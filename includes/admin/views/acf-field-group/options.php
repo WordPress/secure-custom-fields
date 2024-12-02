@@ -81,15 +81,15 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// style
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Style', 'acf' ),
+					'label'        => __( 'Style', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'button_group',
 					'name'         => 'style',
 					'prefix'       => 'acf_field_group',
 					'value'        => $field_group['style'],
 					'choices'      => array(
-						'default'  => __( 'Standard (WP metabox)', 'acf' ),
-						'seamless' => __( 'Seamless (no metabox)', 'acf' ),
+						'default'  => __( 'Standard (WP metabox)', 'secure-custom-fields' ),
+						'seamless' => __( 'Seamless (no metabox)', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -98,16 +98,16 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// position
 			acf_render_field_wrap(
 				array(
-					'label'         => __( 'Position', 'acf' ),
-					'instructions'  => __( "'High' position not supported in the Block Editor", 'acf' ),
+					'label'         => __( 'Position', 'secure-custom-fields' ),
+					'instructions'  => __( "'High' position not supported in the Block Editor", 'secure-custom-fields' ),
 					'type'          => 'button_group',
 					'name'          => 'position',
 					'prefix'        => 'acf_field_group',
 					'value'         => $field_group['position'],
 					'choices'       => array(
-						'acf_after_title' => __( 'High (after title)', 'acf' ),
-						'normal'          => __( 'Normal (after content)', 'acf' ),
-						'side'            => __( 'Side', 'acf' ),
+						'acf_after_title' => __( 'High (after title)', 'secure-custom-fields' ),
+						'normal'          => __( 'Normal (after content)', 'secure-custom-fields' ),
+						'side'            => __( 'Side', 'secure-custom-fields' ),
 					),
 					'default_value' => 'normal',
 				),
@@ -119,15 +119,15 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// label_placement
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Label Placement', 'acf' ),
+					'label'        => __( 'Label Placement', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'button_group',
 					'name'         => 'label_placement',
 					'prefix'       => 'acf_field_group',
 					'value'        => $field_group['label_placement'],
 					'choices'      => array(
-						'top'  => __( 'Top aligned', 'acf' ),
-						'left' => __( 'Left aligned', 'acf' ),
+						'top'  => __( 'Top aligned', 'secure-custom-fields' ),
+						'left' => __( 'Left aligned', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -136,15 +136,15 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// instruction_placement
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Instruction Placement', 'acf' ),
+					'label'        => __( 'Instruction Placement', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'button_group',
 					'name'         => 'instruction_placement',
 					'prefix'       => 'acf_field_group',
 					'value'        => $field_group['instruction_placement'],
 					'choices'      => array(
-						'label' => __( 'Below labels', 'acf' ),
-						'field' => __( 'Below fields', 'acf' ),
+						'label' => __( 'Below labels', 'secure-custom-fields' ),
+						'field' => __( 'Below fields', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -153,8 +153,8 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// menu_order
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Order No.', 'acf' ),
-					'instructions' => __( 'Field groups with a lower order will appear first', 'acf' ),
+					'label'        => __( 'Order No.', 'secure-custom-fields' ),
+					'instructions' => __( 'Field groups with a lower order will appear first', 'secure-custom-fields' ),
 					'type'         => 'number',
 					'name'         => 'menu_order',
 					'prefix'       => 'acf_field_group',
@@ -169,21 +169,21 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 
 			// hide on screen
 			$choices = array(
-				'permalink'       => __( 'Permalink', 'acf' ),
-				'the_content'     => __( 'Content Editor', 'acf' ),
-				'excerpt'         => __( 'Excerpt', 'acf' ),
-				'custom_fields'   => __( 'Custom Fields', 'acf' ),
-				'discussion'      => __( 'Discussion', 'acf' ),
-				'comments'        => __( 'Comments', 'acf' ),
-				'revisions'       => __( 'Revisions', 'acf' ),
-				'slug'            => __( 'Slug', 'acf' ),
-				'author'          => __( 'Author', 'acf' ),
-				'format'          => __( 'Format', 'acf' ),
-				'page_attributes' => __( 'Page Attributes', 'acf' ),
-				'featured_image'  => __( 'Featured Image', 'acf' ),
-				'categories'      => __( 'Categories', 'acf' ),
-				'tags'            => __( 'Tags', 'acf' ),
-				'send-trackbacks' => __( 'Send Trackbacks', 'acf' ),
+				'permalink'       => __( 'Permalink', 'secure-custom-fields' ),
+				'the_content'     => __( 'Content Editor', 'secure-custom-fields' ),
+				'excerpt'         => __( 'Excerpt', 'secure-custom-fields' ),
+				'custom_fields'   => __( 'Custom Fields', 'secure-custom-fields' ),
+				'discussion'      => __( 'Discussion', 'secure-custom-fields' ),
+				'comments'        => __( 'Comments', 'secure-custom-fields' ),
+				'revisions'       => __( 'Revisions', 'secure-custom-fields' ),
+				'slug'            => __( 'Slug', 'secure-custom-fields' ),
+				'author'          => __( 'Author', 'secure-custom-fields' ),
+				'format'          => __( 'Format', 'secure-custom-fields' ),
+				'page_attributes' => __( 'Page Attributes', 'secure-custom-fields' ),
+				'featured_image'  => __( 'Featured Image', 'secure-custom-fields' ),
+				'categories'      => __( 'Categories', 'secure-custom-fields' ),
+				'tags'            => __( 'Tags', 'secure-custom-fields' ),
+				'send-trackbacks' => __( 'Send Trackbacks', 'secure-custom-fields' ),
 			);
 			if ( acf_get_setting( 'remove_wp_meta_box' ) ) {
 				unset( $choices['custom_fields'] );
@@ -191,8 +191,8 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Hide on screen', 'acf' ),
-					'instructions' => __( '<b>Select</b> items to <b>hide</b> them from the edit screen.', 'acf' ) . '<br /><br />' . __( "If multiple field groups appear on an edit screen, the first field group's options will be used (the one with the lowest order number)", 'acf' ),
+					'label'        => __( 'Hide on screen', 'secure-custom-fields' ),
+					'instructions' => __( '<b>Select</b> items to <b>hide</b> them from the edit screen.', 'secure-custom-fields' ) . '<br /><br />' . __( "If multiple field groups appear on an edit screen, the first field group's options will be used (the one with the lowest order number)", 'secure-custom-fields' ),
 					'type'         => 'checkbox',
 					'name'         => 'hide_on_screen',
 					'prefix'       => 'acf_field_group',
@@ -214,15 +214,15 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// active
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Active', 'acf' ),
+					'label'        => __( 'Active', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'true_false',
 					'name'         => 'active',
 					'prefix'       => 'acf_field_group',
 					'value'        => $field_group['active'],
 					'ui'           => 1,
-				// 'ui_on_text'  => __('Active', 'acf'),
-				// 'ui_off_text' => __('Inactive', 'acf'),
+				// 'ui_on_text'  => __('Active', 'secure-custom-fields'),
+				// 'ui_off_text' => __('Inactive', 'secure-custom-fields'),
 				)
 			);
 
@@ -230,15 +230,15 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			if ( acf_get_setting( 'rest_api_enabled' ) ) {
 				acf_render_field_wrap(
 					array(
-						'label'        => __( 'Show in REST API', 'acf' ),
+						'label'        => __( 'Show in REST API', 'secure-custom-fields' ),
 						'instructions' => '',
 						'type'         => 'true_false',
 						'name'         => 'show_in_rest',
 						'prefix'       => 'acf_field_group',
 						'value'        => $field_group['show_in_rest'],
 						'ui'           => 1,
-					// 'ui_on_text'  => __('Active', 'acf'),
-					// 'ui_off_text' => __('Inactive', 'acf'),
+					// 'ui_on_text'  => __('Active', 'secure-custom-fields'),
+					// 'ui_off_text' => __('Inactive', 'secure-custom-fields'),
 					)
 				);
 			}
@@ -246,8 +246,8 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			// description
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Description', 'acf' ),
-					'instructions' => __( 'Shown in field group list', 'acf' ),
+					'label'        => __( 'Description', 'secure-custom-fields' ),
+					'instructions' => __( 'Shown in field group list', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'description',
 					'prefix'       => 'acf_field_group',
@@ -258,13 +258,13 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			);
 
 			/* translators: 1: Post creation date 2: Post creation time */
-			$acf_created_on = sprintf( __( 'Created on %1$s at %2$s', 'acf' ), get_the_date(), get_the_time() );
+			$acf_created_on = sprintf( __( 'Created on %1$s at %2$s', 'secure-custom-fields' ), get_the_date(), get_the_time() );
 			?>
 			<div class="acf-field-group-settings-footer">
 				<span class="acf-created-on"><?php echo esc_html( $acf_created_on ); ?></span>
 				<a href="<?php echo get_delete_post_link(); ?>" class="acf-btn acf-btn-tertiary  acf-delete-field-group">
 					<i class="acf-icon acf-icon-trash"></i>
-					<?php esc_html_e( 'Delete Field Group', 'acf' ); ?>
+					<?php esc_html_e( 'Delete Field Group', 'secure-custom-fields' ); ?>
 				</a>
 			</div>
 			<?php

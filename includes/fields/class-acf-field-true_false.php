@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 
 			// vars
 			$this->name          = 'true_false';
-			$this->label         = __( 'True / False', 'acf' );
+			$this->label         = __( 'True / False', 'secure-custom-fields' );
 			$this->category      = 'choice';
-			$this->description   = __( 'A toggle that allows you to pick a value of 1 or 0 (on or off, true or false, etc). Can be presented as a stylized switch or checkbox.', 'acf' );
+			$this->description   = __( 'A toggle that allows you to pick a value of 1 or 0 (on or off, true or false, etc). Can be presented as a stylized switch or checkbox.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-true-false.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/true-false/';
 			$this->defaults      = array(
@@ -73,10 +73,10 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 
 				// vars
 				if ( $field['ui_on_text'] === '' ) {
-					$field['ui_on_text'] = __( 'Yes', 'acf' );
+					$field['ui_on_text'] = __( 'Yes', 'secure-custom-fields' );
 				}
 				if ( $field['ui_off_text'] === '' ) {
-					$field['ui_off_text'] = __( 'No', 'acf' );
+					$field['ui_off_text'] = __( 'No', 'secure-custom-fields' );
 				}
 
 				// update input
@@ -122,8 +122,8 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Message', 'acf' ),
-					'instructions' => __( 'Displays text alongside the checkbox', 'acf' ),
+					'label'        => __( 'Message', 'secure-custom-fields' ),
+					'instructions' => __( 'Displays text alongside the checkbox', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'message',
 				)
@@ -132,7 +132,7 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'true_false',
 					'name'         => 'default_value',
@@ -152,11 +152,11 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'On Text', 'acf' ),
-					'instructions' => __( 'Text shown when active', 'acf' ),
+					'label'        => __( 'On Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Text shown when active', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'ui_on_text',
-					'placeholder'  => __( 'Yes', 'acf' ),
+					'placeholder'  => __( 'Yes', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'ui',
 						'operator' => '==',
@@ -168,11 +168,11 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Off Text', 'acf' ),
-					'instructions' => __( 'Text shown when inactive', 'acf' ),
+					'label'        => __( 'Off Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Text shown when inactive', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'ui_off_text',
-					'placeholder'  => __( 'No', 'acf' ),
+					'placeholder'  => __( 'No', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'ui',
 						'operator' => '==',
@@ -184,8 +184,8 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Stylized UI', 'acf' ),
-					'instructions' => __( 'Use a stylized checkbox using select2', 'acf' ),
+					'label'        => __( 'Stylized UI', 'secure-custom-fields' ),
+					'instructions' => __( 'Use a stylized checkbox using select2', 'secure-custom-fields' ),
 					'type'         => 'true_false',
 					'name'         => 'ui',
 					'ui'           => 1,

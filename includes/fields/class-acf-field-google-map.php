@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 
 			// vars
 			$this->name           = 'google_map';
-			$this->label          = __( 'Google Map', 'acf' );
+			$this->label          = __( 'Google Map', 'secure-custom-fields' );
 			$this->category       = 'advanced';
-			$this->description    = __( 'An interactive UI for selecting a location using Google Maps. Requires a Google Maps API key and additional configuration to display correctly.', 'acf' );
+			$this->description    = __( 'An interactive UI for selecting a location using Google Maps. Requires a Google Maps API key and additional configuration to display correctly.', 'secure-custom-fields' );
 			$this->preview_image  = acf_get_url() . '/assets/images/field-type-previews/field-preview-google-map.png';
 			$this->doc_url        = 'https://www.advancedcustomfields.com/resources/google-map/';
 			$this->defaults       = array(
@@ -54,7 +54,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			// localize
 			acf_localize_text(
 				array(
-					'Sorry, this browser does not support geolocation'  => __( 'Sorry, this browser does not support geolocation', 'acf' ),
+					'Sorry, this browser does not support geolocation'  => __( 'Sorry, this browser does not support geolocation', 'secure-custom-fields' ),
 				)
 			);
 
@@ -146,12 +146,12 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 	<div class="title">
 
 		<div class="acf-actions -hover">
-			<a href="#" data-name="search" class="acf-icon -search grey" title="<?php esc_attr_e( 'Search', 'acf' ); ?>"></a>
-			<a href="#" data-name="clear" class="acf-icon -cancel grey" title="<?php esc_attr_e( 'Clear location', 'acf' ); ?>"></a>
-			<a href="#" data-name="locate" class="acf-icon -location grey" title="<?php esc_attr_e( 'Find current location', 'acf' ); ?>"></a>
+			<a href="#" data-name="search" class="acf-icon -search grey" title="<?php esc_attr_e( 'Search', 'secure-custom-fields' ); ?>"></a>
+			<a href="#" data-name="clear" class="acf-icon -cancel grey" title="<?php esc_attr_e( 'Clear location', 'secure-custom-fields' ); ?>"></a>
+			<a href="#" data-name="locate" class="acf-icon -location grey" title="<?php esc_attr_e( 'Find current location', 'secure-custom-fields' ); ?>"></a>
 		</div>
 
-		<input class="search" type="text" placeholder="<?php esc_attr_e( 'Search for address...', 'acf' ); ?>" value="<?php echo esc_attr( $search ); ?>" />
+		<input class="search" type="text" placeholder="<?php esc_attr_e( 'Search for address...', 'secure-custom-fields' ); ?>" value="<?php echo esc_attr( $search ); ?>" />
 		<i class="acf-loading"></i>
 
 	</div>
@@ -179,8 +179,8 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'       => __( 'Center', 'acf' ),
-					'hint'        => __( 'Center the initial map', 'acf' ),
+					'label'       => __( 'Center', 'secure-custom-fields' ),
+					'hint'        => __( 'Center the initial map', 'secure-custom-fields' ),
 					'type'        => 'text',
 					'name'        => 'center_lat',
 					'prepend'     => 'lat',
@@ -192,8 +192,8 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'       => __( 'Center', 'acf' ),
-					'hint'        => __( 'Center the initial map', 'acf' ),
+					'label'       => __( 'Center', 'secure-custom-fields' ),
+					'hint'        => __( 'Center the initial map', 'secure-custom-fields' ),
 					'type'        => 'text',
 					'name'        => 'center_lng',
 					'prepend'     => 'lng',
@@ -206,8 +206,8 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Zoom', 'acf' ),
-					'instructions' => __( 'Set the initial zoom level', 'acf' ),
+					'label'        => __( 'Zoom', 'secure-custom-fields' ),
+					'instructions' => __( 'Set the initial zoom level', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'zoom',
 					'placeholder'  => $this->default_values['zoom'],
@@ -218,8 +218,8 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Height', 'acf' ),
-					'instructions' => __( 'Customize the map height', 'acf' ),
+					'label'        => __( 'Height', 'secure-custom-fields' ),
+					'instructions' => __( 'Customize the map height', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'height',
 					'append'       => 'px',

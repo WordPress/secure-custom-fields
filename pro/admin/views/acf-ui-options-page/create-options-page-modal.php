@@ -13,9 +13,9 @@
 
 	acf_render_field_wrap(
 		array(
-			'label'       => __( 'Page Title', 'acf' ),
+			'label'       => __( 'Page Title', 'secure-custom-fields' ),
 			/* translators: example options page name */
-			'placeholder' => __( 'Site Settings', 'acf' ),
+			'placeholder' => __( 'Site Settings', 'secure-custom-fields' ),
 			'value'       => $acf_options_page_prefilled_title,
 			'type'        => 'text',
 			'name'        => 'page_title',
@@ -30,7 +30,7 @@
 
 	acf_render_field_wrap(
 		array(
-			'label'    => __( 'Menu Slug', 'acf' ),
+			'label'    => __( 'Menu Slug', 'secure-custom-fields' ),
 			'type'     => 'text',
 			'name'     => 'menu_slug',
 			'key'      => 'menu_slug',
@@ -44,7 +44,7 @@
 
 	acf_render_field_wrap(
 		array(
-			'label'    => __( 'Parent Page', 'acf' ),
+			'label'    => __( 'Parent Page', 'secure-custom-fields' ),
 			'type'     => 'select',
 			'name'     => 'parent_slug',
 			'key'      => 'parent_slug',
@@ -59,8 +59,8 @@
 	?>
 
 	<div class="acf-actions">
-		<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Cancel', 'acf' ); ?></button>
-		<button type="submit" class="acf-btn acf-btn-primary"><?php esc_html_e( 'Done', 'acf' ); ?></button>
+		<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Cancel', 'secure-custom-fields' ); ?></button>
+		<button type="submit" class="acf-btn acf-btn-primary"><?php esc_html_e( 'Done', 'secure-custom-fields' ); ?></button>
 	</div>
 
 </form>

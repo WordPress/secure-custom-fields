@@ -12,6 +12,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 	#[AllowDynamicProperties]
 	class ACF_Admin_Taxonomies extends ACF_Admin_Internal_Post_Type_List {
 
+
 		/**
 		 * The slug for the internal post type.
 		 *
@@ -37,6 +38,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 
 		/**
 		 * Constructor.
+		 *
 		 * @since 6.2
 		 */
 		public function __construct() {
@@ -83,7 +85,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
 			$cap         = acf_get_setting( 'capability' );
-			add_submenu_page( $parent_slug, __( 'Taxonomies', 'acf' ), __( 'Taxonomies', 'acf' ), $cap, 'edit.php?post_type=acf-taxonomy' );
+			add_submenu_page( $parent_slug, __( 'Taxonomies', 'secure-custom-fields' ), __( 'Taxonomies', 'secure-custom-fields' ), $cap, 'edit.php?post_type=acf-taxonomy' );
 		}
 
 		/**
@@ -106,15 +108,15 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 			$columns = array(
 				'cb'               => $_columns['cb'],
 				'title'            => $_columns['title'],
-				'acf-description'  => __( 'Description', 'acf' ),
-				'acf-key'          => __( 'Key', 'acf' ),
-				'acf-post-types'   => __( 'Post Types', 'acf' ),
-				'acf-field-groups' => __( 'Field Groups', 'acf' ),
-				'acf-count'        => __( 'Terms', 'acf' ),
+				'acf-description'  => __( 'Description', 'secure-custom-fields' ),
+				'acf-key'          => __( 'Key', 'secure-custom-fields' ),
+				'acf-post-types'   => __( 'Post Types', 'secure-custom-fields' ),
+				'acf-field-groups' => __( 'Field Groups', 'secure-custom-fields' ),
+				'acf-count'        => __( 'Terms', 'secure-custom-fields' ),
 			);
 
 			if ( acf_get_local_json_files( $this->post_type ) ) {
-				$columns['acf-json'] = __( 'Local JSON', 'acf' );
+				$columns['acf-json'] = __( 'Local JSON', 'secure-custom-fields' );
 			}
 
 			return $columns;
@@ -137,13 +139,13 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 					echo esc_html( $post['key'] );
 					break;
 
-				// Description.
+					// Description.
 				case 'acf-description':
 					if ( ( is_string( $post['description'] ) || is_numeric( $post['description'] ) ) && ! empty( $post['description'] ) ) {
 						echo '<span class="acf-description">' . acf_esc_html( $post['description'] ) . '</span>';
 					} else {
 						echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'acf' ) . '</span>';
+						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'secure-custom-fields' ) . '</span>';
 					}
 					break;
 
@@ -159,7 +161,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 					$this->render_admin_table_column_num_terms( $post );
 					break;
 
-				// Local JSON.
+					// Local JSON.
 				case 'acf-json':
 					$this->render_admin_table_column_local_status( $post );
 					break;
@@ -179,7 +181,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 
 			if ( empty( $field_groups ) ) {
 				echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-				echo '<span class="screen-reader-text">' . esc_html__( 'No field groups', 'acf' ) . '</span>';
+				echo '<span class="screen-reader-text">' . esc_html__( 'No field groups', 'secure-custom-fields' ) . '</span>';
 				return;
 			}
 
@@ -237,7 +239,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 
 			if ( empty( $labels ) ) {
 				echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-				echo '<span class="screen-reader-text">' . esc_html__( 'No post types', 'acf' ) . '</span>';
+				echo '<span class="screen-reader-text">' . esc_html__( 'No post types', 'secure-custom-fields' ) . '</span>';
 				return;
 			}
 
@@ -264,7 +266,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		 */
 		public function render_admin_table_column_num_terms( $taxonomy ) {
 			$no_terms  = '<span class="acf-emdash" aria-hidden="true">—</span>';
-			$no_terms .= '<span class="screen-reader-text">' . esc_html__( 'No terms', 'acf' ) . '</span>';
+			$no_terms .= '<span class="screen-reader-text">' . esc_html__( 'No terms', 'secure-custom-fields' ) . '</span>';
 
 			// WP doesn't count terms for taxonomies that don't exist and instead returns WP_Error.
 			if ( empty( $taxonomy['active'] ) || 'trash' === get_post_status( $taxonomy['ID'] ) ) {
@@ -309,28 +311,28 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 				case 'acfactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of taxonomies activated */
-						_n( 'Taxonomy activated.', '%s taxonomies activated.', $count, 'acf' ),
+						_n( '%s taxonomy activated.', '%s taxonomies activated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfdeactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of taxonomies deactivated */
-						_n( 'Taxonomy deactivated.', '%s taxonomies deactivated.', $count, 'acf' ),
+						_n( '%s taxonomy deactivated.', '%s taxonomies deactivated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfduplicatecomplete':
 					$text = sprintf(
 						/* translators: %s number of taxonomies duplicated */
-						_n( 'Taxonomy duplicated.', '%s taxonomies duplicated.', $count, 'acf' ),
+						_n( '%s taxonomy duplicated.', '%s taxonomies duplicated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfsynccomplete':
 					$text = sprintf(
 						/* translators: %s number of taxonomies synchronized */
-						_n( 'Taxonomy synchronized.', '%s taxonomies synchronized.', $count, 'acf' ),
+						_n( '%s taxonomy synchronized.', '%s taxonomies synchronized.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
@@ -348,8 +350,8 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		 */
 		public function get_registration_error_state() {
 			return '<span class="acf-js-tooltip dashicons dashicons-warning" title="' .
-			__( 'This taxonomy could not be registered because its key is in use by another taxonomy registered by another plugin or theme.', 'acf' ) .
-			'"></span> ' . _x( 'Registration Failed', 'post status', 'acf' );
+				__( 'This taxonomy could not be registered because its key is in use by another taxonomy registered by another plugin or theme.', 'secure-custom-fields' ) .
+				'"></span> ' . _x( 'Registration Failed', 'post status', 'secure-custom-fields' );
 		}
 	}
 

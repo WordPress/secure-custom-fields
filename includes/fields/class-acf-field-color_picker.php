@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 
 			// vars
 			$this->name          = 'color_picker';
-			$this->label         = __( 'Color Picker', 'acf' );
+			$this->label         = __( 'Color Picker', 'secure-custom-fields' );
 			$this->category      = 'advanced';
-			$this->description   = __( 'An interactive UI for selecting a color, or specifying a Hex value.', 'acf' );
+			$this->description   = __( 'An interactive UI for selecting a color, or specifying a Hex value.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-color-picker.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/color-picker/';
 			$this->defaults      = array(
@@ -62,12 +62,12 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 						'wp-color-picker',
 						'wpColorPickerL10n',
 						array(
-							'clear'            => __( 'Clear', 'acf' ),
-							'clearAriaLabel'   => __( 'Clear color', 'acf' ),
-							'defaultString'    => __( 'Default', 'acf' ),
-							'defaultAriaLabel' => __( 'Select default color', 'acf' ),
-							'pick'             => __( 'Select Color', 'acf' ),
-							'defaultLabel'     => __( 'Color value', 'acf' ),
+							'clear'            => __( 'Clear', 'secure-custom-fields' ),
+							'clearAriaLabel'   => __( 'Clear color', 'secure-custom-fields' ),
+							'defaultString'    => __( 'Default', 'secure-custom-fields' ),
+							'defaultAriaLabel' => __( 'Select default color', 'secure-custom-fields' ),
+							'pick'             => __( 'Select Color', 'secure-custom-fields' ),
+							'defaultLabel'     => __( 'Color value', 'secure-custom-fields' ),
 						)
 					);
 				}
@@ -88,8 +88,8 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			acf_localize_data(
 				array(
 					'colorPickerL10n' => array(
-						'hex_string'  => __( 'Hex String', 'acf' ),
-						'rgba_string' => __( 'RGBA String', 'acf' ),
+						'hex_string'  => __( 'Hex String', 'secure-custom-fields' ),
+						'rgba_string' => __( 'RGBA String', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -141,7 +141,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'text',
 					'name'         => 'default_value',
@@ -153,7 +153,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Enable Transparency', 'acf' ),
+					'label'        => __( 'Enable Transparency', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'true_false',
 					'name'         => 'enable_opacity',
@@ -165,14 +165,14 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'string' => __( 'Hex String', 'acf' ),
-						'array'  => __( 'RGBA Array', 'acf' ),
+						'string' => __( 'Hex String', 'secure-custom-fields' ),
+						'array'  => __( 'RGBA Array', 'secure-custom-fields' ),
 					),
 				)
 			);

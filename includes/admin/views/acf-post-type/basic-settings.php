@@ -19,9 +19,9 @@ if ( acf_is_post_type( $acf_duplicate_post_type ) ) {
 
 acf_render_field_wrap(
 	array(
-		'label'       => __( 'Plural Label', 'acf' ),
+		'label'       => __( 'Plural Label', 'secure-custom-fields' ),
 		/* translators: example post type */
-		'placeholder' => __( 'Movies', 'acf' ),
+		'placeholder' => __( 'Movies', 'secure-custom-fields' ),
 		'type'        => 'text',
 		'name'        => 'name',
 		'key'         => 'name',
@@ -36,9 +36,9 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'       => __( 'Singular Label', 'acf' ),
+		'label'       => __( 'Singular Label', 'secure-custom-fields' ),
 		/* translators: example post type */
-		'placeholder' => __( 'Movie', 'acf' ),
+		'placeholder' => __( 'Movie', 'secure-custom-fields' ),
 		'type'        => 'text',
 		'name'        => 'singular_name',
 		'key'         => 'singular_name',
@@ -53,10 +53,10 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Post Type Key', 'acf' ),
-		'instructions' => __( 'Lower case letters, underscores and dashes only, Max 20 characters.', 'acf' ),
+		'label'        => __( 'Post Type Key', 'secure-custom-fields' ),
+		'instructions' => __( 'Lower case letters, underscores and dashes only, Max 20 characters.', 'secure-custom-fields' ),
 		/* translators: example post type */
-		'placeholder'  => __( 'movie', 'acf' ),
+		'placeholder'  => __( 'movie', 'secure-custom-fields' ),
 		'type'         => 'text',
 		'name'         => 'post_type',
 		'key'          => 'post_type',
@@ -83,8 +83,8 @@ acf_render_field_wrap(
 		'key'          => 'taxonomies',
 		'prefix'       => 'acf_post_type',
 		'value'        => $acf_post_type['taxonomies'],
-		'label'        => __( 'Taxonomies', 'acf' ),
-		'instructions' => __( 'Select existing taxonomies to classify items of the post type.', 'acf' ),
+		'label'        => __( 'Taxonomies', 'secure-custom-fields' ),
+		'instructions' => __( 'Select existing taxonomies to classify items of the post type.', 'secure-custom-fields' ),
 		'choices'      => acf_get_taxonomy_labels(),
 		'ui'           => true,
 		'allow_null'   => true,
@@ -103,8 +103,8 @@ acf_render_field_wrap(
 		'key'          => 'public',
 		'prefix'       => 'acf_post_type',
 		'value'        => $acf_post_type['public'],
-		'label'        => __( 'Public', 'acf' ),
-		'instructions' => __( 'Visible on the frontend and in the admin dashboard.', 'acf' ),
+		'label'        => __( 'Public', 'secure-custom-fields' ),
+		'instructions' => __( 'Visible on the frontend and in the admin dashboard.', 'secure-custom-fields' ),
 		'ui'           => true,
 		'default'      => 1,
 	),
@@ -119,8 +119,8 @@ acf_render_field_wrap(
 		'class'        => 'acf_hierarchical_switch',
 		'prefix'       => 'acf_post_type',
 		'value'        => $acf_post_type['hierarchical'],
-		'label'        => __( 'Hierarchical', 'acf' ),
-		'instructions' => __( 'Hierarchical post types can have descendants (like pages).', 'acf' ),
+		'label'        => __( 'Hierarchical', 'secure-custom-fields' ),
+		'instructions' => __( 'Hierarchical post types can have descendants (like pages).', 'secure-custom-fields' ),
 		'ui'           => true,
 	),
 	'div'
@@ -132,8 +132,8 @@ acf_render_field_wrap( array( 'type' => 'seperator' ) );
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Advanced Configuration', 'acf' ),
-		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'acf' ),
+		'label'        => __( 'Advanced Configuration', 'secure-custom-fields' ),
+		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'secure-custom-fields' ),
 		'type'         => 'true_false',
 		'name'         => 'advanced_configuration',
 		'key'          => 'advanced_configuration',

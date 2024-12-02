@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 
 			// vars
 			$this->name          = 'wysiwyg';
-			$this->label         = __( 'WYSIWYG Editor', 'acf' );
+			$this->label         = __( 'WYSIWYG Editor', 'secure-custom-fields' );
 			$this->category      = 'content';
-			$this->description   = __( 'Displays the WordPress WYSIWYG editor as seen in Posts and Pages allowing for a rich text-editing experience that also allows for multimedia content.', 'acf' ) . ' ' . __( 'We do not recommend using this field in ACF Blocks.', 'acf' );
+			$this->description   = __( 'Displays the WordPress WYSIWYG editor as seen in Posts and Pages allowing for a rich text-editing experience that also allows for multimedia content.', 'secure-custom-fields' ) . ' ' . __( 'We do not recommend using this field in ACF Blocks.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-wysiwyg.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/wysiwyg-editor/';
 			$this->defaults      = array(
@@ -258,14 +258,14 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 				<?php endif; ?>
 					<?php if ( user_can_richedit() && $show_tabs ) : ?>
 					<div class="wp-editor-tabs">
-						<button id="<?php echo esc_attr( $id ); ?>-tmce" class="wp-switch-editor switch-tmce" data-wp-editor-id="<?php echo esc_attr( $id ); ?>" type="button"><?php esc_html_e( 'Visual', 'acf' ); ?></button>
-						<button id="<?php echo esc_attr( $id ); ?>-html" class="wp-switch-editor switch-html" data-wp-editor-id="<?php echo esc_attr( $id ); ?>" type="button"><?php echo esc_html_x( 'Text', 'Name for the Text editor tab (formerly HTML)', 'acf' ); ?></button>
+						<button id="<?php echo esc_attr( $id ); ?>-tmce" class="wp-switch-editor switch-tmce" data-wp-editor-id="<?php echo esc_attr( $id ); ?>" type="button"><?php esc_html_e( 'Visual', 'secure-custom-fields' ); ?></button>
+						<button id="<?php echo esc_attr( $id ); ?>-html" class="wp-switch-editor switch-html" data-wp-editor-id="<?php echo esc_attr( $id ); ?>" type="button"><?php echo esc_html_x( 'Text', 'Name for the Text editor tab (formerly HTML)', 'secure-custom-fields' ); ?></button>
 					</div>
 				<?php endif; ?>
 			</div>
 			<div id="wp-<?php echo esc_attr( $id ); ?>-editor-container" class="wp-editor-container">
 					<?php if ( $field['delay'] ) : ?>
-					<div class="acf-editor-toolbar"><?php esc_html_e( 'Click to initialize TinyMCE', 'acf' ); ?></div>
+					<div class="acf-editor-toolbar"><?php esc_html_e( 'Click to initialize TinyMCE', 'secure-custom-fields' ); ?></div>
 				<?php endif; ?>
 					<?php printf( $textarea, $field['value'] ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by format_for_editor(). ?>
 			</div>
@@ -288,8 +288,8 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'textarea',
 					'name'         => 'default_value',
 				)
@@ -321,14 +321,14 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Tabs', 'acf' ),
+					'label'        => __( 'Tabs', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'tabs',
 					'choices'      => array(
-						'all'    => __( 'Visual & Text', 'acf' ),
-						'visual' => __( 'Visual Only', 'acf' ),
-						'text'   => __( 'Text Only', 'acf' ),
+						'all'    => __( 'Visual & Text', 'secure-custom-fields' ),
+						'visual' => __( 'Visual Only', 'secure-custom-fields' ),
+						'text'   => __( 'Text Only', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -336,7 +336,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Toolbar', 'acf' ),
+					'label'        => __( 'Toolbar', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'toolbar',
@@ -352,7 +352,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Show Media Upload Buttons', 'acf' ),
+					'label'        => __( 'Show Media Upload Buttons', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'media_upload',
 					'type'         => 'true_false',
@@ -363,8 +363,8 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Delay Initialization', 'acf' ),
-					'instructions' => __( 'TinyMCE will not be initialized until field is clicked', 'acf' ),
+					'label'        => __( 'Delay Initialization', 'secure-custom-fields' ),
+					'instructions' => __( 'TinyMCE will not be initialized until field is clicked', 'secure-custom-fields' ),
 					'name'         => 'delay',
 					'type'         => 'true_false',
 					'ui'           => 1,

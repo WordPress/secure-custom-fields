@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Current_User_Role' ) ) :
 		 */
 		public function initialize() {
 			$this->name     = 'current_user_role';
-			$this->label    = __( 'Current User Role', 'acf' );
+			$this->label    = __( 'Current User Role', 'secure-custom-fields' );
 			$this->category = 'user';
 		}
 
@@ -74,7 +74,7 @@ if ( ! class_exists( 'ACF_Location_Current_User_Role' ) ) :
 			if ( is_multisite() ) {
 				return array_merge(
 					array(
-						'super_admin' => __( 'Super Admin', 'acf' ),
+						'super_admin' => __( 'Super Admin', 'secure-custom-fields' ),
 					),
 					$choices
 				);

@@ -53,14 +53,14 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 				0  => '', // Unused. Messages start at index 1.
 				1  => $this->options_page_created_message(), // Updated.
 				2  => $this->options_page_created_message(),
-				3  => __( 'Options page deleted.', 'acf' ),
-				4  => __( 'Options page updated.', 'acf' ),
+				3  => __( 'Options page deleted.', 'secure-custom-fields' ),
+				4  => __( 'Options page updated.', 'secure-custom-fields' ),
 				5  => false, // Post type does not support revisions.
 				6  => $this->options_page_created_message( true ), // Created.
-				7  => __( 'Options page saved.', 'acf' ),
-				8  => __( 'Options page submitted.', 'acf' ),
-				9  => __( 'Options page scheduled for.', 'acf' ),
-				10 => __( 'Options page draft updated.', 'acf' ),
+				7  => __( 'Options page saved.', 'secure-custom-fields' ),
+				8  => __( 'Options page submitted.', 'secure-custom-fields' ),
+				9  => __( 'Options page scheduled for.', 'secure-custom-fields' ),
+				10 => __( 'Options page draft updated.', 'secure-custom-fields' ),
 			);
 
 			return $messages;
@@ -80,13 +80,13 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 			$title = get_the_title( $post_id );
 
 			/* translators: %s options page name */
-			$item_saved_text = sprintf( __( '%s options page updated', 'acf' ), $title );
+			$item_saved_text = sprintf( __( '%s options page updated', 'secure-custom-fields' ), $title );
 			/* translators: %s options page name */
-			$add_fields_text = sprintf( __( 'Add fields to %s', 'acf' ), $title );
+			$add_fields_text = sprintf( __( 'Add fields to %s', 'secure-custom-fields' ), $title );
 
 			if ( $created ) {
 				/* translators: %s options page name */
-				$item_saved_text = sprintf( __( '%s options page created', 'acf' ), $title );
+				$item_saved_text = sprintf( __( '%s options page created', 'secure-custom-fields' ), $title );
 			}
 
 			$add_fields_link = wp_nonce_url(
@@ -99,7 +99,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 			<p class="acf-item-saved-text"><?php echo esc_html( $item_saved_text ); ?></p>
 			<div class="acf-item-saved-links">
 				<a href="<?php echo esc_url( $add_fields_link ); ?>"><?php echo esc_html( $add_fields_text ); ?></a>
-				<a class="acf-link-field-groups" href="#"><?php esc_html_e( 'Link existing field groups', 'acf' ); ?></a>
+				<a class="acf-link-field-groups" href="#"><?php esc_html_e( 'Link existing field groups', 'secure-custom-fields' ); ?></a>
 			</div>
 			<?php
 			return ob_get_clean();
@@ -128,11 +128,11 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 
 			acf_localize_text(
 				array(
-					'Post'    => __( 'Post', 'acf' ),
-					'Posts'   => __( 'Posts', 'acf' ),
-					'Page'    => __( 'Page', 'acf' ),
-					'Pages'   => __( 'Pages', 'acf' ),
-					'Default' => __( 'Default', 'acf' ),
+					'Post'    => __( 'Post', 'secure-custom-fields' ),
+					'Posts'   => __( 'Posts', 'secure-custom-fields' ),
+					'Page'    => __( 'Page', 'secure-custom-fields' ),
+					'Pages'   => __( 'Pages', 'secure-custom-fields' ),
+					'Default' => __( 'Default', 'secure-custom-fields' ),
 				)
 			);
 
@@ -154,8 +154,8 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 			$acf_ui_options_page = acf_get_internal_post_type( $post->ID, $this->post_type );
 
 			// metaboxes.
-			add_meta_box( 'acf-basic-settings', __( 'Basic Settings', 'acf' ), array( $this, 'mb_basic_settings' ), 'acf-ui-options-page', 'normal', 'high' );
-			add_meta_box( 'acf-advanced-settings', __( 'Advanced Settings', 'acf' ), array( $this, 'mb_advanced_settings' ), 'acf-ui-options-page', 'normal', 'high' );
+			add_meta_box( 'acf-basic-settings', __( 'Basic Settings', 'secure-custom-fields' ), array( $this, 'mb_basic_settings' ), 'acf-ui-options-page', 'normal', 'high' );
+			add_meta_box( 'acf-advanced-settings', __( 'Advanced Settings', 'secure-custom-fields' ), array( $this, 'mb_advanced_settings' ), 'acf-ui-options-page', 'normal', 'high' );
 
 			// actions.
 			add_action( 'post_submitbox_misc_actions', array( $this, 'post_submitbox_misc_actions' ), 10, 0 );
@@ -280,7 +280,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 		public function post_submitbox_misc_actions() {
 			global $acf_ui_options_page;
 
-			$status_label = $acf_ui_options_page['active'] ? _x( 'Active', 'post status', 'acf' ) : _x( 'Inactive', 'post status', 'acf' );
+			$status_label = $acf_ui_options_page['active'] ? _x( 'Active', 'post status', 'secure-custom-fields' ) : _x( 'Inactive', 'post status', 'secure-custom-fields' );
 			?>
 			<script type="text/javascript">
 				(function($) {
@@ -358,7 +358,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 		public function get_parent_page_choices( int $post_id = 0 ) {
 			global $menu;
 			$acf_all_options_pages   = acf_get_options_pages();
-			$acf_parent_page_choices = array( 'None' => array( 'none' => __( 'No Parent', 'acf' ) ) );
+			$acf_parent_page_choices = array( 'None' => array( 'none' => __( 'No Parent', 'secure-custom-fields' ) ) );
 			$self_slug               = false;
 
 			if ( is_array( $acf_all_options_pages ) ) {
@@ -447,7 +447,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 						if ( $existing_options_page['menu_slug'] === $options_page['menu_slug'] ) {
 							wp_send_json_error(
 								array(
-									'error' => __( 'The provided Menu Slug already exists.', 'acf' ),
+									'error' => __( 'The provided Menu Slug already exists.', 'secure-custom-fields' ),
 								)
 							);
 						}
@@ -479,7 +479,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 			wp_send_json_success(
 				array(
 					'content' => $content,
-					'title'   => esc_html__( 'Add New Options Page', 'acf' ),
+					'title'   => esc_html__( 'Add New Options Page', 'secure-custom-fields' ),
 				)
 			);
 		}

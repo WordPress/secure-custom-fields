@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Current_User' ) ) :
 		 */
 		public function initialize() {
 			$this->name     = 'current_user';
-			$this->label    = __( 'Current User', 'acf' );
+			$this->label    = __( 'Current User', 'secure-custom-fields' );
 			$this->category = 'user';
 		}
 
@@ -68,9 +68,9 @@ if ( ! class_exists( 'ACF_Location_Current_User' ) ) :
 		 */
 		public function get_values( $rule ) {
 			return array(
-				'logged_in'     => __( 'Logged in', 'acf' ),
-				'viewing_front' => __( 'Viewing front end', 'acf' ),
-				'viewing_back'  => __( 'Viewing back end', 'acf' ),
+				'logged_in'     => __( 'Logged in', 'secure-custom-fields' ),
+				'viewing_front' => __( 'Viewing front end', 'secure-custom-fields' ),
+				'viewing_back'  => __( 'Viewing back end', 'secure-custom-fields' ),
 			);
 		}
 	}

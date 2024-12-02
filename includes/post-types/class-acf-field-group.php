@@ -342,7 +342,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 
 			// Add (copy) to title when appropriate.
 			if ( ! $new_post_id ) {
-				$post['title'] .= ' (' . __( 'copy', 'acf' ) . ')';
+				$post['title'] .= ' (' . __( 'copy', 'secure-custom-fields' ) . ')';
 			}
 
 			// When importing a new field group, insert a temporary post and set the field group's ID.

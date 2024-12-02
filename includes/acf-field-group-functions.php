@@ -492,9 +492,9 @@ function acf_import_field_group( $field_group ) {
  */
 function acf_get_combined_field_group_settings_tabs() {
 	$default_field_group_settings_tabs = array(
-		'location_rules' => __( 'Location Rules', 'acf' ),
-		'presentation'   => __( 'Presentation', 'acf' ),
-		'group_settings' => __( 'Group Settings', 'acf' ),
+		'location_rules' => __( 'Location Rules', 'secure-custom-fields' ),
+		'presentation'   => __( 'Presentation', 'secure-custom-fields' ),
+		'group_settings' => __( 'Group Settings', 'secure-custom-fields' ),
 	);
 
 	$field_group_settings_tabs = (array) apply_filters( 'acf/field_group/additional_group_settings_tabs', array() );

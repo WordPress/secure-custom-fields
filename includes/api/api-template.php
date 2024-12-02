@@ -43,7 +43,7 @@ function get_field( $selector, $post_id = false, $format_value = true, $escape_h
 
 	// escape html is only compatible when formatting the value too
 	if ( ! $dummy_field && ! $format_value && $escape_html ) {
-		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'acf' ), '6.2.6' ); //phpcs:ignore -- escape not required.
+		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'secure-custom-fields' ), '6.2.6' ); //phpcs:ignore -- escape not required.
 		return false;
 	}
 
@@ -248,7 +248,7 @@ function get_field_object( $selector, $post_id = false, $format_value = true, $l
 
 	// escape html is only compatible when formatting the value too
 	if ( ! $format_value && $escape_html ) {
-		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'acf' ), '6.2.6' ); //phpcs:ignore -- escape not required.
+		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'secure-custom-fields' ), '6.2.6' ); //phpcs:ignore -- escape not required.
 		$field['value'] = false;
 		return $field;
 	}
@@ -382,7 +382,7 @@ function get_fields( $post_id = false, $format_value = true, $escape_html = fals
 
 	// escape html is only compatible when formatting the value too
 	if ( ! $format_value && $escape_html ) {
-		_doing_it_wrong( __FUNCTION__, __( 'Returning escaped HTML values is only possible when format_value is also true. The field values have not been returned for security.', 'acf' ), '6.2.6' ); //phpcs:ignore -- escape not required.
+		_doing_it_wrong( __FUNCTION__, __( 'Returning escaped HTML values is only possible when format_value is also true. The field values have not been returned for security.', 'secure-custom-fields' ), '6.2.6' ); //phpcs:ignore -- escape not required.
 		return false;
 	}
 
@@ -436,7 +436,7 @@ function get_field_objects( $post_id = false, $format_value = true, $load_value 
 
 	// escape html is only compatible when formatting the value too
 	if ( ! $format_value && $escape_html ) {
-		_doing_it_wrong( __FUNCTION__, __( 'Returning escaped HTML values is only possible when format_value is also true. The field values have not been returned for security.', 'acf' ), '6.2.6' ); //phpcs:ignore -- escape not required.
+		_doing_it_wrong( __FUNCTION__, __( 'Returning escaped HTML values is only possible when format_value is also true. The field values have not been returned for security.', 'secure-custom-fields' ), '6.2.6' ); //phpcs:ignore -- escape not required.
 	}
 
 	// populate vars
@@ -944,7 +944,7 @@ function get_sub_field_object( $selector, $format_value = true, $load_value = tr
 
 	// escape html is only compatible when formatting the value too
 	if ( ! $format_value && $escape_html ) {
-		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'acf' ), '6.2.6' ); //phpcs:ignore -- escape not required.
+		_doing_it_wrong( __FUNCTION__, __( 'Returning an escaped HTML value is only possible when format_value is also true. The field value has not been returned for security.', 'secure-custom-fields' ), '6.2.6' ); //phpcs:ignore -- escape not required.
 		$sub_field['value'] = false;
 	}
 
@@ -1008,7 +1008,7 @@ function acf_shortcode( $atts ) {
 	// Return if the ACF shortcode is disabled.
 	if ( ! acf_get_setting( 'enable_shortcode' ) ) {
 		if ( is_preview() ) {
-			return apply_filters( 'acf/shortcode/disabled_message', esc_html__( '[The ACF shortcode is disabled on this site]', 'acf' ) );
+			return apply_filters( 'acf/shortcode/disabled_message', esc_html__( '[The ACF shortcode is disabled on this site]', 'secure-custom-fields' ) );
 		} else {
 			return;
 		}
@@ -1024,7 +1024,7 @@ function acf_shortcode( $atts ) {
 	// Limit previews of ACF shortcode data for users without publish_posts permissions.
 	$preview_capability = apply_filters( 'acf/shortcode/preview_capability', 'publish_posts' );
 	if ( is_preview() && ! current_user_can( $preview_capability ) ) {
-		return apply_filters( 'acf/shortcode/preview_capability_message', esc_html__( '[ACF shortcode value disabled for preview]', 'acf' ) );
+		return apply_filters( 'acf/shortcode/preview_capability_message', esc_html__( '[ACF shortcode value disabled for preview]', 'secure-custom-fields' ) );
 	}
 
 	// Mitigate issue where some AJAX requests can return ACF field data.
@@ -1040,7 +1040,7 @@ function acf_shortcode( $atts ) {
 			'format_value' => true,
 		),
 		$atts,
-		'acf'
+		'secure-custom-fields'
 	);
 
 	// Decode the post ID for filtering.
@@ -1051,7 +1051,7 @@ function acf_shortcode( $atts ) {
 	if ( $decoded_post_id['type'] === 'post' ) {
 		if ( $atts['post_id'] !== false && ( (int) $atts['post_id'] !== (int) acf_get_valid_post_id() ) && ( ! is_post_publicly_viewable( $decoded_post_id['id'] ) ) && apply_filters( 'acf/shortcode/prevent_access_to_fields_on_non_public_posts', true ) ) {
 			if ( is_preview() ) {
-				return apply_filters( 'acf/shortcode/post_not_public_message', esc_html__( '[The ACF shortcode cannot display fields from non-public posts]', 'acf' ) );
+				return apply_filters( 'acf/shortcode/post_not_public_message', esc_html__( '[The ACF shortcode cannot display fields from non-public posts]', 'secure-custom-fields' ) );
 			} else {
 				return;
 			}
@@ -1074,7 +1074,7 @@ function acf_shortcode( $atts ) {
 
 	if ( ! acf_field_type_supports( $field_type, 'bindings', true ) ) {
 		if ( is_preview() ) {
-			return apply_filters( 'acf/shortcode/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in bindings or the ACF Shortcode.', 'acf' ) . ']' );
+			return apply_filters( 'acf/shortcode/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 		} else {
 			return;
 		}
@@ -1082,7 +1082,7 @@ function acf_shortcode( $atts ) {
 
 	if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
 		if ( is_preview() ) {
-			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'acf' ) . ']' );
+			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 		} else {
 			return;
 		}

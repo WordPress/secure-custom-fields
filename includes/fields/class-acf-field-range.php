@@ -19,8 +19,8 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 
 			// vars
 			$this->name          = 'range';
-			$this->label         = __( 'Range', 'acf' );
-			$this->description   = __( 'An input for selecting a numerical value within a specified range using a range slider element.', 'acf' );
+			$this->label         = __( 'Range', 'secure-custom-fields' );
+			$this->description   = __( 'An input for selecting a numerical value within a specified range using a range slider element.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-range.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/range/';
 			$this->defaults      = array(
@@ -150,8 +150,8 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'number',
 					'name'         => 'default_value',
 				)
@@ -170,7 +170,7 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum Value', 'acf' ),
+					'label'        => __( 'Minimum Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'min',
@@ -181,7 +181,7 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum Value', 'acf' ),
+					'label'        => __( 'Maximum Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'max',
@@ -203,7 +203,7 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Step Size', 'acf' ),
+					'label'        => __( 'Step Size', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'step',
@@ -214,8 +214,8 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prepend', 'acf' ),
-					'instructions' => __( 'Appears before the input', 'acf' ),
+					'label'        => __( 'Prepend', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears before the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'prepend',
 				)
@@ -224,8 +224,8 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Append', 'acf' ),
-					'instructions' => __( 'Appears after the input', 'acf' ),
+					'label'        => __( 'Append', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears after the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'append',
 				)

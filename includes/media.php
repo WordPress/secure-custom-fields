@@ -45,14 +45,14 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 			if ( wp_script_is( 'acf-input' ) ) {
 				acf_localize_text(
 					array(
-						'Select.verb'           => _x( 'Select', 'verb', 'acf' ),
-						'Edit.verb'             => _x( 'Edit', 'verb', 'acf' ),
-						'Update.verb'           => _x( 'Update', 'verb', 'acf' ),
-						'Uploaded to this post' => __( 'Uploaded to this post', 'acf' ),
-						'Expand Details'        => __( 'Expand Details', 'acf' ),
-						'Collapse Details'      => __( 'Collapse Details', 'acf' ),
-						'Restricted'            => __( 'Restricted', 'acf' ),
-						'All images'            => __( 'All images', 'acf' ),
+						'Select.verb'           => _x( 'Select', 'verb', 'secure-custom-fields' ),
+						'Edit.verb'             => _x( 'Edit', 'verb', 'secure-custom-fields' ),
+						'Update.verb'           => _x( 'Update', 'verb', 'secure-custom-fields' ),
+						'Uploaded to this post' => __( 'Uploaded to this post', 'secure-custom-fields' ),
+						'Expand Details'        => __( 'Expand Details', 'secure-custom-fields' ),
+						'Collapse Details'      => __( 'Collapse Details', 'secure-custom-fields' ),
+						'Restricted'            => __( 'Restricted', 'secure-custom-fields' ),
+						'All images'            => __( 'All images', 'secure-custom-fields' ),
 					)
 				);
 				acf_localize_data(

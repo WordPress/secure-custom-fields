@@ -12,6 +12,7 @@ if ( class_exists( 'ACF_Rest_Api' ) ) {
 
 class ACF_Rest_Api {
 
+
 	/** @var ACF_Rest_Request */
 	private $request;
 
@@ -271,7 +272,9 @@ class ACF_Rest_Api {
 		if ( ! $object_id or ! $object_type ) {
 			return new WP_Error(
 				'acf_rest_object_unknown',
-				__( sprintf( 'Unable to determine the %s object ID or type. The %s property cannot be updated.', get_class( $object ), $property ), 'acf' ),
+				/* translators: 1: object type, 2: property */
+				sprintf( __( 'Unable to determine the %1$s object ID or type. The %2$s property cannot be updated.', 'secure-custom-fields' ), get_class( $object ), $property )
+			),
 				array( 'status' => 400 )
 			);
 		}

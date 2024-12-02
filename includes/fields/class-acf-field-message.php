@@ -20,9 +20,9 @@ if ( ! class_exists( 'acf_field_message' ) ) :
 
 			// vars
 			$this->name          = 'message';
-			$this->label         = __( 'Message', 'acf' );
+			$this->label         = __( 'Message', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Used to display a message to editors alongside other fields. Useful for providing additional context or instructions around your fields.', 'acf' );
+			$this->description   = __( 'Used to display a message to editors alongside other fields. Useful for providing additional context or instructions around your fields.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-message.png';
 			$this->supports      = array(
 				'required' => false,
@@ -84,7 +84,7 @@ if ( ! class_exists( 'acf_field_message' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Message', 'acf' ),
+					'label'        => __( 'Message', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'textarea',
 					'name'         => 'message',
@@ -94,14 +94,14 @@ if ( ! class_exists( 'acf_field_message' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'New Lines', 'acf' ),
-					'instructions' => __( 'Controls how new lines are rendered', 'acf' ),
+					'label'        => __( 'New Lines', 'secure-custom-fields' ),
+					'instructions' => __( 'Controls how new lines are rendered', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'new_lines',
 					'choices'      => array(
-						'wpautop' => __( 'Automatically add paragraphs', 'acf' ),
-						'br'      => __( 'Automatically add &lt;br&gt;', 'acf' ),
-						''        => __( 'No Formatting', 'acf' ),
+						'wpautop' => __( 'Automatically add paragraphs', 'secure-custom-fields' ),
+						'br'      => __( 'Automatically add &lt;br&gt;', 'secure-custom-fields' ),
+						''        => __( 'No Formatting', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -109,8 +109,8 @@ if ( ! class_exists( 'acf_field_message' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Escape HTML', 'acf' ),
-					'instructions' => __( 'Allow HTML markup to display as visible text instead of rendering', 'acf' ),
+					'label'        => __( 'Escape HTML', 'secure-custom-fields' ),
+					'instructions' => __( 'Allow HTML markup to display as visible text instead of rendering', 'secure-custom-fields' ),
 					'name'         => 'esc_html',
 					'type'         => 'true_false',
 					'ui'           => 1,

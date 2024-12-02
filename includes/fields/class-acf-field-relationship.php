@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 	class acf_field_relationship extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -14,9 +15,9 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 */
 		public function initialize() {
 			$this->name          = 'relationship';
-			$this->label         = __( 'Relationship', 'acf' );
+			$this->label         = __( 'Relationship', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'A dual-column interface to select one or more posts, pages, or custom post type items to create a relationship with the item that you\'re currently editing. Includes options to search and filter.', 'acf' );
+			$this->description   = __( 'A dual-column interface to select one or more posts, pages, or custom post type items to create a relationship with the item that you\'re currently editing. Includes options to search and filter.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-relationship.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/relationship/';
 			$this->defaults      = array(
@@ -72,10 +73,10 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			// localize
 			acf_localize_text(
 				array(
-					// 'Minimum values reached ( {min} values )' => __('Minimum values reached ( {min} values )', 'acf'),
-					'Maximum values reached ( {max} values )' => __( 'Maximum values reached ( {max} values )', 'acf' ),
-					'Loading'          => __( 'Loading', 'acf' ),
-					'No matches found' => __( 'No matches found', 'acf' ),
+					// 'Minimum values reached ( {min} values )' => __('Minimum values reached ( {min} values )', 'secure-custom-fields'),
+					'Maximum values reached ( {max} values )' => __( 'Maximum values reached ( {max} values )', 'secure-custom-fields' ),
+					'Loading'          => __( 'Loading', 'secure-custom-fields' ),
+					'No matches found' => __( 'No matches found', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -369,7 +370,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			// post_type filter
 			if ( in_array( 'post_type', $filters ) ) {
 				$filter_post_type_choices = array(
-					'' => __( 'Select post type', 'acf' ),
+					'' => __( 'Select post type', 'secure-custom-fields' ),
 				) + acf_get_pretty_post_types( $post_type );
 			}
 
@@ -377,7 +378,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			if ( in_array( 'taxonomy', $filters ) ) {
 				$term_choices            = array();
 				$filter_taxonomy_choices = array(
-					'' => __( 'Select taxonomy', 'acf' ),
+					'' => __( 'Select taxonomy', 'secure-custom-fields' ),
 				);
 
 				// check for specific taxonomy setting
@@ -421,114 +422,114 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			);
 
 			?>
-<div <?php echo acf_esc_attrs( $atts ); ?>>
+			<div <?php echo acf_esc_attrs( $atts ); ?>>
 
-			<?php
-			acf_hidden_input(
-				array(
-					'name'  => $field['name'],
-					'value' => '',
-				)
-			);
-			?>
-
-			<?php
-
-			/* filters */
-			if ( $filter_count ) :
+				<?php
+				acf_hidden_input(
+					array(
+						'name'  => $field['name'],
+						'value' => '',
+					)
+				);
 				?>
-	<div class="filters -f<?php echo esc_attr( $filter_count ); ?>">
+
 				<?php
 
-				/* search */
-				if ( in_array( 'search', $filters ) ) :
+				/* filters */
+				if ( $filter_count ) :
 					?>
-		<div class="filter -search">
-					<?php
-					acf_text_input(
-						array(
-							'placeholder' => __( 'Search...', 'acf' ),
-							'data-filter' => 's',
-						)
-					);
-					?>
-		</div>
-					<?php
-			endif;
-
-				/* post_type */
-				if ( in_array( 'post_type', $filters ) ) :
-					?>
-		<div class="filter -post_type">
-					<?php
-					acf_select_input(
-						array(
-							'choices'     => $filter_post_type_choices,
-							'data-filter' => 'post_type',
-						)
-					);
-					?>
-		</div>
-					<?php
-			endif;
-
-				/* post_type */
-				if ( in_array( 'taxonomy', $filters ) ) :
-					?>
-		<div class="filter -taxonomy">
-					<?php
-					acf_select_input(
-						array(
-							'choices'     => $filter_taxonomy_choices,
-							'data-filter' => 'taxonomy',
-						)
-					);
-					?>
-		</div>
-				<?php endif; ?>
-	</div>
-			<?php endif; ?>
-
-	<div class="selection">
-		<div class="choices">
-			<ul class="acf-bl list choices-list"></ul>
-		</div>
-		<div class="values">
-			<ul class="acf-bl list values-list">
-				<?php
-				if ( ! empty( $field['value'] ) ) :
-
-					// get posts
-					$posts = acf_get_posts(
-						array(
-							'post__in'  => $field['value'],
-							'post_type' => $field['post_type'],
-						)
-					);
-
-						// loop
-					foreach ( $posts as $post ) :
-						?>
-					<li>
+					<div class="filters -f<?php echo esc_attr( $filter_count ); ?>">
 						<?php
-							acf_hidden_input(
-								array(
-									'name'  => $field['name'] . '[]',
-									'value' => $post->ID,
-								)
-							);
-						?>
-						<span tabindex="0" data-id="<?php echo esc_attr( $post->ID ); ?>" class="acf-rel-item acf-rel-item-remove">
-								<?php echo acf_esc_html( $this->get_post_title( $post, $field ) ); ?>
-							<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a>
-						</span>
-					</li>
-						<?php endforeach; ?>
+
+						/* search */
+						if ( in_array( 'search', $filters ) ) :
+							?>
+							<div class="filter -search">
+								<?php
+								acf_text_input(
+									array(
+										'placeholder' => __( 'Search...', 'secure-custom-fields' ),
+										'data-filter' => 's',
+									)
+								);
+								?>
+							</div>
+							<?php
+						endif;
+
+						/* post_type */
+						if ( in_array( 'post_type', $filters ) ) :
+							?>
+							<div class="filter -post_type">
+								<?php
+								acf_select_input(
+									array(
+										'choices'     => $filter_post_type_choices,
+										'data-filter' => 'post_type',
+									)
+								);
+								?>
+							</div>
+							<?php
+						endif;
+
+						/* post_type */
+						if ( in_array( 'taxonomy', $filters ) ) :
+							?>
+							<div class="filter -taxonomy">
+								<?php
+								acf_select_input(
+									array(
+										'choices'     => $filter_taxonomy_choices,
+										'data-filter' => 'taxonomy',
+									)
+								);
+								?>
+							</div>
+						<?php endif; ?>
+					</div>
 				<?php endif; ?>
-			</ul>
-		</div>
-	</div>
-</div>
+
+				<div class="selection">
+					<div class="choices">
+						<ul class="acf-bl list choices-list"></ul>
+					</div>
+					<div class="values">
+						<ul class="acf-bl list values-list">
+							<?php
+							if ( ! empty( $field['value'] ) ) :
+
+								// get posts
+								$posts = acf_get_posts(
+									array(
+										'post__in'  => $field['value'],
+										'post_type' => $field['post_type'],
+									)
+								);
+
+								// loop
+								foreach ( $posts as $post ) :
+									?>
+									<li>
+										<?php
+										acf_hidden_input(
+											array(
+												'name'  => $field['name'] . '[]',
+												'value' => $post->ID,
+											)
+										);
+										?>
+										<span tabindex="0" data-id="<?php echo esc_attr( $post->ID ); ?>" class="acf-rel-item acf-rel-item-remove">
+											<?php echo acf_esc_html( $this->get_post_title( $post, $field ) ); ?>
+											<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a>
+										</span>
+									</li>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						</ul>
+					</div>
+				</div>
+			</div>
 			<?php
 		}
 
@@ -547,7 +548,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Type', 'acf' ),
+					'label'        => __( 'Filter by Post Type', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_type',
@@ -555,14 +556,14 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All post types', 'acf' ),
+					'placeholder'  => __( 'All post types', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Status', 'acf' ),
+					'label'        => __( 'Filter by Post Status', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_status',
@@ -570,14 +571,14 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'Any post status', 'acf' ),
+					'placeholder'  => __( 'Any post status', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Taxonomy', 'acf' ),
+					'label'        => __( 'Filter by Taxonomy', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'taxonomy',
@@ -585,21 +586,21 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All taxonomies', 'acf' ),
+					'placeholder'  => __( 'All taxonomies', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filters', 'acf' ),
+					'label'        => __( 'Filters', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'checkbox',
 					'name'         => 'filters',
 					'choices'      => array(
-						'search'    => __( 'Search', 'acf' ),
-						'post_type' => __( 'Post Type', 'acf' ),
-						'taxonomy'  => __( 'Taxonomy', 'acf' ),
+						'search'    => __( 'Search', 'secure-custom-fields' ),
+						'post_type' => __( 'Post Type', 'secure-custom-fields' ),
+						'taxonomy'  => __( 'Taxonomy', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -607,13 +608,13 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'choices'      => array(
-						'object' => __( 'Post Object', 'acf' ),
-						'id'     => __( 'Post ID', 'acf' ),
+						'object' => __( 'Post Object', 'secure-custom-fields' ),
+						'id'     => __( 'Post ID', 'secure-custom-fields' ),
 					),
 					'layout'       => 'horizontal',
 				)
@@ -635,7 +636,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum Posts', 'acf' ),
+					'label'        => __( 'Minimum Posts', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'min',
@@ -645,7 +646,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum Posts', 'acf' ),
+					'label'        => __( 'Maximum Posts', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'max',
@@ -665,12 +666,12 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Elements', 'acf' ),
-					'instructions' => __( 'Selected elements will be displayed in each result', 'acf' ),
+					'label'        => __( 'Elements', 'secure-custom-fields' ),
+					'instructions' => __( 'Selected elements will be displayed in each result', 'secure-custom-fields' ),
 					'type'         => 'checkbox',
 					'name'         => 'elements',
 					'choices'      => array(
-						'featured_image' => __( 'Featured Image', 'acf' ),
+						'featured_image' => __( 'Featured Image', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -750,7 +751,8 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 
 			// min
 			if ( count( $value ) < $field['min'] ) {
-				$valid = _n( '%1$s requires at least %2$s selection', '%1$s requires at least %2$s selections', $field['min'], 'acf' );
+				/* translators: %1$s: field label, %2$s: minimum number of selections */
+				$valid = _n( '%1$s requires at least %2$s selection', '%1$s requires at least %2$s selections', $field['min'], 'secure-custom-fields' );
 				$valid = sprintf( $valid, $field['label'], $field['min'] );
 			}
 

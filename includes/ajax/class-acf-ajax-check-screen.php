@@ -34,7 +34,7 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 			);
 
 			if ( ! acf_current_user_can_edit_post( (int) $args['post_id'] ) ) {
-				return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'acf' ) );
+				return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 			}
 
 			$response = array(

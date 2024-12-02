@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 
 			// vars
 			$this->name          = 'time_picker';
-			$this->label         = __( 'Time Picker', 'acf' );
+			$this->label         = __( 'Time Picker', 'secure-custom-fields' );
 			$this->category      = 'advanced';
-			$this->description   = __( 'An interactive UI for picking a time. The time format can be customized using the field settings.', 'acf' );
+			$this->description   = __( 'An interactive UI for picking a time. The time format can be customized using the field settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-time.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/time-picker/';
 			$this->defaults      = array(
@@ -102,15 +102,15 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Display Format', 'acf' ),
-					'hint'         => __( 'The format displayed when editing a post', 'acf' ),
+					'label'        => __( 'Display Format', 'secure-custom-fields' ),
+					'hint'         => __( 'The format displayed when editing a post', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'display_format',
 					'other_choice' => 1,
 					'choices'      => array(
 						'g:i a' => '<span>' . $g_i_a . '</span><code>g:i a</code>',
 						'H:i:s' => '<span>' . $H_i_s . '</span><code>H:i:s</code>',
-						'other' => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+						'other' => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 					),
 				)
 			);
@@ -118,15 +118,15 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
-					'hint'         => __( 'The format returned via template functions', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
+					'hint'         => __( 'The format returned via template functions', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'other_choice' => 1,
 					'choices'      => array(
 						'g:i a' => '<span>' . $g_i_a . '</span><code>g:i a</code>',
 						'H:i:s' => '<span>' . $H_i_s . '</span><code>H:i:s</code>',
-						'other' => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+						'other' => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 					),
 				)
 			);

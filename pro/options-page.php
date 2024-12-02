@@ -40,7 +40,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 
 			// Allow empty arg to generate the default Options Page.
 			if ( empty( $page ) ) {
-				$page_title = __( 'Options', 'acf' );
+				$page_title = __( 'Options', 'secure-custom-fields' );
 				$page       = array(
 					'page_title' => $page_title,
 					'menu_title' => $page_title,
@@ -70,8 +70,8 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 					'redirect'        => true,
 					'post_id'         => 'options',
 					'autoload'        => false,
-					'update_button'   => __( 'Update', 'acf' ),
-					'updated_message' => __( 'Options Updated', 'acf' ),
+					'update_button'   => __( 'Update', 'secure-custom-fields' ),
+					'updated_message' => __( 'Options Updated', 'secure-custom-fields' ),
 				)
 			);
 

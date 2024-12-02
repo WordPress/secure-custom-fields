@@ -101,8 +101,8 @@ if ( ! class_exists( 'ACF_Location' ) ) :
 		 */
 		public static function get_operators( $rule ) {
 			return array(
-				'==' => __( 'is equal to', 'acf' ),
-				'!=' => __( 'is not equal to', 'acf' ),
+				'==' => __( 'is equal to', 'secure-custom-fields' ),
+				'!=' => __( 'is not equal to', 'secure-custom-fields' ),
 			);
 		}
 

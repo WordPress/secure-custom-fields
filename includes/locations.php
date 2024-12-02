@@ -23,7 +23,7 @@ function acf_register_location_type( $class_name ) {
 	// Check class exists.
 	if ( ! class_exists( $class_name ) ) {
 		/* translators: %s class name for a location that could not be found */
-		$message = sprintf( __( 'Class "%s" does not exist.', 'acf' ), $class_name );
+		$message = sprintf( __( 'Class "%s" does not exist.', 'secure-custom-fields' ), $class_name );
 		_doing_it_wrong( __FUNCTION__, esc_html( $message ), '5.9.0' );
 		return false;
 	}
@@ -35,7 +35,7 @@ function acf_register_location_type( $class_name ) {
 	// Check location type is unique.
 	if ( $store->has( $name ) ) {
 		/* translators: %s the name of the location type */
-		$message = sprintf( __( 'Location type "%s" is already registered.', 'acf' ), $name );
+		$message = sprintf( __( 'Location type "%s" is already registered.', 'secure-custom-fields' ), $name );
 		_doing_it_wrong( __FUNCTION__, esc_html( $message ), '5.9.0' );
 		return false;
 	}
@@ -98,10 +98,10 @@ function acf_get_location_rule_types() {
 
 	// Default categories.
 	$categories = array(
-		'post'  => __( 'Post', 'acf' ),
-		'page'  => __( 'Page', 'acf' ),
-		'user'  => __( 'User', 'acf' ),
-		'forms' => __( 'Forms', 'acf' ),
+		'post'  => __( 'Post', 'secure-custom-fields' ),
+		'page'  => __( 'Page', 'secure-custom-fields' ),
+		'user'  => __( 'User', 'secure-custom-fields' ),
+		'forms' => __( 'Forms', 'secure-custom-fields' ),
 	);
 
 	// Loop over all location types and append to $type.

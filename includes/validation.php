@@ -9,6 +9,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 	class acf_validation {
 
 
+
 		/**
 		 * This function will setup the class functionality
 		 *
@@ -133,7 +134,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 						'errors' => array(
 							array(
 								'input'   => false,
-								'message' => __( 'ACF was unable to perform validation due to an invalid security nonce being provided.', 'acf' ),
+								'message' => __( 'ACF was unable to perform validation due to an invalid security nonce being provided.', 'secure-custom-fields' ),
 							),
 						),
 					)
@@ -244,7 +245,7 @@ function acf_validate_save_post( $show_errors = false ) {
 
 	// show errors
 	if ( $show_errors ) {
-		$message  = '<h2>' . __( 'Validation failed', 'acf' ) . '</h2>';
+		$message  = '<h2>' . __( 'Validation failed', 'secure-custom-fields' ) . '</h2>';
 		$message .= '<ul>';
 		foreach ( $errors as $error ) {
 			$message .= '<li>' . $error['message'] . '</li>';
@@ -252,7 +253,7 @@ function acf_validate_save_post( $show_errors = false ) {
 		$message .= '</ul>';
 
 		// die
-		wp_die( acf_esc_html( $message ), esc_html__( 'Validation failed', 'acf' ) );
+		wp_die( acf_esc_html( $message ), esc_html__( 'Validation failed', 'secure-custom-fields' ) );
 	}
 
 	// return
@@ -309,8 +310,9 @@ function acf_validate_values( $values, $input_prefix = '' ) {
 function acf_validate_value( $value, $field, $input ) {
 
 	// vars
-	$valid   = true;
-	$message = sprintf( __( '%s value is required', 'acf' ), $field['label'] );
+	$valid = true;
+	/* translators: %s: field label */
+	$message = sprintf( __( '%s value is required', 'secure-custom-fields' ), $field['label'] );
 
 	// valid
 	if ( $field['required'] ) {
@@ -322,16 +324,16 @@ function acf_validate_value( $value, $field, $input ) {
 	}
 
 	/**
-	* Filters whether the value is valid.
-	*
-	* @date    28/09/13
-	* @since   5.0.0
-	*
-	* @param   bool $valid The valid status. Return a string to display a custom error message.
-	* @param   mixed $value The value.
-	* @param   array $field The field array.
-	* @param   string $input The input element's name attribute.
-	*/
+	 * Filters whether the value is valid.
+	 *
+	 * @date    28/09/13
+	 * @since   5.0.0
+	 *
+	 * @param   bool $valid The valid status. Return a string to display a custom error message.
+	 * @param   mixed $value The value.
+	 * @param   array $field The field array.
+	 * @param   string $input The input element's name attribute.
+	 */
 	$valid = apply_filters( "acf/validate_value/type={$field['type']}", $valid, $value, $field, $input );
 	$valid = apply_filters( "acf/validate_value/name={$field['_name']}", $valid, $value, $field, $input );
 	$valid = apply_filters( "acf/validate_value/key={$field['key']}", $valid, $value, $field, $input );

@@ -19,8 +19,8 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 
 			// vars
 			$this->name          = 'password';
-			$this->label         = __( 'Password', 'acf' );
-			$this->description   = __( 'An input for providing a password using a masked field.', 'acf' );
+			$this->label         = __( 'Password', 'secure-custom-fields' );
+			$this->description   = __( 'An input for providing a password using a masked field.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-password.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/password/';
 			$this->defaults      = array(
@@ -71,8 +71,8 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -81,8 +81,8 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prepend', 'acf' ),
-					'instructions' => __( 'Appears before the input', 'acf' ),
+					'label'        => __( 'Prepend', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears before the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'prepend',
 				)
@@ -91,8 +91,8 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Append', 'acf' ),
-					'instructions' => __( 'Appears after the input', 'acf' ),
+					'label'        => __( 'Append', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears after the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'append',
 				)

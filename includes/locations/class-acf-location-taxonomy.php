@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Taxonomy' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'taxonomy';
-			$this->label       = __( 'Taxonomy', 'acf' );
+			$this->label       = __( 'Taxonomy', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'term';
 		}
@@ -60,7 +60,7 @@ if ( ! class_exists( 'ACF_Location_Taxonomy' ) ) :
 		public function get_values( $rule ) {
 			return array_merge(
 				array(
-					'all' => __( 'All', 'acf' ),
+					'all' => __( 'All', 'secure-custom-fields' ),
 				),
 				acf_get_taxonomy_labels()
 			);

@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Options_Page' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'options_page';
-			$this->label       = __( 'Options Page', 'acf' );
+			$this->label       = __( 'Options Page', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'option';
 		}
@@ -67,11 +67,11 @@ if ( ! class_exists( 'ACF_Location_Options_Page' ) ) :
 					$choices[ $page['menu_slug'] ] = $page['page_title'];
 				}
 			} else {
-				$choices[''] = __( 'Select options page...', 'acf' );
+				$choices[''] = __( 'Select options page...', 'secure-custom-fields' );
 			}
 
 			if ( acf_get_setting( 'enable_options_pages_ui' ) ) {
-				$choices['add_new_options_page'] = __( 'Add New Options Page', 'acf' );
+				$choices['add_new_options_page'] = __( 'Add New Options Page', 'secure-custom-fields' );
 			}
 
 			// Return choices.

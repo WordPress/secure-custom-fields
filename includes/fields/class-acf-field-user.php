@@ -4,6 +4,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 
 	class ACF_Field_User extends ACF_Field {
 
+
 		/**
 		 * Initializes the field type.
 		 *
@@ -12,9 +13,9 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 */
 		function initialize() {
 			$this->name          = 'user';
-			$this->label         = __( 'User', 'acf' );
+			$this->label         = __( 'User', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'Allows the selection of one or more users which can be used to create relationships between data objects.', 'acf' );
+			$this->description   = __( 'Allows the selection of one or more users which can be used to create relationships between data objects.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-user.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/user/';
 			$this->defaults      = array(
@@ -77,7 +78,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Role', 'acf' ),
+					'label'        => __( 'Filter by Role', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'role',
@@ -85,21 +86,21 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All user roles', 'acf' ),
+					'placeholder'  => __( 'All user roles', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'choices'      => array(
-						'array'  => __( 'User Array', 'acf' ),
-						'object' => __( 'User Object', 'acf' ),
-						'id'     => __( 'User ID', 'acf' ),
+						'array'  => __( 'User Array', 'secure-custom-fields' ),
+						'object' => __( 'User Object', 'secure-custom-fields' ),
+						'id'     => __( 'User ID', 'secure-custom-fields' ),
 					),
 					'layout'       => 'horizontal',
 				)
@@ -108,7 +109,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Select Multiple', 'acf' ),
+					'label'        => __( 'Select Multiple', 'secure-custom-fields' ),
 					'instructions' => 'Allow content editors to select multiple values',
 					'name'         => 'multiple',
 					'type'         => 'true_false',
@@ -129,7 +130,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',
@@ -397,7 +398,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		function ajax_query_init( $request, $query ) {
 			// Require field and make sure it's a user field.
 			if ( ! $query->field || $query->field['type'] !== $this->name ) {
-				$query->send( new WP_Error( 'acf_missing_field', __( 'Error loading field.', 'acf' ), array( 'status' => 404 ) ) );
+				$query->send( new WP_Error( 'acf_missing_field', __( 'Error loading field.', 'secure-custom-fields' ), array( 'status' => 404 ) ) );
 			}
 
 			// Verify that this is a legitimate request using a separate nonce from the main AJAX nonce.
@@ -405,7 +406,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			$key   = acf_request_arg( 'field_key', '' );
 
 			if ( ! acf_verify_ajax( $nonce, $key ) ) {
-				$query->send( new WP_Error( 'acf_invalid_request', __( 'Invalid request.', 'acf' ), array( 'status' => 404 ) ) );
+				$query->send( new WP_Error( 'acf_invalid_request', __( 'Invalid request.', 'secure-custom-fields' ), array( 'status' => 404 ) ) );
 			}
 		}
 
@@ -565,8 +566,9 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			}
 
 			if ( count( $invalid_users ) ) {
-				$error         = sprintf(
-					__( '%1$s must have a valid user ID.', 'acf' ),
+				$error = sprintf(
+					/* translators: %s: field value */
+					__( '%1$s must have a valid user ID.', 'secure-custom-fields' ),
 					$param
 				);
 				$data['value'] = $invalid_users;
@@ -574,12 +576,13 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			}
 
 			if ( count( $insufficient_roles ) ) {
-				$error         = sprintf(
+				$error = sprintf(
+					/* translators: 1: field name, 2: role name */
 					_n(
 						'%1$s must have a user with the %2$s role.',
 						'%1$s must have a user with one of the following roles: %2$s',
 						count( $field['role'] ),
-						'acf'
+						'secure-custom-fields'
 					),
 					$param,
 					count( $field['role'] ) > 1 ? implode( ', ', $field['role'] ) : $field['role'][0]

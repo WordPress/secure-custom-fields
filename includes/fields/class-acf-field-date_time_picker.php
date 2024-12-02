@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 
 			// vars
 			$this->name          = 'date_time_picker';
-			$this->label         = __( 'Date Time Picker', 'acf' );
+			$this->label         = __( 'Date Time Picker', 'secure-custom-fields' );
 			$this->category      = 'advanced';
-			$this->description   = __( 'An interactive UI for picking a date and time. The date return format can be customized using the field settings.', 'acf' );
+			$this->description   = __( 'An interactive UI for picking a date and time. The date return format can be customized using the field settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-date-time.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/date-time-picker/';
 			$this->defaults      = array(
@@ -62,24 +62,24 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 			acf_localize_data(
 				array(
 					'dateTimePickerL10n' => array(
-						'timeOnlyTitle' => _x( 'Choose Time', 'Date Time Picker JS timeOnlyTitle', 'acf' ),
-						'timeText'      => _x( 'Time', 'Date Time Picker JS timeText', 'acf' ),
-						'hourText'      => _x( 'Hour', 'Date Time Picker JS hourText', 'acf' ),
-						'minuteText'    => _x( 'Minute', 'Date Time Picker JS minuteText', 'acf' ),
-						'secondText'    => _x( 'Second', 'Date Time Picker JS secondText', 'acf' ),
-						'millisecText'  => _x( 'Millisecond', 'Date Time Picker JS millisecText', 'acf' ),
-						'microsecText'  => _x( 'Microsecond', 'Date Time Picker JS microsecText', 'acf' ),
-						'timezoneText'  => _x( 'Time Zone', 'Date Time Picker JS timezoneText', 'acf' ),
-						'currentText'   => _x( 'Now', 'Date Time Picker JS currentText', 'acf' ),
-						'closeText'     => _x( 'Done', 'Date Time Picker JS closeText', 'acf' ),
-						'selectText'    => _x( 'Select', 'Date Time Picker JS selectText', 'acf' ),
+						'timeOnlyTitle' => _x( 'Choose Time', 'Date Time Picker JS timeOnlyTitle', 'secure-custom-fields' ),
+						'timeText'      => _x( 'Time', 'Date Time Picker JS timeText', 'secure-custom-fields' ),
+						'hourText'      => _x( 'Hour', 'Date Time Picker JS hourText', 'secure-custom-fields' ),
+						'minuteText'    => _x( 'Minute', 'Date Time Picker JS minuteText', 'secure-custom-fields' ),
+						'secondText'    => _x( 'Second', 'Date Time Picker JS secondText', 'secure-custom-fields' ),
+						'millisecText'  => _x( 'Millisecond', 'Date Time Picker JS millisecText', 'secure-custom-fields' ),
+						'microsecText'  => _x( 'Microsecond', 'Date Time Picker JS microsecText', 'secure-custom-fields' ),
+						'timezoneText'  => _x( 'Time Zone', 'Date Time Picker JS timezoneText', 'secure-custom-fields' ),
+						'currentText'   => _x( 'Now', 'Date Time Picker JS currentText', 'secure-custom-fields' ),
+						'closeText'     => _x( 'Done', 'Date Time Picker JS closeText', 'secure-custom-fields' ),
+						'selectText'    => _x( 'Select', 'Date Time Picker JS selectText', 'secure-custom-fields' ),
 						'amNames'       => array(
-							_x( 'AM', 'Date Time Picker JS amText', 'acf' ),
-							_x( 'A', 'Date Time Picker JS amTextShort', 'acf' ),
+							_x( 'AM', 'Date Time Picker JS amText', 'secure-custom-fields' ),
+							_x( 'A', 'Date Time Picker JS amTextShort', 'secure-custom-fields' ),
 						),
 						'pmNames'       => array(
-							_x( 'PM', 'Date Time Picker JS pmText', 'acf' ),
-							_x( 'P', 'Date Time Picker JS pmTextShort', 'acf' ),
+							_x( 'PM', 'Date Time Picker JS pmText', 'secure-custom-fields' ),
+							_x( 'P', 'Date Time Picker JS pmTextShort', 'secure-custom-fields' ),
 						),
 					),
 				)
@@ -167,8 +167,8 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Display Format', 'acf' ),
-					'hint'         => __( 'The format displayed when editing a post', 'acf' ),
+					'label'        => __( 'Display Format', 'secure-custom-fields' ),
+					'hint'         => __( 'The format displayed when editing a post', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'display_format',
 					'other_choice' => 1,
@@ -177,7 +177,7 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 						'm/d/Y g:i a'  => '<span>' . $m_d_Y . '</span><code>m/d/Y g:i a</code>',
 						'F j, Y g:i a' => '<span>' . $F_j_Y . '</span><code>F j, Y g:i a</code>',
 						'Y-m-d H:i:s'  => '<span>' . $Ymd . '</span><code>Y-m-d H:i:s</code>',
-						'other'        => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+						'other'        => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 					),
 				)
 			);
@@ -185,8 +185,8 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
-					'hint'         => __( 'The format returned via template functions', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
+					'hint'         => __( 'The format returned via template functions', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'other_choice' => 1,
@@ -195,7 +195,7 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 						'm/d/Y g:i a'  => '<span>' . $m_d_Y . '</span><code>m/d/Y g:i a</code>',
 						'F j, Y g:i a' => '<span>' . $F_j_Y . '</span><code>F j, Y g:i a</code>',
 						'Y-m-d H:i:s'  => '<span>' . $Ymd . '</span><code>Y-m-d H:i:s</code>',
-						'other'        => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+						'other'        => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 					),
 				)
 			);
@@ -205,7 +205,7 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Week Starts On', 'acf' ),
+					'label'        => __( 'Week Starts On', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'first_day',

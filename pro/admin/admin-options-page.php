@@ -8,6 +8,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 
 	class acf_admin_options_page {
 
+
 		/** @var array Contains the current options page */
 		var $page;
 
@@ -156,10 +157,11 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			}
 
 			// add submit div
-			add_meta_box( 'submitdiv', __( 'Publish', 'acf' ), array( $this, 'postbox_submitdiv' ), 'acf_options_page', 'side', 'high' );
+			add_meta_box( 'submitdiv', __( 'Publish', 'secure-custom-fields' ), array( $this, 'postbox_submitdiv' ), 'acf_options_page', 'side', 'high' );
 
 			if ( empty( $field_groups ) ) {
-				acf_add_admin_notice( sprintf( __( 'No Custom Field Groups found for this options page. <a href="%s">Create a Custom Field Group</a>', 'acf' ), admin_url( 'post-new.php?post_type=acf-field-group' ) ), 'warning' );
+				/* translators: %s: URL to create a new field group */
+				acf_add_admin_notice( sprintf( __( 'No Custom Field Groups found for this options page. <a href="%s">Create a Custom Field Group</a>', 'secure-custom-fields' ), admin_url( 'post-new.php?post_type=acf-field-group' ) ), 'warning' );
 			} else {
 				foreach ( $field_groups as $i => $field_group ) {
 
@@ -202,24 +204,6 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		function postbox_submitdiv( $post, $args ) {
 
 			/**
-			*  Fires before the major-publishing-actions div.
-			*
-			* @date    24/9/18
-			* @since   5.7.7
-			*
-			* @param array $page The current options page.
-			*/
-			do_action( 'acf/options_page/submitbox_before_major_actions', $this->page );
-			?>
-		<div id="major-publishing-actions">
-
-			<div id="publishing-action">
-				<span class="spinner"></span>
-				<input type="submit" accesskey="p" value="<?php echo esc_attr( $this->page['update_button'] ); ?>" class="button button-primary button-large" id="publish" name="publish">
-			</div>
-			
-			<?php
-			/**
 			 *  Fires before the major-publishing-actions div.
 			 *
 			 * @date    24/9/18
@@ -227,11 +211,29 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			 *
 			 * @param array $page The current options page.
 			 */
-			do_action( 'acf/options_page/submitbox_major_actions', $this->page );
+			do_action( 'acf/options_page/submitbox_before_major_actions', $this->page );
 			?>
-			<div class="clear"></div>
-		
-		</div>
+			<div id="major-publishing-actions">
+
+				<div id="publishing-action">
+					<span class="spinner"></span>
+					<input type="submit" accesskey="p" value="<?php echo esc_attr( $this->page['update_button'] ); ?>" class="button button-primary button-large" id="publish" name="publish">
+				</div>
+
+				<?php
+				/**
+				 *  Fires before the major-publishing-actions div.
+				 *
+				 * @date    24/9/18
+				 * @since   5.7.7
+				 *
+				 * @param array $page The current options page.
+				 */
+				do_action( 'acf/options_page/submitbox_major_actions', $this->page );
+				?>
+				<div class="clear"></div>
+
+			</div>
 			<?php
 		}
 
@@ -255,7 +257,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 				'style'      => $field_group['style'],
 				'label'      => $field_group['label_placement'],
 				'editLink'   => '',
-				'editTitle'  => __( 'Edit field group', 'acf' ),
+				'editTitle'  => __( 'Edit field group', 'secure-custom-fields' ),
 				'visibility' => true,
 			);
 
@@ -271,13 +273,13 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			acf_render_fields( $fields, $this->page['post_id'], 'div', $field_group['instruction_placement'] );
 
 			?>
-<script type="text/javascript">
-if( typeof acf !== 'undefined' ) {
-		
-	acf.newPostbox(<?php echo json_encode( $o ); ?>);	
+			<script type="text/javascript">
+				if (typeof acf !== 'undefined') {
 
-}
-</script>
+					acf.newPostbox(<?php echo json_encode( $o ); ?>);
+
+				}
+			</script>
 			<?php
 		}
 

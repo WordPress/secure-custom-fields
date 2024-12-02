@@ -21,7 +21,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 */
 		public function verify_request( $request ) {
 			if ( empty( $request['nonce'] ) || empty( $request['field_key'] ) ) {
-				return new WP_Error( 'acf_invalid_args', __( 'Invalid request args.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_args', __( 'Invalid request args.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 
 			$nonce  = $request['nonce'];
@@ -29,7 +29,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 
 			if ( isset( $request['conditional_logic'] ) && true === (bool) $request['conditional_logic'] ) {
 				if ( ! acf_current_user_can_admin() ) {
-					return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'acf' ) );
+					return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 				}
 
 				// Use the standard ACF admin nonce.
@@ -38,7 +38,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			}
 
 			if ( ! acf_verify_ajax( $nonce, $action ) ) {
-				return new WP_Error( 'acf_invalid_nonce', __( 'Invalid nonce.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_nonce', __( 'Invalid nonce.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 
 			return true;

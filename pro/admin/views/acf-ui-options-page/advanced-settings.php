@@ -17,12 +17,12 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 	switch ( $tab_key ) {
 		case 'visibility':
-			$acf_dashicon_class_name = __( 'Dashicon class name', 'acf' );
+			$acf_dashicon_class_name = __( 'Dashicon class name', 'secure-custom-fields' );
 			$acf_dashicon_link       = '<a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">' . $acf_dashicon_class_name . '</a>';
 
 			$acf_menu_icon_instructions = sprintf(
-			/* translators: %s = "dashicon class name", link to the WordPress dashicon documentation. */
-				__( 'The icon used for the options page menu item in the admin dashboard. Can be a URL or %s to use for the icon.', 'acf' ),
+				/* translators: %s = "dashicon class name", link to the WordPress dashicon documentation. */
+				__( 'The icon used for the options page menu item in the admin dashboard. Can be a URL or %s to use for the icon.', 'secure-custom-fields' ),
 				$acf_dashicon_link
 			);
 
@@ -56,7 +56,7 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			acf_render_field_wrap(
 				array(
-					'label'         => __( 'Menu Icon', 'acf' ),
+					'label'         => __( 'Menu Icon', 'secure-custom-fields' ),
 					'type'          => 'icon_picker',
 					'name'          => 'menu_icon',
 					'key'           => 'menu_icon',
@@ -77,7 +77,7 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			acf_render_field_wrap(
 				array(
-					'label'  => __( 'Menu Title', 'acf' ),
+					'label'  => __( 'Menu Title', 'secure-custom-fields' ),
 					'type'   => 'text',
 					'name'   => 'menu_title',
 					'key'    => 'menu_title',
@@ -91,28 +91,28 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			$acf_menu_position_link = sprintf(
 				'<a href="https://developer.wordpress.org/reference/functions/add_menu_page/#default-bottom-of-menu-structure" target="_blank">%s</a>',
-				__( 'Learn more about menu positions.', 'acf' )
+				__( 'Learn more about menu positions.', 'secure-custom-fields' )
 			);
 			$acf_menu_position_desc = sprintf(
 				/* translators: %s - link to WordPress docs to learn more about menu positions. */
-				__( 'The position in the menu where this page should appear. %s', 'acf' ),
+				__( 'The position in the menu where this page should appear. %s', 'secure-custom-fields' ),
 				$acf_menu_position_link
 			);
 
 			$acf_menu_position_desc_parent = sprintf(
 				/* translators: %s - link to WordPress docs to learn more about menu positions. */
-				__( 'The position in the menu where this page should appear. %s', 'acf' ),
+				__( 'The position in the menu where this page should appear. %s', 'secure-custom-fields' ),
 				$acf_menu_position_link
 			);
 
-			$acf_menu_position_desc_child = __( 'The position in the menu where this child page should appear. The first child page is 0, the next is 1, etc.', 'acf' );
+			$acf_menu_position_desc_child = __( 'The position in the menu where this child page should appear. The first child page is 0, the next is 1, etc.', 'secure-custom-fields' );
 
 			$acf_menu_position_desc  = '<span class="acf-menu-position-desc-parent">' . $acf_menu_position_desc_parent . '</span>';
 			$acf_menu_position_desc .= '<span class="acf-menu-position-desc-child">' . $acf_menu_position_desc_child . '</span>';
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Menu Position', 'acf' ),
+					'label'        => __( 'Menu Position', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'position',
 					'key'          => 'position',
@@ -126,8 +126,8 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Redirect to Child Page', 'acf' ),
-					'instructions' => __( 'When child pages exist for this parent page, this page will redirect to the first child page.', 'acf' ),
+					'label'        => __( 'Redirect to Child Page', 'secure-custom-fields' ),
+					'instructions' => __( 'When child pages exist for this parent page, this page will redirect to the first child page.', 'secure-custom-fields' ),
 					'type'         => 'true_false',
 					'name'         => 'redirect',
 					'key'          => 'redirect',
@@ -150,8 +150,8 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 					'key'          => 'description',
 					'prefix'       => 'acf_ui_options_page',
 					'value'        => $acf_ui_options_page['description'],
-					'label'        => __( 'Description', 'acf' ),
-					'instructions' => __( 'A descriptive summary of the options page.', 'acf' ),
+					'label'        => __( 'Description', 'secure-custom-fields' ),
+					'instructions' => __( 'A descriptive summary of the options page.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -160,9 +160,9 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 		case 'labels':
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Update Button Label', 'acf' ),
-					'instructions' => __( 'The label used for the submit button which updates the fields on the options page.', 'acf' ),
-					'placeholder'  => __( 'Update', 'acf' ),
+					'label'        => __( 'Update Button Label', 'secure-custom-fields' ),
+					'instructions' => __( 'The label used for the submit button which updates the fields on the options page.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Update', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'update_button',
 					'key'          => 'update_button',
@@ -175,9 +175,9 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Updated Message', 'acf' ),
-					'instructions' => __( 'The message that is displayed after successfully updating the options page.', 'acf' ),
-					'placeholder'  => __( 'Updated Options', 'acf' ),
+					'label'        => __( 'Updated Message', 'secure-custom-fields' ),
+					'instructions' => __( 'The message that is displayed after successfully updating the options page.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Updated Options', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'updated_message',
 					'key'          => 'updated_message',
@@ -214,8 +214,8 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 					'key'          => 'capability',
 					'prefix'       => 'acf_ui_options_page',
 					'value'        => $acf_ui_options_page['capability'],
-					'label'        => __( 'Capability', 'acf' ),
-					'instructions' => __( 'The capability required for this menu to be displayed to the user.', 'acf' ),
+					'label'        => __( 'Capability', 'secure-custom-fields' ),
+					'instructions' => __( 'The capability required for this menu to be displayed to the user.', 'secure-custom-fields' ),
 					'choices'      => $acf_all_caps,
 					'default'      => 'edit_posts',
 					'class'        => 'acf-options-page-capability',
@@ -231,11 +231,11 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 					'key'          => 'data_storage',
 					'prefix'       => 'acf_ui_options_page',
 					'value'        => $acf_ui_options_page['data_storage'],
-					'label'        => __( 'Data Storage', 'acf' ),
-					'instructions' => __( 'By default, the option page stores field data in the options table. You can make the page load field data from a post, user, or term.', 'acf' ),
+					'label'        => __( 'Data Storage', 'secure-custom-fields' ),
+					'instructions' => __( 'By default, the option page stores field data in the options table. You can make the page load field data from a post, user, or term.', 'secure-custom-fields' ),
 					'choices'      => array(
-						'options' => __( 'Options', 'acf' ),
-						'post_id' => __( 'Custom Storage', 'acf' ),
+						'options' => __( 'Options', 'secure-custom-fields' ),
+						'post_id' => __( 'Custom Storage', 'secure-custom-fields' ),
 					),
 					'default'      => 'options',
 					'hide_search'  => true,
@@ -250,18 +250,18 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 			$acf_custom_storage_link = sprintf(
 				'<a href="%1$s" target="_blank">%2$s</a>',
 				$acf_custom_storage_url,
-				__( 'Learn more about available settings.', 'acf' )
+				__( 'Learn more about available settings.', 'secure-custom-fields' )
 			);
 
 			$acf_custom_storage_desc = sprintf(
 				/* translators: %s = link to learn more about storage locations. */
-				__( 'Set a custom storage location. Can be a numeric post ID (123), or a string (`user_2`). %s', 'acf' ),
+				__( 'Set a custom storage location. Can be a numeric post ID (123), or a string (`user_2`). %s', 'secure-custom-fields' ),
 				$acf_custom_storage_link
 			);
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Custom Storage', 'acf' ),
+					'label'        => __( 'Custom Storage', 'secure-custom-fields' ),
 					'instructions' => $acf_custom_storage_desc,
 					'type'         => 'text',
 					'name'         => 'post_id',
@@ -280,8 +280,8 @@ foreach ( acf_get_combined_options_page_settings_tabs() as $tab_key => $tab_labe
 
 			acf_render_field_wrap(
 				array(
-					'label'        => __( 'Autoload Options', 'acf' ),
-					'instructions' => __( 'Improve performance by loading the fields in the option records automatically when WordPress loads.', 'acf' ),
+					'label'        => __( 'Autoload Options', 'secure-custom-fields' ),
+					'instructions' => __( 'Improve performance by loading the fields in the option records automatically when WordPress loads.', 'secure-custom-fields' ),
 					'type'         => 'true_false',
 					'name'         => 'autoload',
 					'key'          => 'autoload',

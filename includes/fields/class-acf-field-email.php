@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 	class acf_field_email extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,8 +20,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 
 			// vars
 			$this->name          = 'email';
-			$this->label         = __( 'Email', 'acf' );
-			$this->description   = __( 'A text input specifically designed for storing email addresses.', 'acf' );
+			$this->label         = __( 'Email', 'secure-custom-fields' );
+			$this->description   = __( 'A text input specifically designed for storing email addresses.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-email.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/email/';
 			$this->defaults      = array(
@@ -100,8 +101,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'default_value',
 				)
@@ -120,8 +121,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -130,8 +131,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prepend', 'acf' ),
-					'instructions' => __( 'Appears before the input', 'acf' ),
+					'label'        => __( 'Prepend', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears before the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'prepend',
 				)
@@ -140,8 +141,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Append', 'acf' ),
-					'instructions' => __( 'Appears after the input', 'acf' ),
+					'label'        => __( 'Append', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears after the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'append',
 				)
@@ -163,7 +164,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			$flags = defined( 'FILTER_FLAG_EMAIL_UNICODE' ) ? FILTER_FLAG_EMAIL_UNICODE : 0;
 
 			if ( $value && filter_var( wp_unslash( $value ), FILTER_VALIDATE_EMAIL, $flags ) === false ) {
-				return sprintf( __( "'%s' is not a valid email address", 'acf' ), esc_html( $value ) );
+				/* translators: %s: form field value */
+				return sprintf( __( "'%s' is not a valid email address", 'secure-custom-fields' ), esc_html( $value ) );
 			}
 
 			return $valid;

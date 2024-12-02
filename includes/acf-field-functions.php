@@ -132,7 +132,7 @@ function acf_get_field_post( $id = 0 ) {
 
 		// Try cache.
 		$cache_key = acf_cache_key( "acf_get_field_post:$type:$id" );
-		$post_id   = wp_cache_get( $cache_key, 'acf' );
+		$post_id   = wp_cache_get( $cache_key, 'secure-custom-fields' );
 		if ( $post_id === false ) {
 
 			// Query posts.
@@ -154,7 +154,7 @@ function acf_get_field_post( $id = 0 ) {
 			$post_id = $posts ? $posts[0]->ID : 0;
 
 			// Update cache.
-			wp_cache_set( $cache_key, $post_id, 'acf' );
+			wp_cache_set( $cache_key, $post_id, 'secure-custom-fields' );
 		}
 
 		// Check $post_id and return the post when possible.
@@ -235,7 +235,7 @@ function acf_validate_field( $field = array() ) {
 			'conditional_logic' => false,
 			'parent'            => 0,
 			'wrapper'           => array(),
-		// 'attributes'      => array()
+			// 'attributes'      => array()
 		)
 	);
 
@@ -401,7 +401,7 @@ function acf_get_raw_fields( $id = 0 ) {
 
 	// Try cache.
 	$cache_key = acf_cache_key( "acf_get_field_posts:$id" );
-	$post_ids  = wp_cache_get( $cache_key, 'acf' );
+	$post_ids  = wp_cache_get( $cache_key, 'secure-custom-fields' );
 	if ( $post_ids === false ) {
 
 		// Query posts.
@@ -427,7 +427,7 @@ function acf_get_raw_fields( $id = 0 ) {
 		}
 
 		// Update cache.
-		wp_cache_set( $cache_key, $post_ids, 'acf' );
+		wp_cache_set( $cache_key, $post_ids, 'secure-custom-fields' );
 	}
 
 	// Loop over ids and populate array of fields.
@@ -616,14 +616,14 @@ function acf_render_fields( $fields, $post_id = 0, $el = 'div', $instruction = '
 	}
 
 	/**
-	* Fires after fields have been rendered.
-	*
-	* @date    12/02/2014
-	* @since   5.0.0
-	*
-	* @param    array $fields An array of fields.
-	* @param    (int|string) $post_id The post ID to load values from.
-	*/
+	 * Fires after fields have been rendered.
+	 *
+	 * @date    12/02/2014
+	 * @since   5.0.0
+	 *
+	 * @param    array $fields An array of fields.
+	 * @param    (int|string) $post_id The post ID to load values from.
+	 */
 	do_action( 'acf/render_fields', $fields, $post_id );
 }
 
@@ -753,18 +753,18 @@ function acf_render_field_wrap( $field, $element = 'div', $instruction = 'label'
 	echo "<$element $attributes_html>\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
 	if ( $element !== 'td' ) {
 		echo "<$inner_element class=\"acf-label\">\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
-			acf_render_field_label( $field );
+		acf_render_field_label( $field );
 		if ( $instruction == 'label' ) {
 			acf_render_field_instructions( $field, $field_setting );
 		}
-			echo "</$inner_element>\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
+		echo "</$inner_element>\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
 	}
-		echo "<$inner_element class=\"acf-input\">\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
-			acf_render_field( $field );
+	echo "<$inner_element class=\"acf-input\">\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
+	acf_render_field( $field );
 	if ( ! $field_setting && $instruction == 'field' ) {
 		acf_render_field_instructions( $field );
 	}
-		echo "</$inner_element>\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
+	echo "</$inner_element>\n"; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped earlier in function.
 
 	if ( $field_setting && $instruction === 'field' ) {
 		acf_render_field_instructions( $field );
@@ -851,7 +851,7 @@ function acf_get_field_label( $field, $context = '' ) {
 
 	// Display empty text when editing field.
 	if ( $context == 'admin' && $label === '' ) {
-		$label = __( '(no label)', 'acf' );
+		$label = __( '(no label)', 'secure-custom-fields' );
 	}
 
 	// Add required HTML.
@@ -1117,11 +1117,11 @@ function acf_flush_field_cache( $field ) {
 	acf_get_store( 'fields' )->remove( $field['key'] );
 
 	// Flush cached post_id for this field's name and key.
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:name:{$field['name']}" ), 'acf' );
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:key:{$field['key']}" ), 'acf' );
+	wp_cache_delete( acf_cache_key( "acf_get_field_post:name:{$field['name']}" ), 'secure-custom-fields' );
+	wp_cache_delete( acf_cache_key( "acf_get_field_post:key:{$field['key']}" ), 'secure-custom-fields' );
 
 	// Flush cached array of post_ids for this field's parent.
-	wp_cache_delete( acf_cache_key( "acf_get_field_posts:{$field['parent']}" ), 'acf' );
+	wp_cache_delete( acf_cache_key( "acf_get_field_posts:{$field['parent']}" ), 'secure-custom-fields' );
 }
 
 /**
@@ -1277,7 +1277,7 @@ add_action( 'wp_untrash_post_status', '_acf_untrash_field_post_status', 10, 3 );
  * @param   string $prefix The new prefix.
  * @return  void
  */
-function acf_prefix_fields( &$fields, $prefix = 'acf' ) {
+function acf_prefix_fields( &$fields, $prefix = 'secure-custom-fields' ) {
 
 	// Loopover fields.
 	foreach ( $fields as &$field ) {

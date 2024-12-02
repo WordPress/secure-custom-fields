@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Widget' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'widget';
-			$this->label       = __( 'Widget', 'acf' );
+			$this->label       = __( 'Widget', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'widget';
 		}
@@ -62,7 +62,7 @@ if ( ! class_exists( 'ACF_Location_Widget' ) ) :
 
 			// Populate choices.
 			$choices = array(
-				'all' => __( 'All', 'acf' ),
+				'all' => __( 'All', 'secure-custom-fields' ),
 			);
 			if ( $wp_widget_factory->widgets ) {
 				foreach ( $wp_widget_factory->widgets as $widget ) {

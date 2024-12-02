@@ -87,16 +87,16 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 				'acf-taxonomy',
 				array(
 					'labels'          => array(
-						'name'               => __( 'Taxonomies', 'acf' ),
-						'singular_name'      => __( 'Taxonomies', 'acf' ),
-						'add_new'            => __( 'Add New', 'acf' ),
-						'add_new_item'       => __( 'Add New Taxonomy', 'acf' ),
-						'edit_item'          => __( 'Edit Taxonomy', 'acf' ),
-						'new_item'           => __( 'New Taxonomy', 'acf' ),
-						'view_item'          => __( 'View Taxonomy', 'acf' ),
-						'search_items'       => __( 'Search Taxonomies', 'acf' ),
-						'not_found'          => __( 'No Taxonomies found', 'acf' ),
-						'not_found_in_trash' => __( 'No Taxonomies found in Trash', 'acf' ),
+						'name'               => __( 'Taxonomies', 'secure-custom-fields' ),
+						'singular_name'      => __( 'Taxonomies', 'secure-custom-fields' ),
+						'add_new'            => __( 'Add New', 'secure-custom-fields' ),
+						'add_new_item'       => __( 'Add New Taxonomy', 'secure-custom-fields' ),
+						'edit_item'          => __( 'Edit Taxonomy', 'secure-custom-fields' ),
+						'new_item'           => __( 'New Taxonomy', 'secure-custom-fields' ),
+						'view_item'          => __( 'View Taxonomy', 'secure-custom-fields' ),
+						'search_items'       => __( 'Search Taxonomies', 'secure-custom-fields' ),
+						'not_found'          => __( 'No Taxonomies found', 'secure-custom-fields' ),
+						'not_found_in_trash' => __( 'No Taxonomies found in Trash', 'secure-custom-fields' ),
 					),
 					'public'          => false,
 					'hierarchical'    => true,
@@ -248,18 +248,18 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 
 			if ( strlen( $taxonomy_key ) > 32 ) {
 				$valid = false;
-				acf_add_internal_post_type_validation_error( 'taxonomy', __( 'The taxonomy key must be under 32 characters.', 'acf' ) );
+				acf_add_internal_post_type_validation_error( 'taxonomy', __( 'The taxonomy key must be under 32 characters.', 'secure-custom-fields' ) );
 			}
 
 			if ( preg_match( '/^[a-z0-9_-]*$/', $taxonomy_key ) !== 1 ) {
 				$valid = false;
-				acf_add_internal_post_type_validation_error( 'taxonomy', __( 'The taxonomy key must only contain lower case alphanumeric characters, underscores or dashes.', 'acf' ) );
+				acf_add_internal_post_type_validation_error( 'taxonomy', __( 'The taxonomy key must only contain lower case alphanumeric characters, underscores or dashes.', 'secure-custom-fields' ) );
 			}
 
 			if ( in_array( $taxonomy_key, acf_get_wp_reserved_terms(), true ) ) {
 				$valid = false;
 				/* translators: %s a link to WordPress.org's Reserved Terms page */
-				$message = sprintf( __( 'This field must not be a WordPress <a href="%s" target="_blank">reserved term</a>.', 'acf' ), 'https://codex.wordpress.org/Reserved_Terms' );
+				$message = sprintf( __( 'This field must not be a WordPress <a href="%s" target="_blank">reserved term</a>.', 'secure-custom-fields' ), 'https://codex.wordpress.org/Reserved_Terms' );
 				acf_add_internal_post_type_validation_error( 'taxonomy', $message );
 			} else {
 				// Check if this post key exists in the ACF store for registered post types, excluding those which failed registration.
@@ -281,11 +281,11 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 
 				if ( $duplicates ) {
 					$valid = false;
-					acf_add_internal_post_type_validation_error( 'taxonomy', __( 'This taxonomy key is already in use by another taxonomy in ACF and cannot be used.', 'acf' ) );
+					acf_add_internal_post_type_validation_error( 'taxonomy', __( 'This taxonomy key is already in use by another taxonomy in ACF and cannot be used.', 'secure-custom-fields' ) );
 					// If we're not already in use with another ACF taxonomy, check if we're registered, but not by ACF.
 				} elseif ( empty( $matches ) && taxonomy_exists( $taxonomy_key ) ) {
 					$valid = false;
-					acf_add_internal_post_type_validation_error( 'taxonomy', __( 'This taxonomy key is already in use by another taxonomy registered outside of ACF and cannot be used.', 'acf' ) );
+					acf_add_internal_post_type_validation_error( 'taxonomy', __( 'This taxonomy key is already in use by another taxonomy registered outside of ACF and cannot be used.', 'secure-custom-fields' ) );
 				}
 			}
 

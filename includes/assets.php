@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 
 	class ACF_Assets {
 
+
 		/**
 		 * Storage for i18n data.
 		 *
@@ -347,11 +348,11 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				array(
 
 					// Tooltip
-					'Are you sure?' => __( 'Are you sure?', 'acf' ),
-					'Yes'           => __( 'Yes', 'acf' ),
-					'No'            => __( 'No', 'acf' ),
-					'Remove'        => __( 'Remove', 'acf' ),
-					'Cancel'        => __( 'Cancel', 'acf' ),
+					'Are you sure?' => __( 'Are you sure?', 'secure-custom-fields' ),
+					'Yes'           => __( 'Yes', 'secure-custom-fields' ),
+					'No'            => __( 'No', 'secure-custom-fields' ),
+					'Remove'        => __( 'Remove', 'secure-custom-fields' ),
+					'Cancel'        => __( 'Cancel', 'secure-custom-fields' ),
 				)
 			);
 
@@ -361,19 +362,20 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					array(
 
 						// Unload
-						'The changes you made will be lost if you navigate away from this page' => __( 'The changes you made will be lost if you navigate away from this page', 'acf' ),
+						'The changes you made will be lost if you navigate away from this page' => __( 'The changes you made will be lost if you navigate away from this page', 'secure-custom-fields' ),
 
 						// Validation
-						'Validation successful'       => __( 'Validation successful', 'acf' ),
-						'Validation failed'           => __( 'Validation failed', 'acf' ),
-						'1 field requires attention'  => __( '1 field requires attention', 'acf' ),
-						'%d fields require attention' => __( '%d fields require attention', 'acf' ),
+						'Validation successful'       => __( 'Validation successful', 'secure-custom-fields' ),
+						'Validation failed'           => __( 'Validation failed', 'secure-custom-fields' ),
+						'1 field requires attention'  => __( '1 field requires attention', 'secure-custom-fields' ),
+						/* translators: %d: number of fields */
+						'%d fields require attention' => __( '%d fields require attention', 'secure-custom-fields' ),
 
 						// Block Validation
-						'An ACF Block on this page requires attention before you can save.' => __( 'An ACF Block on this page requires attention before you can save.', 'acf' ),
+						'An ACF Block on this page requires attention before you can save.' => __( 'An ACF Block on this page requires attention before you can save.', 'secure-custom-fields' ),
 
 						// Other
-						'Edit field group'            => __( 'Edit field group', 'acf' ),
+						'Edit field group'            => __( 'Edit field group', 'secure-custom-fields' ),
 					)
 				);
 
@@ -532,9 +534,9 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		public function print_uploader_scripts() {
 			// Todo: investigate output-buffer to hide HTML.
 			?>
-		<div id="acf-hidden-wp-editor" style="display: none;">
-			<?php wp_editor( '', 'acf_content' ); ?>
-		</div>
+			<div id="acf-hidden-wp-editor" style="display: none;">
+				<?php wp_editor( '', 'acf_content' ); ?>
+			</div>
 			<?php
 
 			/**

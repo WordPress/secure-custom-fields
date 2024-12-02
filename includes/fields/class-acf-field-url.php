@@ -16,8 +16,8 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		public function initialize() {
 			// vars
 			$this->name          = 'url';
-			$this->label         = __( 'URL', 'acf' );
-			$this->description   = __( 'A text input specifically designed for storing web addresses.', 'acf' );
+			$this->label         = __( 'URL', 'secure-custom-fields' );
+			$this->description   = __( 'A text input specifically designed for storing web addresses.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-url.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/url/';
 			$this->defaults      = array(
@@ -81,8 +81,8 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'default_value',
 				)
@@ -101,8 +101,8 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -135,7 +135,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 
 				// protocol relative url
 			} else {
-				$valid = __( 'Value must be a valid URL', 'acf' );
+				$valid = __( 'Value must be a valid URL', 'secure-custom-fields' );
 			}
 
 			// return

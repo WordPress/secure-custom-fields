@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 
 			// vars
 			$this->name          = 'group';
-			$this->label         = __( 'Group', 'acf' );
+			$this->label         = __( 'Group', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Provides a way to structure fields into groups to better organize the data and the edit screen.', 'acf' );
+			$this->description   = __( 'Provides a way to structure fields into groups to better organize the data and the edit screen.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-group.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/group/';
 			$this->supports      = array(
@@ -388,7 +388,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 			?>
 			<div class="acf-field acf-field-setting-sub_fields" data-setting="group" data-name="sub_fields">
 				<div class="acf-label">
-					<label><?php esc_html_e( 'Sub Fields', 'acf' ); ?></label>
+					<label><?php esc_html_e( 'Sub Fields', 'secure-custom-fields' ); ?></label>
 				</div>
 				<div class="acf-input acf-input-sub">
 					<?php
@@ -404,15 +404,15 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Layout', 'acf' ),
-					'instructions' => __( 'Specify the style used to render the selected fields', 'acf' ),
+					'label'        => __( 'Layout', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the style used to render the selected fields', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'layout',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'block' => __( 'Block', 'acf' ),
-						'table' => __( 'Table', 'acf' ),
-						'row'   => __( 'Row', 'acf' ),
+						'block' => __( 'Block', 'secure-custom-fields' ),
+						'table' => __( 'Table', 'secure-custom-fields' ),
+						'row'   => __( 'Row', 'secure-custom-fields' ),
 					),
 				)
 			);

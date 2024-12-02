@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 
 	class ACF_Admin_Tool_Import extends ACF_Admin_Tool {
 
+
 		/**
 		 * initialize
 		 *
@@ -23,7 +24,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 
 			// vars
 			$this->name  = 'import';
-			$this->title = __( 'Import Field Groups', 'acf' );
+			$this->title = __( 'Import Field Groups', 'secure-custom-fields' );
 			$this->icon  = 'dashicons-upload';
 		}
 
@@ -42,93 +43,93 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		function html() {
 
 			?>
-		<div class="acf-postbox-header">
-			<h2 class="acf-postbox-title"><?php esc_html_e( 'Import', 'acf' ); ?></h2>
-			<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the Secure Custom Fields JSON file you would like to import. When you click the import button below, SCF will import the items in that file.', 'acf' ); ?>">?</i></div>
-		</div>
-		<div class="acf-postbox-inner">
-			<div class="acf-fields">
-				<?php
-
-				acf_render_field_wrap(
-					array(
-						'label'    => __( 'Select File', 'acf' ),
-						'type'     => 'file',
-						'name'     => 'acf_import_file',
-						'value'    => false,
-						'uploader' => 'basic',
-					)
-				);
-
-				?>
+			<div class="acf-postbox-header">
+				<h2 class="acf-postbox-title"><?php esc_html_e( 'Import', 'secure-custom-fields' ); ?></h2>
+				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the Secure Custom Fields JSON file you would like to import. When you click the import button below, SCF will import the items in that file.', 'secure-custom-fields' ); ?>">?</i></div>
 			</div>
-			<p class="acf-submit">
-				<button type="submit" class="acf-btn" name="import_type" value="json">
-					<?php esc_html_e( 'Import JSON', 'acf' ); ?>
-				</button>
-			</p>
+			<div class="acf-postbox-inner">
+				<div class="acf-fields">
+					<?php
 
-			<?php
-			if ( is_plugin_active( 'custom-post-type-ui/custom-post-type-ui.php' ) && acf_get_setting( 'enable_post_types' ) ) {
-				$cptui_post_types  = get_option( 'cptui_post_types' );
-				$cptui_taxonomies  = get_option( 'cptui_taxonomies' );
-				$choices           = array();
-				$overwrite_warning = false;
+					acf_render_field_wrap(
+						array(
+							'label'    => __( 'Select File', 'secure-custom-fields' ),
+							'type'     => 'file',
+							'name'     => 'acf_import_file',
+							'value'    => false,
+							'uploader' => 'basic',
+						)
+					);
 
-				if ( $cptui_post_types ) {
-					$choices['post_types'] = __( 'Post Types', 'acf' );
-					$existing_post_types   = acf_get_acf_post_types();
+					?>
+				</div>
+				<p class="acf-submit">
+					<button type="submit" class="acf-btn" name="import_type" value="json">
+						<?php esc_html_e( 'Import JSON', 'secure-custom-fields' ); ?>
+					</button>
+				</p>
 
-					foreach ( $existing_post_types as $existing_post_type ) {
-						if ( isset( $cptui_post_types[ $existing_post_type['post_type'] ] ) ) {
-							$overwrite_warning = true;
-						}
-					}
-				}
+				<?php
+				if ( is_plugin_active( 'custom-post-type-ui/custom-post-type-ui.php' ) && acf_get_setting( 'enable_post_types' ) ) {
+					$cptui_post_types  = get_option( 'cptui_post_types' );
+					$cptui_taxonomies  = get_option( 'cptui_taxonomies' );
+					$choices           = array();
+					$overwrite_warning = false;
 
-				if ( $cptui_taxonomies ) {
-					$choices['taxonomies'] = __( 'Taxonomies', 'acf' );
+					if ( $cptui_post_types ) {
+						$choices['post_types'] = __( 'Post Types', 'secure-custom-fields' );
+						$existing_post_types   = acf_get_acf_post_types();
 
-					if ( ! $overwrite_warning ) {
-						$existing_taxonomies = acf_get_acf_taxonomies();
-						foreach ( $existing_taxonomies as $existing_taxonomy ) {
-							if ( isset( $cptui_taxonomies[ $existing_taxonomy['taxonomy'] ] ) ) {
+						foreach ( $existing_post_types as $existing_post_type ) {
+							if ( isset( $cptui_post_types[ $existing_post_type['post_type'] ] ) ) {
 								$overwrite_warning = true;
 							}
 						}
 					}
-				}
 
-				if ( ! empty( $choices ) ) :
-					?>
-					<div class="acf-fields import-cptui">
-						<?php
-						acf_render_field_wrap(
-							array(
-								'label'   => __( 'Import from Custom Post Type UI', 'acf' ),
-								'type'    => 'checkbox',
-								'name'    => 'acf_import_cptui',
-								'choices' => $choices,
-								'toggle'  => true,
-							)
-						);
-						?>
-					</div>
-					<?php
-					if ( $overwrite_warning ) {
-						echo '<p class="acf-inline-notice notice notice-info">' . esc_html__( 'Importing a Post Type or Taxonomy with the same key as one that already exists will overwrite the settings for the existing Post Type or Taxonomy with those of the import.', 'acf' ) . '</p>';
+					if ( $cptui_taxonomies ) {
+						$choices['taxonomies'] = __( 'Taxonomies', 'secure-custom-fields' );
+
+						if ( ! $overwrite_warning ) {
+							$existing_taxonomies = acf_get_acf_taxonomies();
+							foreach ( $existing_taxonomies as $existing_taxonomy ) {
+								if ( isset( $cptui_taxonomies[ $existing_taxonomy['taxonomy'] ] ) ) {
+									$overwrite_warning = true;
+								}
+							}
+						}
 					}
-					?>
-					<p class="acf-submit">
-						<button type="submit" class="acf-btn" name="import_type" value="cptui">
-							<?php esc_html_e( 'Import from Custom Post Type UI', 'acf' ); ?>
-						</button>
-					</p>
-					<?php
-				endif;
-			}
-			?>
-		</div>
+
+					if ( ! empty( $choices ) ) :
+						?>
+						<div class="acf-fields import-cptui">
+							<?php
+							acf_render_field_wrap(
+								array(
+									'label'   => __( 'Import from Custom Post Type UI', 'secure-custom-fields' ),
+									'type'    => 'checkbox',
+									'name'    => 'acf_import_cptui',
+									'choices' => $choices,
+									'toggle'  => true,
+								)
+							);
+							?>
+						</div>
+						<?php
+						if ( $overwrite_warning ) {
+							echo '<p class="acf-inline-notice notice notice-info">' . esc_html__( 'Importing a Post Type or Taxonomy with the same key as one that already exists will overwrite the settings for the existing Post Type or Taxonomy with those of the import.', 'secure-custom-fields' ) . '</p>';
+						}
+						?>
+						<p class="acf-submit">
+							<button type="submit" class="acf-btn" name="import_type" value="cptui">
+								<?php esc_html_e( 'Import from Custom Post Type UI', 'secure-custom-fields' ); ?>
+							</button>
+						</p>
+						<?php
+					endif;
+				}
+				?>
+			</div>
 			<?php
 		}
 
@@ -148,19 +149,19 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 
 			// Check file size.
 			if ( empty( $_FILES['acf_import_file']['size'] ) ) {
-				return acf_add_admin_notice( __( 'No file selected', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'No file selected', 'secure-custom-fields' ), 'warning' );
 			}
 
 			$file = acf_sanitize_files_array( $_FILES['acf_import_file'] );
 
 			// Check errors.
 			if ( $file['error'] ) {
-				return acf_add_admin_notice( __( 'Error uploading file. Please try again', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'Error uploading file. Please try again', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// Check file type.
 			if ( pathinfo( $file['name'], PATHINFO_EXTENSION ) !== 'json' ) {
-				return acf_add_admin_notice( __( 'Incorrect file type', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'Incorrect file type', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// Read JSON.
@@ -169,7 +170,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 
 			// Check if empty.
 			if ( ! $json || ! is_array( $json ) ) {
-				return acf_add_admin_notice( __( 'Import file empty', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'Import file empty', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// Ensure $json is an array of posts.
@@ -201,7 +202,8 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 			$total = count( $ids );
 
 			// Generate text.
-			$text = sprintf( _n( 'Imported 1 item', 'Imported %s items', $total, 'acf' ), $total );
+			/* translators: %d - number of items imported */
+			$text = sprintf( _n( 'Imported %s item', 'Imported %s items', $total, 'secure-custom-fields' ), $total );
 
 			// Add links to text.
 			$links = array();
@@ -225,7 +227,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		 */
 		public function import_cpt_ui( $import_args ) {
 			if ( ! is_array( $import_args ) ) {
-				return acf_add_admin_notice( __( 'Nothing from Custom Post Type UI plugin selected for import.', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'Nothing from Custom Post Type UI plugin selected for import.', 'secure-custom-fields' ), 'warning' );
 			}
 
 			$imported = array();
@@ -236,7 +238,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 				$instance         = acf_get_internal_post_type_instance( 'acf-post-type' );
 
 				if ( ! is_array( $cptui_post_types ) || ! $instance ) {
-					return acf_add_admin_notice( __( 'Failed to import post types.', 'acf' ), 'warning' );
+					return acf_add_admin_notice( __( 'Failed to import post types.', 'secure-custom-fields' ), 'warning' );
 				}
 
 				foreach ( $cptui_post_types as $post_type ) {
@@ -254,7 +256,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 				$instance         = acf_get_internal_post_type_instance( 'acf-taxonomy' );
 
 				if ( ! is_array( $cptui_taxonomies ) || ! $instance ) {
-					return acf_add_admin_notice( __( 'Failed to import taxonomies.', 'acf' ), 'warning' );
+					return acf_add_admin_notice( __( 'Failed to import taxonomies.', 'secure-custom-fields' ), 'warning' );
 				}
 
 				foreach ( $cptui_taxonomies as $taxonomy ) {
@@ -270,7 +272,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 				// Generate text.
 				$total = count( $imported );
 				/* translators: %d - number of items imported from CPTUI */
-				$text = sprintf( _n( 'Imported %d item from Custom Post Type UI -', 'Imported %d items from Custom Post Type UI -', $total, 'acf' ), $total );
+				$text = sprintf( _n( 'Imported %d item from Custom Post Type UI -', 'Imported %d items from Custom Post Type UI -', $total, 'secure-custom-fields' ), $total );
 
 				// Add links to text.
 				$links = array();
@@ -279,12 +281,12 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 				}
 
 				$text .= ' ' . implode( ', ', $links );
-				$text .= __( '. The Custom Post Type UI plugin can be deactivated.', 'acf' );
+				$text .= __( '. The Custom Post Type UI plugin can be deactivated.', 'secure-custom-fields' );
 
 				return acf_add_admin_notice( $text, 'success' );
 			}
 
-			return acf_add_admin_notice( __( 'Nothing to import', 'acf' ), 'warning' );
+			return acf_add_admin_notice( __( 'Nothing to import', 'secure-custom-fields' ), 'warning' );
 		}
 	}
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * General functions relating to the bidirectional feature of some fields.
  *
@@ -190,7 +191,7 @@ function acf_build_bidirectional_relationship_field_target_args( $results, $opti
 				'text'             => $data['label'],
 				'field_type'       => $data['type'],
 				/* translators: %s A field type name, such as "Relationship" */
-				'human_field_type' => sprintf( __( '%s Field', 'acf' ), acf_get_field_type_prop( $data['type'], 'label' ) ),
+				'human_field_type' => sprintf( __( '%s Field', 'secure-custom-fields' ), acf_get_field_type_prop( $data['type'], 'label' ) ),
 				'this_field'       => ! empty( $data['this_field'] ),
 			);
 		}
@@ -217,8 +218,8 @@ function acf_render_bidirectional_field_settings( $field ) {
 	acf_render_field_setting(
 		$field,
 		array(
-			'label'        => __( 'Bidirectional', 'acf' ),
-			'instructions' => __( 'Update a field on the selected values, referencing back to this ID', 'acf' ),
+			'label'        => __( 'Bidirectional', 'secure-custom-fields' ),
+			'instructions' => __( 'Update a field on the selected values, referencing back to this ID', 'secure-custom-fields' ),
 			'type'         => 'true_false',
 			'name'         => 'bidirectional',
 			'ui'           => 1,
@@ -244,8 +245,8 @@ function acf_render_bidirectional_field_settings( $field ) {
 		array(
 			'type'         => 'select',
 			'name'         => 'bidirectional_target',
-			'label'        => __( 'Target Field', 'acf' ),
-			'instructions' => __( 'Select field(s) to store the reference back to the item being updated. You may select this field. Target fields must be compatible with where this field is being displayed. For example, if this field is displayed on a Taxonomy, your target field should be of type Taxonomy', 'acf' ),
+			'label'        => __( 'Target Field', 'secure-custom-fields' ),
+			'instructions' => __( 'Select field(s) to store the reference back to the item being updated. You may select this field. Target fields must be compatible with where this field is being displayed. For example, if this field is displayed on a Taxonomy, your target field should be of type Taxonomy', 'secure-custom-fields' ),
 			'class'        => 'bidrectional_target',
 			'choices'      => acf_build_bidirectional_target_current_choices( $field['bidirectional_target'] ),
 			'conditions'   => array(
@@ -269,6 +270,6 @@ function acf_render_bidirectional_field_settings( $field ) {
  */
 function acf_get_bidirectional_field_settings_instruction_text() {
 	/* translators: %s the URL to ACF's bidirectional relationship documentation */
-	$message = '<p class="acf-feature-notice with-warning-icon">' . __( 'Enabling the bidirectional setting allows you to update a value in the target fields for each value selected for this field, adding or removing the Post ID, Taxonomy ID or User ID of the item being updated.', 'acf'  ) . '</p>';
+	$message = '<p class="acf-feature-notice with-warning-icon">' . __( 'Enabling the bidirectional setting allows you to update a value in the target fields for each value selected for this field, adding or removing the Post ID, Taxonomy ID or User ID of the item being updated.', 'secure-custom-fields' ) . '</p>';
 	return $message;
 }

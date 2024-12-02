@@ -57,16 +57,16 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		public function post_updated_messages( $messages ) {
 			$messages['acf-field-group'] = array(
 				0  => '', // Unused. Messages start at index 1.
-				1  => __( 'Field group updated.', 'acf' ),
-				2  => __( 'Field group updated.', 'acf' ),
-				3  => __( 'Field group deleted.', 'acf' ),
-				4  => __( 'Field group updated.', 'acf' ),
+				1  => __( 'Field group updated.', 'secure-custom-fields' ),
+				2  => __( 'Field group updated.', 'secure-custom-fields' ),
+				3  => __( 'Field group deleted.', 'secure-custom-fields' ),
+				4  => __( 'Field group updated.', 'secure-custom-fields' ),
 				5  => false, // field group does not support revisions.
-				6  => __( 'Field group published.', 'acf' ),
-				7  => __( 'Field group saved.', 'acf' ),
-				8  => __( 'Field group submitted.', 'acf' ),
-				9  => __( 'Field group scheduled for.', 'acf' ),
-				10 => __( 'Field group draft updated.', 'acf' ),
+				6  => __( 'Field group published.', 'secure-custom-fields' ),
+				7  => __( 'Field group saved.', 'secure-custom-fields' ),
+				8  => __( 'Field group submitted.', 'secure-custom-fields' ),
+				9  => __( 'Field group scheduled for.', 'secure-custom-fields' ),
+				10 => __( 'Field group draft updated.', 'secure-custom-fields' ),
 			);
 
 			return $messages;
@@ -82,69 +82,69 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 
 			acf_localize_text(
 				array(
-					'The string "field_" may not be used at the start of a field name' => esc_html__( 'The string "field_" may not be used at the start of a field name', 'acf' ),
-					'This field cannot be moved until its changes have been saved' => esc_html__( 'This field cannot be moved until its changes have been saved', 'acf' ),
-					'Field group title is required'     => esc_html__( 'Field group title is required', 'acf' ),
-					'Move field group to trash?'        => esc_html__( 'Move field group to trash?', 'acf' ),
-					'No toggle fields available'        => esc_html__( 'No toggle fields available', 'acf' ),
-					'Move Custom Field'                 => esc_html__( 'Move Custom Field', 'acf' ),
-					'Close modal'                       => esc_html__( 'Close modal', 'acf' ),
-					'Field moved to other group'        => esc_html__( 'Field moved to other group', 'acf' ),
-					'Field groups linked successfully.' => esc_html__( 'Field groups linked successfully.', 'acf' ),
-					'Checked'                           => esc_html__( 'Checked', 'acf' ),
-					'(no label)'                        => esc_html__( '(no label)', 'acf' ),
-					'(this field)'                      => esc_html__( '(this field)', 'acf' ),
-					'copy'                              => esc_html__( 'copy', 'acf' ),
-					'or'                                => esc_html__( 'or', 'acf' ),
-					'Show this field group if'          => esc_html__( 'Show this field group if', 'acf' ),
-					'Null'                              => esc_html__( 'Null', 'acf' ),
-					'PRO Only'                          => esc_html__( 'PRO Only', 'acf' ),
+					'The string "field_" may not be used at the start of a field name' => esc_html__( 'The string "field_" may not be used at the start of a field name', 'secure-custom-fields' ),
+					'This field cannot be moved until its changes have been saved' => esc_html__( 'This field cannot be moved until its changes have been saved', 'secure-custom-fields' ),
+					'Field group title is required'     => esc_html__( 'Field group title is required', 'secure-custom-fields' ),
+					'Move field group to trash?'        => esc_html__( 'Move field group to trash?', 'secure-custom-fields' ),
+					'No toggle fields available'        => esc_html__( 'No toggle fields available', 'secure-custom-fields' ),
+					'Move Custom Field'                 => esc_html__( 'Move Custom Field', 'secure-custom-fields' ),
+					'Close modal'                       => esc_html__( 'Close modal', 'secure-custom-fields' ),
+					'Field moved to other group'        => esc_html__( 'Field moved to other group', 'secure-custom-fields' ),
+					'Field groups linked successfully.' => esc_html__( 'Field groups linked successfully.', 'secure-custom-fields' ),
+					'Checked'                           => esc_html__( 'Checked', 'secure-custom-fields' ),
+					'(no label)'                        => esc_html__( '(no label)', 'secure-custom-fields' ),
+					'(this field)'                      => esc_html__( '(this field)', 'secure-custom-fields' ),
+					'copy'                              => esc_html__( 'copy', 'secure-custom-fields' ),
+					'or'                                => esc_html__( 'or', 'secure-custom-fields' ),
+					'Show this field group if'          => esc_html__( 'Show this field group if', 'secure-custom-fields' ),
+					'Null'                              => esc_html__( 'Null', 'secure-custom-fields' ),
+					'PRO Only'                          => esc_html__( 'PRO Only', 'secure-custom-fields' ),
 
 					// Conditions.
-					'Has any value'                     => esc_html__( 'Has any value', 'acf' ),
-					'Has no value'                      => esc_html__( 'Has no value', 'acf' ),
-					'Value is equal to'                 => esc_html__( 'Value is equal to', 'acf' ),
-					'Value is not equal to'             => esc_html__( 'Value is not equal to', 'acf' ),
-					'Value matches pattern'             => esc_html__( 'Value matches pattern', 'acf' ),
-					'Value contains'                    => esc_html__( 'Value contains', 'acf' ),
-					'Value is greater than'             => esc_html__( 'Value is greater than', 'acf' ),
-					'Value is less than'                => esc_html__( 'Value is less than', 'acf' ),
-					'Selection is greater than'         => esc_html__( 'Selection is greater than', 'acf' ),
-					'Selection is less than'            => esc_html__( 'Selection is less than', 'acf' ),
-					'Relationship is equal to'          => esc_html__( 'Relationship is equal to', 'acf' ),
-					'Relationship is not equal to'      => esc_html__( 'Relationship is not equal to', 'acf' ),
-					'Relationships contain'             => esc_html__( 'Relationships contain', 'acf' ),
-					'Relationships do not contain'      => esc_html__( 'Relationships do not contain', 'acf' ),
-					'Post is equal to'                  => esc_html__( 'Post is equal to', 'acf' ),
-					'Post is not equal to'              => esc_html__( 'Post is not equal to', 'acf' ),
-					'Posts contain'                     => esc_html__( 'Posts contain', 'acf' ),
-					'Posts do not contain'              => esc_html__( 'Posts do not contain', 'acf' ),
-					'Has any post selected'             => esc_html__( 'Has any post selected', 'acf' ),
-					'Has no post selected'              => esc_html__( 'Has no post selected', 'acf' ),
-					'Has any relationship selected'     => esc_html__( 'Has any relationship selected', 'acf' ),
-					'Has no relationship selected'      => esc_html__( 'Has no relationship selected', 'acf' ),
-					'Page is equal to'                  => esc_html__( 'Page is equal to', 'acf' ),
-					'Page is not equal to'              => esc_html__( 'Page is not equal to', 'acf' ),
-					'Pages contain'                     => esc_html__( 'Pages contain', 'acf' ),
-					'Pages do not contain'              => esc_html__( 'Pages do not contain', 'acf' ),
-					'Has any page selected'             => esc_html__( 'Has any page selected', 'acf' ),
-					'Has no page selected'              => esc_html__( 'Has no page selected', 'acf' ),
-					'User is equal to'                  => esc_html__( 'User is equal to', 'acf' ),
-					'User is not equal to'              => esc_html__( 'User is not equal to', 'acf' ),
-					'Users contain'                     => esc_html__( 'Users contain', 'acf' ),
-					'Users do not contain'              => esc_html__( 'Users do not contain', 'acf' ),
-					'Has any user selected'             => esc_html__( 'Has any user selected', 'acf' ),
-					'Has no user selected'              => esc_html__( 'Has no user selected', 'acf' ),
-					'Term is equal to'                  => esc_html__( 'Term is equal to', 'acf' ),
-					'Term is not equal to'              => esc_html__( 'Term is not equal to', 'acf' ),
-					'Terms contain'                     => esc_html__( 'Terms contain', 'acf' ),
-					'Terms do not contain'              => esc_html__( 'Terms do not contain', 'acf' ),
-					'Has any term selected'             => esc_html__( 'Has any term selected', 'acf' ),
-					'Has no term selected'              => esc_html__( 'Has no term selected', 'acf' ),
+					'Has any value'                     => esc_html__( 'Has any value', 'secure-custom-fields' ),
+					'Has no value'                      => esc_html__( 'Has no value', 'secure-custom-fields' ),
+					'Value is equal to'                 => esc_html__( 'Value is equal to', 'secure-custom-fields' ),
+					'Value is not equal to'             => esc_html__( 'Value is not equal to', 'secure-custom-fields' ),
+					'Value matches pattern'             => esc_html__( 'Value matches pattern', 'secure-custom-fields' ),
+					'Value contains'                    => esc_html__( 'Value contains', 'secure-custom-fields' ),
+					'Value is greater than'             => esc_html__( 'Value is greater than', 'secure-custom-fields' ),
+					'Value is less than'                => esc_html__( 'Value is less than', 'secure-custom-fields' ),
+					'Selection is greater than'         => esc_html__( 'Selection is greater than', 'secure-custom-fields' ),
+					'Selection is less than'            => esc_html__( 'Selection is less than', 'secure-custom-fields' ),
+					'Relationship is equal to'          => esc_html__( 'Relationship is equal to', 'secure-custom-fields' ),
+					'Relationship is not equal to'      => esc_html__( 'Relationship is not equal to', 'secure-custom-fields' ),
+					'Relationships contain'             => esc_html__( 'Relationships contain', 'secure-custom-fields' ),
+					'Relationships do not contain'      => esc_html__( 'Relationships do not contain', 'secure-custom-fields' ),
+					'Post is equal to'                  => esc_html__( 'Post is equal to', 'secure-custom-fields' ),
+					'Post is not equal to'              => esc_html__( 'Post is not equal to', 'secure-custom-fields' ),
+					'Posts contain'                     => esc_html__( 'Posts contain', 'secure-custom-fields' ),
+					'Posts do not contain'              => esc_html__( 'Posts do not contain', 'secure-custom-fields' ),
+					'Has any post selected'             => esc_html__( 'Has any post selected', 'secure-custom-fields' ),
+					'Has no post selected'              => esc_html__( 'Has no post selected', 'secure-custom-fields' ),
+					'Has any relationship selected'     => esc_html__( 'Has any relationship selected', 'secure-custom-fields' ),
+					'Has no relationship selected'      => esc_html__( 'Has no relationship selected', 'secure-custom-fields' ),
+					'Page is equal to'                  => esc_html__( 'Page is equal to', 'secure-custom-fields' ),
+					'Page is not equal to'              => esc_html__( 'Page is not equal to', 'secure-custom-fields' ),
+					'Pages contain'                     => esc_html__( 'Pages contain', 'secure-custom-fields' ),
+					'Pages do not contain'              => esc_html__( 'Pages do not contain', 'secure-custom-fields' ),
+					'Has any page selected'             => esc_html__( 'Has any page selected', 'secure-custom-fields' ),
+					'Has no page selected'              => esc_html__( 'Has no page selected', 'secure-custom-fields' ),
+					'User is equal to'                  => esc_html__( 'User is equal to', 'secure-custom-fields' ),
+					'User is not equal to'              => esc_html__( 'User is not equal to', 'secure-custom-fields' ),
+					'Users contain'                     => esc_html__( 'Users contain', 'secure-custom-fields' ),
+					'Users do not contain'              => esc_html__( 'Users do not contain', 'secure-custom-fields' ),
+					'Has any user selected'             => esc_html__( 'Has any user selected', 'secure-custom-fields' ),
+					'Has no user selected'              => esc_html__( 'Has no user selected', 'secure-custom-fields' ),
+					'Term is equal to'                  => esc_html__( 'Term is equal to', 'secure-custom-fields' ),
+					'Term is not equal to'              => esc_html__( 'Term is not equal to', 'secure-custom-fields' ),
+					'Terms contain'                     => esc_html__( 'Terms contain', 'secure-custom-fields' ),
+					'Terms do not contain'              => esc_html__( 'Terms do not contain', 'secure-custom-fields' ),
+					'Has any term selected'             => esc_html__( 'Has any term selected', 'secure-custom-fields' ),
+					'Has no term selected'              => esc_html__( 'Has no term selected', 'secure-custom-fields' ),
 
 					// Custom Select2 templates.
-					'Type to search...'                 => esc_html__( 'Type to search...', 'acf' ),
-					'This Field'                        => esc_html__( 'This Field', 'acf' ),
+					'Type to search...'                 => esc_html__( 'Type to search...', 'secure-custom-fields' ),
+					'This Field'                        => esc_html__( 'This Field', 'secure-custom-fields' ),
 				)
 			);
 
@@ -155,8 +155,8 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 					'PROUpgradeURL'       => 'https://www.advancedcustomfields.com/pro/',
 					'PROFieldTypes'       => acf_get_pro_field_types(),
 					'PROLocationTypes'    => array(
-						'block'        => esc_html__( 'Block', 'acf' ),
-						'options_page' => esc_html__( 'Options Page', 'acf' ),
+						'block'        => esc_html__( 'Block', 'secure-custom-fields' ),
+						'options_page' => esc_html__( 'Options Page', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -176,8 +176,8 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 			$field_group = acf_get_field_group( $post->ID );
 
 			// metaboxes.
-			add_meta_box( 'acf-field-group-fields', __( 'Fields', 'acf' ), array( $this, 'mb_fields' ), 'acf-field-group', 'normal', 'high' );
-			add_meta_box( 'acf-field-group-options', __( 'Settings', 'acf' ), array( $this, 'mb_options' ), 'acf-field-group', 'normal', 'high' );
+			add_meta_box( 'acf-field-group-fields', __( 'Fields', 'secure-custom-fields' ), array( $this, 'mb_fields' ), 'acf-field-group', 'normal', 'high' );
+			add_meta_box( 'acf-field-group-options', __( 'Settings', 'secure-custom-fields' ), array( $this, 'mb_options' ), 'acf-field-group', 'normal', 'high' );
 
 			// actions.
 			add_action( 'post_submitbox_misc_actions', array( $this, 'post_submitbox_misc_actions' ), 10, 0 );
@@ -255,10 +255,10 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 			$hide_field_settings_tabs = apply_filters( 'acf/field_group/disable_field_settings_tabs', false );
 
 			$html .= '<div id="acf-append-show-on-screen" class="acf-hidden">';
-			$html .= '<label for="acf-field-key-hide"><input id="acf-field-key-hide" type="checkbox" value="1" name="show_field_keys" ' . $show_field_keys . ' /> ' . __( 'Field Keys', 'acf' ) . '</label>';
+			$html .= '<label for="acf-field-key-hide"><input id="acf-field-key-hide" type="checkbox" value="1" name="show_field_keys" ' . $show_field_keys . ' /> ' . __( 'Field Keys', 'secure-custom-fields' ) . '</label>';
 
 			if ( ! $hide_field_settings_tabs ) {
-				$html .= '<label for="acf-field-settings-tabs"><input id="acf-field-settings-tabs" type="checkbox" value="1" name="show_field_settings_tabs" ' . $show_field_settings_tabs . ' />' . __( 'Field Settings Tabs', 'acf' ) . '</label>';
+				$html .= '<label for="acf-field-settings-tabs"><input id="acf-field-settings-tabs" type="checkbox" value="1" name="show_field_settings_tabs" ' . $show_field_settings_tabs . ' />' . __( 'Field Settings Tabs', 'secure-custom-fields' ) . '</label>';
 			}
 
 			$html .= '</div>';
@@ -283,7 +283,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		 */
 		public function post_submitbox_misc_actions() {
 			global $field_group;
-			$status_label = $field_group['active'] ? _x( 'Active', 'post status', 'acf' ) : _x( 'Inactive', 'post status', 'acf' );
+			$status_label = $field_group['active'] ? _x( 'Active', 'post status', 'secure-custom-fields' ) : _x( 'Inactive', 'post status', 'secure-custom-fields' );
 
 			?>
 			<script type="text/javascript">
@@ -535,14 +535,14 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 				$link = '<a href="' . admin_url( 'post.php?post=' . $new_field_group['ID'] . '&action=edit' ) . '" target="_blank">' . esc_html( $new_field_group['title'] ) . '</a>';
 
 				echo '' .
-					'<p><strong>' . esc_html__( 'Move Complete.', 'acf' ) . '</strong></p>' .
+					'<p><strong>' . esc_html__( 'Move Complete.', 'secure-custom-fields' ) . '</strong></p>' .
 					'<p>' . sprintf(
 						/* translators: Confirmation message once a field has been moved to a different field group. */
-						acf_punctify( __( 'The %1$s field can now be found in the %2$s field group', 'acf' ) ),
+						acf_punctify( __( 'The %1$s field can now be found in the %2$s field group', 'secure-custom-fields' ) ),
 						esc_html( $field['label'] ),
 						$link  //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					) . '</p>' .
-					'<a href="#" class="button button-primary acf-close-popup">' . esc_html__( 'Close Modal', 'acf' ) . '</a>';
+					'<a href="#" class="button button-primary acf-close-popup">' . esc_html__( 'Close Modal', 'secure-custom-fields' ) . '</a>';
 				die();
 			}
 
@@ -572,14 +572,14 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 					'type'       => 'select',
 					'name'       => 'acf_field_group',
 					'choices'    => $choices,
-					'aria-label' => __( 'Please select the destination for this field', 'acf' ),
+					'aria-label' => __( 'Please select the destination for this field', 'secure-custom-fields' ),
 				)
 			);
 
-			echo '<p>' . esc_html__( 'Please select the destination for this field', 'acf' ) . '</p>';
+			echo '<p>' . esc_html__( 'Please select the destination for this field', 'secure-custom-fields' ) . '</p>';
 			echo '<form id="acf-move-field-form">';
 				acf_render_field_wrap( $field );
-				echo '<button type="submit" class="acf-btn">' . esc_html__( 'Move Field', 'acf' ) . '</button>';
+				echo '<button type="submit" class="acf-btn">' . esc_html__( 'Move Field', 'secure-custom-fields' ) . '</button>';
 			echo '</form>';
 
 			die();

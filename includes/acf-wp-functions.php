@@ -41,7 +41,7 @@ function acf_get_object_type( $object_type, $object_subtype = '' ) {
 					return false;
 				}
 			} else {
-				$props['label'] = __( 'Posts', 'acf' );
+				$props['label'] = __( 'Posts', 'secure-custom-fields' );
 				$props['icon']  = 'dashicons-admin-post';
 			}
 			break;
@@ -54,40 +54,40 @@ function acf_get_object_type( $object_type, $object_subtype = '' ) {
 					return false;
 				}
 			} else {
-				$props['label'] = __( 'Taxonomies', 'acf' );
+				$props['label'] = __( 'Taxonomies', 'secure-custom-fields' );
 			}
 			$props['icon'] = 'dashicons-tag';
 			break;
 		case 'attachment':
-			$props['label'] = __( 'Attachments', 'acf' );
+			$props['label'] = __( 'Attachments', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-media';
 			break;
 		case 'comment':
-			$props['label'] = __( 'Comments', 'acf' );
+			$props['label'] = __( 'Comments', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-comments';
 			break;
 		case 'widget':
-			$props['label'] = __( 'Widgets', 'acf' );
+			$props['label'] = __( 'Widgets', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-screenoptions';
 			break;
 		case 'menu':
-			$props['label'] = __( 'Menus', 'acf' );
+			$props['label'] = __( 'Menus', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-appearance';
 			break;
 		case 'menu_item':
-			$props['label'] = __( 'Menu items', 'acf' );
+			$props['label'] = __( 'Menu items', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-appearance';
 			break;
 		case 'user':
-			$props['label'] = __( 'Users', 'acf' );
+			$props['label'] = __( 'Users', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-users';
 			break;
 		case 'option':
-			$props['label'] = __( 'Options', 'acf' );
+			$props['label'] = __( 'Options', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-admin-generic';
 			break;
 		case 'block':
-			$props['label'] = __( 'Blocks', 'acf' );
+			$props['label'] = __( 'Blocks', 'secure-custom-fields' );
 			$props['icon']  = 'dashicons-block-default';
 			break;
 		default:

@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Comment' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'comment';
-			$this->label       = __( 'Comment', 'acf' );
+			$this->label       = __( 'Comment', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'comment';
 		}
@@ -58,7 +58,7 @@ if ( ! class_exists( 'ACF_Location_Comment' ) ) :
 		public function get_values( $rule ) {
 			return array_merge(
 				array(
-					'all' => __( 'All', 'acf' ),
+					'all' => __( 'All', 'secure-custom-fields' ),
 				),
 				acf_get_pretty_post_types() // Todo: Change to post types that support comments.
 			);

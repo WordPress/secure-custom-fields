@@ -273,7 +273,7 @@ function acf_get_field_type_prop( $name = '', $prop = '' ) {
  */
 function acf_get_field_type_label( $name = '' ) {
 	$label = acf_get_field_type_prop( $name, 'label' );
-	return $label ? $label : '<span class="acf-js-tooltip" title="' . __( 'Field type does not exist', 'acf' ) . '">' . __( 'Unknown', 'acf' ) . '</span>';
+	return $label ? $label : '<span class="acf-js-tooltip" title="' . __( 'Field type does not exist', 'secure-custom-fields' ) . '">' . __( 'Unknown', 'secure-custom-fields' ) . '</span>';
 }
 
 /**
@@ -322,13 +322,13 @@ function acf_field_type_exists( $type = '' ) {
 function acf_get_field_categories_i18n() {
 
 	$categories_i18n = array(
-		'basic'      => __( 'Basic', 'acf' ),
-		'content'    => __( 'Content', 'acf' ),
-		'choice'     => __( 'Choice', 'acf' ),
-		'relational' => __( 'Relational', 'acf' ),
-		'advanced'   => __( 'Advanced', 'acf' ),
-		'layout'     => __( 'Layout', 'acf' ),
-		'pro'        => __( 'PRO', 'acf' ),
+		'basic'      => __( 'Basic', 'secure-custom-fields' ),
+		'content'    => __( 'Content', 'secure-custom-fields' ),
+		'choice'     => __( 'Choice', 'secure-custom-fields' ),
+		'relational' => __( 'Relational', 'secure-custom-fields' ),
+		'advanced'   => __( 'Advanced', 'secure-custom-fields' ),
+		'layout'     => __( 'Layout', 'secure-custom-fields' ),
+		'pro'        => __( 'PRO', 'secure-custom-fields' ),
 	);
 
 	return apply_filters( 'acf/localized_field_categories', $categories_i18n );
@@ -379,11 +379,11 @@ function acf_get_grouped_field_types() {
  */
 function acf_get_combined_field_type_settings_tabs() {
 	$default_field_type_settings_tabs = array(
-		'general'           => __( 'General', 'acf' ),
-		'validation'        => __( 'Validation', 'acf' ),
-		'presentation'      => __( 'Presentation', 'acf' ),
-		'conditional_logic' => __( 'Conditional Logic', 'acf' ),
-		'advanced'          => __( 'Advanced', 'acf' ),
+		'general'           => __( 'General', 'secure-custom-fields' ),
+		'validation'        => __( 'Validation', 'secure-custom-fields' ),
+		'presentation'      => __( 'Presentation', 'secure-custom-fields' ),
+		'conditional_logic' => __( 'Conditional Logic', 'secure-custom-fields' ),
+		'advanced'          => __( 'Advanced', 'secure-custom-fields' ),
 	);
 
 	$field_type_settings_tabs = (array) apply_filters( 'acf/field_group/additional_field_settings_tabs', array() );
@@ -413,40 +413,40 @@ function acf_get_pro_field_types() {
 	return array(
 		'clone'            => array(
 			'name'          => 'clone',
-			'label'         => _x( 'Clone', 'noun', 'acf' ),
+			'label'         => _x( 'Clone', 'noun', 'secure-custom-fields' ),
 			'doc_url'       => 'https://www.advancedcustomfields.com/resources/clone/',
 			'preview_image' => acf_get_url() . '/assets/images/field-type-previews/field-preview-clone.png',
-			'description'   => __( 'This allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'acf' ),
+			'description'   => __( 'This allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/how-to-use-the-clone-field/',
 			'category'      => 'layout',
 			'pro'           => true,
 		),
 		'flexible_content' => array(
 			'name'          => 'flexible_content',
-			'label'         => __( 'Flexible Content', 'acf' ),
+			'label'         => __( 'Flexible Content', 'secure-custom-fields' ),
 			'doc_url'       => 'https://www.advancedcustomfields.com/resources/flexible-content/',
 			'preview_image' => acf_get_url() . '/assets/images/field-type-previews/field-preview-flexible-content.png',
-			'description'   => __( 'This provides a simple, structured, layout-based editor. The Flexible Content field allows you to define, create and manage content with total control by using layouts and subfields to design the available blocks.', 'acf' ),
+			'description'   => __( 'This provides a simple, structured, layout-based editor. The Flexible Content field allows you to define, create and manage content with total control by using layouts and subfields to design the available blocks.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/building-layouts-with-the-flexible-content-field-in-a-theme/',
 			'category'      => 'layout',
 			'pro'           => true,
 		),
 		'gallery'          => array(
 			'name'          => 'gallery',
-			'label'         => __( 'Gallery', 'acf' ),
+			'label'         => __( 'Gallery', 'secure-custom-fields' ),
 			'doc_url'       => 'https://www.advancedcustomfields.com/resources/gallery/',
 			'preview_image' => acf_get_url() . '/assets/images/field-type-previews/field-preview-gallery.png',
-			'description'   => __( 'This provides an interactive interface for managing a collection of attachments. Most settings are similar to the Image field type. Additional settings allow you to specify where new attachments are added in the gallery and the minimum/maximum number of attachments allowed.', 'acf' ),
+			'description'   => __( 'This provides an interactive interface for managing a collection of attachments. Most settings are similar to the Image field type. Additional settings allow you to specify where new attachments are added in the gallery and the minimum/maximum number of attachments allowed.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/how-to-use-the-gallery-field/',
 			'category'      => 'content',
 			'pro'           => true,
 		),
 		'repeater'         => array(
 			'name'          => 'repeater',
-			'label'         => __( 'Repeater', 'acf' ),
+			'label'         => __( 'Repeater', 'secure-custom-fields' ),
 			'doc_url'       => 'https://www.advancedcustomfields.com/resources/repeater/',
 			'preview_image' => acf_get_url() . '/assets/images/field-type-previews/field-preview-repeater.png',
-			'description'   => __( 'This provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'acf' ),
+			'description'   => __( 'This provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/repeater/how-to-use-the-repeater-field/',
 			'category'      => 'layout',
 			'pro'           => true,

@@ -22,7 +22,7 @@ if ( empty( $field['conditional_logic'] ) ) {
 	<div class="acf-conditional-toggle">
 		<div class="acf-label">
 			<?php $acf_label_for = acf_idify( $field['prefix'] . '[conditional_logic]' ); ?>
-			<label for="<?php echo esc_attr( $acf_label_for ); ?>"><?php esc_html_e( 'Conditional Logic', 'acf' ); ?></label>
+			<label for="<?php echo esc_attr( $acf_label_for ); ?>"><?php esc_html_e( 'Conditional Logic', 'secure-custom-fields' ); ?></label>
 		</div>
 		<div class="acf-input">
 			<?php
@@ -61,7 +61,7 @@ if ( empty( $field['conditional_logic'] ) ) {
 			// vars
 			// $group_id must be completely different to $rule_id to avoid JS issues
 			$group_id = "group_{$group_id}";
-			$h4       = ( $group_id == 'group_0' ) ? __( 'Show this field if', 'acf' ) : __( 'or', 'acf' );
+			$h4       = ( $group_id == 'group_0' ) ? __( 'Show this field if', 'secure-custom-fields' ) : __( 'or', 'secure-custom-fields' );
 
 			?>
 			<div class="rule-group" data-id="<?php echo esc_attr( $group_id ); ?>">
@@ -166,7 +166,7 @@ if ( empty( $field['conditional_logic'] ) ) {
 								?>
 							</td>
 							<td class="add">
-								<a href="#" class="button add-conditional-rule"><?php esc_html_e( 'and', 'acf' ); ?></a>
+								<a href="#" class="button add-conditional-rule"><?php esc_html_e( 'and', 'secure-custom-fields' ); ?></a>
 							</td>
 							<td class="remove">
 								<a href="#" class="acf-icon -minus remove-conditional-rule"></a>
@@ -179,8 +179,8 @@ if ( empty( $field['conditional_logic'] ) ) {
 			</div>
 		<?php endforeach; ?>
 
-		<h4><?php esc_html_e( 'or', 'acf' ); ?></h4>
+		<h4><?php esc_html_e( 'or', 'secure-custom-fields' ); ?></h4>
 
-		<a href="#" class="button add-conditional-group"><?php esc_html_e( 'Add rule group', 'acf' ); ?></a>
+		<a href="#" class="button add-conditional-group"><?php esc_html_e( 'Add rule group', 'secure-custom-fields' ); ?></a>
 	</div>							
 </div>

@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 	abstract class ACF_Internal_Post_Type {
 
+
 		/**
 		 * The ACF internal post type name.
 		 *
@@ -181,7 +182,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			if ( is_string( $id ) ) {
 				// Try cache.
 				$cache_key = $this->cache_key . $id;
-				$post_id   = wp_cache_get( $cache_key, 'acf' );
+				$post_id   = wp_cache_get( $cache_key, 'secure-custom-fields' );
 
 				if ( $post_id === false ) {
 					$query_key = 'acf_' . $this->post_key_prefix . 'key';
@@ -206,7 +207,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 					$post_id = $posts ? $posts[0]->ID : 0;
 
 					// Update cache.
-					wp_cache_set( $cache_key, $post_id, 'acf' );
+					wp_cache_set( $cache_key, $post_id, 'secure-custom-fields' );
 				}
 
 				// Check $post_id and return the post when possible.
@@ -389,7 +390,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		public function get_raw_posts() {
 			// Try cache.
 			$cache_key = acf_cache_key( $this->cache_key_plural );
-			$post_ids  = wp_cache_get( $cache_key, 'acf' ); // TODO: Do we need to change the group at all?
+			$post_ids  = wp_cache_get( $cache_key, 'secure-custom-fields' ); // TODO: Do we need to change the group at all?
 
 			if ( $post_ids === false ) {
 
@@ -415,7 +416,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 				}
 
 				// Update cache.
-				wp_cache_set( $cache_key, $post_ids, 'acf' );
+				wp_cache_set( $cache_key, $post_ids, 'secure-custom-fields' );
 			}
 
 			// Loop over ids and populate array of ACF posts.
@@ -561,10 +562,10 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			acf_get_store( $this->store )->remove( $post['key'] );
 
 			// Flush cached post_id for this field group's key.
-			wp_cache_delete( acf_cache_key( $this->cache_key . $post['key'] ), 'acf' );
+			wp_cache_delete( acf_cache_key( $this->cache_key . $post['key'] ), 'secure-custom-fields' );
 
 			// Flush cached array of post_ids for collection of field groups.
-			wp_cache_delete( acf_cache_key( $this->cache_key_plural ), 'acf' );
+			wp_cache_delete( acf_cache_key( $this->cache_key_plural ), 'secure-custom-fields' );
 		}
 
 		/**
@@ -725,7 +726,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 
 			// Add (copy) to title when appropriate.
 			if ( ! $new_post_id ) {
-				$post['title'] .= ' (' . __( 'copy', 'acf' ) . ')';
+				$post['title'] .= ' (' . __( 'copy', 'secure-custom-fields' ) . ')';
 			}
 
 			// When importing a new field group, insert a temporary post and set the field group's ID.
@@ -926,5 +927,4 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			return $post;
 		}
 	}
-
 }

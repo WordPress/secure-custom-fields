@@ -4,6 +4,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 
 	class acf_field_repeater extends acf_field {
 
+
 		/**
 		 * If we're currently rendering fields.
 		 *
@@ -26,9 +27,9 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 */
 		public function initialize() {
 			$this->name          = 'repeater';
-			$this->label         = __( 'Repeater', 'acf' );
+			$this->label         = __( 'Repeater', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'acf' );
+			$this->description   = __( 'Provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-repeater.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/repeater/';
 			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/repeater/how-to-use-the-repeater-field/';
@@ -64,10 +65,10 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		public function input_admin_enqueue_scripts() {
 			acf_localize_text(
 				array(
-					'Minimum rows not reached ({min} rows)' => __( 'Minimum rows not reached ({min} rows)', 'acf' ),
-					'Maximum rows reached ({max} rows)' => __( 'Maximum rows reached ({max} rows)', 'acf' ),
-					'Error loading page'                => __( 'Error loading page', 'acf' ),
-					'Order will be assigned upon save'  => __( 'Order will be assigned upon save', 'acf' ),
+					'Minimum rows not reached ({min} rows)' => __( 'Minimum rows not reached ({min} rows)', 'secure-custom-fields' ),
+					'Maximum rows reached ({max} rows)' => __( 'Maximum rows reached ({max} rows)', 'secure-custom-fields' ),
+					'Error loading page'                => __( 'Error loading page', 'secure-custom-fields' ),
+					'Order will be assigned upon save'  => __( 'Order will be assigned upon save', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -101,7 +102,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			}
 
 			if ( '' === $field['button_label'] ) {
-				$field['button_label'] = __( 'Add Row', 'acf' );
+				$field['button_label'] = __( 'Add Row', 'secure-custom-fields' );
 			}
 
 			return $field;
@@ -160,7 +161,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			?>
 			<div class="acf-field acf-field-setting-sub_fields" data-setting="repeater" data-name="sub_fields">
 				<div class="acf-label">
-					<label><?php esc_html_e( 'Sub Fields', 'acf' ); ?></label>
+					<label><?php esc_html_e( 'Sub Fields', 'secure-custom-fields' ); ?></label>
 					<p class="description"></p>
 				</div>
 				<div class="acf-input acf-input-sub">
@@ -175,16 +176,16 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Layout', 'acf' ),
+					'label'        => __( 'Layout', 'secure-custom-fields' ),
 					'instructions' => '',
 					'class'        => 'acf-repeater-layout',
 					'type'         => 'radio',
 					'name'         => 'layout',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'table' => __( 'Table', 'acf' ),
-						'block' => __( 'Block', 'acf' ),
-						'row'   => __( 'Row', 'acf' ),
+						'table' => __( 'Table', 'secure-custom-fields' ),
+						'block' => __( 'Block', 'secure-custom-fields' ),
+						'row'   => __( 'Row', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -193,8 +194,8 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				acf_render_field_setting(
 					$field,
 					array(
-						'label'        => __( 'Pagination', 'acf' ),
-						'instructions' => __( 'Useful for fields with a large number of rows.', 'acf' ),
+						'label'        => __( 'Pagination', 'secure-custom-fields' ),
+						'instructions' => __( 'Useful for fields with a large number of rows.', 'secure-custom-fields' ),
 						'class'        => 'acf-repeater-pagination',
 						'type'         => 'true_false',
 						'name'         => 'pagination',
@@ -205,8 +206,8 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				acf_render_field_setting(
 					$field,
 					array(
-						'label'        => __( 'Rows Per Page', 'acf' ),
-						'instructions' => __( 'Set the number of rows to be displayed on a page.', 'acf' ),
+						'label'        => __( 'Rows Per Page', 'secure-custom-fields' ),
+						'instructions' => __( 'Set the number of rows to be displayed on a page.', 'secure-custom-fields' ),
 						'class'        => 'acf-repeater-pagination-num-rows',
 						'type'         => 'number',
 						'name'         => 'rows_per_page',
@@ -238,7 +239,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum Rows', 'acf' ),
+					'label'        => __( 'Minimum Rows', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'min',
@@ -249,7 +250,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum Rows', 'acf' ),
+					'label'        => __( 'Maximum Rows', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'max',
@@ -279,8 +280,8 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Collapsed', 'acf' ),
-					'instructions' => __( 'Select a sub field to show when row is collapsed', 'acf' ),
+					'label'        => __( 'Collapsed', 'secure-custom-fields' ),
+					'instructions' => __( 'Select a sub field to show when row is collapsed', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'collapsed',
 					'allow_null'   => 1,
@@ -291,11 +292,11 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Button Label', 'acf' ),
+					'label'        => __( 'Button Label', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'text',
 					'name'         => 'button_label',
-					'placeholder'  => __( 'Add Row', 'acf' ),
+					'placeholder'  => __( 'Add Row', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -459,7 +460,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			if ( empty( $field['pagination'] ) && $min && $count < $min ) {
 
 				// create error
-				$error = __( 'Minimum rows not reached ({min} rows)', 'acf' );
+				$error = __( 'Minimum rows not reached ({min} rows)', 'secure-custom-fields' );
 				$error = str_replace( '{min}', $min, $error );
 
 				// return
@@ -910,7 +911,8 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 					'param' => $param,
 					'value' => $value,
 				);
-				$error = sprintf( __( '%s must be of type array or null.', 'acf' ), $param );
+				/* translators: 1: submitted value */
+				$error = sprintf( __( '%s must be of type array or null.', 'secure-custom-fields' ), $param );
 				return new WP_Error( 'rest_invalid_param', $error, $param );
 			}
 
@@ -1047,12 +1049,12 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			);
 
 			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'] ) ) {
-				$error = array( 'error' => __( 'Invalid nonce.', 'acf' ) );
+				$error = array( 'error' => __( 'Invalid nonce.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 401 );
 			}
 
 			if ( '' === $args['field_name'] || '' === $args['field_key'] ) {
-				$error = array( 'error' => __( 'Invalid field key or name.', 'acf' ) );
+				$error = array( 'error' => __( 'Invalid field key or name.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 404 );
 			}
 
@@ -1061,7 +1063,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$response = array();
 
 			if ( ! $field || ! $post_id ) {
-				$error = array( 'error' => __( 'There was an error retrieving the field.', 'acf' ) );
+				$error = array( 'error' => __( 'There was an error retrieving the field.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 404 );
 			}
 

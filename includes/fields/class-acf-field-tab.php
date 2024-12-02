@@ -20,9 +20,9 @@ if ( ! class_exists( 'acf_field_tab' ) ) :
 
 			// vars
 			$this->name          = 'tab';
-			$this->label         = __( 'Tab', 'acf' );
+			$this->label         = __( 'Tab', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Allows you to group fields into tabbed sections in the edit screen. Useful for keeping fields organized and structured.', 'acf' );
+			$this->description   = __( 'Allows you to group fields into tabbed sections in the edit screen. Useful for keeping fields organized and structured.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-tabs.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/tab/';
 			$this->supports      = array(
@@ -86,13 +86,13 @@ if ( ! class_exists( 'acf_field_tab' ) ) :
 			/*
 				// message
 				$message = '';
-				$message .= '<p>' . __( 'Use "Tab Fields" to better organize your edit screen by grouping fields together.', 'acf') . '</p>';
-				$message .= '<p>' . __( 'All fields following this "tab field" (or until another "tab field" is defined) will be grouped together using this field\'s label as the tab heading.','acf') . '</p>';
+				$message .= '<p>' . __( 'Use "Tab Fields" to better organize your edit screen by grouping fields together.', 'secure-custom-fields') . '</p>';
+				$message .= '<p>' . __( 'All fields following this "tab field" (or until another "tab field" is defined) will be grouped together using this field\'s label as the tab heading.','secure-custom-fields') . '</p>';
 
 
 				// default_value
 				acf_render_field_setting( $field, array(
-				'label'         => __('Instructions','acf'),
+				'label'         => __('Instructions','secure-custom-fields'),
 				'instructions'  => '',
 				'name'          => 'notes',
 				'type'          => 'message',
@@ -104,12 +104,12 @@ if ( ! class_exists( 'acf_field_tab' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'   => __( 'Placement', 'acf' ),
+					'label'   => __( 'Placement', 'secure-custom-fields' ),
 					'type'    => 'select',
 					'name'    => 'placement',
 					'choices' => array(
-						'top'  => __( 'Top aligned', 'acf' ),
-						'left' => __( 'Left aligned', 'acf' ),
+						'top'  => __( 'Top aligned', 'secure-custom-fields' ),
+						'left' => __( 'Left aligned', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -118,8 +118,8 @@ if ( ! class_exists( 'acf_field_tab' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'New Tab Group', 'acf' ),
-					'instructions' => __( 'Start a new group of tabs at this tab.', 'acf' ),
+					'label'        => __( 'New Tab Group', 'secure-custom-fields' ),
+					'instructions' => __( 'Start a new group of tabs at this tab.', 'secure-custom-fields' ),
 					'name'         => 'endpoint',
 					'type'         => 'true_false',
 					'ui'           => 1,
