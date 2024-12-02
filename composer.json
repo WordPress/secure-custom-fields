@@ -1,0 +1,12 @@
+{
+    "name": "wordpress/secure-custom-fields",
+    "description": "Secure Custom Fields",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "WordPress.org"
+        }
+    ],
+    "require": {}
+}
