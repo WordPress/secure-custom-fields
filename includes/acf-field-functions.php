@@ -581,7 +581,7 @@ function acf_render_fields( $fields, $post_id = 0, $el = 'div', $instruction = '
 
 	// Parameter order changed in ACF 5.6.9.
 	if ( is_array( $post_id ) ) {
-		$args    = func_get_args();
+		$args    = func_get_args(); // phpcs:ignore PHPCompatibility.FunctionUse.ArgumentFunctionsReportCurrentValue
 		$fields  = $args[1];
 		$post_id = $args[0];
 	}

@@ -4,6 +4,14 @@
 	<arg name="extensions" value="php"/>
 	<file>.</file>
 
+	<!-- Exclude package files -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+
+	<!-- Confirm PHP compat. -->
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="PHPCompatibilityWP" />
+
     <!-- Display sniff code -->
     <arg value="s"/>
 
