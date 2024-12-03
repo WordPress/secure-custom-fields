@@ -273,8 +273,7 @@ class ACF_Rest_Api {
 			return new WP_Error(
 				'acf_rest_object_unknown',
 				/* translators: 1: object type, 2: property */
-				sprintf( __( 'Unable to determine the %1$s object ID or type. The %2$s property cannot be updated.', 'secure-custom-fields' ), get_class( $object ), $property )
-			),
+				sprintf( __( 'Unable to determine the %1$s object ID or type. The %2$s property cannot be updated.', 'secure-custom-fields' ), get_class( $object ), $property ),
 				array( 'status' => 400 )
 			);
 		}
