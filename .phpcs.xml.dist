@@ -7,6 +7,7 @@
 	<!-- Exclude package files -->
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/lang/*</exclude-pattern>
 
 	<!-- Confirm PHP compat. -->
 	<config name="testVersion" value="7.4-"/>
@@ -17,7 +18,17 @@
 
 	<rule ref="WordPress">
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" /> <!-- 'acf/hookname' is used throughout. -->
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" /> <!-- This is trivial and not really useful today. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" /> <!-- Refactoring of this scale is not in scope yet.-->
 	</rule>
+	<rule ref="WordPress.Security.EscapeOutput">
+        	<properties>
+            	<property name="customEscapingFunctions" type="array">
+                	<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
+					<element value="acf_esc_html" />
+            	</property>
+        	</properties>
+    	</rule>
     <rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">

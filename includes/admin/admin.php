@@ -99,7 +99,6 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * @date    7/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function current_screen( $screen ) {
@@ -226,7 +225,6 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * @date    27/3/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function in_admin_header() {

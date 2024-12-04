@@ -1,11 +1,23 @@
 <?php
+/**
+ * Admin upgrade class.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
-
+	/**
+	 * Class responsible for handling the upgrade process for the admin section
+	 * of the SCF plugin.
+	 *
+	 * This class contains methods and properties that manage the upgrade routines
+	 * and ensure that the plugin's data and settings are properly updated when
+	 * a new version is installed.
+	 */
 	class ACF_Admin_Upgrade {
 
 		/**
@@ -23,10 +35,9 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * @date    31/7/18
 		 * @since   5.7.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function __construct() {
+		public function __construct() {
 
 			$this->network_upgrade_needed_transient = 'acf_network_upgrade_needed_' . ACF_UPGRADE_VERSION;
 
@@ -37,17 +48,16 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * admin_menu
+		 * Function admin_menu
 		 *
 		 * Setus up logic if DB Upgrade is needed on a single site.
 		 *
 		 * @date    24/8/18
 		 * @since   5.7.4
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function admin_menu() {
+		public function admin_menu() {
 
 			// check if upgrade is avaialble
 			if ( acf_has_upgrade() ) {
@@ -71,15 +81,15 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * @since   5.7.4
 		 * @since   6.0.0 Reduce memory usage, cache network upgrade checks.
 		 */
-		function network_admin_menu() {
+		public function network_admin_menu() {
 			$network_upgrade_needed = get_site_transient( $this->network_upgrade_needed_transient );
 
 			// No transient value exists, so run the upgrade check.
-			if ( $network_upgrade_needed === false ) {
+			if ( false === $network_upgrade_needed ) {
 				$network_upgrade_needed = $this->check_for_network_upgrades();
 			}
 
-			if ( $network_upgrade_needed === 'no' ) {
+			if ( 'no' === $network_upgrade_needed ) {
 				return;
 			}
 
@@ -153,17 +163,16 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * admin_load
+		 * Function admin_load
 		 *
 		 * Runs during the loading of the admin page.
 		 *
 		 * @date    24/8/18
 		 * @since   5.7.4
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @return  void
 		 */
-		function admin_load() {
+		public function admin_load() {
 
 			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
@@ -175,17 +184,16 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * network_admin_load
+		 * Function network_admin_load
 		 *
 		 * Runs during the loading of the network admin page.
 		 *
 		 * @date    24/8/18
 		 * @since   5.7.4
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @return  void
 		 */
-		function network_admin_load() {
+		public function network_admin_load() {
 
 			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
@@ -210,17 +218,16 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * admin_notices
+		 * Function admin_notices
 		 *
 		 * Displays the DB Upgrade prompt.
 		 *
 		 * @date    23/8/18
 		 * @since   5.7.3
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function admin_notices() {
+		public function admin_notices() {
 
 			// vars
 			$view = array(
@@ -234,17 +241,16 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * network_admin_notices
+		 * Function network_admin_notices
 		 *
 		 * Displays the DB Upgrade prompt on a multi site.
 		 *
 		 * @date    23/8/18
 		 * @since   5.7.3
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function network_admin_notices() {
+		public function network_admin_notices() {
 
 			// vars
 			$view = array(
@@ -258,32 +264,30 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		}
 
 		/**
-		 * admin_html
+		 * Function admin_html
 		 *
 		 * Displays the HTML for the admin page.
 		 *
 		 * @date    24/8/18
 		 * @since   5.7.4
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function admin_html() {
+		public function admin_html() {
 			acf_get_view( 'upgrade/upgrade' );
 		}
 
 		/**
-		 * network_admin_html
+		 * Function network_admin_html
 		 *
 		 * Displays the HTML for the network upgrade admin page.
 		 *
 		 * @date    24/8/18
 		 * @since   5.7.4
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function network_admin_html() {
+		public function network_admin_html() {
 			acf_get_view( 'upgrade/network' );
 		}
 	}
