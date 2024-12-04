@@ -126,7 +126,6 @@ function acf_get_field_groups( $filter = array() ) {
  * @date    18/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  array
  */
 function acf_get_raw_field_groups() {

@@ -16,7 +16,6 @@ if ( ! class_exists( 'ACF_Compatibility' ) ) :
 		 * @date    30/04/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {
@@ -55,7 +54,6 @@ if ( ! class_exists( 'ACF_Compatibility' ) ) :
 		 * @date    10/6/19
 		 * @since   5.8.1
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function init() {

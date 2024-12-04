@@ -15,7 +15,6 @@ if ( ! class_exists( 'ACF_Location_Attachment' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function initialize() {

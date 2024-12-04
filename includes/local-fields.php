@@ -19,7 +19,6 @@ acf_enable_filter( 'local' );
  * @date    22/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  void
  */
 function acf_enable_local() {
@@ -34,7 +33,6 @@ function acf_enable_local() {
  * @date    22/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  void
  */
 function acf_disable_local() {
@@ -49,7 +47,6 @@ function acf_disable_local() {
  * @date    23/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  boolean
  */
 function acf_is_local_enabled() {
@@ -103,7 +100,6 @@ function acf_get_local_store( $name = '', $post_type = '' ) {
  * @date    22/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  void
  */
 function acf_reset_local() {
@@ -121,7 +117,6 @@ function acf_reset_local() {
  * @date    22/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  array
  */
 function acf_get_local_field_groups() {
@@ -716,7 +711,6 @@ add_filter( 'acf/is_taxonomy_key', '_acf_apply_is_local_internal_post_type_key',
  * @date    23/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  void
  */
 function _acf_do_prepare_local_fields() {

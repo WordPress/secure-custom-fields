@@ -16,7 +16,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @date    23/06/12
 		 * @since   3.1.8
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {
@@ -63,7 +62,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @date    10/04/2015
 		 * @since   5.2.3
 		 *
-		 * @param   void
 		 * @return  boolean
 		 */
 		function is_translatable() {
@@ -242,7 +240,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @date    26/02/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ) {
@@ -275,7 +272,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @date    7/08/2015
 		 * @since   5.2.3
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function verify_ajax() {

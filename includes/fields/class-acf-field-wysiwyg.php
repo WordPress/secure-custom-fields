@@ -128,7 +128,6 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 * @date    16/12/2015
 		 * @since   5.3.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function acf_enqueue_uploader() {

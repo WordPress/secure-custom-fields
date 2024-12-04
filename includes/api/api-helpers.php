@@ -3233,7 +3233,6 @@ function acf_get_post_thumbnail( $post = null, $size = 'thumbnail' ) {
  *
  * @since   5.0.0
  *
- * @param   void
  * @return  string
  */
 function acf_get_browser() {
@@ -3784,7 +3783,6 @@ function acf_parse_markdown( $text = '' ) {
  *
  * @since   5.4.0
  *
- * @param   void
  * @return  array
  */
 function acf_get_sites() {

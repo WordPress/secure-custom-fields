@@ -361,7 +361,6 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * @date    24/10/13
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function ajax_query() {

@@ -22,7 +22,6 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * @date    8/10/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {

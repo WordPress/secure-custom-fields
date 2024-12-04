@@ -58,7 +58,6 @@ endif;
  * @date    16/12/16
  * @since   5.5.0
  *
- * @param   void
  * @return  string
  */
 function acf_get_locale() {

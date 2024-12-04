@@ -22,7 +22,6 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * @date    14/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function __construct() {
@@ -57,7 +56,6 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * @date    14/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  boolean
 		 */
 		public function is_enabled() {
@@ -204,7 +202,6 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * @date    14/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function include_fields() {

@@ -52,7 +52,6 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * @date    17/4/18
 		 * @since   5.6.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function admin_enqueue_scripts() {
@@ -75,7 +74,6 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * @date    17/4/18
 		 * @since   5.6.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function login_form_register() {
@@ -96,7 +94,6 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * @date    8/10/13
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function render_register() {
@@ -119,7 +116,6 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * @date    8/10/13
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function render_edit( $user ) {

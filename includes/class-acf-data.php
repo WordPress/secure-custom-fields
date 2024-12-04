@@ -53,7 +53,6 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    9/1/19
 		 * @since   5.7.10
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function initialize() {
@@ -159,7 +158,6 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    9/1/19
 		 * @since   5.7.10
 		 *
-		 * @param   void
 		 * @return  array
 		 */
 		function get_data() {
@@ -241,7 +239,6 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    22/1/19
 		 * @since   5.7.10
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function reset() {
@@ -257,7 +254,6 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    23/1/19
 		 * @since   5.7.10
 		 *
-		 * @param   void
 		 * @return  integer
 		 */
 		function count() {
@@ -272,7 +268,6 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    23/1/19
 		 * @since   5.7.10
 		 *
-		 * @param   void
 		 * @return  integer
 		 */
 		function query( $args, $operator = 'AND' ) {

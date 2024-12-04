@@ -186,7 +186,6 @@ function acf_is_filter_enabled( $name = '' ) {
  * @date    14/7/16
  * @since   5.4.0
  *
- * @param   void
  * @return  array
  */
 function acf_get_filters() {
@@ -216,7 +215,6 @@ function acf_set_filters( $filters = array() ) {
  * @date    14/7/16
  * @since   5.4.0
  *
- * @param   void
  * @return  array
  */
 function acf_disable_filters() {
@@ -481,7 +479,6 @@ function acf_doing_action( $action ) {
  * @date    23/01/2015
  * @since   5.1.5
  *
- * @param   void
  * @return  string
  */
 function acf_get_current_url() {

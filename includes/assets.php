@@ -39,7 +39,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    10/4/18
 		 * @since   5.6.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function __construct() {
@@ -103,7 +102,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    10/4/18
 		 * @since   5.6.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function register_scripts() {
@@ -167,7 +165,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    27/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		private function add_actions() {
@@ -293,7 +290,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    27/10/2014
 		 * @since   5.0.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function enqueue_uploader() {
@@ -315,8 +311,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * Fires when enqueuing the uploader.
 			 *
 			 * @since   5.6.9
-			 *
-			 * @param   void
 			 */
 			do_action( 'acf/enqueue_uploader' );
 		}
@@ -327,7 +321,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    27/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function enqueue_scripts() {
@@ -383,8 +376,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				 * Fires during "admin_enqueue_scripts" when ACF scripts are enqueued.
 				 *
 				 * @since   5.6.9
-				 *
-				 * @param   void
 				 */
 				do_action( 'acf/input/admin_enqueue_scripts' );
 			}
@@ -393,8 +384,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * Fires during "admin_enqueue_scripts" when ACF scripts are enqueued.
 			 *
 			 * @since   5.6.9
-			 *
-			 * @param   void
 			 */
 			do_action( 'acf/admin_enqueue_scripts' );
 			do_action( 'acf/enqueue_scripts' );
@@ -417,7 +406,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    27/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function print_scripts() {
@@ -427,8 +415,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				 * Fires during "admin_head" when ACF scripts are enqueued.
 				 *
 				 * @since   5.6.9
-				 *
-				 * @param   void
 				 */
 				do_action( 'acf/input/admin_head' );
 				do_action( 'acf/input/admin_print_scripts' );
@@ -438,8 +424,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * Fires during "admin_head" when ACF scripts are enqueued.
 			 *
 			 * @since   5.6.9
-			 *
-			 * @param   void
 			 */
 			do_action( 'acf/admin_head' );
 			do_action( 'acf/admin_print_scripts' );
@@ -451,7 +435,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    27/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function print_footer_scripts() {
@@ -512,8 +495,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * Fires during "admin_footer" when ACF scripts are enqueued.
 			 *
 			 * @since   5.6.9
-			 *
-			 * @param   void
 			 */
 			do_action( 'acf/admin_footer' );
 			do_action( 'acf/admin_print_footer_scripts' );
@@ -528,7 +509,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * @date    11/06/2020
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function print_uploader_scripts() {
@@ -543,8 +523,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * Fires when printing uploader scripts.
 			 *
 			 * @since   5.6.9
-			 *
-			 * @param   void
 			 */
 			do_action( 'acf/admin_print_uploader_scripts' );
 		}
@@ -612,7 +590,6 @@ function acf_enqueue_scripts( $args = array() ) {
  * @date    27/10/2014
  * @since   5.0.9
  *
- * @param   void
  * @return  void
  */
 function acf_enqueue_uploader() {

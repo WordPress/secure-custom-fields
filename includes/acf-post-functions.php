@@ -6,7 +6,6 @@
  * @date    29/8/17
  * @since   5.6.2
  *
- * @param   void
  * @return  array
  */
 function acf_get_post_templates() {

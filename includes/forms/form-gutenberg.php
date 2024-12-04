@@ -16,7 +16,6 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * @date    13/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {
@@ -36,7 +35,6 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * @date    14/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function enqueue_block_editor_assets() {
@@ -66,7 +64,6 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * @date    13/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function add_meta_boxes() {
@@ -83,7 +80,6 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * @date    13/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function block_editor_meta_box_hidden_fields() {
@@ -172,7 +168,6 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * @date    16/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function acf_validate_save_post() {
