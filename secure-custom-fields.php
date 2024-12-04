@@ -1,9 +1,9 @@
-<?php
-
+<?php // phpcs:disable WordPress.Files.FileName.InvalidClassFileName -- This file contains procedural code for now.
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- This file contains both procedural and object-oriented code for now.
 /**
  * Secure Custom Fields
  *
- * Plugin Name:       Secure Custom Fields
+ * Plugin Name:       Secure Custom Fields (Preview)
  * Plugin URI:        http://wordpress.org/plugins/secure-custom-fields/
  * Description:       Secure Custom Fields (SCF) offers an intuitive way for developers to enhance WordPress content management by adding extra fields and options without coding requirements.
  * Version:           6.4.1-beta4
