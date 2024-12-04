@@ -14,7 +14,6 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * @date    23/06/12
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function __construct() {
@@ -38,7 +37,6 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * @date    27/4/18
 		 * @since   5.6.9
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function enqueue_scripts() {
@@ -133,7 +131,6 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * @date    21/5/21
 		 * @since   5.9.7
 		 *
-		 * @param   void
 		 * @return  array| false.
 		 */
 		private function get_source_field() {
@@ -165,7 +162,6 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * @date    26/06/2015
 		 * @since   5.2.3
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function wp_ajax_query_attachments() {

@@ -8,7 +8,6 @@
  * @date    24/8/18
  * @since   5.7.4
  *
- * @param   void
  * @return  boolean
  */
 function acf_has_upgrade() {
@@ -82,7 +81,6 @@ function acf_upgrade_all() {
  * @date    10/09/2016
  * @since   5.4.0
  *
- * @param   void
  * @return  string
  */
 function acf_get_db_version() {
@@ -110,7 +108,6 @@ function acf_update_db_version( $version = '' ) {
  * @date    23/8/18
  * @since   5.7.4
  *
- * @param   void
  * @return  void
  */
 function acf_upgrade_500() {
@@ -136,7 +133,6 @@ function acf_upgrade_500() {
  * @date    23/8/18
  * @since   5.7.4
  *
- * @param   void
  * @return  void
  */
 function acf_upgrade_500_field_groups() {
@@ -377,7 +373,6 @@ function acf_upgrade_500_field( $field ) {
  * @date    23/8/18
  * @since   5.7.4
  *
- * @param   void
  * @return  void
  */
 function acf_upgrade_550() {
@@ -403,7 +398,6 @@ function acf_upgrade_550() {
  * @date    23/8/18
  * @since   5.7.4
  *
- * @param   void
  * @return  void
  */
 function acf_upgrade_550_termmeta() {

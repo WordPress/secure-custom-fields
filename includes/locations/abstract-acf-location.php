@@ -67,7 +67,6 @@ if ( ! class_exists( 'ACF_Location' ) ) :
 		 * @date    8/4/20
 		 * @since   5.9.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function __construct() {
@@ -83,7 +82,6 @@ if ( ! class_exists( 'ACF_Location' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function initialize() {

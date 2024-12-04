@@ -25,7 +25,6 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * @date    31/7/18
 		 * @since   5.7.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {
@@ -86,7 +85,6 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * @date    31/7/18
 		 * @since   5.7.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function initialize() {
@@ -101,7 +99,6 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * @date    31/7/18
 		 * @since   5.7.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function add_actions() {
@@ -123,7 +120,6 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * @date    1/8/18
 		 * @since   5.7.2
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function request() {
