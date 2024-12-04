@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
 /**
  * ACF Admin Notices
  *
@@ -25,37 +25,40 @@ acf_register_store( 'notices' );
  * @since   5.7.10
  */
 if ( ! class_exists( 'ACF_Admin_Notice' ) ) :
-
+	/**
+	 * Class responsible for handling admin notices.
+	 */
 	class ACF_Admin_Notice extends ACF_Data {
 
-		/** @var array Storage for data. */
-		var $data = array(
+		/**
+		 * Storage for data.
+		 *
+		 * @var array
+		 */
+		public $data = array(
 
-			/** @type string Text displayed in notice. */
+			/** Text displayed in notice. @type string */
 			'text'        => '',
 
-			/** @type string The type of notice (warning, error, success, info). */
+			/** The type of notice (warning, error, success, info). @type string */
 			'type'        => 'info',
 
-			/** @type bool If the notice can be dismissed. */
+			/** If the notice can be dismissed. @type bool */
 			'dismissible' => true,
 
-			/** @type bool If the dismissed state should be persisted to ACF user preferences. */
+			/** If the dismissed state should be persisted to ACF user preferences. @type bool */
 			'persisted'   => false,
 		);
 
 		/**
-		 * render
-		 *
 		 * Renders the notice HTML.
 		 *
 		 * @date    27/12/18
 		 * @since   5.8.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
-		function render() {
+		public function render() {
 			$notice_text    = $this->get( 'text' );
 			$notice_type    = $this->get( 'type' );
 			$is_dismissible = $this->get( 'dismissible' );
@@ -75,8 +78,6 @@ if ( ! class_exists( 'ACF_Admin_Notice' ) ) :
 endif; // class_exists check
 
 /**
- * acf_new_admin_notice
- *
  * Instantiates and returns a new model.
  *
  * @date    23/12/18
@@ -98,14 +99,11 @@ function acf_new_admin_notice( $data = false ) {
 }
 
 /**
- * acf_render_admin_notices
- *
  * Renders all admin notices HTML.
  *
  * @date    10/1/19
  * @since   5.7.10
  *
- * @param   void
  * @return  void
  */
 function acf_render_admin_notices() {
@@ -125,17 +123,15 @@ function acf_render_admin_notices() {
 add_action( 'admin_notices', 'acf_render_admin_notices', 99 );
 
 /**
- * acf_add_admin_notice
- *
  * Creates and returns a new notice.
  *
  * @date        17/10/13
  * @since       5.0.0
  *
  * @param   string  $text        The admin notice text.
- * @param   string  $class       The type of notice (warning, error, success, info).
- * @param   boolean $dismissable Is this notification dismissible (default true) (since 5.11.0)
- * @param   boolean $persisted   Store once a notice has been dismissed per user and prevent showing it again. (since 6.1.0)
+ * @param   string  $type        The type of notice (warning, error, success, info).
+ * @param   boolean $dismissible Is this notification dismissible (default true) (since 5.11.0).
+ * @param   boolean $persisted   Store once a notice has been dismissed per user and prevent showing it again. (since 6.1.0).
  * @return  ACF_Admin_Notice
  */
 function acf_add_admin_notice( $text = '', $type = 'info', $dismissible = true, $persisted = false ) {

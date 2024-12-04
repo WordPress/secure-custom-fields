@@ -1,51 +1,58 @@
-<?php
-
+<?php // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 if ( ! class_exists( 'acf_admin_tools' ) ) :
 	#[AllowDynamicProperties]
-	class acf_admin_tools {
-
-
-		/** @var array Contains an array of admin tool instances */
-		var $tools = array();
-
-
-		/** @var string The active tool */
-		var $active = '';
+	/**
+	 * Class AdminTools
+	 *
+	 * This class provides various administrative tools for managing secure custom fields.
+	 */
+	class acf_admin_tools { // phpcs:ignore
 
 
 		/**
-		 * __construct
+		 * Contains an array of admin tool instance.
 		 *
+		 * @var array
+		 */
+		public $tools = array(); // @todo This should be private, but maintaining compatibility with the original code.
+
+
+		/**
+		 * The active tool
+		 *
+		 * @var string
+		 */
+		public $active = ''; // @todo Check to see if this should be private, but maintaining compatibility with the original code for now.
+
+
+		/**
 		 * This function will setup the class functionality
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function __construct() {
+		public function __construct() {
 
 			// actions
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 15 );
 		}
 
 		/**
-		 * register_tool
-		 *
-		 * This function will store a tool tool class
+		 * This function will store a tool class instance in the tools array.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   string $class
-		 * @return  n/a
+		 * @param   string $class Class name.
+		 * @return  void
 		 */
-		function register_tool( $class ) {
+		public function register_tool( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound
 
 			$instance                       = new $class();
 			$this->tools[ $instance->name ] = $instance;
@@ -53,50 +60,44 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 
 
 		/**
-		 * get_tool
-		 *
-		 * This function will return a tool tool class
+		 * This function will return a tool class or null if not found.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   string $name
-		 * @return  n/a
+		 * @param   string $name Name of tool.
+		 * @return  mixed (ACF_Admin_Tool|null)
 		 */
-		function get_tool( $name ) {
+		public function get_tool( $name ) {
 
 			return isset( $this->tools[ $name ] ) ? $this->tools[ $name ] : null;
 		}
 
 
 		/**
-		 * get_tools
-		 *
-		 * This function will return an array of all tools
+		 * This function will return an array of all tool instances.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
 		 * @return  array
 		 */
-		function get_tools() {
+		public function get_tools() {
 
 			return $this->tools;
 		}
 
 
 		/**
-		 * This function will add the ACF menu item to the WP admin
+		 * This function will add the SCF menu item to the WP admin
 		 *
 		 * @type    action (admin_menu)
 		 * @date    28/09/13
 		 * @since   5.0.0
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function admin_menu() {
+		public function admin_menu() {
 
 			// bail early if no show_admin
 			if ( ! acf_get_setting( 'show_admin' ) ) {
@@ -112,17 +113,14 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 
 
 		/**
-		 * load
-		 *
-		 * description
+		 * Loads the admin tools page.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function load() {
+		public function load() {
 
 			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
@@ -153,17 +151,14 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		}
 
 		/**
-		 * include_tools
-		 *
-		 * description
+		 * Includes various tool-related files.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function include_tools() {
+		public function include_tools() {
 
 			// include
 			acf_include( 'includes/admin/tools/class-acf-admin-tool.php' );
@@ -176,17 +171,14 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 
 
 		/**
-		 * check_submit
-		 *
-		 * description
+		 * Verifies the nonces and submits the value if it passes.
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function check_submit() {
+		public function check_submit() {
 
 			// loop
 			foreach ( $this->get_tools() as $tool ) {
@@ -203,17 +195,14 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 
 
 		/**
-		 * html
-		 *
-		 * description
+		 * Admin Tools html
 		 *
 		 * @date    10/10/17
 		 * @since   5.6.3
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function html() {
+		public function html() {
 
 			// vars
 			$screen = get_current_screen();
@@ -254,7 +243,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 			$tool       = $this->get_tool( $metabox['args']['tool'] );
 			$form_attrs = array( 'method' => 'post' );
 
-			if ( $metabox['args']['tool'] === 'import' ) {
+			if ( 'import' === $metabox['args']['tool'] ) {
 				$form_attrs['onsubmit'] = 'acf.disableForm(event)';
 			}
 
@@ -271,30 +260,29 @@ endif; // class_exists check
 
 
 /**
- * alias of acf()->admin_tools->register_tool()
+ * Alias of acf()->admin_tools->register_tool()
  *
  * @type    function
  * @date    31/5/17
  * @since   5.6.0
  *
- * @param   n/a
- * @return  n/a
+ * @param   ACF_Admin_Tool $class The tool class.
+ * @return  void
  */
-function acf_register_admin_tool( $class ) {
-
-	return acf()->admin_tools->register_tool( $class );
+function acf_register_admin_tool( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound
+	acf()->admin_tools->register_tool( $class );
 }
 
 
 /**
+ *
  * This function will return the admin URL to the tools page
  *
  * @type    function
  * @date    31/5/17
  * @since   5.6.0
  *
- * @param   n/a
- * @return  n/a
+ * @return  string The URL to the tools page.
  */
 function acf_get_admin_tools_url() {
 
@@ -309,8 +297,8 @@ function acf_get_admin_tools_url() {
  * @date    31/5/17
  * @since   5.6.0
  *
- * @param   n/a
- * @return  n/a
+ * @param   string $tool The tool name.
+ * @return  string The URL to a particular tool's page.
  */
 function acf_get_admin_tool_url( $tool = '' ) {
 

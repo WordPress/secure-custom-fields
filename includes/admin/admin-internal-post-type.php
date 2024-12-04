@@ -164,7 +164,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		 * @since   5.3.8
 		 *
 		 * @param array $l10n The array of translated strings.
-		 * @return array $l10n
+		 * @return void
 		 */
 		public function admin_l10n( $l10n ) {
 			// Override as necessary.
