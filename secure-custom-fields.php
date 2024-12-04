@@ -13,6 +13,8 @@
  * Domain Path:       /lang
  * Requires PHP:      7.4
  * Requires at least: 6.0
+ *
+ * @package wordpress/secure-custom-fields
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -165,7 +167,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Override the shortcode default value based on the version when installed.
 			$first_activated_version = acf_get_version_when_first_activated();
 
-			// Only enable shortcode by default for versions prior to 6.3
+			// Only enable shortcode by default for versions prior to 6.3.
 			if ( $first_activated_version && version_compare( $first_activated_version, '6.3', '>=' ) ) {
 				$this->settings['enable_shortcode'] = false;
 			}
@@ -640,7 +642,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function get_instance( $class ) {
+		public function get_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
 			$name = strtolower( $class );
 			return isset( $this->instances[ $name ] ) ? $this->instances[ $name ] : null;
 		}
@@ -654,7 +656,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function new_instance( $class ) {
+		public function new_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
 			$instance                 = new $class();
 			$name                     = strtolower( $class );
 			$this->instances[ $name ] = $instance;
@@ -741,25 +743,23 @@ if ( ! function_exists( 'scf_deactivate_other_instances' ) ) {
 	/**
 	 * Checks if another version of ACF/ACF PRO is active and deactivates it.
 	 * Hooked on `activated_plugin` so other plugin is deactivated when current plugin is activated.
-	 *
-	 * @param string $plugin The plugin being activated.
 	 */
-	function scf_deactivate_other_instances( $plugin ) {
+	function scf_deactivate_other_instances() {
 
 		$plugin_to_deactivate  = 'advanced-custom-fields/acf.php';
 		$deactivated_notice_id = '1';
 
-		// Check if the plugin to deactivate is installed
+		// Check if the plugin to deactivate is installed.
 		if ( is_plugin_active( 'advanced-custom-fields-pro/acf.php' ) ) {
 			$plugin_to_deactivate  = 'advanced-custom-fields-pro/acf.php';
 			$deactivated_notice_id = '2';
 		} elseif ( is_plugin_active( 'advanced-custom-fields/acf.php' ) ) {
-			// Check if the plugin to deactivate is 'advanced-custom-fields/acf.php' but the title is 'Secure Custom Fields'
+			// Check if the plugin to deactivate is 'advanced-custom-fields/acf.php' but the title is 'Secure Custom Fields'.
 			if ( ! function_exists( 'get_plugin_data' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_to_deactivate );
-			if ( $plugin_data['Name'] === 'Secure Custom Fields' ) {
+			if ( 'Secure Custom Fields' === $plugin_data['Name'] ) {
 				$deactivated_notice_id = '3';
 			}
 		}

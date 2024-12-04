@@ -15,7 +15,9 @@
     <!-- Display sniff code -->
     <arg value="s"/>
 
-	<rule ref="WordPress" phpcbf-only="true" />
+	<rule ref="WordPress">
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" /> <!-- 'acf/hookname' is used throughout. -->
+	</rule>
     <rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
