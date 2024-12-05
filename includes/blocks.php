@@ -1,8 +1,8 @@
 <?php
 /**
- * The ACF Blocks PHP code.
+ * The SCF Blocks PHP code.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 // Exit if accessed directly.
@@ -19,7 +19,7 @@ add_filter( 'block_type_metadata_settings', 'acf_handle_json_block_registration'
 add_action( 'acf_block_render_template', 'acf_block_render_template', 10, 6 );
 
 /**
- * Prefix block names for ACF blocks registered through block.json
+ * Prefix block names for SCF blocks registered through block.json
  *
  * @since 6.0.0
  *
@@ -37,7 +37,7 @@ function acf_add_block_namespace( $metadata ) {
 }
 
 /**
- * Handle an ACF block registered through block.json
+ * Handle an SCF block registered through block.json
  *
  * @since 6.0.0
  *
@@ -51,7 +51,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		return $settings;
 	}
 
-	// Setup ACF defaults.
+	// Setup SCF defaults.
 	$settings = wp_parse_args(
 		$settings,
 		array(
@@ -72,13 +72,13 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		)
 	);
 
-	// Add user provided attributes to ACF's required defaults.
+	// Add user provided attributes to SCF's required defaults.
 	$settings['attributes'] = wp_parse_args(
 		acf_get_block_type_default_attributes( $metadata ),
 		$settings['attributes']
 	);
 
-	// Add default ACF 'supports' settings.
+	// Add default SCF 'supports' settings.
 	$settings['supports'] = wp_parse_args(
 		$settings['supports'],
 		array(
@@ -90,7 +90,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		)
 	);
 
-	// Add default ACF 'uses_context' settings.
+	// Add default SCF 'uses_context' settings.
 	$settings['uses_context'] = array_values(
 		array_unique(
 			array_merge(
@@ -103,7 +103,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		)
 	);
 
-	// Map custom ACF properties from the ACF key, with localization.
+	// Map custom SCF properties from the SCF key, with localization.
 	$property_mappings = array(
 		'renderCallback' => 'render_callback',
 		'renderTemplate' => 'render_template',
@@ -147,7 +147,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 }
 
 /**
- * Check if a block.json block is an ACF block.
+ * Check if a block.json block is an SCF block.
  *
  * @since 6.0.0
  *

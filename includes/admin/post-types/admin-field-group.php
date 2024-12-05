@@ -161,6 +161,9 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 				)
 			);
 
+			wp_enqueue_script( 'acf-pro-field-group' );
+			wp_enqueue_style( 'acf-pro-field-group' );
+
 			do_action( 'acf/field_group/admin_enqueue_scripts' );
 		}
 

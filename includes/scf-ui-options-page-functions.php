@@ -1,12 +1,12 @@
 <?php
 /**
- * Helper/wrapper Functions for ACF UI Options pages.
+ * Helper/wrapper Functions for SCF UI Options pages.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**
- * Get an ACF UI options page as an array
+ * Get an SCF UI options page as an array
  *
  * @since 6.2
  *
@@ -18,7 +18,7 @@ function acf_get_ui_options_page( $id ) {
 }
 
 /**
- * Retrieves a raw ACF UI options page.
+ * Retrieves a raw SCF UI options page.
  *
  * @since   6.2
  *
@@ -30,7 +30,7 @@ function acf_get_raw_ui_options_page( $id ) {
 }
 
 /**
- * Gets a post object for an ACF UI options page.
+ * Gets a post object for an SCF UI options page.
  *
  * @since 6.2
  *
@@ -42,7 +42,7 @@ function acf_get_ui_options_page_post( $id ) {
 }
 
 /**
- * Returns true if the given identifier is an ACF UI options page key.
+ * Returns true if the given identifier is an SCF UI options page key.
  *
  * @since 6.2
  *
@@ -54,11 +54,11 @@ function acf_is_ui_options_page_key( $id ) {
 }
 
 /**
- * Validates an ACF UI options page.
+ * Validates an SCF UI options page.
  *
  * @since 6.2
  *
- * @param array $ui_options_page The ACF UI options page array to validate.
+ * @param array $ui_options_page The SCF UI options page array to validate.
  * @return array|boolean
  */
 function acf_validate_ui_options_page( array $ui_options_page = array() ) {
@@ -66,11 +66,11 @@ function acf_validate_ui_options_page( array $ui_options_page = array() ) {
 }
 
 /**
- * Translates the settings for an ACF UI options page.
+ * Translates the settings for an SCF UI options page.
  *
  * @since 6.2
  *
- * @param array $ui_options_page The ACF UI options page array.
+ * @param array $ui_options_page The SCF UI options page array.
  * @return array
  */
 function acf_translate_ui_options_page( array $ui_options_page ) {
@@ -78,7 +78,7 @@ function acf_translate_ui_options_page( array $ui_options_page ) {
 }
 
 /**
- * Returns and array of ACF UI options pages for the given $filter.
+ * Returns and array of SCF UI options pages for the given $filter.
  *
  * @since 6.2
  *
@@ -90,7 +90,7 @@ function acf_get_ui_options_pages( array $filter = array() ) {
 }
 
 /**
- * Returns an array of raw ACF UI options pages.
+ * Returns an array of raw SCF UI options pages.
  *
  * @since 6.2
  *
@@ -101,11 +101,11 @@ function acf_get_raw_ui_options_pages() {
 }
 
 /**
- * Returns a filtered array of ACF UI options pages based on the given $args.
+ * Returns a filtered array of SCF UI options pages based on the given $args.
  *
  * @since 6.2
  *
- * @param array $ui_options_pages An array of ACF UI options pages.
+ * @param array $ui_options_pages An array of SCF UI options pages.
  * @param array $args             An array of args to filter by.
  * @return array
  */
@@ -114,7 +114,7 @@ function acf_filter_ui_options_pages( array $ui_options_pages, array $args = arr
 }
 
 /**
- * Updates an ACF UI options page in the database.
+ * Updates an SCF UI options page in the database.
  *
  * @since 6.2
  *
@@ -130,7 +130,7 @@ function acf_update_ui_options_page( array $ui_options_page ) {
  *
  * @since 6.2
  *
- * @param array $ui_options_page The ACF UI options page array.
+ * @param array $ui_options_page The SCF UI options page array.
  * @return void
  */
 function acf_flush_ui_options_page_cache( array $ui_options_page ) {

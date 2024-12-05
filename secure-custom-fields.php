@@ -84,6 +84,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			$this->define( 'ACF_MAJOR_VERSION', 6 );
 			$this->define( 'ACF_FIELD_API_VERSION', 5 );
 			$this->define( 'ACF_UPGRADE_VERSION', '5.5.0' ); // Highest version with an upgrade routine. See upgrades.php.
+			$this->define( 'ACF_PRO', true );
 
 			// Register activation hook.
 			register_activation_hook( __FILE__, array( $this, 'acf_plugin_activated' ) );
@@ -129,6 +130,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'enable_shortcode'        => true,
 				'enable_bidirection'      => true,
 				'enable_block_bindings'   => true,
+                'pro' => true,
 			);
 
 			// Include utility functions.
@@ -142,6 +144,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Include classes.
 			acf_include( 'includes/class-acf-data.php' );
 			acf_include( 'includes/class-acf-internal-post-type.php' );
+			acf_include( 'includes/class-acf-options-page.php' );
 			acf_include( 'includes/class-acf-site-health.php' );
 			acf_include( 'includes/fields/class-acf-field.php' );
 			acf_include( 'includes/locations/abstract-acf-legacy-location.php' );
@@ -163,6 +166,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/acf-value-functions.php' );
 			acf_include( 'includes/acf-input-functions.php' );
 			acf_include( 'includes/acf-wp-functions.php' );
+			acf_include( 'includes/scf-ui-options-page-functions.php' );
 
 			// Override the shortcode default value based on the version when installed.
 			$first_activated_version = acf_get_version_when_first_activated();
@@ -188,6 +192,8 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/upgrades.php' );
 			acf_include( 'includes/validation.php' );
 			acf_include( 'includes/rest-api.php' );
+			acf_include( 'includes/blocks.php' );
+			acf_include( 'pro/options-page.php' );
 
 			// Include field group class.
 			acf_include( 'includes/post-types/class-acf-field-group.php' );
@@ -221,6 +227,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-options-page.php' );
 			}
 
 			// Include legacy.
@@ -276,6 +283,9 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/post-types/class-acf-post-type.php' );
 			}
 
+			if ( acf_get_setting( 'enable_options_pages_ui' ) ) {
+				acf_include( 'includes/post-types/class-acf-ui-options-page.php' );
+			}
 			// Add other ACF internal post types.
 			do_action( 'acf/init_internal_post_types' );
 
@@ -312,6 +322,11 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/fields/class-acf-field-accordion.php' );
 			acf_include( 'includes/fields/class-acf-field-tab.php' );
 			acf_include( 'includes/fields/class-acf-field-group.php' );
+			acf_include( 'includes/fields/class-acf-repeater-table.php' );
+			acf_include( 'includes/fields/class-acf-field-repeater.php' );
+			acf_include( 'includes/fields/class-acf-field-flexible-content.php' );
+			acf_include( 'includes/fields/class-acf-field-gallery.php' );
+			acf_include( 'includes/fields/class-acf-field-clone.php' );
 
 			/**
 			 * Fires after field types have been included.
@@ -345,6 +360,8 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/locations/class-acf-location-widget.php' );
 			acf_include( 'includes/locations/class-acf-location-nav-menu.php' );
 			acf_include( 'includes/locations/class-acf-location-nav-menu-item.php' );
+			acf_include( 'includes/locations/class-acf-location-block.php' );
+			acf_include( 'includes/locations/class-acf-location-options-page.php' );
 
 			/**
 			 * Fires after location types have been included.
@@ -383,6 +400,13 @@ if ( ! class_exists( 'ACF' ) ) {
 			 * @param int ACF_MAJOR_VERSION The major version of ACF.
 			 */
 			do_action( 'acf/include_taxonomies', ACF_MAJOR_VERSION );
+
+			/**
+			 * Fires during initialization. Used to add local option pages.
+			 *
+			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 */
+			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
 			// If we're on 6.5 or newer, load block bindings. This will move to an autoloader in 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
@@ -518,6 +542,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			$field_key     = $wp_query->get( 'acf_field_key' );
 			$field_name    = $wp_query->get( 'acf_field_name' );
 			$group_key     = $wp_query->get( 'acf_group_key' );
+			$options_page_key = $wp_query->get( 'acf_ui_options_page_key' );
 			$post_type_key = $wp_query->get( 'acf_post_type_key' );
 			$taxonomy_key  = $wp_query->get( 'acf_taxonomy_key' );
 
@@ -539,6 +564,11 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Add custom "acf_post_type_key" arg.
 			if ( $post_type_key ) {
 				$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_name = %s", $post_type_key );
+			}
+
+			// Add custom "acf_options_page_key" arg.
+			if ( $options_page_key ) {
+				$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_name = %s", $options_page_key );
 			}
 
 			// Add custom "acf_taxonomy_key" arg.
