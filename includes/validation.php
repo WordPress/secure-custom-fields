@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed, PEAR.NamingConventions.ValidClassName
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'acf_validation' ) ) :
 	#[AllowDynamicProperties]
+	/**
+	 * Validation Class
+	 */
 	class acf_validation {
-
-
-
 		/**
 		 * This function will setup the class functionality
 		 *
@@ -17,10 +17,9 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function __construct() {
+		public function __construct() {
 
 			// vars
 			$this->errors = array();
@@ -39,11 +38,10 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    25/11/2013
 		 * @since   5.0.0
 		 *
-		 * @param   $input (string) name attribute of DOM elmenet
-		 * @param   $message (string) error message
-		 * @return  $post_id (int)
+		 * @param   string $input name attribute of DOM elmenet.
+		 * @param   string $message error message.
 		 */
-		function add_error( $input, $message ) {
+		public function add_error( $input, $message ) {
 
 			// add to array
 			$this->errors[] = array(
@@ -60,10 +58,10 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    5/03/2016
 		 * @since   5.3.2
 		 *
-		 * @param   $input (string) name attribute of DOM elmenet
-		 * @return  (mixed)
+		 * @param   string $input name attribute of DOM elmenet.
+		 * @return  array|bool
 		 */
-		function get_error( $input ) {
+		public function get_error( $input ) {
 
 			// bail early if no errors
 			if ( empty( $this->errors ) ) {
@@ -89,10 +87,9 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    25/11/2013
 		 * @since   5.0.0
 		 *
-		 * @param   n/a
-		 * @return  (array|boolean)
+		 * @return  array|bool
 		 */
-		function get_errors() {
+		public function get_errors() {
 
 			// bail early if no errors
 			if ( empty( $this->errors ) ) {
@@ -111,10 +108,9 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    4/03/2016
 		 * @since   5.3.2
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function reset_errors() {
+		public function reset_errors() {
 
 			$this->errors = array();
 		}
@@ -176,7 +172,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 					return;
 				}
 
-				acf_validate_values( $_POST['acf'], 'acf' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				acf_validate_values( wp_unslash( $_POST['acf'] ), 'acf' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
@@ -188,35 +184,68 @@ endif; // class_exists check
 
 
 /**
- * Public functions
+ * Add validation error.
  *
- * alias of acf()->validation->function()
+ * Alias of acf()->validation->add_error()
  *
  * @type    function
  * @date    6/10/13
  * @since   5.0.0
  *
- * @param   n/a
- * @return  n/a
+ * @param   string $input name attribute of DOM elmenet.
+ * @param   string $message error message.
+ * @return  void
  */
 function acf_add_validation_error( $input, $message = '' ) {
-
-	return acf()->validation->add_error( $input, $message );
+	acf()->validation->add_error( $input, $message );
 }
 
+/**
+ * Retrieve validation errors.
+ *
+ * Alias of acf()->validation->function()
+ *
+ * @type    function
+ * @date    6/10/13
+ * @since   5.0.0
+ *
+ * @return  array|bool
+ */
 function acf_get_validation_errors() {
-
 	return acf()->validation->get_errors();
 }
 
-function acf_get_validation_error() {
-
+/**
+ * Get the validation error.
+ *
+ * Alias of acf()->validation->get_error()
+ *
+ * @type    function
+ * @date    6/10/13
+ * @since   5.0.0
+ * @since 6.4.1 Added the $input parameter, which is required in the get_error method.
+ *
+ * @param   string $input name attribute of DOM elmenet.
+ *
+ * @return  string|bool
+ */
+function acf_get_validation_error( $input ) {
 	return acf()->validation->get_error( $input );
 }
 
+/**
+ * Reset Validation errors.
+ *
+ * Alias of acf()->validation->reset_errors()
+ *
+ * @type    function
+ * @date    6/10/13
+ * @since   5.0.0
+ *
+ * @return  void
+ */
 function acf_reset_validation_errors() {
-
-	return acf()->validation->reset_errors();
+	acf()->validation->reset_errors();
 }
 
 
@@ -227,8 +256,8 @@ function acf_reset_validation_errors() {
  * @date    25/11/2013
  * @since   5.0.0
  *
- * @param   $show_errors (boolean) if true, errors will be shown via a wp_die screen
- * @return  (boolean)
+ * @param   bool $show_errors if true, errors will be shown via a wp_die screen.
+ * @return  bool
  */
 function acf_validate_save_post( $show_errors = false ) {
 
@@ -268,9 +297,10 @@ function acf_validate_save_post( $show_errors = false ) {
  * @date    6/10/13
  * @since   5.0.0
  *
- * @param   values (array)
- * @param   $input_prefix (string)
- * @return  n/a
+ * @param   array  $values An array of field values.
+ * @param   string $input_prefix The input element's name attribute.
+ *
+ * @return  void
  */
 function acf_validate_values( $values, $input_prefix = '' ) {
 
@@ -304,8 +334,11 @@ function acf_validate_values( $values, $input_prefix = '' ) {
  * @date    6/10/13
  * @since   5.0.0
  *
- * @param   n/a
- * @return  n/a
+ * @param   mixed  $value The field value to validate.
+ * @param   array  $field The field array.
+ * @param   string $input The input element's name attribute.
+ *
+ * @return  boolean
  */
 function acf_validate_value( $value, $field, $input ) {
 

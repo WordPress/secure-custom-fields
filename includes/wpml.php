@@ -1,4 +1,9 @@
 <?php
+/**
+ * ACF WPML Compatibility
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,11 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 
+	/**
+	 * ACF WPML Compatibility
+	 *
+	 * This class is used to add compatibility with WPML.
+	 *
+	 * @date    06/23/2012
+	 * @since   3.1.8
+	 */
 	class ACF_WPML_Compatibility {
 
 		/**
-		 * __construct
-		 *
 		 * Sets up the class functionality.
 		 *
 		 * @date    23/06/12
@@ -18,7 +29,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 *
 		 * @return  void
 		 */
-		function __construct() {
+		public function __construct() {
 
 			// global
 			global $sitepress;
@@ -54,8 +65,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		}
 
 		/**
-		 * is_translatable
-		 *
 		 * Returns true if the acf-field-group post type is translatable.
 		 * Also adds compatibility with ACF4 settings
 		 *
@@ -64,7 +73,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 *
 		 * @return  boolean
 		 */
-		function is_translatable() {
+		public function is_translatable() {
 
 			// global
 			global $sitepress;
@@ -100,8 +109,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		}
 
 		/**
-		 * upgrade_500_field_group
-		 *
 		 * Update the icl_translations table data when creating the field groups.
 		 *
 		 * @date    10/04/2015
@@ -111,7 +118,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @param   object $ofg         The old field group WP_Post object.
 		 * @return  void
 		 */
-		function upgrade_500_field_group( $field_group, $ofg ) {
+		public function upgrade_500_field_group( $field_group, $ofg ) {
 
 			// global
 			global $wpdb;
@@ -179,8 +186,6 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		}
 
 		/**
-		 * settings_save_json
-		 *
 		 * Modifies the json path.
 		 *
 		 * @date    19/05/2014
@@ -189,7 +194,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @param   string $path The json save path.
 		 * @return  string
 		 */
-		function settings_save_json( $path ) {
+		public function settings_save_json( $path ) {
 
 			// bail early if dir does not exist
 			if ( ! wp_is_writable( $path ) ) {
@@ -209,20 +214,18 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		}
 
 		/**
-		 * settings_load_json
-		 *
 		 * Modifies the json path.
 		 *
 		 * @date    19/05/2014
 		 * @since   5.0.0
 		 *
-		 * @param   string $path The json save path.
+		 * @param   array $paths The json save path.
 		 * @return  string
 		 */
-		function settings_load_json( $paths ) {
+		public function settings_load_json( $paths ) {
 
 			// loop
-			if ( $paths ) {
+			if ( $paths && is_array( $paths ) ) {
 				foreach ( $paths as $i => $path ) {
 					$paths[ $i ] = untrailingslashit( $path ) . '/' . acf_get_setting( 'current_language' );
 				}
@@ -233,19 +236,22 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		}
 
 		/**
-		 * icl_make_duplicate
-		 *
-		 * description
+		 * Duplicate the icl_translations row when duplicating a field group.
 		 *
 		 * @date    26/02/2014
 		 * @since   5.0.0
 		 *
+		 * @param   int    $master_post_id The original post ID.
+		 * @param   string $lang           The language code.
+		 * @param   array  $postarr        The post data.
+		 * @param   int    $id             The new post ID.
+		 *
 		 * @return  void
 		 */
-		function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ) {
+		public function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ) {
 
 			// bail early if not acf-field-group
-			if ( $postarr['post_type'] != 'acf-field-group' ) {
+			if ( 'acf-field-group' !== $postarr['post_type'] ) {
 				return;
 			}
 
@@ -258,14 +264,14 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 			// always translate independately to avoid many many bugs!
 			// - translation post gets a new key (post_name) when origional post is saved
 			// - local json creates new files due to changed key
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase -- Variable name is from WPML.
 			global $iclTranslationManagement;
 			$iclTranslationManagement->reset_duplicate_flag( $id );
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		}
 
 
 		/**
-		 * verify_ajax
-		 *
 		 * Sets the correct language during AJAX requests.
 		 *
 		 * @type    function
@@ -274,21 +280,19 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 *
 		 * @return  void
 		 */
-		function verify_ajax() {
+		public function verify_ajax() {
 
 			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Verified elsewhere.
 			// set the language for this AJAX request
 			// this will allow get_posts to work as expected (load posts from the correct language)
 			if ( isset( $_REQUEST['lang'] ) ) {
 				global $sitepress;
-				$sitepress->switch_lang( sanitize_text_field( $_REQUEST['lang'] ) );
+				$sitepress->switch_lang( sanitize_text_field( wp_unslash( $_REQUEST['lang'] ) ) );
 			}
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		/**
-		 * get_translatable_documents
-		 *
 		 * Removes 'acf-field' from the available post types for translation.
 		 *
 		 * @type    function
@@ -298,7 +302,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * @param   array $icl_post_types The array of post types.
 		 * @return  array
 		 */
-		function get_translatable_documents( $icl_post_types ) {
+		public function get_translatable_documents( $icl_post_types ) {
 
 			// unset
 			unset( $icl_post_types['acf-field'] );
