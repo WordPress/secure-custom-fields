@@ -13,7 +13,6 @@ if ( ! class_exists( 'ACF_Legacy_Location' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		public function __construct() {

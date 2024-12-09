@@ -42,7 +42,6 @@ function acf_get_form_data( $name = '' ) {
  * @date    15/10/13
  * @since   5.0.0
  *
- * @param   void
  * @return  void
  */
 function acf_form_data( $data = array() ) {

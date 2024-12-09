@@ -16,7 +16,6 @@ if ( ! class_exists( 'ACF_Location_User_Role' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function initialize() {

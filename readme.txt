@@ -1,4 +1,4 @@
-=== Secure Custom Fields ===
+=== Secure Custom Fields (Preview) ===
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0

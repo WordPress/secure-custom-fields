@@ -19,7 +19,6 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function __construct() {
@@ -42,7 +41,6 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * @date    19/9/18
 		 * @since   5.7.6
 		 *
-		 * @param   void
 		 * @return  void
 		 */
 		function initialize() {

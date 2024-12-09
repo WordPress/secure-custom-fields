@@ -64,7 +64,6 @@ function acf_register_location_type( $class_name ) {
  * @date    8/4/20
  * @since   5.9.0
  *
- * @param   void
  * @return  array
  */
 function acf_get_location_types() {
@@ -90,7 +89,6 @@ function acf_get_location_type( $name ) {
  * @date    8/4/20
  * @since   5.9.0
  *
- * @param   void
  * @return  array
  */
 function acf_get_location_rule_types() {

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ACF Internal Post Type List class
  *
@@ -16,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
+	/**
+	 * Internal Post Type List class.
+	 *
+	 * Adds logic to the edit page for internal post types.
+	 */
 	class ACF_Admin_Internal_Post_Type_List {
 
 
@@ -150,12 +154,12 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			add_filter( "bulk_actions-edit-{$this->post_type}", array( $this, 'admin_table_bulk_actions' ), 10, 1 );
 			add_action( 'admin_footer', array( $this, 'admin_footer' ), 1 );
 
-			if ( $this->view !== 'trash' ) {
+			if ( 'trash' !== $this->view ) {
 				add_filter( 'page_row_actions', array( $this, 'page_row_actions' ), 10, 2 );
 			}
 
 			// Add hooks for "sync" view.
-			if ( $this->view === 'sync' ) {
+			if ( 'sync' === $this->view ) {
 				add_action( 'admin_footer', array( $this, 'admin_footer__sync' ), 1 );
 			}
 
@@ -185,7 +189,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 						continue;
 
 						// Ignore not local "json".
-					} elseif ( $local !== 'json' ) {
+					} elseif ( 'json' === $local ) {
 						continue;
 
 						// Append to sync if not yet in database.
@@ -271,7 +275,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		 * @return array
 		 */
 		public function display_post_states( $post_states, $post ) {
-			if ( $post->post_status === 'acf-disabled' ) {
+			if ( 'acf-disabled' === $post->post_status ) {
 				$post_states['acf-disabled'] = $this->get_disabled_post_state();
 			}
 
@@ -483,7 +487,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			}
 
 			if ( $this->sync ) {
-				if ( $this->view === 'sync' ) {
+				if ( 'sync' === $this->view ) {
 					$actions = array();
 				}
 				$actions['acfsync'] = __( 'Sync changes', 'secure-custom-fields' );
@@ -501,7 +505,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		 * @param integer $count  The number of items the action was performed on.
 		 * @return string
 		 */
-		public function get_action_notice_text( $action, $count = 1 ) {
+		public function get_action_notice_text( $action, $count = 1 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Keep it for awareness when extending.
 			return '';
 		}
 
@@ -773,19 +777,12 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 				$synced = array();
 
 				foreach ( $this->sync as $key => $post ) {
-					if ( $post['key'] && in_array( $post['key'], $keys ) ) {
-						// Import.
-					} elseif ( $post['ID'] && in_array( $post['ID'], $keys ) ) {
-						// Import.
-					} else {
-						// Ignore.
-						continue;
+					if ( ( $post['key'] && in_array( $post['key'], $keys, true ) ) || ( $post['ID'] && in_array( $post['ID'], $keys, true ) ) ) {
+						$local_post       = json_decode( file_get_contents( $files[ $key ] ), true );
+						$local_post['ID'] = $post['ID'];
+						$result           = acf_import_internal_post_type( $local_post, $this->post_type );
+						$synced[]         = $result['ID'];
 					}
-
-					$local_post       = json_decode( file_get_contents( $files[ $key ] ), true );
-					$local_post['ID'] = $post['ID'];
-					$result           = acf_import_internal_post_type( $local_post, $this->post_type );
-					$synced[]         = $result['ID'];
 				}
 
 				// Redirect.
@@ -813,7 +810,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			if ( $count ) {
 				$views['sync'] = sprintf(
 					'<a %s href="%s">%s <span class="count">(%s)</span></a>',
-					( $this->view === 'sync' ? 'class="current"' : '' ),
+					( 'sync' === $this->view ? 'class="current"' : '' ),
 					esc_url( $this->get_admin_url( '&post_status=sync' ) ),
 					esc_html( __( 'Sync available', 'secure-custom-fields' ) ),
 					$count
@@ -821,7 +818,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			}
 
 			// Modify table pagination args to match JSON data.
-			if ( $this->view === 'sync' ) {
+			if ( 'sync' === $this->view ) {
 				$wp_list_table->set_pagination_args(
 					array(
 						'total_items' => $count,
@@ -903,11 +900,11 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 							echo '<tr>';
 							foreach ( $columns as $column_name => $column_label ) {
 								$el = 'td';
-								if ( $column_name === 'cb' ) {
+								if ( 'cb' === $column_name ) {
 									$el           = 'th';
 									$classes      = 'check-column';
 									$column_label = '';
-								} elseif ( $column_name === 'title' ) {
+								} elseif ( 'title' === $column_name ) {
 									$classes = "$column_name column-$column_name column-primary";
 								} else {
 									$classes = "$column_name column-$column_name";

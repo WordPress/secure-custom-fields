@@ -3,9 +3,11 @@
  * This file is for the converting of sites from acf.php to secure-custom-fields.php as the main plugin file.
  *
  * Under this slug, acf.php would have been the main plugin file in < 6.4.0-beta4.
+ *
+ * @package wordpress/secure-custom-fields
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
