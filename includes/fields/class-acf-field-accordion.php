@@ -21,9 +21,9 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 
 			// vars
 			$this->name          = 'accordion';
-			$this->label         = __( 'Accordion', 'acf' );
+			$this->label         = __( 'Accordion', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Allows you to group and organize custom fields into collapsable panels that are shown while editing content. Useful for keeping large datasets tidy.', 'acf' );
+			$this->description   = __( 'Allows you to group and organize custom fields into collapsable panels that are shown while editing content. Useful for keeping large datasets tidy.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-accordion.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/accordion/';
 			$this->supports      = array(
@@ -80,8 +80,8 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Open', 'acf' ),
-					'instructions' => __( 'Display this accordion as open on page load.', 'acf' ),
+					'label'        => __( 'Open', 'secure-custom-fields' ),
+					'instructions' => __( 'Display this accordion as open on page load.', 'secure-custom-fields' ),
 					'name'         => 'open',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -91,8 +91,8 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Multi-Expand', 'acf' ),
-					'instructions' => __( 'Allow this accordion to open without closing others.', 'acf' ),
+					'label'        => __( 'Multi-Expand', 'secure-custom-fields' ),
+					'instructions' => __( 'Allow this accordion to open without closing others.', 'secure-custom-fields' ),
 					'name'         => 'multi_expand',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -102,8 +102,8 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Endpoint', 'acf' ),
-					'instructions' => __( 'Define an endpoint for the previous accordion to stop. This accordion will not be visible.', 'acf' ),
+					'label'        => __( 'Endpoint', 'secure-custom-fields' ),
+					'instructions' => __( 'Define an endpoint for the previous accordion to stop. This accordion will not be visible.', 'secure-custom-fields' ),
 					'name'         => 'endpoint',
 					'type'         => 'true_false',
 					'ui'           => 1,

@@ -20,16 +20,16 @@
 </style>
 <div id="acf-upgrade-wrap" class="wrap">
 	
-	<h1><?php esc_html_e( 'Upgrade Database', 'acf' ); ?></h1>
+	<h1><?php esc_html_e( 'Upgrade Database', 'secure-custom-fields' ); ?></h1>
 	
 <?php if ( acf_has_upgrade() ) : ?>
 
-	<p><?php esc_html_e( 'Reading upgrade tasks...', 'acf' ); ?></p>
+	<p><?php esc_html_e( 'Reading upgrade tasks...', 'secure-custom-fields' ); ?></p>
 	<?php /* translators: %s the new ACF version */ ?>
-	<p class="step-1"><i class="acf-loading"></i> <?php echo esc_html( sprintf( __( 'Upgrading data to version %s', 'acf' ), ACF_VERSION ) ); ?></p>
+	<p class="step-1"><i class="acf-loading"></i> <?php echo esc_html( sprintf( __( 'Upgrading data to version %s', 'secure-custom-fields' ), ACF_VERSION ) ); ?></p>
 	<p class="step-2"></p>
 	<?php /* translators: %s the url to the field group page. */ ?>
-	<p class="step-3"><?php echo acf_esc_html( sprintf( __( 'Database upgrade complete. <a href="%s">See what\'s new</a>', 'acf' ), esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ) ) ); ?></p>
+	<p class="step-3"><?php echo acf_esc_html( sprintf( __( 'Database upgrade complete. <a href="%s">See what\'s new</a>', 'secure-custom-fields' ), esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ) ) ); ?></p>
 	
 	<script type="text/javascript">
 	(function($) {
@@ -61,7 +61,7 @@
 						success = true;
 					},
 					error: function( jqXHR, textStatus, errorThrown ){
-						response = '<?php esc_attr_e( 'Upgrade failed.', 'acf' ); ?>';
+						response = '<?php esc_attr_e( 'Upgrade failed.', 'secure-custom-fields' ); ?>';
 						if( error = acf.getXhrError(jqXHR) ) {
 							response += ' <code>' + error +  '</code>';
 						}
@@ -90,7 +90,7 @@
 
 <?php else : ?>
 
-	<p><?php esc_html_e( 'No updates available.', 'acf' ); ?></p>
+	<p><?php esc_html_e( 'No updates available.', 'secure-custom-fields' ); ?></p>
 	
 <?php endif; ?>
 </div>

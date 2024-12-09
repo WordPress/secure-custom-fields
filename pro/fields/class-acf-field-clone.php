@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 	class acf_field_clone extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,9 +20,9 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 
 			// vars
 			$this->name          = 'clone';
-			$this->label         = _x( 'Clone', 'noun', 'acf' );
+			$this->label         = _x( 'Clone', 'noun', 'secure-custom-fields' );
 			$this->category      = 'layout';
-			$this->description   = __( 'Allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'acf' );
+			$this->description   = __( 'Allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-clone.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/clone/';
 			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/how-to-use-the-clone-field/';
@@ -654,50 +655,50 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		function render_field_table( $field ) {
 
 			?>
-<table class="acf-table">
-	<thead>
-		<tr>
-			<?php
-			foreach ( $field['sub_fields'] as $sub_field ) :
+			<table class="acf-table">
+				<thead>
+					<tr>
+						<?php
+						foreach ( $field['sub_fields'] as $sub_field ) :
 
-				// Prepare field (allow sub fields to be removed).
-				$sub_field = acf_prepare_field( $sub_field );
-				if ( ! $sub_field ) {
-					continue;
-				}
+							// Prepare field (allow sub fields to be removed).
+							$sub_field = acf_prepare_field( $sub_field );
+							if ( ! $sub_field ) {
+								continue;
+							}
 
-				// Define attrs.
-				$attrs              = array();
-				$attrs['class']     = 'acf-th';
-				$attrs['data-name'] = $sub_field['_name'];
-				$attrs['data-type'] = $sub_field['type'];
-				$attrs['data-key']  = $sub_field['key'];
+							// Define attrs.
+							$attrs              = array();
+							$attrs['class']     = 'acf-th';
+							$attrs['data-name'] = $sub_field['_name'];
+							$attrs['data-type'] = $sub_field['type'];
+							$attrs['data-key']  = $sub_field['key'];
 
-				if ( $sub_field['wrapper']['width'] ) {
-					$attrs['data-width'] = $sub_field['wrapper']['width'];
-					$attrs['style']      = 'width: ' . $sub_field['wrapper']['width'] . '%;';
-				}
+							if ( $sub_field['wrapper']['width'] ) {
+								$attrs['data-width'] = $sub_field['wrapper']['width'];
+								$attrs['style']      = 'width: ' . $sub_field['wrapper']['width'] . '%;';
+							}
 
-				?>
-			<th <?php echo acf_esc_attrs( $attrs ); ?>>
-				<?php acf_render_field_label( $sub_field ); ?>
-				<?php acf_render_field_instructions( $sub_field ); ?>
-			</th>
-			<?php endforeach; ?>
-		</tr>
-	</thead>
-	<tbody>
-		<tr class="acf-row">
-			<?php
+							?>
+							<th <?php echo acf_esc_attrs( $attrs ); ?>>
+								<?php acf_render_field_label( $sub_field ); ?>
+								<?php acf_render_field_instructions( $sub_field ); ?>
+							</th>
+						<?php endforeach; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="acf-row">
+						<?php
 
-			foreach ( $field['sub_fields'] as $sub_field ) {
-				acf_render_field_wrap( $sub_field, 'td' );
-			}
+						foreach ( $field['sub_fields'] as $sub_field ) {
+							acf_render_field_wrap( $sub_field, 'td' );
+						}
 
-			?>
-		</tr>
-	</tbody>
-</table>
+						?>
+					</tr>
+				</tbody>
+			</table>
 			<?php
 		}
 
@@ -721,8 +722,8 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Fields', 'acf' ),
-					'instructions' => __( 'Select one or more fields you wish to clone', 'acf' ),
+					'label'        => __( 'Fields', 'secure-custom-fields' ),
+					'instructions' => __( 'Select one or more fields you wish to clone', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'clone',
 					'multiple'     => 1,
@@ -742,14 +743,14 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Display', 'acf' ),
-					'instructions' => __( 'Specify the style used to render the clone field', 'acf' ),
+					'label'        => __( 'Display', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the style used to render the clone field', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'display',
 					'class'        => 'setting-display',
 					'choices'      => array(
-						'group'    => __( 'Group (displays selected fields in a group within this field)', 'acf' ),
-						'seamless' => __( 'Seamless (replaces this field with selected fields)', 'acf' ),
+						'group'    => __( 'Group (displays selected fields in a group within this field)', 'secure-custom-fields' ),
+						'seamless' => __( 'Seamless (replaces this field with selected fields)', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -758,26 +759,27 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Layout', 'acf' ),
-					'instructions' => __( 'Specify the style used to render the selected fields', 'acf' ),
+					'label'        => __( 'Layout', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the style used to render the selected fields', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'layout',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'block' => __( 'Block', 'acf' ),
-						'table' => __( 'Table', 'acf' ),
-						'row'   => __( 'Row', 'acf' ),
+						'block' => __( 'Block', 'secure-custom-fields' ),
+						'table' => __( 'Table', 'secure-custom-fields' ),
+						'row'   => __( 'Row', 'secure-custom-fields' ),
 					),
 				)
 			);
 
 			// prefix_label
-			$instructions = __( 'Labels will be displayed as %s', 'acf' );
+			/* translators: %s: field label */
+			$instructions = __( 'Labels will be displayed as %s', 'secure-custom-fields' );
 			$instructions = sprintf( $instructions, '<code class="prefix-label-code-1"></code>' );
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prefix Field Labels', 'acf' ),
+					'label'        => __( 'Prefix Field Labels', 'secure-custom-fields' ),
 					'instructions' => $instructions,
 					'name'         => 'prefix_label',
 					'class'        => 'setting-prefix-label',
@@ -787,12 +789,13 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			);
 
 			// prefix_name
-			$instructions = __( 'Values will be saved as %s', 'acf' );
+			/* translators: %s: field name */
+			$instructions = __( 'Values will be saved as %s', 'secure-custom-fields' );
 			$instructions = sprintf( $instructions, '<code class="prefix-name-code-1"></code>' );
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prefix Field Names', 'acf' ),
+					'label'        => __( 'Prefix Field Names', 'secure-custom-fields' ),
 					'instructions' => $instructions,
 					'name'         => 'prefix_name',
 					'class'        => 'setting-prefix-name',
@@ -889,11 +892,11 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 
 			// bail early if no field
 			if ( ! $field ) {
-				return __( 'Unknown field', 'acf' );
+				return __( 'Unknown field', 'secure-custom-fields' );
 			}
 
 			// title
-			$title = $field['label'] ? $field['label'] : __( '(no title)', 'acf' );
+			$title = $field['label'] ? $field['label'] : __( '(no title)', 'secure-custom-fields' );
 
 			// append type
 			$title .= ' (' . $field['type'] . ')';
@@ -922,11 +925,12 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 
 			// bail early if no field group
 			if ( ! $field_group ) {
-				return __( 'Unknown field group', 'acf' );
+				return __( 'Unknown field group', 'secure-custom-fields' );
 			}
 
 			// return
-			return sprintf( __( 'All fields from %s field group', 'acf' ), $field_group['title'] );
+			/* translators: %s: field group title */
+			return sprintf( __( 'All fields from %s field group', 'secure-custom-fields' ), $field_group['title'] );
 		}
 
 
@@ -1043,7 +1047,8 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 				$children   = array();
 				$children[] = $field_group['key'];
 				foreach ( $fields as $field ) {
-					$children[] = $field['key']; }
+					$children[] = $field['key'];
+				}
 
 				// loop
 				foreach ( $children as $child ) {

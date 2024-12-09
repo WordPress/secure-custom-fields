@@ -32,7 +32,7 @@ class Bindings {
 			register_block_bindings_source(
 				'acf/field',
 				array(
-					'label'              => _x( 'ACF Fields', 'The core ACF block binding source name for fields on the current page', 'acf' ),
+					'label'              => _x( 'ACF Fields', 'The core ACF block binding source name for fields on the current page', 'secure-custom-fields' ),
 					'get_value_callback' => array( $this, 'get_value' ),
 				)
 			);
@@ -61,7 +61,7 @@ class Bindings {
 
 			if ( ! acf_field_type_supports( $field['type'], 'bindings', true ) ) {
 				if ( is_preview() ) {
-					return apply_filters( 'acf/bindings/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in Block Bindings or the ACF shortcode.', 'acf' ) . ']' );
+					return apply_filters( 'acf/bindings/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in Block Bindings or the ACF shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
 				}
@@ -69,7 +69,7 @@ class Bindings {
 
 			if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
 				if ( is_preview() ) {
-					return apply_filters( 'acf/bindings/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'acf' ) . ']' );
+					return apply_filters( 'acf/bindings/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
 				}

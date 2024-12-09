@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Nav_Menu' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'nav_menu';
-			$this->label       = __( 'Menu', 'acf' );
+			$this->label       = __( 'Menu', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'menu';
 		}
@@ -71,13 +71,13 @@ if ( ! class_exists( 'ACF_Location_Nav_Menu' ) ) :
 		 */
 		public function get_values( $rule ) {
 			$choices = array(
-				'all' => __( 'All', 'acf' ),
+				'all' => __( 'All', 'secure-custom-fields' ),
 			);
 
 			// Append locations.
 			$nav_locations = get_registered_nav_menus();
 			if ( $nav_locations ) {
-				$cat = __( 'Menu Locations', 'acf' );
+				$cat = __( 'Menu Locations', 'secure-custom-fields' );
 				foreach ( $nav_locations as $slug => $title ) {
 					$choices[ $cat ][ "location/$slug" ] = $title;
 				}
@@ -86,7 +86,7 @@ if ( ! class_exists( 'ACF_Location_Nav_Menu' ) ) :
 			// Append menu IDs.
 			$nav_menus = wp_get_nav_menus();
 			if ( $nav_menus ) {
-				$cat = __( 'Menus', 'acf' );
+				$cat = __( 'Menus', 'secure-custom-fields' );
 				foreach ( $nav_menus as $nav_menu ) {
 					$choices[ $cat ][ $nav_menu->term_id ] = $nav_menu->name;
 				}

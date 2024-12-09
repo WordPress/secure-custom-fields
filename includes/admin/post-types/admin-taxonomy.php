@@ -45,15 +45,15 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 			$messages['acf-taxonomy'] = array(
 				0  => '', // Unused. Messages start at index 1.
 				1  => $this->taxonomy_saved_message(),
-				2  => __( 'Taxonomy updated.', 'acf' ),
-				3  => __( 'Taxonomy deleted.', 'acf' ),
+				2  => __( 'Taxonomy updated.', 'secure-custom-fields' ),
+				3  => __( 'Taxonomy deleted.', 'secure-custom-fields' ),
 				4  => $this->taxonomy_saved_message(),
 				5  => false, // taxonomy does not support revisions.
 				6  => $this->taxonomy_saved_message( true ),
-				7  => __( 'Taxonomy saved.', 'acf' ),
-				8  => __( 'Taxonomy submitted.', 'acf' ),
-				9  => __( 'Taxonomy scheduled for.', 'acf' ),
-				10 => __( 'Taxonomy draft updated.', 'acf' ),
+				7  => __( 'Taxonomy saved.', 'secure-custom-fields' ),
+				8  => __( 'Taxonomy submitted.', 'secure-custom-fields' ),
+				9  => __( 'Taxonomy scheduled for.', 'secure-custom-fields' ),
+				10 => __( 'Taxonomy draft updated.', 'secure-custom-fields' ),
 			);
 
 			return $messages;
@@ -73,13 +73,13 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 			$title = get_the_title( $post_id );
 
 			/* translators: %s taxonomy name */
-			$item_saved_text = sprintf( __( '%s taxonomy updated', 'acf' ), $title );
+			$item_saved_text = sprintf( __( '%s taxonomy updated', 'secure-custom-fields' ), $title );
 			/* translators: %s taxonomy name */
-			$add_fields_text = sprintf( __( 'Add fields to %s', 'acf' ), $title );
+			$add_fields_text = sprintf( __( 'Add fields to %s', 'secure-custom-fields' ), $title );
 
 			if ( $created ) {
 				/* translators: %s taxonomy name */
-				$item_saved_text = sprintf( __( '%s taxonomy created', 'acf' ), $title );
+				$item_saved_text = sprintf( __( '%s taxonomy created', 'secure-custom-fields' ), $title );
 			}
 
 			$add_fields_link = wp_nonce_url(
@@ -101,11 +101,11 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 			ob_start(); ?>
 			<p class="acf-item-saved-text"><?php echo esc_html( $item_saved_text ); ?></p>
 			<div class="acf-item-saved-links">
-				<a href="<?php echo esc_url( $add_fields_link ); ?>"><?php esc_html_e( 'Add fields', 'acf' ); ?></a>
-				<a class="acf-link-field-groups" href="#"><?php esc_html_e( 'Link field groups', 'acf' ); ?></a>
-				<a href="<?php echo esc_url( $create_taxonomy_link ); ?>"><?php esc_html_e( 'Create taxonomy', 'acf' ); ?></a>
-				<a href="<?php echo esc_url( $duplicate_taxonomy_link ); ?>"><?php esc_html_e( 'Duplicate taxonomy', 'acf' ); ?></a>
-				<a href="<?php echo esc_url( $create_post_type_link ); ?>"><?php esc_html_e( 'Create post type', 'acf' ); ?></a>
+				<a href="<?php echo esc_url( $add_fields_link ); ?>"><?php esc_html_e( 'Add fields', 'secure-custom-fields' ); ?></a>
+				<a class="acf-link-field-groups" href="#"><?php esc_html_e( 'Link field groups', 'secure-custom-fields' ); ?></a>
+				<a href="<?php echo esc_url( $create_taxonomy_link ); ?>"><?php esc_html_e( 'Create taxonomy', 'secure-custom-fields' ); ?></a>
+				<a href="<?php echo esc_url( $duplicate_taxonomy_link ); ?>"><?php esc_html_e( 'Duplicate taxonomy', 'secure-custom-fields' ); ?></a>
+				<a href="<?php echo esc_url( $create_post_type_link ); ?>"><?php esc_html_e( 'Create post type', 'secure-custom-fields' ); ?></a>
 			</div>
 			<?php
 			return ob_get_clean();
@@ -122,11 +122,11 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 
 			acf_localize_text(
 				array(
-					'Tag'        => __( 'Tag', 'acf' ),
-					'Tags'       => __( 'Tags', 'acf' ),
-					'Category'   => __( 'Category', 'acf' ),
-					'Categories' => __( 'Categories', 'acf' ),
-					'Default'    => __( 'Default', 'acf' ),
+					'Tag'        => __( 'Tag', 'secure-custom-fields' ),
+					'Tags'       => __( 'Tags', 'secure-custom-fields' ),
+					'Category'   => __( 'Category', 'secure-custom-fields' ),
+					'Categories' => __( 'Categories', 'secure-custom-fields' ),
+					'Default'    => __( 'Default', 'secure-custom-fields' ),
 				)
 			);
 
@@ -150,14 +150,14 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 
 			if ( ! empty( $acf_taxonomy['not_registered'] ) ) {
 				acf_add_admin_notice(
-					__( 'This taxonomy could not be registered because its key is in use by another taxonomy registered by another plugin or theme.', 'acf' ),
+					__( 'This taxonomy could not be registered because its key is in use by another taxonomy registered by another plugin or theme.', 'secure-custom-fields' ),
 					'error'
 				);
 			}
 
 			// metaboxes.
-			add_meta_box( 'acf-basic-settings', __( 'Basic Settings', 'acf' ), array( $this, 'mb_basic_settings' ), 'acf-taxonomy', 'normal', 'high' );
-			add_meta_box( 'acf-advanced-settings', __( 'Advanced Settings', 'acf' ), array( $this, 'mb_advanced_settings' ), 'acf-taxonomy', 'normal', 'high' );
+			add_meta_box( 'acf-basic-settings', __( 'Basic Settings', 'secure-custom-fields' ), array( $this, 'mb_basic_settings' ), 'acf-taxonomy', 'normal', 'high' );
+			add_meta_box( 'acf-advanced-settings', __( 'Advanced Settings', 'secure-custom-fields' ), array( $this, 'mb_advanced_settings' ), 'acf-taxonomy', 'normal', 'high' );
 
 			// actions.
 			add_action( 'post_submitbox_misc_actions', array( $this, 'post_submitbox_misc_actions' ), 10, 0 );
@@ -281,7 +281,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 		 */
 		public function post_submitbox_misc_actions() {
 			global $acf_taxonomy;
-			$status_label = $acf_taxonomy['active'] ? _x( 'Active', 'post status', 'acf' ) : _x( 'Inactive', 'post status', 'acf' );
+			$status_label = $acf_taxonomy['active'] ? _x( 'Active', 'post status', 'secure-custom-fields' ) : _x( 'Inactive', 'post status', 'secure-custom-fields' );
 
 			?>
 			<script type="text/javascript">

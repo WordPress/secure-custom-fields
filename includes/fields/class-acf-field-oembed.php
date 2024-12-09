@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 
 			// vars
 			$this->name          = 'oembed';
-			$this->label         = __( 'oEmbed', 'acf' );
+			$this->label         = __( 'oEmbed', 'secure-custom-fields' );
 			$this->category      = 'content';
-			$this->description   = __( 'An interactive component for embedding videos, images, tweets, audio and other content by making use of the native WordPress oEmbed functionality.', 'acf' );
+			$this->description   = __( 'An interactive component for embedding videos, images, tweets, audio and other content by making use of the native WordPress oEmbed functionality.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-oembed.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/oembed/';
 			$this->defaults      = array(
@@ -195,7 +195,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 				array(
 					'class'        => 'input-search',
 					'value'        => $field['value'],
-					'placeholder'  => __( 'Enter URL', 'acf' ),
+					'placeholder'  => __( 'Enter URL', 'secure-custom-fields' ),
 					'autocomplete' => 'off',
 				)
 			);
@@ -235,10 +235,10 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'       => __( 'Embed Size', 'acf' ),
+					'label'       => __( 'Embed Size', 'secure-custom-fields' ),
 					'type'        => 'text',
 					'name'        => 'width',
-					'prepend'     => __( 'Width', 'acf' ),
+					'prepend'     => __( 'Width', 'secure-custom-fields' ),
 					'append'      => 'px',
 					'placeholder' => $this->width,
 				)
@@ -247,10 +247,10 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'       => __( 'Embed Size', 'acf' ),
+					'label'       => __( 'Embed Size', 'secure-custom-fields' ),
 					'type'        => 'text',
 					'name'        => 'height',
-					'prepend'     => __( 'Height', 'acf' ),
+					'prepend'     => __( 'Height', 'secure-custom-fields' ),
 					'append'      => 'px',
 					'placeholder' => $this->height,
 					'_append'     => 'width',

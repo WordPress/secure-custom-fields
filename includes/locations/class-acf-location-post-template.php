@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'post_template';
-			$this->label       = __( 'Post Template', 'acf' );
+			$this->label       = __( 'Post Template', 'secure-custom-fields' );
 			$this->category    = 'post';
 			$this->object_type = 'post';
 		}
@@ -82,7 +82,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		public function get_values( $rule ) {
 			return array_merge(
 				array(
-					'default' => apply_filters( 'default_page_template_title', __( 'Default Template', 'acf' ), 'meta-box' ),
+					'default' => apply_filters( 'default_page_template_title', __( 'Default Template', 'secure-custom-fields' ), 'meta-box' ),
 				),
 				acf_get_post_templates()
 			);

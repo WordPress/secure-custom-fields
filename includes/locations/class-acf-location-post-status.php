@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Post_Status' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'post_status';
-			$this->label       = __( 'Post Status', 'acf' );
+			$this->label       = __( 'Post Status', 'secure-custom-fields' );
 			$this->category    = 'post';
 			$this->object_type = 'post';
 		}

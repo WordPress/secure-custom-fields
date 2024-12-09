@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_link' ) ) :
 
 			// vars
 			$this->name          = 'link';
-			$this->label         = __( 'Link', 'acf' );
+			$this->label         = __( 'Link', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'Allows you to specify a link and its properties such as title and target using the WordPress native link picker.', 'acf' );
+			$this->description   = __( 'Allows you to specify a link and its properties such as title and target using the WordPress native link picker.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-link.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/link/';
 			$this->defaults      = array(
@@ -116,12 +116,12 @@ if ( ! class_exists( 'acf_field_link' ) ) :
 		<?php endforeach; ?>
 	</div>
 
-	<a href="#" class="button" data-name="add" target=""><?php esc_html_e( 'Select Link', 'acf' ); ?></a>
+	<a href="#" class="button" data-name="add" target=""><?php esc_html_e( 'Select Link', 'secure-custom-fields' ); ?></a>
 
 	<div class="link-wrap">
 		<span class="link-title"><?php echo esc_html( $link['title'] ); ?></span>
 		<a class="link-url" href="<?php echo esc_url( $link['url'] ); ?>" target="_blank"><?php echo esc_html( $link['url'] ); ?></a>
-		<i class="acf-icon -link-ext acf-js-tooltip" title="<?php esc_attr_e( 'Opens in a new window/tab', 'acf' ); ?>"></i><a class="acf-icon -pencil -clear acf-js-tooltip" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'acf' ); ?>"></a><a class="acf-icon -cancel -clear acf-js-tooltip" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'acf' ); ?>"></a>
+		<i class="acf-icon -link-ext acf-js-tooltip" title="<?php esc_attr_e( 'Opens in a new window/tab', 'secure-custom-fields' ); ?>"></i><a class="acf-icon -pencil -clear acf-js-tooltip" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>"></a><a class="acf-icon -cancel -clear acf-js-tooltip" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
 	</div>
 
 </div>
@@ -143,14 +143,14 @@ if ( ! class_exists( 'acf_field_link' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Value', 'acf' ),
-					'instructions' => __( 'Specify the returned value on front end', 'acf' ),
+					'label'        => __( 'Return Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the returned value on front end', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'array' => __( 'Link Array', 'acf' ),
-						'url'   => __( 'Link URL', 'acf' ),
+						'array' => __( 'Link Array', 'secure-custom-fields' ),
+						'url'   => __( 'Link URL', 'secure-custom-fields' ),
 					),
 				)
 			);

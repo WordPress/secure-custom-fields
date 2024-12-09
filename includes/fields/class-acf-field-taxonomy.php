@@ -4,6 +4,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 
 	class acf_field_taxonomy extends acf_field {
 
+
 		// vars
 		var $save_post_terms = array();
 
@@ -17,9 +18,9 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 */
 		public function initialize() {
 			$this->name          = 'taxonomy';
-			$this->label         = __( 'Taxonomy', 'acf' );
+			$this->label         = __( 'Taxonomy', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'Allows the selection of one or more taxonomy terms based on the criteria and options specified in the fields settings.', 'acf' );
+			$this->description   = __( 'Allows the selection of one or more taxonomy terms based on the criteria and options specified in the fields settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-taxonomy.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/taxonomy/';
 			$this->defaults      = array(
@@ -488,30 +489,30 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			}
 
 			?>
-<div <?php echo acf_esc_attrs( $div ); ?>>
-			<?php if ( $field['add_term'] && current_user_can( $taxonomy->cap->manage_terms ) ) : ?>
-	<div class="acf-actions -hover">
-		<a href="#" class="acf-icon -plus acf-js-tooltip small" data-name="add" title="<?php echo esc_attr( $taxonomy->labels->add_new_item ); ?>"></a>
-	</div>
-				<?php
-	endif;
+			<div <?php echo acf_esc_attrs( $div ); ?>>
+				<?php if ( $field['add_term'] && current_user_can( $taxonomy->cap->manage_terms ) ) : ?>
+					<div class="acf-actions -hover">
+						<a href="#" class="acf-icon -plus acf-js-tooltip small" data-name="add" title="<?php echo esc_attr( $taxonomy->labels->add_new_item ); ?>"></a>
+					</div>
+					<?php
+				endif;
 
-			if ( $field['field_type'] == 'select' ) {
-				$field['multiple'] = 0;
+				if ( $field['field_type'] == 'select' ) {
+					$field['multiple'] = 0;
 
-				$this->render_field_select( $field );
-			} elseif ( $field['field_type'] == 'multi_select' ) {
-				$field['multiple'] = 1;
+					$this->render_field_select( $field );
+				} elseif ( $field['field_type'] == 'multi_select' ) {
+					$field['multiple'] = 1;
 
-				$this->render_field_select( $field );
-			} elseif ( $field['field_type'] == 'radio' ) {
-				$this->render_field_checkbox( $field );
-			} elseif ( $field['field_type'] == 'checkbox' ) {
-				$this->render_field_checkbox( $field );
-			}
+					$this->render_field_select( $field );
+				} elseif ( $field['field_type'] == 'radio' ) {
+					$this->render_field_checkbox( $field );
+				} elseif ( $field['field_type'] == 'checkbox' ) {
+					$this->render_field_checkbox( $field );
+				}
 
-			?>
-</div>
+				?>
+			</div>
 			<?php
 		}
 
@@ -587,7 +588,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			// vars.
 			$args = array(
 				'taxonomy'         => $field['taxonomy'],
-				'show_option_none' => sprintf( _x( 'No %s', 'No Terms', 'acf' ), $taxonomy_obj->labels->name ),
+				/* translators: %s: Taxonomy name */
+				'show_option_none' => sprintf( _x( 'No %s', 'No Terms', 'secure-custom-fields' ), $taxonomy_obj->labels->name ),
 				'hide_empty'       => false,
 				'style'            => 'none',
 				'walker'           => new ACF_Taxonomy_Field_Walker( $field ),
@@ -599,11 +601,11 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			$args = apply_filters( 'acf/fields/taxonomy/wp_list_categories/key=' . $field['key'], $args, $field );
 
 			?>
-<div class="categorychecklist-holder">
-	<ul class="acf-checkbox-list acf-bl">
-			<?php wp_list_categories( $args ); ?>
-	</ul>
-</div>
+			<div class="categorychecklist-holder">
+				<ul class="acf-checkbox-list acf-bl">
+					<?php wp_list_categories( $args ); ?>
+				</ul>
+			</div>
 			<?php
 		}
 
@@ -622,8 +624,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Taxonomy', 'acf' ),
-					'instructions' => __( 'Select the taxonomy to be displayed', 'acf' ),
+					'label'        => __( 'Taxonomy', 'secure-custom-fields' ),
+					'instructions' => __( 'Select the taxonomy to be displayed', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'taxonomy',
 					'choices'      => acf_get_taxonomy_labels(),
@@ -633,8 +635,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Create Terms', 'acf' ),
-					'instructions' => __( 'Allow new terms to be created whilst editing', 'acf' ),
+					'label'        => __( 'Create Terms', 'secure-custom-fields' ),
+					'instructions' => __( 'Allow new terms to be created whilst editing', 'secure-custom-fields' ),
 					'name'         => 'add_term',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -644,8 +646,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Save Terms', 'acf' ),
-					'instructions' => __( 'Connect selected terms to the post', 'acf' ),
+					'label'        => __( 'Save Terms', 'secure-custom-fields' ),
+					'instructions' => __( 'Connect selected terms to the post', 'secure-custom-fields' ),
 					'name'         => 'save_terms',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -655,8 +657,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Load Terms', 'acf' ),
-					'instructions' => __( 'Load value from posts terms', 'acf' ),
+					'label'        => __( 'Load Terms', 'secure-custom-fields' ),
+					'instructions' => __( 'Load value from posts terms', 'secure-custom-fields' ),
 					'name'         => 'load_terms',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -666,13 +668,13 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Value', 'acf' ),
+					'label'        => __( 'Return Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'choices'      => array(
-						'object' => __( 'Term Object', 'acf' ),
-						'id'     => __( 'Term ID', 'acf' ),
+						'object' => __( 'Term Object', 'secure-custom-fields' ),
+						'id'     => __( 'Term ID', 'secure-custom-fields' ),
 					),
 					'layout'       => 'horizontal',
 				)
@@ -681,19 +683,19 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Appearance', 'acf' ),
-					'instructions' => __( 'Select the appearance of this field', 'acf' ),
+					'label'        => __( 'Appearance', 'secure-custom-fields' ),
+					'instructions' => __( 'Select the appearance of this field', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'field_type',
 					'optgroup'     => true,
 					'choices'      => array(
-						__( 'Multiple Values', 'acf' ) => array(
-							'checkbox'     => __( 'Checkbox', 'acf' ),
-							'multi_select' => __( 'Multi Select', 'acf' ),
+						__( 'Multiple Values', 'secure-custom-fields' ) => array(
+							'checkbox'     => __( 'Checkbox', 'secure-custom-fields' ),
+							'multi_select' => __( 'Multi Select', 'secure-custom-fields' ),
 						),
-						__( 'Single Value', 'acf' )    => array(
-							'radio'  => __( 'Radio Buttons', 'acf' ),
-							'select' => _x( 'Select', 'noun', 'acf' ),
+						__( 'Single Value', 'secure-custom-fields' )    => array(
+							'radio'  => __( 'Radio Buttons', 'secure-custom-fields' ),
+							'select' => _x( 'Select', 'noun', 'secure-custom-fields' ),
 						),
 					),
 				)
@@ -702,7 +704,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',
@@ -785,7 +787,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			if ( ! current_user_can( $taxonomy_obj->cap->manage_terms ) ) {
 				wp_send_json_error(
 					array(
-						'error' => sprintf( __( 'User unable to add new %s', 'acf' ), $taxonomy_label ),
+						/* translators: %s: Taxonomy name */
+						'error' => sprintf( __( 'User unable to add new %s', 'secure-custom-fields' ), $taxonomy_label ),
 					)
 				);
 			}
@@ -797,7 +800,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				if ( term_exists( $args['term_name'], $field['taxonomy'], $args['term_parent'] ) ) {
 					wp_send_json_error(
 						array(
-							'error' => sprintf( __( '%s already exists', 'acf' ), $taxonomy_label ),
+							/* translators: %s: Taxonomy name */
+							'error' => sprintf( __( '%s already exists', 'secure-custom-fields' ), $taxonomy_label ),
 						)
 					);
 				}
@@ -833,7 +837,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				// success
 				wp_send_json_success(
 					array(
-						'message'     => sprintf( __( '%s added', 'acf' ), $taxonomy_label ),
+						/* translators: %s: Taxonomy name */
+						'message'     => sprintf( __( '%s added', 'secure-custom-fields' ), $taxonomy_label ),
 						'term_id'     => $term->term_id,
 						'term_name'   => $term->name,
 						'term_label'  => $prefix . $term->name,
@@ -843,55 +848,55 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			}
 
 			?>
-		<form method="post">
-			<?php
-
-			acf_render_field_wrap(
-				array(
-					'label' => __( 'Name', 'acf' ),
-					'name'  => 'term_name',
-					'type'  => 'text',
-				)
-			);
-
-			if ( is_taxonomy_hierarchical( $field['taxonomy'] ) ) {
-				$choices  = array();
-				$response = $this->get_ajax_query( $args );
-
-				if ( $response ) {
-					foreach ( $response['results'] as $v ) {
-						$choices[ $v['id'] ] = $v['text'];
-					}
-				}
+			<form method="post">
+				<?php
 
 				acf_render_field_wrap(
 					array(
-						'label'      => __( 'Parent', 'acf' ),
-						'name'       => 'term_parent',
-						'type'       => 'select',
-						'allow_null' => 1,
-						'ui'         => 0,
-						'choices'    => $choices,
+						'label' => __( 'Name', 'secure-custom-fields' ),
+						'name'  => 'term_name',
+						'type'  => 'text',
 					)
 				);
-			}
 
-			?>
-		<p class="acf-submit">
-			<button class="acf-submit-button button button-primary" type="submit"><?php esc_html_e( 'Add', 'acf' ); ?></button>
-		</p>
-		</form><?php
+				if ( is_taxonomy_hierarchical( $field['taxonomy'] ) ) {
+					$choices  = array();
+					$response = $this->get_ajax_query( $args );
 
-		// die
-		die;
+					if ( $response ) {
+						foreach ( $response['results'] as $v ) {
+							$choices[ $v['id'] ] = $v['text'];
+						}
+					}
+
+					acf_render_field_wrap(
+						array(
+							'label'      => __( 'Parent', 'secure-custom-fields' ),
+							'name'       => 'term_parent',
+							'type'       => 'select',
+							'allow_null' => 1,
+							'ui'         => 0,
+							'choices'    => $choices,
+						)
+					);
+				}
+
+				?>
+				<p class="acf-submit">
+					<button class="acf-submit-button button button-primary" type="submit"><?php esc_html_e( 'Add', 'secure-custom-fields' ); ?></button>
+				</p>
+			</form><?php
+
+					// die
+					die;
 		}
 
-		/**
-		 * Return the schema array for the REST API.
-		 *
-		 * @param array $field
-		 * @return array
-		 */
+				/**
+				 * Return the schema array for the REST API.
+				 *
+				 * @param array $field
+				 * @return array
+				 */
 		public function get_rest_schema( array $field ) {
 			$schema = array(
 				'type'     => array( 'integer', 'array', 'null' ),
@@ -912,13 +917,13 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			return $schema;
 		}
 
-		/**
-		 * @see \acf_field::get_rest_links()
-		 * @param mixed          $value   The raw (unformatted) field value.
-		 * @param integer|string $post_id
-		 * @param array          $field
-		 * @return array
-		 */
+				/**
+				 * @see \acf_field::get_rest_links()
+				 * @param mixed          $value   The raw (unformatted) field value.
+				 * @param integer|string $post_id
+				 * @param array          $field
+				 * @return array
+				 */
 		public function get_rest_links( $value, $post_id, array $field ) {
 			$links = array();
 
@@ -950,8 +955,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 	}
 
 
-	// initialize
-	acf_register_field_type( 'acf_field_taxonomy' );
-endif; // class_exists check
+			// initialize
+			acf_register_field_type( 'acf_field_taxonomy' );
+		endif; // class_exists check
 
 ?>

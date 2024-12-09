@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 	class acf_field_file extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,9 +20,9 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 
 			// vars
 			$this->name          = 'file';
-			$this->label         = __( 'File', 'acf' );
+			$this->label         = __( 'File', 'secure-custom-fields' );
 			$this->category      = 'content';
-			$this->description   = __( 'Uses the native WordPress media picker to upload, or choose files.', 'acf' );
+			$this->description   = __( 'Uses the native WordPress media picker to upload, or choose files.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-file.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/file/';
 			$this->defaults      = array(
@@ -52,9 +53,9 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			// localize
 			acf_localize_text(
 				array(
-					'Select File' => __( 'Select File', 'acf' ),
-					'Edit File'   => __( 'Edit File', 'acf' ),
-					'Update File' => __( 'Update File', 'acf' ),
+					'Select File' => __( 'Select File', 'secure-custom-fields' ),
+					'Edit File'   => __( 'Edit File', 'secure-custom-fields' ),
+					'Update File' => __( 'Update File', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -118,67 +119,69 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			}
 
 			?>
-<div <?php echo acf_esc_attrs( $div ); ?>>
-			<?php
-			acf_hidden_input(
-				array(
-					'name'      => $field['name'],
-					'value'     => $field['value'],
-					'data-name' => 'id',
-				)
-			);
-			?>
-	<div class="show-if-value file-wrap">
-		<div class="file-icon">
-			<img data-name="icon" src="<?php echo esc_url( $o['icon'] ); ?>" alt=""/>
-		</div>
-		<div class="file-info">
-			<p>
-				<strong data-name="title"><?php echo esc_html( $o['title'] ); ?></strong>
-			</p>
-			<p>
-				<strong><?php esc_html_e( 'File name', 'acf' ); ?>:</strong>
-				<a data-name="filename" href="<?php echo esc_url( $o['url'] ); ?>" target="_blank"><?php echo esc_html( $o['filename'] ); ?></a>
-			</p>
-			<p>
-				<strong><?php esc_html_e( 'File size', 'acf' ); ?>:</strong>
-				<span data-name="filesize"><?php echo esc_html( $o['filesize'] ); ?></span>
-			</p>
-		</div>
-		<div class="acf-actions -hover">
-			<?php if ( $uploader != 'basic' ) : ?>
-			<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'acf' ); ?>"></a>
-			<?php endif; ?>
-			<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'acf' ); ?>"></a>
-		</div>
-	</div>
-	<div class="hide-if-value">
-			<?php if ( $uploader == 'basic' ) : ?>
-
-				<?php if ( $field['value'] && ! is_numeric( $field['value'] ) ) : ?>
-				<div class="acf-error-message"><p><?php echo acf_esc_html( $field['value'] ); ?></p></div>
-			<?php endif; ?>
-
-			<label class="acf-basic-uploader">
+			<div <?php echo acf_esc_attrs( $div ); ?>>
 				<?php
-				acf_file_input(
+				acf_hidden_input(
 					array(
-						'name' => $field['name'],
-						'id'   => $field['id'],
-						'key'  => $field['key'],
+						'name'      => $field['name'],
+						'value'     => $field['value'],
+						'data-name' => 'id',
 					)
 				);
 				?>
-			</label>
+				<div class="show-if-value file-wrap">
+					<div class="file-icon">
+						<img data-name="icon" src="<?php echo esc_url( $o['icon'] ); ?>" alt="" />
+					</div>
+					<div class="file-info">
+						<p>
+							<strong data-name="title"><?php echo esc_html( $o['title'] ); ?></strong>
+						</p>
+						<p>
+							<strong><?php esc_html_e( 'File name', 'secure-custom-fields' ); ?>:</strong>
+							<a data-name="filename" href="<?php echo esc_url( $o['url'] ); ?>" target="_blank"><?php echo esc_html( $o['filename'] ); ?></a>
+						</p>
+						<p>
+							<strong><?php esc_html_e( 'File size', 'secure-custom-fields' ); ?>:</strong>
+							<span data-name="filesize"><?php echo esc_html( $o['filesize'] ); ?></span>
+						</p>
+					</div>
+					<div class="acf-actions -hover">
+						<?php if ( $uploader != 'basic' ) : ?>
+							<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>"></a>
+						<?php endif; ?>
+						<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
+					</div>
+				</div>
+				<div class="hide-if-value">
+					<?php if ( $uploader == 'basic' ) : ?>
 
-		<?php else : ?>
+						<?php if ( $field['value'] && ! is_numeric( $field['value'] ) ) : ?>
+							<div class="acf-error-message">
+								<p><?php echo acf_esc_html( $field['value'] ); ?></p>
+							</div>
+						<?php endif; ?>
 
-			<p><?php esc_html_e( 'No file selected', 'acf' ); ?> <a data-name="add" class="acf-button button" href="#"><?php esc_html_e( 'Add File', 'acf' ); ?></a></p>
+						<label class="acf-basic-uploader">
+							<?php
+							acf_file_input(
+								array(
+									'name' => $field['name'],
+									'id'   => $field['id'],
+									'key'  => $field['key'],
+								)
+							);
+							?>
+						</label>
 
-		<?php endif; ?>
+					<?php else : ?>
 
-	</div>
-</div>
+						<p><?php esc_html_e( 'No file selected', 'secure-custom-fields' ); ?> <a data-name="add" class="acf-button button" href="#"><?php esc_html_e( 'Add File', 'secure-custom-fields' ); ?></a></p>
+
+					<?php endif; ?>
+
+				</div>
+			</div>
 			<?php
 		}
 
@@ -196,15 +199,15 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Value', 'acf' ),
-					'instructions' => __( 'Specify the returned value on front end', 'acf' ),
+					'label'        => __( 'Return Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the returned value on front end', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'array' => __( 'File Array', 'acf' ),
-						'url'   => __( 'File URL', 'acf' ),
-						'id'    => __( 'File ID', 'acf' ),
+						'array' => __( 'File Array', 'secure-custom-fields' ),
+						'url'   => __( 'File URL', 'secure-custom-fields' ),
+						'id'    => __( 'File ID', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -212,14 +215,14 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Library', 'acf' ),
-					'instructions' => __( 'Limit the media library choice', 'acf' ),
+					'label'        => __( 'Library', 'secure-custom-fields' ),
+					'instructions' => __( 'Limit the media library choice', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'library',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'all'        => __( 'All', 'acf' ),
-						'uploadedTo' => __( 'Uploaded to post', 'acf' ),
+						'all'        => __( 'All', 'secure-custom-fields' ),
+						'uploadedTo' => __( 'Uploaded to post', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -249,11 +252,11 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum', 'acf' ),
-					'instructions' => __( 'Restrict which files can be uploaded', 'acf' ),
+					'label'        => __( 'Minimum', 'secure-custom-fields' ),
+					'instructions' => __( 'Restrict which files can be uploaded', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'min_size',
-					'prepend'      => __( 'File size', 'acf' ),
+					'prepend'      => __( 'File size', 'secure-custom-fields' ),
 					'append'       => 'MB',
 				)
 			);
@@ -261,11 +264,11 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum', 'acf' ),
-					'instructions' => __( 'Restrict which files can be uploaded', 'acf' ),
+					'label'        => __( 'Maximum', 'secure-custom-fields' ),
+					'instructions' => __( 'Restrict which files can be uploaded', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'max_size',
-					'prepend'      => __( 'File size', 'acf' ),
+					'prepend'      => __( 'File size', 'secure-custom-fields' ),
 					'append'       => 'MB',
 				)
 			);
@@ -273,8 +276,8 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label' => __( 'Allowed File Types', 'acf' ),
-					'hint'  => __( 'Comma separated list. Leave blank for all types', 'acf' ),
+					'label' => __( 'Allowed File Types', 'secure-custom-fields' ),
+					'hint'  => __( 'Comma separated list. Leave blank for all types', 'secure-custom-fields' ),
 					'type'  => 'text',
 					'name'  => 'mime_types',
 				)
@@ -334,7 +337,7 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 		function get_media_item_args( $vars ) {
 
 			$vars['send'] = true;
-			return( $vars );
+			return ( $vars );
 		}
 
 
@@ -444,7 +447,8 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			);
 
 			if ( ! $attachment ) {
-				$error = sprintf( __( '%s requires a valid attachment ID.', 'acf' ), $param );
+				/* translators: %s: field value */
+				$error = sprintf( __( '%s requires a valid attachment ID.', 'secure-custom-fields' ), $param );
 				return new WP_Error( 'rest_invalid_param', $error, $data );
 			}
 

@@ -154,7 +154,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 
 			// Verify nonce.
 			if ( ! acf_verify_ajax() ) {
-				return new WP_Error( 'acf_invalid_nonce', __( 'Invalid nonce.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_nonce', __( 'Invalid nonce.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 			return true;
 		}

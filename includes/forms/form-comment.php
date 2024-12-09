@@ -137,7 +137,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 						// 'style'           => $field_group['style'],
 						'label'      => $field_group['label_placement'],
 						'edit_url'   => '',
-						'edit_title' => __( 'Edit field group', 'acf' ),
+						'edit_title' => __( 'Edit field group', 'secure-custom-fields' ),
 						// 'visibility'  => $visibility
 					);
 

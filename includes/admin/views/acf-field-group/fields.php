@@ -29,8 +29,8 @@ if ( $is_subfield ) {
 ?>
 <?php if ( $parent || $is_subfield ) { ?>
 <div class="acf-sub-field-list-header">
-	<h3 class="acf-sub-field-list-title"><?php esc_html_e( 'Fields', 'acf' ); ?></h3>
-	<a href="#" class="acf-btn acf-btn-secondary add-field"><i class="acf-icon acf-icon-plus"></i><?php esc_html_e( 'Add Field', 'acf' ); ?></a>
+	<h3 class="acf-sub-field-list-title"><?php esc_html_e( 'Fields', 'secure-custom-fields' ); ?></h3>
+	<a href="#" class="acf-btn acf-btn-secondary add-field"><i class="acf-icon acf-icon-plus"></i><?php esc_html_e( 'Add Field', 'secure-custom-fields' ); ?></a>
 </div>
 <?php } ?>
 <?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed string output ?>
@@ -40,19 +40,19 @@ if ( $is_subfield ) {
 		<li class="li-field-order">
 			<?php
 			/* translators: A symbol (or text, if not available in your locale) meaning "Order Number", in terms of positional placement. */
-			esc_html_e( '#', 'acf' );
+			esc_html_e( '#', 'secure-custom-fields' );
 			?>
 			<span class="acf-hidden">
 				<?php
 				/* translators: Hidden accessibility text for the positional order number of the field. */
-				esc_html_e( 'Order', 'acf' );
+				esc_html_e( 'Order', 'secure-custom-fields' );
 				?>
 			</span>
 		</li>
-		<li class="li-field-label"><?php esc_html_e( 'Label', 'acf' ); ?></li>
-		<li class="li-field-name"><?php esc_html_e( 'Name', 'acf' ); ?></li>
-		<li class="li-field-key"><?php esc_html_e( 'Key', 'acf' ); ?></li>
-		<li class="li-field-type"><?php esc_html_e( 'Type', 'acf' ); ?></li>
+		<li class="li-field-label"><?php esc_html_e( 'Label', 'secure-custom-fields' ); ?></li>
+		<li class="li-field-name"><?php esc_html_e( 'Name', 'secure-custom-fields' ); ?></li>
+		<li class="li-field-key"><?php esc_html_e( 'Key', 'secure-custom-fields' ); ?></li>
+		<li class="li-field-type"><?php esc_html_e( 'Type', 'secure-custom-fields' ); ?></li>
 	</ul>
 
 	<?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed string output ?>
@@ -61,16 +61,16 @@ if ( $is_subfield ) {
 		<div class="no-fields-message">
 			<div class="no-fields-message-inner">
 				<img src="<?php echo esc_url( acf_get_url( 'assets/images/empty-group.svg' ) ); ?>" />
-				<h2><?php esc_html_e( 'Add Your First Field', 'acf' ); ?></h2>
-				<p><?php esc_html_e( 'Get started creating new custom fields for your posts, pages, custom post types and other WordPress content.', 'acf' ); ?></p>
+				<h2><?php esc_html_e( 'Add Your First Field', 'secure-custom-fields' ); ?></h2>
+				<p><?php esc_html_e( 'Get started creating new custom fields for your posts, pages, custom post types and other WordPress content.', 'secure-custom-fields' ); ?></p>
 				<a href="#" class="acf-btn acf-btn-primary add-field add-first-field
-"><i class="acf-icon acf-icon-plus"></i> <?php esc_html_e( 'Add Field', 'acf' ); ?></a>
+"><i class="acf-icon acf-icon-plus"></i> <?php esc_html_e( 'Add Field', 'secure-custom-fields' ); ?></a>
 				<p class="acf-small">
 				<?php
 					echo acf_esc_html(
 						sprintf(
 							/* translators: %s url to field types list */
-							__( 'Choose from over 30 field types. <a href="%s" target="_blank">Learn more</a>.', 'acf' ),
+							__( 'Choose from over 30 field types. <a href="%s" target="_blank">Learn more</a>.', 'secure-custom-fields' ),
 							'https://www.advancedcustomfields.com/resources/'
 						)
 					);
@@ -98,7 +98,7 @@ if ( $is_subfield ) {
 
 	<ul class="acf-hl acf-tfoot">
 		<li class="acf-fr">
-			<a href="#" class="acf-btn acf-btn-secondary add-field"><i class="acf-icon acf-icon-plus"></i><?php esc_html_e( 'Add Field', 'acf' ); ?></a>
+			<a href="#" class="acf-btn acf-btn-secondary add-field"><i class="acf-icon acf-icon-plus"></i><?php esc_html_e( 'Add Field', 'secure-custom-fields' ); ?></a>
 		</li>
 	</ul>
 
@@ -110,7 +110,7 @@ if ( ! $parent ) :
 		array(
 			'ID'    => 'acfcloneindex',
 			'key'   => 'acfcloneindex',
-			'label' => __( 'New Field', 'acf' ),
+			'label' => __( 'New Field', 'secure-custom-fields' ),
 			'name'  => 'new_field',
 			'type'  => 'text',
 		)

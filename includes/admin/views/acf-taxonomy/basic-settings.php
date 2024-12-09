@@ -20,9 +20,9 @@ if ( acf_is_taxonomy( $acf_duplicate_taxonomy ) ) {
 
 acf_render_field_wrap(
 	array(
-		'label'       => __( 'Plural Label', 'acf' ),
+		'label'       => __( 'Plural Label', 'secure-custom-fields' ),
 		/* translators: example taxonomy */
-		'placeholder' => __( 'Genres', 'acf' ),
+		'placeholder' => __( 'Genres', 'secure-custom-fields' ),
 		'type'        => 'text',
 		'key'         => 'name',
 		'name'        => 'name',
@@ -37,9 +37,9 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'       => __( 'Singular Label', 'acf' ),
+		'label'       => __( 'Singular Label', 'secure-custom-fields' ),
 		/* translators: example taxonomy */
-		'placeholder' => __( 'Genre', 'acf' ),
+		'placeholder' => __( 'Genre', 'secure-custom-fields' ),
 		'type'        => 'text',
 		'key'         => 'singular_name',
 		'name'        => 'singular_name',
@@ -54,10 +54,10 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Taxonomy Key', 'acf' ),
-		'instructions' => __( 'Lower case letters, underscores and dashes only, Max 32 characters.', 'acf' ),
+		'label'        => __( 'Taxonomy Key', 'secure-custom-fields' ),
+		'instructions' => __( 'Lower case letters, underscores and dashes only, Max 32 characters.', 'secure-custom-fields' ),
 		/* translators: example taxonomy */
-		'placeholder'  => __( 'genre', 'acf' ),
+		'placeholder'  => __( 'genre', 'secure-custom-fields' ),
 		'type'         => 'text',
 		'key'          => 'taxonomy',
 		'name'         => 'taxonomy',
@@ -79,7 +79,7 @@ if ( $acf_use_post_type && ! empty( $acf_use_post_type['post_type'] ) ) {
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Post Types', 'acf' ),
+		'label'        => __( 'Post Types', 'secure-custom-fields' ),
 		'type'         => 'select',
 		'name'         => 'object_type',
 		'prefix'       => 'acf_taxonomy',
@@ -88,7 +88,7 @@ acf_render_field_wrap(
 		'multiple'     => 1,
 		'ui'           => 1,
 		'allow_null'   => 1,
-		'instructions' => __( 'One or many post types that can be classified with this taxonomy.', 'acf' ),
+		'instructions' => __( 'One or many post types that can be classified with this taxonomy.', 'secure-custom-fields' ),
 	),
 	'div',
 	'field'
@@ -103,8 +103,8 @@ acf_render_field_wrap(
 		'name'         => 'public',
 		'prefix'       => 'acf_taxonomy',
 		'value'        => $acf_taxonomy['public'],
-		'label'        => __( 'Public', 'acf' ),
-		'instructions' => __( 'Makes a taxonomy visible on the frontend and in the admin dashboard.', 'acf' ),
+		'label'        => __( 'Public', 'secure-custom-fields' ),
+		'instructions' => __( 'Makes a taxonomy visible on the frontend and in the admin dashboard.', 'secure-custom-fields' ),
 		'ui'           => true,
 		'default'      => 1,
 	)
@@ -118,8 +118,8 @@ acf_render_field_wrap(
 		'class'        => 'acf_hierarchical_switch',
 		'prefix'       => 'acf_taxonomy',
 		'value'        => $acf_taxonomy['hierarchical'],
-		'label'        => __( 'Hierarchical', 'acf' ),
-		'instructions' => __( 'Hierarchical taxonomies can have descendants (like categories).', 'acf' ),
+		'label'        => __( 'Hierarchical', 'secure-custom-fields' ),
+		'instructions' => __( 'Hierarchical taxonomies can have descendants (like categories).', 'secure-custom-fields' ),
 		'ui'           => true,
 	),
 	'div'
@@ -131,8 +131,8 @@ acf_render_field_wrap( array( 'type' => 'seperator' ) );
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Advanced Configuration', 'acf' ),
-		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'acf' ),
+		'label'        => __( 'Advanced Configuration', 'secure-custom-fields' ),
+		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'secure-custom-fields' ),
 		'type'         => 'true_false',
 		'key'          => 'advanced_configuration',
 		'name'         => 'advanced_configuration',

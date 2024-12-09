@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 	class acf_field_number extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,8 +20,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 
 			// vars
 			$this->name          = 'number';
-			$this->label         = __( 'Number', 'acf' );
-			$this->description   = __( 'An input limited to numerical values.', 'acf' );
+			$this->label         = __( 'Number', 'secure-custom-fields' );
+			$this->description   = __( 'An input limited to numerical values.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-number.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/number/';
 			$this->defaults      = array(
@@ -110,8 +111,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'default_value',
 				)
@@ -130,7 +131,7 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum Value', 'acf' ),
+					'label'        => __( 'Minimum Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'min',
@@ -140,7 +141,7 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum Value', 'acf' ),
+					'label'        => __( 'Maximum Value', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'max',
@@ -160,8 +161,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -170,7 +171,7 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Step Size', 'acf' ),
+					'label'        => __( 'Step Size', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'step',
@@ -180,8 +181,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prepend', 'acf' ),
-					'instructions' => __( 'Appears before the input', 'acf' ),
+					'label'        => __( 'Prepend', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears before the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'prepend',
 				)
@@ -190,8 +191,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Append', 'acf' ),
-					'instructions' => __( 'Appears after the input', 'acf' ),
+					'label'        => __( 'Append', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears after the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'append',
 				)
@@ -220,7 +221,7 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 
 				// allow blank to be saved
 				if ( ! empty( $value ) ) {
-					$valid = __( 'Value must be a number', 'acf' );
+					$valid = __( 'Value must be a number', 'secure-custom-fields' );
 				}
 
 				// return early
@@ -232,12 +233,14 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 
 			// min
 			if ( is_numeric( $field['min'] ) && $value < floatval( $field['min'] ) ) {
-				$valid = sprintf( __( 'Value must be equal to or higher than %d', 'acf' ), $field['min'] );
+				/* translators: %d: the minimum value */
+				$valid = sprintf( __( 'Value must be equal to or higher than %d', 'secure-custom-fields' ), $field['min'] );
 			}
 
 			// max
 			if ( is_numeric( $field['max'] ) && $value > floatval( $field['max'] ) ) {
-				$valid = sprintf( __( 'Value must be equal to or lower than %d', 'acf' ), $field['max'] );
+				/* translators: %d: the maximum value */
+				$valid = sprintf( __( 'Value must be equal to or lower than %d', 'secure-custom-fields' ), $field['max'] );
 			}
 
 			// return

@@ -1,7 +1,7 @@
 <?php
 //phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- included template file.
 
-$browse_fields_tabs = array( 'popular' => __( 'Popular', 'acf' ) );
+$browse_fields_tabs = array( 'popular' => __( 'Popular', 'secure-custom-fields' ) );
 $browse_fields_tabs = $browse_fields_tabs + acf_get_field_categories_i18n();
 
 ?>
@@ -9,9 +9,9 @@ $browse_fields_tabs = $browse_fields_tabs + acf_get_field_categories_i18n();
 	<div class="acf-modal acf-browse-fields-modal">
 		<div class="acf-field-picker">
 			<div class="acf-modal-title">
-				<h1><?php esc_html_e( 'Select Field Type', 'acf' ); ?></h1>
+				<h1><?php esc_html_e( 'Select Field Type', 'secure-custom-fields' ); ?></h1>
 				<span class="acf-search-field-types-wrap">
-					<input class="acf-search-field-types" type="search" placeholder="<?php esc_attr_e( 'Search fields...', 'acf' ); ?>" />
+					<input class="acf-search-field-types" type="search" placeholder="<?php esc_attr_e( 'Search fields...', 'secure-custom-fields' ); ?>" />
 				</span>
 			</div>
 			<div class="acf-modal-content">
@@ -38,17 +38,17 @@ $browse_fields_tabs = $browse_fields_tabs + acf_get_field_categories_i18n();
 						<?php
 						printf(
 							/* translators: %s: The invalid search term */
-							acf_esc_html( __( "No search results for '%s'", 'acf' ) ),
+							acf_esc_html( __( "No search results for '%s'", 'secure-custom-fields' ) ),
 							'<span class="acf-invalid-search-term"></span>'
 						);
 						?>
 					</p>
 					<p>
 						<?php
-						$browse_popular_link = '<a href="#" class="acf-browse-popular-fields">' . esc_html( __( 'Popular fields', 'acf' ) ) . '</a>';
+						$browse_popular_link = '<a href="#" class="acf-browse-popular-fields">' . esc_html( __( 'Popular fields', 'secure-custom-fields' ) ) . '</a>';
 						printf(
 							/* translators: %s: A link to the popular fields used in ACF */
-							acf_esc_html( __( 'Try a different search term or browse %s', 'acf' ) ),
+							acf_esc_html( __( 'Try a different search term or browse %s', 'secure-custom-fields' ) ),
 							$browse_popular_link //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						);
 						?>
@@ -57,11 +57,11 @@ $browse_fields_tabs = $browse_fields_tabs + acf_get_field_categories_i18n();
 			</div>
 			<div class="acf-modal-toolbar acf-field-picker-toolbar">
 				<div class="acf-field-picker-label">
-					<input class="acf-insert-field-label" type="text" placeholder="<?php esc_attr_e( 'Field Label', 'acf' ); ?>" />
+					<input class="acf-insert-field-label" type="text" placeholder="<?php esc_attr_e( 'Field Label', 'secure-custom-fields' ); ?>" />
 				</div>
 				<div class="acf-field-picker-actions">
-					<button class="button acf-cancel acf-modal-close"><?php esc_html_e( 'Cancel', 'acf' ); ?></button>
-					<button class="acf-btn acf-select-field"><?php esc_html_e( 'Select Field', 'acf' ); ?></button>
+					<button class="button acf-cancel acf-modal-close"><?php esc_html_e( 'Cancel', 'secure-custom-fields' ); ?></button>
+					<button class="acf-btn acf-select-field"><?php esc_html_e( 'Select Field', 'secure-custom-fields' ); ?></button>
 				</div>
 			</div>
 		</div>

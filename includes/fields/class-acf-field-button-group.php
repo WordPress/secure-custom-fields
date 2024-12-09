@@ -20,9 +20,9 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 
 			// vars
 			$this->name          = 'button_group';
-			$this->label         = __( 'Button Group', 'acf' );
+			$this->label         = __( 'Button Group', 'secure-custom-fields' );
 			$this->category      = 'choice';
-			$this->description   = __( 'A group of buttons with values that you specify, users can choose one option from the values provided.', 'acf' );
+			$this->description   = __( 'A group of buttons with values that you specify, users can choose one option from the values provided.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-button-group.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/button-group/';
 			$this->defaults      = array(
@@ -134,8 +134,8 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Choices', 'acf' ),
-					'instructions' => __( 'Enter each choice on a new line.', 'acf' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'acf' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'acf' ) . '</span>',
+					'label'        => __( 'Choices', 'secure-custom-fields' ),
+					'instructions' => __( 'Enter each choice on a new line.', 'secure-custom-fields' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'secure-custom-fields' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'secure-custom-fields' ) . '</span>',
 					'type'         => 'textarea',
 					'name'         => 'choices',
 				)
@@ -144,8 +144,8 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'default_value',
 				)
@@ -154,15 +154,15 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Value', 'acf' ),
-					'instructions' => __( 'Specify the returned value on front end', 'acf' ),
+					'label'        => __( 'Return Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the returned value on front end', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'value' => __( 'Value', 'acf' ),
-						'label' => __( 'Label', 'acf' ),
-						'array' => __( 'Both (Array)', 'acf' ),
+						'value' => __( 'Value', 'secure-custom-fields' ),
+						'label' => __( 'Label', 'secure-custom-fields' ),
+						'array' => __( 'Both (Array)', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -180,7 +180,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',
@@ -201,14 +201,14 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Layout', 'acf' ),
+					'label'        => __( 'Layout', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'layout',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'horizontal' => __( 'Horizontal', 'acf' ),
-						'vertical'   => __( 'Vertical', 'acf' ),
+						'horizontal' => __( 'Horizontal', 'secure-custom-fields' ),
+						'vertical'   => __( 'Vertical', 'secure-custom-fields' ),
 					),
 				)
 			);

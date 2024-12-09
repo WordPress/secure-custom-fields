@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 	class acf_field_select extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,9 +20,9 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// vars
 			$this->name          = 'select';
-			$this->label         = _x( 'Select', 'noun', 'acf' );
+			$this->label         = _x( 'Select', 'noun', 'secure-custom-fields' );
 			$this->category      = 'choice';
-			$this->description   = __( 'A dropdown list with a selection of choices that you specify.', 'acf' );
+			$this->description   = __( 'A dropdown list with a selection of choices that you specify.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-select.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/select/';
 			$this->defaults      = array(
@@ -83,22 +84,22 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_localize_data(
 				array(
 					'select2L10n' => array(
-						'matches_1'            => _x( 'One result is available, press enter to select it.', 'Select2 JS matches_1', 'acf' ),
+						'matches_1'            => _x( 'One result is available, press enter to select it.', 'Select2 JS matches_1', 'secure-custom-fields' ),
 						/* translators: %d - number of results available in select field */
-						'matches_n'            => _x( '%d results are available, use up and down arrow keys to navigate.', 'Select2 JS matches_n', 'acf' ),
-						'matches_0'            => _x( 'No matches found', 'Select2 JS matches_0', 'acf' ),
-						'input_too_short_1'    => _x( 'Please enter 1 or more characters', 'Select2 JS input_too_short_1', 'acf' ),
+						'matches_n'            => _x( '%d results are available, use up and down arrow keys to navigate.', 'Select2 JS matches_n', 'secure-custom-fields' ),
+						'matches_0'            => _x( 'No matches found', 'Select2 JS matches_0', 'secure-custom-fields' ),
+						'input_too_short_1'    => _x( 'Please enter 1 or more characters', 'Select2 JS input_too_short_1', 'secure-custom-fields' ),
 						/* translators: %d - number of characters to enter into select field input */
-						'input_too_short_n'    => _x( 'Please enter %d or more characters', 'Select2 JS input_too_short_n', 'acf' ),
-						'input_too_long_1'     => _x( 'Please delete 1 character', 'Select2 JS input_too_long_1', 'acf' ),
+						'input_too_short_n'    => _x( 'Please enter %d or more characters', 'Select2 JS input_too_short_n', 'secure-custom-fields' ),
+						'input_too_long_1'     => _x( 'Please delete 1 character', 'Select2 JS input_too_long_1', 'secure-custom-fields' ),
 						/* translators: %d - number of characters that should be removed from select field */
-						'input_too_long_n'     => _x( 'Please delete %d characters', 'Select2 JS input_too_long_n', 'acf' ),
-						'selection_too_long_1' => _x( 'You can only select 1 item', 'Select2 JS selection_too_long_1', 'acf' ),
+						'input_too_long_n'     => _x( 'Please delete %d characters', 'Select2 JS input_too_long_n', 'secure-custom-fields' ),
+						'selection_too_long_1' => _x( 'You can only select 1 item', 'Select2 JS selection_too_long_1', 'secure-custom-fields' ),
 						/* translators: %d - maximum number of items that can be selected in the select field */
-						'selection_too_long_n' => _x( 'You can only select %d items', 'Select2 JS selection_too_long_n', 'acf' ),
-						'load_more'            => _x( 'Loading more results&hellip;', 'Select2 JS load_more', 'acf' ),
-						'searching'            => _x( 'Searching&hellip;', 'Select2 JS searching', 'acf' ),
-						'load_fail'            => _x( 'Loading failed', 'Select2 JS load_fail', 'acf' ),
+						'selection_too_long_n' => _x( 'You can only select %d items', 'Select2 JS selection_too_long_n', 'secure-custom-fields' ),
+						'load_more'            => _x( 'Loading more results&hellip;', 'Select2 JS load_more', 'secure-custom-fields' ),
+						'searching'            => _x( 'Searching&hellip;', 'Select2 JS searching', 'secure-custom-fields' ),
+						'load_fail'            => _x( 'Loading failed', 'Select2 JS load_fail', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -218,7 +219,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// placeholder
 			if ( empty( $field['placeholder'] ) ) {
-				$field['placeholder'] = _x( 'Select', 'verb', 'acf' );
+				$field['placeholder'] = _x( 'Select', 'verb', 'secure-custom-fields' );
 			}
 
 			// add empty value (allows '' to be selected)
@@ -331,8 +332,8 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Choices', 'acf' ),
-					'instructions' => __( 'Enter each choice on a new line.', 'acf' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'acf' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'acf' ) . '</span>',
+					'label'        => __( 'Choices', 'secure-custom-fields' ),
+					'instructions' => __( 'Enter each choice on a new line.', 'secure-custom-fields' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'secure-custom-fields' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'secure-custom-fields' ) . '</span>',
 					'name'         => 'choices',
 					'type'         => 'textarea',
 				)
@@ -342,8 +343,8 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Enter each default value on a new line', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Enter each default value on a new line', 'secure-custom-fields' ),
 					'name'         => 'default_value',
 					'type'         => 'textarea',
 				)
@@ -353,15 +354,15 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
-					'instructions' => __( 'Specify the value returned', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the value returned', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'value' => __( 'Value', 'acf' ),
-						'label' => __( 'Label', 'acf' ),
-						'array' => __( 'Both (Array)', 'acf' ),
+						'value' => __( 'Value', 'secure-custom-fields' ),
+						'label' => __( 'Label', 'secure-custom-fields' ),
+						'array' => __( 'Both (Array)', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -369,7 +370,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Select Multiple', 'acf' ),
+					'label'        => __( 'Select Multiple', 'secure-custom-fields' ),
 					'instructions' => 'Allow content editors to select multiple values',
 					'name'         => 'multiple',
 					'type'         => 'true_false',
@@ -390,7 +391,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',
@@ -411,8 +412,8 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Stylized UI', 'acf' ),
-					'instructions' => __( 'Use a stylized checkbox using select2', 'acf' ),
+					'label'        => __( 'Stylized UI', 'secure-custom-fields' ),
+					'instructions' => __( 'Use a stylized checkbox using select2', 'secure-custom-fields' ),
 					'name'         => 'ui',
 					'type'         => 'true_false',
 					'ui'           => 1,
@@ -422,7 +423,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Use AJAX to lazy load choices?', 'acf' ),
+					'label'        => __( 'Use AJAX to lazy load choices?', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'ajax',
 					'type'         => 'true_false',
@@ -626,7 +627,8 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 					'value' => $value,
 				);
 				$error = sprintf(
-					__( '%1$s is not one of %2$s', 'acf' ),
+					/* translators: 1: parameter, 2: allowed values */
+					__( '%1$s is not one of %2$s', 'secure-custom-fields' ),
 					$param,
 					implode( ', ', $allowed )
 				);

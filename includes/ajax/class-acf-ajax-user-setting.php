@@ -35,7 +35,7 @@ if ( ! class_exists( 'ACF_Ajax_User_Setting' ) ) :
 		 */
 		public function get_response( $request ) {
 			if ( ! acf_current_user_can_admin() ) {
-				return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'acf' ) );
+				return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 			}
 
 			// update

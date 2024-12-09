@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Post_Category' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'post_category';
-			$this->label       = __( 'Post Category', 'acf' );
+			$this->label       = __( 'Post Category', 'secure-custom-fields' );
 			$this->category    = 'post';
 			$this->object_type = 'post';
 		}

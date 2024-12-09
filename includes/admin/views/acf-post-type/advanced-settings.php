@@ -18,17 +18,17 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 	switch ( $tab_key ) {
 		case 'general':
 			$acf_available_supports = array(
-				'title'           => __( 'Title', 'acf' ),
-				'author'          => __( 'Author', 'acf' ),
-				'comments'        => __( 'Comments', 'acf' ),
-				'trackbacks'      => __( 'Trackbacks', 'acf' ),
-				'editor'          => __( 'Editor', 'acf' ),
-				'excerpt'         => __( 'Excerpt', 'acf' ),
-				'revisions'       => __( 'Revisions', 'acf' ),
-				'page-attributes' => __( 'Page Attributes', 'acf' ),
-				'thumbnail'       => __( 'Featured Image', 'acf' ),
-				'custom-fields'   => __( 'Custom Fields', 'acf' ),
-				'post-formats'    => __( 'Post Formats', 'acf' ),
+				'title'           => __( 'Title', 'secure-custom-fields' ),
+				'author'          => __( 'Author', 'secure-custom-fields' ),
+				'comments'        => __( 'Comments', 'secure-custom-fields' ),
+				'trackbacks'      => __( 'Trackbacks', 'secure-custom-fields' ),
+				'editor'          => __( 'Editor', 'secure-custom-fields' ),
+				'excerpt'         => __( 'Excerpt', 'secure-custom-fields' ),
+				'revisions'       => __( 'Revisions', 'secure-custom-fields' ),
+				'page-attributes' => __( 'Page Attributes', 'secure-custom-fields' ),
+				'thumbnail'       => __( 'Featured Image', 'secure-custom-fields' ),
+				'custom-fields'   => __( 'Custom Fields', 'secure-custom-fields' ),
+				'post-formats'    => __( 'Post Formats', 'secure-custom-fields' ),
 			);
 			$acf_available_supports = apply_filters( 'acf/post_type/available_supports', $acf_available_supports, $acf_post_type );
 			$acf_selected_supports  = is_array( $acf_post_type['supports'] ) ? $acf_post_type['supports'] : array();
@@ -38,14 +38,14 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'type'                      => 'checkbox',
 					'name'                      => 'supports',
 					'key'                       => 'supports',
-					'label'                     => __( 'Supports', 'acf' ),
-					'instructions'              => __( 'Enable various features in the content editor.', 'acf' ),
+					'label'                     => __( 'Supports', 'secure-custom-fields' ),
+					'instructions'              => __( 'Enable various features in the content editor.', 'secure-custom-fields' ),
 					'prefix'                    => 'acf_post_type',
 					'value'                     => array_unique( array_filter( $acf_selected_supports ) ),
 					'choices'                   => $acf_available_supports,
 					'allow_custom'              => true,
 					'class'                     => 'acf_post_type_supports',
-					'custom_choice_button_text' => __( 'Add Custom', 'acf' ),
+					'custom_choice_button_text' => __( 'Add Custom', 'secure-custom-fields' ),
 				),
 				'div'
 			);
@@ -59,8 +59,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'description',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['description'],
-					'label'        => __( 'Description', 'acf' ),
-					'instructions' => __( 'A descriptive summary of the post type.', 'acf' ),
+					'label'        => __( 'Description', 'secure-custom-fields' ),
+					'instructions' => __( 'A descriptive summary of the post type.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -75,8 +75,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'active',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['active'],
-					'label'        => __( 'Active', 'acf' ),
-					'instructions' => __( 'Active post types are enabled and registered with WordPress.', 'acf' ),
+					'label'        => __( 'Active', 'secure-custom-fields' ),
+					'instructions' => __( 'Active post types are enabled and registered with WordPress.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 				)
@@ -85,9 +85,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 			break;
 		case 'labels':
 			echo '<div class="acf-field acf-regenerate-labels-bar">';
-			echo '<span class="acf-btn acf-btn-sm acf-btn-clear acf-regenerate-labels"><i class="acf-icon acf-icon-regenerate"></i>' . esc_html__( 'Regenerate', 'acf' ) . '</span>';
-			echo '<span class="acf-btn acf-btn-sm acf-btn-clear acf-clear-labels"><i class="acf-icon acf-icon-trash"></i>' . esc_html__( 'Clear', 'acf' ) . '</span>';
-			echo '<span class="acf-tip acf-labels-tip"><i class="acf-icon acf-icon-help acf-js-tooltip" title="' . esc_attr__( 'Regenerate all labels using the Singular and Plural labels', 'acf' ) . '"></i></span>';
+			echo '<span class="acf-btn acf-btn-sm acf-btn-clear acf-regenerate-labels"><i class="acf-icon acf-icon-regenerate"></i>' . esc_html__( 'Regenerate', 'secure-custom-fields' ) . '</span>';
+			echo '<span class="acf-btn acf-btn-sm acf-btn-clear acf-clear-labels"><i class="acf-icon acf-icon-trash"></i>' . esc_html__( 'Clear', 'secure-custom-fields' ) . '</span>';
+			echo '<span class="acf-tip acf-labels-tip"><i class="acf-icon acf-icon-help acf-js-tooltip" title="' . esc_attr__( 'Regenerate all labels using the Singular and Plural labels', 'secure-custom-fields' ) . '"></i></span>';
 			echo '</div>';
 
 			acf_render_field_wrap(
@@ -101,9 +101,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 						'label'   => '%s',
 						'replace' => 'plural',
 					),
-					'label'        => __( 'Menu Name', 'acf' ),
-					'instructions' => __( 'Admin menu name for the post type.', 'acf' ),
-					'placeholder'  => __( 'Posts', 'acf' ),
+					'label'        => __( 'Menu Name', 'secure-custom-fields' ),
+					'instructions' => __( 'Admin menu name for the post type.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Posts', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -118,12 +118,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['all_items'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'   => __( 'All %s', 'acf' ),
+						'label'   => __( 'All %s', 'secure-custom-fields' ),
 						'replace' => 'plural',
 					),
-					'label'        => __( 'All Items', 'acf' ),
-					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'acf' ),
-					'placeholder'  => __( 'All Posts', 'acf' ),
+					'label'        => __( 'All Items', 'secure-custom-fields' ),
+					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'All Posts', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -138,12 +138,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['edit_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Edit %s', 'acf' ),
+						'label'   => __( 'Edit %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Edit Item', 'acf' ),
-					'instructions' => __( 'At the top of the editor screen when editing an item.', 'acf' ),
-					'placeholder'  => __( 'Edit Post', 'acf' ),
+					'label'        => __( 'Edit Item', 'secure-custom-fields' ),
+					'instructions' => __( 'At the top of the editor screen when editing an item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Edit Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -158,12 +158,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['view_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'View %s', 'acf' ),
+						'label'   => __( 'View %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'View Item', 'acf' ),
-					'instructions' => __( 'In the admin bar to view item when editing it.', 'acf' ),
-					'placeholder'  => __( 'View Post', 'acf' ),
+					'label'        => __( 'View Item', 'secure-custom-fields' ),
+					'instructions' => __( 'In the admin bar to view item when editing it.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'View Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -178,12 +178,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['view_items'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'   => __( 'View %s', 'acf' ),
+						'label'   => __( 'View %s', 'secure-custom-fields' ),
 						'replace' => 'plural',
 					),
-					'label'        => __( 'View Items', 'acf' ),
-					'instructions' => __( 'Appears in the admin bar in the \'All Posts\' view, provided the post type supports archives and the home page is not an archive of that post type.', 'acf' ),
-					'placeholder'  => __( 'View Posts', 'acf' ),
+					'label'        => __( 'View Items', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears in the admin bar in the \'All Posts\' view, provided the post type supports archives and the home page is not an archive of that post type.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'View Posts', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -198,12 +198,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['add_new_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Add New %s', 'acf' ),
+						'label'   => __( 'Add New %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Add New Item', 'acf' ),
-					'instructions' => __( 'At the top of the editor screen when adding a new item.', 'acf' ),
-					'placeholder'  => __( 'Add New Post', 'acf' ),
+					'label'        => __( 'Add New Item', 'secure-custom-fields' ),
+					'instructions' => __( 'At the top of the editor screen when adding a new item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Add New Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -218,12 +218,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['add_new'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Add New %s', 'acf' ),
+						'label'   => __( 'Add New %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Add New', 'acf' ),
-					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'acf' ),
-					'placeholder'  => __( 'Add New Post', 'acf' ),
+					'label'        => __( 'Add New', 'secure-custom-fields' ),
+					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Add New Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -238,12 +238,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['new_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'New %s', 'acf' ),
+						'label'   => __( 'New %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'New Item', 'acf' ),
-					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'acf' ),
-					'placeholder'  => __( 'New Post', 'acf' ),
+					'label'        => __( 'New Item', 'secure-custom-fields' ),
+					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'New Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -258,12 +258,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['parent_item_colon'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Parent %s:', 'acf' ),
+						'label'   => __( 'Parent %s:', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Parent Item Prefix', 'acf' ),
-					'instructions' => __( 'For hierarchical types in the post type list screen.', 'acf' ),
-					'placeholder'  => __( 'Parent Page:', 'acf' ),
+					'label'        => __( 'Parent Item Prefix', 'secure-custom-fields' ),
+					'instructions' => __( 'For hierarchical types in the post type list screen.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Parent Page:', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -278,12 +278,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['search_items'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Search %s', 'acf' ),
+						'label'   => __( 'Search %s', 'secure-custom-fields' ),
 						'replace' => 'plural',
 					),
-					'label'        => __( 'Search Items', 'acf' ),
-					'instructions' => __( 'At the top of the items screen when searching for an item.', 'acf' ),
-					'placeholder'  => __( 'Search Posts', 'acf' ),
+					'label'        => __( 'Search Items', 'secure-custom-fields' ),
+					'instructions' => __( 'At the top of the items screen when searching for an item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Search Posts', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -298,13 +298,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['not_found'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'     => __( 'No %s found', 'acf' ),
+						'label'     => __( 'No %s found', 'secure-custom-fields' ),
 						'replace'   => 'plural',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'No Items Found', 'acf' ),
-					'instructions' => __( 'At the top of the post type list screen when there are no posts to display.', 'acf' ),
-					'placeholder'  => __( 'No posts found', 'acf' ),
+					'label'        => __( 'No Items Found', 'secure-custom-fields' ),
+					'instructions' => __( 'At the top of the post type list screen when there are no posts to display.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'No posts found', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -319,13 +319,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['not_found_in_trash'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'     => __( 'No %s found in Trash', 'acf' ),
+						'label'     => __( 'No %s found in Trash', 'secure-custom-fields' ),
 						'replace'   => 'plural',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'No Items Found in Trash', 'acf' ),
-					'instructions' => __( 'At the top of the post type list screen when there are no posts in the trash.', 'acf' ),
-					'placeholder'  => __( 'No posts found in Trash', 'acf' ),
+					'label'        => __( 'No Items Found in Trash', 'secure-custom-fields' ),
+					'instructions' => __( 'At the top of the post type list screen when there are no posts in the trash.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'No posts found in Trash', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -340,12 +340,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['archives'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s Archives', 'acf' ),
+						'label'   => __( '%s Archives', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Archives Nav Menu', 'acf' ),
-					'instructions' => __( "Adds 'Post Type Archive' items with this label to the list of posts shown when adding items to an existing menu in a CPT with archives enabled. Only appears when editing menus in 'Live Preview' mode and a custom archive slug has been provided.", 'acf' ),
-					'placeholder'  => __( 'Post Archives', 'acf' ),
+					'label'        => __( 'Archives Nav Menu', 'secure-custom-fields' ),
+					'instructions' => __( "Adds 'Post Type Archive' items with this label to the list of posts shown when adding items to an existing menu in a CPT with archives enabled. Only appears when editing menus in 'Live Preview' mode and a custom archive slug has been provided.", 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post Archives', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -360,12 +360,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['attributes'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s Attributes', 'acf' ),
+						'label'   => __( '%s Attributes', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Attributes Meta Box', 'acf' ),
-					'instructions' => __( 'In the editor used for the title of the post attributes meta box.', 'acf' ),
-					'placeholder'  => __( 'Post Attributes', 'acf' ),
+					'label'        => __( 'Attributes Meta Box', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor used for the title of the post attributes meta box.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post Attributes', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -378,9 +378,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'featured_image',
 					'prefix'       => 'acf_post_type[labels]',
 					'value'        => $acf_post_type['labels']['featured_image'],
-					'label'        => __( 'Featured Image Meta Box', 'acf' ),
-					'instructions' => __( 'In the editor used for the title of the featured image meta box.', 'acf' ),
-					'placeholder'  => __( 'Featured image', 'acf' ),
+					'label'        => __( 'Featured Image Meta Box', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor used for the title of the featured image meta box.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Featured image', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -393,9 +393,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'set_featured_image',
 					'prefix'       => 'acf_post_type[labels]',
 					'value'        => $acf_post_type['labels']['set_featured_image'],
-					'label'        => __( 'Set Featured Image', 'acf' ),
-					'instructions' => __( 'As the button label when setting the featured image.', 'acf' ),
-					'placeholder'  => __( 'Set featured image', 'acf' ),
+					'label'        => __( 'Set Featured Image', 'secure-custom-fields' ),
+					'instructions' => __( 'As the button label when setting the featured image.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Set featured image', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -408,9 +408,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'remove_featured_image',
 					'prefix'       => 'acf_post_type[labels]',
 					'value'        => $acf_post_type['labels']['remove_featured_image'],
-					'label'        => __( 'Remove Featured Image', 'acf' ),
-					'instructions' => __( 'As the button label when removing the featured image.', 'acf' ),
-					'placeholder'  => __( 'Remove featured image', 'acf' ),
+					'label'        => __( 'Remove Featured Image', 'secure-custom-fields' ),
+					'instructions' => __( 'As the button label when removing the featured image.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Remove featured image', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -423,9 +423,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'use_featured_image',
 					'prefix'       => 'acf_post_type[labels]',
 					'value'        => $acf_post_type['labels']['use_featured_image'],
-					'label'        => __( 'Use Featured Image', 'acf' ),
-					'instructions' => __( 'As the button label for selecting to use an image as the featured image.', 'acf' ),
-					'placeholder'  => __( 'Use as featured image', 'acf' ),
+					'label'        => __( 'Use Featured Image', 'secure-custom-fields' ),
+					'instructions' => __( 'As the button label for selecting to use an image as the featured image.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Use as featured image', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -440,13 +440,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['insert_into_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'     => __( 'Insert into %s', 'acf' ),
+						'label'     => __( 'Insert into %s', 'secure-custom-fields' ),
 						'replace'   => 'singular',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'Insert Into Media Button', 'acf' ),
-					'instructions' => __( 'As the button label when adding media to content.', 'acf' ),
-					'placeholder'  => __( 'Insert into post', 'acf' ),
+					'label'        => __( 'Insert Into Media Button', 'secure-custom-fields' ),
+					'instructions' => __( 'As the button label when adding media to content.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Insert into post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -461,13 +461,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['uploaded_to_this_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'     => __( 'Uploaded to this %s', 'acf' ),
+						'label'     => __( 'Uploaded to this %s', 'secure-custom-fields' ),
 						'replace'   => 'singular',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'Uploaded To This Item', 'acf' ),
-					'instructions' => __( 'In the media modal showing all media uploaded to this item.', 'acf' ),
-					'placeholder'  => __( 'Uploaded to this post', 'acf' ),
+					'label'        => __( 'Uploaded To This Item', 'secure-custom-fields' ),
+					'instructions' => __( 'In the media modal showing all media uploaded to this item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Uploaded to this post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -482,13 +482,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['filter_items_list'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'     => __( 'Filter %s list', 'acf' ),
+						'label'     => __( 'Filter %s list', 'secure-custom-fields' ),
 						'replace'   => 'plural',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'Filter Items List', 'acf' ),
-					'instructions' => __( 'Used by screen readers for the filter links heading on the post type list screen.', 'acf' ),
-					'placeholder'  => __( 'Filter posts list', 'acf' ),
+					'label'        => __( 'Filter Items List', 'secure-custom-fields' ),
+					'instructions' => __( 'Used by screen readers for the filter links heading on the post type list screen.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Filter posts list', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -503,13 +503,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['filter_by_date'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'     => __( 'Filter %s by date', 'acf' ),
+						'label'     => __( 'Filter %s by date', 'secure-custom-fields' ),
 						'replace'   => 'plural',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'Filter Items By Date', 'acf' ),
-					'instructions' => __( 'Used by screen readers for the filter by date heading on the post type list screen.', 'acf' ),
-					'placeholder'  => __( 'Filter posts by date', 'acf' ),
+					'label'        => __( 'Filter Items By Date', 'secure-custom-fields' ),
+					'instructions' => __( 'Used by screen readers for the filter by date heading on the post type list screen.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Filter posts by date', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -525,12 +525,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['items_list_navigation'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'   => __( '%s list navigation', 'acf' ),
+						'label'   => __( '%s list navigation', 'secure-custom-fields' ),
 						'replace' => 'plural',
 					),
-					'label'        => __( 'Items List Navigation', 'acf' ),
-					'instructions' => __( 'Used by screen readers for the filter list pagination on the post type list screen.', 'acf' ),
-					'placeholder'  => __( 'Posts list navigation', 'acf' ),
+					'label'        => __( 'Items List Navigation', 'secure-custom-fields' ),
+					'instructions' => __( 'Used by screen readers for the filter list pagination on the post type list screen.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Posts list navigation', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -545,12 +545,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['items_list'],
 					'data'         => array(
 						/* translators: %s Plural form of post type name */
-						'label'   => __( '%s list', 'acf' ),
+						'label'   => __( '%s list', 'secure-custom-fields' ),
 						'replace' => 'plural',
 					),
-					'label'        => __( 'Items List', 'acf' ),
-					'instructions' => __( 'Used by screen readers for the items list on the post type list screen.', 'acf' ),
-					'placeholder'  => __( 'Posts list', 'acf' ),
+					'label'        => __( 'Items List', 'secure-custom-fields' ),
+					'instructions' => __( 'Used by screen readers for the items list on the post type list screen.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Posts list', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -565,12 +565,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_published'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s published.', 'acf' ),
+						'label'   => __( '%s published.', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Published', 'acf' ),
-					'instructions' => __( 'In the editor notice after publishing an item.', 'acf' ),
-					'placeholder'  => __( 'Post published.', 'acf' ),
+					'label'        => __( 'Item Published', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor notice after publishing an item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post published.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -585,12 +585,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_published_privately'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s published privately.', 'acf' ),
+						'label'   => __( '%s published privately.', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Published Privately', 'acf' ),
-					'instructions' => __( 'In the editor notice after publishing a private item.', 'acf' ),
-					'placeholder'  => __( 'Post published privately.', 'acf' ),
+					'label'        => __( 'Item Published Privately', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor notice after publishing a private item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post published privately.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -605,12 +605,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_reverted_to_draft'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s reverted to draft.', 'acf' ),
+						'label'   => __( '%s reverted to draft.', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Reverted To Draft', 'acf' ),
-					'instructions' => __( 'In the editor notice after reverting an item to draft.', 'acf' ),
-					'placeholder'  => __( 'Post reverted to draft.', 'acf' ),
+					'label'        => __( 'Item Reverted To Draft', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor notice after reverting an item to draft.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post reverted to draft.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -625,12 +625,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_scheduled'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s scheduled.', 'acf' ),
+						'label'   => __( '%s scheduled.', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Scheduled', 'acf' ),
-					'instructions' => __( 'In the editor notice after scheduling an item.', 'acf' ),
-					'placeholder'  => __( 'Post scheduled.', 'acf' ),
+					'label'        => __( 'Item Scheduled', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor notice after scheduling an item.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post scheduled.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -645,12 +645,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_updated'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s updated.', 'acf' ),
+						'label'   => __( '%s updated.', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Updated', 'acf' ),
-					'instructions' => __( 'In the editor notice after an item is updated.', 'acf' ),
-					'placeholder'  => __( 'Post updated.', 'acf' ),
+					'label'        => __( 'Item Updated', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor notice after an item is updated.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post updated.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -665,12 +665,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_link'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( '%s Link', 'acf' ),
+						'label'   => __( '%s Link', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
-					'label'        => __( 'Item Link', 'acf' ),
-					'instructions' => __( 'Title for a navigation link block variation.', 'acf' ),
-					'placeholder'  => __( 'Post Link', 'acf' ),
+					'label'        => __( 'Item Link', 'secure-custom-fields' ),
+					'instructions' => __( 'Title for a navigation link block variation.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Post Link', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -685,13 +685,13 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['item_link_description'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'     => __( 'A link to a %s.', 'acf' ),
+						'label'     => __( 'A link to a %s.', 'secure-custom-fields' ),
 						'replace'   => 'singular',
 						'transform' => 'lower',
 					),
-					'label'        => __( 'Item Link Description', 'acf' ),
-					'instructions' => __( 'Description for a navigation link block variation.', 'acf' ),
-					'placeholder'  => __( 'A link to a post.', 'acf' ),
+					'label'        => __( 'Item Link Description', 'secure-custom-fields' ),
+					'instructions' => __( 'Description for a navigation link block variation.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'A link to a post.', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -704,9 +704,9 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'enter_title_here',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['enter_title_here'],
-					'label'        => __( 'Title Placeholder', 'acf' ),
-					'instructions' => __( 'In the editor used as the placeholder of the title.', 'acf' ),
-					'placeholder'  => __( 'Add title', 'acf' ),
+					'label'        => __( 'Title Placeholder', 'secure-custom-fields' ),
+					'instructions' => __( 'In the editor used as the placeholder of the title.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Add title', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -721,8 +721,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'show_ui',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['show_ui'],
-					'label'        => __( 'Show In UI', 'acf' ),
-					'instructions' => __( 'Items can be edited and managed in the admin dashboard.', 'acf' ),
+					'label'        => __( 'Show In UI', 'secure-custom-fields' ),
+					'instructions' => __( 'Items can be edited and managed in the admin dashboard.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 				)
@@ -735,8 +735,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'show_in_menu',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['show_in_menu'],
-					'label'        => __( 'Show In Admin Menu', 'acf' ),
-					'instructions' => __( 'Admin editor navigation in the sidebar menu.', 'acf' ),
+					'label'        => __( 'Show In Admin Menu', 'secure-custom-fields' ),
+					'instructions' => __( 'Admin editor navigation in the sidebar menu.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 					'conditions'   => array(
@@ -755,8 +755,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['admin_menu_parent'],
 					'placeholder'  => 'edit.php?post_type={parent_page}',
-					'label'        => __( 'Admin Menu Parent', 'acf' ),
-					'instructions' => __( 'By default the post type will get a new top level item in the admin menu. If an existing top level item is supplied here, the post type will be added as a submenu item under it.', 'acf' ),
+					'label'        => __( 'Admin Menu Parent', 'secure-custom-fields' ),
+					'instructions' => __( 'By default the post type will get a new top level item in the admin menu. If an existing top level item is supplied here, the post type will be added as a submenu item under it.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_in_menu',
 						'operator' => '==',
@@ -774,8 +774,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'menu_position',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['menu_position'],
-					'label'        => __( 'Menu Position', 'acf' ),
-					'instructions' => __( 'The position in the sidebar menu in the admin dashboard.', 'acf' ),
+					'label'        => __( 'Menu Position', 'secure-custom-fields' ),
+					'instructions' => __( 'The position in the sidebar menu in the admin dashboard.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_in_menu',
 						'operator' => '==',
@@ -819,7 +819,7 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'         => 'menu_icon',
 					'prefix'      => 'acf_post_type',
 					'value'       => $acf_post_type['menu_icon'],
-					'label'       => __( 'Menu Icon', 'acf' ),
+					'label'       => __( 'Menu Icon', 'secure-custom-fields' ),
 					'placeholder' => 'dashicons-admin-post',
 					'conditions'  => array(
 						array(
@@ -845,8 +845,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'register_meta_box_cb',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['register_meta_box_cb'],
-					'label'        => __( 'Custom Meta Box Callback', 'acf' ),
-					'instructions' => __( 'A PHP function name to be called when setting up the meta boxes for the edit screen. For security, this callback will be executed in a special context without access to any superglobals like $_POST or $_GET.', 'acf' ),
+					'label'        => __( 'Custom Meta Box Callback', 'secure-custom-fields' ),
+					'instructions' => __( 'A PHP function name to be called when setting up the meta boxes for the edit screen. For security, this callback will be executed in a special context without access to any superglobals like $_POST or $_GET.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_ui',
 						'operator' => '==',
@@ -877,8 +877,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'show_in_admin_bar',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['show_in_admin_bar'],
-					'label'        => __( 'Show In Admin Bar', 'acf' ),
-					'instructions' => __( "Appears as an item in the 'New' menu in the admin bar.", 'acf' ),
+					'label'        => __( 'Show In Admin Bar', 'secure-custom-fields' ),
+					'instructions' => __( "Appears as an item in the 'New' menu in the admin bar.", 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 					'conditions'   => array(
@@ -896,8 +896,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'show_in_nav_menus',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['show_in_nav_menus'],
-					'label'        => __( 'Appearance Menus Support', 'acf' ),
-					'instructions' => __( "Allow items to be added to menus in the 'Appearance' > 'Menus' screen. Must be turned on in 'Screen options'.", 'acf' ),
+					'label'        => __( 'Appearance Menus Support', 'secure-custom-fields' ),
+					'instructions' => __( "Allow items to be added to menus in the 'Appearance' > 'Menus' screen. Must be turned on in 'Screen options'.", 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 				)
@@ -910,8 +910,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'exclude_from_search',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['exclude_from_search'],
-					'label'        => __( 'Exclude From Search', 'acf' ),
-					'instructions' => __( 'Sets whether posts should be excluded from search results and taxonomy archive pages.', 'acf' ),
+					'label'        => __( 'Exclude From Search', 'secure-custom-fields' ),
+					'instructions' => __( 'Sets whether posts should be excluded from search results and taxonomy archive pages.', 'secure-custom-fields' ),
 					'ui'           => true,
 				)
 			);
@@ -925,8 +925,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'rename_capabilities',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['rename_capabilities'],
-					'label'        => __( 'Rename Capabilities', 'acf' ),
-					'instructions' => __( "By default the capabilities of the post type will inherit the 'Post' capability names, eg. edit_post, delete_posts. Enable to use post type specific capabilities, eg. edit_{singular}, delete_{plural}.", 'acf' ),
+					'label'        => __( 'Rename Capabilities', 'secure-custom-fields' ),
+					'instructions' => __( "By default the capabilities of the post type will inherit the 'Post' capability names, eg. edit_post, delete_posts. Enable to use post type specific capabilities, eg. edit_{singular}, delete_{plural}.", 'secure-custom-fields' ),
 					'default'      => false,
 					'ui'           => true,
 				),
@@ -940,8 +940,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'singular_capability_name',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['singular_capability_name'],
-					'label'        => __( 'Singular Capability Name', 'acf' ),
-					'instructions' => __( 'Choose another post type to base the capabilities for this post type.', 'acf' ),
+					'label'        => __( 'Singular Capability Name', 'secure-custom-fields' ),
+					'instructions' => __( 'Choose another post type to base the capabilities for this post type.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'rename_capabilities',
 						'operator' => '==',
@@ -959,8 +959,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'plural_capability_name',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['plural_capability_name'],
-					'label'        => __( 'Plural Capability Name', 'acf' ),
-					'instructions' => __( 'Optionally provide a plural to be used in capabilities.', 'acf' ),
+					'label'        => __( 'Plural Capability Name', 'secure-custom-fields' ),
+					'instructions' => __( 'Optionally provide a plural to be used in capabilities.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'rename_capabilities',
 						'operator' => '==',
@@ -991,8 +991,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'can_export',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['can_export'],
-					'label'        => __( 'Can Export', 'acf' ),
-					'instructions' => __( "Allow the post type to be exported from 'Tools' > 'Export'.", 'acf' ),
+					'label'        => __( 'Can Export', 'secure-custom-fields' ),
+					'instructions' => __( "Allow the post type to be exported from 'Tools' > 'Export'.", 'secure-custom-fields' ),
 					'default'      => 1,
 					'ui'           => 1,
 				),
@@ -1006,8 +1006,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'delete_with_user',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['delete_with_user'],
-					'label'        => __( 'Delete With User', 'acf' ),
-					'instructions' => __( 'Delete items by a user when that user is deleted.', 'acf' ),
+					'label'        => __( 'Delete With User', 'secure-custom-fields' ),
+					'instructions' => __( 'Delete items by a user when that user is deleted.', 'secure-custom-fields' ),
 					'ui'           => 1,
 				),
 				'div'
@@ -1021,22 +1021,22 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'permalink_rewrite',
 					'prefix'       => 'acf_post_type[rewrite]',
 					'value'        => isset( $acf_post_type['rewrite']['permalink_rewrite'] ) ? $acf_post_type['rewrite']['permalink_rewrite'] : 'post_type_key',
-					'label'        => __( 'Permalink Rewrite', 'acf' ),
+					'label'        => __( 'Permalink Rewrite', 'secure-custom-fields' ),
 					/* translators: this string will be appended with the new permalink structure. */
-					'instructions' => __( 'Rewrite the URL using the post type key as the slug. Your permalink structure will be', 'acf' ) . ' {slug}.',
+					'instructions' => __( 'Rewrite the URL using the post type key as the slug. Your permalink structure will be', 'secure-custom-fields' ) . ' {slug}.',
 					'choices'      => array(
-						'post_type_key'    => __( 'Post Type Key', 'acf' ),
-						'custom_permalink' => __( 'Custom Permalink', 'acf' ),
-						'no_permalink'     => __( 'No Permalink (prevent URL rewriting)', 'acf' ),
+						'post_type_key'    => __( 'Post Type Key', 'secure-custom-fields' ),
+						'custom_permalink' => __( 'Custom Permalink', 'secure-custom-fields' ),
+						'no_permalink'     => __( 'No Permalink (prevent URL rewriting)', 'secure-custom-fields' ),
 					),
 					'default'      => 'post_type_key',
 					'hide_search'  => true,
 					'data'         => array(
 						/* translators: this string will be appended with the new permalink structure. */
-						'post_type_key_instructions'    => __( 'Rewrite the URL using the post type key as the slug. Your permalink structure will be', 'acf' ) . ' {slug}.',
+						'post_type_key_instructions'    => __( 'Rewrite the URL using the post type key as the slug. Your permalink structure will be', 'secure-custom-fields' ) . ' {slug}.',
 						/* translators: this string will be appended with the new permalink structure. */
-						'custom_permalink_instructions' => __( 'Rewrite the URL using a custom slug defined in the input below. Your permalink structure will be', 'acf' ) . ' {slug}.',
-						'no_permalink_instructions'     => __( 'Permalinks for this post type are disabled.', 'acf' ),
+						'custom_permalink_instructions' => __( 'Rewrite the URL using a custom slug defined in the input below. Your permalink structure will be', 'secure-custom-fields' ) . ' {slug}.',
+						'no_permalink_instructions'     => __( 'Permalinks for this post type are disabled.', 'secure-custom-fields' ),
 						'site_url'                      => get_site_url(),
 					),
 					'class'        => 'permalink_rewrite',
@@ -1052,8 +1052,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'slug',
 					'prefix'       => 'acf_post_type[rewrite]',
 					'value'        => isset( $acf_post_type['rewrite']['slug'] ) ? $acf_post_type['rewrite']['slug'] : '',
-					'label'        => __( 'URL Slug', 'acf' ),
-					'instructions' => __( 'Customize the slug used in the URL.', 'acf' ),
+					'label'        => __( 'URL Slug', 'secure-custom-fields' ),
+					'instructions' => __( 'Customize the slug used in the URL.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'permalink_rewrite',
 						'operator' => '==',
@@ -1072,8 +1072,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'with_front',
 					'prefix'       => 'acf_post_type[rewrite]',
 					'value'        => isset( $acf_post_type['rewrite']['with_front'] ) ? $acf_post_type['rewrite']['with_front'] : true,
-					'label'        => __( 'Front URL Prefix', 'acf' ),
-					'instructions' => __( 'Alters the permalink structure to add the `WP_Rewrite::$front` prefix to URLs.', 'acf' ),
+					'label'        => __( 'Front URL Prefix', 'secure-custom-fields' ),
+					'instructions' => __( 'Alters the permalink structure to add the `WP_Rewrite::$front` prefix to URLs.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 					'conditions'   => array(
@@ -1091,8 +1091,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'feeds',
 					'prefix'       => 'acf_post_type[rewrite]',
 					'value'        => isset( $acf_post_type['rewrite']['feeds'] ) ? $acf_post_type['rewrite']['feeds'] : $acf_post_type['has_archive'],
-					'label'        => __( 'Feed URL', 'acf' ),
-					'instructions' => __( 'RSS feed URL for the post type items.', 'acf' ),
+					'label'        => __( 'Feed URL', 'secure-custom-fields' ),
+					'instructions' => __( 'RSS feed URL for the post type items.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'conditions'   => array(
 						'field'    => 'permalink_rewrite',
@@ -1109,8 +1109,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'pages',
 					'prefix'       => 'acf_post_type[rewrite]',
 					'value'        => isset( $acf_post_type['rewrite']['pages'] ) ? $acf_post_type['rewrite']['pages'] : true,
-					'label'        => __( 'Pagination', 'acf' ),
-					'instructions' => __( 'Pagination support for the items URLs such as the archives.', 'acf' ),
+					'label'        => __( 'Pagination', 'secure-custom-fields' ),
+					'instructions' => __( 'Pagination support for the items URLs such as the archives.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'default'      => 1,
 					'conditions'   => array(
@@ -1130,8 +1130,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'has_archive',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['has_archive'],
-					'label'        => __( 'Archive', 'acf' ),
-					'instructions' => __( 'Has an item archive that can be customized with an archive template file in your theme.', 'acf' ),
+					'label'        => __( 'Archive', 'secure-custom-fields' ),
+					'instructions' => __( 'Has an item archive that can be customized with an archive template file in your theme.', 'secure-custom-fields' ),
 					'ui'           => true,
 				),
 				'div'
@@ -1144,8 +1144,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'has_archive_slug',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['has_archive_slug'],
-					'label'        => __( 'Archive Slug', 'acf' ),
-					'instructions' => __( 'Custom slug for the Archive URL.', 'acf' ),
+					'label'        => __( 'Archive Slug', 'secure-custom-fields' ),
+					'instructions' => __( 'Custom slug for the Archive URL.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'conditions'   => array(
 						'field'    => 'has_archive',
@@ -1166,8 +1166,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'publicly_queryable',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['publicly_queryable'],
-					'label'        => __( 'Publicly Queryable', 'acf' ),
-					'instructions' => __( 'URLs for an item and items can be accessed with a query string.', 'acf' ),
+					'label'        => __( 'Publicly Queryable', 'secure-custom-fields' ),
+					'instructions' => __( 'URLs for an item and items can be accessed with a query string.', 'secure-custom-fields' ),
 					'default'      => 1,
 					'ui'           => true,
 				),
@@ -1192,12 +1192,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'query_var',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['query_var'],
-					'label'        => __( 'Query Variable Support', 'acf' ),
-					'instructions' => __( 'Items can be accessed using the non-pretty permalink, eg. {post_type}={post_slug}.', 'acf' ),
+					'label'        => __( 'Query Variable Support', 'secure-custom-fields' ),
+					'instructions' => __( 'Items can be accessed using the non-pretty permalink, eg. {post_type}={post_slug}.', 'secure-custom-fields' ),
 					'choices'      => array(
-						'post_type_key'    => __( 'Post Type Key', 'acf' ),
-						'custom_query_var' => __( 'Custom Query Variable', 'acf' ),
-						'none'             => __( 'No Query Variable Support', 'acf' ),
+						'post_type_key'    => __( 'Post Type Key', 'secure-custom-fields' ),
+						'custom_query_var' => __( 'Custom Query Variable', 'secure-custom-fields' ),
+						'none'             => __( 'No Query Variable Support', 'secure-custom-fields' ),
 					),
 					'default'      => 1,
 					'hide_search'  => true,
@@ -1219,8 +1219,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'query_var_name',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['query_var_name'],
-					'label'        => __( 'Query Variable', 'acf' ),
-					'instructions' => __( 'Customize the query variable name.', 'acf' ),
+					'label'        => __( 'Query Variable', 'secure-custom-fields' ),
+					'instructions' => __( 'Customize the query variable name.', 'secure-custom-fields' ),
 					'ui'           => true,
 					'conditions'   => array(
 						'field'    => 'query_var',
@@ -1241,8 +1241,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'show_in_rest',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['show_in_rest'],
-					'label'        => __( 'Show In REST API', 'acf' ),
-					'instructions' => __( 'Exposes this post type in the REST API. Required to use the block editor.', 'acf' ),
+					'label'        => __( 'Show In REST API', 'secure-custom-fields' ),
+					'instructions' => __( 'Exposes this post type in the REST API. Required to use the block editor.', 'secure-custom-fields' ),
 					'default'      => 1,
 					'ui'           => true,
 				),
@@ -1256,8 +1256,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'rest_base',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['rest_base'],
-					'label'        => __( 'Base URL', 'acf' ),
-					'instructions' => __( 'The base URL for the post type REST API URLs.', 'acf' ),
+					'label'        => __( 'Base URL', 'secure-custom-fields' ),
+					'instructions' => __( 'The base URL for the post type REST API URLs.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_in_rest',
 						'operator' => '==',
@@ -1275,8 +1275,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'rest_namespace',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['rest_namespace'],
-					'label'        => __( 'Namespace Route', 'acf' ),
-					'instructions' => __( 'The namespace part of the REST API URL.', 'acf' ),
+					'label'        => __( 'Namespace Route', 'secure-custom-fields' ),
+					'instructions' => __( 'The namespace part of the REST API URL.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_in_rest',
 						'operator' => '==',
@@ -1294,8 +1294,8 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'key'          => 'rest_controller_class',
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['rest_controller_class'],
-					'label'        => __( 'Controller Class', 'acf' ),
-					'instructions' => __( 'Optional custom controller to use instead of `WP_REST_Posts_Controller`.', 'acf' ),
+					'label'        => __( 'Controller Class', 'secure-custom-fields' ),
+					'instructions' => __( 'Optional custom controller to use instead of `WP_REST_Posts_Controller`.', 'secure-custom-fields' ),
 					'default'      => 'WP_REST_Posts_Controller',
 					'conditions'   => array(
 						'field'    => 'show_in_rest',

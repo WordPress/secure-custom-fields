@@ -21,7 +21,7 @@ if ( ! class_exists( 'ACF_Location_User_Role' ) ) :
 		 */
 		function initialize() {
 			$this->name        = 'user_role';
-			$this->label       = __( 'User Role', 'acf' );
+			$this->label       = __( 'User Role', 'secure-custom-fields' );
 			$this->category    = 'user';
 			$this->object_type = 'user';
 		}
@@ -75,7 +75,7 @@ if ( ! class_exists( 'ACF_Location_User_Role' ) ) :
 			global $wp_roles;
 			return array_merge(
 				array(
-					'all' => __( 'All', 'acf' ),
+					'all' => __( 'All', 'secure-custom-fields' ),
 				),
 				$wp_roles->get_names()
 			);

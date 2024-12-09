@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 			// vars
 			$this->name          = 'checkbox';
-			$this->label         = __( 'Checkbox', 'acf' );
+			$this->label         = __( 'Checkbox', 'secure-custom-fields' );
 			$this->category      = 'choice';
-			$this->description   = __( 'A group of checkbox inputs that allow the user to select one, or multiple values that you specify.', 'acf' );
+			$this->description   = __( 'A group of checkbox inputs that allow the user to select one, or multiple values that you specify.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-checkbox.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/checkbox/';
 			$this->defaults      = array(
@@ -32,7 +32,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 				'save_custom'               => 0,
 				'toggle'                    => 0,
 				'return_format'             => 'value',
-				'custom_choice_button_text' => __( 'Add new choice', 'acf' ),
+				'custom_choice_button_text' => __( 'Add new choice', 'secure-custom-fields' ),
 			);
 		}
 
@@ -131,7 +131,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 			foreach ( $value as $value ) {
 				if ( empty( $value ) && $value !== '0' ) {
-					return __( 'Checkbox custom values cannot be empty. Uncheck any empty values.', 'acf' );
+					return __( 'Checkbox custom values cannot be empty. Uncheck any empty values.', 'secure-custom-fields' );
 				}
 			}
 
@@ -154,7 +154,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$atts = array(
 				'type'  => 'checkbox',
 				'class' => 'acf-checkbox-toggle',
-				'label' => __( 'Toggle All', 'acf' ),
+				'label' => __( 'Toggle All', 'secure-custom-fields' ),
 			);
 
 			// custom label
@@ -319,8 +319,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Choices', 'acf' ),
-					'instructions' => __( 'Enter each choice on a new line.', 'acf' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'acf' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'acf' ) . '</span>',
+					'label'        => __( 'Choices', 'secure-custom-fields' ),
+					'instructions' => __( 'Enter each choice on a new line.', 'secure-custom-fields' ) . '<br />' . __( 'For more control, you may specify both a value and label like this:', 'secure-custom-fields' ) . '<br /><span class="acf-field-setting-example">' . __( 'red : Red', 'secure-custom-fields' ) . '</span>',
 					'type'         => 'textarea',
 					'name'         => 'choices',
 				)
@@ -329,8 +329,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Enter each default value on a new line', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Enter each default value on a new line', 'secure-custom-fields' ),
 					'type'         => 'textarea',
 					'name'         => 'default_value',
 				)
@@ -339,15 +339,15 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Value', 'acf' ),
-					'instructions' => __( 'Specify the returned value on front end', 'acf' ),
+					'label'        => __( 'Return Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify the returned value on front end', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'value' => __( 'Value', 'acf' ),
-						'label' => __( 'Label', 'acf' ),
-						'array' => __( 'Both (Array)', 'acf' ),
+						'value' => __( 'Value', 'secure-custom-fields' ),
+						'label' => __( 'Label', 'secure-custom-fields' ),
+						'array' => __( 'Both (Array)', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -365,22 +365,22 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Custom Values', 'acf' ),
+					'label'        => __( 'Allow Custom Values', 'secure-custom-fields' ),
 					'name'         => 'allow_custom',
 					'type'         => 'true_false',
 					'ui'           => 1,
-					'instructions' => __( "Allow 'custom' values to be added", 'acf' ),
+					'instructions' => __( "Allow 'custom' values to be added", 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Save Custom Values', 'acf' ),
+					'label'        => __( 'Save Custom Values', 'secure-custom-fields' ),
 					'name'         => 'save_custom',
 					'type'         => 'true_false',
 					'ui'           => 1,
-					'instructions' => __( "Save 'custom' values to the field's choices", 'acf' ),
+					'instructions' => __( "Save 'custom' values to the field's choices", 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'allow_custom',
 						'operator' => '==',
@@ -402,14 +402,14 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Layout', 'acf' ),
+					'label'        => __( 'Layout', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'layout',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'vertical'   => __( 'Vertical', 'acf' ),
-						'horizontal' => __( 'Horizontal', 'acf' ),
+						'vertical'   => __( 'Vertical', 'secure-custom-fields' ),
+						'horizontal' => __( 'Horizontal', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -417,8 +417,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Add Toggle All', 'acf' ),
-					'instructions' => __( 'Prepend an extra checkbox to toggle all choices', 'acf' ),
+					'label'        => __( 'Add Toggle All', 'secure-custom-fields' ),
+					'instructions' => __( 'Prepend an extra checkbox to toggle all choices', 'secure-custom-fields' ),
 					'name'         => 'toggle',
 					'type'         => 'true_false',
 					'ui'           => 1,

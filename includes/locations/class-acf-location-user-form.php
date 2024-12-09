@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_User_Form' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'user_form';
-			$this->label       = __( 'User Form', 'acf' );
+			$this->label       = __( 'User Form', 'secure-custom-fields' );
 			$this->category    = 'user';
 			$this->object_type = 'user';
 		}
@@ -68,10 +68,10 @@ if ( ! class_exists( 'ACF_Location_User_Form' ) ) :
 		 */
 		public function get_values( $rule ) {
 			return array(
-				'all'      => __( 'All', 'acf' ),
-				'add'      => __( 'Add', 'acf' ),
-				'edit'     => __( 'Add / Edit', 'acf' ),
-				'register' => __( 'Register', 'acf' ),
+				'all'      => __( 'All', 'secure-custom-fields' ),
+				'add'      => __( 'Add', 'secure-custom-fields' ),
+				'edit'     => __( 'Add / Edit', 'secure-custom-fields' ),
+				'register' => __( 'Register', 'secure-custom-fields' ),
 			);
 		}
 	}

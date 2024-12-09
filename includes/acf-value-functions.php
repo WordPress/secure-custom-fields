@@ -373,7 +373,7 @@ function acf_log_invalid_field_notice( $field, $function ) {
 
 	$error_text = sprintf(
 		/* translators: %1 plugin name */
-		__( '<strong>%1$s</strong> - We\'ve detected one or more calls to retrieve ACF field values before ACF has been initialized. This is not supported and can result in malformed or missing data.', 'acf' ),
+		__( '<strong>%1$s</strong> - We\'ve detected one or more calls to retrieve ACF field values before ACF has been initialized. This is not supported and can result in malformed or missing data.', 'secure-custom-fields' ),
 		acf_get_setting( 'name' ),
 	);
 	_doing_it_wrong( esc_html( $function ), acf_esc_html( $error_text ), '5.11.1' );

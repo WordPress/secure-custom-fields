@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Ajax_Local_JSON_Diff' ) ) :
 
 	class ACF_Ajax_Local_JSON_Diff extends ACF_Ajax {
 
+
 		/**
 		 * The AJAX action name.
 		 *
@@ -34,7 +35,7 @@ if ( ! class_exists( 'ACF_Ajax_Local_JSON_Diff' ) ) :
 		public function get_response( $request ) {
 			// Bail early if the current user can't access the ACF admin.
 			if ( ! acf_current_user_can_admin() ) {
-				return new WP_Error( 'acf_not_allowed', __( 'Sorry, you do not have permission to do that.', 'acf' ), array( 'status' => 403 ) );
+				return new WP_Error( 'acf_not_allowed', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ), array( 'status' => 403 ) );
 			}
 
 			$json = array();
@@ -44,12 +45,12 @@ if ( ! class_exists( 'ACF_Ajax_Local_JSON_Diff' ) ) :
 
 			// Bail early if missing props.
 			if ( ! $id ) {
-				return new WP_Error( 'acf_invalid_param', __( 'Invalid field group parameter(s).', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_param', __( 'Invalid field group parameter(s).', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 
 			$post_type = get_post_type( $id );
 			if ( ! in_array( $post_type, acf_get_internal_post_types(), true ) ) {
-				return new WP_Error( 'acf_invalid_post_type', __( 'Invalid post type selected for review.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_post_type', __( 'Invalid post type selected for review.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 
 			// Disable filters and load the post directly from database.
@@ -57,7 +58,7 @@ if ( ! class_exists( 'ACF_Ajax_Local_JSON_Diff' ) ) :
 
 			$post = acf_get_internal_post_type( $id, $post_type );
 			if ( ! $post ) {
-				return new WP_Error( 'acf_invalid_id', __( 'Invalid post ID.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_invalid_id', __( 'Invalid post ID.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 
 			// Field groups also load in fields.
@@ -72,22 +73,23 @@ if ( ! class_exists( 'ACF_Ajax_Local_JSON_Diff' ) ) :
 			$files = acf_get_local_json_files( $post_type );
 			$key   = $post['key'];
 			if ( ! isset( $files[ $key ] ) ) {
-				return new WP_Error( 'acf_cannot_compare', __( 'Sorry, this post is unavailable for diff comparison.', 'acf' ), array( 'status' => 404 ) );
+				return new WP_Error( 'acf_cannot_compare', __( 'Sorry, this post is unavailable for diff comparison.', 'secure-custom-fields' ), array( 'status' => 404 ) );
 			}
 			$local_post = json_decode( file_get_contents( $files[ $key ] ), true );
 
 			// Render diff HTML.
-			$date_format   = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
-			$date_template = __( 'Last updated: %s', 'acf' );
+			$date_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+			/* translators: %s: Date/time. */
+			$date_template = __( 'Last updated: %s', 'secure-custom-fields' );
 			$json['html']  = '
 		<div class="acf-diff">
 			<div class="acf-diff-title">
 				<div class="acf-diff-title-left">
-					<strong>' . __( 'Original', 'acf' ) . '</strong>
+					<strong>' . __( 'Original', 'secure-custom-fields' ) . '</strong>
 					<span>' . sprintf( $date_template, wp_date( $date_format, $post['modified'] ) ) . '</span>
 				</div>
 				<div class="acf-diff-title-right">
-					<strong>' . __( 'JSON (newer)', 'acf' ) . '</strong>
+					<strong>' . __( 'JSON (newer)', 'secure-custom-fields' ) . '</strong>
 					<span>' . sprintf( $date_template, wp_date( $date_format, $local_post['modified'] ) ) . '</span>
 				</div>
 			</div>

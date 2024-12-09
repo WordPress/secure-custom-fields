@@ -137,7 +137,7 @@ function acf_get_term_title( $term ) {
 
 	// Allow for empty name.
 	if ( $title === '' ) {
-		$title = __( '(no title)', 'acf' );
+		$title = __( '(no title)', 'secure-custom-fields' );
 	}
 
 	// Prepend ancestors indentation.

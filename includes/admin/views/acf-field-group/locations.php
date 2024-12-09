@@ -6,8 +6,8 @@ global $field_group;
 ?>
 <div class="acf-field">
 	<div class="acf-label">
-		<label><?php esc_html_e( 'Rules', 'acf' ); ?></label>
-		<i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Create a set of rules to determine which edit screens will use these custom fields', 'acf' ); ?>">?</i>
+		<label><?php esc_html_e( 'Rules', 'secure-custom-fields' ); ?></label>
+		<i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Create a set of rules to determine which edit screens will use these custom fields', 'secure-custom-fields' ); ?>">?</i>
 	</div>
 	<div class="acf-input">
 		<div class="rule-groups">
@@ -32,9 +32,9 @@ global $field_group;
 			endforeach;
 			?>
 
-			<h4><?php esc_html_e( 'or', 'acf' ); ?></h4>
+			<h4><?php esc_html_e( 'or', 'secure-custom-fields' ); ?></h4>
 
-			<a href="#" class="button add-location-group"><?php esc_html_e( 'Add rule group', 'acf' ); ?></a>
+			<a href="#" class="button add-location-group"><?php esc_html_e( 'Add rule group', 'secure-custom-fields' ); ?></a>
 
 		</div>
 	</div>

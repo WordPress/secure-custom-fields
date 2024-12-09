@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Adds helpful debugging information to a new "Advanced Custom Fields"
  * panel in the WordPress Site Health screen.
@@ -15,6 +16,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 	 * The ACF Site Health class responsible for populating ACF debug information in WordPress Site Health.
 	 */
 	class ACF_Site_Health {
+
 		/**
 		 * The option name used to store site health data.
 		 *
@@ -191,12 +193,12 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		}
 
 		/**
-		 * Appends the ACF section to the "Info" tab of the WordPress Site Health screen.
+		 * Appends the SCF section to the "Info" tab of the WordPress Site Health screen.
 		 *
 		 * @since 6.3
 		 *
 		 * @param array $debug_info The current debug info for site health.
-		 * @return array The debug info appended with the ACF section.
+		 * @return array The debug info appended with the SCF section.
 		 */
 		public function render_tab_content( array $debug_info ): array {
 			$data = $this->get_site_health_values();
@@ -227,9 +229,9 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 				}
 			}
 
-			$debug_info['acf'] = array(
-				'label'       => __( 'SCF', 'acf' ),
-				'description' => __( 'This section contains debug information about your SCF configuration which can be useful to provide to support.', 'acf' ),
+			$debug_info['secure-custom-fields'] = array(
+				'label'       => __( 'SCF', 'secure-custom-fields' ),
+				'description' => __( 'This section contains debug information about your SCF configuration which can be useful to provide to support.', 'secure-custom-fields' ),
 				'fields'      => $data,
 			);
 
@@ -246,38 +248,32 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		public function get_site_health_values(): array {
 			global $wpdb;
 
-			$fields         = array();
-			$field_groups   = acf_get_field_groups();
-			$post_types     = acf_get_post_types();
-			$taxonomies     = acf_get_taxonomies();
+			$fields       = array();
+			$field_groups = acf_get_field_groups();
+			$post_types   = acf_get_post_types();
+			$taxonomies   = acf_get_taxonomies();
 
-			$yes = __( 'Yes', 'acf' );
-			$no  = __( 'No', 'acf' );
+			$yes = __( 'Yes', 'secure-custom-fields' );
+			$no  = __( 'No', 'secure-custom-fields' );
 
 			$fields['version'] = array(
-				'label' => __( 'Plugin Version', 'acf' ),
+				'label' => __( 'Plugin Version', 'secure-custom-fields' ),
 				'value' => defined( 'ACF_VERSION' ) ? ACF_VERSION : '',
 			);
 
-			$fields['plugin_type'] = array(
-				'label' => __( 'Plugin Type', 'acf' ),
-				'value' => __( 'PRO', 'acf' ),
-				'debug' => 'PRO',
-			);
-
 			$fields['wp_version'] = array(
-				'label' => __( 'WordPress Version', 'acf' ),
+				'label' => __( 'WordPress Version', 'secure-custom-fields' ),
 				'value' => get_bloginfo( 'version' ),
 			);
 
 			$fields['mysql_version'] = array(
-				'label' => __( 'MySQL Version', 'acf' ),
+				'label' => __( 'MySQL Version', 'secure-custom-fields' ),
 				'value' => $wpdb->db_server_info(),
 			);
 
 			$fields['is_multisite'] = array(
-				'label' => __( 'Is Multisite', 'acf' ),
-				'value' => is_multisite() ? __( 'Yes', 'acf' ) : __( 'No', 'acf' ),
+				'label' => __( 'Is Multisite', 'secure-custom-fields' ),
+				'value' => is_multisite() ? __( 'Yes', 'secure-custom-fields' ) : __( 'No', 'secure-custom-fields' ),
 				'debug' => is_multisite(),
 			);
 
@@ -285,7 +281,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$parent_theme = $active_theme->parent();
 
 			$fields['active_theme'] = array(
-				'label' => __( 'Active Theme', 'acf' ),
+				'label' => __( 'Active Theme', 'secure-custom-fields' ),
 				'value' => array(
 					'name'       => $active_theme->get( 'Name' ),
 					'version'    => $active_theme->get( 'Version' ),
@@ -296,7 +292,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 
 			if ( $parent_theme ) {
 				$fields['parent_theme'] = array(
-					'label' => __( 'Parent Theme', 'acf' ),
+					'label' => __( 'Parent Theme', 'secure-custom-fields' ),
 					'value' => array(
 						'name'       => $parent_theme->get( 'Name' ),
 						'version'    => $parent_theme->get( 'Version' ),
@@ -322,7 +318,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			}
 
 			$fields['active_plugins'] = array(
-				'label' => __( 'Active Plugins', 'acf' ),
+				'label' => __( 'Active Plugins', 'secure-custom-fields' ),
 				'value' => $active_plugins,
 			);
 
@@ -334,7 +330,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['ui_field_groups'] = array(
-				'label' => __( 'Registered Field Groups (UI)', 'acf' ),
+				'label' => __( 'Registered Field Groups (UI)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $ui_field_groups ) ),
 			);
 
@@ -346,7 +342,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['php_field_groups'] = array(
-				'label' => __( 'Registered Field Groups (PHP)', 'acf' ),
+				'label' => __( 'Registered Field Groups (PHP)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $php_field_groups ) ),
 			);
 
@@ -358,7 +354,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['json_field_groups'] = array(
-				'label' => __( 'Registered Field Groups (JSON)', 'acf' ),
+				'label' => __( 'Registered Field Groups (JSON)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $json_field_groups ) ),
 			);
 
@@ -370,7 +366,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['rest_field_groups'] = array(
-				'label' => __( 'Field Groups Enabled for REST API', 'acf' ),
+				'label' => __( 'Field Groups Enabled for REST API', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $rest_field_groups ) ),
 			);
 
@@ -383,7 +379,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 
 			if ( is_plugin_active( 'wpgraphql-acf/wpgraphql-acf.php' ) ) {
 				$fields['graphql_field_groups'] = array(
-					'label' => __( 'Field Groups Enabled for GraphQL', 'acf' ),
+					'label' => __( 'Field Groups Enabled for GraphQL', 'secure-custom-fields' ),
 					'value' => number_format_i18n( count( $graphql_field_groups ) ),
 				);
 			}
@@ -416,19 +412,19 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			}
 
 			$fields['number_of_fields_by_type'] = array(
-				'label' => __( 'Number of Fields by Field Type', 'acf' ),
+				'label' => __( 'Number of Fields by Field Type', 'secure-custom-fields' ),
 				'value' => $fields_by_type,
 			);
 
 			$fields['number_of_third_party_fields_by_type'] = array(
-				'label' => __( 'Number of Third Party Fields by Field Type', 'acf' ),
+				'label' => __( 'Number of Third Party Fields by Field Type', 'secure-custom-fields' ),
 				'value' => $third_party_fields_by_type,
 			);
 
 			$enable_post_types = acf_get_setting( 'enable_post_types' );
 
 			$fields['post_types_enabled'] = array(
-				'label' => __( 'Post Types and Taxonomies Enabled', 'acf' ),
+				'label' => __( 'Post Types and Taxonomies Enabled', 'secure-custom-fields' ),
 				'value' => $enable_post_types ? $yes : $no,
 				'debug' => $enable_post_types,
 			);
@@ -441,7 +437,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['ui_post_types'] = array(
-				'label' => __( 'Registered Post Types (UI)', 'acf' ),
+				'label' => __( 'Registered Post Types (UI)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $ui_post_types ) ),
 			);
 
@@ -453,7 +449,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['json_post_types'] = array(
-				'label' => __( 'Registered Post Types (JSON)', 'acf' ),
+				'label' => __( 'Registered Post Types (JSON)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $json_post_types ) ),
 			);
 
@@ -465,7 +461,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['ui_taxonomies'] = array(
-				'label' => __( 'Registered Taxonomies (UI)', 'acf' ),
+				'label' => __( 'Registered Taxonomies (UI)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $ui_taxonomies ) ),
 			);
 
@@ -477,14 +473,14 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['json_taxonomies'] = array(
-				'label' => __( 'Registered Taxonomies (JSON)', 'acf' ),
+				'label' => __( 'Registered Taxonomies (JSON)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $json_taxonomies ) ),
 			);
 
 			$enable_options_pages_ui = acf_get_setting( 'enable_options_pages_ui' );
 
 			$fields['ui_options_pages_enabled'] = array(
-				'label' => __( 'Options Pages UI Enabled', 'acf' ),
+				'label' => __( 'Options Pages UI Enabled', 'secure-custom-fields' ),
 				'value' => $enable_options_pages_ui ? $yes : $no,
 				'debug' => $enable_options_pages_ui,
 			);
@@ -514,12 +510,12 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 				);
 
 				$fields['ui_options_pages'] = array(
-					'label' => __( 'Registered Options Pages (UI)', 'acf' ),
+					'label' => __( 'Registered Options Pages (UI)', 'secure-custom-fields' ),
 					'value' => number_format_i18n( count( $ui_options_pages_in_ui ) ),
 				);
 
 				$fields['json_options_pages'] = array(
-					'label' => __( 'Registered Options Pages (JSON)', 'acf' ),
+					'label' => __( 'Registered Options Pages (JSON)', 'secure-custom-fields' ),
 					'value' => number_format_i18n( count( $json_options_pages ) ),
 				);
 			}
@@ -533,16 +529,15 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			);
 
 			$fields['php_options_pages'] = array(
-				'label' => __( 'Registered Options Pages (PHP)', 'acf' ),
+				'label' => __( 'Registered Options Pages (PHP)', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $php_options_pages ) ),
 			);
-
 
 			$rest_api_format = acf_get_setting( 'rest_api_format' );
 
 			$fields['rest_api_format'] = array(
-				'label' => __( 'REST API Format', 'acf' ),
-				'value' => 'standard' === $rest_api_format ? __( 'Standard', 'acf' ) : __( 'Light', 'acf' ),
+				'label' => __( 'REST API Format', 'secure-custom-fields' ),
+				'value' => 'standard' === $rest_api_format ? __( 'Standard', 'secure-custom-fields' ) : __( 'Light', 'secure-custom-fields' ),
 				'debug' => $rest_api_format,
 			);
 
@@ -569,33 +564,32 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			}
 
 			$fields['blocks_per_api_version'] = array(
-				'label' => __( 'Blocks Per API Version', 'acf' ),
+				'label' => __( 'Blocks Per API Version', 'secure-custom-fields' ),
 				'value' => $block_api_versions,
 			);
 
 			$fields['blocks_per_acf_block_version'] = array(
-				'label' => __( 'Blocks Per SCF Block Version', 'acf' ),
+				'label' => __( 'Blocks Per SCF Block Version', 'secure-custom-fields' ),
 				'value' => $acf_block_versions,
 			);
 
 			$fields['blocks_using_post_meta'] = array(
-				'label' => __( 'Blocks Using Post Meta', 'acf' ),
+				'label' => __( 'Blocks Using Post Meta', 'secure-custom-fields' ),
 				'value' => number_format_i18n( $blocks_using_post_meta ),
 			);
 
 			$preload_blocks = acf_get_setting( 'preload_blocks' );
 
 			$fields['preload_blocks'] = array(
-				'label' => __( 'Block Preloading Enabled', 'acf' ),
+				'label' => __( 'Block Preloading Enabled', 'secure-custom-fields' ),
 				'value' => ! empty( $preload_blocks ) ? $yes : $no,
 				'debug' => $preload_blocks,
 			);
 
-
 			$show_admin = acf_get_setting( 'show_admin' );
 
 			$fields['admin_ui_enabled'] = array(
-				'label' => __( 'Admin UI Enabled', 'acf' ),
+				'label' => __( 'Admin UI Enabled', 'secure-custom-fields' ),
 				'value' => $show_admin ? $yes : $no,
 				'debug' => $show_admin,
 			);
@@ -603,7 +597,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$field_type_modal_enabled = apply_filters( 'acf/field_group/enable_field_browser', true );
 
 			$fields['field_type-modal_enabled'] = array(
-				'label' => __( 'Field Type Modal Enabled', 'acf' ),
+				'label' => __( 'Field Type Modal Enabled', 'secure-custom-fields' ),
 				'value' => ! empty( $field_type_modal_enabled ) ? $yes : $no,
 				'debug' => $field_type_modal_enabled,
 			);
@@ -611,7 +605,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$field_settings_tabs_enabled = apply_filters( 'acf/field_group/disable_field_settings_tabs', false );
 
 			$fields['field_settings_tabs_enabled'] = array(
-				'label' => __( 'Field Settings Tabs Enabled', 'acf' ),
+				'label' => __( 'Field Settings Tabs Enabled', 'secure-custom-fields' ),
 				'value' => empty( $field_settings_tabs_enabled ) ? $yes : $no,
 				'debug' => $field_settings_tabs_enabled,
 			);
@@ -619,13 +613,13 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$shortcode_enabled = acf_get_setting( 'enable_shortcode' );
 
 			$fields['shortcode_enabled'] = array(
-				'label' => __( 'Shortcode Enabled', 'acf' ),
+				'label' => __( 'Shortcode Enabled', 'secure-custom-fields' ),
 				'value' => ! empty( $shortcode_enabled ) ? $yes : $no,
 				'debug' => $shortcode_enabled,
 			);
 
 			$fields['registered_acf_forms'] = array(
-				'label' => __( 'Registered SCF Forms', 'acf' ),
+				'label' => __( 'Registered SCF Forms', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( acf_get_forms() ) ),
 			);
 
@@ -634,13 +628,13 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$load_paths = $local_json->get_load_paths();
 
 			$fields['json_save_paths'] = array(
-				'label' => __( 'JSON Save Paths', 'acf' ),
+				'label' => __( 'JSON Save Paths', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $save_paths ) ),
 				'debug' => count( $save_paths ),
 			);
 
 			$fields['json_load_paths'] = array(
-				'label' => __( 'JSON Load Paths', 'acf' ),
+				'label' => __( 'JSON Load Paths', 'secure-custom-fields' ),
 				'value' => number_format_i18n( count( $load_paths ) ),
 				'debug' => count( $load_paths ),
 			);

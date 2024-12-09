@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Page_Type' ) ) :
 		 */
 		public function initialize() {
 			$this->name           = 'page_type';
-			$this->label          = __( 'Page Type', 'acf' );
+			$this->label          = __( 'Page Type', 'secure-custom-fields' );
 			$this->category       = 'page';
 			$this->object_type    = 'post';
 			$this->object_subtype = 'page';
@@ -107,11 +107,11 @@ if ( ! class_exists( 'ACF_Location_Page_Type' ) ) :
 		 */
 		public function get_values( $rule ) {
 			return array(
-				'front_page' => __( 'Front Page', 'acf' ),
-				'posts_page' => __( 'Posts Page', 'acf' ),
-				'top_level'  => __( 'Top Level Page (no parent)', 'acf' ),
-				'parent'     => __( 'Parent Page (has children)', 'acf' ),
-				'child'      => __( 'Child Page (has parent)', 'acf' ),
+				'front_page' => __( 'Front Page', 'secure-custom-fields' ),
+				'posts_page' => __( 'Posts Page', 'secure-custom-fields' ),
+				'top_level'  => __( 'Top Level Page (no parent)', 'secure-custom-fields' ),
+				'parent'     => __( 'Parent Page (has children)', 'secure-custom-fields' ),
+				'child'      => __( 'Child Page (has parent)', 'secure-custom-fields' ),
 			);
 		}
 	}

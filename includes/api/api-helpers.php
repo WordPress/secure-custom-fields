@@ -725,9 +725,9 @@ function acf_get_image_sizes() {
 
 	// vars
 	$sizes = array(
-		'thumbnail' => __( 'Thumbnail', 'acf' ),
-		'medium'    => __( 'Medium', 'acf' ),
-		'large'     => __( 'Large', 'acf' ),
+		'thumbnail' => __( 'Thumbnail', 'secure-custom-fields' ),
+		'medium'    => __( 'Medium', 'secure-custom-fields' ),
+		'large'     => __( 'Large', 'secure-custom-fields' ),
 	);
 
 	// find all sizes
@@ -762,7 +762,7 @@ function acf_get_image_sizes() {
 	}
 
 	// add full end
-	$sizes['full'] = __( 'Full Size', 'acf' );
+	$sizes['full'] = __( 'Full Size', 'secure-custom-fields' );
 
 	// filter for 3rd party customization
 	$sizes = apply_filters( 'acf/get_image_sizes', $sizes );
@@ -1406,7 +1406,7 @@ function acf_get_post_title( $post = 0, $is_search = false ) {
 
 	// empty
 	if ( $title === '' ) {
-		$title = __( '(no title)', 'acf' );
+		$title = __( '(no title)', 'secure-custom-fields' );
 	}
 
 	// status
@@ -1864,7 +1864,7 @@ function acf_str_replace( $string = '', $search_replace = array() ) {
 }
 
 /**
-* date & time formats
+ * date & time formats
  *
  * These settings contain an association of format strings from PHP => JS
  *
@@ -1883,19 +1883,19 @@ acf_update_setting(
 		'y' => 'y',     // Numeric, 2 digits                                99, 03
 
 
-	// Month
+		// Month
 		'm' => 'mm',    // Numeric, with leading zeros                      01–12
 		'n' => 'm',     // Numeric, without leading zeros                   1–12
 		'F' => 'MM',    // Textual full                                     January – December
 		'M' => 'M',     // Textual three letters                            Jan - Dec
 
 
-	// Weekday
+		// Weekday
 		'l' => 'DD',    // Full name  (lowercase 'L')                       Sunday – Saturday
 		'D' => 'D',     // Three letter name                                Mon – Sun
 
 
-	// Day of Month
+		// Day of Month
 		'd' => 'dd',    // Numeric, with leading zeros                      01–31
 		'j' => 'd',     // Numeric, without leading zeros                   1–31
 		'S' => '',      // The English suffix for the day of the month      st, nd or th in the 1st, 2nd or 15th.
@@ -2565,9 +2565,9 @@ function acf_get_attachment( $attachment ) {
 	$meta          = wp_get_attachment_metadata( $attachment->ID );
 	$attached_file = get_attached_file( $attachment->ID );
 	if ( strpos( $attachment->post_mime_type, '/' ) !== false ) {
-		list( $type, $subtype ) = explode( '/', $attachment->post_mime_type );
+		list($type, $subtype) = explode( '/', $attachment->post_mime_type );
 	} else {
-		list( $type, $subtype ) = array( $attachment->post_mime_type, '' );
+		list($type, $subtype) = array( $attachment->post_mime_type, '' );
 	}
 
 	// Generate response.
@@ -2917,11 +2917,13 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 			if ( $min_width && $file['width'] < $min_width ) {
 
 				// min width
-				$errors['min_width'] = sprintf( __( 'Image width must be at least %dpx.', 'acf' ), $min_width );
+				/* translators: 1: image width */
+				$errors['min_width'] = sprintf( __( 'Image width must be at least %dpx.', 'secure-custom-fields' ), $min_width );
 			} elseif ( $max_width && $file['width'] > $max_width ) {
 
 				// min width
-				$errors['max_width'] = sprintf( __( 'Image width must not exceed %dpx.', 'acf' ), $max_width );
+				/* translators: 1: image width */
+				$errors['max_width'] = sprintf( __( 'Image width must not exceed %dpx.', 'secure-custom-fields' ), $max_width );
 			}
 		}
 
@@ -2933,11 +2935,13 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 			if ( $min_height && $file['height'] < $min_height ) {
 
 				// min height
-				$errors['min_height'] = sprintf( __( 'Image height must be at least %dpx.', 'acf' ), $min_height );
+				/* translators: 1: image height */
+				$errors['min_height'] = sprintf( __( 'Image height must be at least %dpx.', 'secure-custom-fields' ), $min_height );
 			} elseif ( $max_height && $file['height'] > $max_height ) {
 
 				// min height
-				$errors['max_height'] = sprintf( __( 'Image height must not exceed %dpx.', 'acf' ), $max_height );
+				/* translators: 1: image height */
+				$errors['max_height'] = sprintf( __( 'Image height must not exceed %dpx.', 'secure-custom-fields' ), $max_height );
 			}
 		}
 	}
@@ -2950,11 +2954,13 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 		if ( $min_size && $file['size'] < acf_get_filesize( $min_size ) ) {
 
 			// min width
-			$errors['min_size'] = sprintf( __( 'File size must be at least %s.', 'acf' ), acf_format_filesize( $min_size ) );
+			/* translators: 1: file size */
+			$errors['min_size'] = sprintf( __( 'File size must be at least %s.', 'secure-custom-fields' ), acf_format_filesize( $min_size ) );
 		} elseif ( $max_size && $file['size'] > acf_get_filesize( $max_size ) ) {
 
 			// min width
-			$errors['max_size'] = sprintf( __( 'File size must not exceed %s.', 'acf' ), acf_format_filesize( $max_size ) );
+			/* translators: 1: file size */
+			$errors['max_size'] = sprintf( __( 'File size must not exceed %s.', 'secure-custom-fields' ), acf_format_filesize( $max_size ) );
 		}
 	}
 
@@ -2978,24 +2984,24 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 				$last1 = array_pop( $mime_types );
 				$last2 = array_pop( $mime_types );
 
-				$mime_types[] = $last2 . ' ' . __( 'or', 'acf' ) . ' ' . $last1;
+				$mime_types[] = $last2 . ' ' . __( 'or', 'secure-custom-fields' ) . ' ' . $last1;
 			}
-
-			$errors['mime_types'] = sprintf( __( 'File type must be %s.', 'acf' ), implode( ', ', $mime_types ) );
+			/* translators: 1: file type(s) */
+			$errors['mime_types'] = sprintf( __( 'File type must be %s.', 'secure-custom-fields' ), implode( ', ', $mime_types ) );
 		}
 	}
 
 	/**
-	* Filters the errors for a file before it is uploaded or displayed in the media modal.
-	*
-	* @since   5.2.3
-	*
-	* @param   array $errors An array of errors.
-	* @param   array $file An array of data for a single file.
-	* @param   array $attachment An array of attachment data which differs based on the context.
-	* @param   array $field The field array.
-	* @param   string $context The curent context (uploading, preparing)
-	*/
+	 * Filters the errors for a file before it is uploaded or displayed in the media modal.
+	 *
+	 * @since   5.2.3
+	 *
+	 * @param   array $errors An array of errors.
+	 * @param   array $file An array of data for a single file.
+	 * @param   array $attachment An array of attachment data which differs based on the context.
+	 * @param   array $field The field array.
+	 * @param   string $context The curent context (uploading, preparing)
+	 */
 	$errors = apply_filters( "acf/validate_attachment/type={$field['type']}", $errors, $file, $attachment, $field, $context );
 	$errors = apply_filters( "acf/validate_attachment/name={$field['_name']}", $errors, $file, $attachment, $field, $context );
 	$errors = apply_filters( "acf/validate_attachment/key={$field['key']}", $errors, $file, $attachment, $field, $context );
@@ -3006,7 +3012,7 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 }
 
 /**
-* _acf_settings_uploader
+ * _acf_settings_uploader
  *
  * Dynamic logic for uploader setting
  *
@@ -3279,7 +3285,7 @@ function acf_is_ajax( $action = '' ) {
 	// phpcs:disable WordPress.Security.NonceVerification.Missing
 	// check $action
 	if ( $action && acf_maybe_get( $_POST, 'action' ) !== $action ) {
-	// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		$is_ajax = false;
 	}
 
@@ -3638,14 +3644,14 @@ function acf_connect_attachment_to_post( $attachment_id = 0, $post_id = 0 ) {
 	}
 
 	/**
-	* Filters whether or not to connect the attachment.
-	*
-	* @since   5.8.0
-	*
-	* @param   bool $bool Returning false will prevent the connection. Default true.
-	* @param   int $attachment_id The attachment ID.
-	* @param   int $post_id The post ID.
-	*/
+	 * Filters whether or not to connect the attachment.
+	 *
+	 * @since   5.8.0
+	 *
+	 * @param   bool $bool Returning false will prevent the connection. Default true.
+	 * @param   int $attachment_id The attachment ID.
+	 * @param   int $post_id The post ID.
+	 */
 	if ( ! apply_filters( 'acf/connect_attachment_to_post', true, $attachment_id, $post_id ) ) {
 		return false;
 	}

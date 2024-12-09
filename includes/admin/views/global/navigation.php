@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $submenu, $submenu_file, $plugin_page, $acf_page_title;
 
 // Setup default vars and generate array of navigation items.
-$parent_slug         = 'edit.php?post_type=acf-field-group';
-$core_tabs           = array();
-$acf_more_items      = array();
-$more_items          = array();
+$parent_slug    = 'edit.php?post_type=acf-field-group';
+$core_tabs      = array();
+$acf_more_items = array();
+$more_items     = array();
 
 // Hardcoded since future ACF post types will likely live in the "More" menu.
 $core_tabs_classes      = array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy' );
@@ -139,14 +139,14 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 	<div class="acf-admin-toolbar-inner">
 		<div class="acf-nav-wrap">
 			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo">
-				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Seecure Custom Fields logo', 'acf' ); ?>">
+				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Seecure Custom Fields logo', 'secure-custom-fields' ); ?>">
 			</a>
 
 			<h2><?php echo esc_html( acf_get_setting( 'name' ) ); ?></h2>
 			<?php acf_print_menu_section( $core_tabs, 'core' ); ?>
 			<?php if ( $acf_more_items || $more_items ) { ?>
 				<div class="acf-more acf-header-tab-acf-more" tabindex="0">
-					<span class="acf-tab acf-more-tab"><i class="acf-icon acf-icon-more"></i><?php esc_html_e( 'More', 'acf' ); ?> <i class="acf-icon acf-icon-dropdown"></i></span>
+					<span class="acf-tab acf-more-tab"><i class="acf-icon acf-icon-more"></i><?php esc_html_e( 'More', 'secure-custom-fields' ); ?> <i class="acf-icon acf-icon-dropdown"></i></span>
 					<ul>
 						<?php
 						if ( $acf_more_items ) {
@@ -156,7 +156,7 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 							acf_print_menu_section( $acf_more_items, 'acf' );
 						}
 						if ( $more_items ) {
-							echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">' . esc_html__( 'Other', 'acf' ) . ' </span></li>';
+							echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">' . esc_html__( 'Other', 'secure-custom-fields' ) . ' </span></li>';
 							acf_print_menu_section( $more_items );
 						}
 						?>
@@ -174,7 +174,7 @@ $screen = get_current_screen();
 
 if ( ! in_array( $screen->id, acf_get_internal_post_types(), true ) ) {
 	if ( $plugin_page == 'acf-tools' ) {
-		$acf_page_title = __( 'Tools', 'acf' );
+		$acf_page_title = __( 'Tools', 'secure-custom-fields' );
 	}
 	acf_get_view( 'global/header' );
 }

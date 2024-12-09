@@ -17,9 +17,9 @@ if ( acf_is_ui_options_page( $acf_duplicate_options_page ) ) {
 
 acf_render_field_wrap(
 	array(
-		'label'       => __( 'Page Title', 'acf' ),
+		'label'       => __( 'Page Title', 'secure-custom-fields' ),
 		/* translators: example options page name */
-		'placeholder' => __( 'Site Settings', 'acf' ),
+		'placeholder' => __( 'Site Settings', 'secure-custom-fields' ),
 		'type'        => 'text',
 		'name'        => 'page_title',
 		'key'         => 'page_title',
@@ -34,7 +34,7 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'    => __( 'Menu Slug', 'acf' ),
+		'label'    => __( 'Menu Slug', 'secure-custom-fields' ),
 		'type'     => 'text',
 		'name'     => 'menu_slug',
 		'key'      => 'menu_slug',
@@ -49,7 +49,7 @@ acf_render_field_wrap(
 
 acf_render_field_wrap(
 	array(
-		'label'    => __( 'Parent Page', 'acf' ),
+		'label'    => __( 'Parent Page', 'secure-custom-fields' ),
 		'type'     => 'select',
 		'name'     => 'parent_slug',
 		'key'      => 'parent_slug',
@@ -69,8 +69,8 @@ acf_render_field_wrap( array( 'type' => 'seperator' ) );
 
 acf_render_field_wrap(
 	array(
-		'label'        => __( 'Advanced Configuration', 'acf' ),
-		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'acf' ),
+		'label'        => __( 'Advanced Configuration', 'secure-custom-fields' ),
+		'instructions' => __( 'I know what I\'m doing, show me all the options.', 'secure-custom-fields' ),
 		'type'         => 'true_false',
 		'name'         => 'advanced_configuration',
 		'key'          => 'advanced_configuration',

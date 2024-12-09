@@ -12,6 +12,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 	#[AllowDynamicProperties]
 	class ACF_Admin_UI_Options_Pages extends ACF_Admin_Internal_Post_Type_List {
 
+
 		/**
 		 * The slug for the internal post type.
 		 *
@@ -91,7 +92,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
 			$cap         = acf_get_setting( 'capability' );
-			add_submenu_page( $parent_slug, __( 'Options Pages', 'acf' ), __( 'Options Pages', 'acf' ), $cap, 'edit.php?post_type=acf-ui-options-page' );
+			add_submenu_page( $parent_slug, __( 'Options Pages', 'secure-custom-fields' ), __( 'Options Pages', 'secure-custom-fields' ), $cap, 'edit.php?post_type=acf-ui-options-page' );
 		}
 
 		/**
@@ -114,12 +115,12 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 			$columns = array(
 				'cb'              => $_columns['cb'],
 				'title'           => $_columns['title'],
-				'acf-description' => __( 'Description', 'acf' ),
-				'acf-key'         => __( 'Key', 'acf' ),
+				'acf-description' => __( 'Description', 'secure-custom-fields' ),
+				'acf-key'         => __( 'Key', 'secure-custom-fields' ),
 			);
 
 			if ( acf_get_local_json_files( $this->post_type ) ) {
-				$columns['acf-json'] = __( 'Local JSON', 'acf' );
+				$columns['acf-json'] = __( 'Local JSON', 'secure-custom-fields' );
 			}
 
 			return $columns;
@@ -142,17 +143,17 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 					echo esc_html( $post['key'] );
 					break;
 
-				// Description.
+					// Description.
 				case 'acf-description':
 					if ( ! empty( $post['description'] ) && ( is_string( $post['description'] ) || is_numeric( $post['description'] ) ) ) {
 						echo '<span class="acf-description">' . acf_esc_html( $post['description'] ) . '</span>';
 					} else {
 						echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'acf' ) . '</span>';
+						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'secure-custom-fields' ) . '</span>';
 					}
 					break;
 
-				// Local JSON.
+					// Local JSON.
 				case 'acf-json':
 					$this->render_admin_table_column_local_status( $post );
 					break;
@@ -176,28 +177,28 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 				case 'acfactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of post types activated */
-						_n( 'Options page activated.', '%s options pages activated.', $count, 'acf' ),
+						_n( '%s options page activated.', '%s options pages activated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfdeactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of post types deactivated */
-						_n( 'Options page deactivated.', '%s options pages deactivated.', $count, 'acf' ),
+						_n( '%s options page deactivated.', '%s options pages deactivated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfduplicatecomplete':
 					$text = sprintf(
 						/* translators: %s number of post types duplicated */
-						_n( 'Options page duplicated.', '%s options pages duplicated.', $count, 'acf' ),
+						_n( '%s options page duplicated.', '%s options pages duplicated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfsynccomplete':
 					$text = sprintf(
 						/* translators: %s number of post types synchronized */
-						_n( 'Options page synchronized.', '%s options pages synchronized.', $count, 'acf' ),
+						_n( '%s options page synchronized.', '%s options pages synchronized.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;

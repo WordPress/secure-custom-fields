@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 	class acf_field_textarea extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,8 +20,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 
 			// vars
 			$this->name          = 'textarea';
-			$this->label         = __( 'Text Area', 'acf' );
-			$this->description   = __( 'A basic textarea input for storing paragraphs of text.', 'acf' );
+			$this->label         = __( 'Text Area', 'secure-custom-fields' );
+			$this->description   = __( 'A basic textarea input for storing paragraphs of text.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-textarea.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/textarea/';
 			$this->defaults      = array(
@@ -90,8 +91,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'textarea',
 					'name'         => 'default_value',
 				)
@@ -110,8 +111,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Character Limit', 'acf' ),
-					'instructions' => __( 'Leave blank for no limit', 'acf' ),
+					'label'        => __( 'Character Limit', 'secure-custom-fields' ),
+					'instructions' => __( 'Leave blank for no limit', 'secure-custom-fields' ),
 					'type'         => 'number',
 					'name'         => 'maxlength',
 				)
@@ -131,8 +132,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Rows', 'acf' ),
-					'instructions' => __( 'Sets the textarea height', 'acf' ),
+					'label'        => __( 'Rows', 'secure-custom-fields' ),
+					'instructions' => __( 'Sets the textarea height', 'secure-custom-fields' ),
 					'type'         => 'number',
 					'name'         => 'rows',
 					'placeholder'  => 8,
@@ -142,8 +143,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -152,14 +153,14 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'New Lines', 'acf' ),
-					'instructions' => __( 'Controls how new lines are rendered', 'acf' ),
+					'label'        => __( 'New Lines', 'secure-custom-fields' ),
+					'instructions' => __( 'Controls how new lines are rendered', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'new_lines',
 					'choices'      => array(
-						'wpautop' => __( 'Automatically add paragraphs', 'acf' ),
-						'br'      => __( 'Automatically add &lt;br&gt;', 'acf' ),
-						''        => __( 'No Formatting', 'acf' ),
+						'wpautop' => __( 'Automatically add paragraphs', 'secure-custom-fields' ),
+						'br'      => __( 'Automatically add &lt;br&gt;', 'secure-custom-fields' ),
+						''        => __( 'No Formatting', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -214,7 +215,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 
 			// Check maxlength.
 			if ( $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
-				return sprintf( __( 'Value must not exceed %d characters', 'acf' ), $field['maxlength'] );
+				/* translators: %d: the maximum number of characters */
+				return sprintf( __( 'Value must not exceed %d characters', 'secure-custom-fields' ), $field['maxlength'] );
 			}
 
 			// Return.

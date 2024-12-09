@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Location_Attachment' ) ) :
 
 	class ACF_Location_Attachment extends ACF_Location {
 
+
 		/**
 		 * Initializes props.
 		 *
@@ -19,7 +20,7 @@ if ( ! class_exists( 'ACF_Location_Attachment' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'attachment';
-			$this->label       = __( 'Attachment', 'acf' );
+			$this->label       = __( 'Attachment', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'attachment';
 		}
@@ -70,7 +71,7 @@ if ( ! class_exists( 'ACF_Location_Attachment' ) ) :
 		 */
 		public function get_values( $rule ) {
 			$choices = array(
-				'all' => __( 'All', 'acf' ),
+				'all' => __( 'All', 'secure-custom-fields' ),
 			);
 
 			// Get mime types and append into optgroups.
@@ -81,7 +82,8 @@ if ( ! class_exists( 'ACF_Location_Attachment' ) ) :
 				$type = current( explode( '/', $mime_type ) );
 
 				// Append group and mimetype.
-				$choices[ $type ][ $type ]      = sprintf( __( 'All %s formats', 'acf' ), $type );
+				/* translators: 1: image type */
+				$choices[ $type ][ $type ]      = sprintf( __( 'All %s formats', 'secure-custom-fields' ), $type );
 				$choices[ $type ][ $mime_type ] = "$regex ($mime_type)";
 			}
 

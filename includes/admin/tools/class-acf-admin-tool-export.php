@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 	class ACF_Admin_Tool_Export extends ACF_Admin_Tool {
 
+
 		/** @var string View context */
 		var $view = '';
 
@@ -31,11 +32,11 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 			// vars
 			$this->name  = 'export';
-			$this->title = __( 'Export Field Groups', 'acf' );
+			$this->title = __( 'Export Field Groups', 'secure-custom-fields' );
 
 			// active
 			if ( $this->is_active() ) {
-				$this->title .= ' - ' . __( 'Generate PHP', 'acf' );
+				$this->title .= ' - ' . __( 'Generate PHP', 'secure-custom-fields' );
 			}
 		}
 
@@ -85,7 +86,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 			// validate
 			if ( $json === false ) {
-				return acf_add_admin_notice( __( 'No field groups selected', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'No field groups selected', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// headers
@@ -118,7 +119,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 			// validate
 			if ( ! $keys ) {
-				return acf_add_admin_notice( __( 'No field groups selected', 'acf' ), 'warning' );
+				return acf_add_admin_notice( __( 'No field groups selected', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// url
@@ -152,7 +153,8 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 				// add notice
 				if ( $selected ) {
 					$count = count( $selected );
-					$text  = sprintf( _n( 'Exported 1 item.', 'Exported %s items.', $count, 'acf' ), $count );
+					/* translators: %s: number of items exported */
+					$text = sprintf( _n( 'Exported %s item.', 'Exported %s items.', $count, 'secure-custom-fields' ), $count );
 					acf_add_admin_notice( $text, 'success' );
 				}
 			}
@@ -212,7 +214,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 			acf_render_field_wrap(
 				array(
-					'label'   => __( 'Select Field Groups', 'acf' ),
+					'label'   => __( 'Select Field Groups', 'secure-custom-fields' ),
 					'type'    => 'checkbox',
 					'name'    => 'keys',
 					'prefix'  => false,
@@ -236,7 +238,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 				acf_render_field_wrap(
 					array(
-						'label'   => __( 'Select Post Types', 'acf' ),
+						'label'   => __( 'Select Post Types', 'secure-custom-fields' ),
 						'type'    => 'checkbox',
 						'name'    => 'post_type_keys',
 						'prefix'  => false,
@@ -261,7 +263,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 				acf_render_field_wrap(
 					array(
-						'label'   => __( 'Select Taxonomies', 'acf' ),
+						'label'   => __( 'Select Taxonomies', 'secure-custom-fields' ),
 						'type'    => 'checkbox',
 						'name'    => 'taxonomy_keys',
 						'prefix'  => false,
@@ -286,7 +288,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 
 				acf_render_field_wrap(
 					array(
-						'label'   => __( 'Select Options Pages', 'acf' ),
+						'label'   => __( 'Select Options Pages', 'secure-custom-fields' ),
 						'type'    => 'checkbox',
 						'name'    => 'ui_options_page_keys',
 						'prefix'  => false,
@@ -326,19 +328,19 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		function html_archive() {
 
 			?>
-		<div class="acf-postbox-header">
-			<h2 class="acf-postbox-title"><?php esc_html_e( 'Export', 'acf' ); ?></h2>
-			<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the items you would like to export and then select your export method. Export As JSON to export to a .json file which you can then import to another SCF installation. Generate PHP to export to PHP code which you can place in your theme.', 'acf' ); ?>">?</i></div>
-		</div>
-		<div class="acf-postbox-inner">
-			<div class="acf-fields">
-				<?php $this->html_field_selection(); ?>
+			<div class="acf-postbox-header">
+				<h2 class="acf-postbox-title"><?php esc_html_e( 'Export', 'secure-custom-fields' ); ?></h2>
+				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the items you would like to export and then select your export method. Export As JSON to export to a .json file which you can then import to another SCF installation. Generate PHP to export to PHP code which you can place in your theme.', 'secure-custom-fields' ); ?>">?</i></div>
 			</div>
-			<p class="acf-submit acf-actions-strip">
-				<button type="submit" name="action" class="acf-btn acf-button-primary" value="download"><?php esc_html_e( 'Export As JSON', 'acf' ); ?></button>
-				<button type="submit" name="action" class="acf-btn acf-btn-secondary" value="generate"><?php esc_html_e( 'Generate PHP', 'acf' ); ?></button>
-			</p>
-		</div>
+			<div class="acf-postbox-inner">
+				<div class="acf-fields">
+					<?php $this->html_field_selection(); ?>
+				</div>
+				<p class="acf-submit acf-actions-strip">
+					<button type="submit" name="action" class="acf-btn acf-button-primary" value="download"><?php esc_html_e( 'Export As JSON', 'secure-custom-fields' ); ?></button>
+					<button type="submit" name="action" class="acf-btn acf-btn-secondary" value="generate"><?php esc_html_e( 'Generate PHP', 'secure-custom-fields' ); ?></button>
+				</p>
+			</div>
 			<?php
 		}
 
@@ -350,8 +352,8 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		public function html_single() {
 			?>
 			<div class="acf-postbox-header">
-				<h2 class="acf-postbox-title"><?php esc_html_e( 'Export - Generate PHP', 'acf' ); ?></h2>
-				<i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin.", 'acf' ); ?>">?</i>
+				<h2 class="acf-postbox-title"><?php esc_html_e( 'Export - Generate PHP', 'secure-custom-fields' ); ?></h2>
+				<i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin.", 'secure-custom-fields' ); ?>">?</i>
 			</div>
 			<div class="acf-postbox-columns">
 				<div class="acf-postbox-main">
@@ -360,7 +362,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 				<div class="acf-postbox-side">
 					<?php $this->html_panel_selection(); ?>
 					<p class="acf-submit">
-						<button type="submit" name="action" class="acf-btn" value="generate"><?php esc_html_e( 'Generate PHP', 'acf' ); ?></button>
+						<button type="submit" name="action" class="acf-btn" value="generate"><?php esc_html_e( 'Generate PHP', 'secure-custom-fields' ); ?></button>
 					</p>
 				</div>
 			</div>
@@ -422,39 +424,39 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 			echo '</textarea>';
 			?>
 			<p class="acf-submit">
-				<a class="button" id="acf-export-copy"><?php esc_html_e( 'Copy to clipboard', 'acf' ); ?></a>
+				<a class="button" id="acf-export-copy"><?php esc_html_e( 'Copy to clipboard', 'secure-custom-fields' ); ?></a>
 			</p>
 			<script type="text/javascript">
-			(function($){
-				const $a = $('#acf-export-copy');
-				const $textarea = $('#acf-export-textarea');
+				(function($) {
+					const $a = $('#acf-export-copy');
+					const $textarea = $('#acf-export-textarea');
 
-				// Remove $a if 'copy' is not supported.
-				if( !document.queryCommandSupported('copy') ) {
-					return $a.remove();
-				}
-
-				$a.on('click', function( e ){
-					e.preventDefault();
-
-					$textarea.get(0).select();
-
-					try {
-						var copy = document.execCommand('copy');
-						if ( ! copy ) {
-							return;
-						}
-
-						acf.newTooltip({
-							text: 		"<?php esc_html_e( 'Copied', 'acf' ); ?>",
-							timeout:	250,
-							target: 	$(this),
-						});
-					} catch (err) {
-						// Do nothing.
+					// Remove $a if 'copy' is not supported.
+					if (!document.queryCommandSupported('copy')) {
+						return $a.remove();
 					}
-				});
-			})(jQuery);
+
+					$a.on('click', function(e) {
+						e.preventDefault();
+
+						$textarea.get(0).select();
+
+						try {
+							var copy = document.execCommand('copy');
+							if (!copy) {
+								return;
+							}
+
+							acf.newTooltip({
+								text: "<?php esc_html_e( 'Copied', 'secure-custom-fields' ); ?>",
+								timeout: 250,
+								target: $(this),
+							});
+						} catch (err) {
+							// Do nothing.
+						}
+					});
+				})(jQuery);
 			</script>
 			<?php
 		}

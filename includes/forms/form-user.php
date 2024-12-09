@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 
 	class ACF_Form_User {
 
+
 		/** @var string The current view (new, edit, register) */
 		var $view = '';
 
@@ -265,20 +266,20 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 
 			// script
 			?>
-<script type="text/javascript">
-(function($) {
-	
-	// vars
-	var view = '<?php echo esc_attr( $this->view ); ?>';
-	
-	// add missing spinners
-	var $submit = $('input.button-primary');
-	if( !$submit.next('.spinner').length ) {
-		$submit.after('<span class="spinner"></span>');
-	}
-	
-})(jQuery);	
-</script>
+			<script type="text/javascript">
+				(function($) {
+
+					// vars
+					var view = '<?php echo esc_attr( $this->view ); ?>';
+
+					// add missing spinners
+					var $submit = $('input.button-primary');
+					if (!$submit.next('.spinner').length) {
+						$submit.after('<span class="spinner"></span>');
+					}
+
+				})(jQuery);
+			</script>
 			<?php
 		}
 
@@ -325,7 +326,8 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 				foreach ( $acf_errors as $acf_error ) {
 					$errors->add(
 						acf_idify( $acf_error['input'] ),
-						acf_esc_html( acf_punctify( sprintf( __( '<strong>Error</strong>: %s', 'acf' ), $acf_error['message'] ) ) )
+						/* translators: %s: Error message. */
+						acf_esc_html( acf_punctify( sprintf( __( '<strong>Error</strong>: %s', 'secure-custom-fields' ), $acf_error['message'] ) ) )
 					);
 				}
 			}

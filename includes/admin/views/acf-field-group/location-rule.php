@@ -81,7 +81,7 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 		?>
 	</td>
 	<td class="add">
-		<a href="#" class="button add-location-rule"><?php esc_html_e( 'and', 'acf' ); ?></a>
+		<a href="#" class="button add-location-rule"><?php esc_html_e( 'and', 'secure-custom-fields' ); ?></a>
 	</td>
 	<td class="remove">
 		<a href="#" class="acf-icon -minus remove-location-rule"></a>

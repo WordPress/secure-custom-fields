@@ -42,3 +42,4 @@ jspm_packages/
 assets/build/**/*.css
 assets/build/**/*.map
 assets/build/**/*.js
+/vendor/

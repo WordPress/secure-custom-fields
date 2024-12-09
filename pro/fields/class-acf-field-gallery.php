@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 	class acf_field_gallery extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,9 +20,9 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 			// vars
 			$this->name          = 'gallery';
-			$this->label         = __( 'Gallery', 'acf' );
+			$this->label         = __( 'Gallery', 'secure-custom-fields' );
 			$this->category      = 'content';
-			$this->description   = __( 'An interactive interface for managing a collection of attachments, such as images.', 'acf' );
+			$this->description   = __( 'An interactive interface for managing a collection of attachments, such as images.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-gallery.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/gallery/';
 			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/how-to-use-the-gallery-field/';
@@ -69,8 +70,8 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			// localize
 			acf_localize_text(
 				array(
-					'Add Image to Gallery'      => __( 'Add Image to Gallery', 'acf' ),
-					'Maximum selection reached' => __( 'Maximum selection reached', 'acf' ),
+					'Add Image to Gallery'      => __( 'Add Image to Gallery', 'secure-custom-fields' ),
+					'Maximum selection reached' => __( 'Maximum selection reached', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -279,7 +280,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			// Get attachment dimensions / time / size.
 			$dimensions = '';
 			if ( $attachment['type'] === 'audio' ) {
-				$dimensions = __( 'Length', 'acf' ) . ': ' . $attachment['fileLength'];
+				$dimensions = __( 'Length', 'secure-custom-fields' ) . ': ' . $attachment['fileLength'];
 			} elseif ( ! empty( $attachment['width'] ) ) {
 				$dimensions = $attachment['width'] . ' x ' . $attachment['height'];
 			}
@@ -288,34 +289,34 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			}
 
 			?>
-		<div class="acf-gallery-side-info">
-			<img src="<?php echo esc_url( $thumb ); ?>" alt="<?php echo esc_attr( $attachment['alt'] ); ?>" />
-			<p class="filename"><strong><?php echo esc_html( $attachment['filename'] ); ?></strong></p>
-			<p class="uploaded"><?php echo esc_html( $attachment['dateFormatted'] ); ?></p>
-			<p class="dimensions"><?php echo esc_html( $dimensions ); ?></p>
-			<p class="actions">
-				<a href="#" class="acf-gallery-edit" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Edit', 'acf' ); ?></a>
-				<a href="#" class="acf-gallery-remove" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Remove', 'acf' ); ?></a>
-			</p>
-		</div>
-		<table class="form-table">
-			<tbody>
-				<?php
+			<div class="acf-gallery-side-info">
+				<img src="<?php echo esc_url( $thumb ); ?>" alt="<?php echo esc_attr( $attachment['alt'] ); ?>" />
+				<p class="filename"><strong><?php echo esc_html( $attachment['filename'] ); ?></strong></p>
+				<p class="uploaded"><?php echo esc_html( $attachment['dateFormatted'] ); ?></p>
+				<p class="dimensions"><?php echo esc_html( $dimensions ); ?></p>
+				<p class="actions">
+					<a href="#" class="acf-gallery-edit" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Edit', 'secure-custom-fields' ); ?></a>
+					<a href="#" class="acf-gallery-remove" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Remove', 'secure-custom-fields' ); ?></a>
+				</p>
+			</div>
+			<table class="form-table">
+				<tbody>
+					<?php
 
-				// Render fields.
-				$prefix = 'attachments[' . $id . ']';
+					// Render fields.
+					$prefix = 'attachments[' . $id . ']';
 
-				acf_render_field_wrap(
-					array(
-						// 'key'     => "{$field['key']}-title",
-						'name'   => 'title',
-						'prefix' => $prefix,
-						'type'   => 'text',
-						'label'  => __( 'Title', 'acf' ),
-						'value'  => $attachment['title'],
-					),
-					'tr'
-				);
+					acf_render_field_wrap(
+						array(
+							// 'key'     => "{$field['key']}-title",
+							'name'   => 'title',
+							'prefix' => $prefix,
+							'type'   => 'text',
+							'label'  => __( 'Title', 'secure-custom-fields' ),
+							'value'  => $attachment['title'],
+						),
+						'tr'
+					);
 
 					acf_render_field_wrap(
 						array(
@@ -323,7 +324,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 							'name'   => 'caption',
 							'prefix' => $prefix,
 							'type'   => 'textarea',
-							'label'  => __( 'Caption', 'acf' ),
+							'label'  => __( 'Caption', 'secure-custom-fields' ),
 							'value'  => $attachment['caption'],
 						),
 						'tr'
@@ -335,7 +336,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 							'name'   => 'alt',
 							'prefix' => $prefix,
 							'type'   => 'text',
-							'label'  => __( 'Alt Text', 'acf' ),
+							'label'  => __( 'Alt Text', 'secure-custom-fields' ),
 							'value'  => $attachment['alt'],
 						),
 						'tr'
@@ -347,15 +348,15 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 							'name'   => 'description',
 							'prefix' => $prefix,
 							'type'   => 'textarea',
-							'label'  => __( 'Description', 'acf' ),
+							'label'  => __( 'Description', 'secure-custom-fields' ),
 							'value'  => $attachment['description'],
 						),
 						'tr'
 					);
 
-				?>
-			</tbody>
-		</table>
+					?>
+				</tbody>
+			</table>
 			<?php
 
 			// Display compat fields.
@@ -417,76 +418,76 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			}
 
 			?>
-<div <?php echo acf_esc_attrs( $attrs ); ?>>
-	<input type="hidden" name="<?php echo esc_attr( $field['name'] ); ?>" value="" />
-	<div class="acf-gallery-main">
-		<div class="acf-gallery-attachments">
-			<?php if ( $attachments ) : ?>
-				<?php
-				foreach ( $attachments as $i => $attachment ) :
+			<div <?php echo acf_esc_attrs( $attrs ); ?>>
+				<input type="hidden" name="<?php echo esc_attr( $field['name'] ); ?>" value="" />
+				<div class="acf-gallery-main">
+					<div class="acf-gallery-attachments">
+						<?php if ( $attachments ) : ?>
+							<?php
+							foreach ( $attachments as $i => $attachment ) :
 
-					// Vars
-					$a_id       = $attachment['ID'];
-					$a_title    = $attachment['title'];
-					$a_type     = $attachment['type'];
-					$a_filename = $attachment['filename'];
-					$a_class    = "acf-gallery-attachment -{$a_type}";
+								// Vars
+								$a_id       = $attachment['ID'];
+								$a_title    = $attachment['title'];
+								$a_type     = $attachment['type'];
+								$a_filename = $attachment['filename'];
+								$a_class    = "acf-gallery-attachment -{$a_type}";
 
-					// Get thumbnail.
-					$a_thumbnail = acf_get_post_thumbnail( $a_id, $field['preview_size'] );
-					$a_class    .= ( $a_thumbnail['type'] === 'icon' ) ? ' -icon' : '';
+								// Get thumbnail.
+								$a_thumbnail = acf_get_post_thumbnail( $a_id, $field['preview_size'] );
+								$a_class    .= ( $a_thumbnail['type'] === 'icon' ) ? ' -icon' : '';
 
-					?>
-					<div class="<?php echo esc_attr( $a_class ); ?>" data-id="<?php echo esc_attr( $a_id ); ?>">
-						<input type="hidden" name="<?php echo esc_attr( $field['name'] ); ?>[]" value="<?php echo esc_attr( $a_id ); ?>" />
-						<div class="margin">
-							<div class="thumbnail">
-								<img src="<?php echo esc_url( $a_thumbnail['url'] ); ?>" alt="" />
-							</div>
-							<?php if ( $a_type !== 'image' ) : ?>
-								<div class="filename"><?php echo acf_esc_html( acf_get_truncated( $a_filename, 30 ) ); ?></div>
-							<?php endif; ?>
-						</div>
-						<div class="actions">
-							<a class="acf-icon -cancel dark acf-gallery-remove" href="#" data-id="<?php echo esc_attr( $a_id ); ?>" title="<?php esc_html_e( 'Remove', 'acf' ); ?>"></a>
+								?>
+								<div class="<?php echo esc_attr( $a_class ); ?>" data-id="<?php echo esc_attr( $a_id ); ?>">
+									<input type="hidden" name="<?php echo esc_attr( $field['name'] ); ?>[]" value="<?php echo esc_attr( $a_id ); ?>" />
+									<div class="margin">
+										<div class="thumbnail">
+											<img src="<?php echo esc_url( $a_thumbnail['url'] ); ?>" alt="" />
+										</div>
+										<?php if ( $a_type !== 'image' ) : ?>
+											<div class="filename"><?php echo acf_esc_html( acf_get_truncated( $a_filename, 30 ) ); ?></div>
+										<?php endif; ?>
+									</div>
+									<div class="actions">
+										<a class="acf-icon -cancel dark acf-gallery-remove" href="#" data-id="<?php echo esc_attr( $a_id ); ?>" title="<?php esc_html_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
+									</div>
+								</div>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</div>
+					<div class="acf-gallery-toolbar">
+						<ul class="acf-hl">
+							<li>
+								<a href="#" class="acf-button button button-primary acf-gallery-add"><?php esc_html_e( 'Add to gallery', 'secure-custom-fields' ); ?></a>
+							</li>
+							<li class="acf-fr">
+								<select class="acf-gallery-sort">
+									<option value=""><?php esc_html_e( 'Bulk actions', 'secure-custom-fields' ); ?></option>
+									<option value="date"><?php esc_html_e( 'Sort by date uploaded', 'secure-custom-fields' ); ?></option>
+									<option value="modified"><?php esc_html_e( 'Sort by date modified', 'secure-custom-fields' ); ?></option>
+									<option value="title"><?php esc_html_e( 'Sort by title', 'secure-custom-fields' ); ?></option>
+									<option value="reverse"><?php esc_html_e( 'Reverse current order', 'secure-custom-fields' ); ?></option>
+								</select>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="acf-gallery-side">
+					<div class="acf-gallery-side-inner">
+						<div class="acf-gallery-side-data"></div>
+						<div class="acf-gallery-toolbar">
+							<ul class="acf-hl">
+								<li>
+									<a href="#" class="acf-button button acf-gallery-close"><?php esc_html_e( 'Close', 'secure-custom-fields' ); ?></a>
+								</li>
+								<li class="acf-fr">
+									<a class="acf-button button button-primary acf-gallery-update" href="#"><?php esc_html_e( 'Update', 'secure-custom-fields' ); ?></a>
+								</li>
+							</ul>
 						</div>
 					</div>
-				<?php endforeach; ?>
-			<?php endif; ?>
-		</div>
-		<div class="acf-gallery-toolbar">
-			<ul class="acf-hl">
-				<li>
-					<a href="#" class="acf-button button button-primary acf-gallery-add"><?php esc_html_e( 'Add to gallery', 'acf' ); ?></a>
-				</li>
-				<li class="acf-fr">
-					<select class="acf-gallery-sort">
-						<option value=""><?php esc_html_e( 'Bulk actions', 'acf' ); ?></option>
-						<option value="date"><?php esc_html_e( 'Sort by date uploaded', 'acf' ); ?></option>
-						<option value="modified"><?php esc_html_e( 'Sort by date modified', 'acf' ); ?></option>
-						<option value="title"><?php esc_html_e( 'Sort by title', 'acf' ); ?></option>
-						<option value="reverse"><?php esc_html_e( 'Reverse current order', 'acf' ); ?></option>
-					</select>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="acf-gallery-side">
-		<div class="acf-gallery-side-inner">
-			<div class="acf-gallery-side-data"></div>
-			<div class="acf-gallery-toolbar">
-				<ul class="acf-hl">
-					<li>
-						<a href="#" class="acf-button button acf-gallery-close"><?php esc_html_e( 'Close', 'acf' ); ?></a>
-					</li>
-					<li class="acf-fr">
-						<a class="acf-button button button-primary acf-gallery-update" href="#"><?php esc_html_e( 'Update', 'acf' ); ?></a>
-					</li>
-				</ul>
+				</div>
 			</div>
-		</div>
-	</div>
-</div>
 			<?php
 		}
 
@@ -505,15 +506,15 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'array' => __( 'Image Array', 'acf' ),
-						'url'   => __( 'Image URL', 'acf' ),
-						'id'    => __( 'Image ID', 'acf' ),
+						'array' => __( 'Image Array', 'secure-custom-fields' ),
+						'url'   => __( 'Image URL', 'secure-custom-fields' ),
+						'id'    => __( 'Image ID', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -521,14 +522,14 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Library', 'acf' ),
-					'instructions' => __( 'Limit the media library choice', 'acf' ),
+					'label'        => __( 'Library', 'secure-custom-fields' ),
+					'instructions' => __( 'Limit the media library choice', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'library',
 					'layout'       => 'horizontal',
 					'choices'      => array(
-						'all'        => __( 'All', 'acf' ),
-						'uploadedTo' => __( 'Uploaded to post', 'acf' ),
+						'all'        => __( 'All', 'secure-custom-fields' ),
+						'uploadedTo' => __( 'Uploaded to post', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -564,7 +565,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Minimum Selection', 'acf' ),
+					'label'        => __( 'Minimum Selection', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'min',
@@ -574,7 +575,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Maximum Selection', 'acf' ),
+					'label'        => __( 'Maximum Selection', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'number',
 					'name'         => 'max',
@@ -584,11 +585,11 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'   => __( 'Minimum', 'acf' ),
-					'hint'    => __( 'Restrict which images can be uploaded', 'acf' ),
+					'label'   => __( 'Minimum', 'secure-custom-fields' ),
+					'hint'    => __( 'Restrict which images can be uploaded', 'secure-custom-fields' ),
 					'type'    => 'text',
 					'name'    => 'min_width',
-					'prepend' => __( 'Width', 'acf' ),
+					'prepend' => __( 'Width', 'secure-custom-fields' ),
 					'append'  => 'px',
 				)
 			);
@@ -599,7 +600,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 					'label'   => '',
 					'type'    => 'text',
 					'name'    => 'min_height',
-					'prepend' => __( 'Height', 'acf' ),
+					'prepend' => __( 'Height', 'secure-custom-fields' ),
 					'append'  => 'px',
 					'_append' => 'min_width',
 				)
@@ -611,7 +612,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 					'label'   => '',
 					'type'    => 'text',
 					'name'    => 'min_size',
-					'prepend' => __( 'File size', 'acf' ),
+					'prepend' => __( 'File size', 'secure-custom-fields' ),
 					'append'  => 'MB',
 					'_append' => 'min_width',
 				)
@@ -620,11 +621,11 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'   => __( 'Maximum', 'acf' ),
-					'hint'    => __( 'Restrict which images can be uploaded', 'acf' ),
+					'label'   => __( 'Maximum', 'secure-custom-fields' ),
+					'hint'    => __( 'Restrict which images can be uploaded', 'secure-custom-fields' ),
 					'type'    => 'text',
 					'name'    => 'max_width',
-					'prepend' => __( 'Width', 'acf' ),
+					'prepend' => __( 'Width', 'secure-custom-fields' ),
 					'append'  => 'px',
 				)
 			);
@@ -635,7 +636,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 					'label'   => '',
 					'type'    => 'text',
 					'name'    => 'max_height',
-					'prepend' => __( 'Height', 'acf' ),
+					'prepend' => __( 'Height', 'secure-custom-fields' ),
 					'append'  => 'px',
 					'_append' => 'max_width',
 				)
@@ -647,7 +648,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 					'label'   => '',
 					'type'    => 'text',
 					'name'    => 'max_size',
-					'prepend' => __( 'File size', 'acf' ),
+					'prepend' => __( 'File size', 'secure-custom-fields' ),
 					'append'  => 'MB',
 					'_append' => 'max_width',
 				)
@@ -656,8 +657,8 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label' => __( 'Allowed File Types', 'acf' ),
-					'hint'  => __( 'Comma separated list. Leave blank for all types', 'acf' ),
+					'label' => __( 'Allowed File Types', 'secure-custom-fields' ),
+					'hint'  => __( 'Comma separated list. Leave blank for all types', 'secure-custom-fields' ),
 					'type'  => 'text',
 					'name'  => 'mime_types',
 				)
@@ -676,13 +677,13 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Insert', 'acf' ),
-					'instructions' => __( 'Specify where new attachments are added', 'acf' ),
+					'label'        => __( 'Insert', 'secure-custom-fields' ),
+					'instructions' => __( 'Specify where new attachments are added', 'secure-custom-fields' ),
 					'type'         => 'select',
 					'name'         => 'insert',
 					'choices'      => array(
-						'append'  => __( 'Append to the end', 'acf' ),
-						'prepend' => __( 'Prepend to the beginning', 'acf' ),
+						'append'  => __( 'Append to the end', 'secure-custom-fields' ),
+						'prepend' => __( 'Prepend to the beginning', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -690,7 +691,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Preview Size', 'acf' ),
+					'label'        => __( 'Preview Size', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'preview_size',
@@ -784,7 +785,8 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			}
 
 			if ( count( $value ) < $field['min'] ) {
-				$valid = _n( '%1$s requires at least %2$s selection', '%1$s requires at least %2$s selections', $field['min'], 'acf' );
+				/* translators: 1: field label, 2: minimum number of selections */
+				$valid = _n( '%1$s requires at least %2$s selection', '%1$s requires at least %2$s selections', $field['min'], 'secure-custom-fields' );
 				$valid = sprintf( $valid, $field['label'], $field['min'] );
 			}
 

@@ -4,6 +4,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 	#[AllowDynamicProperties]
 	class acf_field {
 
+
 		// field information properties.
 		public $name          = '';
 		public $label         = '';
@@ -309,7 +310,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Required', 'acf' ),
+					'label'        => __( 'Required', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'true_false',
 					'name'         => 'required',
@@ -337,8 +338,8 @@ if ( ! class_exists( 'acf_field' ) ) :
 			}
 
 			/* translators: %s A "Learn More" link to documentation explaining the setting further. */
-			$binding_string       = esc_html__( 'Allow content editors to access and display the field value in the editor UI using Block Bindings or the ACF Shortcode. %s', 'acf' );
-			$binding_url          = '<a target="_blank" href="' . 'https://www.advancedcustomfields.com/resources/bindings-security/' . '">' . esc_html__( 'Learn more.', 'acf' ) . '</a>';
+			$binding_string       = esc_html__( 'Allow content editors to access and display the field value in the editor UI using Block Bindings or the ACF Shortcode. %s', 'secure-custom-fields' );
+			$binding_url          = '<a target="_blank" href="' . 'https://www.advancedcustomfields.com/resources/bindings-security/' . '">' . esc_html__( 'Learn more.', 'secure-custom-fields' ) . '</a>';
 			$binding_instructions = sprintf(
 				$binding_string,
 				$binding_url
@@ -356,7 +357,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Access to Value in Editor UI', 'acf' ),
+					'label'        => __( 'Allow Access to Value in Editor UI', 'secure-custom-fields' ),
 					'instructions' => $binding_instructions,
 					'type'         => 'true_false',
 					'name'         => 'allow_in_bindings',

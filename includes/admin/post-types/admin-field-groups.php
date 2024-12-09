@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 	#[AllowDynamicProperties]
 	class ACF_Admin_Field_Groups extends ACF_Admin_Internal_Post_Type_List {
 
+
 		/**
 		 * The slug for the internal post type.
 		 *
@@ -52,7 +53,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
 			$cap         = acf_get_setting( 'capability' );
-			add_submenu_page( $parent_slug, __( 'Field Groups', 'acf' ), __( 'Field Groups', 'acf' ), $cap, $parent_slug );
+			add_submenu_page( $parent_slug, __( 'Field Groups', 'secure-custom-fields' ), __( 'Field Groups', 'secure-custom-fields' ), $cap, $parent_slug );
 		}
 
 		/**
@@ -87,14 +88,14 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 			$columns = array(
 				'cb'              => $_columns['cb'],
 				'title'           => $_columns['title'],
-				'acf-description' => __( 'Description', 'acf' ),
-				'acf-key'         => __( 'Key', 'acf' ),
-				'acf-location'    => __( 'Location', 'acf' ),
-				'acf-count'       => __( 'Fields', 'acf' ),
+				'acf-description' => __( 'Description', 'secure-custom-fields' ),
+				'acf-key'         => __( 'Key', 'secure-custom-fields' ),
+				'acf-location'    => __( 'Location', 'secure-custom-fields' ),
+				'acf-count'       => __( 'Fields', 'secure-custom-fields' ),
 			);
 
 			if ( acf_get_local_json_files( $this->post_type ) ) {
-				$columns['acf-json'] = __( 'Local JSON', 'acf' );
+				$columns['acf-json'] = __( 'Local JSON', 'secure-custom-fields' );
 			}
 
 			return $columns;
@@ -113,33 +114,33 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		public function render_admin_table_column( $column_name, $post ) {
 			switch ( $column_name ) {
 
-				// Key.
+					// Key.
 				case 'acf-key':
 					echo '<i class="acf-icon acf-icon-key-solid"></i>';
 					echo esc_html( $post['key'] );
 					break;
 
-				// Description.
+					// Description.
 				case 'acf-description':
 					if ( ( is_string( $post['description'] ) || is_numeric( $post['description'] ) ) && ! empty( $post['description'] ) ) {
 						echo '<span class="acf-description">' . acf_esc_html( $post['description'] ) . '</span>';
 					} else {
 						echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'acf' ) . '</span>';
+						echo '<span class="screen-reader-text">' . esc_html__( 'No description', 'secure-custom-fields' ) . '</span>';
 					}
 					break;
 
-				// Location.
+					// Location.
 				case 'acf-location':
 					$this->render_admin_table_column_locations( $post );
 					break;
 
-				// Count.
+					// Count.
 				case 'acf-count':
 					$this->render_admin_table_column_num_fields( $post );
 					break;
 
-				// Local JSON.
+					// Local JSON.
 				case 'acf-json':
 					$this->render_admin_table_column_local_status( $post );
 					break;
@@ -232,7 +233,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 					$html .= ', ...';
 				}
 			} else {
-				$html = '<span class="dashicons dashicons-businesswoman"></span> ' . __( 'Various', 'acf' );
+				$html = '<span class="dashicons dashicons-businesswoman"></span> ' . __( 'Various', 'secure-custom-fields' );
 			}
 
 			// Filter.
@@ -252,7 +253,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 
 			if ( ! $field_count || ! is_numeric( $field_count ) ) {
 				echo '<span class="acf-emdash" aria-hidden="true">—</span>';
-				echo '<span class="screen-reader-text">' . esc_html__( 'No fields', 'acf' ) . '</span>';
+				echo '<span class="screen-reader-text">' . esc_html__( 'No fields', 'secure-custom-fields' ) . '</span>';
 				return;
 			}
 
@@ -350,28 +351,28 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 				case 'acfactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of field groups activated */
-						_n( 'Field group activated.', '%s field groups activated.', $count, 'acf' ),
+						_n( '%s field group activated.', '%s field groups activated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfdeactivatecomplete':
 					$text = sprintf(
 						/* translators: %s number of field groups deactivated */
-						_n( 'Field group deactivated.', '%s field groups deactivated.', $count, 'acf' ),
+						_n( '%s field group deactivated.', '%s field groups deactivated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfduplicatecomplete':
 					$text = sprintf(
 						/* translators: %s number of field groups duplicated */
-						_n( 'Field group duplicated.', '%s field groups duplicated.', $count, 'acf' ),
+						_n( '%s field group duplicated.', '%s field groups duplicated.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;
 				case 'acfsynccomplete':
 					$text = sprintf(
 						/* translators: %s number of field groups synchronized */
-						_n( 'Field group synchronized.', '%s field groups synchronized.', $count, 'acf' ),
+						_n( '%s field group synchronized.', '%s field groups synchronized.', $count, 'secure-custom-fields' ),
 						$count
 					);
 					break;

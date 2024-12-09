@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ACF_Post_Type' ) ) {
 	class ACF_Post_Type extends ACF_Internal_Post_Type {
 
+
 		/**
 		 * The ACF internal post type name.
 		 *
@@ -88,16 +89,16 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 				'acf-post-type',
 				array(
 					'labels'          => array(
-						'name'               => __( 'Post Types', 'acf' ),
-						'singular_name'      => __( 'Post Type', 'acf' ),
-						'add_new'            => __( 'Add New', 'acf' ),
-						'add_new_item'       => __( 'Add New Post Type', 'acf' ),
-						'edit_item'          => __( 'Edit Post Type', 'acf' ),
-						'new_item'           => __( 'New Post Type', 'acf' ),
-						'view_item'          => __( 'View Post Type', 'acf' ),
-						'search_items'       => __( 'Search Post Types', 'acf' ),
-						'not_found'          => __( 'No Post Types found', 'acf' ),
-						'not_found_in_trash' => __( 'No Post Types found in Trash', 'acf' ),
+						'name'               => __( 'Post Types', 'secure-custom-fields' ),
+						'singular_name'      => __( 'Post Type', 'secure-custom-fields' ),
+						'add_new'            => __( 'Add New', 'secure-custom-fields' ),
+						'add_new_item'       => __( 'Add New Post Type', 'secure-custom-fields' ),
+						'edit_item'          => __( 'Edit Post Type', 'secure-custom-fields' ),
+						'new_item'           => __( 'New Post Type', 'secure-custom-fields' ),
+						'view_item'          => __( 'View Post Type', 'secure-custom-fields' ),
+						'search_items'       => __( 'Search Post Types', 'secure-custom-fields' ),
+						'not_found'          => __( 'No Post Types found', 'secure-custom-fields' ),
+						'not_found_in_trash' => __( 'No Post Types found in Trash', 'secure-custom-fields' ),
 					),
 					'public'          => false,
 					'hierarchical'    => true,
@@ -325,18 +326,18 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 
 			if ( strlen( $post_type_key ) > 20 ) {
 				$valid = false;
-				acf_add_internal_post_type_validation_error( 'post_type', __( 'The post type key must be under 20 characters.', 'acf' ) );
+				acf_add_internal_post_type_validation_error( 'post_type', __( 'The post type key must be under 20 characters.', 'secure-custom-fields' ) );
 			}
 
 			if ( preg_match( '/^[a-z0-9_-]*$/', $post_type_key ) !== 1 ) {
 				$valid = false;
-				acf_add_internal_post_type_validation_error( 'post_type', __( 'The post type key must only contain lower case alphanumeric characters, underscores or dashes.', 'acf' ) );
+				acf_add_internal_post_type_validation_error( 'post_type', __( 'The post type key must only contain lower case alphanumeric characters, underscores or dashes.', 'secure-custom-fields' ) );
 			}
 
 			if ( in_array( $post_type_key, acf_get_wp_reserved_terms(), true ) ) {
 				$valid = false;
 				/* translators: %s a link to WordPress.org's Reserved Terms page */
-				$message = sprintf( __( 'This field must not be a WordPress <a href="%s" target="_blank">reserved term</a>.', 'acf' ), 'https://codex.wordpress.org/Reserved_Terms' );
+				$message = sprintf( __( 'This field must not be a WordPress <a href="%s" target="_blank">reserved term</a>.', 'secure-custom-fields' ), 'https://codex.wordpress.org/Reserved_Terms' );
 				acf_add_internal_post_type_validation_error( 'post_type', $message );
 			} else {
 				// Check if this post key exists in the ACF store for registered post types, excluding those which failed registration.
@@ -358,12 +359,12 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 
 				if ( $duplicates ) {
 					$valid = false;
-					acf_add_internal_post_type_validation_error( 'post_type', __( 'This post type key is already in use by another post type in ACF and cannot be used.', 'acf' ) );
+					acf_add_internal_post_type_validation_error( 'post_type', __( 'This post type key is already in use by another post type in ACF and cannot be used.', 'secure-custom-fields' ) );
 				} else {
 					// If we're not already in use with another ACF post type, check if we're registered, but not by ACF.
 					if ( empty( $matches ) && post_type_exists( $post_type_key ) ) {
 						$valid = false;
-						acf_add_internal_post_type_validation_error( 'post_type', __( 'This post type key is already in use by another post type registered outside of ACF and cannot be used.', 'acf' ) );
+						acf_add_internal_post_type_validation_error( 'post_type', __( 'This post type key is already in use by another post type registered outside of ACF and cannot be used.', 'secure-custom-fields' ) );
 					}
 				}
 			}
@@ -654,7 +655,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 			foreach ( $unset as $var ) {
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$originals[ $var ] = $GLOBALS[ $var ];
-					$GLOBALS[ $var ]   = array(); //phpcs:ignore -- used for building a safe context
+					$GLOBALS[$var]   = array(); //phpcs:ignore -- used for building a safe context
 				}
 			}
 
@@ -665,7 +666,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 
 			foreach ( $unset as $var ) {
 				if ( isset( $originals[ $var ] ) ) {
-					$GLOBALS[ $var ] = $originals[ $var ]; //phpcs:ignore -- used for restoring the original context
+					$GLOBALS[$var] = $originals[$var]; //phpcs:ignore -- used for restoring the original context
 				}
 			}
 
@@ -914,7 +915,6 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 			return $this->import_post( $acf_args );
 		}
 	}
-
 }
 
 acf_new_instance( 'ACF_Post_Type' );

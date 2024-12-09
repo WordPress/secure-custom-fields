@@ -114,7 +114,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		'validateOnLoad' => 'validate_on_load',
 		'usePostMeta'    => 'use_post_meta',
 	);
-	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'acf';
+	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
 
 	foreach ( $property_mappings as $key => $mapped_key ) {
@@ -183,7 +183,7 @@ function acf_register_block_type( $block ) {
 
 	// Require name.
 	if ( ! $block['name'] ) {
-		$message = __( 'Block type name is required.', 'acf' );
+		$message = __( 'Block type name is required.', 'secure-custom-fields' );
 		_doing_it_wrong( __FUNCTION__, $message, '5.8.0' ); //phpcs:ignore -- escape not required.
 		return false;
 	}
@@ -191,7 +191,7 @@ function acf_register_block_type( $block ) {
 	// Bail early if already exists.
 	if ( acf_has_block_type( $block['name'] ) ) {
 		/* translators: The name of the block type */
-		$message = sprintf( __( 'Block type "%s" is already registered.', 'acf' ), $block['name'] );
+		$message = sprintf( __( 'Block type "%s" is already registered.', 'secure-custom-fields' ), $block['name'] );
 		_doing_it_wrong( __FUNCTION__, $message, '5.8.0' ); //phpcs:ignore -- escape not required.
 		return false;
 	}
@@ -737,7 +737,7 @@ function acf_block_render_template( $block, $content, $is_preview, $post_id, $wp
 	if ( file_exists( $path ) ) {
 		include $path;
 	} elseif ( $is_preview ) {
-		echo acf_esc_html( apply_filters( 'acf/blocks/template_not_found_message', '<p>' . __( 'The render template for this ACF Block was not found', 'acf' ) . '</p>' ) );
+		echo acf_esc_html( apply_filters( 'acf/blocks/template_not_found_message', '<p>' . __( 'The render template for this ACF Block was not found', 'secure-custom-fields' ) . '</p>' ) );
 	}
 }
 
@@ -787,14 +787,14 @@ function acf_enqueue_block_assets() {
 	// Localize text.
 	acf_localize_text(
 		array(
-			'Switch to Edit'           => __( 'Switch to Edit', 'acf' ),
-			'Switch to Preview'        => __( 'Switch to Preview', 'acf' ),
-			'Change content alignment' => __( 'Change content alignment', 'acf' ),
-			'Error previewing block'   => __( 'An error occurred when loading the preview for this block.', 'acf' ),
-			'Error loading block form' => __( 'An error occurred when loading the block in edit mode.', 'acf' ),
+			'Switch to Edit'           => __( 'Switch to Edit', 'secure-custom-fields' ),
+			'Switch to Preview'        => __( 'Switch to Preview', 'secure-custom-fields' ),
+			'Change content alignment' => __( 'Change content alignment', 'secure-custom-fields' ),
+			'Error previewing block'   => __( 'An error occurred when loading the preview for this block.', 'secure-custom-fields' ),
+			'Error loading block form' => __( 'An error occurred when loading the block in edit mode.', 'secure-custom-fields' ),
 
 			/* translators: %s: Block type title */
-			'%s settings'              => __( '%s settings', 'acf' ),
+			'%s settings'              => __( '%s settings', 'secure-custom-fields' ),
 		)
 	);
 
@@ -1036,13 +1036,13 @@ acf_register_ajax( 'fetch-block', 'acf_ajax_fetch_block' );
  */
 function acf_get_empty_block_form_html( $block_name ) {
 
-	$message = __( 'This block contains no editable fields.', 'acf' );
+	$message = __( 'This block contains no editable fields.', 'secure-custom-fields' );
 
 	if ( acf_current_user_can_admin() ) {
 		$message .= ' ';
 		$message .= sprintf(
 			/* translators: %s: an admin URL to the field group edit screen */
-			__( 'Assign a <a href="%s" target="_blank">field group</a> to add fields to this block.', 'acf' ),
+			__( 'Assign a <a href="%s" target="_blank">field group</a> to add fields to this block.', 'secure-custom-fields' ),
 			admin_url( 'edit.php?post_type=acf-field-group' )
 		);
 	}

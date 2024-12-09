@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ACF Internal Post Type List class
  *
@@ -16,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
 	class ACF_Admin_Internal_Post_Type_List {
+
 
 		/**
 		 * The slug for the internal post type.
@@ -134,7 +136,8 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
 			// Modify publish post status text and order.
 			global $wp_post_statuses;
-			$wp_post_statuses['publish']->label_count = _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'acf' );
+			/* translators: %s: number of items */
+			$wp_post_statuses['publish']->label_count = _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'secure-custom-fields' );
 			$wp_post_statuses['trash']                = acf_extract_var( $wp_post_statuses, 'trash' );
 
 			// Add hooks.
@@ -207,9 +210,9 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
 			acf_localize_text(
 				array(
-					'Review local JSON changes' => esc_html__( 'Review local JSON changes', 'acf' ),
-					'Loading diff'              => esc_html__( 'Loading diff', 'acf' ),
-					'Sync changes'              => esc_html__( 'Sync changes', 'acf' ),
+					'Review local JSON changes' => esc_html__( 'Review local JSON changes', 'secure-custom-fields' ),
+					'Loading diff'              => esc_html__( 'Loading diff', 'secure-custom-fields' ),
+					'Sync changes'              => esc_html__( 'Sync changes', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -241,7 +244,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		 * @return string
 		 */
 		public function get_disabled_post_state() {
-			return '<span class="dashicons dashicons-hidden"></span> ' . _x( 'Inactive', 'post status', 'acf' );
+			return '<span class="dashicons dashicons-hidden"></span> ' . _x( 'Inactive', 'post status', 'secure-custom-fields' );
 		}
 
 		/**
@@ -253,8 +256,8 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		 */
 		public function get_registration_error_state() {
 			return '<span class="acf-js-tooltip dashicons dashicons-warning" title="' .
-			__( 'This item could not be registered because its key is in use by another item registered by another plugin or theme.', 'acf' ) .
-			'"></span> ' . _x( 'Registration Failed', 'post status', 'acf' );
+				__( 'This item could not be registered because its key is in use by another item registered by another plugin or theme.', 'secure-custom-fields' ) .
+				'"></span> ' . _x( 'Registration Failed', 'post status', 'secure-custom-fields' );
 		}
 
 		/**
@@ -365,13 +368,16 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			$theme_path = get_stylesheet_directory();
 			if ( strpos( $file, $theme_path ) !== false ) {
 				$rel_file = str_replace( $theme_path, '', $file );
-				$located  = sprintf( __( 'Located in theme: %s', 'acf' ), $rel_file );
+				/* translators: %s: theme file path */
+				$located = sprintf( __( 'Located in theme: %s', 'secure-custom-fields' ), $rel_file );
 			} elseif ( strpos( $file, WP_PLUGIN_DIR ) !== false ) {
 				$rel_file = str_replace( WP_PLUGIN_DIR, '', $file );
-				$located  = sprintf( __( 'Located in plugin: %s', 'acf' ), $rel_file );
+				/* translators: %s: plugin file path */
+				$located = sprintf( __( 'Located in plugin: %s', 'secure-custom-fields' ), $rel_file );
 			} else {
 				$rel_file = str_replace( ABSPATH, '', $file );
-				$located  = sprintf( __( 'Located in: %s', 'acf' ), $rel_file );
+				/* translators: %s: file path */
+				$located = sprintf( __( 'Located in: %s', 'secure-custom-fields' ), $rel_file );
 			}
 
 			return $located;
@@ -391,22 +397,22 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			if ( isset( $json[ $post['key'] ] ) ) {
 				if ( isset( $this->sync[ $post['key'] ] ) ) {
 					$url = $this->get_admin_url( '&acfsync=' . $post['key'] . '&_wpnonce=' . wp_create_nonce( 'bulk-posts' ) );
-					echo '<strong>' . esc_html__( 'Sync available', 'acf' ) . '</strong>';
+					echo '<strong>' . esc_html__( 'Sync available', 'secure-custom-fields' ) . '</strong>';
 					if ( $post['ID'] ) {
 						echo '<div class="row-actions">
-                            <span class="sync"><a href="' . esc_url( $url ) . '">' . esc_html__( 'Sync', 'acf' ) . '</a> | </span>
-                            <span class="review"><a href="#" data-event="review-sync" data-id="' . esc_attr( $post['ID'] ) . '" data-href="' . esc_url( $url ) . '">' . esc_html__( 'Review changes', 'acf' ) . '</a></span>
+                            <span class="sync"><a href="' . esc_url( $url ) . '">' . esc_html__( 'Sync', 'secure-custom-fields' ) . '</a> | </span>
+                            <span class="review"><a href="#" data-event="review-sync" data-id="' . esc_attr( $post['ID'] ) . '" data-href="' . esc_url( $url ) . '">' . esc_html__( 'Review changes', 'secure-custom-fields' ) . '</a></span>
                         </div>';
 					} else {
 						echo '<div class="row-actions">
-                            <span class="sync"><a href="' . esc_url( $url ) . '">' . esc_html__( 'Import', 'acf' ) . '</a></span>
+                            <span class="sync"><a href="' . esc_url( $url ) . '">' . esc_html__( 'Import', 'secure-custom-fields' ) . '</a></span>
                         </div>';
 					}
 				} else {
-					echo esc_html__( 'Saved', 'acf' );
+					echo esc_html__( 'Saved', 'secure-custom-fields' );
 				}
 			} else {
-				echo '<span class="acf-secondary-text">' . esc_html__( 'Awaiting save', 'acf' ) . '</span>';
+				echo '<span class="acf-secondary-text">' . esc_html__( 'Awaiting save', 'secure-custom-fields' ) . '</span>';
 			}
 		}
 
@@ -437,17 +443,17 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 				$duplicate_action_url = wp_nonce_url( admin_url( 'post-new.php?post_type=acf-ui-options-page&use_options_page=' . $post->ID ), 'acfduplicate-' . $post->ID );
 			}
 
-			$actions['acfduplicate'] = '<a href="' . esc_url( $duplicate_action_url ) . '" aria-label="' . esc_attr__( 'Duplicate this item', 'acf' ) . '">' . __( 'Duplicate', 'acf' ) . '</a>';
+			$actions['acfduplicate'] = '<a href="' . esc_url( $duplicate_action_url ) . '" aria-label="' . esc_attr__( 'Duplicate this item', 'secure-custom-fields' ) . '">' . __( 'Duplicate', 'secure-custom-fields' ) . '</a>';
 
 			// Append the "Activate" or "Deactivate" actions.
 			if ( 'acf-disabled' === $post->post_status ) {
 				$activate_deactivate_action = 'acfactivate';
 				$activate_action_url        = $this->get_admin_url( '&acfactivate=' . $post->ID . '&_wpnonce=' . wp_create_nonce( 'bulk-posts' ) );
-				$actions['acfactivate']     = '<a href="' . esc_url( $activate_action_url ) . '" aria-label="' . esc_attr__( 'Activate this item', 'acf' ) . '">' . __( 'Activate', 'acf' ) . '</a>';
+				$actions['acfactivate']     = '<a href="' . esc_url( $activate_action_url ) . '" aria-label="' . esc_attr__( 'Activate this item', 'secure-custom-fields' ) . '">' . __( 'Activate', 'secure-custom-fields' ) . '</a>';
 			} else {
 				$activate_deactivate_action = 'acfdeactivate';
 				$deactivate_action_url      = $this->get_admin_url( '&acfdeactivate=' . $post->ID . '&_wpnonce=' . wp_create_nonce( 'bulk-posts' ) );
-				$actions['acfdeactivate']   = '<a href="' . esc_url( $deactivate_action_url ) . '" aria-label="' . esc_attr__( 'Deactivate this item', 'acf' ) . '">' . __( 'Deactivate', 'acf' ) . '</a>';
+				$actions['acfdeactivate']   = '<a href="' . esc_url( $deactivate_action_url ) . '" aria-label="' . esc_attr__( 'Deactivate this item', 'secure-custom-fields' ) . '">' . __( 'Deactivate', 'secure-custom-fields' ) . '</a>';
 			}
 
 			// Return actions in custom order.
@@ -469,18 +475,18 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			if ( ! in_array( $this->view, array( 'sync', 'trash' ), true ) ) {
 				// TODO: We'll likely have to add support for CPTs/Taxonomies!
 				if ( 'acf-field-group' === $this->post_type ) {
-					$actions['acfduplicate'] = __( 'Duplicate', 'acf' );
+					$actions['acfduplicate'] = __( 'Duplicate', 'secure-custom-fields' );
 				}
 
-				$actions['acfactivate']   = __( 'Activate', 'acf' );
-				$actions['acfdeactivate'] = __( 'Deactivate', 'acf' );
+				$actions['acfactivate']   = __( 'Activate', 'secure-custom-fields' );
+				$actions['acfdeactivate'] = __( 'Deactivate', 'secure-custom-fields' );
 			}
 
 			if ( $this->sync ) {
 				if ( $this->view === 'sync' ) {
 					$actions = array();
 				}
-				$actions['acfsync'] = __( 'Sync changes', 'acf' );
+				$actions['acfsync'] = __( 'Sync changes', 'secure-custom-fields' );
 			}
 
 			return $actions;
@@ -809,7 +815,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 					'<a %s href="%s">%s <span class="count">(%s)</span></a>',
 					( $this->view === 'sync' ? 'class="current"' : '' ),
 					esc_url( $this->get_admin_url( '&post_status=sync' ) ),
-					esc_html( __( 'Sync available', 'acf' ) ),
+					esc_html( __( 'Sync available', 'secure-custom-fields' ) ),
 					$count
 				);
 			}
@@ -836,10 +842,10 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		public function admin_footer() {
 			?>
 			<script type="text/javascript">
-				(function($){
+				(function($) {
 
 					// Displays a modal comparing local changes.
-					function reviewSync( props ) {
+					function reviewSync(props) {
 						var modal = acf.newModal({
 							title: acf.__('Review local JSON changes'),
 							content: '<p class="acf-modal-feedback"><i class="acf-loading"></i> ' + acf.__('Loading diff') + '</p>',
@@ -848,29 +854,29 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
 						// Call AJAX.
 						var xhr = $.ajax({
-							url: acf.get('ajaxurl'),
-							method: 'POST',
-							dataType: 'json',
-							data: acf.prepareForAjax({
-								action:	'acf/ajax/local_json_diff',
-								id: props.id
+								url: acf.get('ajaxurl'),
+								method: 'POST',
+								dataType: 'json',
+								data: acf.prepareForAjax({
+									action: 'acf/ajax/local_json_diff',
+									id: props.id
+								})
 							})
-						})
-							.done(function( data, textStatus, jqXHR ) {
-								modal.content( data.html );
+							.done(function(data, textStatus, jqXHR) {
+								modal.content(data.html);
 								modal.$('.button-sync-changes').removeClass('disabled');
 							})
-							.fail(function( jqXHR, textStatus, errorThrown ) {
-								if( error = acf.getXhrError(jqXHR) ) {
-									modal.content( '<p class="acf-modal-feedback error">' + error + '</p>' );
+							.fail(function(jqXHR, textStatus, errorThrown) {
+								if (error = acf.getXhrError(jqXHR)) {
+									modal.content('<p class="acf-modal-feedback error">' + error + '</p>');
 								}
 							});
 					}
 
 					// Add event listener.
-					$(document).on('click', 'a[data-event="review-sync"]', function( e ){
+					$(document).on('click', 'a[data-event="review-sync"]', function(e) {
 						e.preventDefault();
-						reviewSync( $(this).data() );
+						reviewSync($(this).data());
 					});
 				})(jQuery);
 			</script>
@@ -892,70 +898,70 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			<div style="display: none;">
 				<table>
 					<tbody id="acf-the-list">
-					<?php
-					foreach ( $this->sync as $k => $field_group ) {
-						echo '<tr>';
-						foreach ( $columns as $column_name => $column_label ) {
-							$el = 'td';
-							if ( $column_name === 'cb' ) {
-								$el           = 'th';
-								$classes      = 'check-column';
-								$column_label = '';
-							} elseif ( $column_name === 'title' ) {
-								$classes = "$column_name column-$column_name column-primary";
-							} else {
-								$classes = "$column_name column-$column_name";
+						<?php
+						foreach ( $this->sync as $k => $field_group ) {
+							echo '<tr>';
+							foreach ( $columns as $column_name => $column_label ) {
+								$el = 'td';
+								if ( $column_name === 'cb' ) {
+									$el           = 'th';
+									$classes      = 'check-column';
+									$column_label = '';
+								} elseif ( $column_name === 'title' ) {
+									$classes = "$column_name column-$column_name column-primary";
+								} else {
+									$classes = "$column_name column-$column_name";
+								}
+								if ( in_array( $column_name, $hidden, true ) ) {
+									$classes .= ' hidden';
+								}
+
+								printf(
+									'<%s class="%s" data-colname="%s">',
+									esc_attr( $el ),
+									esc_attr( $classes ),
+									esc_attr( $column_label )
+								);
+
+								switch ( $column_name ) {
+
+										// Checkbox.
+									case 'cb':
+										echo '<label for="cb-select-' . esc_attr( $k ) . '" class="screen-reader-text">';
+										/* translators: %s: field group title */
+										echo esc_html( sprintf( __( 'Select %s', 'secure-custom-fields' ), $field_group['title'] ) );
+										echo '</label>';
+										echo '<input id="cb-select-' . esc_attr( $k ) . '" type="checkbox" value="' . esc_attr( $k ) . '" name="post[]">';
+										break;
+
+										// Title.
+									case 'title':
+										$post_state = '';
+										if ( ! $field_group['active'] ) {
+											$post_state = ' — <span class="post-state">' . $this->get_disabled_post_state() . '</span>';
+										}
+										echo '<strong><span class="row-title">' . esc_html( $field_group['title'] ) . '</span>' . acf_esc_html( $post_state ) . '</strong>';
+										echo '<div class="row-actions"><span class="file acf-secondary-text">' . esc_html( $this->get_human_readable_file_location( $field_group['local_file'] ) ) . '</span></div>';
+										echo '<button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button>';
+										break;
+
+										// All other columns.
+									default:
+										$this->render_admin_table_column( $column_name, $field_group );
+										break;
+								}
+
+								printf( '</%s>', esc_attr( $el ) );
 							}
-							if ( in_array( $column_name, $hidden, true ) ) {
-								$classes .= ' hidden';
-							}
-
-							printf(
-								'<%s class="%s" data-colname="%s">',
-								esc_attr( $el ),
-								esc_attr( $classes ),
-								esc_attr( $column_label )
-							);
-
-							switch ( $column_name ) {
-
-								// Checkbox.
-								case 'cb':
-									echo '<label for="cb-select-' . esc_attr( $k ) . '" class="screen-reader-text">';
-									/* translators: %s: field group title */
-									echo esc_html( sprintf( __( 'Select %s', 'acf' ), $field_group['title'] ) );
-									echo '</label>';
-									echo '<input id="cb-select-' . esc_attr( $k ) . '" type="checkbox" value="' . esc_attr( $k ) . '" name="post[]">';
-									break;
-
-								// Title.
-								case 'title':
-									$post_state = '';
-									if ( ! $field_group['active'] ) {
-										$post_state = ' — <span class="post-state">' . $this->get_disabled_post_state() . '</span>';
-									}
-									echo '<strong><span class="row-title">' . esc_html( $field_group['title'] ) . '</span>' . acf_esc_html( $post_state ) . '</strong>';
-									echo '<div class="row-actions"><span class="file acf-secondary-text">' . esc_html( $this->get_human_readable_file_location( $field_group['local_file'] ) ) . '</span></div>';
-									echo '<button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button>';
-									break;
-
-								// All other columns.
-								default:
-									$this->render_admin_table_column( $column_name, $field_group );
-									break;
-							}
-
-							printf( '</%s>', esc_attr( $el ) );
+							echo '</tr>';
 						}
-						echo '</tr>';
-					}
-					?>
+						?>
 					</tbody>
 				</table>
 			</div>
 			<script type="text/javascript">
-				(function($){
-					$('#the-list').html( $('#acf-the-list').children() );
+				(function($) {
+					$('#the-list').html($('#acf-the-list').children());
 				})(jQuery);
 			</script>
 			<?php

@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Page' ) ) :
 		 */
 		public function initialize() {
 			$this->name           = 'page';
-			$this->label          = __( 'Page', 'acf' );
+			$this->label          = __( 'Page', 'secure-custom-fields' );
 			$this->category       = 'page';
 			$this->object_type    = 'post';
 			$this->object_subtype = 'page';

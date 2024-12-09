@@ -8,6 +8,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 
 	class ACF_Admin {
 
+
 		/**
 		 * Constructor.
 		 *
@@ -43,7 +44,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 			$parent_slug = 'edit.php?post_type=acf-field-group';
 
 			// Add menu items.
-			add_menu_page( __( 'SCF', 'acf' ), __( 'SCF', 'acf' ), $cap, $parent_slug, false, 'dashicons-welcome-widgets-menus', 80 );
+			add_menu_page( __( 'SCF', 'secure-custom-fields' ), __( 'SCF', 'secure-custom-fields' ), $cap, $parent_slug, false, 'dashicons-welcome-widgets-menus', 80 );
 		}
 
 		/**
@@ -59,8 +60,8 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 				'acf-escaped-html-notice',
 				'acf_escaped_html_notice',
 				array(
-					'show_details' => __( 'Show&nbsp;details', 'acf' ),
-					'hide_details' => __( 'Hide&nbsp;details', 'acf' ),
+					'show_details' => __( 'Show&nbsp;details', 'secure-custom-fields' ),
+					'hide_details' => __( 'Hide&nbsp;details', 'secure-custom-fields' ),
 				)
 			);
 		}
@@ -131,7 +132,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 
 			$text = sprintf(
 				/* translators: %s - URL to ACF tools page. */
-				__( 'Import Post Types and Taxonomies registered with Custom Post Type UI and manage them with ACF. <a href="%s">Get Started</a>.', 'acf' ),
+				__( 'Import Post Types and Taxonomies registered with Custom Post Type UI and manage them with SCF. <a href="%s">Get Started</a>.', 'secure-custom-fields' ),
 				acf_get_admin_tools_url()
 			);
 

@@ -21,7 +21,7 @@ if ( ! class_exists( 'ACF_Ajax_Upgrade' ) ) :
 		 */
 		public function get_response( $request ) {
 			if ( ! current_user_can( acf_get_setting( 'capability' ) ) ) {
-				return new WP_Error( 'upgrade_error', __( 'Sorry, you do not have permission to do that.', 'acf' ) );
+				return new WP_Error( 'upgrade_error', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 			}
 
 			// Switch blog.
@@ -31,7 +31,7 @@ if ( ! class_exists( 'ACF_Ajax_Upgrade' ) ) :
 
 			// Bail early if no upgrade avaiable.
 			if ( ! acf_has_upgrade() ) {
-				return new WP_Error( 'upgrade_error', __( 'No updates available.', 'acf' ) );
+				return new WP_Error( 'upgrade_error', __( 'No updates available.', 'secure-custom-fields' ) );
 			}
 
 			// Listen for output.

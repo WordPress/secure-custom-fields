@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'block';
-			$this->label       = __( 'Block', 'acf' );
+			$this->label       = __( 'Block', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'block';
 
@@ -65,12 +65,12 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 			// Append block types.
 			$blocks = acf_get_block_types();
 			if ( $blocks ) {
-				$choices['all'] = __( 'All', 'acf' );
+				$choices['all'] = __( 'All', 'secure-custom-fields' );
 				foreach ( $blocks as $block ) {
 					$choices[ $block['name'] ] = $block['title'];
 				}
 			} else {
-				$choices[''] = __( 'No block types exist', 'acf' );
+				$choices[''] = __( 'No block types exist', 'secure-custom-fields' );
 			}
 
 			// Return choices.

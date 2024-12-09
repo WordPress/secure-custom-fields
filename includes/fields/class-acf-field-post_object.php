@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 	class acf_field_post_object extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -12,9 +13,9 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		 */
 		public function initialize() {
 			$this->name          = 'post_object';
-			$this->label         = __( 'Post Object', 'acf' );
+			$this->label         = __( 'Post Object', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'An interactive and customizable UI for picking one or many posts, pages or post type items with the option to search. ', 'acf' );
+			$this->description   = __( 'An interactive and customizable UI for picking one or many posts, pages or post type items with the option to search. ', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-post-object.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/post-object/';
 			$this->defaults      = array(
@@ -251,7 +252,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			);
 
 			// look for parent
-			$search = '| ' . __( 'Parent', 'acf' ) . ':';
+			$search = '| ' . __( 'Parent', 'secure-custom-fields' ) . ':';
 			$pos    = strpos( $text, $search );
 
 			if ( $pos !== false ) {
@@ -348,7 +349,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Type', 'acf' ),
+					'label'        => __( 'Filter by Post Type', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_type',
@@ -356,14 +357,14 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All post types', 'acf' ),
+					'placeholder'  => __( 'All post types', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Status', 'acf' ),
+					'label'        => __( 'Filter by Post Status', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_status',
@@ -371,14 +372,14 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'Any post status', 'acf' ),
+					'placeholder'  => __( 'Any post status', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Taxonomy', 'acf' ),
+					'label'        => __( 'Filter by Taxonomy', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'taxonomy',
@@ -386,20 +387,20 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All taxonomies', 'acf' ),
+					'placeholder'  => __( 'All taxonomies', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Return Format', 'acf' ),
+					'label'        => __( 'Return Format', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'radio',
 					'name'         => 'return_format',
 					'choices'      => array(
-						'object' => __( 'Post Object', 'acf' ),
-						'id'     => __( 'Post ID', 'acf' ),
+						'object' => __( 'Post Object', 'secure-custom-fields' ),
+						'id'     => __( 'Post ID', 'secure-custom-fields' ),
 					),
 					'layout'       => 'horizontal',
 				)
@@ -408,7 +409,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Select Multiple', 'acf' ),
+					'label'        => __( 'Select Multiple', 'secure-custom-fields' ),
 					'instructions' => 'Allow content editors to select multiple values',
 					'name'         => 'multiple',
 					'type'         => 'true_false',
@@ -429,7 +430,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',
@@ -631,8 +632,9 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			}
 
 			if ( count( $invalid_posts ) ) {
-				$error         = sprintf(
-					__( '%1$s must have a valid post ID.', 'acf' ),
+				$error = sprintf(
+					/* translators: %s: field name */
+					__( '%1$s must have a valid post ID.', 'secure-custom-fields' ),
 					$param
 				);
 				$data['value'] = $invalid_posts;
@@ -640,12 +642,13 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			}
 
 			if ( count( $post_type_errors ) ) {
-				$error         = sprintf(
+				$error = sprintf(
+					/* translators: 1: field name, 2: post type */
 					_n(
 						'%1$s must be of post type %2$s.',
 						'%1$s must be of one of the following post types: %2$s',
 						count( $field['post_type'] ),
-						'acf'
+						'secure-custom-fields'
 					),
 					$param,
 					count( $field['post_type'] ) > 1 ? implode( ', ', $field['post_type'] ) : $field['post_type'][0]
@@ -656,12 +659,13 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			}
 
 			if ( count( $taxonomy_errors ) ) {
-				$error         = sprintf(
+				$error = sprintf(
+					/* translators: 1: field name, 2: taxonomy term */
 					_n(
 						'%1$s must have term %2$s.',
 						'%1$s must have one of the following terms: %2$s',
 						count( $field['taxonomy'] ),
-						'acf'
+						'secure-custom-fields'
 					),
 					$param,
 					count( $field['taxonomy'] ) > 1 ? implode( ', ', $field['taxonomy'] ) : $field['taxonomy'][0]

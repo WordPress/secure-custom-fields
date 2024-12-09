@@ -5,6 +5,7 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 	class acf_field_text extends acf_field {
 
 
+
 		/**
 		 * This function will setup the field type data
 		 *
@@ -19,8 +20,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 
 			// vars
 			$this->name          = 'text';
-			$this->label         = __( 'Text', 'acf' );
-			$this->description   = __( 'A basic text input, useful for storing single string values.', 'acf' );
+			$this->label         = __( 'Text', 'secure-custom-fields' );
+			$this->description   = __( 'A basic text input, useful for storing single string values.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-text.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/text/';
 			$this->defaults      = array(
@@ -92,8 +93,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Default Value', 'acf' ),
-					'instructions' => __( 'Appears when creating a new post', 'acf' ),
+					'label'        => __( 'Default Value', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears when creating a new post', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'default_value',
 				)
@@ -112,8 +113,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Character Limit', 'acf' ),
-					'instructions' => __( 'Leave blank for no limit', 'acf' ),
+					'label'        => __( 'Character Limit', 'secure-custom-fields' ),
+					'instructions' => __( 'Leave blank for no limit', 'secure-custom-fields' ),
 					'type'         => 'number',
 					'name'         => 'maxlength',
 				)
@@ -132,8 +133,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Placeholder Text', 'acf' ),
-					'instructions' => __( 'Appears within the input', 'acf' ),
+					'label'        => __( 'Placeholder Text', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears within the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'placeholder',
 				)
@@ -142,8 +143,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Prepend', 'acf' ),
-					'instructions' => __( 'Appears before the input', 'acf' ),
+					'label'        => __( 'Prepend', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears before the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'prepend',
 				)
@@ -152,8 +153,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Append', 'acf' ),
-					'instructions' => __( 'Appears after the input', 'acf' ),
+					'label'        => __( 'Append', 'secure-custom-fields' ),
+					'instructions' => __( 'Appears after the input', 'secure-custom-fields' ),
 					'type'         => 'text',
 					'name'         => 'append',
 				)
@@ -178,7 +179,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 
 			// Check maxlength
 			if ( $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
-				return sprintf( __( 'Value must not exceed %d characters', 'acf' ), $field['maxlength'] );
+				/* translators: %d: the maximum number of characters */
+				return sprintf( __( 'Value must not exceed %d characters', 'secure-custom-fields' ), $field['maxlength'] );
 			}
 
 			// Return.

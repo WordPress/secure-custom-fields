@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 
 			// vars
 			$this->name          = 'date_picker';
-			$this->label         = __( 'Date Picker', 'acf' );
+			$this->label         = __( 'Date Picker', 'secure-custom-fields' );
 			$this->category      = 'advanced';
-			$this->description   = __( 'An interactive UI for picking a date. The date return format can be customized using the field settings.', 'acf' );
+			$this->description   = __( 'An interactive UI for picking a date. The date return format can be customized using the field settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-date-picker.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/date-picker/';
 			$this->defaults      = array(
@@ -54,11 +54,11 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			acf_localize_data(
 				array(
 					'datePickerL10n' => array(
-						'closeText'       => _x( 'Done', 'Date Picker JS closeText', 'acf' ),
-						'currentText'     => _x( 'Today', 'Date Picker JS currentText', 'acf' ),
-						'nextText'        => _x( 'Next', 'Date Picker JS nextText', 'acf' ),
-						'prevText'        => _x( 'Prev', 'Date Picker JS prevText', 'acf' ),
-						'weekHeader'      => _x( 'Wk', 'Date Picker JS weekHeader', 'acf' ),
+						'closeText'       => _x( 'Done', 'Date Picker JS closeText', 'secure-custom-fields' ),
+						'currentText'     => _x( 'Today', 'Date Picker JS currentText', 'secure-custom-fields' ),
+						'nextText'        => _x( 'Next', 'Date Picker JS nextText', 'secure-custom-fields' ),
+						'prevText'        => _x( 'Prev', 'Date Picker JS prevText', 'secure-custom-fields' ),
+						'weekHeader'      => _x( 'Wk', 'Date Picker JS weekHeader', 'secure-custom-fields' ),
 						'monthNames'      => array_values( $wp_locale->month ),
 						'monthNamesShort' => array_values( $wp_locale->month_abbrev ),
 						'dayNames'        => array_values( $wp_locale->weekday ),
@@ -167,8 +167,8 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Display Format', 'acf' ),
-					'hint'         => __( 'The format displayed when editing a post', 'acf' ),
+					'label'        => __( 'Display Format', 'secure-custom-fields' ),
+					'hint'         => __( 'The format displayed when editing a post', 'secure-custom-fields' ),
 					'type'         => 'radio',
 					'name'         => 'display_format',
 					'other_choice' => 1,
@@ -176,7 +176,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 						'd/m/Y'  => '<span>' . $d_m_Y . '</span><code>d/m/Y</code>',
 						'm/d/Y'  => '<span>' . $m_d_Y . '</span><code>m/d/Y</code>',
 						'F j, Y' => '<span>' . $F_j_Y . '</span><code>F j, Y</code>',
-						'other'  => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+						'other'  => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 					),
 				)
 			);
@@ -186,8 +186,8 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 				acf_render_field_setting(
 					$field,
 					array(
-						'label' => __( 'Save Format', 'acf' ),
-						'hint'  => __( 'The format used when saving a value', 'acf' ),
+						'label' => __( 'Save Format', 'secure-custom-fields' ),
+						'hint'  => __( 'The format used when saving a value', 'secure-custom-fields' ),
 						'type'  => 'text',
 						'name'  => 'save_format',
 					// 'readonly'        => 1 // this setting was not readonly in v4
@@ -197,8 +197,8 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 				acf_render_field_setting(
 					$field,
 					array(
-						'label'        => __( 'Return Format', 'acf' ),
-						'hint'         => __( 'The format returned via template functions', 'acf' ),
+						'label'        => __( 'Return Format', 'secure-custom-fields' ),
+						'hint'         => __( 'The format returned via template functions', 'secure-custom-fields' ),
 						'type'         => 'radio',
 						'name'         => 'return_format',
 						'other_choice' => 1,
@@ -207,7 +207,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 							'm/d/Y'  => '<span>' . $m_d_Y . '</span><code>m/d/Y</code>',
 							'F j, Y' => '<span>' . $F_j_Y . '</span><code>F j, Y</code>',
 							'Ymd'    => '<span>' . $Ymd . '</span><code>Ymd</code>',
-							'other'  => '<span>' . __( 'Custom:', 'acf' ) . '</span>',
+							'other'  => '<span>' . __( 'Custom:', 'secure-custom-fields' ) . '</span>',
 						),
 					)
 				);
@@ -218,7 +218,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Week Starts On', 'acf' ),
+					'label'        => __( 'Week Starts On', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'first_day',

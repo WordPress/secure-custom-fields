@@ -89,16 +89,16 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 				'acf-ui-options-page',
 				array(
 					'labels'          => array(
-						'name'               => __( 'Options Pages', 'acf' ),
-						'singular_name'      => __( 'Options Pages', 'acf' ),
-						'add_new'            => __( 'Add New', 'acf' ),
-						'add_new_item'       => __( 'Add New Options Page', 'acf' ),
-						'edit_item'          => __( 'Edit Options Page', 'acf' ),
-						'new_item'           => __( 'New Options Page', 'acf' ),
-						'view_item'          => __( 'View Options Page', 'acf' ),
-						'search_items'       => __( 'Search Options Pages', 'acf' ),
-						'not_found'          => __( 'No Options Pages found', 'acf' ),
-						'not_found_in_trash' => __( 'No Options Pages found in Trash', 'acf' ),
+						'name'               => __( 'Options Pages', 'secure-custom-fields' ),
+						'singular_name'      => __( 'Options Pages', 'secure-custom-fields' ),
+						'add_new'            => __( 'Add New', 'secure-custom-fields' ),
+						'add_new_item'       => __( 'Add New Options Page', 'secure-custom-fields' ),
+						'edit_item'          => __( 'Edit Options Page', 'secure-custom-fields' ),
+						'new_item'           => __( 'New Options Page', 'secure-custom-fields' ),
+						'view_item'          => __( 'View Options Page', 'secure-custom-fields' ),
+						'search_items'       => __( 'Search Options Pages', 'secure-custom-fields' ),
+						'not_found'          => __( 'No Options Pages found', 'secure-custom-fields' ),
+						'not_found_in_trash' => __( 'No Options Pages found in Trash', 'secure-custom-fields' ),
 					),
 					'public'          => false,
 					'hierarchical'    => true,
@@ -170,8 +170,8 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 				'description'            => '',
 				'menu_icon'              => array(),
 				// Labels tab.
-				'update_button'          => __( 'Update', 'acf' ),
-				'updated_message'        => __( 'Options Updated', 'acf' ),
+				'update_button'          => __( 'Update', 'secure-custom-fields' ),
+				'updated_message'        => __( 'Options Updated', 'secure-custom-fields' ),
 				// Permissions tab.
 				'capability'             => 'edit_posts',
 				'data_storage'           => 'options',
@@ -200,7 +200,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 
 			if ( preg_match( '/^[a-z0-9_-]*$/', $menu_slug ) !== 1 ) {
 				$valid = false;
-				acf_add_internal_post_type_validation_error( 'menu_slug', __( 'The menu slug must only contain lower case alphanumeric characters, underscores or dashes.', 'acf' ) );
+				acf_add_internal_post_type_validation_error( 'menu_slug', __( 'The menu slug must only contain lower case alphanumeric characters, underscores or dashes.', 'secure-custom-fields' ) );
 			}
 
 			// Check for duplicate menu_slug.
@@ -232,7 +232,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 				$valid = false;
 				acf_add_internal_post_type_validation_error(
 					'menu_slug',
-					__( 'This Menu Slug is already in use by another ACF Options Page.', 'acf' ),
+					__( 'This Menu Slug is already in use by another ACF Options Page.', 'secure-custom-fields' ),
 					'acf-ui-options-page'
 				);
 			}
@@ -425,7 +425,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 					$args['icon_url'] = $args['menu_icon']['value'];
 				}
 				if ( $args['menu_icon']['type'] === 'media_library' ) {
-					$image_url        = wp_get_attachment_image_url($args['menu_icon']['value']);
+					$image_url        = wp_get_attachment_image_url( $args['menu_icon']['value'] );
 					$args['icon_url'] = $image_url;
 				}
 				if ( $args['menu_icon']['type'] === 'dashicons' ) {

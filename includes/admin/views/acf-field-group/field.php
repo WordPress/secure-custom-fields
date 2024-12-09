@@ -36,7 +36,7 @@ if ( ! isset( $num_field_groups ) ) {
 $conditional_logic_class = $conditional_logic_text = '';
 if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic'] ) && count( $field['conditional_logic'] ) > 0 ) {
 	$conditional_logic_class = ' is-enabled';
-	$conditional_logic_text  = __( 'Active', 'acf' );
+	$conditional_logic_text  = __( 'Active', 'secure-custom-fields' );
 }
 
 ?>
@@ -66,19 +66,19 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 	<div class="handle">
 		<ul class="acf-hl acf-tbody">
 			<li class="li-field-order">
-				<span class="acf-icon acf-sortable-handle" title="<?php esc_attr_e( 'Drag to reorder', 'acf' ); ?>"><?php echo intval( $i + 1 ); ?></span>
+				<span class="acf-icon acf-sortable-handle" title="<?php esc_attr_e( 'Drag to reorder', 'secure-custom-fields' ); ?>"><?php echo intval( $i + 1 ); ?></span>
 			</li>
 			<li class="li-field-label">
 				<strong class="<?php echo esc_attr( $inactive_field_class ); ?>" title="<?php echo esc_attr( $inactive_field_title ); ?>">
-					<a class="edit-field" title="<?php esc_attr_e( 'Edit field', 'acf' ); ?>" href="#"><?php echo acf_esc_html( $field_label ); ?></a>
+					<a class="edit-field" title="<?php esc_attr_e( 'Edit field', 'secure-custom-fields' ); ?>" href="#"><?php echo acf_esc_html( $field_label ); ?></a>
 				</strong>
 				<div class="row-options">
-					<a class="edit-field" title="<?php esc_attr_e( 'Edit field', 'acf' ); ?>" href="#"><?php esc_html_e( 'Edit', 'acf' ); ?></a>
-					<a class="duplicate-field" title="<?php esc_attr_e( 'Duplicate field', 'acf' ); ?>" href="#"><?php esc_html_e( 'Duplicate', 'acf' ); ?></a>
+					<a class="edit-field" title="<?php esc_attr_e( 'Edit field', 'secure-custom-fields' ); ?>" href="#"><?php esc_html_e( 'Edit', 'secure-custom-fields' ); ?></a>
+					<a class="duplicate-field" title="<?php esc_attr_e( 'Duplicate field', 'secure-custom-fields' ); ?>" href="#"><?php esc_html_e( 'Duplicate', 'secure-custom-fields' ); ?></a>
 					<?php if ( $num_field_groups > 1 ) : ?>
-					<a class="move-field" title="<?php esc_attr_e( 'Move field to another group', 'acf' ); ?>" href="#"><?php esc_html_e( 'Move', 'acf' ); ?></a>
+					<a class="move-field" title="<?php esc_attr_e( 'Move field to another group', 'secure-custom-fields' ); ?>" href="#"><?php esc_html_e( 'Move', 'secure-custom-fields' ); ?></a>
 					<?php endif; ?>
-					<a class="delete-field" title="<?php esc_attr_e( 'Delete field', 'acf' ); ?>" href="#"><?php esc_html_e( 'Delete', 'acf' ); ?></a>
+					<a class="delete-field" title="<?php esc_attr_e( 'Delete field', 'secure-custom-fields' ); ?>" href="#"><?php esc_html_e( 'Delete', 'secure-custom-fields' ); ?></a>
 				</div>
 			</li>
 			<li class="li-field-name"><span class="copyable"><?php echo esc_html( $field['name'] ); ?></span></li>
@@ -106,7 +106,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 					);
 
 					if ( $tab_key === 'conditional_logic' ) {
-						$field_to_render['label'] = __( 'Conditional Logic', 'acf' ) . '<i class="conditional-logic-badge' . $conditional_logic_class . '">' . $conditional_logic_text . '</i>';
+						$field_to_render['label'] = __( 'Conditional Logic', 'secure-custom-fields' ) . '<i class="conditional-logic-badge' . $conditional_logic_class . '">' . $conditional_logic_text . '</i>';
 					}
 
 					acf_render_field_wrap( $field_to_render );
@@ -126,7 +126,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 								acf_render_field_setting(
 									$field,
 									array(
-										'label'        => __( 'Field Type', 'acf' ),
+										'label'        => __( 'Field Type', 'secure-custom-fields' ),
 										'instructions' => '',
 										'type'         => 'select',
 										'name'         => 'type',
@@ -142,7 +142,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 										<div class="acf-input">
 											<button class="acf-btn browse-fields">
 												<i class="acf-icon acf-icon-dots-grid"></i>
-												<?php esc_html_e( 'Browse Fields', 'acf' ); ?>
+												<?php esc_html_e( 'Browse Fields', 'secure-custom-fields' ); ?>
 											</button>
 										</div>
 									</div>
@@ -153,8 +153,8 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 								acf_render_field_setting(
 									$field,
 									array(
-										'label'        => __( 'Field Label', 'acf' ),
-										'instructions' => __( 'This is the name which will appear on the EDIT page', 'acf' ),
+										'label'        => __( 'Field Label', 'secure-custom-fields' ),
+										'instructions' => __( 'This is the name which will appear on the EDIT page', 'secure-custom-fields' ),
 										'name'         => 'label',
 										'type'         => 'text',
 										'class'        => 'field-label',
@@ -166,8 +166,8 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 								acf_render_field_setting(
 									$field,
 									array(
-										'label'        => __( 'Field Name', 'acf' ),
-										'instructions' => __( 'Single word, no spaces. Underscores and dashes allowed', 'acf' ),
+										'label'        => __( 'Field Name', 'secure-custom-fields' ),
+										'instructions' => __( 'Single word, no spaces. Underscores and dashes allowed', 'secure-custom-fields' ),
 										'name'         => 'name',
 										'type'         => 'text',
 										'class'        => 'field-name',
@@ -203,8 +203,8 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 								acf_render_field_setting(
 									$field,
 									array(
-										'label'        => __( 'Instructions', 'acf' ),
-										'instructions' => __( 'Instructions for content editors. Shown when submitting data.', 'acf' ),
+										'label'        => __( 'Instructions', 'secure-custom-fields' ),
+										'instructions' => __( 'Instructions for content editors. Shown when submitting data.', 'secure-custom-fields' ),
 										'type'         => 'textarea',
 										'name'         => 'instructions',
 										'rows'         => 5,
@@ -220,7 +220,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 										'name'         => 'class',
 										'prefix'       => $field['prefix'] . '[wrapper]',
 										'value'        => $field['wrapper']['class'],
-										'prepend'      => __( 'class', 'acf' ),
+										'prepend'      => __( 'class', 'secure-custom-fields' ),
 										'wrapper'      => array(
 											'data-append' => 'wrapper',
 										),
@@ -236,7 +236,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 										'name'         => 'id',
 										'prefix'       => $field['prefix'] . '[wrapper]',
 										'value'        => $field['wrapper']['id'],
-										'prepend'      => __( 'id', 'acf' ),
+										'prepend'      => __( 'id', 'secure-custom-fields' ),
 										'wrapper'      => array(
 											'data-append' => 'wrapper',
 										),
@@ -256,13 +256,13 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 
 								acf_render_field_wrap(
 									array(
-										'label'        => __( 'Wrapper Attributes', 'acf' ),
+										'label'        => __( 'Wrapper Attributes', 'secure-custom-fields' ),
 										'instructions' => '',
 										'type'         => 'number',
 										'name'         => 'width',
 										'prefix'       => $field['prefix'] . '[wrapper]',
 										'value'        => $field['wrapper']['width'],
-										'prepend'      => __( 'width', 'acf' ),
+										'prepend'      => __( 'width', 'secure-custom-fields' ),
 										'append'       => '%',
 										'wrapper'      => array(
 											'data-name' => 'wrapper',
@@ -305,7 +305,7 @@ if ( isset( $field['conditional_logic'] ) && is_array( $field['conditional_logic
 
 				?>
 				<div class="acf-field-settings-footer">
-					<a class="button close-field edit-field" title="<?php esc_attr_e( 'Close Field', 'acf' ); ?>" href="#"><?php esc_html_e( 'Close Field', 'acf' ); ?></a>
+					<a class="button close-field edit-field" title="<?php esc_attr_e( 'Close Field', 'secure-custom-fields' ); ?>" href="#"><?php esc_html_e( 'Close Field', 'secure-custom-fields' ); ?></a>
 				</div>
 			</div>
 		</div>

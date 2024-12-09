@@ -19,9 +19,9 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 
 			// vars
 			$this->name          = 'page_link';
-			$this->label         = __( 'Page Link', 'acf' );
+			$this->label         = __( 'Page Link', 'secure-custom-fields' );
 			$this->category      = 'relational';
-			$this->description   = __( 'An interactive dropdown to select one or more posts, pages, custom post type items or archive URLs, with the option to search.', 'acf' );
+			$this->description   = __( 'An interactive dropdown to select one or more posts, pages, custom post type items or archive URLs, with the option to search.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-page-link.png';
 			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/page-link/';
 			$this->defaults      = array(
@@ -193,7 +193,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 				}
 				if ( $children ) {
 					$results[] = array(
-						'text'     => __( 'Archives', 'acf' ),
+						'text'     => __( 'Archives', 'secure-custom-fields' ),
 						'children' => $children,
 					);
 				}
@@ -270,7 +270,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			);
 
 			// look for parent
-			$search = '| ' . __( 'Parent', 'acf' ) . ':';
+			$search = '| ' . __( 'Parent', 'secure-custom-fields' ) . ':';
 			$pos    = strpos( $text, $search );
 
 			if ( $pos !== false ) {
@@ -439,7 +439,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Type', 'acf' ),
+					'label'        => __( 'Filter by Post Type', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_type',
@@ -447,14 +447,14 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All post types', 'acf' ),
+					'placeholder'  => __( 'All post types', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Post Status', 'acf' ),
+					'label'        => __( 'Filter by Post Status', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'post_status',
@@ -462,14 +462,14 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'Any post status', 'acf' ),
+					'placeholder'  => __( 'Any post status', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Filter by Taxonomy', 'acf' ),
+					'label'        => __( 'Filter by Taxonomy', 'secure-custom-fields' ),
 					'instructions' => '',
 					'type'         => 'select',
 					'name'         => 'taxonomy',
@@ -477,14 +477,14 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 					'multiple'     => 1,
 					'ui'           => 1,
 					'allow_null'   => 1,
-					'placeholder'  => __( 'All taxonomies', 'acf' ),
+					'placeholder'  => __( 'All taxonomies', 'secure-custom-fields' ),
 				)
 			);
 
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Archives URLs', 'acf' ),
+					'label'        => __( 'Allow Archives URLs', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_archives',
 					'type'         => 'true_false',
@@ -495,7 +495,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Select Multiple', 'acf' ),
+					'label'        => __( 'Select Multiple', 'secure-custom-fields' ),
 					'instructions' => 'Allow content editors to select multiple values',
 					'name'         => 'multiple',
 					'type'         => 'true_false',
@@ -516,7 +516,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			acf_render_field_setting(
 				$field,
 				array(
-					'label'        => __( 'Allow Null', 'acf' ),
+					'label'        => __( 'Allow Null', 'secure-custom-fields' ),
 					'instructions' => '',
 					'name'         => 'allow_null',
 					'type'         => 'true_false',

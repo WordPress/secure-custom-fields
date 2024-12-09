@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Location_Nav_Menu_Item' ) ) :
 		 */
 		public function initialize() {
 			$this->name        = 'nav_menu_item';
-			$this->label       = __( 'Menu Item', 'acf' );
+			$this->label       = __( 'Menu Item', 'secure-custom-fields' );
 			$this->category    = 'forms';
 			$this->object_type = 'menu_item';
 		}

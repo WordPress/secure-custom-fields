@@ -281,13 +281,13 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 						'Field group linked successfully.',
 						'Field groups linked successfully.',
 						count( $args['field_groups'] ),
-						'acf'
+						'secure-custom-fields'
 					);
 					echo esc_html( $link_successful_text );
 					?>
 				</p>
 				<div class="acf-actions">
-					<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Close Modal', 'acf' ); ?></button>
+					<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Close Modal', 'secure-custom-fields' ); ?></button>
 				</div>
 				<?php
 				$content = ob_get_clean();
@@ -310,8 +310,8 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 
 			$instructions = sprintf(
 				/* translators: %s - either "post type" or "taxonomy" */
-				__( 'Add this %s to the location rules of the selected field groups.', 'acf' ),
-				'acf-post-type' === $post_type ? __( 'post type', 'acf' ) : __( 'taxonomy', 'acf' )
+				__( 'Add this %s to the location rules of the selected field groups.', 'secure-custom-fields' ),
+				'acf-post-type' === $post_type ? __( 'post type', 'secure-custom-fields' ) : __( 'taxonomy', 'secure-custom-fields' )
 			);
 
 			$field = acf_get_valid_field(
@@ -319,9 +319,9 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 					'type'         => 'select',
 					'name'         => 'acf_field_groups',
 					'choices'      => $choices,
-					'aria-label'   => __( 'Please select the field groups to link.', 'acf' ),
-					'placeholder'  => __( 'Select one or many field groups...', 'acf' ),
-					'label'        => __( 'Field Group(s)', 'acf' ),
+					'aria-label'   => __( 'Please select the field groups to link.', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Select one or many field groups...', 'secure-custom-fields' ),
+					'label'        => __( 'Field Group(s)', 'secure-custom-fields' ),
 					'instructions' => $instructions,
 					'ui'           => true,
 					'multiple'     => true,
@@ -334,8 +334,8 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 			<form id="acf-link-field-groups-form">
 				<?php acf_render_field_wrap( $field, 'div', 'field' ); ?>
 				<div class="acf-actions">
-					<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Cancel', 'acf' ); ?></button>
-					<button type="submit" class="acf-btn acf-btn-primary"><?php esc_html_e( 'Done', 'acf' ); ?></button>
+					<button type="button" class="acf-btn acf-btn-secondary acf-close-popup"><?php esc_html_e( 'Cancel', 'secure-custom-fields' ); ?></button>
+					<button type="submit" class="acf-btn acf-btn-primary"><?php esc_html_e( 'Done', 'secure-custom-fields' ); ?></button>
 				</div>
 			</form>
 			<?php
@@ -344,7 +344,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 			wp_send_json_success(
 				array(
 					'content' => $content,
-					'title'   => esc_html__( 'Link Existing Field Groups', 'acf' ),
+					'title'   => esc_html__( 'Link Existing Field Groups', 'secure-custom-fields' ),
 				)
 			);
 		}
