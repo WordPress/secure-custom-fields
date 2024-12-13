@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 6.4.1-beta3
+Stable tag: 6.4.1-beta4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,13 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.4.1 =
+* Unreleased: In beta *
+
+* Forked from Advanced Custom Fields®
+* Various updates to coding standards.
+* Updated to rely on the WordPress.org translation packs for all strings.
+
 = 6.3.9 =
 *Release Date 22nd October 2024*
 
@@ -72,3 +79,8 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 *Release Date 7th October 2024*
 
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
+
+== Upgrade Notice ==
+
+= 6.4.1-beta4 =
+This update changes the main file name. Updates should seamlessly work, but please confirm the plugin is active after upgrade.

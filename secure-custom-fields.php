@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '6.4.1-beta1';
+		public $version = '6.4.1-beta4';
 
 		/**
 		 * The plugin settings array.
