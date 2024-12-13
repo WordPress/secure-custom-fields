@@ -2,17 +2,17 @@
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 6.3.9
+Stable tag: 6.4.1-beta3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Secure Custom Fields (SCF) offers an intuitive way for developers to enhance WordPress content management by adding extra fields and options without coding requirements.
+Secure Custom Fields boosts content management with custom fields and options. It deactivates Advanced Custom Fields to prevent duplicate code errors.
 
 == Description ==
 
-SCF extends WordPress’s capabilities, transforming it into a flexible content management tool. With SCF, managing custom data becomes straightforward and efficient.
+Secure Custom Fields (SCF) extends WordPress’s capabilities, transforming it into a flexible content management tool. With SCF, managing custom data becomes straightforward and efficient.
 
 **Easily create fields on demand.**
 The SCF builder makes it easy to add fields to WordPress edit screens, whether you’re adding a new “ingredients” field to a recipe or designing complex metadata for a specialized site.
@@ -29,6 +29,8 @@ Beyond custom fields, SCF allows you to register new post types and taxonomies d
 **Accessible and user-friendly design.**
 The field interface aligns with WordPress’s native design, creating an experience that’s both accessible and easy for content creators to use.
 
+Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors.
+
 = Features =
 * Clear and easy-to-use setup
 * Robust functions for content management
@@ -41,6 +43,10 @@ The field interface aligns with WordPress’s native design, creating an experie
 2. Easy to add custom content while writing.
 3. Need a new post type? Just add it!
 4. Navigate the various field types with ease.
+
+= Acknowledgement =
+
+This plugin builds upon and is a fork of the previous work done by the contributors of Advanced Custom Fields. Please see the plugin's license.txt for the full license and acknowledgements.
 
 
 == Changelog ==
