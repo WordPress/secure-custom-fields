@@ -130,7 +130,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'enable_shortcode'        => true,
 				'enable_bidirection'      => true,
 				'enable_block_bindings'   => true,
-                'pro' => true,
+				'pro'                     => true,
 			);
 
 			// Include utility functions.
@@ -539,12 +539,12 @@ if ( ! class_exists( 'ACF' ) ) {
 		public function posts_where( $where, $wp_query ) {
 			global $wpdb;
 
-			$field_key     = $wp_query->get( 'acf_field_key' );
-			$field_name    = $wp_query->get( 'acf_field_name' );
-			$group_key     = $wp_query->get( 'acf_group_key' );
+			$field_key        = $wp_query->get( 'acf_field_key' );
+			$field_name       = $wp_query->get( 'acf_field_name' );
+			$group_key        = $wp_query->get( 'acf_group_key' );
 			$options_page_key = $wp_query->get( 'acf_ui_options_page_key' );
-			$post_type_key = $wp_query->get( 'acf_post_type_key' );
-			$taxonomy_key  = $wp_query->get( 'acf_taxonomy_key' );
+			$post_type_key    = $wp_query->get( 'acf_post_type_key' );
+			$taxonomy_key     = $wp_query->get( 'acf_taxonomy_key' );
 
 			// Add custom "acf_field_key" arg.
 			if ( $field_key ) {
