@@ -193,7 +193,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/validation.php' );
 			acf_include( 'includes/rest-api.php' );
 			acf_include( 'includes/blocks.php' );
-			acf_include( 'pro/options-page.php' );
+			acf_include( 'includes/class-acf-options-page.php' );
 
 			// Include field group class.
 			acf_include( 'includes/post-types/class-acf-field-group.php' );
