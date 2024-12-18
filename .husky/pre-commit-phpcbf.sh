@@ -24,7 +24,8 @@ if [ $PHPCBF_STATUS -ne 3 ]; then
     echo "$STAGED_PHP_FILES" | xargs git add
 
     if [ $PHPCBF_STATUS -eq 1 ] || [ $PHPCBF_STATUS -eq 2 ]; then
-        echo "\nShowing remaining errors after auto-fixing:"
+        echo ""
+        echo "Showing remaining errors after auto-fixing:"
         echo "$STAGED_PHP_FILES" | xargs vendor/bin/phpcs
     fi
 fi
