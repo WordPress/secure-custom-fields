@@ -25,8 +25,7 @@ if [ $PHPCBF_STATUS -ne 3 ]; then
 
     if [ $PHPCBF_STATUS -eq 1 ] || [ $PHPCBF_STATUS -eq 2 ]; then
         echo ""
-        echo "Showing remaining errors after auto-fixing:"
-        echo "$STAGED_PHP_FILES" | xargs vendor/bin/phpcs
+        echo "Some errors were fixed by PHPCBF, but not all. Continuing with phpcs-changed for remaining errors on lines changed by this PR."
     fi
 fi
 
