@@ -21,11 +21,13 @@ jobs:
       run: composer install
         
     - name: Run PHPCS on changed files
+      env:
+        BASE_REF: ${{ github.base_ref }}
       run: |
-        CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }} | grep ".php$" || true)
-        if [ ! -z "$CHANGED_FILES" ]; then
+        CHANGED_FILES=$(git diff --name-only --no-renames --diff-filter=d "origin/$BASE_REF" '*.php' || true)
+        if [[ -n "$CHANGED_FILES" ]]; then
           vendor/bin/phpcs-changed \
-            --git-base=origin/${{ github.base_ref }} \
+            --git-base="origin/$BASE_REF" \
             --phpcs-path=vendor/bin/phpcs \
             --standard=.phpcs.xml.dist \
             $CHANGED_FILES
