@@ -16,15 +16,13 @@ echo "Running PHPCBF on staged files..."
 # First try to fix what we can with PHPCBF
 echo "$STAGED_PHP_FILES" | xargs vendor/bin/phpcbf
 
-echo 'does this run?'
-
 # Check the return code
 PHPCBF_STATUS=$?
 
 # If files were fixed, add them back to staging
 if [ $PHPCBF_STATUS -ne 3 ]; then
     echo "$STAGED_PHP_FILES" | xargs git add
-    
+
     if [ $PHPCBF_STATUS -eq 1 ] || [ $PHPCBF_STATUS -eq 2 ]; then
         echo "\nShowing remaining errors after auto-fixing:"
         echo "$STAGED_PHP_FILES" | xargs vendor/bin/phpcs
@@ -50,4 +48,4 @@ if [ $PHPCS_STATUS -ne 0 ]; then
 fi
 
 echo "✅ All coding standards checks passed!"
-exit 0 
+exit 0
