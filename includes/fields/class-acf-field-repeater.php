@@ -1,10 +1,16 @@
 <?php
+/**
+ * ACF Repeater Field Class
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
+// phpcs:disable PEAR.NamingConventions.ValidClassName
 if ( ! class_exists( 'acf_field_repeater' ) ) :
-
+	/**
+	 * The Repeater Field.
+	 */
 	class acf_field_repeater extends acf_field {
-
-
 		/**
 		 * If we're currently rendering fields.
 		 *
@@ -151,7 +157,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 *
 		 * @param array $field An array holding all the field's data.
 		 */
-		function render_field_settings( $field ) {
+		public function render_field_settings( $field ) {
 			$args                = array(
 				'fields'      => $field['sub_fields'],
 				'parent'      => $field['ID'],
@@ -232,7 +238,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The field settings array.
 		 * @return void
 		 */
-		function render_field_validation_settings( $field ) {
+		public function render_field_validation_settings( $field ) {
 			$field['min'] = empty( $field['min'] ) ? '' : $field['min'];
 			$field['max'] = empty( $field['max'] ) ? '' : $field['max'];
 
@@ -267,7 +273,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The field settings array.
 		 * @return void
 		 */
-		function render_field_presentation_settings( $field ) {
+		public function render_field_presentation_settings( $field ) {
 			$choices = array();
 			if ( $field['collapsed'] ) {
 				$sub_field = acf_get_field( $field['collapsed'] );
@@ -434,7 +440,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param  string  $input The input element's name attribute.
 		 * @return boolean
 		 */
-		function validate_value( $valid, $value, $field, $input ) {
+		public function validate_value( $valid, $value, $field, $input ) {
 			// vars
 			$count = 0;
 
@@ -511,13 +517,13 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @date    15/2/17
 		 * @since   5.5.8
 		 *
-		 * @param   array   $row
-		 * @param   integer $i
-		 * @param   array   $field
-		 * @param   mixed   $post_id
+		 * @param  array   $row Row array.
+		 * @param   integer $i Row ID.
+		 * @param   array   $field Array of fields.
+		 * @param   mixed   $post_id Post ID.
 		 * @return  boolean
 		 */
-		function update_row( $row, $i, $field, $post_id ) {
+		public function update_row( $row, $i, $field, $post_id ) {
 			// bail early if no layout reference
 			if ( ! is_array( $row ) ) {
 				return false;
@@ -556,12 +562,12 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @date    15/2/17
 		 * @since   5.5.8
 		 *
-		 * @param   integer $i
-		 * @param   array   $field
-		 * @param   mixed   $post_id
+		 * @param   integer $i Row ID.
+		 * @param   array   $field Array of fields.
+		 * @param   mixed   $post_id Post ID.
 		 * @return  boolean
 		 */
-		function delete_row( $i, $field, $post_id ) {
+		public function delete_row( $i, $field, $post_id ) {
 			// bail early if no sub fields
 			if ( empty( $field['sub_fields'] ) ) {
 				return false;
@@ -747,7 +753,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The main field array.
 		 * @return void
 		 */
-		function delete_field( $field ) {
+		public function delete_field( $field ) {
 			// Bail early if no subfields.
 			if ( empty( $field['sub_fields'] ) ) {
 				return;
@@ -770,7 +776,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array   $field   The main field array.
 		 * @return void
 		 */
-		function delete_value( $post_id, $key, $field ) {
+		public function delete_value( $post_id, $key, $field ) {
 			// Get the old value from the database.
 			$old_value = (int) acf_get_metadata( $post_id, $field['name'] );
 
@@ -806,7 +812,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The field array holding all the field options.
 		 * @return array
 		 */
-		function duplicate_field( $field ) {
+		public function duplicate_field( $field ) {
 			// get sub fields
 			$sub_fields = acf_extract_var( $field, 'sub_fields' );
 
@@ -828,7 +834,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The main field array.
 		 * @return array
 		 */
-		function translate_field( $field ) {
+		public function translate_field( $field ) {
 			$field['button_label'] = acf_translate( $field['button_label'] );
 			return $field;
 		}
@@ -842,7 +848,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The main field array.
 		 * @return array
 		 */
-		function validate_any_field( $field ) {
+		public function validate_any_field( $field ) {
 			// width has changed
 			if ( isset( $field['column_width'] ) ) {
 				$field['wrapper']['width'] = acf_extract_var( $field, 'column_width' );
@@ -860,7 +866,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field The field settings.
 		 * @return array
 		 */
-		function prepare_field_for_export( $field ) {
+		public function prepare_field_for_export( $field ) {
 			// Check for subfields.
 			if ( ! empty( $field['sub_fields'] ) ) {
 				$field['sub_fields'] = acf_prepare_fields_for_export( $field['sub_fields'] );
@@ -878,7 +884,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param   array $field The field settings.
 		 * @return  array
 		 */
-		function prepare_field_for_import( $field ) {
+		public function prepare_field_for_import( $field ) {
 			// Check for sub fields.
 			if ( ! empty( $field['sub_fields'] ) ) {
 				$sub_fields = acf_extract_var( $field, 'sub_fields' );
@@ -899,9 +905,9 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Additional validation for the repeater field when submitted via REST.
 		 *
-		 * @param  boolean $valid The current validity booleean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity booleean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {
@@ -922,7 +928,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Return the schema array for the REST API.
 		 *
-		 * @param array $field
+		 * @param array $field Schema array for REST API.
 		 * @return array
 		 */
 		public function get_rest_schema( array $field ) {
@@ -936,7 +942,9 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			);
 
 			foreach ( $field['sub_fields'] as $sub_field ) {
-				if ( $sub_field_schema = acf_get_field_rest_schema( $sub_field ) ) {
+				$sub_field_schema = acf_get_field_rest_schema( $sub_field );
+
+				if ( $sub_field_schema ) {
 					$schema['items']['properties'][ $sub_field['name'] ] = $sub_field_schema;
 				}
 			}
@@ -955,9 +963,9 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
-		 * @param mixed          $value
-		 * @param integer|string $post_id
-		 * @param array          $field
+		 * @param mixed          $value Value for the REST output.
+		 * @param integer|string $post_id Post ID.
+		 * @param array          $field Array of fields to be returned.
 		 * @return array|mixed
 		 */
 		public function format_value_for_rest( $value, $post_id, array $field ) {

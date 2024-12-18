@@ -1,7 +1,15 @@
 <?php
+/**
+ * Handles the CPT for Option Pages.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 
+	/**
+	 * Adds the post type for powering Options Pages.
+	 */
 	class ACF_UI_Options_Page extends ACF_Internal_Post_Type {
 
 		/**
@@ -268,7 +276,6 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		 *
 		 * @since 6.2
 		 *
-		 * @param ACF_Local_JSON $local_json The ACF_Local_JSON object.
 		 * @return void
 		 */
 		public function setup_local_json() {
@@ -297,7 +304,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 			// Get load paths.
 			$files = $local_json->scan_files( 'acf-ui-options-page' );
 			foreach ( $files as $key => $file ) {
-				$json               = json_decode( file_get_contents( $file ), true );
+				$json               = json_decode( file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, @todo needs review.
 				$json['local']      = 'json';
 				$json['local_file'] = $file;
 				acf_add_local_internal_post_type( $json, 'acf-ui-options-page' );
@@ -421,14 +428,14 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 
 			// Override the icon_url if the value was saved after the icon picker was added to ACF in 6.3.
 			if ( ! $this->value_was_saved_prior_to_icon_picker_field( $args ) ) {
-				if ( $args['menu_icon']['type'] === 'url' ) {
+				if ( 'url' === $args['menu_icon']['type'] ) {
 					$args['icon_url'] = $args['menu_icon']['value'];
 				}
-				if ( $args['menu_icon']['type'] === 'media_library' ) {
+				if ( 'media_library' === $args['menu_icon']['type'] ) {
 					$image_url        = wp_get_attachment_image_url( $args['menu_icon']['value'] );
 					$args['icon_url'] = $image_url;
 				}
-				if ( $args['menu_icon']['type'] === 'dashicons' ) {
+				if ( 'dashicons' === $args['menu_icon']['type'] ) {
 					$args['icon_url'] = $args['menu_icon']['value'];
 				}
 			}

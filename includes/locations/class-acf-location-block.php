@@ -1,4 +1,9 @@
 <?php
+/**
+ * Handles the location for the block functionality.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'ACF_Location_Block' ) ) :
 
+	/**
+	 * Handles the location for the block functionality.
+	 */
 	class ACF_Location_Block extends ACF_Location {
 
 		/**

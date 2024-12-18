@@ -1,4 +1,9 @@
 <?php
+/**
+ * Handles adding Options Page to the menu.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'ACF_Location_Options_Page' ) ) :
 
+	/**
+	 * Handles adding Options Page to the menu.
+	 */
 	class ACF_Location_Options_Page extends ACF_Location {
 
 		/**

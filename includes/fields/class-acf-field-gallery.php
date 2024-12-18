@@ -1,11 +1,18 @@
 <?php
+/**
+ * The Gallery Field.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+ // phpcs:disable PEAR.NamingConventions.ValidClassName
 
 if ( ! class_exists( 'acf_field_gallery' ) ) :
 
+	/**
+	 * The Field Gallery class.
+	 */
 	class acf_field_gallery extends acf_field {
-
-
-
 		/**
 		 * This function will setup the field type data
 		 *
@@ -13,10 +20,9 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @date    5/03/2014
 		 * @since   5.0.0
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function initialize() {
+		public function initialize() {
 
 			// vars
 			$this->name          = 'gallery';
@@ -56,16 +62,13 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		}
 
 		/**
-		 * description
+		 * Enqueue admin scripts.
 		 *
 		 * @type    function
 		 * @date    16/12/2015
 		 * @since   5.3.2
-		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
 		 */
-		function input_admin_enqueue_scripts() {
+		public function input_admin_enqueue_scripts() {
 
 			// localize
 			acf_localize_text(
@@ -142,7 +145,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			}
 
 			// loop over attachments
-			foreach ( $_POST['attachments'] as $id => $changes ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP core when saved.
+			foreach ( wp_unslash( $_POST['attachments'] ) as $id => $changes ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP core when saved.
 
 				if ( ! current_user_can( 'edit_post', $id ) ) {
 					wp_send_json_error();
@@ -150,7 +153,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 				$post = get_post( $id, ARRAY_A );
 
-				if ( 'attachment' != $post['post_type'] ) {
+				if ( 'attachment' !== $post['post_type'] ) {
 					wp_send_json_error();
 				}
 
@@ -168,7 +171,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 				if ( isset( $changes['alt'] ) ) {
 					$alt = wp_unslash( $changes['alt'] );
-					if ( $alt != get_post_meta( $id, '_wp_attachment_image_alt', true ) ) {
+					if ( get_post_meta( $id, '_wp_attachment_image_alt', true ) !== $alt ) {
 						$alt = wp_strip_all_tags( $alt, true );
 						update_post_meta( $id, '_wp_attachment_image_alt', wp_slash( $alt ) );
 					}
@@ -215,13 +218,13 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			}
 
 			// Reverse order.
-			if ( $args['sort'] === 'reverse' ) {
+			if ( 'reverse' === $args['sort'] ) {
 				$ids = array_reverse( $args['ids'] );
 				wp_send_json_success( $ids );
 			}
 
 			// Ascending order.
-			if ( $args['sort'] === 'title' ) {
+			if ( 'title' === $args['sort'] ) {
 				$order = 'ASC';
 			}
 
@@ -255,7 +258,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @param   array   $field The field array.
 		 * @return  void
 		 */
-		function render_attachment( $id, $field ) {
+		public function render_attachment( $id, $field ) {
 			// Load attachmenet data.
 			$attachment = wp_prepare_attachment_for_js( $id );
 			$compat     = get_compat_media_markup( $id );
@@ -269,7 +272,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 				$thumb = $attachment['sizes']['thumbnail']['url'];
 
 				// Use url for svg.
-			} elseif ( $attachment['type'] === 'image' ) {
+			} elseif ( 'image' === $attachment['type'] ) {
 				$thumb = $attachment['url'];
 
 				// Default to icon.
@@ -279,7 +282,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 			// Get attachment dimensions / time / size.
 			$dimensions = '';
-			if ( $attachment['type'] === 'audio' ) {
+			if ( 'audio' === $attachment['type'] ) {
 				$dimensions = __( 'Length', 'secure-custom-fields' ) . ': ' . $attachment['fileLength'];
 			} elseif ( ! empty( $attachment['width'] ) ) {
 				$dimensions = $attachment['width'] . ' x ' . $attachment['height'];
@@ -308,7 +311,6 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 					acf_render_field_wrap(
 						array(
-							// 'key'     => "{$field['key']}-title",
 							'name'   => 'title',
 							'prefix' => $prefix,
 							'type'   => 'text',
@@ -320,7 +322,6 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 					acf_render_field_wrap(
 						array(
-							// 'key'     => "{$field['key']}-caption",
 							'name'   => 'caption',
 							'prefix' => $prefix,
 							'type'   => 'textarea',
@@ -332,7 +333,6 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 					acf_render_field_wrap(
 						array(
-							// 'key'     => "{$field['key']}-alt",
 							'name'   => 'alt',
 							'prefix' => $prefix,
 							'type'   => 'text',
@@ -344,7 +344,6 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 					acf_render_field_wrap(
 						array(
-							// 'key'     => "{$field['key']}-description",
 							'name'   => 'description',
 							'prefix' => $prefix,
 							'type'   => 'textarea',
@@ -364,15 +363,16 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		}
 
 		/**
-		 * Create the HTML interface for your field
+		 * Creates the HTML interface for the gallery field.
 		 *
-		 * @param   $field - an array holding all the field's data
+		 * @param   array $field The field array holding all the field's data.
 		 *
 		 * @type    action
 		 * @since   3.6
 		 * @date    23/01/13
+		 * @return  void
 		 */
-		function render_field( $field ) {
+		public function render_field( $field ) {
 
 			// Enqueue uploader assets.
 			acf_enqueue_uploader();
@@ -435,7 +435,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 								// Get thumbnail.
 								$a_thumbnail = acf_get_post_thumbnail( $a_id, $field['preview_size'] );
-								$a_class    .= ( $a_thumbnail['type'] === 'icon' ) ? ' -icon' : '';
+								$a_class    .= ( 'icon' === $a_thumbnail['type'] ) ? ' -icon' : '';
 
 								?>
 								<div class="<?php echo esc_attr( $a_class ); ?>" data-id="<?php echo esc_attr( $a_id ); ?>">
@@ -444,7 +444,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 										<div class="thumbnail">
 											<img src="<?php echo esc_url( $a_thumbnail['url'] ); ?>" alt="" />
 										</div>
-										<?php if ( $a_type !== 'image' ) : ?>
+										<?php if ( 'image' !== $a_type ) : ?>
 											<div class="filename"><?php echo acf_esc_html( acf_get_truncated( $a_filename, 30 ) ); ?></div>
 										<?php endif; ?>
 									</div>
@@ -500,9 +500,9 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @since   3.6
 		 * @date    23/01/13
 		 *
-		 * @param   $field  - an array holding all the field's data
+		 * @param   array $field  an array holding all the field's data.
 		 */
-		function render_field_settings( $field ) {
+		public function render_field_settings( $field ) {
 			acf_render_field_setting(
 				$field,
 				array(
@@ -543,7 +543,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @param array $field The field settings array.
 		 * @return void
 		 */
-		function render_field_validation_settings( $field ) {
+		public function render_field_validation_settings( $field ) {
 			// Clear numeric settings.
 			$clear = array(
 				'min',
@@ -673,7 +673,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @param array $field The field settings array.
 		 * @return void
 		 */
-		function render_field_presentation_settings( $field ) {
+		public function render_field_presentation_settings( $field ) {
 			acf_render_field_setting(
 				$field,
 				array(
@@ -701,19 +701,19 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * Filters the value after it is loaded from the database and before it is returned to the template.
 		 *
 		 * @type    filter
 		 * @since   3.6
 		 * @date    23/01/13
 		 *
-		 * @param   $value (mixed) the value which was loaded from the database
-		 * @param   $post_id (mixed) the post_id from which the value was loaded
-		 * @param   $field (array) the field array holding all the field options
+		 * @param   mixed $value   The value which was loaded from the database.
+		 * @param   mixed $post_id The post ID from which the value was loaded.
+		 * @param   array $field   The field array holding all the field options.
 		 *
-		 * @return  $value (mixed) the modified value
+		 * @return  mixed The modified value.
 		 */
-		function format_value( $value, $post_id, $field ) {
+		public function format_value( $value, $post_id, $field ) {
 
 			// Bail early if no value.
 			if ( ! $value ) {
@@ -741,22 +741,18 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			// Format values using field settings.
 			$value = array();
 			foreach ( $posts as $post ) {
-
-				// Return object.
-				if ( $field['return_format'] == 'object' ) {
-					$item = $post;
-
-					// Return array.
-				} elseif ( $field['return_format'] == 'array' ) {
-					$item = acf_get_attachment( $post );
-
-					// Return URL.
-				} elseif ( $field['return_format'] == 'url' ) {
-					$item = wp_get_attachment_url( $post->ID );
-
-					// Return ID.
-				} else {
-					$item = $post->ID;
+				switch ( $field['return_format'] ) {
+					case 'object':
+						$item = $post;
+						break;
+					case 'array':
+						$item = acf_get_attachment( $post );
+						break;
+					case 'url':
+						$item = wp_get_attachment_url( $post->ID );
+						break;
+					default:
+						$item = $post->ID;
 				}
 
 				// Append item.
@@ -769,16 +765,19 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 
 		/**
-		 * description
+		 * Validates the value for this field.
 		 *
 		 * @type    function
 		 * @date    11/02/2014
 		 * @since   5.0.0
 		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
+		 * @param   bool   $valid Whether the value is valid.
+		 * @param   mixed  $value The field value.
+		 * @param   array  $field The field array.
+		 * @param   string $input The input element's name attribute.
+		 * @return  bool|string True if valid, error message if not.
 		 */
-		function validate_value( $valid, $value, $field, $input ) {
+		public function validate_value( $valid, $value, $field, $input ) {
 
 			if ( empty( $value ) || ! is_array( $value ) ) {
 				$value = array();
@@ -801,13 +800,13 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @since   3.6
 		 * @date    23/01/13
 		 *
-		 * @param   $value - the value which will be saved in the database
-		 * @param   $post_id - the post_id of which the value will be saved
-		 * @param   $field - the field array holding all the field options
+		 * @param   mixed $value   The value which will be saved in the database.
+		 * @param   mixed $post_id The post_id of which the value will be saved.
+		 * @param   array $field   The field array holding all the field options.
 		 *
 		 * @return  $value - the modified value
 		 */
-		function update_value( $value, $post_id, $field ) {
+		public function update_value( $value, $post_id, $field ) {
 
 			// Bail early if no value.
 			if ( empty( $value ) ) {
@@ -830,9 +829,9 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Validates file fields updated via the REST API.
 		 *
-		 * @param  boolean $valid The current validity booleean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity booleean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {
@@ -854,7 +853,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Return the schema array for the REST API.
 		 *
-		 * @param array $field
+		 * @param array $field The field array.
 		 * @return array
 		 */
 		public function get_rest_schema( array $field ) {
@@ -878,10 +877,12 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		}
 
 		/**
+		 * Returns an array of links for this field's value.
+		 *
 		 * @see \acf_field::get_rest_links()
 		 * @param mixed          $value   The raw (unformatted) field value.
-		 * @param integer|string $post_id
-		 * @param array          $field
+		 * @param integer|string $post_id The post ID.
+		 * @param array          $field   The field array.
 		 * @return array
 		 */
 		public function get_rest_links( $value, $post_id, array $field ) {
@@ -905,9 +906,9 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
-		 * @param mixed          $value
-		 * @param string|integer $post_id
-		 * @param array          $field
+		 * @param mixed          $value   The field value.
+		 * @param string|integer $post_id The post ID.
+		 * @param array          $field   The field array.
 		 * @return mixed
 		 */
 		public function format_value_for_rest( $value, $post_id, array $field ) {

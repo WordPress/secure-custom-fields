@@ -1,5 +1,11 @@
 <?php
 /**
+ * For rendering repeater tables.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+/**
  * ACF_Repeater_Table
  *
  * Helper class for rendering repeater tables.
@@ -86,7 +92,7 @@ class ACF_Repeater_Table {
 		if ( $this->field['collapsed'] ) {
 			foreach ( $this->sub_fields as &$sub_field ) {
 				// Add target class.
-				if ( $sub_field['key'] == $this->field['collapsed'] ) {
+				if ( $sub_field['key'] === $this->field['collapsed'] ) {
 					$sub_field['wrapper']['class'] .= ' -collapsed-target';
 				}
 			}
@@ -94,7 +100,7 @@ class ACF_Repeater_Table {
 
 		if ( $this->field['max'] ) {
 			// If max 1 row, don't show order.
-			if ( 1 == $this->field['max'] ) {
+			if ( 1 === (int) $this->field['max'] ) {
 				$this->show_order = false;
 			}
 
@@ -252,22 +258,22 @@ class ACF_Repeater_Table {
 	 *
 	 * @since 6.0.0
 	 *
-	 * @param boolean $return If we should return the rows or render them.
+	 * @param boolean $should_return If we should return the rows or render them.
 	 * @return array|void
 	 */
-	public function rows( $return = false ) {
+	public function rows( $should_return = false ) {
 		$rows = array();
 
 		// Don't include the clone when rendering via AJAX.
-		if ( $return && isset( $this->value['acfcloneindex'] ) ) {
+		if ( $should_return && isset( $this->value['acfcloneindex'] ) ) {
 			unset( $this->value['acfcloneindex'] );
 		}
 
 		foreach ( $this->value as $i => $row ) {
-			$rows[ $i ] = $this->row( $i, $row, $return );
+			$rows[ $i ] = $this->row( $i, $row, $should_return );
 		}
 
-		if ( $return ) {
+		if ( $should_return ) {
 			return $rows;
 		}
 
@@ -281,11 +287,11 @@ class ACF_Repeater_Table {
 	 *
 	 * @param integer $i      The row number.
 	 * @param array   $row    An array containing the row values.
-	 * @param boolean $return If we should return the row or render it.
+	 * @param boolean $should_return If we should return the row or render it.
 	 * @return string|void
 	 */
-	public function row( $i, $row, $return = false ) {
-		if ( $return ) {
+	public function row( $i, $row, $should_return = false ) {
+		if ( $should_return ) {
 			ob_start();
 		}
 
@@ -340,7 +346,7 @@ class ACF_Repeater_Table {
 
 		echo '</tr>';
 
-		if ( $return ) {
+		if ( $should_return ) {
 			return ob_get_clean();
 		}
 	}
