@@ -110,6 +110,15 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			$version = acf_get_setting( 'version' );
 
 			// Register scripts.
+			wp_register_script( 'acf-pro-input', acf_get_url( "assets/build/js/pro/acf-pro-input{$min}.js" ), array( 'acf-input' ), $version );
+			wp_register_script( 'acf-pro-field-group', acf_get_url( "assets/build/js/pro/acf-pro-field-group{$min}.js" ), array( 'acf-field-group' ), $version );
+			wp_register_script( 'acf-pro-ui-options-page', acf_get_url( "assets/build/js/pro/acf-pro-ui-options-page{$min}.js" ), array( 'acf-input' ), $version );
+
+			// Register styles.
+			wp_register_style( 'acf-pro-input', acf_get_url( 'assets/build/css/pro/acf-pro-input.css' ), array( 'acf-input' ), $version );
+			wp_register_style( 'acf-pro-field-group', acf_get_url( 'assets/build/css/pro/acf-pro-field-group.css' ), array( 'acf-input' ), $version );
+
+			// Register scripts.
 			wp_register_script( 'acf', acf_get_url( 'assets/build/js/acf' . $suffix . '.js' ), array( 'jquery' ), $version );
 			wp_register_script( 'acf-input', acf_get_url( 'assets/build/js/acf-input' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-resizable', 'acf', 'wp-a11y' ), $version );
 			wp_register_script( 'acf-field-group', acf_get_url( 'assets/build/js/acf-field-group' . $suffix . '.js' ), array( 'acf-input' ), $version );
@@ -371,6 +380,11 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 						'Edit field group'            => __( 'Edit field group', 'secure-custom-fields' ),
 					)
 				);
+
+                // @todo integrate into the above. Previously, they were simply hooked into the hook below.
+				wp_enqueue_script( 'acf-pro-input' );
+				wp_enqueue_script( 'acf-pro-ui-options-page' );
+				wp_enqueue_style( 'acf-pro-input' );
 
 				/**
 				 * Fires during "admin_enqueue_scripts" when ACF scripts are enqueued.

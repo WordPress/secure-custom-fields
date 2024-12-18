@@ -35,7 +35,6 @@ Installing this plugin will deactivate plugins with matching function names/func
 * Clear and easy-to-use setup
 * Robust functions for content management
 * Over 30 Field Types
-* Millions of Users
 
 == Screenshots ==
 
