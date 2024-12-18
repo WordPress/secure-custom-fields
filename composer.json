@@ -15,6 +15,7 @@
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
-        "phpcompatibility/phpcompatibility-wp": "^2.1"
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "sirbrillig/phpcs-changed": "^2.11"
     }
 }

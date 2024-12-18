@@ -1,0 +1,36 @@
+name: Code Standards
+on:
+  pull_request:
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required for phpcs-changed to compare with base branch
+        
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: composer:v2
+        
+    - name: Install Dependencies
+      run: composer install
+        
+    - name: Run PHPCS on changed files
+      env:
+        BASE_REF: ${{ github.base_ref }}
+      run: |
+        CHANGED_FILES=$(git diff --name-only --no-renames --diff-filter=d "origin/$BASE_REF" '*.php' || true)
+        if [[ -n "$CHANGED_FILES" ]]; then
+          vendor/bin/phpcs-changed \
+            --git-base="origin/$BASE_REF" \
+            --phpcs-path=vendor/bin/phpcs \
+            --standard=.phpcs.xml.dist \
+            $CHANGED_FILES
+        else
+          echo "No PHP files changed"
+        fi
