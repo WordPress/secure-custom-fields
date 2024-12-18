@@ -4,7 +4,7 @@
 set +e
 
 # Get list of staged PHP files
-STAGED_PHP_FILES=$(git diff --cached --name-only --diff-filter=d | grep ".php$") || true
+STAGED_PHP_FILES=$(git diff --cached --name-only --no-renames --diff-filter=d '*.php' )
 
 # Exit if no PHP files are staged
 if [ -z "$STAGED_PHP_FILES" ]; then
