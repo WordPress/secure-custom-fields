@@ -31,14 +31,12 @@ fi
 
 # Now run phpcs-changed to check only modified lines
 echo "Checking modified lines with phpcs-changed..."
-STAGED_FILES_SPACE_SEPARATED=$(echo "$STAGED_PHP_FILES" | tr '\n' ' ')
 
-# Run phpcs-changed
 vendor/bin/phpcs-changed\
     --git-staged\
     --phpcs-path=vendor/bin/phpcs\
     --standard=.phpcs.xml.dist\
-    $STAGED_FILES_SPACE_SEPARATED
+    $STAGED_PHP_FILES
 
 PHPCS_STATUS=$?
 
