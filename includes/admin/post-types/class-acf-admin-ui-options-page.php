@@ -1,9 +1,8 @@
 <?php
 /**
- * ACF Admin Post Type Class
+ * Admin Post Type Class
  *
  * @package    ACF
- * @subpackage Admin
  */
 
 if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
@@ -309,6 +308,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Validated in $this->verify_save_post() above.
 			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized when saved.
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Unslashed as part of the update_post() method.
 			$_POST['acf_ui_options_page']['ID']    = $post_id;
 			$_POST['acf_ui_options_page']['title'] = isset( $_POST['acf_ui_options_page']['page_title'] ) ? $_POST['acf_ui_options_page']['page_title'] : '';
 
@@ -316,7 +316,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Page' ) ) :
 			acf_update_internal_post_type( $_POST['acf_ui_options_page'], $this->post_type ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Validated in verify_save_post
 			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
-
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			return $post_id;
 		}
 

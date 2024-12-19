@@ -465,7 +465,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			// Validate internal post type.
 			$post = $this->validate_post( $post );
 
-			// May have been posted. Remove slashes.
+			// May have been posted. Remove slashes. Do not remove this without ensuring the data is sanitized.
 			$post = wp_unslash( $post );
 
 			// Parse types (converts string '0' to int 0).

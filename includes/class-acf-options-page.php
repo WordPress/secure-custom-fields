@@ -1,28 +1,39 @@
 <?php
+/**
+ * Options Page Class
+ *
+ * Handles the creation and management of global options pages.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
+ // phpcs:disable PEAR.NamingConventions.ValidClassName
+ // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- @todo
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 if ( ! class_exists( 'acf_options_page' ) ) :
 
+	/**
+	 * Manages the creation and configuration of WordPress admin options pages.
+	 */
 	class acf_options_page {
 
-		/** @var array Contains an array of options page settings */
-		var $pages = array();
+		/**
+		 * Storage for registered options pages.
+		 *
+		 * @var array $pages Contains an array of options page settings.
+		 */
+		public $pages = array();
 
 
 		/**
-		 * Initialize filters, action, variables and includes
+		 * Empty constructor.
 		 *
-		 * @type    function
-		 * @date    23/06/12
-		 * @since   5.0.0
-		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return  void
 		 */
-		function __construct() {
+		public function __construct() {
 
 			/* do nothing */
 		}
@@ -36,7 +47,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 * @param   array|string $page The Options Page settings array or name.
 		 * @return  array
 		 */
-		function validate_page( $page ) {
+		public function validate_page( $page ) {
 
 			// Allow empty arg to generate the default Options Page.
 			if ( empty( $page ) ) {
@@ -118,10 +129,10 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 * @date    9/6/17
 		 * @since   5.6.0
 		 *
-		 * @param   $page (array)
-		 * @return  n/a
+		 * @param   array $page The options page settings array.
+		 * @return  array|bool The page settings array or false if already exists.
 		 */
-		function add_page( $page ) {
+		public function add_page( $page ) {
 
 			// validate
 			$page = $this->validate_page( $page );
@@ -141,16 +152,16 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 
 
 		/**
-		 * description
+		 * Adds a sub page to an existing options page.
 		 *
 		 * @type    function
 		 * @date    9/6/17
 		 * @since   5.6.0
 		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
+		 * @param   array $page The options sub page settings array.
+		 * @return  array|bool The page settings array or false if parent doesn't exist.
 		 */
-		function add_sub_page( $page ) {
+		public function add_sub_page( $page ) {
 
 			// validate
 			$page = $this->validate_page( $page );
@@ -161,7 +172,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 			}
 
 			// create default parent if not yet exists
-			if ( $page['parent_slug'] == 'acf-options' && ! $this->get_page( 'acf-options' ) ) {
+			if ( 'acf-options' === $page['parent_slug'] && ! $this->get_page( 'acf-options' ) ) {
 				$this->add_page( '' );
 			}
 
@@ -171,17 +182,17 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 
 
 		/**
-		 * This function will update an options page settings
+		 * Updates an existing options page settings.
 		 *
 		 * @type    function
 		 * @date    9/6/17
 		 * @since   5.6.0
 		 *
-		 * @param   $slug (string)
-		 * @param   $data (array)
-		 * @return  (array)
+		 * @param   string $slug The menu slug of the options page.
+		 * @param   array  $data Array of options page settings to update.
+		 * @return  array|bool The updated page settings array or false if page not found.
 		 */
-		function update_page( $slug = '', $data = array() ) {
+		public function update_page( $slug = '', $data = array() ) {
 
 			// vars
 			$page = $this->get_page( $slug );
@@ -203,32 +214,31 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 
 
 		/**
-		 * This function will return an options page settings
+		 * Returns an options page settings array by slug.
 		 *
 		 * @type    function
 		 * @date    6/07/2016
 		 * @since   5.4.0
 		 *
-		 * @param   $slug (string)
-		 * @return  (mixed)
+		 * @param   string $slug The menu slug of the options page.
+		 * @return  array|null The options page settings array or null if not found.
 		 */
-		function get_page( $slug ) {
+		public function get_page( $slug ) {
 
 			return isset( $this->pages[ $slug ] ) ? $this->pages[ $slug ] : null;
 		}
 
 
 		/**
-		 * This function will return all options page settings
+		 * Returns all registered options page settings.
 		 *
 		 * @type    function
 		 * @date    6/07/2016
 		 * @since   5.4.0
 		 *
-		 * @param   $slug (string)
-		 * @return  (mixed)
+		 * @return  array Array of all registered options pages.
 		 */
-		function get_pages() {
+		public function get_pages() {
 
 			return $this->pages;
 		}
@@ -248,6 +258,15 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 	 * @return  (object)
 	 */
 
+	/**
+	 * Returns the options page instance.
+	 *
+	 * @type    function
+	 * @date    9/6/17
+	 * @since   5.6.0
+	 *
+	 * @return  object The options page instance.
+	 */
 	function acf_options_page() {
 
 		global $acf_options_page;
@@ -269,18 +288,17 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 endif; // class_exists check
 
 
-/**
- * alias of acf_options_page()->add_page()
- *
- * @type    function
- * @date    24/02/2014
- * @since   5.0.0
- *
- * @param   $page (mixed)
- * @return  (array)
- */
 if ( ! function_exists( 'acf_add_options_page' ) ) :
-
+	/**
+	 * Alias of acf_options_page()->add_page()
+	 *
+	 * @type    function
+	 * @date    24/02/2014
+	 * @since   5.0.0
+	 *
+	 * @param   mixed $page The options page settings.
+	 * @return  array The page settings array.
+	 */
 	function acf_add_options_page( $page = '' ) {
 		return acf_options_page()->add_page( $page );
 	}
@@ -288,18 +306,18 @@ if ( ! function_exists( 'acf_add_options_page' ) ) :
 endif;
 
 
-/**
- * alias of acf_options_page()->add_sub_page()
- *
- * @type    function
- * @date    24/02/2014
- * @since   5.0.0
- *
- * @param   $page (mixed)
- * @return  (array)
- */
 if ( ! function_exists( 'acf_add_options_sub_page' ) ) :
 
+	/**
+	 * Adds a sub page to an existing options page.
+	 *
+	 * @type    function
+	 * @date    24/02/2014
+	 * @since   5.0.0
+	 *
+	 * @param   mixed $page The options sub page settings.
+	 * @return  array The page settings array.
+	 */
 	function acf_add_options_sub_page( $page = '' ) {
 
 		return acf_options_page()->add_sub_page( $page );
@@ -308,19 +326,19 @@ if ( ! function_exists( 'acf_add_options_sub_page' ) ) :
 endif;
 
 
-/**
- * alias of acf_options_page()->update_page()
- *
- * @type    function
- * @date    24/02/2014
- * @since   5.0.0
- *
- * @param   $slug (string)
- * @param   $page (mixed)
- * @return  (array)
- */
 if ( ! function_exists( 'acf_update_options_page' ) ) :
 
+	/**
+	 * Alias of acf_options_page()->update_page()
+	 *
+	 * @type    function
+	 * @date    24/02/2014
+	 * @since   5.0.0
+	 *
+	 * @param   string $slug The menu slug of the options page.
+	 * @param   array  $data Array of options page settings to update.
+	 * @return  array The updated page settings array.
+	 */
 	function acf_update_options_page( $slug = '', $data = array() ) {
 
 		return acf_options_page()->update_page( $slug, $data );
@@ -328,19 +346,17 @@ if ( ! function_exists( 'acf_update_options_page' ) ) :
 
 endif;
 
-
-/**
- * This function will return an options page settings
- *
- * @type    function
- * @date    24/02/2014
- * @since   5.0.0
- *
- * @param   $slug (string)
- * @return  (array)
- */
 if ( ! function_exists( 'acf_get_options_page' ) ) :
-
+	/**
+	 * Returns an options page settings array.
+	 *
+	 * @type    function
+	 * @date    24/02/2014
+	 * @since   5.0.0
+	 *
+	 * @param   string $slug The menu slug of the options page.
+	 * @return  array|bool The options page settings array or false if not found.
+	 */
 	function acf_get_options_page( $slug ) {
 
 		// vars
@@ -360,19 +376,16 @@ if ( ! function_exists( 'acf_get_options_page' ) ) :
 
 endif;
 
-
-/**
- * This function will return all options page settings
- *
- * @type    function
- * @date    24/02/2014
- * @since   5.0.0
- *
- * @param   n/a
- * @return  (array)
- */
 if ( ! function_exists( 'acf_get_options_pages' ) ) :
-
+	/**
+	 * This function will return all options page settings
+	 *
+	 * @type    function
+	 * @date    24/02/2014
+	 * @since   5.0.0
+	 *
+	 * @return  array|bool The options page settings array or false if no pages are registered.
+	 */
 	function acf_get_options_pages() {
 
 		// global
@@ -448,18 +461,19 @@ if ( ! function_exists( 'acf_get_options_pages' ) ) :
 endif;
 
 
-/**
- * This function is used to customize the options page admin menu title
- *
- * @type    function
- * @date    13/07/13
- * @since   4.0.0
- *
- * @param   $title (string)
- * @return  n/a
- */
+
 if ( ! function_exists( 'acf_set_options_page_title' ) ) :
 
+	/**
+	 * This function is used to customize the options page admin menu title
+	 *
+	 * @type    function
+	 * @date    13/07/13
+	 * @since   4.0.0
+	 *
+	 * @param   string $title The title of the options page.
+	 * @return  void
+	 */
 	function acf_set_options_page_title( $title = 'Options' ) {
 
 		acf_update_options_page(
@@ -474,18 +488,18 @@ if ( ! function_exists( 'acf_set_options_page_title' ) ) :
 endif;
 
 
-/**
- * This function is used to customize the options page admin menu name
- *
- * @type    function
- * @date    13/07/13
- * @since   4.0.0
- *
- * @param   $title (string)
- * @return  n/a
- */
-if ( ! function_exists( 'acf_set_options_page_menu' ) ) :
 
+if ( ! function_exists( 'acf_set_options_page_menu' ) ) :
+	/**
+	 * This function is used to customize the options page admin menu name
+	 *
+	 * @type    function
+	 * @date    13/07/13
+	 * @since   4.0.0
+	 *
+	 * @param   string $title The title of the options page.
+	 * @return  void
+	 */
 	function acf_set_options_page_menu( $title = 'Options' ) {
 
 		acf_update_options_page(
@@ -499,18 +513,18 @@ if ( ! function_exists( 'acf_set_options_page_menu' ) ) :
 endif;
 
 
-/**
- * This function is used to customize the options page capability. Defaults to 'edit_posts'
- *
- * @type    function
- * @date    13/07/13
- * @since   4.0.0
- *
- * @param   $title (string)
- * @return  n/a
- */
-if ( ! function_exists( 'acf_set_options_page_capability' ) ) :
 
+if ( ! function_exists( 'acf_set_options_page_capability' ) ) :
+	/**
+	 * This function is used to customize the options page capability. Defaults to 'edit_posts'
+	 *
+	 * @type    function
+	 * @date    13/07/13
+	 * @since   4.0.0
+	 *
+	 * @param   string $capability The capability of the options page.
+	 * @return  void
+	 */
 	function acf_set_options_page_capability( $capability = 'edit_posts' ) {
 
 		acf_update_options_page(
@@ -524,18 +538,18 @@ if ( ! function_exists( 'acf_set_options_page_capability' ) ) :
 endif;
 
 
-/**
- * This is an old function which is now referencing the new 'acf_add_options_sub_page' function
- *
- * @type    function
- * @since   3.0.0
- * @date    29/01/13
- *
- * @param   {string}    $title
- * @return  N/A
- */
-if ( ! function_exists( 'register_options_page' ) ) :
 
+if ( ! function_exists( 'register_options_page' ) ) :
+	/**
+	 * This is an old function which is now referencing the new 'acf_add_options_sub_page' function
+	 *
+	 * @type    function
+	 * @since   3.0.0
+	 * @date    29/01/13
+	 *
+	 * @param   string $page The options sub page settings array.
+	 * @return  void
+	 */
 	function register_options_page( $page = '' ) {
 
 		acf_add_options_sub_page( $page );

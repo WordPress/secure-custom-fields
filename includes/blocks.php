@@ -721,9 +721,14 @@ function acf_render_block( $attributes, $content = '', $is_preview = false, $pos
  *
  * @since   6.0.4
  *
- * @param   array $block The block props.
+ * @param   array   $block      The block props.
+ * @param   string  $content    The block content.
+ * @param   boolean $is_preview Whether this is a preview render.
+ * @param   int     $post_id    The post ID this block is saved to.
+ * @param   object  $wp_block   The block instance object.
+ * @param   array   $context    The block context array.
  */
-function acf_block_render_template( $block, $content, $is_preview, $post_id, $wp_block, $context ) {
+function acf_block_render_template( $block, $content, $is_preview, $post_id, $wp_block, $context ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	// Locate template.
 	if ( isset( $block['path'] ) && file_exists( $block['path'] . '/' . $block['render_template'] ) ) {
 		$path = $block['path'] . '/' . $block['render_template'];
@@ -978,7 +983,7 @@ function acf_ajax_fetch_block() {
 		}
 	}
 
-	$query['validate'] = ( ! empty( $query['validate'] ) && ( $query['validate'] === 'true' || $query['validate'] === true ) );
+	$query['validate'] = ( ! empty( $query['validate'] ) && ( 'true' === $query['validate'] || true === $query['validate'] ) );
 	if ( ! empty( $query['validate'] ) || ! empty( $block['validate'] ) ) {
 		$response['validation'] = acf_get_block_validation_state( $block, $first_preview, $use_post_data );
 	}
@@ -1262,7 +1267,7 @@ function acf_get_block_validation_state( $block, $using_defaults = false, $use_p
  *
  * @since 6.3.1
  *
- * @param array $block The block object containing the POSTed values and other block data
+ * @param array $block The block object containing the POSTed values and other block data.
  * @return array|boolean An array containing the validation errors, or false if there are no errors.
  */
 function acf_validate_block_from_post_data( $block ) {

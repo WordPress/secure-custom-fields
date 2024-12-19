@@ -1,3 +1,13 @@
+<?php
+/**
+ * Options Page Template
+ *
+ * Template for displaying the options page interface.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+?>
 <div class="wrap acf-settings-wrap">
 	
 	<h1><?php echo esc_html( $page_title ); ?></h1>
@@ -21,7 +31,7 @@
 		
 		<div id="poststuff" class="poststuff">
 			
-			<div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+			<div id="post-body" class="metabox-holder columns-<?php echo 1 === (int) get_current_screen()->get_columns() ? '1' : '2'; ?>">
 				
 				<div id="postbox-container-1" class="postbox-container">
 					

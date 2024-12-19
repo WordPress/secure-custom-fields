@@ -1,3 +1,13 @@
+<?php
+/**
+ * Create Options Page Modal
+ *
+ * Renders the modal form for creating a new options page.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+?>
 <form id="acf-create-options-page-form">
 	<?php
 

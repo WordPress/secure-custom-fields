@@ -1,4 +1,11 @@
 <?php
+/**
+ * Advanced Settings for Options Pages
+ *
+ * Renders the advanced settings tabs for options page configuration.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 global $acf_ui_options_page;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Handles the admin interface for managing UI options pages.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -75,7 +80,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 					$hidden_items = array();
 				}
 
-				if ( ! in_array( 'acf-key', $hidden_items ) ) {
+				if ( ! in_array( 'acf-key', $hidden_items, true ) ) {
 					$hidden_items[] = 'acf-key';
 				}
 				update_user_option( get_current_user_id(), $option_key, $hidden_items, true );

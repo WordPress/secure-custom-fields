@@ -1,4 +1,12 @@
 <?php
+/**
+ * Basic Settings for Options Pages
+ *
+ * Renders the basic settings form for options page configuration.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
 global $acf_ui_options_page, $acf_parent_page_options;
 
 $acf_duplicate_options_page = acf_get_ui_options_page_from_request_args( 'acfduplicate' );

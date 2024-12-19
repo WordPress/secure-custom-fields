@@ -1,16 +1,31 @@
 <?php
+/**
+ * Admin Options Page Class
+ *
+ * Handles the admin interface for options pages.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
+// phpcs:disable PEAR.NamingConventions.ValidClassName
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 if ( ! class_exists( 'acf_admin_options_page' ) ) :
 
+	/**
+	 * Class for managing options pages in the WordPress admin.
+	 */
 	class acf_admin_options_page {
 
 
-		/** @var array Contains the current options page */
-		var $page;
+		/**
+		 * Current options page data.
+		 *
+		 * @var array Contains the current options page
+		 */
+		public $page;
 
 
 		/**
@@ -25,9 +40,9 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 
 
 		/**
-		 * description
+		 * Adds menu items for registered options pages.
 		 *
-		 * @since   5.0.0
+		 * @since 5.0.0
 		 */
 		public function admin_menu() {
 
@@ -59,16 +74,13 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 
 
 		/**
-		 * description
+		 * Handles the load action for the options page.
 		 *
-		 * @type    function
-		 * @date    2/02/13
-		 * @since   3.6
+		 * Enqueues scripts, validates saves, and sets up the options page.
 		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
+		 * @since 3.6.0
 		 */
-		function admin_load() {
+		public function admin_load() {
 
 			// globals
 			global $plugin_page;
@@ -152,7 +164,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			);
 
 			// notices
-			if ( ! empty( $_GET['message'] ) && $_GET['message'] == '1' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to display a notice.
+			if ( ! empty( $_GET['message'] ) && '1' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to display a notice.
 				acf_add_admin_notice( $this->page['updated_message'], 'success' );
 			}
 
@@ -173,9 +185,9 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 					$args     = array( 'field_group' => $field_group );
 
 					// tweaks to vars
-					if ( $context == 'acf_after_title' ) {
+					if ( 'acf_after_title' === $context ) {
 						$context = 'normal';
-					} elseif ( $context == 'side' ) {
+					} elseif ( 'side' === $context ) {
 						$priority = 'core';
 					}
 
@@ -194,14 +206,9 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * This function will render the submitdiv metabox
 		 *
-		 * @type    function
-		 * @date    23/03/2016
 		 * @since   5.3.2
-		 *
-		 * @param   n/a
-		 * @return  n/a
 		 */
-		function postbox_submitdiv( $post, $args ) {
+		public function postbox_submitdiv() {
 
 			/**
 			 *  Fires before the major-publishing-actions div.
@@ -243,8 +250,8 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		 *
 		 * @since   5.0.0
 		 *
-		 * @param object $post The post object
-		 * @param array  $args The metabox arguments
+		 * @param object $post The post object.
+		 * @param array  $args The metabox arguments.
 		 */
 		public function postbox_acf( $post, $args ) {
 			$id          = $args['id'];
@@ -276,7 +283,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			<script type="text/javascript">
 				if (typeof acf !== 'undefined') {
 
-					acf.newPostbox(<?php echo json_encode( $o ); ?>);
+					acf.newPostbox(<?php echo wp_json_encode( $o ); ?>);
 
 				}
 			</script>
@@ -285,11 +292,11 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 
 
 		/**
-		 * description
+		 * Renders the options page HTML content.
 		 *
 		 * @since 2.0.4
 		 */
-		function html() {
+		public function html() {
 
 			// load view
 			acf_get_view( __DIR__ . '/views/html-options-page.php', $this->page );
