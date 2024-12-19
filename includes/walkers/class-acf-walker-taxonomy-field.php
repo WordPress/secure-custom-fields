@@ -11,7 +11,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		/**
 		 * What the class handles.
 		 *
-		 * @since 2.1.0
+		 * @since ACF 2.1.0
 		 * @var string
 		 */
 		public $tree_type = 'category';
@@ -19,7 +19,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		/**
 		 * DB fields to use.
 		 *
-		 * @since 2.1.0
+		 * @since ACF 2.1.0
 		 * @var array
 		 */
 		public $db_fields = array(
@@ -30,7 +30,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		/**
 		 * The field being rendered.
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 * @var array
 		 */
 		public $field;
@@ -39,7 +39,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		 * Constructor
 		 *
 		 * @date    20/4/21
-		 * @since   1.0.0
+		 * @since   ACF 1.0.0
 		 *
 		 * @param   array $field The field being rendered.
 		 * @return  void
@@ -53,7 +53,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		 *
 		 * @see Walker:start_lvl()
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param string  $output Used to append additional content (passed by reference).
 		 * @param integer $depth  Depth of category. Used for tab indentation.
@@ -69,7 +69,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		 *
 		 * @see Walker::end_lvl()
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param string  $output Used to append additional content (passed by reference).
 		 * @param integer $depth  Depth of category. Used for tab indentation.
@@ -85,7 +85,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		 *
 		 * @see Walker::start_el()
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param string  $output Used to append additional content (passed by reference).
 		 * @param WP_Term $term   The current term object.
@@ -118,7 +118,7 @@ if ( ! class_exists( 'ACF_Taxonomy_Field_Walker' ) ) :
 		 *
 		 * @see Walker::end_el()
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param string  $output   Used to append additional content (passed by reference).
 		 * @param WP_Term $category The current term object.

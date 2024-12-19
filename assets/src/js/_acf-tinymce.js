@@ -7,7 +7,7 @@
 		 *
 		 *  @type	function
 		 *  @date	18/8/17
-		 *  @since	5.6.0
+		 *  @since	ACF 5.6.0
 		 *
 		 *  @param	$post_id (int)
 		 *  @return	$post_id (int)
@@ -34,7 +34,7 @@
 		 *
 		 *  @type	function
 		 *  @date	18/8/17
-		 *  @since	5.6.0
+		 *  @since	ACF 5.6.0
 		 *
 		 *  @param	$post_id (int)
 		 *  @return	$post_id (int)
@@ -68,7 +68,7 @@
 		 *
 		 *  @type	function
 		 *  @date	18/8/17
-		 *  @since	5.6.0
+		 *  @since	ACF 5.6.0
 		 *
 		 *  @param	$post_id (int)
 		 *  @return	$post_id (int)
@@ -176,7 +176,7 @@
 		 *
 		 *  @type	function
 		 *  @date	18/8/17
-		 *  @since	5.6.0
+		 *  @since	ACF 5.6.0
 		 *
 		 *  @param	$post_id (int)
 		 *  @return	$post_id (int)
@@ -229,7 +229,7 @@
 		 *
 		 *  @type	function
 		 *  @date	18/8/17
-		 *  @since	5.6.0
+		 *  @since	ACF 5.6.0
 		 *
 		 *  @param	$post_id (int)
 		 *  @return	$post_id (int)

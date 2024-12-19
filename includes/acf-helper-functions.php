@@ -4,7 +4,7 @@
  * Returns true if the value provided is considered "empty". Allows numbers such as 0.
  *
  * @date    6/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   mixed $var The value to check.
  * @return  boolean
@@ -17,7 +17,7 @@ function acf_is_empty( $var ) {
  * Returns true if the value provided is considered "not empty". Allows numbers such as 0.
  *
  * @date    15/7/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   mixed $var The value to check.
  * @return  boolean
@@ -30,7 +30,7 @@ function acf_not_empty( $var ) {
  * Returns a unique numeric based id.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $prefix The id prefix. Defaults to 'acf'.
  * @return  string
@@ -51,7 +51,7 @@ function acf_uniqid( $prefix = 'acf' ) {
  * Merges together two arrays but with extra functionality to append class names.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $array1 An array of attributes.
  * @param   array $array2 An array of attributes.
@@ -79,7 +79,7 @@ function acf_merge_attributes( $array1, $array2 ) {
  * Returns a filtered cache key.
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string $key The cache key.
  * @return  string
@@ -90,7 +90,7 @@ function acf_cache_key( $key = '' ) {
 	 * Filters the cache key.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param   string $key The cache key.
 	 * @param   string $original_key The original cache key.
@@ -104,7 +104,7 @@ function acf_cache_key( $key = '' ) {
  * Returns an array of $_REQUEST values using the provided defaults.
  *
  * @date    28/2/19
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   array $args An array of args.
  * @return  array
@@ -120,7 +120,7 @@ function acf_request_args( $args = array() ) {
  * Returns a single $_REQUEST arg with fallback.
  *
  * @date    23/10/20
- * @since   5.9.2
+ * @since   ACF 5.9.2
  *
  * @param   string $key     The property name.
  * @param   mixed  $default The default value to fallback to.
@@ -139,7 +139,7 @@ acf_register_store( 'filters' );
  * Enables a filter with the given name.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   string name The modifer name.
  * @return  void
@@ -154,7 +154,7 @@ function acf_enable_filter( $name = '' ) {
  * Disables a filter with the given name.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   string name The modifer name.
  * @return  void
@@ -169,7 +169,7 @@ function acf_disable_filter( $name = '' ) {
  * Returns the state of a filter for the given name.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   string name The modifer name.
  * @return  array
@@ -184,7 +184,7 @@ function acf_is_filter_enabled( $name = '' ) {
  * Returns an array of filters in their current state.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @return  array
  */
@@ -198,7 +198,7 @@ function acf_get_filters() {
  * Sets an array of filter states.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   array $filters An Array of modifers
  * @return  array
@@ -213,7 +213,7 @@ function acf_set_filters( $filters = array() ) {
  * Disables all filters and returns the previous state.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @return  array
  */
@@ -235,7 +235,7 @@ function acf_disable_filters() {
  * Enables all or an array of specific filters and returns the previous state.
  *
  * @date    14/7/16
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   array $filters An Array of modifers
  * @return  array
@@ -264,7 +264,7 @@ function acf_enable_filters( $filters = array() ) {
  * Parses the provided value for an ID.
  *
  * @date    29/3/19
- * @since   5.7.14
+ * @since   ACF 5.7.14
  *
  * @param   mixed $value A value to parse.
  * @return  integer
@@ -294,7 +294,7 @@ function acf_idval( $value ) {
  * Checks value for potential id value.
  *
  * @date    6/4/19
- * @since   5.7.14
+ * @since   ACF 5.7.14
  *
  * @param   mixed $value A value to parse.
  * @return  mixed
@@ -332,7 +332,7 @@ function acf_format_numerics( $value ) {
  * Casts the provided value as eiter an int or float using a simple hack.
  *
  * @date    11/4/19
- * @since   5.7.14
+ * @since   ACF 5.7.14
  *
  * @param   mixed $value A value to parse.
  * @return  (int|float)
@@ -347,7 +347,7 @@ function acf_numval( $value ) {
  * Returns an id attribute friendly string.
  *
  * @date    24/12/17
- * @since   5.6.5
+ * @since   ACF 5.6.5
  *
  * @param   string $str The string to convert.
  * @return  string
@@ -360,7 +360,7 @@ function acf_idify( $str = '' ) {
  * Returns a slug friendly string.
  *
  * @date    24/12/17
- * @since   5.6.5
+ * @since   ACF 5.6.5
  *
  * @param   string $str  The string to convert.
  * @param   string $glue The glue between each slug piece.
@@ -374,7 +374,7 @@ function acf_slugify( $str = '', $glue = '-' ) {
 	/**
 	 * Filters the slug created by acf_slugify().
 	 *
-	 * @since 5.11.4
+	 * @since ACF 5.11.4
 	 *
 	 * @param string $slug The newly created slug.
 	 * @param string $raw  The original string.
@@ -387,7 +387,7 @@ function acf_slugify( $str = '', $glue = '-' ) {
  * Returns a string with correct full stop punctuation.
  *
  * @date    12/7/19
- * @since   5.8.2
+ * @since   ACF 5.8.2
  *
  * @param   string $str The string to format.
  * @return  string
@@ -405,7 +405,7 @@ function acf_punctify( $str = '' ) {
  * Returns true if ACF already did an event.
  *
  * @date    30/8/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   string $name The name of the event.
  * @return  boolean
@@ -433,7 +433,7 @@ function acf_did( $name ) {
  * 4. Use mb_strlen() to accomodate special characters.
  *
  * @date    04/06/2020
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   string $str The string to review.
  * @return  integer
@@ -446,7 +446,7 @@ function acf_strlen( $str ) {
  * Returns a value with default fallback.
  *
  * @date    6/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   mixed $value         The value.
  * @param   mixed $default_value The default value.
@@ -460,7 +460,7 @@ function acf_with_default( $value, $default_value ) {
  * Returns the current priority of a running action.
  *
  * @date    14/07/2020
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   string $action The action name.
  * @return  integer|boolean
@@ -477,7 +477,7 @@ function acf_doing_action( $action ) {
  * Returns the current URL.
  *
  * @date    23/01/2015
- * @since   5.1.5
+ * @since   ACF 5.1.5
  *
  * @return  string
  */
@@ -522,7 +522,7 @@ function acf_sanitize_request_args( $args = array() ) {
 /**
  * Sanitizes file upload arrays.
  *
- * @since 6.0.4
+ * @since ACF 6.0.4
  *
  * @param array $args The file array.
  *
@@ -568,7 +568,7 @@ function acf_sanitize_files_array( array $args = array() ) {
  *
  * This addresses nested file fields within repeaters and groups.
  *
- * @since 6.0.5
+ * @since ACF 6.0.5
  *
  * @param array  $array             The file upload array.
  * @param string $sanitize_function Callback used to sanitize array value.
@@ -597,7 +597,7 @@ function acf_sanitize_files_value_array( $array, $sanitize_function ) {
 /**
  * Maybe unserialize, but don't allow any classes.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $data String to be unserialized, if serialized.
  * @return mixed The unserialized, or original data.
@@ -613,7 +613,7 @@ function acf_maybe_unserialize( $data ) {
 /**
  * Check if ACF is a beta-like release.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @return boolean True if the current install version contains a dash, indicating a alpha, beta or RC release.
  */
@@ -626,7 +626,7 @@ function acf_is_beta() {
  * However, if ACF was first activated prior to the introduction of the acf_first_activated_version option,
  * this function returns false (boolean) to indicate that the version could not be determined.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @return string|boolean The (string) version of ACF when it was first activated, or false (boolean) if the version could not be determined.
  */

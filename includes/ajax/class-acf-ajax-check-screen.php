@@ -17,7 +17,7 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 		/**
 		 * Returns the response data to sent back.
 		 *
-		 * @since 5.7.2
+		 * @since ACF 5.7.2.7.2
 		 *
 		 * @param array $request The request args.
 		 * @return array|WP_Error The response data or WP_Error.

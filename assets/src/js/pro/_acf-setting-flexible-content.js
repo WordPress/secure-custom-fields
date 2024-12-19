@@ -5,7 +5,7 @@
 	 *  Extra logic for this field setting
 	 *
 	 *  @date	18/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -368,7 +368,7 @@
 	 *  description
 	 *
 	 *  @date	19/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

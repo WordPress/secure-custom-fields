@@ -15,7 +15,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -36,7 +36,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 *
 		 * @type    function
 		 * @date    25/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $input name attribute of DOM elmenet.
 		 * @param   string $message error message.
@@ -56,7 +56,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   string $input name attribute of DOM elmenet.
 		 * @return  array|bool
@@ -85,7 +85,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 *
 		 * @type    function
 		 * @date    25/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  array|bool
 		 */
@@ -106,7 +106,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 *
 		 * @type    function
 		 * @date    4/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @return  void
 		 */
@@ -118,7 +118,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		/**
 		 * Validates $_POST data via AJAX prior to save.
 		 *
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 *
 		 * @return void
 		 */
@@ -155,7 +155,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		/**
 		 * Loops over $_POST data and validates ACF values.
 		 *
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 */
 		public function acf_validate_save_post() {
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
@@ -190,7 +190,7 @@ endif; // class_exists check
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $input name attribute of DOM elmenet.
  * @param   string $message error message.
@@ -207,7 +207,7 @@ function acf_add_validation_error( $input, $message = '' ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @return  array|bool
  */
@@ -222,8 +222,8 @@ function acf_get_validation_errors() {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
- * @since 6.4.1 Added the $input parameter, which is required in the get_error method.
+ * @since   ACF 5.0.0
+ * @since   6.4.1 Added the $input parameter, which is required in the get_error method.
  *
  * @param   string $input name attribute of DOM elmenet.
  *
@@ -240,7 +240,7 @@ function acf_get_validation_error( $input ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @return  void
  */
@@ -254,7 +254,7 @@ function acf_reset_validation_errors() {
  *
  * @type    function
  * @date    25/11/2013
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   bool $show_errors if true, errors will be shown via a wp_die screen.
  * @return  bool
@@ -295,7 +295,7 @@ function acf_validate_save_post( $show_errors = false ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array  $values An array of field values.
  * @param   string $input_prefix The input element's name attribute.
@@ -332,7 +332,7 @@ function acf_validate_values( $values, $input_prefix = '' ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   mixed  $value The field value to validate.
  * @param   array  $field The field array.
@@ -360,7 +360,7 @@ function acf_validate_value( $value, $field, $input ) {
 	 * Filters whether the value is valid.
 	 *
 	 * @date    28/09/13
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   bool $valid The valid status. Return a string to display a custom error message.
 	 * @param   mixed $value The value.

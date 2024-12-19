@@ -5,7 +5,7 @@
 	 *  Returns a jQuery selection object of acf fields.
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	object $args {
 	 *		Optional. Arguments to find fields.
@@ -113,7 +113,7 @@
 	 *  Finds a specific field with jQuery
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string key 		The field's key.
 	 *  @param	jQuery $parent	jQuery element to search within.
@@ -135,7 +135,7 @@
 	 *  Returns a field instance
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	jQuery|string $field	jQuery element or field key.
 	 *  @return	object
@@ -165,7 +165,7 @@
 	 *  Returns multiple field instances
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	jQuery|object $fields	jQuery elements or query args.
 	 *  @return	array
@@ -196,7 +196,7 @@
 	 *  Returns the closest jQuery field element
 	 *
 	 *  @date	9/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	jQuery $el
 	 *  @return	jQuery
@@ -212,7 +212,7 @@
 	 *  Returns the closest field instance
 	 *
 	 *  @date	22/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	jQuery $el
 	 *  @return	object
@@ -229,7 +229,7 @@
 	 *  Sets up callback logic for global field actions
 	 *
 	 *  @date	15/6/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string action
 	 *  @return	void
@@ -292,7 +292,7 @@
 	 *  Sets up callback logic for single field actions
 	 *
 	 *  @date	15/6/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string action
 	 *  @return	void
@@ -381,7 +381,7 @@
 	 *  Manages field actions and events
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @param	void

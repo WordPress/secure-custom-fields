@@ -4,7 +4,7 @@
  *
  * Shows the databse upgrade process.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 ?>

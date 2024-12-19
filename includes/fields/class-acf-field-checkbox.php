@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -43,7 +43,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 * @param   $field (array) the $field being rendered
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field (array) the $field being edited
@@ -102,7 +102,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/7/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -116,7 +116,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		/**
 		 * Validates values for the checkbox field
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @param  boolean $valid If the field is valid.
 		 * @param  mixed   $value The value to validate.
@@ -143,7 +143,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/7/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -177,7 +177,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/7/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -306,7 +306,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -356,7 +356,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -393,7 +393,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -430,7 +430,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 * This filter is appied to the $field before it is saved to the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options
@@ -451,7 +451,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value which will be saved in the database
@@ -518,7 +518,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 *
 		 * @type    function
 		 * @date    8/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $field (array)
 		 * @return  $field
@@ -533,7 +533,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database

@@ -99,7 +99,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Get an ACF CPT object as an array.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|WP_Post $id The post ID being queried.
 		 * @return array|boolean The main ACF array for the post, or false on failure.
@@ -133,7 +133,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Filters the post array after it has been loaded.
 			 *
 			 * @date  12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The post array.
 			 */
@@ -149,7 +149,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Filter the posts returned by $this->get_posts().
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $posts An array of posts to filter.
 		 * @param array $args  An array of args to filter by.
@@ -172,7 +172,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Filters the field group data before it is updated in the database.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $field_group The field group being updated.
 		 * @return array
@@ -192,7 +192,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Deletes an ACF field group and related fields.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the field group to delete.
 		 * @return boolean
@@ -225,7 +225,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Fires immediately after an ACF post has been deleted.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -237,7 +237,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Trashes an ACF field group and related fields.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the field group to trash.
 		 * @return boolean
@@ -266,7 +266,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Fires immediately after a field_group has been trashed.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -278,7 +278,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Restores an ACF field group and related fields from the trash.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the ACF post to untrash.
 		 * @return boolean
@@ -306,7 +306,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Fires immediately after an ACF post has been untrashed.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -318,7 +318,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Duplicates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id          The ID of the post to duplicate.
 		 * @param integer        $new_post_id Optional post ID to override.
@@ -359,7 +359,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Fires immediately after an ACF post has been duplicated.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param   array $post The ACF post array.
 			 */
@@ -371,7 +371,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Returns a modified ACF field group array ready for export.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return array
@@ -387,7 +387,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Filters the ACF post array before being returned to the export tool.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -397,7 +397,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Prepares an ACF field group for import.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF field group array.
 		 * @return array
@@ -415,7 +415,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Filters the ACF post array before being returned to the import tool.
 			 *
 			 * @date 21/11/19
-			 * @since 5.8.8
+			 * @since ACF 5.8.8
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -425,7 +425,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Returns a string that can be used to create a field group with PHP.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main field group array.
 		 * @return string
@@ -450,7 +450,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Imports an ACF post into the database.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return array
@@ -531,7 +531,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * Fires immediately after an ACF post has been imported.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param   array $post The ACF post array.
 			 */

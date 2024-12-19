@@ -5,7 +5,7 @@
 	 *  Inserts a new __proto__ object compatibility layer
 	 *
 	 *  @date	15/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	object instance The object to modify.
 	 *  @param	object compatibilty Optional. The compatibilty layer.
@@ -35,7 +35,7 @@
 	 *  Returns the compatibility layer for a given instance
 	 *
 	 *  @date	13/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	object		instance		The object to look in.
 	 *  @return	object|null	compatibility	The compatibility object or null on failure.
@@ -51,7 +51,7 @@
 	 *  Compatibility layer for the acf object
 	 *
 	 *  @date	15/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -226,7 +226,7 @@
 	 *  Using the acf.add_action() or acf.add_filter() functions will interpret new field parameters as jQuery $field
 	 *
 	 *  @date	12/5/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -285,7 +285,7 @@
 	 *
 	 *  @type	object
 	 *  @date	8/09/2014
-	 *  @since	5.0.0
+	 *  @since	ACF 5.0.0
 	 *
 	 *  @param	(object)
 	 *  @return	(object)
@@ -412,7 +412,7 @@
 	 *
 	 *  @type	function
 	 *  @date	21/02/2014
-	 *  @since	3.5.1
+	 *  @since	ACF 3.5.1
 	 *
 	 *  @param	n/a
 	 *  @return	n/a
@@ -505,7 +505,7 @@
 	 *  description
 	 *
 	 *  @date	15/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -537,7 +537,7 @@
 	 *  description
 	 *
 	 *  @date	15/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -596,7 +596,7 @@
 	 *  description
 	 *
 	 *  @date	15/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -646,7 +646,7 @@
 	 *  description
 	 *
 	 *  @date	11/6/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -680,7 +680,7 @@
 	 *  description
 	 *
 	 *  @date	11/6/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -707,7 +707,7 @@
 	 *  description
 	 *
 	 *  @date	11/6/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

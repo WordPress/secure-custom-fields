@@ -14,7 +14,7 @@ if ( ! class_exists( 'ACF_Ajax_Upgrade' ) ) :
 		/**
 		 * Returns the response data to sent back.
 		 *
-		 * @since 5.7.2
+		 * @since ACF 5.7.2
 		 *
 		 * @param array $request The request args.
 		 * @return boolean|WP_Error True if successful, or WP_Error on failure.

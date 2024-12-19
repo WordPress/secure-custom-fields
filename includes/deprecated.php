@@ -22,7 +22,7 @@ acf_add_filter_variations( 'acf/get_valid_field', array( 'type' ), 0 );
  * Renders the field's label.
  *
  * @date    19/9/17
- * @since   5.6.3
+ * @since   ACF 5.6.3
  * @deprecated 5.6.5
  *
  * @param   array $field The field array.
@@ -43,7 +43,7 @@ function acf_render_field_wrap_label( $field ) {
  * Renders the field's instructions.
  *
  * @date    19/9/17
- * @since   5.6.3
+ * @since   ACF 5.6.3
  * @deprecated 5.6.5
  *
  * @param   array $field The field array.
@@ -62,7 +62,7 @@ function acf_render_field_wrap_description( $field ) {
  * Returns and array of fields for the given $parent_id.
  *
  * @date    27/02/2014
- * @since   5.0.0.
+ * @since   ACF 5.0.0.
  * @deprecated  5.7.11
  *
  * @param   integer $parent_id The parent ID.
@@ -88,7 +88,7 @@ function acf_get_fields_by_id( $parent_id = 0 ) {
  * A wrapper for the WP update_option but provides logic for a 'no' autoload
  *
  * @date    4/01/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  * @deprecated  5.7.11
  *
  * @param   string $option   The option name.
@@ -114,7 +114,7 @@ function acf_update_option( $option = '', $value = '', $autoload = null ) {
  * Finds the field key for a given field name and post_id.
  *
  * @date    26/1/18
- * @since   5.6.5
+ * @since   ACF 5.6.5
  * @deprecated  5.6.8
  *
  * @param   string $field_name The name of the field. eg 'sub_heading'
@@ -136,7 +136,7 @@ function acf_get_field_reference( $field_name, $post_id ) {
  * Returns the plugin url to a specified file.
  *
  * @date    28/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  * @deprecated  5.6.8
  *
  * @param   string $filename The specified file.

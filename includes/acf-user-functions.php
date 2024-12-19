@@ -6,7 +6,7 @@
  * Similar to the get_users() function but with extra functionality.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $args The query args.
  * @return  array
@@ -39,7 +39,7 @@ function acf_get_users( $args = array() ) {
  * Returns a result containing "id" and "text" for the given user.
  *
  * @date    21/5/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   WP_User $user The user object.
  * @return  array
@@ -66,7 +66,7 @@ function acf_get_user_result( $user ) {
  * Returns an array of user roles in the format "name => label".
  *
  * @date    20/5/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   array $roles A specific array of roles.
  * @return  array
@@ -97,7 +97,7 @@ function acf_get_user_role_labels( $roles = array() ) {
  * Returns true if the current user is allowed to save unfiltered HTML.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  boolean
  */
@@ -110,7 +110,7 @@ function acf_allow_unfiltered_html() {
 	 * Filters whether the current user is allowed to save unfiltered HTML.
 	 *
 	 * @date    9/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   bool allow_unfiltered_html The result.
 	 */

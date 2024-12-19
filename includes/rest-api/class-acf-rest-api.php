@@ -168,7 +168,7 @@ class ACF_Rest_Api {
 			/**
 			 * Filters whether a value passed via REST is valid.
 			 *
-			 * @since   5.11
+			 * @since   ACF 5.11
 			 *
 			 * @param bool  $valid True if the value is valid, false or WP_Error if not.
 			 * @param mixed $value The value to check.

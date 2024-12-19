@@ -483,7 +483,7 @@
 	 *  Adds compatibility with the Gutenberg edit screen.
 	 *
 	 *  @date	11/12/18
-	 *  @since	5.8.0
+	 *  @since	ACF 5.8.0
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -608,7 +608,7 @@
 		 * Fires after the Post edit screen metaboxs are refreshed to update the Block Editor API state.
 		 *
 		 * @date	11/11/19
-		 * @since	5.8.7
+		 * @since	ACF 5.8.7
 		 *
 		 * @param	object data The "check_screen" JSON response data.
 		 * @return	void

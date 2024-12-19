@@ -6,7 +6,7 @@
  * Retrieves a field group for the given identifier.
  *
  * @date    30/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id The field group ID, key or name.
  * @return  (array|false) The field group array.
@@ -21,7 +21,7 @@ function acf_get_field_group( $id = 0 ) {
  * Retrieves raw field group data for the given identifier.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  (array|false) The field group array.
@@ -36,7 +36,7 @@ function acf_get_raw_field_group( $id = 0 ) {
  * Retrieves the field group's WP_Post object.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field group's ID, key or name.
  * @return  (array|false) The field group's array.
@@ -51,7 +51,7 @@ function acf_get_field_group_post( $id = 0 ) {
  * Returns true if the given identifier is a field group key.
  *
  * @date    6/12/2013
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $id The identifier.
  * @return  boolean
@@ -64,7 +64,7 @@ function acf_is_field_group_key( $id = '' ) {
  * Ensures the given field group is valid.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param array $field_group The field group array.
  * @return array
@@ -79,7 +79,7 @@ function acf_validate_field_group( $field_group = array() ) {
  * Ensures the given field group is valid.
  *
  * @date        28/09/13
- * @since       5.0.0
+ * @since       ACF 5.0.0
  *
  * @param   array $field_group The field group array.
  * @return  array
@@ -94,7 +94,7 @@ function acf_get_valid_field_group( $field_group = false ) {
  * Translates a field group's settings.
  *
  * @date    8/03/2016
- * @since   5.3.2
+ * @since   ACF 5.3.2
  *
  * @param   array $field_group The field group array.
  * @return  array
@@ -109,7 +109,7 @@ function acf_translate_field_group( $field_group = array() ) {
  * Returns and array of field_groups for the given $filter.
  *
  * @date    30/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $filter An array of args to filter results by.
  * @return  array
@@ -124,7 +124,7 @@ function acf_get_field_groups( $filter = array() ) {
  * Returns and array of raw field_group data.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  array
  */
@@ -138,7 +138,7 @@ function acf_get_raw_field_groups() {
  * Returns a filtered aray of field groups based on the given $args.
  *
  * @date    29/11/2013
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field_groups An array of field groups.
  * @param   array $args         An array of location args.
@@ -154,7 +154,7 @@ function acf_filter_field_groups( $field_groups, $args = array() ) {
  * Returns true if the given field group's location rules match the given $args.
  *
  * @date    7/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field_groups An array of field groups.
  * @param   array $args         An array of location args.
@@ -207,7 +207,7 @@ function acf_get_field_group_visibility( $field_group, $args = array() ) {
  * Updates a field group in the database.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_group The field group array.
  * @return  array
@@ -222,7 +222,7 @@ function acf_update_field_group( $field_group ) {
  * Allows full control over 'acf-field-group' slugs.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param string  $slug          The post slug.
  * @param integer $post_ID       Post ID.
@@ -248,7 +248,7 @@ function _acf_apply_unique_field_group_slug( $slug, $post_ID, $post_status, $pos
  * Deletes all caches for this field group.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_group The field group array.
  * @return  void
@@ -263,7 +263,7 @@ function acf_flush_field_group_cache( $field_group ) {
  * Deletes a field group from the database.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field group ID, key or name.
  * @return  boolean True if field group was deleted.
@@ -278,7 +278,7 @@ function acf_delete_field_group( $id = 0 ) {
  * Trashes a field group from the database.
  *
  * @date    2/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id The field group ID, key or name.
  * @return  boolean True if field group was trashed.
@@ -293,7 +293,7 @@ function acf_trash_field_group( $id = 0 ) {
  * Restores a field_group from the trash.
  *
  * @date    2/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id The field_group ID, key or name.
  * @return  boolean True if field_group was trashed.
@@ -307,7 +307,7 @@ function acf_untrash_field_group( $id = 0 ) {
  *
  * Prior to WordPress 5.6.0, this filter was not needed as restored posts were always assigned their original status.
  *
- * @since 5.9.5
+ * @since ACF 5.9.5
  *
  * @param string  $new_status      The new status of the post being restored.
  * @param integer $post_id         The ID of the post being restored.
@@ -324,7 +324,7 @@ function _acf_untrash_field_group_post_status( $new_status, $post_id, $previous_
  * Returns true if the given params match a field group.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_group The field group array.
  * @param   mixed $id          An optional identifier to search for.
@@ -340,7 +340,7 @@ function acf_is_field_group( $field_group = false ) {
  * Duplicates a field group.
  *
  * @date    16/06/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id          The field_group ID, key or name.
  * @param   integer      $new_post_id Optional post ID to override.
@@ -367,7 +367,7 @@ function acf_update_field_group_active_status( $id, $activate = true ) {
  * Returns the CSS styles generated from field group settings.
  *
  * @date    20/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field_group The field group array.
  * @return  string.
@@ -411,7 +411,7 @@ function acf_get_field_group_style( $field_group ) {
 	 * Filters the generated CSS styles.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   string $style The CSS styles.
 	 * @param   array $field_group The field group array.
@@ -425,7 +425,7 @@ function acf_get_field_group_style( $field_group ) {
  * Checks if the current user can edit the field group and returns the edit url.
  *
  * @date    23/9/18
- * @since   5.7.7
+ * @since   ACF 5.7.7
  *
  * @param   integer $post_id The field group ID.
  * @return  string
@@ -440,7 +440,7 @@ function acf_get_field_group_edit_link( $post_id ) {
  * Returns a modified field group ready for export.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field_group The field group array.
  * @return  array
@@ -455,7 +455,7 @@ function acf_prepare_field_group_for_export( $field_group = array() ) {
  * Prepares a field group for the import process.
  *
  * @date    21/11/19
- * @since   5.8.8
+ * @since   ACF 5.8.8
  *
  * @param   array $field_group The field group array.
  * @return  array
@@ -470,7 +470,7 @@ function acf_prepare_field_group_for_import( $field_group ) {
  * Imports a field group into the databse.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field_group The field group array.
  * @return  array The new field group.
@@ -485,7 +485,7 @@ function acf_import_field_group( $field_group ) {
  * I.E. Default tabs should be static and should not be changed by the
  * filtered tabs.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @return array Key/value array of the default settings tabs for field group settings.
  */
@@ -513,7 +513,7 @@ function acf_get_combined_field_group_settings_tabs() {
 /**
  * Checks if a field group has the provided location rule.
  *
- * @since 6.2.8
+ * @since ACF 6.2.8
  *
  * @param integer $post_id  The post ID of the field group.
  * @param string  $location The location type to check for.

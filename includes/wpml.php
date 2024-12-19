@@ -17,7 +17,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 	 * This class is used to add compatibility with WPML.
 	 *
 	 * @date    06/23/2012
-	 * @since   3.1.8
+	 * @since   ACF 3.1.8
 	 */
 	class ACF_WPML_Compatibility {
 
@@ -25,7 +25,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Sets up the class functionality.
 		 *
 		 * @date    23/06/12
-		 * @since   3.1.8
+		 * @since   ACF 3.1.8
 		 *
 		 * @return  void
 		 */
@@ -69,7 +69,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Also adds compatibility with ACF4 settings
 		 *
 		 * @date    10/04/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @return  boolean
 		 */
@@ -112,7 +112,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Update the icl_translations table data when creating the field groups.
 		 *
 		 * @date    10/04/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param   array  $field_group The new field group array.
 		 * @param   object $ofg         The old field group WP_Post object.
@@ -189,7 +189,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Modifies the json path.
 		 *
 		 * @date    19/05/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $path The json save path.
 		 * @return  string
@@ -217,7 +217,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Modifies the json path.
 		 *
 		 * @date    19/05/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $paths The json save path.
 		 * @return  string
@@ -239,7 +239,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 * Duplicate the icl_translations row when duplicating a field group.
 		 *
 		 * @date    26/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   int    $master_post_id The original post ID.
 		 * @param   string $lang           The language code.
@@ -276,7 +276,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/08/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @return  void
 		 */
@@ -297,7 +297,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 		 *
 		 * @type    function
 		 * @date    17/8/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   array $icl_post_types The array of post types.
 		 * @return  array

@@ -14,7 +14,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 			$this->name          = 'taxonomy';
@@ -52,7 +52,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Returns AJAX results for the Taxonomy field.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -83,7 +83,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/10/2014
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 *
 		 * @param   $options (array)
 		 * @return  (array)
@@ -199,7 +199,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Returns the Term's title displayed in the field UI.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   WP_Term $term     The term object.
 		 * @param   array   $field    The field settings.
@@ -222,7 +222,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			 * Filters the term title.
 			 *
 			 * @date    1/11/2013
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   string $title The term title.
 			 * @param   WP_Term $term The term object.
@@ -238,7 +238,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    13/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $value (array)
 		 * @return  $value
@@ -273,7 +273,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value found in the database
@@ -342,7 +342,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Filters the field value before it is saved into the database.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param  mixed   $value   The value which will be saved in the database.
 		 * @param  integer $post_id The post_id of which the value will be saved.
@@ -388,7 +388,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * This function will save any terms in the save_post_terms array
 		 *
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 *
 		 * @param  mixed $post_id The ACF post ID to save to.
 		 * @return void
@@ -424,7 +424,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -462,7 +462,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Renders the Taxonomy field.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -520,7 +520,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * Create the HTML interface for your field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - an array holding all the field's data
@@ -560,7 +560,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Create the HTML interface for your field
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param array $field an array holding all the field's data.
 		 */
@@ -615,7 +615,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -721,7 +721,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Renders the field settings used in the "Advanced" tab.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -733,7 +733,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * Filters choices in taxonomy conditions.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array  $choices           The selected choice.
 		 * @param array  $conditional_field The conditional field settings object.
@@ -754,7 +754,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		/**
 		 * AJAX handler for adding Taxonomy field terms.
 		 *
-		 * @since 5.2.3
+		 * @since ACF 5.2.3
 		 *
 		 * @return void
 		 */

@@ -2,7 +2,7 @@
 /**
  * The empty list state for an ACF field group
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 ?><script>document.body.classList.add('acf-no-field-groups');</script>

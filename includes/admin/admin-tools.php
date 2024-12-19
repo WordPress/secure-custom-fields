@@ -33,7 +33,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * This function will setup the class functionality
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  void
 		 */
@@ -47,7 +47,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * This function will store a tool class instance in the tools array.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   string $class Class name.
 		 * @return  void
@@ -63,7 +63,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * This function will return a tool class or null if not found.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   string $name Name of tool.
 		 * @return  mixed (ACF_Admin_Tool|null)
@@ -78,7 +78,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * This function will return an array of all tool instances.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  array
 		 */
@@ -93,7 +93,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 *
 		 * @type    action (admin_menu)
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -116,7 +116,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * Loads the admin tools page.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  void
 		 */
@@ -140,7 +140,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		/**
 		 * Modifies the admin body class.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @param string $classes Space-separated list of CSS classes.
 		 * @return string
@@ -154,7 +154,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * Includes various tool-related files.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  void
 		 */
@@ -174,7 +174,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * Verifies the nonces and submits the value if it passes.
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  void
 		 */
@@ -198,7 +198,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 * Admin Tools html
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @return  void
 		 */
@@ -234,7 +234,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		/**
 		 * Output the metabox HTML for specific tools
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @param mixed $post    The post this metabox is being displayed on, should be an empty string always for us on a tools page.
 		 * @param array $metabox An array of the metabox attributes.
@@ -264,7 +264,7 @@ endif; // class_exists check
  *
  * @type    function
  * @date    31/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   ACF_Admin_Tool $class The tool class.
  * @return  void
@@ -280,7 +280,7 @@ function acf_register_admin_tool( $class ) { // phpcs:ignore Universal.NamingCon
  *
  * @type    function
  * @date    31/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @return  string The URL to the tools page.
  */
@@ -295,7 +295,7 @@ function acf_get_admin_tools_url() {
  *
  * @type    function
  * @date    31/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   string $tool The tool name.
  * @return  string The URL to a particular tool's page.

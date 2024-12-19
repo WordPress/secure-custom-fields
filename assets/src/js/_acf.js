@@ -5,7 +5,7 @@
 	 *  description
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -26,7 +26,7 @@
 	 *  Gets a specific data value
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @return	mixed
@@ -42,7 +42,7 @@
 	 *  Returns `true` if the data exists and is not null
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @return	boolean
@@ -58,7 +58,7 @@
 	 *  Sets a specific data value
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @param	mixed value
@@ -76,7 +76,7 @@
 	 *  Returns a unique ID
 	 *
 	 *  @date	9/11/17
-	 *  @since	5.6.3
+	 *  @since	ACF 5.6.3
 	 *
 	 *  @param	string prefix Optional prefix.
 	 *  @return	string
@@ -95,7 +95,7 @@
 	 *  Credit: https://stackoverflow.com/questions/1960473/get-all-unique-values-in-an-array-remove-duplicates
 	 *
 	 *  @date	23/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -114,7 +114,7 @@
 	 *  Returns a unique ID (PHP version)
 	 *
 	 *  @date	9/11/17
-	 *  @since	5.6.3
+	 *  @since	ACF 5.6.3
 	 *  @source	http://locutus.io/php/misc/uniqid/
 	 *
 	 *  @param	string prefix Optional prefix.
@@ -177,7 +177,7 @@
 	 *  Performs a string replace
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string search
 	 *  @param	string replace
@@ -196,7 +196,7 @@
 	 *  Thanks to https://stackoverflow.com/questions/2970525/converting-any-string-into-camel-case
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string str
 	 *  @return	string
@@ -221,7 +221,7 @@
 	 *  Thanks to https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string str
 	 *  @return	string
@@ -238,7 +238,7 @@
 	 *  Converts a string into a HTML class friendly slug
 	 *
 	 *  @date	21/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string str
 	 *  @return	string
@@ -508,7 +508,7 @@
 	 *  Returns the number of characters that match between two strings
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -535,7 +535,7 @@
 	 * Escapes HTML entities from a string.
 	 *
 	 * @date	08/06/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	string string The input string.
 	 * @return	string
@@ -563,7 +563,7 @@
 	 * Unescapes HTML entities from a string.
 	 *
 	 * @date	08/06/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	string string The input string.
 	 * @return	string
@@ -591,7 +591,7 @@
 	 * Escapes HTML entities from a string.
 	 *
 	 * @date	08/06/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	string string The input string.
 	 * @return	string
@@ -602,7 +602,7 @@
 	 * Encodes <script> tags for safe HTML output.
 	 *
 	 * @date	08/06/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	string string The input string.
 	 * @return	string
@@ -621,7 +621,7 @@
 	/**
 	 * Encode a string potentially containing HTML into it's HTML entities equivalent.
 	 *
-	 * @since 6.3.6
+	 * @since ACF 6.3.6
 	 *
 	 * @param {string} string String to encode.
 	 * @return {string} The encoded string
@@ -633,7 +633,7 @@
 	/**
 	 * Decode a HTML encoded string into it's original form.
 	 *
-	 * @since 5.6.5
+	 * @since ACF 5.6.5
 	 *
 	 * @param {string} string String to encode.
 	 * @return {string} The encoded string
@@ -648,7 +648,7 @@
 	 *  Merges together defaults and args much like the WP wp_parse_args function
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	object args
 	 *  @param	object defaults
@@ -667,7 +667,7 @@
 	 *  Retrieve the translation of $text.
 	 *
 	 *  @date	16/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string text Text to translate.
 	 *  @return	string Translated text.
@@ -687,7 +687,7 @@
 	 *  Retrieve translated string with gettext context.
 	 *
 	 *  @date	16/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string text Text to translate.
 	 *  @param	string context Context information for the translators.
@@ -704,7 +704,7 @@
 	 *  Retrieve the plural or single form based on the amount.
 	 *
 	 *  @date	16/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	string single Single text to translate.
 	 *  @param	string plural Plural text to translate.
@@ -734,7 +734,7 @@
 	 *  description
 	 *
 	 *  @date	24/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -820,7 +820,7 @@
 	 *  Similar to $.serializeArray() but works with a parent wrapping element.
 	 *
 	 *  @date	19/8/18
-	 *  @since	5.7.3
+	 *  @since	ACF 5.7.3
 	 *
 	 *  @param	jQuery $el The element or form to serialize.
 	 *  @return	array
@@ -836,7 +836,7 @@
 	 *  Returns an object containing name => value data ready to be encoded for Ajax.
 	 *
 	 *  @date	17/12/18
-	 *  @since	5.8.0
+	 *  @since	ACF 5.8.0
 	 *
 	 *  @param	jQUery $el The element or form to serialize.
 	 *  @return	object
@@ -871,7 +871,7 @@
 	 *  Wrapper for acf.hooks.addAction
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -895,7 +895,7 @@
 	 *  Wrapper for acf.hooks.removeAction
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -913,7 +913,7 @@
 	 *  Wrapper for acf.hooks.doAction
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -936,7 +936,7 @@
 	 *  Return true if doing action
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -953,7 +953,7 @@
 	 *  Wrapper for acf.hooks.doAction
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -970,7 +970,7 @@
 	 *  Wrapper for acf.hooks.doAction
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -991,7 +991,7 @@
 	 *  Wrapper for acf.hooks.addFilter
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -1009,7 +1009,7 @@
 	 *  Wrapper for acf.hooks.removeFilter
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -1027,7 +1027,7 @@
 	 *  Wrapper for acf.hooks.applyFilters
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	n/a
 	 *  @return	this
@@ -1044,7 +1044,7 @@
 	 *  description
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1060,7 +1060,7 @@
 	 *  description
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1091,7 +1091,7 @@
 	 *  Converts "this.thing" to "thing-123" if editing post 123.
 	 *
 	 *  @date	11/11/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @return	string
@@ -1110,7 +1110,7 @@
 	 *  Gets a preference setting or null if not set.
 	 *
 	 *  @date	11/11/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @return	mixed
@@ -1127,7 +1127,7 @@
 	 *  Sets a preference setting.
 	 *
 	 *  @date	11/11/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @param	mixed value
@@ -1150,7 +1150,7 @@
 	 *  Removes a preference setting.
 	 *
 	 *  @date	11/11/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string name
 	 *  @return	n/a
@@ -1166,7 +1166,7 @@
 	 *  Removes an element with fade effect
 	 *
 	 *  @date	1/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1206,7 +1206,7 @@
 	 *  description
 	 *
 	 *  @date	16/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1255,7 +1255,7 @@
 	 *  description
 	 *
 	 *  @date	16/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1304,7 +1304,7 @@
 	 *  description
 	 *
 	 *  @date	3/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1393,7 +1393,7 @@
 		 * Fires after an element has been duplicated and appended to the DOM.
 		 *
 		 * @date	30/10/19
-		 * @since	5.8.7
+		 * @since	ACF 5.8.7
 		 *
 		 * @param	jQuery $el The original element.
 		 * @param	jQuery $el2 The duplicated element.
@@ -1413,7 +1413,7 @@
 	 *  description
 	 *
 	 *  @date	7/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1479,7 +1479,7 @@
 	/**
 	 * Prepares AJAX data prior to being sent.
 	 *
-	 * @since 5.6.5
+	 * @since ACF 5.6.5
 	 *
 	 * @param Object  data             The data to prepare
 	 * @param boolean use_global_nonce Should we ignore any nonce provided in the data object and force ACF's global nonce for this request
@@ -1509,7 +1509,7 @@
 	 *  description
 	 *
 	 *  @date	5/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1531,7 +1531,7 @@
 	 *  description
 	 *
 	 *  @date	12/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1551,7 +1551,7 @@
 	 *  description
 	 *
 	 *  @date	5/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1578,7 +1578,7 @@
 	 *  description
 	 *
 	 *  @date	8/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1617,7 +1617,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1652,7 +1652,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1681,7 +1681,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1697,7 +1697,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1713,7 +1713,7 @@
 	 *  description
 	 *
 	 *  @date	12/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1752,7 +1752,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1782,7 +1782,7 @@
 	 *  description
 	 *
 	 *  @date	12/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1811,7 +1811,7 @@
 	 *  description
 	 *
 	 *  @date	9/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1841,7 +1841,7 @@
 	 *  description
 	 *
 	 *  @date	10/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1863,7 +1863,7 @@
 	 *  description
 	 *
 	 *  @date	10/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1885,7 +1885,7 @@
 	 *  description
 	 *
 	 *  @date	10/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1940,7 +1940,7 @@
 	 *  description
 	 *
 	 *  @date	18/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1956,7 +1956,7 @@
 	 *  description
 	 *
 	 *  @date	18/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1972,7 +1972,7 @@
 	 *  description
 	 *
 	 *  @date	18/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -1986,7 +1986,7 @@
 	 * Returns the error message from an XHR object.
 	 *
 	 * @date	17/3/20
-	 * @since	5.8.9
+	 * @since	ACF 5.8.9
 	 *
 	 * @param	object xhr The XHR object.
 	 * @return	(string)
@@ -2015,7 +2015,7 @@
 	 *  Renders the innter html for a select field.
 	 *
 	 *  @date	19/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	jQuery $select The select element.
 	 *  @param	array choices An array of choices.
@@ -2080,7 +2080,7 @@
 	 *  Creates a "lock" on an element for a given type and key
 	 *
 	 *  @date	22/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	jQuery $el The element to lock.
 	 *  @param	string type The type of lock such as "condition" or "visibility".
@@ -2111,7 +2111,7 @@
 	 *  Unlocks a "lock" on an element for a given type and key
 	 *
 	 *  @date	22/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	jQuery $el The element to lock.
 	 *  @param	string type The type of lock such as "condition" or "visibility".
@@ -2137,7 +2137,7 @@
 	 *  Returns true if a lock exists for a given type
 	 *
 	 *  @date	22/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	jQuery $el The element to lock.
 	 *  @param	string type The type of lock such as "condition" or "visibility".
@@ -2153,7 +2153,7 @@
 	 *
 	 *  Returns true if the Gutenberg editor is being used.
 	 *
-	 *  @since	5.8.0
+	 *  @since	ACF 5.8.0
 	 *
 	 *  @return	bool
 	 */
@@ -2166,7 +2166,7 @@
 	 *
 	 *  Returns true if the Gutenberg post editor is being used.
 	 *
-	 *  @since	6.2.2
+	 *  @since	ACF 6.2.2
 	 *
 	 *  @return	bool
 	 */
@@ -2180,7 +2180,7 @@
 	 *  Returns an array of items from the given object.
 	 *
 	 *  @date	20/11/18
-	 *  @since	5.8.0
+	 *  @since	ACF 5.8.0
 	 *
 	 *  @param	object obj The object of items.
 	 *  @return	array
@@ -2197,7 +2197,7 @@
 	 * Returns a debounced version of the passed function which will postpone its execution until after `wait` milliseconds have elapsed since the last time it was invoked.
 	 *
 	 * @date	28/8/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	function callback The callback function.
 	 * @return	int wait The number of milliseconds to wait.
@@ -2221,7 +2221,7 @@
 	 * Returns a throttled version of the passed function which will allow only one execution per `limit` time period.
 	 *
 	 * @date	28/8/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	function callback The callback function.
 	 * @return	int wait The number of milliseconds to wait.
@@ -2244,7 +2244,7 @@
 	 * Returns true if the given element is in view.
 	 *
 	 * @date	29/8/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	elem el The dom element to inspect.
 	 * @return	bool
@@ -2269,7 +2269,7 @@
 	 * Watches for a dom element to become visible in the browser and then excecutes the passed callback.
 	 *
 	 * @date	28/8/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	dom el The dom element to inspect.
 	 * @param	function callback The callback function.
@@ -2336,7 +2336,7 @@
 	 * Creates a function that is restricted to invoking `func` once.
 	 *
 	 * @date	2/9/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	function func The function to restrict.
 	 * @return	function
@@ -2355,7 +2355,7 @@
 	 * Focuses attention to a specific element.
 	 *
 	 * @date	05/05/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	jQuery $el The jQuery element to focus.
 	 * @return	void
@@ -2392,7 +2392,7 @@
 	 * Description
 	 *
 	 * @date	05/05/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	type Var Description.
 	 * @return	type Description.
@@ -2453,7 +2453,7 @@
 	/**
 	 * Disable form submit buttons
 	 *
-	 * @since 6.2.3
+	 * @since ACF 6.2.3
 	 *
 	 * @param event e
 	 * @returns void
@@ -2470,7 +2470,7 @@
 	 *
 	 *  @type	function
 	 *  @date	8/09/2014
-	 *  @since	5.0.0
+	 *  @since	ACF 5.0.0
 	 *
 	 *  @param	n/a
 	 *  @return	(boolean)
@@ -2487,7 +2487,7 @@
 	 *
 	 *  @type	function
 	 *  @date	19/11/2013
-	 *  @since	5.0.0
+	 *  @since	ACF 5.0.0
 	 *
 	 *  @param	$.fn
 	 *  @return	(string)
@@ -2504,7 +2504,7 @@
 	 *
 	 *  @type	function
 	 *  @date	5/3/17
-	 *  @since	5.5.10
+	 *  @since	ACF 5.5.10
 	 *
 	 *  @param	n/a
 	 *  @return	n/a
@@ -2520,7 +2520,7 @@
 	 * Returns true if value is a number or a numeric string.
 	 *
 	 * @date	30/11/20
-	 * @since	5.9.4
+	 * @since	ACF 5.9.4
 	 * @link	https://stackoverflow.com/questions/9716468/pure-javascript-a-function-like-jquerys-isnumeric/9716488#9716488
 	 *
 	 * @param	mixed n The variable being evaluated.
@@ -2534,7 +2534,7 @@
 	 * Triggers a "refresh" action used by various Components to redraw the DOM.
 	 *
 	 * @date	26/05/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	void
 	 * @return	void
@@ -2547,7 +2547,7 @@
 	/**
 	 * Log something to console if we're in debug mode.
 	 *
-	 * @since 6.3
+	 * @since ACF 6.3
 	 */
 	acf.debug = function () {
 		if ( acf.get( 'debug' ) ) console.log.apply( null, arguments );

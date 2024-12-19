@@ -5,7 +5,7 @@
  * Functions and classes to manage admin notices.
  *
  * @date    10/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  */
 
 // Exit if accessed directly.
@@ -22,7 +22,7 @@ acf_register_store( 'notices' );
  * Class used to create an admin notice.
  *
  * @date    10/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  */
 if ( ! class_exists( 'ACF_Admin_Notice' ) ) :
 	/**
@@ -54,7 +54,7 @@ if ( ! class_exists( 'ACF_Admin_Notice' ) ) :
 		 * Renders the notice HTML.
 		 *
 		 * @date    27/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -81,7 +81,7 @@ endif; // class_exists check
  * Instantiates and returns a new model.
  *
  * @date    23/12/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   array $data Optional data to set.
  * @return  ACF_Admin_Notice
@@ -102,7 +102,7 @@ function acf_new_admin_notice( $data = false ) {
  * Renders all admin notices HTML.
  *
  * @date    10/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  void
  */
@@ -126,7 +126,7 @@ add_action( 'admin_notices', 'acf_render_admin_notices', 99 );
  * Creates and returns a new notice.
  *
  * @date        17/10/13
- * @since       5.0.0
+ * @since       ACF 5.0.0
  *
  * @param   string  $text        The admin notice text.
  * @param   string  $type        The type of notice (warning, error, success, info).

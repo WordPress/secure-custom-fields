@@ -4,7 +4,7 @@
  * The template for displaying admin navigation.
  *
  * @date    27/3/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -78,7 +78,7 @@ if ( isset( $submenu[ $parent_slug ] ) ) {
 /**
  * Filters the admin navigation more items.
  *
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   array $more_items The array of navigation tabs.
  */
@@ -93,7 +93,7 @@ if ( $core_tabs === false ) {
  * Helper function for looping over the provided menu items
  * and echoing out the necessary markup.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array  $menu_items An array of menu items to print.
  * @param string $section    The section being printed.

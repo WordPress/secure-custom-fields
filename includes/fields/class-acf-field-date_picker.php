@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -37,7 +37,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -82,7 +82,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -149,7 +149,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -231,7 +231,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -257,7 +257,7 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 		 * and ensures the return and display values are set.
 		 *
 		 * @type    filter
-		 * @since   5.11.0
+		 * @since   ACF 5.11.0
 		 * @date    28/09/21
 		 *
 		 * @param  array $field The field array holding all the field options.

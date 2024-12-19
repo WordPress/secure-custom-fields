@@ -20,7 +20,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-field-group';
@@ -28,7 +28,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-single-field-group';
@@ -36,7 +36,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Constructs the class.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function __construct() {
 			parent::__construct();
@@ -49,7 +49,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Customizes the messages shown when editing a field group.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param array $messages Post type messages.
 		 * @return array
@@ -75,7 +75,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Enqueues any scripts necessary for internal post type.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function admin_enqueue_scripts() {
 			parent::admin_enqueue_scripts();
@@ -161,13 +161,16 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 				)
 			);
 
+			wp_enqueue_script( 'acf-pro-field-group' );
+			wp_enqueue_style( 'acf-pro-field-group' );
+
 			do_action( 'acf/field_group/admin_enqueue_scripts' );
 		}
 
 		/**
 		 * Set up functionality for the field group edit page.
 		 *
-		 * @since 3.1.8
+		 * @since ACF 3.1.8
 		 */
 		public function admin_head() {
 			global $post, $field_group;
@@ -211,7 +214,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will add extra HTML to the acf form data element
 		 *
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param array $args Arguments array to pass through to action.
 		 * @return void
@@ -223,7 +226,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will append extra l10n strings to the acf JS object
 		 *
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param array $l10n The array of translated strings.
 		 * @return array $l10n
@@ -235,7 +238,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Admin footer third party hook support
 		 *
-		 * @since 5.3.2
+		 * @since ACF 5.3.2
 		 */
 		public function admin_footer() {
 			do_action( 'acf/field_group/admin_footer' );
@@ -244,7 +247,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Screen settings html output
 		 *
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param string $html Current screen settings HTML.
 		 * @return string $html
@@ -279,7 +282,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will customize the publish metabox
 		 *
-		 * @since   5.2.9
+		 * @since   ACF 5.2.9
 		 */
 		public function post_submitbox_misc_actions() {
 			global $field_group;
@@ -297,7 +300,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Saves field group data.
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param integer $post_id The post ID.
 		 * @param WP_Post $post    The post object.
@@ -379,7 +382,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will render the HTML for the metabox 'acf-field-group-fields'
 		 *
-		 * @since  5.0.0
+		 * @since  ACF 5.0.0
 		 */
 		public function mb_fields() {
 			global $field_group;
@@ -395,7 +398,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will render the HTML for the metabox 'acf-field-group-options'
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function mb_options() {
 			global $field_group;
@@ -411,7 +414,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function can be accessed via an AJAX action and will return the result from the render_location_value function
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function ajax_render_location_rule() {
 			// validate.
@@ -444,7 +447,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * This function will return HTML containing the field's settings based on it's new type
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function ajax_render_field_settings() {
 			// Verify the current request.
@@ -484,7 +487,7 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 		/**
 		 * Moves fields between field groups via AJAX.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */

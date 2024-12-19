@@ -5,7 +5,7 @@
 	 *  Calculates the model ID for a field type
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string type
 	 *  @return	string
@@ -21,7 +21,7 @@
 	 *  description
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -39,7 +39,7 @@
 	 *  description
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -68,7 +68,7 @@
 	 *  description
 	 *
 	 *  @date	19/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -87,7 +87,7 @@
 	/**
 	 * settingsManager
 	 *
-	 * @since	5.6.5
+	 * @since	ACF 5.6.5
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -104,7 +104,7 @@
 	/**
 	 * acf.FieldSetting
 	 *
-	 * @since	5.6.5
+	 * @since	ACF 5.6.5
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -149,7 +149,7 @@
 	 * The 'endpoint' setting on accordions and tabs requires an additional class on the
 	 * field object row when enabled.
 	 *
-	 * @since	6.0.0
+	 * @since	ACF 6.0.0
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -188,7 +188,7 @@
 	 *
 	 * This field type requires some extra logic for its settings
 	 *
-	 * @since	5.0.0
+	 * @since	ACF 5.0.0
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -224,7 +224,7 @@
 	 *
 	 * This field type requires some extra logic for its settings
 	 *
-	 * @since	5.0.0
+	 * @since	ACF 5.0.0
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -249,7 +249,7 @@
 	 *
 	 * This field type requires some extra logic for its settings
 	 *
-	 * @since	5.0.0
+	 * @since	ACF 5.0.0
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void
@@ -273,7 +273,7 @@
 	 * Color Picker Settings.
 	 *
 	 * @date	16/12/20
-	 * @since	5.9.4
+	 * @since	ACF 5.9.4
 	 *
 	 * @param	object The object containing the extended variables and methods.
 	 * @return	void

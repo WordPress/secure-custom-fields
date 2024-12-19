@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-field-group';
@@ -20,7 +20,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-field-groups';
@@ -35,7 +35,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Constructor.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 7 );
@@ -48,7 +48,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Add any menu items required for field groups.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
@@ -59,7 +59,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Redirects users from ACF 4.0 admin page.
 		 *
-		 * @since 5.7.6
+		 * @since ACF 5.7.6
 		 */
 		public function handle_redirection() {
 			if ( isset( $_GET['post_type'] ) && $_GET['post_type'] === 'acf' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -72,7 +72,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Customizes the admin table columns.
 		 *
 		 * @date    1/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param array $_columns The columns array.
 		 * @return array
@@ -105,7 +105,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Renders a specific admin table column.
 		 *
 		 * @date    17/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param string $column_name The name of the column to display.
 		 * @param array  $post        The main ACF post array.
@@ -151,7 +151,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Displays a visual representation of the field group's locations.
 		 *
 		 * @date    1/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param array $field_group The field group.
 		 * @return void
@@ -243,7 +243,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Renders the number of fields created for the field group in the list table.
 		 *
-		 * @since 6.1.5
+		 * @since ACF 6.1.5
 		 *
 		 * @param array $field_group The main field group array.
 		 * @return void
@@ -273,7 +273,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Gets the class(es) to be used by field groups in the list table.
 		 *
-		 * @since 6.2.8
+		 * @since ACF 6.2.8
 		 *
 		 * @param array   $classes   An array of the classes used by the field group.
 		 * @param array   $css_class An array of additional classes added to the field group.
@@ -293,7 +293,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Fires when trashing a field group.
 		 *
 		 * @date    8/01/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   integer $post_id The post ID.
 		 * @return  void
@@ -308,7 +308,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Fires when untrashing a field group.
 		 *
 		 * @date    8/01/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   integer $post_id The post ID.
 		 * @return  void
@@ -323,7 +323,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		 * Fires when deleting a field group.
 		 *
 		 * @date    8/01/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   integer $post_id The post ID.
 		 * @return  void
@@ -337,7 +337,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		/**
 		 * Gets the translated action notice text for list table actions (activate, deactivate, sync, etc.).
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string  $action The action being performed.
 		 * @param integer $count  The number of items the action was performed on.

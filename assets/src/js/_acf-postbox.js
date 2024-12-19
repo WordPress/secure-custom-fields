@@ -5,7 +5,7 @@
 	 * Manages postboxes on the screen.
 	 *
 	 * @date	25/5/19
-	 * @since	5.8.1
+	 * @since	ACF 5.8.1
 	 *
 	 * @param	void
 	 * @return	void
@@ -24,7 +24,7 @@
 	 *  Returns a postbox instance.
 	 *
 	 *  @date	23/9/18
-	 *  @since	5.7.7
+	 *  @since	ACF 5.7.7
 	 *
 	 *  @param	mixed $el Either a jQuery element or the postbox id.
 	 *  @return	object
@@ -45,7 +45,7 @@
 	 *  Returns an array of postbox instances.
 	 *
 	 *  @date	23/9/18
-	 *  @since	5.7.7
+	 *  @since	ACF 5.7.7
 	 *
 	 *  @param	void
 	 *  @return	array
@@ -60,7 +60,7 @@
 	 *  Returns a new postbox instance for the given props.
 	 *
 	 *  @date	20/9/18
-	 *  @since	5.7.6
+	 *  @since	ACF 5.7.6
 	 *
 	 *  @param	object props The postbox properties.
 	 *  @return	object
@@ -75,7 +75,7 @@
 	 *  The postbox model.
 	 *
 	 *  @date	20/9/18
-	 *  @since	5.7.6
+	 *  @since	ACF 5.7.6
 	 *
 	 *  @param	void
 	 *  @return	void

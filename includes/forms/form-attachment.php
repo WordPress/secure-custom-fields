@@ -19,7 +19,7 @@ if ( ! class_exists( 'acf_form_attachment' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -43,7 +43,7 @@ if ( ! class_exists( 'acf_form_attachment' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   N/A
 		 * @return  N/A
@@ -74,7 +74,7 @@ if ( ! class_exists( 'acf_form_attachment' ) ) :
 		 *
 		 * @type    action (admin_footer)
 		 * @date    11/09/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -105,7 +105,7 @@ acf.unload.active = 0;
 		 *
 		 * @type    function
 		 * @date    8/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -180,7 +180,7 @@ acf.unload.active = 0;
 		 *
 		 * @type    function
 		 * @date    8/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)

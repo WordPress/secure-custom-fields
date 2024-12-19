@@ -4,9 +4,9 @@
  *
  * Base class to add functionality to ACF internal post types.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  * @subpackage Admin
- * @since 6.1
+ * @since ACF 6.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +25,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = '';
@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = '';
@@ -52,7 +52,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Prevents the block editor from loading when editing an ACF field group.
 		 *
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param boolean $use_block_editor Whether the post type can be edited or not. Default true.
 		 * @param string  $post_type        The post type being checked.
@@ -69,7 +69,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * This function will customize the message shown when editing a field group
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param array $messages Post type messages.
 		 * @return array
@@ -81,7 +81,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * This function is fired when loading the admin page before HTML has been rendered.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function current_screen() {
 			if ( ! acf_is_screen( $this->post_type ) ) {
@@ -105,7 +105,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Modifies the admin body class.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @param string $classes Space-separated list of CSS classes.
 		 * @return string
@@ -118,7 +118,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Enqueues any scripts necessary for internal post type.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function admin_enqueue_scripts() {
 			wp_enqueue_script( 'acf-internal-post-type' );
@@ -131,7 +131,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Set up functionality for the field group edit page.
 		 *
-		 * @since 3.1.8
+		 * @since ACF 3.1.8
 		 */
 		public function admin_head() {
 			// Override as necessary.
@@ -140,7 +140,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Adds extra HTML to the acf form data element.
 		 *
-		 * @since 5.3.8
+		 * @since ACF 5.3.8
 		 *
 		 * @param array $args Arguments array to pass through to action.
 		 * @return void
@@ -152,7 +152,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Admin footer third party hook support
 		 *
-		 * @since 5.3.2
+		 * @since ACF 5.3.2
 		 */
 		public function admin_footer() {
 			// Override as necessary.
@@ -161,7 +161,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * This function will append extra l10n strings to the acf JS object
 		 *
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param array $l10n The array of translated strings.
 		 * @return void
@@ -173,7 +173,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Ran during the `save_post` hook to verify that the post should be saved.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer $post_id The ID of the post being saved.
 		 * @param WP_Post $post    The post object.
@@ -217,7 +217,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		/**
 		 * Powers the modal for linking field groups to newly-created CPTs/taxonomies.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function ajax_link_field_groups() {
 			// Disable filters to ensure ACF loads raw data from DB.

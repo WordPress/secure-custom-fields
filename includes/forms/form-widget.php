@@ -19,7 +19,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -47,7 +47,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   N/A
 		 * @return  N/A
@@ -74,7 +74,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 * This function will loop over $_POST data and validate
 		 *
 		 * @type  action 'acf/validate_save_post' 5
-		 * @since 5.4.0
+		 * @since ACF 5.4.0
 		 */
 		public function acf_validate_save_post() {
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
@@ -100,7 +100,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $widget (object)
 		 * @param   $return (null)
@@ -184,7 +184,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 *
 		 * @type    function
 		 * @date    27/05/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param   $instance (array) widget settings
 		 * @param   $new_instance (array) widget settings
@@ -220,7 +220,7 @@ if ( ! class_exists( 'acf_form_widget' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a

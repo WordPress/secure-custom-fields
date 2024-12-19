@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		 * Initializes props.
 		 *
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -27,7 +27,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		 * Matches the provided rule against the screen args returning a bool result.
 		 *
 		 * @date    9/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $rule        The location rule.
 		 * @param   array $screen      The screen args.
@@ -73,7 +73,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		 * Returns an array of possible values for this rule type.
 		 *
 		 * @date    9/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $rule A location rule.
 		 * @return  array
@@ -91,7 +91,7 @@ if ( ! class_exists( 'ACF_Location_Post_Template' ) ) :
 		 * Returns the object_subtype connected to this location.
 		 *
 		 * @date    1/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $rule A location rule.
 		 * @return  string|array

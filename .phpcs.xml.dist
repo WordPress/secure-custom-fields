@@ -13,8 +13,8 @@
 	<config name="testVersion" value="7.4-"/>
 	<rule ref="PHPCompatibilityWP" />
 
-    <!-- Display sniff code -->
-    <arg value="s"/>
+	<!-- Display sniff code -->
+	<arg value="s"/>
 
 	<rule ref="WordPress">
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" /> <!-- 'acf/hookname' is used throughout. -->
@@ -22,14 +22,28 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" /> <!-- Refactoring of this scale is not in scope yet.-->
 	</rule>
 	<rule ref="WordPress.Security.EscapeOutput">
-        	<properties>
-            	<property name="customEscapingFunctions" type="array">
-                	<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
-					<element value="acf_esc_html" />
-            	</property>
-        	</properties>
-    	</rule>
-    <rule ref="WordPress.WP.I18n">
+		<properties>
+		   	<property name="customEscapingFunctions" type="array">
+			   	<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
+				<element value="acf_esc_html" />
+		   	</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.Security.ValidatedSanitizedInput">
+		<properties>
+			<property name="customSanitizingFunctions" type="array">
+				<element value="acf_sanitize_request_args" />
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification">
+		<properties>
+			<property name="customNonceVerificationFunctions" type="array">
+				<element value="acf_verify_ajax" />
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
 				<element value="secure-custom-fields"/>

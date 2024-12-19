@@ -9,7 +9,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This function will setup the field type data
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 			$this->name          = 'post_object';
@@ -37,7 +37,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Filters choices in post object conditions.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array  $choices           The selected choice.
 		 * @param array  $conditional_field The conditional field settings object.
@@ -58,7 +58,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * AJAX query handler for post object fields.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -87,7 +87,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This function will return an array of data formatted for use in a select2 AJAX response
 		 *
-		 * @since 5.0.9
+		 * @since ACF 5.0.9
 		 *
 		 * @param array $options The options being queried for the ajax request.
 		 * @return array|boolean The AJAX response array, or false on failure.
@@ -237,7 +237,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This function will return an array containing id, text and maybe description data
 		 *
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   mixed  $id   The ID of the post result.
 		 * @param   string $text The text for the response item.
@@ -268,7 +268,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This function post object's filtered output post title
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   WP_Post $post      The WordPress post.
 		 * @param   array   $field     The field being output.
@@ -305,7 +305,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Create the HTML interface for the post object field.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field An array holding all the field's data.
 		 * @return void
@@ -341,7 +341,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		 * Create extra options for post object field. This is rendered when editing.
 		 * The value of $field['name'] can be used (like below) to save extra data to the $field.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field An array holding all the field's data.
 		 */
@@ -421,7 +421,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -442,7 +442,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Renders the field settings used in the "Advanced" tab.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -454,7 +454,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This filter is applied to the $value after it is loaded from the db
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param  mixed $value   The value found in the database
 		 * @param  mixed $post_id The post_id from which the value was loaded
@@ -476,7 +476,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param  mixed $value   The value found in the database
 		 * @param  mixed $post_id The post_id from which the value was loaded
@@ -509,7 +509,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Filters the field value before it is saved into the database.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param  mixed   $value   The value which will be saved in the database.
 		 * @param  integer $post_id The post_id of which the value will be saved.
@@ -545,7 +545,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * This function will return an array of posts for a given field value
 		 *
-		 * @since 5.0
+		 * @since ACF 5.0
 		 *
 		 * @param  mixed $value The value of the field.
 		 * @param  array $field The field array holding all the field options.
@@ -576,7 +576,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Validates post object fields updated via the REST API.
 		 *
-		 * @since 5.11
+		 * @since ACF 5.11
 		 *
 		 * @param  boolean $valid The current validity booleean
 		 * @param  integer $value The value of the field
@@ -681,7 +681,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Return the schema array for the REST API.
 		 *
-		 * @since 5.11
+		 * @since ACF 5.11
 		 *
 		 * @param array $field The field array.
 		 * @return array
@@ -709,7 +709,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * REST link attributes generator for this field.
 		 *
-		 * @since 5.11
+		 * @since ACF 5.11
 		 * @see \acf_field::get_rest_links()
 		 *
 		 * @param mixed          $value   The raw (unformatted) field value.
@@ -747,7 +747,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
-		 * @since 5.11
+		 * @since ACF 5.11
 		 *
 		 * @param mixed          $value   The raw (unformatted) field value.
 		 * @param integer|string $post_id The post ID being queried.

@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -41,7 +41,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		/**
 		 * Filters choices in page link conditions.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array  $choices           The selected choice.
 		 * @param array  $conditional_field The conditional field settings object.
@@ -62,7 +62,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		/**
 		 * Returns AJAX results for the Page Link field.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -255,7 +255,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $id (mixed)
 		 * @param   $text (string)
@@ -288,7 +288,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 *
 		 * @type    function
 		 * @date    1/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post (object)
 		 * @param   $field (array)
@@ -320,7 +320,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 *
 		 * @type    function
 		 * @date    13/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $value (array)
 		 * @return  $value
@@ -381,7 +381,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		/**
 		 * Renders the Page Link field.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -430,7 +430,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -507,7 +507,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -529,7 +529,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -582,7 +582,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value which will be saved in the database

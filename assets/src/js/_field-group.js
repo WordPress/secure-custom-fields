@@ -5,7 +5,7 @@
 	 *  Generic field group functionality
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -236,7 +236,7 @@
 	 *  Screen options functionality
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -351,7 +351,7 @@
 	 *  Appends fields together
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void

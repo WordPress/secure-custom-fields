@@ -1,0 +1,1 @@
+This directory remains to ensure compatability with plugins that extend ACF Pro and may check for or include any of these files directly.

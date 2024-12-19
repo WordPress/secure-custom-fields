@@ -23,7 +23,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * This function will initialize the admin tool
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -47,7 +47,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * This function will run when the tool's form has been submit
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -74,7 +74,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * description
 		 *
 		 * @date    17/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -107,7 +107,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * description
 		 *
 		 * @date    17/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -137,7 +137,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * description
 		 *
 		 * @date    21/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -167,7 +167,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * This function will output the metabox HTML
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -188,7 +188,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Renders the checkboxes to select items to export.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 */
 		public function html_field_selection() {
 			// Ensure `l10n_var_export` is always false at the point we're outputting the options.
@@ -303,7 +303,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Renders the side panel for selecting ACF items to export via PHP.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 */
 		public function html_panel_selection() {
 			?>
@@ -320,7 +320,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		 * description
 		 *
 		 * @date    20/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -347,7 +347,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Renders the PHP export screen.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 */
 		public function html_single() {
 			?>
@@ -372,7 +372,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Generates the HTML for the PHP export functionality.
 		 *
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 */
 		public function html_generate() {
 			// Prevent default translation and fake __() within string.
@@ -464,7 +464,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Return an array of keys that have been selected in the export tool.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @return array|boolean
 		 */
@@ -492,7 +492,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		/**
 		 * Returns the JSON data for given $_POST args.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @return array|boolean
 		 */

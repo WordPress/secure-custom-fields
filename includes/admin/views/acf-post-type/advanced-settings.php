@@ -1,4 +1,11 @@
 <?php
+/**
+ * Advanced Settings for Post Types
+ *
+ * Renders the advanced settings tabs for post type configuration.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 global $acf_post_type;
 

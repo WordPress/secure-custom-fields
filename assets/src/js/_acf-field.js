@@ -8,7 +8,7 @@
 	 *  description
 	 *
 	 *  @date	23/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -30,7 +30,7 @@
 		 *  Called during the constructor function to setup this field ready for initialization
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	jQuery $field The field element.
 		 *  @return	void
@@ -53,7 +53,7 @@
 		 *  Sets or returns the field's value
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	mixed val Optional. The value to set
 		 *  @return	mixed
@@ -76,7 +76,7 @@
 		 *  returns the field's value
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	void
 		 *  @return	mixed
@@ -92,7 +92,7 @@
 		 *  sets the field's value and returns true if changed
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	mixed val
 		 *  @return	boolean. True if changed.
@@ -108,7 +108,7 @@
 		 *  i18n helper to be removed
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -124,7 +124,7 @@
 		 *  returns the control jQuery element used for inheriting data. Uses this.control setting.
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	void
 		 *  @return	jQuery
@@ -140,7 +140,7 @@
 		 *  returns the input jQuery element used for saving values. Uses this.input setting.
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	void
 		 *  @return	jQuery
@@ -156,7 +156,7 @@
 		 *  description
 		 *
 		 *  @date	12/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -172,7 +172,7 @@
 		 *  description
 		 *
 		 *  @date	12/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -188,7 +188,7 @@
 		 *  Returns the field's input name
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	void
 		 *  @return	string
@@ -204,7 +204,7 @@
 		 *  returns the field's parent field or false on failure.
 		 *
 		 *  @date	8/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	void
 		 *  @return	object|false
@@ -224,7 +224,7 @@
 		 *  description
 		 *
 		 *  @date	9/7/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -412,7 +412,7 @@
 	 *  description
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -440,7 +440,7 @@
 	 *  Calculates the model ID for a field type
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	string type
 	 *  @return	string
@@ -456,7 +456,7 @@
 	 *  description
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -481,7 +481,7 @@
 	 *  description
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -498,7 +498,7 @@
 	 *  description
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

@@ -5,7 +5,7 @@
 	 *  description
 	 *
 	 *  @date	1/7/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -32,7 +32,7 @@
 	 * Adds compatiblity for the 'unmount' and 'remount' actions added in 5.8.0
 	 *
 	 * @date	7/3/19
-	 * @since	5.7.14
+	 * @since	ACF 5.7.14
 	 *
 	 * @param	void
 	 * @return	void
@@ -57,7 +57,7 @@
 	 *  Adds compatibility for sorting a <tr> element
 	 *
 	 *  @date	6/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -101,7 +101,7 @@
 	 *  Fixes browser bugs when duplicating an element
 	 *
 	 *  @date	6/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -131,7 +131,7 @@
 	 *  description
 	 *
 	 *  @date	6/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -238,7 +238,7 @@
 	 *  description
 	 *
 	 *  @date	6/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -349,7 +349,7 @@
 	 * Adds a body class when holding down the "shift" key.
 	 *
 	 * @date	06/05/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 */
 	var bodyClassShiftHelper = new acf.Model( {
 		id: 'bodyClassShiftHelper',

@@ -11,7 +11,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 			$this->name          = 'relationship';
@@ -40,7 +40,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Filters choices in relation conditions.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array  $choices           The selected choice.
 		 * @param array  $conditional_field The conditional field settings object.
@@ -63,7 +63,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -84,7 +84,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Returns AJAX results for the Relationship field.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -113,7 +113,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * This function will return an array of data formatted for use in a select2 AJAX response
 		 *
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 *
 		 * @param array $options An array of options for the query.
 		 * @return array
@@ -279,7 +279,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $id (mixed)
 		 * @param   $text (string)
@@ -303,7 +303,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 *
 		 * @type    function
 		 * @date    1/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post (object)
 		 * @param   $field (array)
@@ -352,7 +352,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -539,7 +539,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -624,7 +624,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -657,7 +657,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -680,7 +680,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Renders the field settings used in the "Advanced" tab.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -693,7 +693,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -737,7 +737,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -764,7 +764,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Filters the field value before it is saved into the database.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param mixed   $value   The value which will be saved in the database.
 		 * @param integer $post_id The post_id of which the value will be saved.

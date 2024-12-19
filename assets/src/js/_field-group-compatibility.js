@@ -7,7 +7,7 @@
 	 *  Compatibility layer for extinct acf.field_group
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -41,7 +41,7 @@
 	 *  Compatibility layer for extinct acf.field_group.field_object
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -165,7 +165,7 @@
 	 *
 	 *  @type	function
 	 *  @date	21/02/2014
-	 *  @since	3.5.1
+	 *  @since	ACF 3.5.1
 	 *
 	 *  @param	n/a
 	 *  @return	n/a

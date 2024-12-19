@@ -151,7 +151,7 @@
 	 *  Creates a new Popup with the supplied props
 	 *
 	 *  @date	17/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	object props
 	 *  @return	object

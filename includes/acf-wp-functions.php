@@ -4,7 +4,7 @@
  * Returns a WordPress object type.
  *
  * @date    1/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   string $object_type    The object type (post, term, user, etc).
  * @param   string $object_subtype Optional object subtype (post type, taxonomy).
@@ -101,7 +101,7 @@ function acf_get_object_type( $object_type, $object_subtype = '' ) {
 	 * Filters the object type.
 	 *
 	 * @date    6/4/20
-	 * @since   5.9.0
+	 * @since   ACF 5.9.0
 	 *
 	 * @param   object $object The object props.
 	 * @param   string $object_type The object type (post, term, user, etc).
@@ -114,7 +114,7 @@ function acf_get_object_type( $object_type, $object_subtype = '' ) {
  * Decodes a post_id value such as 1 or "user_1" into an array containing the type and ID.
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   (int|string) $post_id The post id.
  * @return  array
@@ -213,7 +213,7 @@ function acf_decode_post_id( $post_id = 0 ) {
 	 * Filters the decoded post_id information.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param   array $props An array containing "type" and "id" information.
 	 * @param   (int|string) $post_id The post id.

@@ -13,7 +13,7 @@ $acf_instances = array();
  * Creates a new instance of the given class and stores it in the instances data store.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $class The class name.
  * @return  object The instance.
@@ -27,7 +27,7 @@ function acf_new_instance( $class = '' ) {
  * Returns an instance for the given class.
  *
  * @date  9/1/19
- * @since 5.7.10
+ * @since ACF 5.7.10
  *
  * @param string $class The class name.
  * @return object The instance.
@@ -46,7 +46,7 @@ function acf_get_instance( $class = '' ) {
  * Registers a data store.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $name The store name.
  * @param   array  $data Array of data to start the store with.
@@ -71,7 +71,7 @@ function acf_register_store( $name = '', $data = false ) {
  * Returns a data store.
  *
  * @date    9/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $name The store name.
  * @return  ACF_Data
@@ -87,7 +87,7 @@ function acf_get_store( $name = '' ) {
  * Triggered when switching between sites on a multisite installation.
  *
  * @date    13/2/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   integer                       $site_id New blog ID.
  * @param   int prev_blog_id Prev blog ID.
@@ -109,7 +109,7 @@ add_action( 'switch_blog', 'acf_switch_stores', 10, 2 );
  * Returns the plugin path to a specified file.
  *
  * @date    28/9/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $filename The specified file.
  * @return  string
@@ -125,7 +125,7 @@ function acf_get_path( $filename = '' ) {
  * This function also defines the ACF_URL constant.
  *
  * @date    12/12/17
- * @since   5.6.8
+ * @since   ACF 5.6.8
  *
  * @param   string $filename The specified file.
  * @return  string
@@ -141,7 +141,7 @@ function acf_get_url( $filename = '' ) {
  * Includes a file within the ACF plugin.
  *
  * @date    10/3/14
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $filename The specified file.
  * @return  void

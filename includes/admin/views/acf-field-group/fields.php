@@ -16,7 +16,7 @@ if ( $is_subfield ) {
 	/**
 	 * Filter for determining if a new field group should render with a text field automatically
 	 *
-	 * @since   6.2
+	 * @since   ACF 6.2
 	 *
 	 * @param bool $bool If an empty field group should render with a new field auto appended.
 	 */

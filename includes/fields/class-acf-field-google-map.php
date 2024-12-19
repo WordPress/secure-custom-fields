@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -44,7 +44,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -102,7 +102,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -168,7 +168,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -234,7 +234,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 * Filters the value loaded from the database.
 		 *
 		 * @date    16/10/19
-		 * @since   5.8.1
+		 * @since   ACF 5.8.1
 		 *
 		 * @param   mixed $value   The value loaded from the database.
 		 * @param   mixed $post_id The post ID where the value is saved.
@@ -264,7 +264,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value which will be saved in the database

@@ -17,7 +17,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Sets up the class functionality.
 		 *
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0.0.0
 		 *
 		 * @return  void
 		 */
@@ -39,7 +39,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Sets up Form functionality.
 		 *
 		 * @date    19/9/18
-		 * @since   5.7.6
+		 * @since   ACF 5.7.6.7.6
 		 *
 		 * @return  void
 		 */
@@ -77,7 +77,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Adds ACF metaboxes for the given $post_type and $post.
 		 *
 		 * @date    19/9/18
-		 * @since   5.7.6
+		 * @since   ACF 5.7.6.7.6
 		 *
 		 * @param   string  $post_type The post type.
 		 * @param   WP_Post $post      The post being edited.
@@ -115,7 +115,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 					 * Filters the metabox priority.
 					 *
 					 * @date    23/06/12
-					 * @since   3.1.8
+					 * @since   ACF 3.1.8.1.8
 					 *
 					 * @param   string $priority The metabox priority (high, core, default, low).
 					 * @param   array $field_group The field group array.
@@ -158,7 +158,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			* Fires after metaboxes have been added.
 			*
 			* @date    13/12/18
-			* @since   5.8.0
+			* @since   ACF 5.8.0.8.0
 			*
 			* @param   string $post_type The post type.
 			* @param   WP_Post $post The post being edited.
@@ -171,7 +171,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Called after the title and before the content editor to render the after title metaboxes.
 		 * Also renders the CSS required to hide the "hide-on-screen" elements on the page based on the field group settings.
 		 *
-		 * @since 5.7.6
+		 * @since ACF 5.7.6.7.6
 		 */
 		public function edit_form_after_title() {
 
@@ -204,7 +204,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Renders the ACF metabox HTML.
 		 *
 		 * @date    19/9/18
-		 * @since   5.7.6
+		 * @since   ACF 5.7.6.7.6
 		 *
 		 * @param   WP_Post                               $post The post being edited.
 		 * @param   array metabox The add_meta_box() args.
@@ -227,7 +227,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 * Allows WP to insert a new post without title or post_content if ACF data exists.
 		 *
 		 * @date    16/07/2014
-		 * @since   5.0.1
+		 * @since   ACF 5.0.1.0.1
 		 *
 		 * @param   boolean $maybe_empty Whether the post should be considered "empty".
 		 * @param   array   $postarr     Array of post data.
@@ -250,7 +250,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 *
 		 * @type    function
 		 * @date    26/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   WP_Post $post The post to check.
 		 * @return  boolean
@@ -288,7 +288,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		/**
 		 * Triggers during the 'save_post' action to save the $_POST data.
 		 *
-		 * @since   1.0.0
+		 * @since   ACF 1.0.0.0.0
 		 *
 		 * @param integer $post_id The post ID.
 		 * @param WP_Post $post    The post object.

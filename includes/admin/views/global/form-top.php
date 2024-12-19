@@ -21,7 +21,7 @@ if ( 'acf-field-group' === $acf_post_type ) {
 	/**
 	 * Sets a default title to be prefilled (e.g. "Movies Fields") for a post type or taxonomy.
 	 *
-	 * @since 6.1.5
+	 * @since ACF 6.1.5
 	 *
 	 * @param string $acf_prefilled_title A string to define the prefilled title for a post type or taxonomy.
 	 */

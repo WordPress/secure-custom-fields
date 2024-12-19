@@ -21,7 +21,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -45,7 +45,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    23/06/12
-		 * @since   3.1.8
+		 * @since   ACF 3.1.8
 		 *
 		 * @param   n/a
 		 * @return  (boolean)
@@ -71,7 +71,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   N/A
 		 * @return  N/A
@@ -102,7 +102,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    8/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -153,7 +153,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    8/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -204,7 +204,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    27/03/2015
-		 * @since   5.1.5
+		 * @since   ACF 5.1.5
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -298,7 +298,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    8/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -326,7 +326,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)

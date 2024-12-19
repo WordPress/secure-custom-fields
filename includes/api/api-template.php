@@ -5,7 +5,7 @@
  * There is a 3rd parameter to turn on/off formating. This means that an image field will not use
  * its 'return option' to format the value but return only what was saved in the database
  *
- * @since   3.6
+ * @since   ACF 3.6
  *
  * @param string  $selector     The field name or key.
  * @param mixed   $post_id      The post_id of which the value is saved against.
@@ -83,7 +83,7 @@ function get_field( $selector, $post_id = false, $format_value = true, $escape_h
 /**
  * This function is the same as echo get_field(), but will escape the value for safe HTML output regardless of parameters.
  *
- * @since   1.0.3
+ * @since   ACF 1.0.3
  *
  * @param string  $selector     The field name or key.
  * @param mixed   $post_id      The post_id of which the value is saved against.
@@ -132,7 +132,7 @@ function the_field( $selector, $post_id = false, $format_value = true ) {
 /**
  * Logs instances of ACF successfully escaping unsafe HTML.
  *
- * @since 6.2.5
+ * @since ACF 6.2.5
  *
  * @param string $function The function that resulted in HTML being escaped.
  * @param string $selector The selector (field key, name, etc.) passed to that function.
@@ -182,7 +182,7 @@ add_action( 'acf/removed_unsafe_html', '_acf_log_escaped_html', 10, 4 );
 /**
  * Returns an array of instances where HTML was altered due to escaping in the_field or a shortcode.
  *
- * @since 6.2.5
+ * @since ACF 6.2.5
  *
  * @return array
  */
@@ -194,7 +194,7 @@ function _acf_get_escaped_html_log() {
 /**
  * Updates the array of instances where HTML was altered due to escaping in the_field or a shortcode.
  *
- * @since 6.2.5
+ * @since ACF 6.2.5
  *
  * @param array $escaped The array of instances.
  * @return boolean True on success, or false on failure.
@@ -207,7 +207,7 @@ function _acf_update_escaped_html_log( $escaped = array() ) {
  * Deletes the array of instances where HTML was altered due to escaping in the_field or a shortcode.
  * Since 6.2.7, also clears the legacy `acf_will_escape_html_log` option to clean up.
  *
- * @since 6.2.5
+ * @since ACF 6.2.5
  *
  * @return boolean True on success, or false on failure.
  */
@@ -219,7 +219,7 @@ function _acf_delete_escaped_html_log() {
 /**
  * This function will return an array containing all the field data for a given field_name.
  *
- * @since 3.6
+ * @since ACF 3.6
  *
  * @param string  $selector     The field name or key.
  * @param mixed   $post_id      The post_id of which the value is saved against.
@@ -280,7 +280,7 @@ function get_field_object( $selector, $post_id = false, $format_value = true, $l
  * This function will return a field for the given selector.
  * It will also review the field_reference to ensure the correct field is returned which makes it useful for the template API
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (mixed) identifier of field. Can be an ID, key, name or post object
  * @param   $post_id (mixed) the post_id of which the value is saved against
@@ -317,7 +317,7 @@ function acf_maybe_get_field( $selector, $post_id = false, $strict = true ) {
 /**
  * This function will attempt to find a sub field
  *
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   $post_id (int)
  * @return  $post_id (int)
@@ -370,7 +370,7 @@ function acf_maybe_get_sub_field( $selectors, $post_id = false, $strict = true )
  * This function will return an array containing all the custom field values for a specific post_id.
  * The function is not very elegant and wastes a lot of PHP memory / SQL queries if you are not using all the values.
  *
- * @since   3.6
+ * @since   ACF 3.6
  *
  * @param mixed   $post_id      The post_id of which the value is saved against.
  * @param boolean $format_value Whether or not to format the field value.
@@ -409,7 +409,7 @@ function get_fields( $post_id = false, $format_value = true, $escape_html = fals
  * This function will return an array containing all the custom field objects for a specific post_id.
  * The function is not very elegant and wastes a lot of PHP memory / SQL queries if you are not using all the fields / values.
  *
- * @since 3.6
+ * @since ACF 3.6
  *
  * @param mixed   $post_id      The post_id of which the value is saved against.
  * @param boolean $format_value Whether or not to format the field value.
@@ -505,7 +505,7 @@ function get_field_objects( $post_id = false, $format_value = true, $load_value 
  * Checks if a field (such as Repeater or Flexible Content) has any rows of data to loop over.
  * This function is intended to be used in conjunction with the_row() to step through available values.
  *
- * @since   4.3.0
+ * @since   ACF 4.3.0
  *
  * @param   string $selector The field name or field key.
  * @param   mixed  $post_id  The post ID where the value is saved. Defaults to the current post.
@@ -638,7 +638,7 @@ function have_rows( $selector, $post_id = false ) {
 /**
  * This function will progress the global repeater or flexible content value 1 row
  *
- * @since   4.3.0
+ * @since   ACF 4.3.0
  *
  * @param   N/A
  * @return  (array) the current row data
@@ -722,7 +722,7 @@ function the_row_index() {
 /**
  * This function is used inside a 'has_sub_field' while loop to return a sub field object
  *
- * @since   5.3.8
+ * @since   ACF 5.3.8
  *
  * @param   $selector (string)
  * @return  (array)
@@ -756,7 +756,7 @@ function get_row_sub_field( $selector ) {
 /**
  * This function is used inside a 'has_sub_field' while loop to return a sub field value
  *
- * @since   5.3.8
+ * @since   ACF 5.3.8
  *
  * @param   $selector (string)
  * @return  (mixed)
@@ -785,7 +785,7 @@ function get_row_sub_value( $selector ) {
  * This function will find the current loop and unset it from the global array.
  * To be used when loop finishes or a break is used
  *
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   $hard_reset (boolean) completely wipe the global variable, or just unset the active row
  * @return  (boolean)
@@ -805,7 +805,7 @@ function reset_rows() {
  * When using a repeater or flexible content field, it will loop through the rows until
  * there are none left or a break is detected
  *
- * @since   1.0.3
+ * @since   ACF 1.0.3
  *
  * @param   $field_name (string) the field name
  * @param   $post_id (mixed) the post_id of which the value is saved against
@@ -836,7 +836,7 @@ function has_sub_fields( $field_name, $post_id = false ) {
 /**
  * This function is used inside a 'has_sub_field' while loop to return a sub field value
  *
- * @since 1.0.3
+ * @since ACF 1.0.3
  *
  * @param string  $selector     The field name or key.
  * @param boolean $format_value Whether or not to format the value as described above.
@@ -862,7 +862,7 @@ function get_sub_field( $selector = '', $format_value = true, $escape_html = fal
 /**
  * This function is the same as echo get_sub_field(), but will escape the value for safe HTML output.
  *
- * @since   1.0.3
+ * @since   ACF 1.0.3
  *
  * @param string  $field_name   The field name.
  * @param boolean $format_value Enable formatting of value. When false, the field value will be escaped at this level with `acf_esc_html`. Default true.
@@ -911,7 +911,7 @@ function the_sub_field( $field_name, $format_value = true ) {
 /**
  * This function is used inside a 'has_sub_field' while loop to return a sub field object
  *
- * @since 3.5.8.1
+ * @since ACF 3.5.8.1
  *
  * @param string  $selector     The field name or key.
  * @param boolean $format_value Whether to format the field value.
@@ -976,7 +976,7 @@ function get_sub_field_object( $selector, $format_value = true, $load_value = tr
 /**
  * This function will return a string representation of the current row layout within a 'have_rows' loop
  *
- * @since   3.0.6
+ * @since   ACF 3.0.6
  *
  * @return mixed
  */
@@ -998,7 +998,7 @@ function get_row_layout() {
  * This function is used to add basic shortcode support for the ACF plugin
  * eg. [acf field="heading" post_id="123" format_value="1"]
  *
- * @since 1.1.1
+ * @since ACF 1.1.1
  *
  * @param array $atts The shortcode attributes.
  *
@@ -1127,7 +1127,7 @@ add_shortcode( 'acf', 'acf_shortcode' );
 /**
  * This function will update a value in the database
  *
- * @since   3.1.9
+ * @since   ACF 3.1.9
  *
  * @param string $selector The field name or key.
  * @param mixed  $value    The value to save in the database.
@@ -1162,7 +1162,7 @@ function update_field( $selector, $value, $post_id = false ) {
 /**
  * This function will update a value of a sub field in the database
  *
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   $selector (mixed) the sub field name or key, or an array of ancestors
  * @param   $value (mixed) the value to save in the database
@@ -1197,7 +1197,7 @@ function update_sub_field( $selector, $value, $post_id = false ) {
 /**
  * This function will remove a value from the database
  *
- * @since   3.1.9
+ * @since   ACF 3.1.9
  *
  * @param   $selector (string) the field name or key
  * @param   $post_id (mixed) the post_id of which the value is saved against
@@ -1220,7 +1220,7 @@ function delete_field( $selector, $post_id = false ) {
 /**
  * This function will delete a value of a sub field in the database
  *
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   $selector (mixed) the sub field name or key, or an array of ancestors
  * @param   $value (mixed) the value to save in the database
@@ -1235,7 +1235,7 @@ function delete_sub_field( $selector, $post_id = false ) {
 /**
  * This function will add a row of data to a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $row (array)
@@ -1278,7 +1278,7 @@ function add_row( $selector, $row = false, $post_id = false ) {
 /**
  * This function will add a row of data to a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $row (array)
@@ -1324,7 +1324,7 @@ function add_sub_row( $selector, $row = false, $post_id = false ) {
 /**
  * This function will update a row of data to a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $i (int)
@@ -1369,7 +1369,7 @@ function update_row( $selector, $i = 1, $row = false, $post_id = false ) {
 /**
  * This function will add a row of data to a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $row (array)
@@ -1417,7 +1417,7 @@ function update_sub_row( $selector, $i = 1, $row = false, $post_id = false ) {
 /**
  * This function will delete a row of data from a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $i (int)
@@ -1466,7 +1466,7 @@ function delete_row( $selector, $i = 1, $post_id = false ) {
 /**
  * This function will add a row of data to a field
  *
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   $selector (string)
  * @param   $row (array)
@@ -1521,7 +1521,7 @@ function delete_sub_row( $selector, $i = 1, $post_id = false ) {
  *
  * These functions are outdated
  *
- * @since   1.0.0
+ * @since   ACF 1.0.0
  *
  * @param   n/a
  * @return  n/a

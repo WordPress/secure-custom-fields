@@ -16,7 +16,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-taxonomy';
@@ -24,7 +24,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-taxonomies';
@@ -39,7 +39,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Constructor.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
@@ -49,7 +49,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Current screen actions for the taxonomies list admin page.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function current_screen() {
 			// Bail early if not post types admin page.
@@ -80,7 +80,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Add any menu items required for taxonomies.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
@@ -92,7 +92,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		 * Customizes the admin table columns.
 		 *
 		 * @date    1/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param array $_columns The columns array.
 		 * @return array
@@ -126,7 +126,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		 * Renders a specific admin table column.
 		 *
 		 * @date    17/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param string $column_name The name of the column to display.
 		 * @param array  $post        The main ACF post array.
@@ -171,7 +171,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Renders the field groups attached to the taxonomy in the list table.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $taxonomy The main taxonomy array.
 		 * @return void
@@ -201,7 +201,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Renders the post types attached to the taxonomy in the list table.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $taxonomy The main taxonomy array.
 		 * @return void
@@ -259,7 +259,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Renders the number of terms created for the taxonomy in the list table.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $taxonomy The main taxonomy array.
 		 * @return void
@@ -297,7 +297,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Gets the translated action notice text for list table actions (activate, deactivate, sync, etc.).
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string  $action The action being performed.
 		 * @param integer $count  The number of items the action was performed on.
@@ -344,7 +344,7 @@ if ( ! class_exists( 'ACF_Admin_Taxonomies' ) ) :
 		/**
 		 * Returns the registration error state.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @return string
 		 */

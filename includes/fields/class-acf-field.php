@@ -27,7 +27,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		 * Initializes the `acf_field` class. To initialize a field type that is
 		 * extending this class, use the `initialize()` method in the child class instead.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function __construct() {
 			// Initialize the field type.
@@ -91,7 +91,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		/**
 		 * Initializes the field type. Overridden in child classes.
 		 *
-		 * @since 5.6.0
+		 * @since ACF 5.6.0
 		 */
 		public function initialize() {
 			/* do nothing */
@@ -101,7 +101,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		 * Checks a function `is_callable()` before adding the filter, since
 		 * classes that extend `acf_field` might not implement all filters.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param string  $tag             The name of the filter to add the callback to.
 		 * @param string  $function_to_add The callback to be run when the filter is applied.
@@ -121,7 +121,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		/**
 		 * Adds a filter specific to the current field type.
 		 *
-		 * @since 5.4.0
+		 * @since ACF 5.4.0
 		 *
 		 * @param string  $tag             The name of the filter to add the callback to.
 		 * @param string  $function_to_add The callback to be run when the filter is applied.
@@ -139,7 +139,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		 * Checks a function `is_callable()` before adding the action, since
 		 * classes that extend `acf_field` might not implement all actions.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param string  $tag             The name of the action to add the callback to.
 		 * @param string  $function_to_add The callback to be run when the action is ran.
@@ -159,7 +159,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		/**
 		 * Adds an action specific to the current field type.
 		 *
-		 * @since 5.4.0
+		 * @since ACF 5.4.0
 		 *
 		 * @param string  $tag             The name of the action to add the callback to.
 		 * @param string  $function_to_add The callback to be run when the action is ran.
@@ -177,7 +177,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		 * Appends default settings to a field.
 		 * Runs on `acf/validate_field/type={$this->name}`.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field The field array.
 		 * @return array $field
@@ -202,7 +202,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		 * Append l10n text translations to an array which is later passed to JS.
 		 * Runs on `acf/input/admin_l10n`.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $l10n
 		 * @return array $l10n
@@ -294,7 +294,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		/**
 		 * Renders the "Required" setting on the field type "Validation" settings tab.
 		 *
-		 * @since 6.2.5
+		 * @since ACF 6.2.5
 		 *
 		 * @param array $field The field type being rendered.
 		 * @return void
@@ -324,7 +324,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 		/**
 		 * Renders the "Allow in Bindings" setting on the field type "Presentation" settings tab.
 		 *
-		 * @since 6.3.6
+		 * @since ACF 6.3.6
 		 *
 		 * @param array $field The field type being rendered.
 		 * @return void

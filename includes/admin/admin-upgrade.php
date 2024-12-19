@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Sets up the class functionality.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @return  void
 		 */
@@ -53,7 +53,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Setus up logic if DB Upgrade is needed on a single site.
 		 *
 		 * @date    24/8/18
-		 * @since   5.7.4
+		 * @since   ACF 5.7.4
 		 *
 		 * @return  void
 		 */
@@ -78,8 +78,8 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * the “Upgrade Database” submenu under the “Dashboard” network admin
 		 * menu item if an ACF upgrade needs to run on any network site.
 		 *
-		 * @since   5.7.4
-		 * @since   6.0.0 Reduce memory usage, cache network upgrade checks.
+		 * @since   ACF 5.7.4
+		 * @since   ACF 6.0.0 Reduce memory usage, cache network upgrade checks.
 		 */
 		public function network_admin_menu() {
 			$network_upgrade_needed = get_site_transient( $this->network_upgrade_needed_transient );
@@ -117,7 +117,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * ACF_UPGRADE_VERSION will trigger new upgrade checks but incrementing
 		 * ACF_VERSION alone will not.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 * @return string 'yes' if any site in the network requires an upgrade,
 		 *               otherwise 'no'. String instead of boolean so that
 		 *               `false` returned from a get_site_transient check can
@@ -168,7 +168,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Runs during the loading of the admin page.
 		 *
 		 * @date    24/8/18
-		 * @since   5.7.4
+		 * @since   ACF 5.7.4
 		 *
 		 * @return  void
 		 */
@@ -189,7 +189,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Runs during the loading of the network admin page.
 		 *
 		 * @date    24/8/18
-		 * @since   5.7.4
+		 * @since   ACF 5.7.4
 		 *
 		 * @return  void
 		 */
@@ -207,7 +207,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		/**
 		 * Modifies the admin body class.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @param string $classes Space-separated list of CSS classes.
 		 * @return string
@@ -223,7 +223,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Displays the DB Upgrade prompt.
 		 *
 		 * @date    23/8/18
-		 * @since   5.7.3
+		 * @since   ACF 5.7.3
 		 *
 		 * @return  void
 		 */
@@ -246,7 +246,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Displays the DB Upgrade prompt on a multi site.
 		 *
 		 * @date    23/8/18
-		 * @since   5.7.3
+		 * @since   ACF 5.7.3
 		 *
 		 * @return  void
 		 */
@@ -269,7 +269,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Displays the HTML for the admin page.
 		 *
 		 * @date    24/8/18
-		 * @since   5.7.4
+		 * @since   ACF 5.7.4
 		 *
 		 * @return  void
 		 */
@@ -283,7 +283,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * Displays the HTML for the network upgrade admin page.
 		 *
 		 * @date    24/8/18
-		 * @since   5.7.4
+		 * @since   ACF 5.7.4
 		 *
 		 * @return  void
 		 */

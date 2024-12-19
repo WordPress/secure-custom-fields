@@ -20,7 +20,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Sets up the class functionality.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -39,7 +39,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Accepts data in either raw or request format.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   array   $meta    An array of metdata to store.
 		 * @param   mixed   $post_id The post_id for this data.
@@ -71,7 +71,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Returns true if the supplied $meta is from a REQUEST (serialized <form> data).
 		 *
 		 * @date    11/3/19
-		 * @since   5.7.14
+		 * @since   ACF 5.7.14
 		 *
 		 * @param   array $meta An array of metdata to check.
 		 * @return  boolean
@@ -87,7 +87,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * This is achieved by simulating a save whilst capturing all meta changes.
 		 *
 		 * @date    26/2/19
-		 * @since   5.7.13
+		 * @since   ACF 5.7.13
 		 *
 		 * @param   array $values  An array of raw values.
 		 * @param   mixed $post_id The post_id for this data.
@@ -119,7 +119,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Records all meta activity and returns a non null value to bypass DB updates.
 		 *
 		 * @date    26/2/19
-		 * @since   5.7.13
+		 * @since   ACF 5.7.13
 		 *
 		 * @param   null         $null    .
 		 * @param   (int|string) $post_id The post id.
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Removes postmeta from storage.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   mixed $post_id The post_id for this data.
 		 * @return  void
@@ -164,7 +164,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Injects the local meta.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   null  $null    An empty parameter. Return a non null value to short-circuit the function.
 		 * @param   mixed $post_id The post_id for this data.
@@ -183,7 +183,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Injects the local meta.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   null         $null    An empty parameter. Return a non null value to short-circuit the function.
 		 * @param   (int|string) $post_id The post id.
@@ -208,7 +208,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * Injects the local post_id.
 		 *
 		 * @date    8/10/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   null  $null    An empty parameter. Return a non null value to short-circuit the function.
 		 * @param   mixed $post_id The post_id for this data.
@@ -230,7 +230,7 @@ endif; // class_exists check
  * Adds postmeta to storage.
  *
  * @date    8/10/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  * @see     ACF_Local_Meta::add() for list of parameters.
  *
  * @return  array
@@ -245,7 +245,7 @@ function acf_setup_meta( $meta = array(), $post_id = 0, $is_main = false ) {
  * Removes postmeta to storage.
  *
  * @date    8/10/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  * @see     ACF_Local_Meta::remove() for list of parameters.
  *
  * @return  void

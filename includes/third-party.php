@@ -18,7 +18,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		/**
 		 * This function will setup the class functionality
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function __construct() {
 			// Tabify Edit Screen - http://wordpress.org/extend/plugins/tabify-edit-screen/
@@ -48,7 +48,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		 * Show the EE post types in lists where 'show_ui' is used.
 		 *
 		 * @date    24/2/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @param   array $post_types Post types array.
 		 * @param   array $args       Other arguments array.
@@ -68,7 +68,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		/**
 		 * This function removes ACF post types from the tabify edit screen (post type selection sidebar)
 		 *
-		 * @since   3.5.1
+		 * @since   ACF 3.5.1
 		 *
 		 * @param   array $posttypes An array of post types supported by tabify.
 		 * @return  array
@@ -85,7 +85,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		/**
 		 * This function creates dummy metaboxes on the tabify edit screen page
 		 *
-		 * @since 3.5.1
+		 * @since ACF 3.5.1
 		 *
 		 * @param string $post_type The name of the displayed post type.
 		 */
@@ -110,7 +110,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		/**
 		 * This filter will prevent PTS from running on the field group page
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $pages An array of pages PTS should run on.
 		 * @return  array
@@ -140,7 +140,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		/**
 		 * Runs during 'admin_enqueue_scripts' if dark mode is enabled
 		 *
-		 * @since   5.7.3
+		 * @since   ACF 5.7.3
 		 */
 		public function doing_dark_mode() {
 			$min = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';

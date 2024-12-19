@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_separator' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -32,7 +32,7 @@ if ( ! class_exists( 'acf_field_separator' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -45,7 +45,7 @@ if ( ! class_exists( 'acf_field_separator' ) ) :
 		 * This filter is appied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options

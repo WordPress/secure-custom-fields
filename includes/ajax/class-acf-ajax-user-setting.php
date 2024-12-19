@@ -28,7 +28,7 @@ if ( ! class_exists( 'ACF_Ajax_User_Setting' ) ) :
 		 * Returns the response data to sent back.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $request The request args.
 		 * @return  mixed The response data or WP_Error.

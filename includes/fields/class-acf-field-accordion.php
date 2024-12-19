@@ -12,7 +12,7 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 		 * This function will setup the field type data
 		 *
 		 * @date  30/10/17
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @param  n/a
 		 * @return n/a
@@ -44,7 +44,7 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 		 * Create the HTML interface for your field
 		 *
 		 * @date  30/10/17
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @param  array $field
 		 * @return n/a
@@ -73,7 +73,7 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 		 * @param   $field  - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field_settings( $field ) {
@@ -116,7 +116,7 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 		 * This filter is appied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options

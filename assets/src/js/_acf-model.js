@@ -9,7 +9,7 @@
 	 *  Heavily inspired by backbone.js
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	object protoProps New properties for this object.
 	 *  @return	function.
@@ -53,7 +53,7 @@
 	 *  Base class for all inheritence
 	 *
 	 *  @date	14/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	object props
 	 *  @return	function.
@@ -130,7 +130,7 @@
 		 *  Gets a specific data value
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @return	mixed
@@ -146,7 +146,7 @@
 		 *  Returns `true` if the data exists and is not null
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @return	boolean
@@ -162,7 +162,7 @@
 		 *  Sets a specific data value
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	mixed value
@@ -196,7 +196,7 @@
 		 *  Inherits the data from a jQuery element
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	jQuery $el
 		 *  @return	this
@@ -221,7 +221,7 @@
 		 *  mimics the jQuery prop function
 		 *
 		 *  @date	4/6/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -237,7 +237,7 @@
 		 *  Run during constructor function
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	n/a
 		 *  @return	n/a
@@ -253,7 +253,7 @@
 		 *  Also run during constructor function
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	n/a
 		 *  @return	n/a
@@ -267,7 +267,7 @@
 		 *  Adds multiple jQuery elements to this object
 		 *
 		 *  @date	9/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -287,7 +287,7 @@
 		 *  description
 		 *
 		 *  @date	9/5/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -303,7 +303,7 @@
 		 *  Adds multiple event handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object events {event1 : callback, event2 : callback, etc }
 		 *  @return	n/a
@@ -324,7 +324,7 @@
 		 *  Removes multiple event handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object events {event1 : callback, event2 : callback, etc }
 		 *  @return	n/a
@@ -345,7 +345,7 @@
 		 *  Returns a jQuery element to trigger an event on.
 		 *
 		 *  @date	5/6/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	jQuery $el		The default jQuery element. Optional.
 		 *  @param	string event	The event name. Optional.
@@ -363,7 +363,7 @@
 		 *  Requires both this.el and this.$el to be defined
 		 *
 		 *  @date	5/6/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -383,7 +383,7 @@
 		 *  Returns a new event callback function scoped to this model
 		 *
 		 *  @date	29/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	function callback
 		 *  @return	function
@@ -413,7 +413,7 @@
 		 *  Uses the instance 'cid' to namespace event
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -481,7 +481,7 @@
 		 *  Removes an event handler similar to jQuery
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -540,7 +540,7 @@
 		 *  Triggers an event similar to jQuery
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -563,7 +563,7 @@
 		 *  Adds multiple action handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object actions {action1 : callback, action2 : callback, etc }
 		 *  @return	n/a
@@ -583,7 +583,7 @@
 		 *  Removes multiple action handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object actions {action1 : callback, action2 : callback, etc }
 		 *  @return	n/a
@@ -603,7 +603,7 @@
 		 *  Adds an action using the wp.hooks library
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -630,7 +630,7 @@
 		 *  Remove an action using the wp.hooks library
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -647,7 +647,7 @@
 		 *  Adds multiple filter handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object filters {filter1 : callback, filter2 : callback, etc }
 		 *  @return	n/a
@@ -667,7 +667,7 @@
 		 *  Adds a filter using the wp.hooks library
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -693,7 +693,7 @@
 		 *  Removes multiple filter handlers
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	object filters {filter1 : callback, filter2 : callback, etc }
 		 *  @return	n/a
@@ -713,7 +713,7 @@
 		 *  Remove a filter using the wp.hooks library
 		 *
 		 *  @date	14/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	string name
 		 *  @param	string callback
@@ -730,7 +730,7 @@
 		 *  description
 		 *
 		 *  @date	16/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -746,7 +746,7 @@
 		 *  Removes the element and listenters
 		 *
 		 *  @date	19/12/17
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -765,7 +765,7 @@
 		 *  description
 		 *
 		 *  @date	16/1/18
-		 *  @since	5.6.5
+		 *  @since	ACF 5.6.5
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -781,7 +781,7 @@
 		 *  used for debugging
 		 *
 		 *  @date	7/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -797,7 +797,7 @@
 		 *  used for debugging
 		 *
 		 *  @date	7/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -813,7 +813,7 @@
 		 *  description
 		 *
 		 *  @date	15/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -829,7 +829,7 @@
 		 *  description
 		 *
 		 *  @date	15/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	type $var Description. Default.
 		 *  @return	type Description.
@@ -845,7 +845,7 @@
 		 *  Returns a new function scoped to this model
 		 *
 		 *  @date	29/3/18
-		 *  @since	5.6.9
+		 *  @since	ACF 5.6.9
 		 *
 		 *  @param	function callback
 		 *  @return	function
@@ -868,7 +868,7 @@
 	 *  This function will get an instance from an element
 	 *
 	 *  @date	5/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -884,7 +884,7 @@
 	 *  This function will get an array of instances from multiple elements
 	 *
 	 *  @date	5/3/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

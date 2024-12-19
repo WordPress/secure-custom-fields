@@ -15,7 +15,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		 * This function will initialize the admin tool
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -35,7 +35,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		 * This function will output the metabox HTML
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -136,7 +136,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		/**
 		 * Imports the selected ACF posts and returns an admin notice on completion.
 		 *
-		 * @since 5.6.3
+		 * @since ACF 5.6.3
 		 *
 		 * @return ACF_Admin_Notice
 		 */
@@ -220,7 +220,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 		/**
 		 * Handles the import of CPTUI post types and taxonomies.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $import_args What to import.
 		 * @return ACF_Admin_Notice

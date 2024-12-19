@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Constructor.
 		 *
 		 * @date    23/06/12
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -35,7 +35,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Fires when ACF scrtips are enqueued.
 		 *
 		 * @date    27/4/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @return  void
 		 */
@@ -66,7 +66,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Uploads attachments found in the basic `$_FILES` array.
 		 *
 		 * @date    24/10/2014
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 *
 		 * @param   string|integer $post_id The post ID being saved.
 		 * @return  void
@@ -81,7 +81,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Filters data for the current file being uploaded.
 		 *
 		 * @date    16/02/2015
-		 * @since   5.1.5
+		 * @since   ACF 5.1.5
 		 *
 		 * @param   array $file An array of data for a single file.
 		 * @return  array
@@ -99,7 +99,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 			 * Filters the errors for a file before it is uploaded to WordPress.
 			 *
 			 * @date    16/02/2015
-			 * @since   5.1.5
+			 * @since   ACF 5.1.5
 			 *
 			 * @param   array $errors An array of errors.
 			 * @param   array $file An array of data for a single file.
@@ -129,7 +129,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Returns the field responsible for the current Media query or upload context.
 		 *
 		 * @date    21/5/21
-		 * @since   5.9.7
+		 * @since   ACF 5.9.7
 		 *
 		 * @return  array| false.
 		 */
@@ -160,7 +160,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Fires during the WP Modal Query AJAX call.
 		 *
 		 * @date    26/06/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @return  void
 		 */
@@ -177,7 +177,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Append acf_errors false for non-acf media library calls to prevent media library caching.
 		 *
 		 * @date    31/8/21
-		 * @since   5.10.2
+		 * @since   ACF 5.10.2
 		 *
 		 * @param   array       $response   Array of prepared attachment data.
 		 * @param   WP_Post     $attachment Attachment object.
@@ -193,7 +193,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Filters attachment data as it is being prepared for JS.
 		 *
 		 * @date    21/5/21
-		 * @since   5.9.7
+		 * @since   ACF 5.9.7
 		 *
 		 * @param   array       $response   Array of prepared attachment data.
 		 * @param   WP_Post     $attachment Attachment object.
@@ -218,7 +218,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		 * Filters the names and labels of the default image sizes.
 		 *
 		 * @date    21/5/21
-		 * @since   5.9.7
+		 * @since   ACF 5.9.7
 		 *
 		 * @param   array $size_names Array of image size labels keyed by their name.
 		 * @return  array

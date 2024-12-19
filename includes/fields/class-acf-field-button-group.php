@@ -11,7 +11,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * This function will setup the field type data
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -38,7 +38,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		/**
 		 * Creates the field's input HTML
 		 *
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   array $field The field settings array
 		 */
@@ -122,7 +122,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * Creates the field's settings HTML
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   array $field The field settings array
 		 * @return  n/a
@@ -171,7 +171,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -192,7 +192,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -218,7 +218,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * This filter is appied to the $field before it is saved to the database
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   array $field The field array holding all the field options
 		 * @return  $field
@@ -233,7 +233,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   mixed $value   The value found in the database
 		 * @param   mixed $post_id The post ID from which the value was loaded from
@@ -250,7 +250,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * This function will translate field settings
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   array $field The field array holding all the field options
 		 * @return  $field
@@ -265,7 +265,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @date    18/9/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   mixed $value   The value found in the database
 		 * @param   mixed $post_id The post ID from which the value was loaded from
