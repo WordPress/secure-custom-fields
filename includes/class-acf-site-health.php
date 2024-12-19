@@ -4,7 +4,7 @@
  * Adds helpful debugging information to a new "Advanced Custom Fields"
  * panel in the WordPress Site Health screen.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 // Exit if accessed directly.

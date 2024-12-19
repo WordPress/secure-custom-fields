@@ -4,7 +4,7 @@
  *
  * Base class to add functionality to ACF internal post types.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  * @subpackage Admin
  * @since ACF 6.1
  */

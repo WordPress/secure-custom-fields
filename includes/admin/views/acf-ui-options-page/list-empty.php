@@ -2,7 +2,7 @@
 /**
  * The empty list state for an ACF Options Page
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 ?>

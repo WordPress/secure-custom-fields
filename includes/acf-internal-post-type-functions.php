@@ -3,7 +3,7 @@
 /**
  * Generic functions for accessing ACF objects stored as WordPress post types which aren't handled by type specific functions.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**

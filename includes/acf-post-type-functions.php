@@ -2,7 +2,7 @@
 /**
  * Functions for ACF post type objects.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**

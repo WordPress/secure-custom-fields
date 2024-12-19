@@ -3,7 +3,7 @@
 /**
  * General functions relating to the bidirectional feature of some fields.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**

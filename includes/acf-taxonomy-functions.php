@@ -2,7 +2,7 @@
 /**
  * Functions for ACF taxonomy objects.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**

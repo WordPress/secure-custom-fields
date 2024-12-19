@@ -2,7 +2,7 @@
 /**
  * View to output admin tools for both archive and single
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 $class = $active ? 'single' : 'grid';
