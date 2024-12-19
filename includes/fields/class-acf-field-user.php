@@ -9,7 +9,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Initializes the field type.
 		 *
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		function initialize() {
 			$this->name          = 'user';
@@ -40,7 +40,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		/**
 		 * Filters choices in user conditions.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array  $choices           The selected choice.
 		 * @param array  $conditional_field The conditional field settings object.
@@ -69,7 +69,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Renders the field settings HTML.
 		 *
 		 * @date    23/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   array $field The ACF field.
 		 * @return  void
@@ -121,7 +121,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		/**
 		 * Renders the field settings used in the "Advanced" tab.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -154,7 +154,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		/**
 		 * Renders the field input HTML.
 		 *
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   array $field The ACF field.
 		 * @return  void
@@ -196,7 +196,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Returns the result text for a given WP_User object.
 		 *
 		 * @date    1/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   WP_User      $user    The WP_User object.
 		 * @param   array        $field   The ACF field related to this query.
@@ -215,7 +215,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * Filters the result text.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $args The query args.
 			 * @param   array $field The ACF field related to this query.
@@ -228,7 +228,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the field value after it is loaded from the database.
 		 *
 		 * @date    23/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   mixed $value   The field value.
 		 * @param   mixed $post_id The post ID where the value is saved.
@@ -248,7 +248,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the field value after it is loaded from the database but before it is returned to the front-end API.
 		 *
 		 * @date    23/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   mixed $value   The field value.
 		 * @param   mixed $post_id The post ID where the value is saved.
@@ -322,7 +322,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		/**
 		 * Filters the field value before it is saved into the database.
 		 *
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param  mixed $value   The field value.
 		 * @param  mixed $post_id The post ID where the value is saved.
@@ -359,7 +359,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Callback for the AJAX query request.
 		 *
 		 * @date    24/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -388,7 +388,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Runs during the AJAX query initialization.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array          $request The query request.
 		 * @param   ACF_Ajax_Query $query   The query object.
@@ -413,7 +413,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the AJAX query args.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array          $args    The query args.
 		 * @param   array          $request The query request.
@@ -431,7 +431,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * Filters the query args.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $args The query args.
 			 * @param   array $field The ACF field related to this query.
@@ -444,7 +444,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the WP_User_Query search columns.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array         $columns       An array of column names to be searched.
 		 * @param   string        $search        The search term.
@@ -457,7 +457,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * Filters the column names to be searched.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $columns An array of column names to be searched.
 			 * @param   string $search The search term.
@@ -471,7 +471,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the AJAX Query result.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array          $item  The choice id and text.
 		 * @param   WP_User        $user  The user object.
@@ -484,7 +484,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * Filters the result text.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   string The result text.
 			 * @param   WP_User $user The user object.
@@ -499,7 +499,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Return an array of data formatted for use in a select2 AJAX response.
 		 *
 		 * @date    15/10/2014
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 * @deprecated 5.8.9
 		 *
 		 * @param   array $args An array of query args.
@@ -514,7 +514,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 		 * Filters the WP_User_Query search columns.
 		 *
 		 * @date    15/10/2014
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9
 		 * @deprecated 5.8.9
 		 *
 		 * @param   array         $columns       An array of column names to be searched.

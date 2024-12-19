@@ -18,7 +18,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -66,7 +66,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function input_admin_enqueue_scripts() {
 
@@ -82,7 +82,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * AJAX handler for retrieving and rendering an attachment.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -123,7 +123,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * AJAX handler for updating an attachment.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -197,7 +197,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * AJAX handler for getting the attachment sort order.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @return void
 		 */
@@ -252,7 +252,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * Renders the sidebar HTML shown when selecting an attachmemnt.
 		 *
 		 * @date    13/12/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   integer $id    The attachment ID.
 		 * @param   array   $field The field array.
@@ -368,7 +368,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @param   array $field The field array holding all the field's data.
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 * @return  void
 		 */
@@ -497,7 +497,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   array $field  an array holding all the field's data.
@@ -538,7 +538,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -668,7 +668,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -704,7 +704,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * Filters the value after it is loaded from the database and before it is returned to the template.
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   mixed $value   The value which was loaded from the database.
@@ -769,7 +769,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   bool   $valid Whether the value is valid.
 		 * @param   mixed  $value The field value.
@@ -797,7 +797,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   mixed $value   The value which will be saved in the database.

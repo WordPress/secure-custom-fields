@@ -27,7 +27,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Constructs the ACF_Site_Health class.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 */
 		public function __construct() {
 			add_action( 'debug_information', array( $this, 'render_tab_content' ) );
@@ -48,7 +48,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Gets the stored site health information.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return array
 		 */
@@ -65,7 +65,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Updates the site health information.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $data An array of site health information to update.
 		 * @return boolean
@@ -77,7 +77,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Stores debug data in the ACF site health option.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $data Data to update with (optional).
 		 * @return boolean
@@ -112,7 +112,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Pushes an event to the ACF site health option.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param string $event_name The name of the event to push.
 		 * @return boolean
@@ -145,7 +145,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Logs activation events for free/pro.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return boolean
 		 */
@@ -158,7 +158,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Adds events when ACF internal post types are created.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $post The post about to be updated.
 		 * @return array
@@ -195,7 +195,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Appends the SCF section to the "Info" tab of the WordPress Site Health screen.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $debug_info The current debug info for site health.
 		 * @return array The debug info appended with the SCF section.
@@ -241,7 +241,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		/**
 		 * Gets the values for all data in the ACF site health section.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return array
 		 */

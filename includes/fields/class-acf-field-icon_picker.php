@@ -14,7 +14,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Initialize icon picker field
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return void
 		 */
@@ -40,7 +40,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Gets the available tabs for the icon picker field.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return array
 		 */
@@ -58,7 +58,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 			/**
 			 * Allows filtering the tabs used by the icon picker.
 			 *
-			 * @since 6.3
+			 * @since ACF 6.3
 			 *
 			 * @param array $tabs An associative array of tabs in key => label format.
 			 * @return array
@@ -69,7 +69,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Renders icon picker field
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param object $field The ACF Field
 		 * @return void
@@ -225,7 +225,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Renders field settings for the icon picker field.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $field The icon picker field object.
 		 * @return void
@@ -273,7 +273,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Localizes text for Icon Picker
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return void
 		 */
@@ -292,7 +292,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Validates the field value before it is saved into the database.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param  integer $valid The current validation status.
 		 * @param  mixed   $value The value of the field.
@@ -329,7 +329,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		 *
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param  mixed   $value   The value which was loaded from the database.
 		 * @param  integer $post_id The $post_id from which the value was loaded.
@@ -376,7 +376,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		 *
 		 * This function will return an array of dashicons.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @return  array $dashicons an array of dashicons.
 		 */
@@ -728,7 +728,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Returns the schema used by the REST API.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param array $field The main field array.
 		 * @return array
@@ -756,7 +756,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		/**
 		 * Validates a value sent via the REST API.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param boolean    $valid The current validity boolean.
 		 * @param array|null $value The value of the field.

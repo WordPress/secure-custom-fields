@@ -46,7 +46,7 @@ function acf_get_internal_post_type( $id, $post_type ) {
 /**
  * Retrieves raw internal post type data for the given identifier.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param   integer|string $id        The post ID.
  * @param   string         $post_type The post type name.
@@ -65,7 +65,7 @@ function acf_get_raw_internal_post_type( $id, $post_type ) {
 /**
  * Gets a post object from an ACF internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id        The post ID, key, or name.
  * @param string         $post_type The post type name.
@@ -84,7 +84,7 @@ function acf_get_internal_post_type_post( $id, $post_type ) {
 /**
  * Returns true if the given identifier is a ACF internal post type key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $id        The identifier.
  * @param string $post_type The ACF post type the key is for.
@@ -102,7 +102,7 @@ function acf_is_internal_post_type_key( $id = '', $post_type = 'acf-field-group'
 /**
  * Validates an ACF internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $internal_post_type The internal post type array.
  * @param string $post_type_name     The post type name.
@@ -121,7 +121,7 @@ function acf_validate_internal_post_type( $internal_post_type, $post_type_name )
 /**
  * Translates the settings for an ACF internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $internal_post_type The ACF post array.
  * @param string $post_type          The post type name.
@@ -140,7 +140,7 @@ function acf_translate_internal_post_type( $internal_post_type, $post_type ) {
 /**
  * Returns and array of ACF posts for the given $filter.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $post_type The ACF post type to get posts for.
  * @param array  $filter    An array of args to filter results by.
@@ -160,7 +160,7 @@ function acf_get_internal_post_type_posts( $post_type = 'acf-field-group', $filt
 /**
  * Returns an array of raw/unvalidated ACF post data.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $post_type The ACF post type to get post data for.
  * @return array
@@ -179,7 +179,7 @@ function acf_get_raw_internal_post_type_posts( $post_type ) {
 /**
  * Returns a filtered array of ACF posts based on the given $args.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $posts     An array of ACF posts.
  * @param array  $args      An array of args to filter by.
@@ -200,7 +200,7 @@ function acf_filter_internal_post_type_posts( $posts, $args = array(), $post_typ
 /**
  * Updates a internal post type in the database.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param array  $internal_post_type Array of data to be saved.
  * @param string $post_type_name     The internal post type being updated.
@@ -219,7 +219,7 @@ function acf_update_internal_post_type( $internal_post_type, $post_type_name ) {
 /**
  * Deletes all caches for the provided ACF post.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The ACF post type the cache is being cleared for.
@@ -236,7 +236,7 @@ function acf_flush_internal_post_type_cache( $post, $post_type ) {
 /**
  * Deletes an internal post type from the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id             The internal post type ID, key or name.
  * @param string         $post_type_name The post type to be deleted.
@@ -255,7 +255,7 @@ function acf_delete_internal_post_type( $id = 0, $post_type_name = '' ) {
 /**
  * Trashes an internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id             The internal post type ID, key, or name.
  * @param string         $post_type_name The post type being trashed.
@@ -274,7 +274,7 @@ function acf_trash_internal_post_type( $id = 0, $post_type_name = '' ) {
 /**
  * Restores an ACF post from the trash.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id             The internal post type ID, key, or name.
  * @param string         $post_type_name The post type being untrashed.
@@ -293,7 +293,7 @@ function acf_untrash_internal_post_type( $id = 0, $post_type_name = '' ) {
 /**
  * Returns true if the given params match an ACF post.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The ACF post type.
@@ -312,7 +312,7 @@ function acf_is_internal_post_type( $post, $post_type ) {
 /**
  * Duplicates an ACF post.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id          The field_group ID, key or name.
  * @param integer        $new_post_id Optional ID to override.
@@ -350,7 +350,7 @@ function acf_update_internal_post_type_active_status( $id, $activate = true, $po
 /**
  * Checks if the current user can edit the field group and returns the edit url.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer $post_id   The ACF post ID.
  * @param string  $post_type The ACF post type to get the edit link for.
@@ -369,7 +369,7 @@ function acf_get_internal_post_type_edit_link( $post_id, $post_type ) {
 /**
  * Returns a modified field group ready for export.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The post type of the ACF post being exported.
@@ -388,7 +388,7 @@ function acf_prepare_internal_post_type_for_export( $post = array(), $post_type 
 /**
  * Exports an ACF post as PHP.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The post type of the ACF post being exported.
@@ -407,7 +407,7 @@ function acf_export_internal_post_type_as_php( $post, $post_type = 'acf-field-gr
 /**
  * Prepares an ACF post for the import process.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The post type of the ACF post being imported.
@@ -426,7 +426,7 @@ function acf_prepare_internal_post_type_for_import( $post = array(), $post_type 
 /**
  * Imports an ACF post into the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The ACF post array.
  * @param string $post_type The post type of the ACF post being imported.
@@ -469,7 +469,7 @@ function acf_determine_internal_post_type( $key ) {
 /**
  * Check if the provided key is an identifiable ACF post type.
  *
- * @since 6.2.8
+ * @since ACF 6.2.8
  *
  * @param string $key The key to check.
  * @return boolean
@@ -481,7 +481,7 @@ function acf_is_valid_internal_post_type_key( string $key ) {
 /**
  * Check if the provided post type object contains a valid internal post type key.
  *
- * @since 6.2.8
+ * @since ACF 6.2.8
  *
  * @param array $internal_post_type The post type object array to check it's key.
  * @return boolean
@@ -496,7 +496,7 @@ function acf_internal_post_object_contains_valid_key( array $internal_post_type 
 /**
  * Returns an array of tabs for the post type advanced settings.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @return array
  */
@@ -525,7 +525,7 @@ function acf_get_combined_post_type_settings_tabs() {
 /**
  * Returns an array of tabs for the taxonomy advanced settings.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @return array
  */
@@ -554,7 +554,7 @@ function acf_get_combined_taxonomy_settings_tabs() {
 /**
  * Returns an array of tabs for the options page advanced settings
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @return array
  */
@@ -580,7 +580,7 @@ function acf_get_combined_options_page_settings_tabs() {
 /**
  * Converts an _acf_screen or hook value into a post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $screen The ACF screen being viewed.
  * @return string The post type matching the screen or hook value.
@@ -603,7 +603,7 @@ function acf_get_post_type_from_screen_value( $screen ) {
 /**
  * Calls the ajax validator for a post type
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $post_type The post type being validated.
  * @return mixed
@@ -619,7 +619,7 @@ function acf_validate_internal_post_type_values( $post_type ) {
 /**
  * Adds a validation error for ACF internal post types.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $name      The name of the input.
  * @param string $message   An optional error message to display.
@@ -648,7 +648,7 @@ function acf_add_internal_post_type_validation_error( $name, $message = '', $pos
 /**
  * Gets an ACF post type from request args and verifies nonce based on action.
  *
- * @since 6.1.5
+ * @since ACF 6.1.5
  *
  * @param string $action The action being performed.
  * @return array|boolean
@@ -666,7 +666,7 @@ function acf_get_post_type_from_request_args( $action = '' ) {
 /**
  * Gets an ACF taxonomy from request args and verifies nonce based on action.
  *
- * @since 6.1.5
+ * @since ACF 6.1.5
  *
  * @param string $action The action being performed.
  * @return array|boolean
@@ -684,7 +684,7 @@ function acf_get_taxonomy_from_request_args( $action = '' ) {
 /**
  * Gets an ACF options page from request args and verifies nonce based on action.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param string $action The action being performed.
  * @return array|boolean

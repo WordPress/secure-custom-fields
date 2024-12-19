@@ -21,7 +21,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-ui-options-page';
@@ -29,7 +29,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-options-pages';
@@ -51,7 +51,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * Constructor.
 		 *
-		 * @since   6.2
+		 * @since   ACF 6.2
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -61,7 +61,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * Current screen actions for the post types list admin page.
 		 *
-		 * @since   6.1
+		 * @since   ACF 6.1
 		 */
 		public function current_screen() {
 			// Bail early if not post types admin page.
@@ -92,7 +92,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * Add any menu items required for post types.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function admin_menu() {
 			$parent_slug = 'edit.php?post_type=acf-field-group';
@@ -104,7 +104,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		 * Customizes the admin table columns.
 		 *
 		 * @date    1/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param array $_columns The columns array.
 		 * @return array
@@ -135,7 +135,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		 * Renders a specific admin table column.
 		 *
 		 * @date    17/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param string $column_name The name of the column to display.
 		 * @param array  $post        The main ACF post array.
@@ -168,7 +168,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * Gets the translated action notice text for list table actions (activate, deactivate, sync, etc.).
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string  $action The action being performed.
 		 * @param integer $count  The number of items the action was performed on.

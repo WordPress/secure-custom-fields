@@ -5,7 +5,7 @@
 	 *  Returns a single fieldObject $el for a given field key
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	string key The field key
 	 *  @return	jQuery
@@ -24,7 +24,7 @@
 	 *  Returns an array of fieldObject $el for the given args
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	object args
 	 *  @return	jQuery
@@ -91,7 +91,7 @@
 	 *  Returns a single fieldObject instance for a given $el|key
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	string|jQuery $field The field $el or key
 	 *  @return	jQuery
@@ -119,7 +119,7 @@
 	 *  Returns an array of fieldObject instances for the given args
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	object args
 	 *  @return	array
@@ -146,7 +146,7 @@
 	 *  Initializes and returns a new FieldObject instance
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	jQuery $field The field $el
 	 *  @return	object
@@ -169,7 +169,7 @@
 	 *  description
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -270,7 +270,7 @@
 	 *  description
 	 *
 	 *  @date	4/1/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

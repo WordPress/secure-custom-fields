@@ -118,7 +118,7 @@
 	 *  Events manager for the acf accordion
 	 *
 	 *  @date	14/2/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void

@@ -42,7 +42,7 @@ class Bindings {
 	/**
 	 * Handle returing the block binding value for an ACF meta value.
 	 *
-	 * @since 6.2.8
+	 * @since ACF 6.2.8
 	 *
 	 * @param array     $source_attrs   An array of the source attributes requested.
 	 * @param \WP_Block $block_instance The block instance.

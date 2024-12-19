@@ -20,7 +20,7 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 		 * Initializes props.
 		 *
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -37,7 +37,7 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 		 * Matches the provided rule against the screen args returning a bool result.
 		 *
 		 * @date    9/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $rule        The location rule.
 		 * @param   array $screen      The screen args.
@@ -61,7 +61,7 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 		 * Returns an array of possible values for this rule type.
 		 *
 		 * @date    9/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $rule A location rule.
 		 * @return  array
@@ -87,7 +87,7 @@ if ( ! class_exists( 'ACF_Location_Block' ) ) :
 		/**
 		 * Adds block-specific classes to field groups in the Field Groups list table.
 		 *
-		 * @since 6.2.8
+		 * @since ACF 6.2.8
 		 *
 		 * @param array   $classes   An array of the classes used by the field group.
 		 * @param array   $css_class An array of additional classes added to the field group.

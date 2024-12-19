@@ -62,7 +62,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * A dummy constructor to ensure ACF is only setup once.
 		 *
 		 * @date    23/06/12
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function __construct() {
 			// Do nothing.
@@ -72,7 +72,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Sets up the ACF plugin.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 
@@ -249,7 +249,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Completes the setup process on "init" of earlier.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function init() {
 
@@ -332,7 +332,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 * Fires after field types have been included.
 			 *
 			 * @date    28/09/13
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
@@ -367,7 +367,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 * Fires after location types have been included.
 			 *
 			 * @date    28/09/13
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
@@ -377,7 +377,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 * Fires during initialization. Used to add local fields.
 			 *
 			 * @date    28/09/13
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
@@ -386,7 +386,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires during initialization. Used to add local post types.
 			 *
-			 * @since 6.1
+			 * @since ACF 6.1
 			 *
 			 * @param int ACF_MAJOR_VERSION The major version of ACF.
 			 */
@@ -395,7 +395,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires during initialization. Used to add local taxonomies.
 			 *
-			 * @since 6.1
+			 * @since ACF 6.1
 			 *
 			 * @param int ACF_MAJOR_VERSION The major version of ACF.
 			 */
@@ -418,7 +418,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 * Fires after ACF is completely "initialized".
 			 *
 			 * @date    28/09/13
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
 			 */
@@ -429,7 +429,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Registers the ACF post types.
 		 *
 		 * @date    22/10/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function register_post_types() {
 			$cap = acf_get_setting( 'capability' );
@@ -507,7 +507,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Registers the ACF post statuses.
 		 *
 		 * @date    22/10/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function register_post_status() {
 
@@ -530,7 +530,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Filters the $where clause allowing for custom WP_Query args.
 		 *
 		 * @date    31/8/19
-		 * @since   5.8.1
+		 * @since   ACF 5.8.1
 		 *
 		 * @param  string   $where    The WHERE clause.
 		 * @param  WP_Query $wp_query The query object.
@@ -583,7 +583,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Defines a constant if doesnt already exist.
 		 *
 		 * @date    3/5/17
-		 * @since   5.5.13
+		 * @since   ACF 5.5.13
 		 *
 		 * @param   string $name  The constant name.
 		 * @param   mixed  $value The constant value.
@@ -599,7 +599,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Returns true if a setting exists for this name.
 		 *
 		 * @date    2/2/18
-		 * @since   5.6.5
+		 * @since   ACF 5.6.5
 		 *
 		 * @param   string $name The setting name.
 		 * @return  boolean
@@ -612,7 +612,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Returns a setting or null if doesn't exist.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $name The setting name.
 		 * @return  mixed
@@ -625,7 +625,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Updates a setting for the given name and value.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $name  The setting name.
 		 * @param   mixed  $value The setting value.
@@ -640,7 +640,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Returns data or null if doesn't exist.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $name The data name.
 		 * @return  mixed
@@ -653,7 +653,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Sets data for the given name and value.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   string $name  The data name.
 		 * @param   mixed  $value The data value.
@@ -667,7 +667,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Returns an instance or null if doesn't exist.
 		 *
 		 * @date    13/2/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @param   string $class The instance class name.
 		 * @return  object
@@ -681,7 +681,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Creates and stores an instance of the given class.
 		 *
 		 * @date    13/2/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @param   string $class The instance class name.
 		 * @return  object
@@ -697,7 +697,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Magic __isset method for backwards compatibility.
 		 *
 		 * @date    24/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $key Key name.
 		 * @return  boolean
@@ -710,7 +710,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Magic __get method for backwards compatibility.
 		 *
 		 * @date    24/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $key Key name.
 		 * @return  mixed
@@ -728,7 +728,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		/**
 		 * Plugin Activation Hook
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 */
 		public function acf_plugin_activated() {
 			// Set the first activated version of ACF.
@@ -750,7 +750,7 @@ if ( ! class_exists( 'ACF' ) ) {
 	 * Example: <?php $acf = acf(); ?>
 	 *
 	 * @date    4/09/13
-	 * @since   4.3.0
+	 * @since   ACF 4.3.0
 	 *
 	 * @return  ACF
 	 */

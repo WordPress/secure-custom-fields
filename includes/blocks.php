@@ -21,7 +21,7 @@ add_action( 'acf_block_render_template', 'acf_block_render_template', 10, 6 );
 /**
  * Prefix block names for SCF blocks registered through block.json
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param array $metadata The block metadata array.
  * @return array The original array with a prefixed block name if it's an ACF block.
@@ -39,7 +39,7 @@ function acf_add_block_namespace( $metadata ) {
 /**
  * Handle an SCF block registered through block.json
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param array $settings The compiled block settings.
  * @param array $metadata The raw json metadata.
@@ -149,7 +149,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 /**
  * Check if a block.json block is an SCF block.
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param array $metadata The raw block metadata array.
  * @return boolean
@@ -163,7 +163,7 @@ function acf_is_acf_block_json( $metadata ) {
  * Registers a block type.
  *
  * @date    18/2/19
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   array $block The block settings.
  * @return  (array|false)
@@ -175,7 +175,7 @@ function acf_register_block_type( $block ) {
 	/**
 	 * Filters the arguments for registering a block type.
 	 *
-	 * @since   5.8.9
+	 * @since   ACF 5.8.9
 	 *
 	 * @param   array $block The array of arguments for registering a block type.
 	 */
@@ -230,7 +230,7 @@ function acf_register_block_type( $block ) {
  * See acf_register_block_type().
  *
  * @date    18/2/19
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   array $block The block settings.
  * @return  (array|false)
@@ -242,7 +242,7 @@ function acf_register_block( $block ) {
 /**
  * Returns true if a block type exists for the given name.
  *
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   string $name The block type name.
  * @return  boolean
@@ -254,7 +254,7 @@ function acf_has_block_type( $name ) {
 /**
  * Returns an array of all registered block types.
  *
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @return  array
  */
@@ -265,7 +265,7 @@ function acf_get_block_types() {
 /**
  * Returns a block type for the given name.
  *
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   string $name The block type name.
  * @return  (array|null)
@@ -277,7 +277,7 @@ function acf_get_block_type( $name ) {
 /**
  * Removes a block type for the given name.
  *
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   string $name The block type name.
  * @return  void
@@ -290,7 +290,7 @@ function acf_remove_block_type( $name ) {
  * Returns an array of default attribute settings for a block type.
  *
  * @date    19/11/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param array $block_type A block configuration array.
  * @return array
@@ -356,7 +356,7 @@ function acf_get_block_type_default_attributes( $block_type ) {
 /**
  * Validates a block type ensuring all settings exist.
  *
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   array $block The block settings.
  * @return  array
@@ -421,7 +421,7 @@ function acf_validate_block_type( $block ) {
 /**
  * Prepares a block for use in render_callback by merging in all settings and attributes.
  *
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   array $block The block props.
  * @return  array|boolean
@@ -472,7 +472,7 @@ function acf_prepare_block( $block ) {
 /**
  * Add backwards compatible attribute values.
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param array $block The original block.
  * @return array Modified block array with backwards compatibility attributes.
@@ -490,7 +490,7 @@ function acf_add_back_compat_attributes( $block ) {
 /**
  * Get back compat new values and old values.
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @return array back compat key array.
  */
@@ -507,7 +507,7 @@ function acf_get_block_back_compat_attribute_key_array() {
  * The render callback for all ACF blocks.
  *
  * @date    28/10/20
- * @since   5.9.2
+ * @since   ACF 5.9.2
  *
  * @param   array    $attributes The block attributes.
  * @param   string   $content    The block content.
@@ -537,7 +537,7 @@ function acf_render_block_callback( $attributes, $content = '', $wp_block = null
  * Returns the rendered block HTML.
  *
  * @date    28/2/19
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   array    $attributes     The block attributes.
  * @param   string   $content        The block content.
@@ -672,7 +672,7 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 /**
  * Renders the block HTML.
  *
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   array    $attributes The block attributes.
  * @param   string   $content    The block content.
@@ -719,7 +719,7 @@ function acf_render_block( $attributes, $content = '', $is_preview = false, $pos
 /**
  * Locate and include an ACF block's template.
  *
- * @since   6.0.4
+ * @since   ACF 6.0.4
  *
  * @param   array   $block      The block props.
  * @param   string  $content    The block content.
@@ -750,7 +750,7 @@ function acf_block_render_template( $block, $content, $is_preview, $post_id, $wp
  * Returns an array of all fields for the given block.
  *
  * @date    24/10/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   array $block The block props.
  * @return  array
@@ -783,7 +783,7 @@ function acf_get_block_fields( $block ) {
 /**
  * Enqueues and localizes block scripts and styles.
  *
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @return  void
  */
@@ -846,7 +846,7 @@ function acf_enqueue_block_assets() {
 /**
  * Enqueues scripts and styles for a specific block type.
  *
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   array $block_type The block type settings.
  * @return  void
@@ -875,7 +875,7 @@ function acf_enqueue_block_type_assets( $block_type ) {
 /**
  * Handles the ajax request for block data.
  *
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @return  void
  */
@@ -1034,7 +1034,7 @@ acf_register_ajax( 'fetch-block', 'acf_ajax_fetch_block' );
 /**
  * Render the empty block form for when a block has no fields assigned.
  *
- * @since   6.0.0
+ * @since   ACF 6.0.0
  *
  * @param   string $block_name The block name current being rendered.
  * @return  string The html that makes up a block form with no fields.
@@ -1068,7 +1068,7 @@ function acf_get_empty_block_form_html( $block_name ) {
 /**
  * Parse content that may contain HTML block comments and saves ACF block meta.
  *
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   string $text Content that may contain HTML block comments.
  * @return  string
@@ -1091,7 +1091,7 @@ add_filter( 'content_save_pre', 'acf_parse_save_blocks', 5, 1 );
 /**
  * Callback used in preg_replace to modify ACF Block comment.
  *
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   array $matches The preg matches.
  * @return  string
@@ -1131,7 +1131,7 @@ function acf_parse_save_blocks_callback( $matches ) {
 	/**
 	 * Filters the block attributes before saving.
 	 *
-	 * @since 5.7.14
+	 * @since ACF 5.7.14
 	 *
 	 * @param array $attrs The block attributes.
 	 */
@@ -1146,7 +1146,7 @@ function acf_parse_save_blocks_callback( $matches ) {
 /**
  * Return or generate a block ID.
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param array   $attributes A block attributes array.
  * @param array   $context    The block context array, defaults to an empty array.
@@ -1182,7 +1182,7 @@ function acf_get_block_id( $attributes, $context = array(), $force = false ) {
 /**
  * Ensure a block ID always has a block_ prefix for post meta internals.
  *
- * @since 6.0.0
+ * @since ACF 6.0.0
  *
  * @param string $block_id A possibly non-prefixed block ID.
  * @return string A prefixed block ID.
@@ -1205,7 +1205,7 @@ function acf_ensure_block_id_prefix( $block_id ) {
  * TODO: Remove this when we refactor `acf_parse_save_blocks_callback()` to use `serialize_block()`,
  * or when we're confident that folks aren't using WP versions prior to 5.8.
  *
- * @since 5.12
+ * @since ACF 5.12
  *
  * @param array $block_attributes Attributes object.
  * @return string Serialized attributes.
@@ -1228,7 +1228,7 @@ function acf_serialize_block_attributes( $block_attributes ) {
  * This function can use values loaded into Local Meta, which means they have to be
  * converted back to the data format before they can be validated.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @param array   $block          An array of the block's data attribute.
  * @param boolean $using_defaults True if the block is currently being generated with default values. Default false.
@@ -1265,7 +1265,7 @@ function acf_get_block_validation_state( $block, $using_defaults = false, $use_p
 /**
  * Handle the specific validation for a block from POSTed values.
  *
- * @since 6.3.1
+ * @since ACF 6.3.1
  *
  * @param array $block The block object containing the POSTed values and other block data.
  * @return array|boolean An array containing the validation errors, or false if there are no errors.
@@ -1283,7 +1283,7 @@ function acf_validate_block_from_post_data( $block ) {
  * This function uses the values loaded into Local Meta, which means they have to be
  * converted back to the data format because they can be validated.
  *
- * @since 6.3.1
+ * @since ACF 6.3.1
  *
  * @param string  $block_id       The block ID.
  * @param array   $field_objects  The field objects in local meta to be validated.
@@ -1337,7 +1337,7 @@ function acf_validate_block_from_local_meta( $block_id, $field_objects, $using_d
  * Set ACF data before a rest call if media scripts have not been enqueued yet for after REST reset.
  *
  * @date    07/06/22
- * @since   6.0
+ * @since   ACF 6.0
  *
  * @param   WP_REST_Response|WP_HTTP_Response|WP_Error|mixed $response The WordPress response object.
  * @return  mixed
@@ -1357,7 +1357,7 @@ add_filter( 'rest_request_before_callbacks', 'acf_set_after_rest_media_enqueue_r
  * Reset wp_enqueue_media action count after REST call so it can happen inside the main execution if required.
  *
  * @date    07/06/22
- * @since   6.0
+ * @since   ACF 6.0
  *
  * @param   WP_REST_Response|WP_HTTP_Response|WP_Error|mixed $response The WordPress response object.
  * @return  mixed
@@ -1377,7 +1377,7 @@ add_filter( 'rest_request_after_callbacks', 'acf_reset_media_enqueue_after_rest'
 /**
  * Checks if the provided block is configured to save/load post meta.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @param array $block The block to check.
  * @return boolean
@@ -1393,7 +1393,7 @@ function acf_block_uses_post_meta( $block ): bool {
 /**
  * Loads ACF field values from the post meta if the block is configured to do so.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @param array   $block   The block to get values for.
  * @param integer $post_id The ID of the post to retrieve meta from.
@@ -1449,7 +1449,7 @@ function acf_add_block_meta_values( $block, $post_id ) {
 /**
  * Stores ACF field values in post meta for any blocks configured to do so.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @param integer $post_id The ID of the post being saved.
  * @param WP_Post $post    The post object.
@@ -1471,7 +1471,7 @@ add_action( 'save_post', 'acf_save_block_meta_values', 10, 2 );
  * Iterates over blocks in post content and retrieves values
  * that need to be saved to post meta.
  *
- * @since 6.3
+ * @since ACF 6.3
  *
  * @param string $content The content saved for the post.
  * @return array An array containing the field values that need to be saved.

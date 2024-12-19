@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Legacy_Locations' ) ) :
 		 * Magic __isset method for backwards compatibility.
 		 *
 		 * @date    10/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $key Key name.
 		 * @return  boolean
@@ -28,7 +28,7 @@ if ( ! class_exists( 'ACF_Legacy_Locations' ) ) :
 		 * Magic __get method for backwards compatibility.
 		 *
 		 * @date    10/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $key Key name.
 		 * @return  mixed
@@ -46,7 +46,7 @@ if ( ! class_exists( 'ACF_Legacy_Locations' ) ) :
 		 * Magic __call method for backwards compatibility.
 		 *
 		 * @date    10/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $name      The method name.
 		 * @param   array  $arguments The array of arguments.

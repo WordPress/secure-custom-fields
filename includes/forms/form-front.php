@@ -20,7 +20,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -72,7 +72,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -147,7 +147,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -167,7 +167,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -192,7 +192,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -224,7 +224,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -290,7 +290,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -310,7 +310,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/3/17
-		 * @since   5.5.10
+		 * @since   ACF 5.5.10
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -357,7 +357,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/3/17
-		 * @since   5.5.10
+		 * @since   ACF 5.5.10
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -407,7 +407,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 *
 		 * @type    function
 		 * @date    7/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -554,7 +554,7 @@ endif; // class_exists check
  *
  * @type    function
  * @date    11/06/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   n/a
  * @return  n/a

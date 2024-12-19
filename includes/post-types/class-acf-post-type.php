@@ -80,7 +80,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Registers the acf-post-type custom post type with WordPress.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function register_post_type() {
 			$cap = acf_get_setting( 'capability' );
@@ -122,7 +122,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Register activated post types with WordPress
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function register_post_types() {
 			foreach ( $this->get_posts( array( 'active' => true ) ) as $post_type ) {
@@ -144,7 +144,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Filters the "Add title" text for ACF post types.
 		 *
-		 * @since 6.2.1
+		 * @since ACF 6.2.1
 		 *
 		 * @param string  $default The default text.
 		 * @param WP_Post $post    The WP_Post object.
@@ -257,7 +257,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Validates an ACF internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post array.
 		 * @return array
@@ -300,7 +300,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 			 * Filters the ACF post array to validate settings.
 			 *
 			 * @date    12/02/2014
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   array $post The post array.
 			 */
@@ -311,7 +311,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		 * Validates post type values before allowing save from the global $_POST object.
 		 * Errors are added to the form using acf_add_internal_post_type_validation_error().
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @return boolean validity status
 		 */
@@ -381,7 +381,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		 * Omits settings that line up with the WordPress defaults to reduce the size
 		 * of the array passed to `register_post_type()`, which might be exported.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param  array   $post          The main ACF post type settings array.
 		 * @param  boolean $escape_labels Determines if the label values should be escaped.
@@ -623,7 +623,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Ensure the metabox being called does not perform any unsafe operations.
 		 *
-		 * @since 6.3.8
+		 * @since ACF 6.3.8
 		 *
 		 * @param WP_Post $post The post being rendered.
 		 * @return mixed The callback result.
@@ -676,7 +676,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Returns a string that can be used to create a post type in PHP.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post type array.
 		 * @return string
@@ -708,7 +708,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Flush rewrite rules whenever anything changes about a post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post type array.
 		 */
@@ -736,7 +736,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Translates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The field group array.
 		 * @return array
@@ -758,7 +758,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 				 * Filters the post array to translate strings.
 				 *
 				 * @date    12/02/2014
-				 * @since   5.0.0
+				 * @since   ACF 5.0.0
 				 *
 				 * @param   array $post The post array.
 				 */
@@ -771,7 +771,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		/**
 		 * Imports a post type from CPTUI.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $args Arguments from CPTUI.
 		 * @return array

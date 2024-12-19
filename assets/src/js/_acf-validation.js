@@ -5,7 +5,7 @@
 	 *  The model for validating forms
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -37,7 +37,7 @@
 		 *  Adds errors to the form.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	array errors An array of errors.
 		 *  @return	void
@@ -52,7 +52,7 @@
 		 *  Adds and error to the form.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object error An error object containing input and message.
 		 *  @return	void
@@ -67,7 +67,7 @@
 		 *  Returns true if the form has errors.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	bool
@@ -82,7 +82,7 @@
 		 *  Removes any errors.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	void
@@ -97,7 +97,7 @@
 		 *  Returns the forms errors.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	array
@@ -112,7 +112,7 @@
 		 *  Returns the forms field errors.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	array
@@ -149,7 +149,7 @@
 		 *  Returns the forms global errors (errors without a specific input).
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	array
@@ -166,7 +166,7 @@
 		 *
 		 *  Displays all errors for this form.
 		 *
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	{string} [location=before] - The location to add the error, before or after the input. Default before. Since 6.3.
 		 *  @return	void
@@ -271,7 +271,7 @@
 		 *  Update the form class when changing the 'status' data
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
 		 *  @param	jQuery $el The form element.
@@ -289,7 +289,7 @@
 		 *  Vaildates the form via AJAX.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object args A list of settings to customize the validation process.
 		 *  @return	bool True if the form is valid.
@@ -450,7 +450,7 @@
 		 *  Called during the constructor function to setup this instance
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	jQuery $form The form element.
 		 *  @return	void
@@ -466,7 +466,7 @@
 		 *  Rests the validation to be used again.
 		 *
 		 *  @date	6/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	void
@@ -488,7 +488,7 @@
 	 *  Returns the instance for a given form element.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $el The form element.
 	 *  @return	object
@@ -507,7 +507,7 @@
 	/**
 	 *  A helper function to generate a Validator for a block form, so .addErrors can be run via block logic.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 *
 	 *  @param $el The jQuery block form wrapper element.
 	 *  @return bool
@@ -520,7 +520,7 @@
 	 *  A helper function for the Validator.validate() function.
 	 *  Returns true if form is valid, or fetches a validation request and returns false.
 	 *
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	object args A list of settings to customize the validation process.
 	 *  @return	bool
@@ -535,7 +535,7 @@
 	 *  Enables a submit button and returns the element.
 	 *
 	 *  @date	30/8/18
-	 *  @since	5.7.4
+	 *  @since	ACF 5.7.4
 	 *
 	 *  @param	jQuery $submit The submit button.
 	 *  @return	jQuery
@@ -550,7 +550,7 @@
 	 *  Disables a submit button and returns the element.
 	 *
 	 *  @date	30/8/18
-	 *  @since	5.7.4
+	 *  @since	ACF 5.7.4
 	 *
 	 *  @param	jQuery $submit The submit button.
 	 *  @return	jQuery
@@ -565,7 +565,7 @@
 	 *  Shows the spinner element.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $spinner The spinner element.
 	 *  @return	jQuery
@@ -582,7 +582,7 @@
 	 *  Hides the spinner element.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $spinner The spinner element.
 	 *  @return	jQuery
@@ -599,7 +599,7 @@
 	 *  Locks a form by disabeling its primary inputs and showing a spinner.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
@@ -625,7 +625,7 @@
 	 *  Unlocks a form by enabeling its primary inputs and hiding all spinners.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
@@ -648,7 +648,7 @@
 	 *  An internal function to find the 'primary' form submit wrapping element.
 	 *
 	 *  @date	4/9/18
-	 *  @since	5.7.5
+	 *  @since	ACF 5.7.5
 	 *
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
@@ -698,7 +698,7 @@
 	 * A debounced function to trigger a form submission.
 	 *
 	 * @date	15/07/2020
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	type Var Description.
 	 * @return	type Description.
@@ -711,7 +711,7 @@
 	 * Ensure field is visible for validation errors
 	 *
 	 * @date	20/10/2021
-	 * @since	5.11.0
+	 * @since	ACF 5.11.0
 	 */
 	var ensureFieldPostBoxIsVisible = function ( $el ) {
 		// Find the postbox element containing this field.
@@ -731,7 +731,7 @@
 	 * Ensure metaboxes which contain browser validation failures are visible.
 	 *
 	 * @date	20/10/2021
-	 * @since	5.11.0
+	 * @since	ACF 5.11.0
 	 */
 	var ensureInvalidFieldVisibility = function () {
 		// Load each ACF input field and check it's browser validation state.
@@ -750,7 +750,7 @@
 	 *  Global validation logic
 	 *
 	 *  @date	4/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -787,7 +787,7 @@
 		 *  Called when initializing the model.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	void
@@ -807,7 +807,7 @@
 		 *  Enables validation.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	void
@@ -822,7 +822,7 @@
 		 *  Disables validation.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	void
 		 *  @return	void
@@ -837,7 +837,7 @@
 		 *  Rests the form validation to be used again
 		 *
 		 *  @date	6/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	jQuery $form The form element.
 		 *  @return	void
@@ -852,7 +852,7 @@
 		 *  Adds 'invalid' event listeners to HTML inputs.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	jQuery $el The element being added / readied.
 		 *  @return	void
@@ -876,7 +876,7 @@
 		 *  Callback for the 'invalid' event.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
 		 *  @param	jQuery $el The input element.
@@ -911,7 +911,7 @@
 		 *  Callback when clicking submit.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
 		 *  @param	jQuery $el The input element.
@@ -932,7 +932,7 @@
 		 *  Set ignore to true when saving a draft.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
 		 *  @param	jQuery $el The input element.
@@ -948,7 +948,7 @@
 		 * Callback when the 'post' form is submit.
 		 *
 		 * @date	5/3/19
-		 * @since	5.7.13
+		 * @since	ACF 5.7.13
 		 *
 		 * @param	object e The event object.
 		 * @param	jQuery $el The input element.
@@ -971,7 +971,7 @@
 		 *  Callback when the form is submit.
 		 *
 		 *  @date	4/9/18
-		 *  @since	5.7.5
+		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
 		 *  @param	jQuery $el The input element.
@@ -1009,7 +1009,7 @@
 		 * Resets data during onSubmit when the form is allowed to submit.
 		 *
 		 * @date	5/3/19
-		 * @since	5.7.13
+		 * @since	ACF 5.7.13
 		 *
 		 * @param	void
 		 * @return	void

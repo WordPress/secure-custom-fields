@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -37,7 +37,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -88,7 +88,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -138,7 +138,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -155,7 +155,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		 * and ensures the return and display values are set.
 		 *
 		 * @type  filter
-		 * @since 5.11.0
+		 * @since ACF 5.11.0
 		 *
 		 * @param  array $field The field array holding all the field options.
 		 * @return array

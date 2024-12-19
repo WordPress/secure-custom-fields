@@ -64,7 +64,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Constructs the class and any parent classes.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 */
 		public function __construct() {
 			$this->register_post_type();
@@ -88,7 +88,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Registers the acf-ui-options-page custom post type with WordPress.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 */
 		public function register_post_type() {
 			$cap = acf_get_setting( 'capability' );
@@ -130,7 +130,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Register activated options pages.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 */
 		public function register_ui_options_pages() {
 			$child_pages = array();
@@ -192,7 +192,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		 * Validates options page values before allowing save from the global $_POST object.
 		 * Errors are added to the form using acf_add_internal_post_type_validation_error().
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @return boolean validity status
 		 */
@@ -251,7 +251,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Updates the settings for ACF UI options pages.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $post The ACF post to update.
 		 * @return array
@@ -274,7 +274,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Sets up the local JSON functionality for options pages.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @return void
 		 */
@@ -291,7 +291,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Includes all local JSON options pages.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function include_json_options_pages() {
 			$local_json = acf_get_instance( 'ACF_Local_JSON' );
@@ -314,7 +314,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * Returns a string that can be used to create an options page with PHP.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $post The main options page array.
 		 * @return string
@@ -346,7 +346,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		/**
 		 * This function returns whether the value was saved prior to the icon picker field or not.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param mixed $args The args for the icon field.
 		 * @return boolean
@@ -371,7 +371,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 		 * Omits settings that line up with the defaults to reduce the size
 		 * of the array passed to `acf_add_options_page()`, which might be exported.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param array $post The main ACF options page settings array.
 		 * @return array

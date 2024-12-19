@@ -9,7 +9,7 @@ acf_register_store( 'values' )->prop( 'multisite', true );
  * Retrieves the field key for a given field name and post_id.
  *
  * @date    26/1/18
- * @since   5.6.5
+ * @since   ACF 5.6.5
  *
  * @param   string $field_name The name of the field. eg 'sub_heading'.
  * @param   mixed  $post_id    The post_id of which the value is saved against.
@@ -30,7 +30,7 @@ function acf_get_reference( $field_name, $post_id ) {
 	 * Filters the reference value.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param   string $reference The reference value.
 	 * @param   string $field_name The field name.
@@ -43,7 +43,7 @@ function acf_get_reference( $field_name, $post_id ) {
  * Retrieves the value for a given field and post_id.
  *
  * @date    28/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   integer|string $post_id The post id.
  * @param   array          $field   The field array.
@@ -109,7 +109,7 @@ function acf_get_value( $post_id, $field ) {
 	 * Filters the $value after it has been loaded.
 	 *
 	 * @date    28/09/13
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   mixed $value The value to preview.
 	 * @param   string $post_id The post ID for this value.
@@ -132,7 +132,7 @@ acf_add_filter_variations( 'acf/load_value', array( 'type', 'name', 'key' ), 2 )
 /**
  * Returns a formatted version of the provided value.
  *
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param mixed          $value       The field value.
  * @param integer|string $post_id     The post id.
@@ -162,7 +162,7 @@ function acf_format_value( $value, $post_id, $field, $escape_html = false ) {
 	/**
 	 * Filters the $value for use in a template function.
 	 *
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param mixed   $value       The value to preview.
 	 * @param string  $post_id     The post ID for this value.
@@ -187,7 +187,7 @@ acf_add_filter_variations( 'acf/format_value', array( 'type', 'name', 'key' ), 2
  * Updates the value for a given field and post_id.
  *
  * @date    28/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   mixed        $value   The new value.
  * @param   (int|string) $post_id The post id.
@@ -206,7 +206,7 @@ function acf_update_value( $value, $post_id, $field ) {
 	 * Filters the $value before it is updated.
 	 *
 	 * @date    28/09/13
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   mixed $value The value to update.
 	 * @param   string $post_id The post ID for this value.
@@ -242,7 +242,7 @@ acf_add_filter_variations( 'acf/update_value', array( 'type', 'name', 'key' ), 2
  * Updates an array of values.
  *
  * @date    26/2/19
- * @since   5.7.13
+ * @since   ACF 5.7.13
  *
  * @param   array values The array of values.
  * @param   (int|string)                     $post_id The post id.
@@ -269,7 +269,7 @@ function acf_update_values( $values, $post_id ) {
  * Deletes all cached data for this value.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $post_id    The post id.
  * @param   string       $field_name The field name.
@@ -290,7 +290,7 @@ function acf_flush_value_cache( $post_id = 0, $field_name = '' ) {
  * Deletes the value for a given field and post_id.
  *
  * @date    28/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $post_id The post id.
  * @param   array        $field   The field array.
@@ -302,7 +302,7 @@ function acf_delete_value( $post_id, $field ) {
 	 * Fires before a value is deleted.
 	 *
 	 * @date    28/09/13
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   string $post_id The post ID for this value.
 	 * @param   mixed $name The meta name.
@@ -332,7 +332,7 @@ acf_add_filter_variations( 'acf/delete_value', array( 'type', 'name', 'key' ), 2
  * Return a human friendly 'preview' for a given field value.
  *
  * @date    28/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   mixed        $value   The new value.
  * @param   (int|string) $post_id The post id.
@@ -345,7 +345,7 @@ function acf_preview_value( $value, $post_id, $field ) {
 	 * Filters the $value before used in HTML.
 	 *
 	 * @date    24/10/16
-	 * @since   5.5.0
+	 * @since   ACF 5.5.0
 	 *
 	 * @param   mixed $value The value to preview.
 	 * @param   string $post_id The post ID for this value.

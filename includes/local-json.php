@@ -11,7 +11,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * The found JSON field group files.
 		 *
-		 * @since 5.9.0
+		 * @since ACF 5.9.0
 		 * @var array
 		 */
 		private $files = array();
@@ -20,7 +20,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Constructor.
 		 *
 		 * @date    14/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return  void
 		 */
@@ -54,7 +54,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Returns true if this component is enabled.
 		 *
 		 * @date    14/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return  boolean
 		 */
@@ -65,7 +65,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Gets the path(s) to load JSON from.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @return array
 		 */
@@ -75,7 +75,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			/**
 			 * Filters the path(s) used to load JSON from.
 			 *
-			 * @since 6.2
+			 * @since ACF 6.2
 			 *
 			 * @param array $paths An array of potential paths to load JSON from.
 			 * @return array
@@ -86,7 +86,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Gets the path(s) to save JSON to.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param string $key  The key to get paths for (optional).
 		 * @param array  $post The main ACF post array (optional).
@@ -107,7 +107,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			/**
 			 * Filters the paths used to save JSON.
 			 *
-			 * @since 6.2
+			 * @since ACF 6.2
 			 *
 			 * @param array $paths An array of the potential paths to save JSON to.
 			 * @param array $post  The ACF field group, post type, or taxonomy array.
@@ -120,7 +120,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Writes field group data to JSON file.
 		 *
 		 * @date    14/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   array $field_group The field group.
 		 * @return  void
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Writes ACF posts to the JSON file.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main ACF post array.
 		 * @return boolean
@@ -155,7 +155,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			/**
 			 * Filters the ACF post before saving it to the file.
 			 *
-			 * @since 6.1
+			 * @since ACF 6.1
 			 *
 			 * @param array $post The main ACF post array
 			 */
@@ -168,7 +168,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Deletes a field group JSON file.
 		 *
 		 * @date 14/4/20
-		 * @since 5.9.0
+		 * @since ACF 5.9.0
 		 *
 		 * @param  array $field_group The field group.
 		 * @return boolean
@@ -180,7 +180,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Deletes an ACF JSON file.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main ACF post array.
 		 * @return boolean
@@ -200,7 +200,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Includes all local JSON fields.
 		 *
 		 * @date    14/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return  void
 		 */
@@ -224,7 +224,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Includes all local JSON post types.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function include_post_types() {
 			// Bail early if disabled.
@@ -245,7 +245,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Includes all local JSON taxonomies.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function include_taxonomies() {
 			// Bail early if disabled.
@@ -267,7 +267,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Scans for JSON field groups.
 		 *
 		 * @date    14/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return array
 		 */
@@ -278,7 +278,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Scans for JSON files.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string $post_type The ACF post type to scan for.
 		 * @return array
@@ -332,7 +332,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Returns an array of found JSON files.
 		 *
 		 * @date 14/4/20
-		 * @since 5.9.0
+		 * @since ACF 5.9.0
 		 *
 		 * @param string $post_type The ACF post type to get files for.
 		 * @return array
@@ -364,7 +364,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		/**
 		 * Gets the filename for an ACF JSON file.
 		 *
-		 * @since 6.3
+		 * @since ACF 6.3
 		 *
 		 * @param string $key  The ACF post key.
 		 * @param array  $post The main ACF post array.
@@ -380,7 +380,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			/**
 			 * Filters the filename used when saving JSON.
 			 *
-			 * @since 6.2
+			 * @since ACF 6.2
 			 *
 			 * @param string $filename  The default filename.
 			 * @param array  $post      The main post array for the item being saved.
@@ -406,7 +406,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Saves an ACF JSON file.
 		 *
 		 * @date 17/4/20
-		 * @since 5.9.0
+		 * @since ACF 5.9.0
 		 *
 		 * @param string $key  The ACF post key.
 		 * @param array  $post The main ACF post array.
@@ -471,7 +471,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Deletes an ACF JSON file.
 		 *
 		 * @date 17/4/20
-		 * @since 5.9.0
+		 * @since ACF 5.9.0
 		 *
 		 * @param string $key  The ACF post key.
 		 * @param array  $post The main ACF post array.
@@ -500,7 +500,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Includes all local JSON files.
 		 *
 		 * @date       10/03/2014
-		 * @since      5.0.0
+		 * @since      ACF 5.0.0
 		 * @deprecated 5.9.0
 		 */
 		public function include_json_folders() {
@@ -512,7 +512,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * Includes local JSON files within a specific folder.
 		 *
 		 * @date    01/05/2017
-		 * @since   5.5.13
+		 * @since   ACF 5.5.13
 		 * @deprecated 5.9.0
 		 *
 		 * @param   string $path The path to a specific JSON folder.
@@ -532,7 +532,7 @@ endif; // class_exists check
  * Returns an array of found JSON field group files.
  *
  * @date    14/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param string $post_type The ACF post type to get files for.
  * @return array
@@ -545,7 +545,7 @@ function acf_get_local_json_files( $post_type = 'acf-field-group' ) {
  * Saves a field group JSON file.
  *
  * @date    5/12/2014
- * @since   5.1.5
+ * @since   ACF 5.1.5
  *
  * @param   array $field_group The field group.
  * @return  boolean
@@ -558,7 +558,7 @@ function acf_write_json_field_group( $field_group ) {
  * Deletes a field group JSON file.
  *
  * @date    5/12/2014
- * @since   5.1.5
+ * @since   ACF 5.1.5
  *
  * @param   string $key The field group key.
  * @return  boolean True on success.

@@ -1,17 +1,13 @@
 <?php
 
 if ( ! class_exists( 'acf_field_clone' ) ) :
-
 	class acf_field_clone extends acf_field {
-
-
-
 		/**
 		 * This function will setup the field type data
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -56,7 +52,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    14/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -71,7 +67,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * This filter is appied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options
@@ -99,7 +95,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    17/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $fields (array)
 		 * @param   $parent (array)
@@ -159,7 +155,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $field (array)
 		 * @param   $parent (array)
@@ -234,7 +230,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $field (array)
 		 * @param   $clone_field (array)
@@ -313,7 +309,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $field (array)
 		 * @param   $clone_field (array)
@@ -353,7 +349,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    4/11/16
-		 * @since   5.5.0
+		 * @since   ACF 5.5.0.5.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -400,7 +396,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value found in the database
@@ -437,7 +433,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type  filter
-		 * @since 3.6
+		 * @since ACF 3.6 3.6
 		 *
 		 * @param mixed   $value       The value which was loaded from the database.
 		 * @param mixed   $post_id     The $post_id from which the value was loaded.
@@ -508,7 +504,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value which will be saved in the database
@@ -571,7 +567,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -621,7 +617,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    12/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -647,7 +643,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    12/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -710,7 +706,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 * @param   $field  - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 */
 		function render_field_settings( $field ) {
@@ -811,7 +807,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    17/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $value (mixed)
 		 * @return  (array)
@@ -844,7 +840,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    17/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8.3.8
 		 *
 		 * @param   $selector (mixed)
 		 * @return  (string)
@@ -883,7 +879,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    20/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   $field (array)
 		 * @return  (string)
@@ -916,7 +912,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    20/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   $field_group (array)
 		 * @return  (string)
@@ -937,7 +933,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		/**
 		 * AJAX handler for getting potential fields to clone.
 		 *
-		 * @since 5.3.8
+		 * @since ACF 5.3.8.3.8
 		 *
 		 * @return void
 		 */
@@ -1124,7 +1120,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    6/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0.4.0
 		 *
 		 * @param   $field (array)
 		 * @return  $field
@@ -1151,7 +1147,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)

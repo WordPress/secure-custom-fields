@@ -18,7 +18,7 @@ function acf_get_post_type( $id ) {
 /**
  * Retrieves a raw ACF CPT.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param   integer|string $id The post ID.
  * @return  array|false The internal post type array.
@@ -30,7 +30,7 @@ function acf_get_raw_post_type( $id ) {
 /**
  * Gets a post object for an ACF CPT.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The post ID, key, or name.
  * @return object|boolean The post object, or false on failure.
@@ -42,7 +42,7 @@ function acf_get_post_type_post( $id ) {
 /**
  * Returns true if the given identifier is an ACF CPT key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $id The identifier.
  * @return boolean
@@ -54,7 +54,7 @@ function acf_is_post_type_key( $id ) {
 /**
  * Validates an ACF CPT.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return array|boolean
@@ -66,7 +66,7 @@ function acf_validate_post_type( array $post_type = array() ) {
 /**
  * Translates the settings for an ACF internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return array
@@ -78,7 +78,7 @@ function acf_translate_post_type( array $post_type ) {
 /**
  * Returns and array of ACF post types for the given $filter.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $filter An array of args to filter results by.
  * @return array
@@ -90,7 +90,7 @@ function acf_get_acf_post_types( array $filter = array() ) {
 /**
  * Returns an array of raw ACF post types.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @return array
  */
@@ -101,7 +101,7 @@ function acf_get_raw_post_types() {
 /**
  * Returns a filtered array of ACF post types based on the given $args.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_types An array of ACF posts.
  * @param array $args       An array of args to filter by.
@@ -114,7 +114,7 @@ function acf_filter_post_types( array $post_types, array $args = array() ) {
 /**
  * Updates an ACF post type in the database.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param array $post_type The main ACF post type array.
  * @return array
@@ -126,7 +126,7 @@ function acf_update_post_type( array $post_type ) {
 /**
  * Deletes all caches for the provided ACF post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return void
@@ -138,7 +138,7 @@ function acf_flush_post_type_cache( array $post_type ) {
 /**
  * Deletes an ACF post type from the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The ACF post type ID, key or name.
  * @return boolean True if post type was deleted.
@@ -150,7 +150,7 @@ function acf_delete_post_type( $id = 0 ) {
 /**
  * Trashes an ACF post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The post type ID, key, or name.
  * @return boolean True if post was trashed.
@@ -162,7 +162,7 @@ function acf_trash_post_type( $id = 0 ) {
 /**
  * Restores an ACF post type from the trash.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The post type ID, key, or name.
  * @return boolean True if post was untrashed.
@@ -174,7 +174,7 @@ function acf_untrash_post_type( $id = 0 ) {
 /**
  * Returns true if the given params match an ACF post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return boolean
@@ -186,7 +186,7 @@ function acf_is_post_type( $post_type ) {
 /**
  * Duplicates an ACF post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id          The ACF post type ID, key or name.
  * @param integer        $new_post_id Optional ID to override.
@@ -210,7 +210,7 @@ function acf_update_post_type_active_status( $id, $activate = true ) {
 /**
  * Checks if the current user can edit the post type and returns the edit url.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer $post_id The ACF post type ID.
  * @return string
@@ -222,7 +222,7 @@ function acf_get_post_type_edit_link( $post_id ) {
 /**
  * Returns a modified ACF post type ready for export.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return array
@@ -234,7 +234,7 @@ function acf_prepare_post_type_for_export( array $post_type = array() ) {
 /**
  * Exports an ACF post type as PHP.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return string|boolean
@@ -246,7 +246,7 @@ function acf_export_post_type_as_php( array $post_type ) {
 /**
  * Prepares an ACF post type for the import process.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return array
@@ -258,7 +258,7 @@ function acf_prepare_post_type_for_import( array $post_type = array() ) {
 /**
  * Imports an ACF post type into the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $post_type The ACF post type array.
  * @return array The imported post type.
@@ -270,7 +270,7 @@ function acf_import_post_type( array $post_type ) {
 /**
  * Exports the "Enter Title Here" text for the provided ACF post types.
  *
- * @since 6.2.1
+ * @since ACF 6.2.1
  *
  * @param array $post_types The post types being exported.
  * @return string

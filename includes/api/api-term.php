@@ -4,7 +4,7 @@
  * Returns an array of taxonomy names.
  *
  * @date    7/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $args An array of args used in the get_taxonomies() function.
  * @return  array An array of taxonomy names.
@@ -48,7 +48,7 @@ function acf_get_taxonomies( $args = array() ) {
  * Returns an array of taxonomies for a given post type(s)
  *
  * @date    7/9/18
- * @since   5.7.5
+ * @since   ACF 5.7.5
  *
  * @param   string|array $post_types The post types to compare against.
  * @return  array
@@ -77,7 +77,7 @@ function acf_get_taxonomies_for_post_type( $post_types = 'post' ) {
  * Returns an array of taxonomies in the format "name => label" for use in a select field.
  *
  * @date    3/8/18
- * @since   5.7.2
+ * @since   ACF 5.7.2
  *
  * @param   array $taxonomies Optional. An array of specific taxonomies to return.
  * @return  array
@@ -127,7 +127,7 @@ function acf_get_taxonomy_labels( $taxonomies = array() ) {
  * Returns the title for this term object.
  *
  * @date    10/9/18
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   object $term The WP_Term object.
  * @return  string
@@ -155,7 +155,7 @@ function acf_get_term_title( $term ) {
  * Returns an array of terms for the given query $args and groups by taxonomy name.
  *
  * @date    2/8/18
- * @since   5.7.2
+ * @since   ACF 5.7.2
  *
  * @param   array $args An array of args used in the get_terms() function.
  * @return  array
@@ -271,7 +271,7 @@ function acf_get_grouped_terms( $args ) {
  * Used in the 'terms_clauses' filter to order terms by taxonomy name.
  *
  * @date    2/8/18
- * @since   5.7.2
+ * @since   ACF 5.7.2
  *
  * @param   array $pieces     Terms query SQL clauses.
  * @param   array $taxonomies An array of taxonomies.
@@ -296,7 +296,7 @@ function _acf_terms_clauses( $pieces, $taxonomies, $args ) {
  * Deprecated in favor of acf_get_taxonomy_labels() function.
  *
  * @date        7/10/13
- * @since       5.0.0
+ * @since       ACF 5.0.0
  * @deprecated  5.7.2
  */
 function acf_get_pretty_taxonomies( $taxonomies = array() ) {
@@ -309,7 +309,7 @@ function acf_get_pretty_taxonomies( $taxonomies = array() ) {
  * Similar to get_term() but with some extra functionality.
  *
  * @date    19/8/18
- * @since   5.7.3
+ * @since   ACF 5.7.3
  *
  * @param   mixed  $term_id  The term ID or a string of "taxonomy:slug".
  * @param   string $taxonomy The taxonomyname.
@@ -336,7 +336,7 @@ function acf_get_term( $term_id, $taxonomy = '' ) {
  * Returns a "taxonomy:slug" string for a given WP_Term.
  *
  * @date    27/8/18
- * @since   5.7.4
+ * @since   ACF 5.7.4
  *
  * @param   WP_Term $term The term object.
  * @return  string
@@ -351,7 +351,7 @@ function acf_encode_term( $term ) {
  * Decodes a "taxonomy:slug" string into an array of taxonomy and slug.
  *
  * @date    27/8/18
- * @since   5.7.4
+ * @since   ACF 5.7.4
  *
  * @param   WP_Term $term The term object.
  * @return  string
@@ -370,7 +370,7 @@ function acf_decode_term( $string ) {
  * Returns an array of WP_Term objects from an array of encoded strings
  *
  * @date    9/9/18
- * @since   5.7.5
+ * @since   ACF 5.7.5
  *
  * @param   array $values The array of encoded strings.
  * @return  array
@@ -402,7 +402,7 @@ function acf_get_encoded_terms( $values ) {
  * Returns an array of choices from the terms provided.
  *
  * @date    8/9/18
- * @since   5.7.5
+ * @since   ACF 5.7.5
  *
  * @param   array  $values and array of WP_Terms objects or encoded strings.
  * @param   string $format The value format (term_id, slug).
@@ -439,7 +439,7 @@ function acf_get_choices_from_terms( $terms, $format = 'term_id' ) {
  * Returns an array of choices from the grouped terms provided.
  *
  * @date    8/9/18
- * @since   5.7.5
+ * @since   ACF 5.7.5
  *
  * @param   array  $value  A grouped array of WP_Terms objects.
  * @param   string $format The value format (term_id, slug).
@@ -469,7 +469,7 @@ function acf_get_choices_from_grouped_terms( $value, $format = 'term_id' ) {
  * Returns an array containing the id and text for this item.
  *
  * @date    10/9/18
- * @since   5.7.6
+ * @since   ACF 5.7.6
  *
  * @param   object $item   The item object such as WP_Post or WP_Term.
  * @param   string $format The value format (term_id, slug)
@@ -498,7 +498,7 @@ function acf_get_choice_from_term( $term, $format = 'term_id' ) {
  * No longer needed since WP introduced the termmeta table in WP 4.4.
  *
  * @date    6/2/17
- * @since   5.5.6
+ * @since   ACF 5.5.6
  * @deprecated 5.9.2
  *
  * @param   $taxonomy (string) The taxonomy type.

@@ -9,7 +9,7 @@ acf_register_store( 'fields' )->prop( 'multisite', true );
  * Retrieves a field for the given identifier.
  *
  * @date    17/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  (array|false) The field array.
@@ -51,7 +51,7 @@ function acf_get_field( $id = 0 ) {
 	 * Filters the $field array after it has been loaded.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array The field array.
 	 */
@@ -74,7 +74,7 @@ acf_add_filter_variations( 'acf/load_field', array( 'type', 'name', 'key' ), 0 )
  * Retrieves raw field data for the given identifier.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  (array|false) The field array.
@@ -113,7 +113,7 @@ function acf_get_raw_field( $id = 0 ) {
  * Retrieves the field's WP_Post object.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  (array|false) The field array.
@@ -173,7 +173,7 @@ function acf_get_field_post( $id = 0 ) {
  * Returns true if the given identifier is a field key.
  *
  * @date    6/12/2013
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $id The identifier.
  * @return  boolean
@@ -189,7 +189,7 @@ function acf_is_field_key( $id = '' ) {
 	 * Filters whether the $id is a field key.
 	 *
 	 * @date    23/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   bool $bool The result.
 	 * @param   string $id The identifier.
@@ -203,7 +203,7 @@ function acf_is_field_key( $id = '' ) {
  * Ensures the given field valid.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field The field array.
  * @return  array
@@ -262,7 +262,7 @@ function acf_validate_field( $field = array() ) {
 	 * Filters the $field array to validate settings.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -281,7 +281,7 @@ acf_add_filter_variations( 'acf/validate_field', array( 'type' ), 0 );
  * Ensures the given field valid.
  *
  * @date        28/09/13
- * @since       5.0.0
+ * @since       ACF 5.0.0
  *
  * @param   array $field The field array.
  * @return  array
@@ -296,7 +296,7 @@ function acf_get_valid_field( $field = false ) {
  * Translates a field's settings.
  *
  * @date    8/03/2016
- * @since   5.3.2
+ * @since   ACF 5.3.2
  *
  * @param   array $field The field array.
  * @return  array
@@ -316,7 +316,7 @@ function acf_translate_field( $field = array() ) {
 		 * Filters the $field array to translate strings.
 		 *
 		 * @date    12/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field The field array.
 		 */
@@ -339,7 +339,7 @@ add_action( 'acf/validate_field', 'acf_translate_field' );
  * Returns and array of fields for the given $parent.
  *
  * @date    30/09/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string|array) $parent The field group or field settings. Also accepts the field group ID or key.
  * @return  array
@@ -376,7 +376,7 @@ function acf_get_fields( $parent ) {
 	 * Filters the $fields array.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $fields The array of fields.
 	 */
@@ -392,7 +392,7 @@ function acf_get_fields( $parent ) {
  * Returns and array of raw field data for the given parent id.
  *
  * @date    18/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   integer $id The field group or field id.
  * @return  array
@@ -446,7 +446,7 @@ function acf_get_raw_fields( $id = 0 ) {
  * Return the number of fields for the given field group.
  *
  * @date    17/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $parent The field group or field array.
  * @return  integer
@@ -466,7 +466,7 @@ function acf_get_field_count( $parent ) {
 	 * Filters the counted number of fields.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   int $count The number of fields.
 	 * @param  array $parent The field group or field array.
@@ -480,7 +480,7 @@ function acf_get_field_count( $parent ) {
  * Allows customization to a field when it is cloned. Used by the clone field.
  *
  * @date    8/03/2016
- * @since   5.3.2
+ * @since   ACF 5.3.2
  *
  * @param   array $field       The field being cloned.
  * @param   array $clone_field The clone field.
@@ -495,7 +495,7 @@ function acf_clone_field( $field, $clone_field ) {
 	 * Filters the $field array when it is being cloned.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 * @param   array $clone_field The clone field array.
@@ -515,7 +515,7 @@ acf_add_filter_variations( 'acf/clone_field', array( 'type' ), 0 );
  * Prepare a field for input.
  *
  * @date    20/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field The field array.
  * @return  array
@@ -549,7 +549,7 @@ function acf_prepare_field( $field ) {
 	 * Allows developers to modify field settings or return false to remove field.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -568,8 +568,8 @@ acf_add_filter_variations( 'acf/prepare_field', array( 'type', 'name', 'key' ), 
  * Renders an array of fields. Also loads the field's value.
  *
  * @date    8/10/13
- * @since   5.0.0
- * @since   5.6.9 Changed parameter order.
+ * @since   ACF 5.0.0
+ * @since   ACF 5.6.9 Changed parameter order.
  *
  * @param   array        $fields      An array of fields.
  * @param   (int|string) $post_id     The post ID to load values from.
@@ -590,7 +590,7 @@ function acf_render_fields( $fields, $post_id = 0, $el = 'div', $instruction = '
 	 * Filters the $fields array before they are rendered.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $fields An array of fields.
 	 * @param   (int|string) $post_id The post ID to load values from.
@@ -619,7 +619,7 @@ function acf_render_fields( $fields, $post_id = 0, $el = 'div', $instruction = '
 	 * Fires after fields have been rendered.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param    array $fields An array of fields.
 	 * @param    (int|string) $post_id The post ID to load values from.
@@ -630,7 +630,7 @@ function acf_render_fields( $fields, $post_id = 0, $el = 'div', $instruction = '
 /**
  * Render the wrapping element for a given field.
  *
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array   $field         The field array.
  * @param   string  $element       The wrapping element type.
@@ -729,7 +729,7 @@ function acf_render_field_wrap( $field, $element = 'div', $instruction = 'label'
 	 * Filters the $wrapper array before rendering.
 	 *
 	 * @date    21/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   array $wrapper The wrapper attributes array.
 	 * @param   array $field The field array.
@@ -778,7 +778,7 @@ function acf_render_field_wrap( $field, $element = 'div', $instruction = 'label'
  * Render the input element for a given field.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field The field array.
  * @return  void
@@ -800,7 +800,7 @@ function acf_render_field( $field ) {
 	 * Fires when rendering a field.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -816,7 +816,7 @@ acf_add_action_variations( 'acf/render_field', array( 'type', 'name', 'key' ), 0
  * Renders the field's label.
  *
  * @date    19/9/17
- * @since   5.6.3
+ * @since   ACF 5.6.3
  *
  * @param   array $field The field array.
  * @return  void
@@ -838,7 +838,7 @@ function acf_render_field_label( $field ) {
  * Returns the field's label with appropriate required label.
  *
  * @date    4/11/2013
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array  $field   The field array.
  * @param   string $context The output context (admin).
@@ -863,7 +863,7 @@ function acf_get_field_label( $field, $context = '' ) {
 	 * Filters the field's label HTML.
 	 *
 	 * @date    21/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   string The label HTML.
 	 * @param   array $field The field array.
@@ -878,7 +878,7 @@ function acf_get_field_label( $field, $context = '' ) {
 /**
  * Renders the field's instructions.
  *
- * @since   5.6.3
+ * @since   ACF 5.6.3
  *
  * @param array   $field   The field array.
  * @param boolean $tooltip If the instructions are being rendered as a tooltip.
@@ -905,7 +905,7 @@ function acf_render_field_instructions( $field, $tooltip = false ) {
  * Renders a field setting used in the admin edit screen.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array   $field   The field array.
  * @param   array   $setting The settings field array.
@@ -971,7 +971,7 @@ function acf_render_field_setting( $field, $setting, $global = false ) {
  * Updates a field in the database.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field    The field array.
  * @param   array $specific An array of specific field attributes to update.
@@ -1008,7 +1008,7 @@ function acf_update_field( $field, $specific = array() ) {
 	 * Filters the $field array before it is updated.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1058,7 +1058,7 @@ function acf_update_field( $field, $specific = array() ) {
 	 * Fires after a field has been updated, and the field cache has been cleaned.
 	 *
 	 * @date    24/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1077,7 +1077,7 @@ acf_add_filter_variations( 'acf/update_field', array( 'type', 'name', 'key' ), 0
  * Allows full control over 'acf-field' slugs.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param string  $slug          The post slug.
  * @param integer $post_ID       Post ID.
@@ -1106,7 +1106,7 @@ add_filter( 'wp_unique_post_slug', '_acf_apply_unique_field_slug', 999, 6 );
  * Deletes all caches for this field.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field The field array.
  * @return  void
@@ -1130,7 +1130,7 @@ function acf_flush_field_cache( $field ) {
  * Deletes a field from the database.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  boolean True if field was deleted.
@@ -1155,7 +1155,7 @@ function acf_delete_field( $id = 0 ) {
 	 * Fires immediately after a field has been deleted.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1174,7 +1174,7 @@ acf_add_action_variations( 'acf/delete_field', array( 'type', 'name', 'key' ), 0
  * Trashes a field from the database.
  *
  * @date    2/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  boolean True if field was trashed.
@@ -1196,7 +1196,7 @@ function acf_trash_field( $id = 0 ) {
 	 * Fires immediately after a field has been trashed.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1212,7 +1212,7 @@ function acf_trash_field( $id = 0 ) {
  * Restores a field from the trash.
  *
  * @date    2/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id The field ID, key or name.
  * @return  boolean True if field was trashed.
@@ -1237,7 +1237,7 @@ function acf_untrash_field( $id = 0 ) {
 	 * Fires immediately after a field has been trashed.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1252,7 +1252,7 @@ function acf_untrash_field( $id = 0 ) {
  *
  * Prior to WordPress 5.6.0, this filter was not needed as restored posts were always assigned their original status.
  *
- * @since 5.9.5
+ * @since ACF 5.9.5
  *
  * @param string  $new_status      The new status of the post being restored.
  * @param integer $post_id         The ID of the post being restored.
@@ -1271,7 +1271,7 @@ add_action( 'wp_untrash_post_status', '_acf_untrash_field_post_status', 10, 3 );
  * Changes the prefix for an array of fields by reference.
  *
  * @date    5/9/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array  $fields An array of fields.
  * @param   string $prefix The new prefix.
@@ -1293,7 +1293,7 @@ function acf_prefix_fields( &$fields, $prefix = 'secure-custom-fields' ) {
  * Searches a field for sub fields matching the given selector.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   (int|string) $id    The field ID, key or name.
  * @param   array        $field The parent field array.
@@ -1313,7 +1313,7 @@ function acf_get_sub_field( $id, $field ) {
 	 * Filters the $sub_field found.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $sub_field The found sub field array.
 	 * @param   string $selector The selector used to search.
@@ -1334,7 +1334,7 @@ acf_add_filter_variations( 'acf/get_sub_field', array( 'type' ), 2 );
  * Searches an array of fields for one that matches the given identifier.
  *
  * @date    12/2/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   (int|string) $id       The field ID, key or name.
  * @param   array        $haystack The array of fields.
@@ -1364,7 +1364,7 @@ function acf_search_fields( $id, $fields ) {
  * Returns true if the given params match a field.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field The field array.
  * @param   mixed $id    An optional identifier to search for.
@@ -1384,7 +1384,7 @@ function acf_is_field( $field = false, $id = '' ) {
  * Returns an array of ancestor field ID's or keys.
  *
  * @date    22/06/2016
- * @since   5.3.8
+ * @since   ACF 5.3.8
  *
  * @param   array $field The field array.
  * @return  array
@@ -1409,7 +1409,7 @@ function acf_get_field_ancestors( $field ) {
  * Duplicate an array of fields.
  *
  * @date    16/06/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array   $fields    An array of fields.
  * @param   integer $parent_id The new parent ID.
@@ -1445,7 +1445,7 @@ function acf_duplicate_fields( $fields = array(), $parent_id = 0 ) {
  * Duplicates a field.
  *
  * @date    16/06/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   (int|string) $id        The field ID, key or name.
  * @param   integer      $parent_id The new parent ID.
@@ -1494,7 +1494,7 @@ function acf_duplicate_field( $id = 0, $parent_id = 0 ) {
 	 * Filters the $field array after it has been duplicated.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1513,7 +1513,7 @@ acf_add_filter_variations( 'acf/duplicate_field', array( 'type' ), 0 );
  * Returns a modified array of fields ready for export.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $fields An array of fields.
  * @return  array
@@ -1530,7 +1530,7 @@ function acf_prepare_fields_for_export( $fields = array() ) {
  * Returns a modified field ready for export.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field The field array.
  * @return  array
@@ -1544,7 +1544,7 @@ function acf_prepare_field_for_export( $field ) {
 	 * Filters the $field array before being returned to the export tool.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */
@@ -1560,7 +1560,7 @@ acf_add_filter_variations( 'acf/prepare_field_for_export', array( 'type' ), 0 );
  * Returns a modified array of fields ready for import.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $fields An array of fields.
  * @return  array
@@ -1594,7 +1594,7 @@ function acf_prepare_fields_for_import( $fields = array() ) {
 	 * Filters the $fields array before being returned to the import tool.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $fields The array of fields.
 	 */
@@ -1608,7 +1608,7 @@ function acf_prepare_fields_for_import( $fields = array() ) {
  * Allows parent fields to modify themselves and also return sub fields.
  *
  * @date    11/03/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $field The field array.
  * @return  array
@@ -1619,7 +1619,7 @@ function acf_prepare_field_for_import( $field ) {
 	 * Filters the $field array before being returned to the import tool.
 	 *
 	 * @date    12/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $field The field array.
 	 */

@@ -29,7 +29,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This function will set up the field type data
 		 *
 		 * @date  5/03/2014
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function initialize() {
 			$this->name          = 'repeater';
@@ -66,7 +66,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Localizes text for the repeater field.
 		 *
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function input_admin_enqueue_scripts() {
 			acf_localize_text(
@@ -82,7 +82,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Filters the field array after it's loaded from the database.
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param array $field The field array holding all the field options.
@@ -118,7 +118,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Runs on the "acf/pre_render_fields" filter. Used to signify
 		 * that we're currently rendering a repeater field.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @param array $fields  The main field array.
 		 * @param mixed $post_id The post ID for the field being rendered.
@@ -136,7 +136,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Create the HTML interface for your field
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 * @date  23/01/13
 		 *
 		 * @param array $field An array holding all the field's data.
@@ -152,7 +152,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Create extra options for your field. This is rendered when editing a field.
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 * @date  23/01/13
 		 *
 		 * @param array $field An array holding all the field's data.
@@ -233,7 +233,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -268,7 +268,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -310,7 +310,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Filters the field $value after it is loaded from the database.
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param mixed $value   The value found in the database.
 		 * @param mixed $post_id The $post_id from which the value was loaded.
@@ -373,7 +373,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type  filter
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param mixed   $value       The value which was loaded from the database.
 		 * @param mixed   $post_id     The $post_id from which the value was loaded.
@@ -432,7 +432,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Validates values for the repeater field
 		 *
 		 * @date  11/02/2014
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param  boolean $valid If the field is valid.
 		 * @param  mixed   $value The value to validate.
@@ -515,7 +515,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This function will update a value row.
 		 *
 		 * @date    15/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param  array   $row Row array.
 		 * @param   integer $i Row ID.
@@ -560,7 +560,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This function will delete a value row.
 		 *
 		 * @date    15/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   integer $i Row ID.
 		 * @param   array   $field Array of fields.
@@ -587,7 +587,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Filters the $value before it is updated in the database.
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param  mixed $value   The value which will be saved in the database.
@@ -748,7 +748,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Deletes any subfields after the field has been deleted.
 		 *
 		 * @date    4/04/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param array $field The main field array.
 		 * @return void
@@ -769,7 +769,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Deletes a value from the database.
 		 *
 		 * @date    1/07/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param integer $post_id The post ID to delete the value from.
 		 * @param string  $key     The meta name/key (unused).
@@ -793,7 +793,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * This filter is applied to the $field before it is saved to the database.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param  array $field The field array holding all the field options.
 		 * @return array
@@ -806,7 +806,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * This filter is applied to the $field before it is duplicated and saved to the database.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 * @date  23/01/13
 		 *
 		 * @param array $field The field array holding all the field options.
@@ -829,7 +829,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This function will translate field settings.
 		 *
 		 * @date  8/03/2016
-		 * @since 5.3.2
+		 * @since ACF 5.3.2
 		 *
 		 * @param array $field The main field array.
 		 * @return array
@@ -843,7 +843,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * This function will add compatibility for the 'column_width' setting
 		 *
 		 * @date  30/1/17
-		 * @since 5.5.6
+		 * @since ACF 5.5.6
 		 *
 		 * @param array $field The main field array.
 		 * @return array
@@ -861,7 +861,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Prepares the field for export.
 		 *
 		 * @date  11/03/2014
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param array $field The field settings.
 		 * @return array
@@ -879,7 +879,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * Returns a flat array of fields containing all subfields ready for import.
 		 *
 		 * @date   11/03/2014
-		 * @since  5.0.0
+		 * @since  ACF 5.0.0
 		 *
 		 * @param   array $field The field settings.
 		 * @return  array
@@ -1040,7 +1040,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		/**
 		 * Returns an array of rows used to populate the repeater table over AJAX.
 		 *
-		 * @since 6.0.0
+		 * @since ACF 6.0.0
 		 *
 		 * @return void|WP_Error
 		 */

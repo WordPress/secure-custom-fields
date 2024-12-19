@@ -84,7 +84,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Sets up the field for rendering.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */
@@ -125,7 +125,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Prepares the repeater values for rendering.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return array
 	 */
@@ -152,7 +152,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders the full repeater table.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */
@@ -200,7 +200,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders the table head.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */
@@ -256,7 +256,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders or returns rows for the repeater field table.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @param boolean $should_return If we should return the rows or render them.
 	 * @return array|void
@@ -283,7 +283,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders an individual row.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @param integer $i      The row number.
 	 * @param array   $row    An array containing the row values.
@@ -354,7 +354,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders the row handle at the start of each row.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @param integer $i The current row number.
 	 * @return void
@@ -392,7 +392,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders the actions displayed at the end of each row.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */
@@ -412,7 +412,7 @@ class ACF_Repeater_Table {
 	/**
 	 * Renders the actions displayed underneath the table.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */
@@ -433,7 +433,7 @@ class ACF_Repeater_Table {
 	 * Renders the table pagination.
 	 * Mostly lifted from the WordPress core WP_List_Table class.
 	 *
-	 * @since 6.0.0
+	 * @since ACF 6.0.0
 	 *
 	 * @return void
 	 */

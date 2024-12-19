@@ -176,7 +176,7 @@
 	 *  description
 	 *
 	 *  @date	8/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

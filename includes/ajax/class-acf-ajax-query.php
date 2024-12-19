@@ -38,7 +38,7 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		 * Returns the response data to sent back.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $request The request args.
 		 * @return  (array|WP_Error) The response data or WP_Error.
@@ -70,7 +70,7 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		 * Called at the beginning of a request to setup properties.
 		 *
 		 * @date    23/5/19
-		 * @since   5.8.1
+		 * @since   ACF 5.8.1
 		 *
 		 * @param   array $request The request args.
 		 * @return  void
@@ -110,7 +110,7 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		 * Returns an array of args for this query.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $request The request args.
 		 * @return  array
@@ -131,7 +131,7 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		 * Returns an array of results for the given args.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $args The query args.
 		 * @return  array
@@ -146,7 +146,7 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		 * Returns a single result for the given item object.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   mixed $item A single item from the queried results.
 		 * @return  array An array containing "id" and "text".

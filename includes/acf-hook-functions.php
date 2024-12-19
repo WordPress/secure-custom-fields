@@ -9,7 +9,7 @@ acf_register_store( 'hook-variations' );
  * Registers variations for the given filter.
  *
  * @date    26/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string  $filter     The filter name.
  * @param   array   $variations An array variation keys.
@@ -39,7 +39,7 @@ function acf_add_filter_variations( $filter = '', $variations = array(), $index 
  * Registers variations for the given action.
  *
  * @date    26/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string  $action     The action name.
  * @param   array   $variations An array variation keys.
@@ -69,7 +69,7 @@ function acf_add_action_variations( $action = '', $variations = array(), $index 
  * Applies hook variations during apply_filters() or do_action().
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   mixed
  * @return  mixed
@@ -127,7 +127,7 @@ acf_register_store( 'deprecated-hooks' );
  * Registers a deprecated filter to run during the replacement.
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string $deprecated  The deprecated hook.
  * @param   string $version     The version this hook was deprecated.
@@ -157,7 +157,7 @@ function acf_add_deprecated_filter( $deprecated, $version, $replacement ) {
  * Registers a deprecated action to run during the replacement.
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string $deprecated  The deprecated hook.
  * @param   string $version     The version this hook was deprecated.
@@ -185,7 +185,7 @@ function acf_add_deprecated_action( $deprecated, $version, $replacement ) {
  * Applies a deprecated filter during apply_filters() or do_action().
  *
  * @date    25/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   mixed
  * @return  mixed

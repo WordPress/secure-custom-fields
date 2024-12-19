@@ -5,7 +5,7 @@
 	 *  Extra logic for this field setting
 	 *
 	 *  @date	18/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -31,7 +31,7 @@
 	 *  Extra logic for this field setting
 	 *
 	 *  @date	18/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -62,7 +62,7 @@
 	 *  Extra logic for this field setting
 	 *
 	 *  @date	18/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -93,7 +93,7 @@
 	 *  Customizes the clone field setting Select2 isntance
 	 *
 	 *  @date	18/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	void
 	 *  @return	void

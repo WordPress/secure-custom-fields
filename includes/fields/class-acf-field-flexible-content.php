@@ -20,7 +20,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 
@@ -62,7 +62,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @return  void
 		 */
@@ -97,7 +97,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/10/13
-		 * @since   1.1.0
+		 * @since   ACF 1.1.0
 		 *
 		 * @param   array $layout The layout array to validate.
 		 * @return  array $layout The validated layout array.
@@ -126,7 +126,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Load a field.
 		 *
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param   array $field the field array holding all the field options.
 		 *
@@ -183,7 +183,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    29/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   int        $sub_field Sub field.
 		 * @param   int|string $id the ID.
@@ -223,7 +223,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * Create the HTML interface for your field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   array $field An array holding all the field's data.
@@ -324,7 +324,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    19/11/2013
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field Fields.
 		 * @param array $layout Layout.
@@ -481,7 +481,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Renders the flexible content field layouts in the field group editor.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 * @date  23/01/13
 		 *
 		 * @param array $field An array holding all the field's data.
@@ -653,7 +653,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -699,7 +699,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param  mixed $value   The value found in the database.
 		 * @param  mixed $post_id The post_id from which the value was loaded.
@@ -769,7 +769,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type  filter
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param  mixed   $value       The value which was loaded from the database.
 		 * @param  mixed   $post_id     The $post_id from which the value was loaded.
@@ -839,7 +839,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   bool   $valid  The validation status.
 		 * @param   mixed  $value  The value to validate.
@@ -977,7 +977,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * This function will return a specific layout by name from a field
 		 *
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param  string $name  The layout name.
 		 * @param  array  $field The field to load the layout from.
@@ -1007,7 +1007,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * This function will delete a value row
 		 *
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   integer $i        The index of the row to delete.
 		 * @param   array   $field    The field array containing all settings.
@@ -1049,7 +1049,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * This function will update a value row
 		 *
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   array   $row      The row array to update.
 		 * @param   integer $i        The index of the row to update.
@@ -1097,7 +1097,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param   mixed $value   The value which will be saved in the database.
 		 * @param   mixed $post_id The post_id of which the value will be saved.
@@ -1175,7 +1175,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    1/07/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param   int    $post_id The post ID.
 		 * @param   string $key    The field key.
@@ -1204,7 +1204,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * This filter is appied to the $field before it is saved to the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param  array $field The field array holding all the field options.
 		 * @return array $field The modified field
@@ -1228,7 +1228,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    4/04/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field The field array to delete.
 		 * @return  void
@@ -1260,7 +1260,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    filter
 		 * @date    23/01/13
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param   array $field The field array holding all the field options.
 		 * @return  array The modified field.
@@ -1299,7 +1299,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Output the layout title for an AJAX response.
 		 *
-		 * @since 5.3.2
+		 * @since ACF 5.3.2
 		 */
 		public function ajax_layout_title() {
 
@@ -1387,7 +1387,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    28/06/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param   array $field       The field array.
 		 * @param   array $clone_field The clone field array.
@@ -1412,7 +1412,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Handles preparing the field for export.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param  array $field The whole field array.
 		 * @return array The export ready field array.
@@ -1433,7 +1433,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Prepares any field for export by removing unnecessary data.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param array $field The field array.
 		 * @return array The prepared field.
@@ -1453,7 +1453,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field The field array to prepare.
 		 * @return  array The prepared field.
@@ -1510,7 +1510,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    30/1/17
-		 * @since   5.5.6
+		 * @since   ACF 5.5.6
 		 *
 		 * @param   array $field Adds column width.
 		 * @return  array
@@ -1532,7 +1532,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 *
 		 * @type    function
 		 * @date    8/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   array $field The field array containing translation strings.
 		 * @return  array The translated field array.

@@ -78,7 +78,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Registers the acf-taxonomy custom post type with WordPress.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function register_post_type() {
 			$cap = acf_get_setting( 'capability' );
@@ -120,7 +120,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Register activated taxonomies with WordPress
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function register_taxonomies() {
 			$taxonomies = $this->get_posts( array( 'active' => true ) );
@@ -233,7 +233,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		 * Validates post type values before allowing save from the global $_POST object.
 		 * Errors are added to the form using acf_add_internal_post_type_validation_error().
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @return boolean validity status
 		 */
@@ -301,7 +301,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		 * Omits settings that line up with the WordPress defaults to reduce the size
 		 * of the array passed to `register_taxonomy()`, which might be exported.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param  array   $post          The main ACF taxonomy settings array.
 		 * @param  boolean $escape_labels Determines if the label values should be escaped.
@@ -507,7 +507,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Ensure the metabox being called does not perform any unsafe operations.
 		 *
-		 * @since 6.3.8
+		 * @since ACF 6.3.8
 		 *
 		 * @param WP_Post $post The post being rendered.
 		 * @param array   $tax  The provided taxonomy information required for callback render.
@@ -561,7 +561,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Returns a string that can be used to create a taxonomy in PHP.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main taxonomy array.
 		 * @return string
@@ -594,7 +594,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Flush rewrite rules whenever anything changes about a taxonomy.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post type array.
 		 */
@@ -622,7 +622,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Translates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The field group array.
 		 * @return array
@@ -644,7 +644,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 				 * Filters the post array to translate strings.
 				 *
 				 * @date    12/02/2014
-				 * @since   5.0.0
+				 * @since   ACF 5.0.0
 				 *
 				 * @param   array $post The post array.
 				 */
@@ -657,7 +657,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		/**
 		 * Imports a taxonomy from CPTUI.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $args Arguments from CPTUI.
 		 * @return array

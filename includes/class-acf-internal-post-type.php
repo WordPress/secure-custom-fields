@@ -80,7 +80,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Get an ACF CPT object as an array.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|WP_Post $id The post ID being queried.
 		 * @return array|boolean The main ACF array for the post, or false on failure.
@@ -114,7 +114,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters the post array after it has been loaded.
 			 *
 			 * @date  12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The post array.
 			 */
@@ -130,7 +130,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Retrieves raw post data for the given identifier.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The field ID, key or name.
 		 * @return array|false The field group array, or false on failure.
@@ -163,7 +163,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Retrieves the WP_Post object for an ACF internal CPT.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The post ID, key, or name.
 		 * @return WP_Post|bool The post object, or false on failure.
@@ -222,7 +222,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns true if the given identifier is an ACF post key.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string $id The identifier.
 		 * @return boolean
@@ -237,7 +237,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters whether the $id is an ACF post key.
 			 *
 			 * @date    23/1/19
-			 * @since   5.7.10
+			 * @since   ACF 5.7.10
 			 *
 			 * @param bool $bool The result.
 			 * @param string $id The identifier.
@@ -248,7 +248,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Validates an ACF internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post array.
 		 * @return array
@@ -276,7 +276,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters the ACF post array to validate settings.
 			 *
 			 * @date    12/02/2014
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param   array $post The post array.
 			 */
@@ -287,14 +287,14 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * Validates post type values before allowing save from the global $_POST object.
 		 * Errors are added to the form using acf_add_internal_post_type_validation_error().
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function ajax_validate_values() {}
 
 		/**
 		 * Ensures the given ACF post is valid.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The main post array.
 		 * @return array
@@ -315,7 +315,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Translates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The field group array.
 		 * @return array
@@ -333,7 +333,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 				 * Filters the post array to translate strings.
 				 *
 				 * @date    12/02/2014
-				 * @since   5.0.0
+				 * @since   ACF 5.0.0
 				 *
 				 * @param   array $post The post array.
 				 */
@@ -346,7 +346,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns an array of ACF posts for the given $filter.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $filter An array of args to filter by.
 		 * @return array
@@ -366,7 +366,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters the posts array.
 			 *
 			 * @date    12/02/2014
-			 * @since   5.0.0
+			 * @since   ACF 5.0.0
 			 *
 			 * @param array $posts The array of ACF posts.
 			 */
@@ -383,7 +383,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns an array of raw ACF post data.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @return array
 		 */
@@ -434,7 +434,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Filter the posts returned by $this->get_posts().
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $posts An array of posts to filter.
 		 * @param array $args  An array of args to filter by.
@@ -456,7 +456,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Updates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post to update.
 		 * @return array
@@ -474,7 +474,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			/**
 			 * Fires before updating an ACF post in the database.
 			 *
-			 * @since 6.1
+			 * @since ACF 6.1
 			 *
 			 * @param array $post The main ACF post array.
 			 */
@@ -518,7 +518,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			/**
 			 * Fires immediately after an ACF post has been updated.
 			 *
-			 * @since   6.1
+			 * @since   ACF 6.1
 			 *
 			 * @param array $post The main ACF post array.
 			 */
@@ -530,7 +530,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Allows full control over ACF post slugs.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string  $slug          The post slug.
 		 * @param integer $post_ID       Post ID.
@@ -552,7 +552,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Deletes all caches for this ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return void
@@ -571,7 +571,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Deletes an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the ACF post to delete.
 		 * @return boolean
@@ -596,7 +596,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Fires immediately after an ACF post has been deleted.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -608,7 +608,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Trashes an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the ACF post to trash.
 		 * @return boolean
@@ -629,7 +629,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Fires immediately after a field_group has been trashed.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -641,7 +641,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Restores an ACF post from the trash.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The ID of the ACF post to untrash.
 		 * @return boolean
@@ -662,7 +662,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Fires immediately after an ACF post has been untrashed.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -675,7 +675,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * Returns the previous post_status instead of "draft" for the ACF internal post types.
 		 * Prior to WordPress 5.6.0, this filter was not needed as restored posts were always assigned their original status.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string  $new_status      The new status of the post being restored.
 		 * @param integer $post_id         The ID of the post being restored.
@@ -689,7 +689,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns true if the given params match an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The post array to check.
 		 * @return boolean
@@ -705,7 +705,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Duplicates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id          The ID of the post to duplicate.
 		 * @param integer        $new_post_id Optional post ID to override.
@@ -741,7 +741,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Fires immediately after an ACF post has been duplicated.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param   array $post The ACF post array.
 			 */
@@ -753,7 +753,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Activates or deactivates an ACF post.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id       The ID of the ACF post to activate/deactivate.
 		 * @param boolean        $activate True if the post should be activated.
@@ -774,7 +774,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			/**
 			 * Fires immediately after an ACF post has been made active/inactive.
 			 *
-			 * @since 6.0.0
+			 * @since ACF 6.0.0
 			 *
 			 * @param array $updated_post The updated ACF post array.
 			 */
@@ -790,7 +790,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Checks if the current user can edit ACF posts and returns the edit url.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param integer $post_id The ACF post ID.
 		 * @return string
@@ -806,7 +806,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns a modified ACF post array ready for export.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return array
@@ -819,7 +819,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters the ACF post array before being returned to the export tool.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -829,7 +829,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Returns a string containing PHP code that can be used to create the post in ACF.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The post being exported.
 		 * @return string
@@ -841,7 +841,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Formats code used for PHP exports.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param string $code The code being formatted.
 		 * @return string
@@ -873,7 +873,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Prepares an ACF post for import.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return array
@@ -883,7 +883,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Filters the ACF post array before being returned to the import tool.
 			 *
 			 * @date 21/11/19
-			 * @since 5.8.8
+			 * @since ACF 5.8.8
 			 *
 			 * @param array $post The ACF post array.
 			 */
@@ -893,7 +893,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		/**
 		 * Imports an ACF post into the database.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param array $post The ACF post array.
 		 * @return array
@@ -918,7 +918,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * Fires immediately after an ACF post has been imported.
 			 *
 			 * @date 12/02/2014
-			 * @since 5.0.0
+			 * @since ACF 5.0.0
 			 *
 			 * @param   array $post The ACF post array.
 			 */

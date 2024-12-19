@@ -20,7 +20,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-post-type';
@@ -28,7 +28,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-single-post-type';
@@ -36,7 +36,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * This function will customize the message shown when editing a post type.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param array $messages Post type messages.
 		 * @return array
@@ -62,7 +62,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Renders the post type created message.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 *
 		 * @param boolean $created True if the post was just created.
 		 * @return string
@@ -112,7 +112,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Enqueues any scripts necessary for internal post type.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function admin_enqueue_scripts() {
 
@@ -136,7 +136,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Sets up all functionality for the post type edit page to work.
 		 *
-		 * @since 3.1.8
+		 * @since ACF 3.1.8
 		 */
 		public function admin_head() {
 
@@ -194,7 +194,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * This function will add extra HTML to the acf form data element
 		 *
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param array $args Arguments array to pass through to action.
 		 * @return void
@@ -206,7 +206,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * This function will append extra l10n strings to the acf JS object
 		 *
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param array $l10n The array of translated strings.
 		 * @return array $l10n
@@ -218,7 +218,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Admin footer third party hook support
 		 *
-		 * @since 5.3.2
+		 * @since ACF 5.3.2
 		 */
 		public function admin_footer() {
 			do_action( 'acf/post_type/admin_footer' );
@@ -227,7 +227,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Screen settings html output
 		 *
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param string $html Current screen settings HTML.
 		 * @return string $html
@@ -275,7 +275,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * This function will customize the publish metabox
 		 *
-		 * @since 5.2.9
+		 * @since ACF 5.2.9
 		 */
 		public function post_submitbox_misc_actions() {
 			global $acf_post_type;
@@ -293,7 +293,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Saves post type data.
 		 *
-		 * @since 1.0.0
+		 * @since ACF 1.0.0
 		 *
 		 * @param  integer $post_id The post ID.
 		 * @param  WP_Post $post    The post object.
@@ -323,7 +323,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Renders HTML for the basic settings metabox.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function mb_basic_settings() {
 			global $acf_post_type;
@@ -339,7 +339,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 		/**
 		 * Renders the HTML for the advanced settings metabox.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function mb_advanced_settings() {
 			acf_get_view( $this->post_type . '/advanced-settings' );

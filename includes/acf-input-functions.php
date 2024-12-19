@@ -6,7 +6,7 @@
  * Filters out empty attrs from the provided array.
  *
  * @date    11/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   array $attrs The array of attrs.
  * @return  array
@@ -32,7 +32,7 @@ function acf_filter_attrs( $attrs ) {
  * Generated valid HTML from an array of attrs.
  *
  * @date    11/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -70,7 +70,7 @@ function acf_esc_attrs( $attrs ) {
  *
  * This function emulates `wp_kses_post()` with a context of "acf" for extensibility.
  *
- * @since  5.9.6
+ * @since  ACF 5.9.6
  *
  * @param  string $string The string to be escaped
  * @return string|false
@@ -87,7 +87,7 @@ function acf_esc_html( $string = '' ) {
 /**
  * Private callback for the "wp_kses_allowed_html" filter used to return allowed HTML for "acf" context.
  *
- * @since   5.9.6
+ * @since   ACF 5.9.6
  *
  * @param  array  $tags    An array of allowed tags.
  * @param  string $context The context name.
@@ -110,7 +110,7 @@ add_filter( 'wp_kses_allowed_html', '_acf_kses_allowed_html', 0, 2 );
  * Returns the HTML of an input.
  *
  * @date    13/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -125,7 +125,7 @@ add_filter( 'wp_kses_allowed_html', '_acf_kses_allowed_html', 0, 2 );
  * Renders the HTML of a hidden input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -140,7 +140,7 @@ function acf_hidden_input( $attrs = array() ) {
  * Returns the HTML of a hidden input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -155,7 +155,7 @@ function acf_get_hidden_input( $attrs = array() ) {
  * Renders the HTML of a text input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -170,7 +170,7 @@ function acf_text_input( $attrs = array() ) {
  * Returns the HTML of a text input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -194,7 +194,7 @@ function acf_get_text_input( $attrs = array() ) {
  * Renders the HTML of a file input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -209,7 +209,7 @@ function acf_file_input( $attrs = array() ) {
  * Returns the HTML of a file input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -259,7 +259,7 @@ function acf_get_file_input( $attrs = array() ) {
  * Renders the HTML of a textarea input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -274,7 +274,7 @@ function acf_textarea_input( $attrs = array() ) {
  * Returns the HTML of a textarea input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -294,7 +294,7 @@ function acf_get_textarea_input( $attrs = array() ) {
  * Renders the HTML of a checkbox input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -309,7 +309,7 @@ function acf_checkbox_input( $attrs = array() ) {
  * Returns the HTML of a checkbox input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -342,7 +342,7 @@ function acf_get_checkbox_input( $attrs = array() ) {
  * Renders the HTML of a radio input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -357,7 +357,7 @@ function acf_radio_input( $attrs = array() ) {
  * Returns the HTML of a radio input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -373,7 +373,7 @@ function acf_get_radio_input( $attrs = array() ) {
  * Renders the HTML of a select input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -388,7 +388,7 @@ function acf_select_input( $attrs = array() ) {
  * Returns the HTML of a select input.
  *
  * @date    3/02/2014
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -409,7 +409,7 @@ function acf_get_select_input( $attrs = array() ) {
  * Returns the HTML of a select input's choices.
  *
  * @date    27/6/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $choices The choices to walk through.
  * @param   array $values  The selected choices.
@@ -461,7 +461,7 @@ function acf_walk_select_input( $choices = array(), $values = array(), $depth = 
  * See acf_filter_attrs().
  *
  * @date    3/10/17
- * @since   5.6.3
+ * @since   ACF 5.6.3
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -476,7 +476,7 @@ function acf_clean_atts( $attrs ) {
  * See acf_esc_attrs().
  *
  * @date    27/6/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $attrs The array of attrs.
  * @return  string
@@ -489,7 +489,7 @@ function acf_esc_atts( $attrs ) {
  * acf_esc_attr
  *
  * @date    13/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  * @deprecated  5.6.0
  * @see acf_esc_attrs().
  *
@@ -506,7 +506,7 @@ function acf_esc_attr( $attrs ) {
  * See acf_esc_attrs().
  *
  * @date    13/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  * @deprecated  5.6.0
  *
  * @param   array $attrs The array of attrs.
@@ -521,7 +521,7 @@ function acf_esc_attr_e( $attrs ) {
  * See acf_esc_attrs().
  *
  * @date    13/6/19
- * @since   5.8.1
+ * @since   ACF 5.8.1
  * @deprecated  5.6.0
  *
  * @param   array $attrs The array of attrs.

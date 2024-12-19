@@ -14,7 +14,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		/**
 		 * Verifies the request.
 		 *
-		 * @since 6.3.2
+		 * @since ACF 6.3.2
 		 *
 		 * @param array $request The request args.
 		 * @return  (bool|WP_Error) True on success, WP_Error on fail.
@@ -50,7 +50,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Called at the beginning of a request to setup properties.
 		 *
 		 * @date    23/5/19
-		 * @since   5.8.1
+		 * @since   ACF 5.8.1
 		 *
 		 * @param   array $request The request args.
 		 * @return  void
@@ -65,7 +65,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			 * Fires when a request is made.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $request The query request.
 			 * @param   ACF_Ajax_Query $query The query object.
@@ -79,7 +79,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Returns an array of args for this query.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $request The request args.
 		 * @return  array
@@ -96,7 +96,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			 * Filters the query args.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $args The query args.
 			 * @param   array $request The query request.
@@ -109,7 +109,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Prepares args for the get_results() method.
 		 *
 		 * @date    23/3/20
-		 * @since   5.8.9
+		 * @since   ACF 5.8.9
 		 *
 		 * @param   array args The query args.
 		 * @return  array
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Returns an array of results for the given args.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array args The query args.
 		 * @return  array
@@ -238,7 +238,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			 * Filters the query results.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $results The query results.
 			 * @param   array $args The query args.
@@ -253,7 +253,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Returns a single result for the given item object.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   mixed $item A single item from the queried results.
 		 * @return  string
@@ -265,7 +265,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			 * Filters the result item.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $item The choice id and text.
 			 * @param   ACF_User $user The user object.
@@ -278,7 +278,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		 * Filters the WP_User_Query search columns.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array         $columns       An array of column names to be searched.
 		 * @param   string        $search        The search term.
@@ -291,7 +291,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 			 * Filters the column names to be searched.
 			 *
 			 * @date    21/5/19
-			 * @since   5.8.1
+			 * @since   ACF 5.8.1
 			 *
 			 * @param   array $columns An array of column names to be searched.
 			 * @param   string $search The search term.

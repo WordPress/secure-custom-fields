@@ -8,7 +8,7 @@
 /**
  * Get an SCF UI options page as an array
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id The post ID being queried.
  * @return array|false The UI options page array.
@@ -20,7 +20,7 @@ function acf_get_ui_options_page( $id ) {
 /**
  * Retrieves a raw SCF UI options page.
  *
- * @since   6.2
+ * @since   ACF 6.2
  *
  * @param integer|string $id The post ID.
  * @return array|false The UI options page array.
@@ -32,7 +32,7 @@ function acf_get_raw_ui_options_page( $id ) {
 /**
  * Gets a post object for an SCF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id The post ID, key, or name.
  * @return object|boolean The post object, or false on failure.
@@ -44,7 +44,7 @@ function acf_get_ui_options_page_post( $id ) {
 /**
  * Returns true if the given identifier is an SCF UI options page key.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param string $id The identifier.
  * @return boolean
@@ -56,7 +56,7 @@ function acf_is_ui_options_page_key( $id ) {
 /**
  * Validates an SCF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The SCF UI options page array to validate.
  * @return array|boolean
@@ -68,7 +68,7 @@ function acf_validate_ui_options_page( array $ui_options_page = array() ) {
 /**
  * Translates the settings for an SCF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The SCF UI options page array.
  * @return array
@@ -80,7 +80,7 @@ function acf_translate_ui_options_page( array $ui_options_page ) {
 /**
  * Returns and array of SCF UI options pages for the given $filter.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $filter An array of args to filter results by.
  * @return array
@@ -92,7 +92,7 @@ function acf_get_ui_options_pages( array $filter = array() ) {
 /**
  * Returns an array of raw SCF UI options pages.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @return array
  */
@@ -103,7 +103,7 @@ function acf_get_raw_ui_options_pages() {
 /**
  * Returns a filtered array of SCF UI options pages based on the given $args.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_pages An array of SCF UI options pages.
  * @param array $args             An array of args to filter by.
@@ -116,7 +116,7 @@ function acf_filter_ui_options_pages( array $ui_options_pages, array $args = arr
 /**
  * Updates an SCF UI options page in the database.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The main ACF UI options page array.
  * @return array
@@ -128,7 +128,7 @@ function acf_update_ui_options_page( array $ui_options_page ) {
 /**
  * Deletes all caches for the provided ACF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The SCF UI options page array.
  * @return void
@@ -140,7 +140,7 @@ function acf_flush_ui_options_page_cache( array $ui_options_page ) {
 /**
  * Deletes an ACF UI options page from the database.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id The ACF UI options page ID, key or name.
  * @return boolean True if the options page was deleted.
@@ -152,7 +152,7 @@ function acf_delete_ui_options_page( $id = 0 ) {
 /**
  * Trashes an ACF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id The UI options page ID, key, or name.
  * @return boolean True if the options page was trashed.
@@ -164,7 +164,7 @@ function acf_trash_ui_options_page( $id = 0 ) {
 /**
  * Restores an ACF UI options page from the trash.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id The UI options page ID, key, or name.
  * @return boolean True if the options page was untrashed.
@@ -176,7 +176,7 @@ function acf_untrash_ui_options_page( $id = 0 ) {
 /**
  * Returns true if the given params match an ACF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The ACF UI options page array.
  * @return boolean
@@ -188,7 +188,7 @@ function acf_is_ui_options_page( $ui_options_page ) {
 /**
  * Duplicates an ACF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id          The ACF UI options page ID, key or name.
  * @param integer        $new_post_id Optional ID to override.
@@ -201,7 +201,7 @@ function acf_duplicate_ui_options_page( $id = 0, $new_post_id = 0 ) {
 /**
  * Activates or deactivates an ACF UI options page.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer|string $id       The ACF UI options page ID, key or name.
  * @param boolean        $activate True if the UI options page should be activated.
@@ -214,7 +214,7 @@ function acf_update_ui_options_page_active_status( $id, $activate = true ) {
 /**
  * Checks if the current user can edit the UI options page and returns the edit URL.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param integer $post_id The ACF UI options page ID.
  * @return string
@@ -226,7 +226,7 @@ function acf_get_ui_options_page_edit_link( $post_id ) {
 /**
  * Returns a modified ACF UI options page ready for export.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The ACF UI options page array.
  * @return array
@@ -238,7 +238,7 @@ function acf_prepare_ui_options_page_for_export( array $ui_options_page = array(
 /**
  * Exports an ACF UI options page as PHP.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The ACF UI options page array.
  * @return string|boolean
@@ -250,7 +250,7 @@ function acf_export_ui_options_page_as_php( array $ui_options_page ) {
 /**
  * Prepares an ACF UI options page for the import process.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The ACF UI options page array.
  * @return array
@@ -262,7 +262,7 @@ function acf_prepare_ui_options_page_for_import( array $ui_options_page = array(
 /**
  * Imports an ACF UI options page into the database.
  *
- * @since 6.2
+ * @since ACF 6.2
  *
  * @param array $ui_options_page The ACF UI options page array.
  * @return array The imported options page.

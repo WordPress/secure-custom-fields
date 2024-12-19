@@ -42,7 +42,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 * Validates an Options Page settings array.
 		 *
 		 * @date    28/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8
 		 *
 		 * @param   array|string $page The Options Page settings array or name.
 		 * @return  array
@@ -115,7 +115,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 			/**
 			 * Filters the $page array after it has been validated.
 			 *
-			 * @since   5.5.8
+			 * @since   ACF 5.5.8
 			 * @param   array $page The Options Page settings array.
 			 */
 			return apply_filters( 'acf/validate_options_page', $page );
@@ -127,7 +127,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 *
 		 * @type    function
 		 * @date    9/6/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   array $page The options page settings array.
 		 * @return  array|bool The page settings array or false if already exists.
@@ -156,7 +156,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 *
 		 * @type    function
 		 * @date    9/6/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   array $page The options sub page settings array.
 		 * @return  array|bool The page settings array or false if parent doesn't exist.
@@ -186,7 +186,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 *
 		 * @type    function
 		 * @date    9/6/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   string $slug The menu slug of the options page.
 		 * @param   array  $data Array of options page settings to update.
@@ -218,7 +218,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 *
 		 * @type    function
 		 * @date    6/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   string $slug The menu slug of the options page.
 		 * @return  array|null The options page settings array or null if not found.
@@ -234,7 +234,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 		 *
 		 * @type    function
 		 * @date    6/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @return  array Array of all registered options pages.
 		 */
@@ -252,7 +252,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    9/6/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @param   n/a
 	 * @return  (object)
@@ -263,7 +263,7 @@ if ( ! class_exists( 'acf_options_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    9/6/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @return  object The options page instance.
 	 */
@@ -294,7 +294,7 @@ if ( ! function_exists( 'acf_add_options_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    24/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   mixed $page The options page settings.
 	 * @return  array The page settings array.
@@ -313,7 +313,7 @@ if ( ! function_exists( 'acf_add_options_sub_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    24/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   mixed $page The options sub page settings.
 	 * @return  array The page settings array.
@@ -333,7 +333,7 @@ if ( ! function_exists( 'acf_update_options_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    24/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   string $slug The menu slug of the options page.
 	 * @param   array  $data Array of options page settings to update.
@@ -352,7 +352,7 @@ if ( ! function_exists( 'acf_get_options_page' ) ) :
 	 *
 	 * @type    function
 	 * @date    24/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   string $slug The menu slug of the options page.
 	 * @return  array|bool The options page settings array or false if not found.
@@ -382,7 +382,7 @@ if ( ! function_exists( 'acf_get_options_pages' ) ) :
 	 *
 	 * @type    function
 	 * @date    24/02/2014
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @return  array|bool The options page settings array or false if no pages are registered.
 	 */
@@ -469,7 +469,7 @@ if ( ! function_exists( 'acf_set_options_page_title' ) ) :
 	 *
 	 * @type    function
 	 * @date    13/07/13
-	 * @since   4.0.0
+	 * @since   ACF 4.0.0
 	 *
 	 * @param   string $title The title of the options page.
 	 * @return  void
@@ -495,7 +495,7 @@ if ( ! function_exists( 'acf_set_options_page_menu' ) ) :
 	 *
 	 * @type    function
 	 * @date    13/07/13
-	 * @since   4.0.0
+	 * @since   ACF 4.0.0
 	 *
 	 * @param   string $title The title of the options page.
 	 * @return  void
@@ -520,7 +520,7 @@ if ( ! function_exists( 'acf_set_options_page_capability' ) ) :
 	 *
 	 * @type    function
 	 * @date    13/07/13
-	 * @since   4.0.0
+	 * @since   ACF 4.0.0
 	 *
 	 * @param   string $capability The capability of the options page.
 	 * @return  void
@@ -544,7 +544,7 @@ if ( ! function_exists( 'register_options_page' ) ) :
 	 * This is an old function which is now referencing the new 'acf_add_options_sub_page' function
 	 *
 	 * @type    function
-	 * @since   3.0.0
+	 * @since   ACF 3.0.0
 	 * @date    29/01/13
 	 *
 	 * @param   string $page The options sub page settings array.

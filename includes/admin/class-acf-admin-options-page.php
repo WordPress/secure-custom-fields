@@ -31,7 +31,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * Initialize filters, action, variables and includes
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function __construct() {
 			// add menu items
@@ -42,7 +42,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * Adds menu items for registered options pages.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function admin_menu() {
 
@@ -78,7 +78,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		 *
 		 * Enqueues scripts, validates saves, and sets up the options page.
 		 *
-		 * @since 3.6.0
+		 * @since ACF 3.6.0
 		 */
 		public function admin_load() {
 
@@ -106,7 +106,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 					/**
 					 * Fires after publishing a save on an options page.
 					 *
-					 * @since 6.1.7
+					 * @since ACF 6.1.7
 					 *
 					 * @param string|int  $post_id   The current id.
 					 * @param string      $menu_slug The current options page menu slug.
@@ -140,7 +140,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * This function will enqueue the 'post.js' script which adds support for 'Screen Options' column toggle
 		 *
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function admin_enqueue_scripts() {
 
@@ -152,7 +152,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		 * This action will find and add field groups to the current edit page
 		 *
 		 * @type    action (admin_head)
-		 * @since   3.1.8
+		 * @since   ACF 3.1.8
 		 */
 		public function admin_head() {
 
@@ -206,7 +206,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * This function will render the submitdiv metabox
 		 *
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 */
 		public function postbox_submitdiv() {
 
@@ -214,7 +214,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			 *  Fires before the major-publishing-actions div.
 			 *
 			 * @date    24/9/18
-			 * @since   5.7.7
+			 * @since   ACF 5.7.7
 			 *
 			 * @param array $page The current options page.
 			 */
@@ -232,7 +232,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 				 *  Fires before the major-publishing-actions div.
 				 *
 				 * @date    24/9/18
-				 * @since   5.7.7
+				 * @since   ACF 5.7.7
 				 *
 				 * @param array $page The current options page.
 				 */
@@ -248,7 +248,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * Renders a postbox on an ACF options page.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param object $post The post object.
 		 * @param array  $args The metabox arguments.
@@ -294,7 +294,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		/**
 		 * Renders the options page HTML content.
 		 *
-		 * @since 2.0.4
+		 * @since ACF 2.0.4
 		 */
 		public function html() {
 

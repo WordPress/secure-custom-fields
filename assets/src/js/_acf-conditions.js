@@ -8,7 +8,7 @@
 	 *  description
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -36,7 +36,7 @@
 	 *  Finds a field that is related to another field
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -115,7 +115,7 @@
 	 *  Returns the field's conditions instance
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -137,7 +137,7 @@
 	 *  description
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
