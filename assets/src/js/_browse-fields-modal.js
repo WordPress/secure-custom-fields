@@ -189,8 +189,8 @@
 				this.$el.find( '.field-type-image' ).hide();
 			}
 
-			const isPro = acf.get( 'is_pro' );
-			const isActive = acf.get( 'isLicenseActive' );
+			const isPro = true;
+			const isActive = true;
 			const $upgateToProButton = this.$el.find( '.acf-btn-pro' );
 			const $upgradeToUnlockButton = this.$el.find(
 				'.field-type-upgrade-to-unlock'

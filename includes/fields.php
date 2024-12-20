@@ -419,7 +419,7 @@ function acf_get_pro_field_types() {
 			'description'   => __( 'This allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/how-to-use-the-clone-field/',
 			'category'      => 'layout',
-			'pro'           => true,
+			'pro'           => false,
 		),
 		'flexible_content' => array(
 			'name'          => 'flexible_content',
@@ -429,7 +429,7 @@ function acf_get_pro_field_types() {
 			'description'   => __( 'This provides a simple, structured, layout-based editor. The Flexible Content field allows you to define, create and manage content with total control by using layouts and subfields to design the available blocks.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/building-layouts-with-the-flexible-content-field-in-a-theme/',
 			'category'      => 'layout',
-			'pro'           => true,
+			'pro'           => false,
 		),
 		'gallery'          => array(
 			'name'          => 'gallery',
@@ -439,7 +439,7 @@ function acf_get_pro_field_types() {
 			'description'   => __( 'This provides an interactive interface for managing a collection of attachments. Most settings are similar to the Image field type. Additional settings allow you to specify where new attachments are added in the gallery and the minimum/maximum number of attachments allowed.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/how-to-use-the-gallery-field/',
 			'category'      => 'content',
-			'pro'           => true,
+			'pro'           => false,
 		),
 		'repeater'         => array(
 			'name'          => 'repeater',
@@ -449,7 +449,7 @@ function acf_get_pro_field_types() {
 			'description'   => __( 'This provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'secure-custom-fields' ),
 			'tutorial_url'  => 'https://www.advancedcustomfields.com/resources/repeater/how-to-use-the-repeater-field/',
 			'category'      => 'layout',
-			'pro'           => true,
+			'pro'           => false,
 		),
 	);
 }

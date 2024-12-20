@@ -110,9 +110,9 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			$version = acf_get_setting( 'version' );
 
 			// Register scripts.
-			wp_register_script( 'acf-pro-input', acf_get_url( "assets/build/js/pro/acf-pro-input{$min}.js" ), array( 'acf-input' ), $version, true );
-			wp_register_script( 'acf-pro-field-group', acf_get_url( "assets/build/js/pro/acf-pro-field-group{$min}.js" ), array( 'acf-field-group' ), $version, true );
-			wp_register_script( 'acf-pro-ui-options-page', acf_get_url( "assets/build/js/pro/acf-pro-ui-options-page{$min}.js" ), array( 'acf-input' ), $version, true );
+			wp_register_script( 'acf-pro-input', acf_get_url( 'assets/build/js/pro/acf-pro-input' . $suffix . '.js' ), array( 'acf-input' ), $version, true );
+			wp_register_script( 'acf-pro-field-group', acf_get_url( 'assets/build/js/pro/acf-pro-field-group' . $suffix . '.js' ), array( 'acf-field-group' ), $version, true );
+			wp_register_script( 'acf-pro-ui-options-page', acf_get_url( 'assets/build/js/pro/acf-pro-ui-options-page' . $suffix . '.js' ), array( 'acf-input' ), $version, true );
 
 			// Register styles.
 			wp_register_style( 'acf-pro-input', acf_get_url( 'assets/build/css/pro/acf-pro-input.css' ), array( 'acf-input' ), $version );
