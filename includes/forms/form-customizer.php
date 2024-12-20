@@ -14,7 +14,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -42,7 +42,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   N/A
 		 * @return  N/A
@@ -66,7 +66,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    27/05/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param   $instance (array) widget settings
 		 * @param   $new_instance (array) widget settings
@@ -120,7 +120,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    22/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $customizer (object)
 		 * @return  $value (mixed)
@@ -179,7 +179,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    22/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $customizer (object)
 		 * @return  n/a
@@ -221,7 +221,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * Used to inject preview value
 		 *
 		 * @date    2/2/18
-		 * @since   5.6.5
+		 * @since   ACF 5.6.5
 		 *
 		 * @param   type $var Description. Default.
 		 * @return  type Description.
@@ -243,7 +243,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * Used to inject preview value
 		 *
 		 * @date    2/2/18
-		 * @since   5.6.5
+		 * @since   ACF 5.6.5
 		 *
 		 * @param   type $var Description. Default.
 		 * @return  type Description.
@@ -267,7 +267,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    22/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $customizer (object)
 		 * @return  n/a
@@ -303,7 +303,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    22/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -338,7 +338,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a

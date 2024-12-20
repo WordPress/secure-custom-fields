@@ -14,7 +14,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -31,7 +31,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   n/a
 		 * @return  (boolean)
@@ -47,7 +47,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (int)
 		 * @return  (boolean)
@@ -63,7 +63,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (mixed)
 		 * @return  (int)
@@ -95,7 +95,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $loop (array)
 		 * @return  n/a
@@ -138,7 +138,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (mixed)
 		 * @param   $key (string) the loop setting name
@@ -168,7 +168,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (mixed)
 		 * @param   $key (string) the loop setting name
@@ -199,7 +199,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 *
 		 * @type    function
 		 * @date    3/03/2016
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (mixed)
 		 * @return  (boolean) true on success
@@ -238,7 +238,7 @@ endif; // class_exists check
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   n/a
  * @return  n/a
@@ -254,7 +254,7 @@ function acf_add_loop( $loop = array() ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   n/a
  * @return  n/a
@@ -270,7 +270,7 @@ function acf_update_loop( $i = 'active', $key = null, $value = null ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   n/a
  * @return  n/a
@@ -286,7 +286,7 @@ function acf_get_loop( $i = 'active', $key = null ) {
  *
  * @type    function
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   n/a
  * @return  n/a

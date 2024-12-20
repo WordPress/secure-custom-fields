@@ -2,7 +2,7 @@
 /**
  * The empty list state for an ACF post type.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 ?><script>document.body.classList.add('acf-no-post-types');</script>

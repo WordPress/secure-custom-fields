@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -37,7 +37,7 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -50,7 +50,7 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -62,7 +62,7 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void

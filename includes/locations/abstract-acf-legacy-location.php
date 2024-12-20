@@ -11,7 +11,7 @@ if ( ! class_exists( 'ACF_Legacy_Location' ) ) :
 		 * Constructor.
 		 *
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @return  void
 		 */
@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF_Legacy_Location' ) ) :
 		 * Magic __call method for backwards compatibility.
 		 *
 		 * @date    10/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $name      The method name.
 		 * @param   array  $arguments The array of arguments.

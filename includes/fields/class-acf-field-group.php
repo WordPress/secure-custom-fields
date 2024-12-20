@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -43,7 +43,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * This filter is appied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options
@@ -69,7 +69,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value found in the database
@@ -106,7 +106,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param  mixed   $value       The value which was loaded from the database.
 		 * @param  mixed   $post_id     The $post_id from which the value was loaded.
@@ -145,7 +145,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * This filter is appied to the $value before it is updated in the db
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value - the value which will be saved in the database
@@ -204,7 +204,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 *
 		 * @type    function
 		 * @date    4/11/16
-		 * @since   5.5.0
+		 * @since   ACF 5.5.0
 		 *
 		 * @param   $field (array)
 		 * @return  $field
@@ -234,7 +234,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -281,7 +281,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 *
 		 * @type    function
 		 * @date    12/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -307,7 +307,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 *
 		 * @type    function
 		 * @date    12/07/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -371,7 +371,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -424,7 +424,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/02/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -470,7 +470,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * This filter is appied to the $field before it is duplicated and saved to the database
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field - the field array holding all the field options
@@ -498,7 +498,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * Prepares the field for export.
 		 *
 		 * @date    11/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field The field settings.
 		 * @return  array
@@ -518,7 +518,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * Returns a flat array of fields containing all sub fields ready for import.
 		 *
 		 * @date    11/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $field The field settings.
 		 * @return  array
@@ -546,7 +546,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * Called when deleting this field's value.
 		 *
 		 * @date    1/07/2015
-		 * @since   5.2.3
+		 * @since   ACF 5.2.3
 		 *
 		 * @param   mixed  $post_id  The post ID being saved
 		 * @param   string $meta_key The field name as seen by the DB
@@ -575,7 +575,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 		 * Called when deleting a field of this type.
 		 *
 		 * @date    8/11/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param   arra $field The field settings.
 		 * @return  void

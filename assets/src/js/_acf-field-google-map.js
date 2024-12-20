@@ -75,7 +75,7 @@
 			 * Fires immediately after the value has changed.
 			 *
 			 * @date	12/02/2014
-			 * @since	5.0.0
+			 * @since	ACF 5.0.0
 			 *
 			 * @param	object|string val The new value.
 			 * @param	object map The Google Map isntance.
@@ -221,7 +221,7 @@
 			 * Fires immediately after the Google Map has been initialized.
 			 *
 			 * @date	12/02/2014
-			 * @since	5.0.0
+			 * @since	ACF 5.0.0
 			 *
 			 * @param	object map The Google Map isntance.
 			 * @param	object marker The Google Map marker isntance.
@@ -419,7 +419,7 @@
 		 * Returns location data for the given GeocoderResult object.
 		 *
 		 * @date	15/10/19
-		 * @since	5.8.6
+		 * @since	ACF 5.8.6
 		 *
 		 * @param	object obj A GeocoderResult object.
 		 * @return	object
@@ -487,7 +487,7 @@
 			 * Filters the parsed result.
 			 *
 			 * @date	18/10/19
-			 * @since	5.8.6
+			 * @since	ACF 5.8.6
 			 *
 			 * @param	object result The parsed result value.
 			 * @param	object obj The GeocoderResult object.
@@ -563,7 +563,7 @@
 	 * Loads the Google Maps API library and troggers callback.
 	 *
 	 * @date	28/3/19
-	 * @since	5.7.14
+	 * @since	ACF 5.7.14
 	 *
 	 * @param	function callback The callback to excecute.
 	 * @return	void

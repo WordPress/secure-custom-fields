@@ -9,7 +9,7 @@ acf_register_store( 'form' );
  * Sets data about the current form.
  *
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $name The store name.
  * @param   array  $data Array of data to start the store with.
@@ -25,7 +25,7 @@ function acf_set_form_data( $name = '', $data = false ) {
  * Gets data about the current form.
  *
  * @date    6/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   string $name The store name.
  * @return  mixed
@@ -40,7 +40,7 @@ function acf_get_form_data( $name = '' ) {
  * Called within a form to set important information and render hidden inputs.
  *
  * @date    15/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @return  void
  */
@@ -91,7 +91,7 @@ function acf_form_data( $data = array() ) {
 		 * Fires within the #acf-form-data element to add extra HTML.
 		 *
 		 * @date    15/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   array $data The form data.
 		 */
@@ -110,7 +110,7 @@ function acf_form_data( $data = array() ) {
  * Saves the $_POST data.
  *
  * @date    15/10/13
- * @since   5.0.0
+ * @since   ACF 5.0.0
  *
  * @param   integer|string $post_id The post id.
  * @param   array          $values  An array of values to override $_POST.
@@ -152,7 +152,7 @@ function acf_save_post( $post_id = 0, $values = null ) {
  * This allows developers to hook in before and after ACF has actually saved the data.
  *
  * @date    11/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   integer|string $post_id The post id.
  * @return  void

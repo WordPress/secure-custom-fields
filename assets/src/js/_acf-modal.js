@@ -113,7 +113,7 @@
 	 * Returns a new modal.
 	 *
 	 * @date	21/4/20
-	 * @since	5.9.0
+	 * @since	ACF 5.9.0
 	 *
 	 * @param	object props The modal props.
 	 * @return	object

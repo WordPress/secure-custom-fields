@@ -6,7 +6,7 @@
 	 *
 	 *  @type	function
 	 *  @date	24/10/13
-	 *  @since	5.0.0
+	 *  @since	ACF 5.0.0
 	 *
 	 *  @param	n/a
 	 *  @return	n/a

@@ -4,7 +4,7 @@
  * Returns an array of "ACF only" meta for the given post_id.
  *
  * @date    9/10/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param mixed $post_id The post_id for this data.
  *
@@ -53,7 +53,7 @@ function acf_get_meta( $post_id = 0 ) {
 	 * Filters the $meta array after it has been loaded.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param array  $meta    The array of loaded meta.
 	 * @param string $post_id The $post_id for this meta.
@@ -68,7 +68,7 @@ function acf_get_meta( $post_id = 0 ) {
  * Returns an array of meta for the given wp_option name prefix in the same format as get_post_meta().
  *
  * @date    9/10/18
- * @since   5.8.0
+ * @since   ACF 5.8.0
  *
  * @param   string $prefix The wp_option name prefix.
  * @return  array
@@ -114,7 +114,7 @@ function acf_get_option_meta( $prefix = '' ) {
  * Retrieves specific metadata from the database.
  *
  * @date    16/10/2015
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   integer|string $post_id The post id.
  * @param   string         $name    The meta name.
@@ -157,7 +157,7 @@ function acf_get_metadata( $post_id = 0, $name = '', $hidden = false ) {
  * Updates metadata in the database.
  *
  * @date    16/10/2015
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   integer|string $post_id The post id.
  * @param   string         $name    The meta name.
@@ -202,7 +202,7 @@ function acf_update_metadata( $post_id = 0, $name = '', $value = '', $hidden = f
  * Deletes metadata from the database.
  *
  * @date    16/10/2015
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   integer|string $post_id The post id.
  * @param   string         $name    The meta name.
@@ -246,7 +246,7 @@ function acf_delete_metadata( $post_id = 0, $name = '', $hidden = false ) {
  * Copies meta from one post to another. Useful for saving and restoring revisions.
  *
  * @date    25/06/2016
- * @since   5.3.8
+ * @since   ACF 5.3.8
  *
  * @param   (int|string) $from_post_id The post id to copy from.
  * @param   (int|string) $to_post_id   The post id to paste to.
@@ -276,7 +276,7 @@ function acf_copy_metadata( $from_post_id = 0, $to_post_id = 0 ) {
  * Copies meta from one post to another. Useful for saving and restoring revisions.
  *
  * @date    25/06/2016
- * @since   5.3.8
+ * @since   ACF 5.3.8
  * @deprecated 5.7.11
  *
  * @param   integer $from_post_id The post id to copy from.
@@ -294,7 +294,7 @@ function acf_copy_postmeta( $from_post_id = 0, $to_post_id = 0 ) {
  * Looks for a reference to help loading the correct field via name.
  *
  * @date    21/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string       $key     The meta name (field name).
  * @param   (int|string) $post_id The post_id where this field's value is saved.
@@ -323,7 +323,7 @@ function acf_get_meta_field( $key = 0, $post_id = 0 ) {
  * Retrieves reference metadata from the database.
  *
  * @date    16/10/2015
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   (int|string)                                   $post_id The post id.
  * @param   string type The reference type (fields|groups).
@@ -356,7 +356,7 @@ function acf_get_metaref( $post_id = 0, $type = 'fields', $name = '' ) {
  * Updates reference metadata in the database.
  *
  * @date    16/10/2015
- * @since   5.2.3
+ * @since   ACF 5.2.3
  *
  * @param   (int|string)                                   $post_id    The post id.
  * @param   string type The reference type (fields|groups).

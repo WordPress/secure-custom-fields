@@ -13,7 +13,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -38,7 +38,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   N/A
 		 * @return  N/A
@@ -64,7 +64,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 * description
 		 *
 		 * @date    30/7/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @param   type $var Description. Default.
 		 * @return  type Description.
@@ -128,7 +128,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    function
 		 * @date    26/5/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -159,7 +159,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    function
 		 * @date    26/5/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -188,7 +188,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 * Needed on nav-menus.php page for new menu with no items
 		 *
 		 * @date    23/2/18
-		 * @since   5.6.9
+		 * @since   ACF 5.6.9
 		 *
 		 * @param   type $var Description. Default.
 		 * @return  type Description.
@@ -203,7 +203,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 * Used to set global data and customize the Walker class.
 		 *
 		 * @date    26/5/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   string  $class   The walker class to use. Default 'Walker_Nav_Menu_Edit'.
 		 * @param   integer $menu_id ID of the menu being rendered.
@@ -224,7 +224,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    action 'acf/validate_save_post' 5
 		 * @date    7/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -254,7 +254,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 *
 		 * @type    function
 		 * @date    11/06/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a

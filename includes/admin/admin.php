@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Constructor.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -30,7 +30,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Adds the ACF menu item.
 		 *
 		 * @date    28/09/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function admin_menu() {
 
@@ -50,7 +50,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Enqueues global admin styling.
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function admin_enqueue_scripts() {
 			wp_enqueue_style( 'acf-global' );
@@ -70,7 +70,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Appends custom admin body classes.
 		 *
 		 * @date    5/11/19
-		 * @since   5.8.7
+		 * @since   ACF 5.8.7
 		 *
 		 * @param   string $classes Space-separated list of CSS classes.
 		 * @return  string
@@ -97,7 +97,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Adds custom functionality to "ACF" admin pages.
 		 *
 		 * @date    7/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return  void
 		 */
@@ -114,7 +114,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Shows a notice to import post types and taxonomies from CPTUI if that plugin is active.
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 */
 		public function maybe_show_import_from_cptui_notice() {
 			global $plugin_page;
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Notifies the user that fields rendered via shortcode or the_field() have
 		 * had HTML removed/altered due to unsafe HTML being escaped.
 		 *
-		 * @since 6.2.5
+		 * @since ACF 6.2.5
 		 */
 		public function maybe_show_escaped_html_notice() {
 			// Only show to editors and above.
@@ -170,7 +170,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Dismisses the escaped unsafe HTML notice.
 		 *
-		 * @since 6.2.5
+		 * @since ACF 6.2.5
 		 */
 		public function dismiss_escaped_html_notice() {
 			if ( empty( $_GET['acf-dismiss-esc-html-notice'] ) ) {
@@ -197,7 +197,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Clear the escaped unsafe HTML log.
 		 *
-		 * @since 6.2.5
+		 * @since ACF 6.2.5
 		 */
 		public function clear_escaped_html_log() {
 			if ( empty( $_GET['acf-clear-esc-html-log'] ) ) {
@@ -223,7 +223,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Renders the admin navigation element.
 		 *
 		 * @date    27/3/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @return  void
 		 */
@@ -243,7 +243,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * Modifies the admin footer text.
 		 *
 		 * @date    7/4/20
-		 * @since   5.9.0
+		 * @since   ACF 5.9.0
 		 *
 		 * @param   string $text The current admin footer text.
 		 * @return  string
@@ -255,7 +255,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Modifies the admin footer version text.
 		 *
-		 * @since 6.2
+		 * @since ACF 6.2
 		 *
 		 * @param   string $text The current admin footer version text.
 		 * @return  string
@@ -267,7 +267,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Ensure the ACF parent menu is selected for add-new.php
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @param string $parent_file The parent file checked against menu activation.
 		 * @return string The modified parent file
 		 */
@@ -285,7 +285,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Ensure the correct ACF submenu item is selected when in post-new versions of edit pages
 		 *
-		 * @since 6.1
+		 * @since ACF 6.1
 		 * @param string $submenu_file The submenu filename.
 		 * @return string The modified submenu filename
 		 */

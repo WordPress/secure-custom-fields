@@ -11,7 +11,7 @@ if ( ! class_exists( 'acf_field_output' ) ) :
 		/**
 		 * This function will setup the field type data
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 */
 		public function initialize() {
 

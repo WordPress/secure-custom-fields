@@ -19,7 +19,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -45,7 +45,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    23/06/12
-		 * @since   3.1.8
+		 * @since   ACF 3.1.8
 		 *
 		 * @param   n/a
 		 * @return  (boolean)
@@ -71,7 +71,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
-		 * @since   3.6.0
+		 * @since   ACF 3.6.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -97,7 +97,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    19/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   $comment (object)
 		 * @return  n/a
@@ -168,7 +168,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    18/04/2016
-		 * @since   5.3.8
+		 * @since   ACF 5.3.8
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -231,7 +231,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    19/10/13
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   comment_id (int)
 		 * @return  n/a
@@ -260,7 +260,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 *
 		 * @type    function
 		 * @date    27/03/2015
-		 * @since   5.1.5
+		 * @since   ACF 5.1.5
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)

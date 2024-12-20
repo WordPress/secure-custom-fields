@@ -36,7 +36,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 * Registers any ACF meta that should be sent the REST/Gutenberg request.
 		 * For now, this is just our "_acf_changed" key that we use to detect if ACF fields have changed.
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 */
 		public function register_meta() {
 			register_meta(
@@ -56,7 +56,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 * Lets WordPress know which meta keys to include in revisions.
 		 * For now, this is just our "_acf_changed" key, as we still handle revisions ourselves.
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 *
 		 * @param array $keys The meta keys that should be revisioned.
 		 * @return array
@@ -70,7 +70,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 * Helps WordPress determine if fields have changed, and if in a legacy
 		 * metabox AJAX request, copies the metadata to the new revision.
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 *
 		 * @param boolean $post_has_changed True if the post has changed, false if not.
 		 * @param WP_Post $last_revision    The WP_Post object for the latest revision.
@@ -93,7 +93,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		/**
 		 * Copies ACF field data to the latest revision.
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 *
 		 * @param integer $revision_id The ID of the revision that was just created.
 		 * @param integer $post_id     The ID of the post being updated.
@@ -123,7 +123,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 *
 		 * @type    function
 		 * @date    21/10/2014
-		 * @since   5.1.0
+		 * @since   ACF 5.1.0
 		 *
 		 * @param   $fields (array)
 		 * @return  $fields
@@ -355,7 +355,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 *
 		 * @type    function
 		 * @date    6/3/17
-		 * @since   5.5.10
+		 * @since   ACF 5.5.10
 		 *
 		 * @param   $post_id (int)
 		 * @param   $_post_id (int)
@@ -424,7 +424,7 @@ endif; // class_exists check
  *
  * @type    function
  * @date    26/09/2016
- * @since   5.4.0
+ * @since   ACF 5.4.0
  *
  * @param   $post_id (int)
  * @return  n/a
@@ -446,7 +446,7 @@ function acf_save_post_revision( $post_id = 0 ) {
  *
  * @type    function
  * @date    25/06/2016
- * @since   5.3.8
+ * @since   ACF 5.3.8
  *
  * @param   $post_id (int)
  * @return  $post_id (int)

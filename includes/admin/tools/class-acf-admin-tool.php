@@ -31,7 +31,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will return the Tool's name
 		 *
 		 * @date    19/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -47,7 +47,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will return the Tool's title
 		 *
 		 * @date    19/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -63,7 +63,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will return the Tool's title
 		 *
 		 * @date    19/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -79,7 +79,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will return true if the tool is active
 		 *
 		 * @date    19/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  boolean
@@ -94,7 +94,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 *
 		 * @type    function
 		 * @date    27/6/17
-		 * @since   5.6.0
+		 * @since   ACF 5.6.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -112,7 +112,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will initialize the admin tool
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -130,7 +130,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function is called during the admin page load
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -147,7 +147,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will output the metabox HTML
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -162,7 +162,7 @@ if ( ! class_exists( 'ACF_Admin_Tool' ) ) :
 		 * This function will run when the tool's form has been submit
 		 *
 		 * @date    10/10/17
-		 * @since   5.6.3
+		 * @since   ACF 5.6.3
 		 *
 		 * @param   n/a
 		 * @return  n/a

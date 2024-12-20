@@ -5,7 +5,7 @@
 	 *  Field group location rules functionality
 	 *
 	 *  @date	15/12/17
-	 *  @since	5.7.0
+	 *  @since	ACF 5.7.0
 	 *
 	 *  @param	void
 	 *  @return	void

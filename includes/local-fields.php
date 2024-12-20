@@ -17,7 +17,7 @@ acf_enable_filter( 'local' );
  * Enables the local filter.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  void
  */
@@ -31,7 +31,7 @@ function acf_enable_local() {
  * Disables the local filter.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  void
  */
@@ -45,7 +45,7 @@ function acf_disable_local() {
  * Returns true if local fields are enabled.
  *
  * @date    23/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  boolean
  */
@@ -57,7 +57,7 @@ function acf_is_local_enabled() {
  * Returns either local store or a dummy store for the given name or post type.
  *
  * @date 23/1/19
- * @since 5.7.10
+ * @since ACF 5.7.10
  *
  * @param string $name      The store name.
  * @param string $post_type The post type for the desired store.
@@ -98,7 +98,7 @@ function acf_get_local_store( $name = '', $post_type = '' ) {
  * Resets the local data.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  void
  */
@@ -115,7 +115,7 @@ function acf_reset_local() {
  * Returns all local field groups.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  array
  */
@@ -126,7 +126,7 @@ function acf_get_local_field_groups() {
 /**
  * Returns local ACF posts with the provided post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $post_type The post type to check for.
  * @return array|mixed
@@ -141,7 +141,7 @@ function acf_get_local_internal_posts( $post_type = 'acf-field-group' ) {
  * description
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   type $var Description. Default.
  * @return  type Description.
@@ -156,7 +156,7 @@ function acf_have_local_field_groups() {
  * description
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   type $var Description. Default.
  * @return  type Description.
@@ -171,7 +171,7 @@ function acf_count_local_field_groups() {
  * Adds a local field group.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_group The field group array.
  * @return  boolean
@@ -223,7 +223,7 @@ function acf_add_local_field_group( $field_group ) {
 /**
  * Adds a local ACF internal post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $post      The main ACF post array.
  * @param string $post_type The post type being added.
@@ -260,7 +260,7 @@ function acf_add_local_internal_post_type( $post, $post_type ) {
  * See acf_add_local_field_group().
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_group The field group array.
  * @return  void
@@ -275,7 +275,7 @@ function register_field_group( $field_group ) {
  * Removes a field group for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  boolean
@@ -287,7 +287,7 @@ function acf_remove_local_field_group( $key = '' ) {
 /**
  * Removes a local ACF post with the given key and post type.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $key       The ACF key.
  * @param string $post_type The ACF post type.
@@ -303,7 +303,7 @@ function acf_remove_local_internal_post_type( $key = '', $post_type = 'acf-field
  * Returns true if a field group exists for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  boolean
@@ -316,7 +316,7 @@ function acf_is_local_field_group( $key = '' ) {
 /**
  * Returns true if an ACF post exists for the given key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $key       The ACF key.
  * @param string $post_type The ACF post type.
@@ -332,7 +332,7 @@ function acf_is_local_internal_post_type( $key = '', $post_type = 'acf-field-gro
  * Returns true if a field group exists for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  boolean
@@ -344,7 +344,7 @@ function acf_is_local_field_group_key( $key = '' ) {
 /**
  * Returns true if a local ACF post exists for the given key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $key       The ACF post key.
  * @param string $post_type The post type to check.
@@ -360,7 +360,7 @@ function acf_is_local_internal_post_type_key( $key = '', $post_type = '' ) {
  * Returns a field group for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  (array|null)
@@ -372,7 +372,7 @@ function acf_get_local_field_group( $key = '' ) {
 /**
  * Returns an ACF post for the given key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $key       The field group key.
  * @param string $post_type The ACF post type.
@@ -388,7 +388,7 @@ function acf_get_local_internal_post_type( $key = '', $post_type = 'acf-field-gr
  * Adds an array of local fields.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $fields An array of un prepared fields.
  * @return  array
@@ -410,7 +410,7 @@ function acf_add_local_fields( $fields = array() ) {
  * Returns all local fields for the given parent.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $parent The parent key.
  * @return  array
@@ -437,7 +437,7 @@ function acf_get_local_fields( $parent = '' ) {
  * Returns true if local fields exist.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $parent The parent key.
  * @return  boolean
@@ -452,7 +452,7 @@ function acf_have_local_fields( $parent = '' ) {
  * Returns the number of local fields for the given parent.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $parent The parent key.
  * @return  integer
@@ -467,7 +467,7 @@ function acf_count_local_fields( $parent = '' ) {
  * Adds a local field.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array   $field    The field array.
  * @param   boolean $prepared Whether or not the field has already been prepared for import.
@@ -520,7 +520,7 @@ function acf_add_local_field( $field, $prepared = false ) {
  * Generates a unique key based on the field's parent.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field key.
  * @return  boolean
@@ -535,7 +535,7 @@ function _acf_generate_local_key( $field ) {
  * Removes a field for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field key.
  * @return  boolean
@@ -550,7 +550,7 @@ function acf_remove_local_field( $key = '' ) {
  * Returns true if a field exists for the given key or name.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  boolean
@@ -565,7 +565,7 @@ function acf_is_local_field( $key = '' ) {
  * Returns true if a field exists for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  boolean
@@ -580,7 +580,7 @@ function acf_is_local_field_key( $key = '' ) {
  * Returns a field for the given key.
  *
  * @date    22/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $key The field group key.
  * @return  (array|null)
@@ -595,7 +595,7 @@ function acf_get_local_field( $key = '' ) {
  * Appends local field groups to the provided array.
  *
  * @date    23/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   array $field_groups An array of field groups.
  * @return  array
@@ -607,7 +607,7 @@ function _acf_apply_get_local_field_groups( $groups = array() ) {
 /**
  * Appends local ACF internal post types to the provided array.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array  $posts     An array of ACF posts.
  * @param string $post_type The ACF internal post type being loaded.
@@ -655,7 +655,7 @@ add_filter( 'acf/load_ui_options_pages', '_acf_apply_get_local_internal_posts', 
  * Returns true if is a local key.
  *
  * @date    23/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   boolean $bool The result.
  * @param   string  $id   The identifier.
@@ -674,7 +674,7 @@ add_filter( 'acf/is_field_key', '_acf_apply_is_local_field_key', 20, 2 );
  * Returns true if is a local key.
  *
  * @date    23/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   boolean $bool The result.
  * @param   string  $id   The identifier.
@@ -687,7 +687,7 @@ function _acf_apply_is_local_field_group_key( $bool, $id ) {
 /**
  * Returns true if is a local key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param boolean $bool      The result.
  * @param string  $id        The identifier.
@@ -709,7 +709,7 @@ add_filter( 'acf/is_taxonomy_key', '_acf_apply_is_local_internal_post_type_key',
  * Local fields that are added too early will not be correctly prepared by the field type class.
  *
  * @date    23/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @return  void
  */

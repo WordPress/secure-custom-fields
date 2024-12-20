@@ -144,7 +144,7 @@ if ( empty( $field['conditional_logic'] ) ) {
 								/**
 								 * Filters the choices available for a conditional logic rule.
 								 *
-								 * @since 6.3.0
+								 * @since ACF 6.3.0
 								 *
 								 * @param array $choices The available choices.
 								 * @param array $conditional_field The field object for the conditional field.

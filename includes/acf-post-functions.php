@@ -4,7 +4,7 @@
  * Returns available templates for each post type.
  *
  * @date    29/8/17
- * @since   5.6.2
+ * @since   ACF 5.6.2
  *
  * @return  array
  */

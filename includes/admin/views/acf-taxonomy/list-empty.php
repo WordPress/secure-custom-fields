@@ -2,7 +2,7 @@
 /**
  * The empty list state for an ACF taxonomy.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 ?>

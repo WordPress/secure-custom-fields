@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -45,7 +45,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 *
 		 * @type    function
 		 * @date    14/2/17
-		 * @since   5.5.8
+		 * @since   ACF 5.5.8.5.8
 		 *
 		 * @param   $field (array)
 		 * @return  (int)
@@ -68,7 +68,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 * Attempts to fetch the HTML for the provided URL using oEmbed.
 		 *
 		 * @date    24/01/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0.0.0
 		 *
 		 * @param string         $url    The URL that should be embedded.
 		 * @param integer|string $width  Optional maxwidth value passed to the provider URL.
@@ -98,7 +98,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		/**
 		 * Returns AJAX results for the oEmbed field.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0.0.0
 		 *
 		 * @return void
 		 */
@@ -122,7 +122,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 *
 		 * @type    function
 		 * @date    15/10/2014
-		 * @since   5.0.9
+		 * @since   ACF 5.0.9.0.9
 		 *
 		 * @param   $options (array)
 		 * @return  (array)
@@ -161,7 +161,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		/**
 		 * Renders the oEmbed field.
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6 3.6
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -228,7 +228,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 * @param   $field  - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 * @date    23/01/13
 		 */
 		function render_field_settings( $field ) {
@@ -262,7 +262,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template.
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6 3.6
 		 *
 		 * @param  mixed $value   The value which was loaded from the database.
 		 * @param  mixed $post_id The $post_id from which the value was loaded.

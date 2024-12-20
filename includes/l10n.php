@@ -3,7 +3,7 @@
 /**
  * Determine the current locale desired for the request.
  *
- * @since 5.0.0
+ * @since ACF 5.0.0
  *
  * @global string $pagenow
  *
@@ -16,7 +16,7 @@ if ( ! function_exists( 'determine_locale' ) ) :
 		 *
 		 * Using this filter allows to override the default logic, effectively short-circuiting the function.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param string|null The locale to return and short-circuit, or null as default.
 		 */
@@ -44,7 +44,7 @@ if ( ! function_exists( 'determine_locale' ) ) :
 		/**
 		 * Filters the locale for the current request.
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 *
 		 * @param string $locale The locale.
 		 */
@@ -56,7 +56,7 @@ endif;
  * Returns the current locale.
  *
  * @date    16/12/16
- * @since   5.5.0
+ * @since   ACF 5.5.0
  *
  * @return  string
  */
@@ -83,7 +83,7 @@ function acf_get_locale() {
 	 * Filters the determined local.
 	 *
 	 * @date    8/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   string $locale The local.
 	 */
@@ -96,7 +96,7 @@ function acf_get_locale() {
  * Loads the plugin's translated strings similar to load_plugin_textdomain().
  *
  * @date    8/1/19
- * @since   5.7.10
+ * @since   ACF 5.7.10
  *
  * @param   string $locale The plugin's current locale.
  * @return  void
@@ -107,7 +107,7 @@ function acf_load_textdomain( $domain = 'secure-custom-fields' ) {
 	 * Filters a plugin's locale.
 	 *
 	 * @date    8/1/19
-	 * @since   5.7.10
+	 * @since   ACF 5.7.10
 	 *
 	 * @param   string $locale The plugin's current locale.
 	 * @param   string $domain Text domain. Unique identifier for retrieving translated strings.
@@ -125,7 +125,7 @@ function acf_load_textdomain( $domain = 'secure-custom-fields' ) {
  * Applies the current language to the cache key.
  *
  * @date    23/1/19
- * @since   5.7.11
+ * @since   ACF 5.7.11
  *
  * @param   string $key The cache key.
  * @return  string

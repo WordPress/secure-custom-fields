@@ -1,15 +1,15 @@
 <?php
 /**
- * ACF Block Bindings
+ * SCF Block Bindings
  *
- * @since 6.2.8
- * @package ACF
+ * @since ACF 6.2.8
+ * @package wordpress/secure-custom-fields
  */
 
 namespace ACF\Blocks;
 
 /**
- * The core ACF Blocks binding class.
+ * The core SCF Blocks binding class.
  */
 class Bindings {
 	/**
@@ -32,7 +32,7 @@ class Bindings {
 			register_block_bindings_source(
 				'acf/field',
 				array(
-					'label'              => _x( 'ACF Fields', 'The core ACF block binding source name for fields on the current page', 'secure-custom-fields' ),
+					'label'              => _x( 'SCF Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
 					'get_value_callback' => array( $this, 'get_value' ),
 				)
 			);
@@ -42,7 +42,7 @@ class Bindings {
 	/**
 	 * Handle returing the block binding value for an ACF meta value.
 	 *
-	 * @since 6.2.8
+	 * @since ACF 6.2.8
 	 *
 	 * @param array     $source_attrs   An array of the source attributes requested.
 	 * @param \WP_Block $block_instance The block instance.
@@ -61,7 +61,7 @@ class Bindings {
 
 			if ( ! acf_field_type_supports( $field['type'], 'bindings', true ) ) {
 				if ( is_preview() ) {
-					return apply_filters( 'acf/bindings/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in Block Bindings or the ACF shortcode.', 'secure-custom-fields' ) . ']' );
+					return apply_filters( 'acf/bindings/field_not_supported_message', '[' . esc_html__( 'The requested SCF field type does not support output in Block Bindings or the SCF shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
 				}
@@ -69,7 +69,7 @@ class Bindings {
 
 			if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
 				if ( is_preview() ) {
-					return apply_filters( 'acf/bindings/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
+					return apply_filters( 'acf/bindings/field_not_allowed_message', '[' . esc_html__( 'The requested SCF field is not allowed to be output in bindings or the SCF Shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
 				}

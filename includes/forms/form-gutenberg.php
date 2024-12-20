@@ -14,7 +14,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Setup for class functionality.
 		 *
 		 * @date    13/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Allows a safe way to customize Guten-only functionality.
 		 *
 		 * @date    14/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -62,7 +62,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Modify screen for Gutenberg.
 		 *
 		 * @date    13/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -78,7 +78,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Modify screen for Gutenberg.
 		 *
 		 * @date    13/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */
@@ -94,7 +94,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * description
 		 *
 		 * @date    5/4/19
-		 * @since   5.7.14
+		 * @since   ACF 5.7.14
 		 *
 		 * @param   type $var Description. Default.
 		 * @return  type Description.
@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Fixes a bug where metaboxes with position "acf_after_title" do not appear in the block editor.
 		 *
 		 * @date    11/7/19
-		 * @since   5.8.2
+		 * @since   ACF 5.8.2
 		 *
 		 * @param   array $stored_meta_box_order User's existing meta box order.
 		 * @return  array Modified array with meta boxes moved around.
@@ -166,7 +166,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		 * Allows data to save and prevent UX issues.
 		 *
 		 * @date    16/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @return  void
 		 */

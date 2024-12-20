@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -48,7 +48,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 *
 		 * @type    function
 		 * @date    20/09/2016
-		 * @since   5.4.0
+		 * @since   ACF 5.4.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -82,7 +82,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 *
 		 * @type    function
 		 * @date    18/04/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  (array)
@@ -126,7 +126,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @return  void
 		 */
@@ -170,7 +170,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 * @param array $field An array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -278,7 +278,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -298,7 +298,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -379,7 +379,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db, and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 *
 		 * @param  mixed   $value       The value which was loaded from the database.
 		 * @param  mixed   $post_id     The $post_id from which the value was loaded.

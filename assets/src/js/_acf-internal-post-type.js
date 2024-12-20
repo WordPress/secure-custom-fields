@@ -4,7 +4,7 @@
 	 *
 	 *  Model for handling events in the settings metaboxes of internal post types
 	 *
-	 *  @since	6.1
+	 *  @since	ACF 6.1
 	 */
 	const internalPostTypeSettingsManager = new acf.Model( {
 		id: 'internalPostTypeSettingsManager',
@@ -284,7 +284,7 @@
 	 *
 	 *  Screen options functionality for internal post types
 	 *
-	 *  @since	6.1
+	 *  @since	ACF 6.1
 	 */
 	const advancedSettingsMetaboxManager = new acf.Model( {
 		id: 'advancedSettingsMetaboxManager',

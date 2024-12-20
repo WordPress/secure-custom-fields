@@ -5,7 +5,7 @@
 	 *  description
 	 *
 	 *  @date	3/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.
@@ -363,7 +363,7 @@
 	 *  description
 	 *
 	 *  @date	20/4/18
-	 *  @since	5.6.9
+	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	type $var Description. Default.
 	 *  @return	type Description.

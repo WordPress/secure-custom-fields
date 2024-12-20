@@ -23,7 +23,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Sets up the class functionality.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @return  void
 		 */
@@ -38,7 +38,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Returns true if the request has data for the given key.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   string $key The data key.
 		 * @return  boolean
@@ -53,7 +53,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Returns request data for the given key.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   string $key The data key.
 		 * @return  mixed
@@ -66,7 +66,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Sets request data for the given key.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   string $key   The data key.
 		 * @param   mixed  $value The data value.
@@ -83,7 +83,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Allows easy access to modifying properties without changing constructor.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @return  void
 		 */
@@ -97,7 +97,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Adds the ajax actions for this response.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @return  void
 		 */
@@ -118,7 +118,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Callback for ajax action. Sets up properties and calls the get_response() function.
 		 *
 		 * @date    1/8/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @return  void
 		 */
@@ -141,7 +141,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Verifies the request.
 		 *
 		 * @date    9/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   array $request The request args.
 		 * @return  (bool|WP_Error) True on success, WP_Error on fail.
@@ -161,7 +161,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Returns the response data to sent back.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   array $request The request args.
 		 * @return  mixed The response data or WP_Error.
@@ -176,7 +176,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Sends back JSON based on the $response as either success or failure.
 		 *
 		 * @date    31/7/18
-		 * @since   5.7.2
+		 * @since   ACF 5.7.2
 		 *
 		 * @param   mixed $response The response to send back.
 		 * @return  void
@@ -197,7 +197,7 @@ if ( ! class_exists( 'ACF_Ajax' ) ) :
 		 * Sends a JSON response for the given WP_Error object.
 		 *
 		 * @date    8/3/20
-		 * @since   5.8.8
+		 * @since   ACF 5.8.8
 		 *
 		 * @param   WP_Error error The error object.
 		 * @return  void

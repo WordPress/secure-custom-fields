@@ -11,7 +11,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		/**
 		 * This function will setup the field type data
 		 *
-		 * @since 5.0.0
+		 * @since ACF 5.0.0
 		 */
 		public function initialize() {
 			// vars
@@ -33,7 +33,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		/**
 		 * Create the HTML interface for your field
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field An array holding all the field's data.
 		 */
@@ -73,7 +73,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		 * Create extra options for your field. This is rendered when editing a field.
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
-		 * @since 3.6
+		 * @since ACF 3.6
 		 *
 		 * @param array $field An array holding all the field's data.
 		 */
@@ -92,7 +92,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -113,7 +113,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		/**
 		 * Validate the fields value is correctly formatted as a URL
 		 *
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param  mixed  $valid The current validity of the field value. Boolean true if valid, a validation error message string if not.
 		 * @param  string $value The value of the field.
@@ -145,7 +145,7 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		/**
 		 * This filter is applied to the $value after it is loaded from the db, and before it is returned to the template
 		 *
-		 * @since 6.2.6
+		 * @since ACF 6.2.6
 		 *
 		 * @param  mixed   $value       The value which was loaded from the database.
 		 * @param  mixed   $post_id     The $post_id from which the value was loaded.

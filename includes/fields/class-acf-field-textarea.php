@@ -11,7 +11,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -40,7 +40,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -84,7 +84,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 * @param   $field  - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field_settings( $field ) {
@@ -102,7 +102,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		/**
 		 * Renders the field settings used in the "Validation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -122,7 +122,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		/**
 		 * Renders the field settings used in the "Presentation" tab.
 		 *
-		 * @since 6.0
+		 * @since ACF 6.0
 		 *
 		 * @param array $field The field settings array.
 		 * @return void
@@ -170,7 +170,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $value (mixed) the value which was loaded from the database
@@ -203,7 +203,7 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 * Validates a field's value.
 		 *
 		 * @date    29/1/19
-		 * @since   5.7.11
+		 * @since   ACF 5.7.11
 		 *
 		 * @param   (bool|string) Whether the value is vaid or not.
 		 * @param   mixed                                          $value The field value.

@@ -118,7 +118,7 @@
 	/**
 	 *  Adds condition for Page Link having Page Link equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasPageLink = acf.Condition.extend( {
 		type: 'hasPageLink',
@@ -138,7 +138,7 @@
 	/**
 	 *  Adds condition for Page Link not equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasPageLinkNotEqual = acf.Condition.extend( {
 		type: 'hasPageLinkNotEqual',
@@ -158,7 +158,7 @@
 	/**
 	 *  Adds condition for Page Link containing a specific Page Link.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsPageLink = acf.Condition.extend( {
 		type: 'containsPageLink',
@@ -187,7 +187,7 @@
 	/**
 	 *  Adds condition for Page Link not containing a specific Page Link.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsNotPageLink = acf.Condition.extend( {
 		type: 'containsNotPageLink',
@@ -216,7 +216,7 @@
 	/**
 	 *  Adds condition for when any page link is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasAnyPageLink = acf.Condition.extend( {
 		type: 'hasAnyPageLink',
@@ -240,7 +240,7 @@
 	/**
 	 *  Adds condition for when no page link is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasNoPageLink = acf.Condition.extend( {
 		type: 'hasNoPageLink',
@@ -264,7 +264,7 @@
 	/**
 	 *  Adds condition for user field having user equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasUser = acf.Condition.extend( {
 		type: 'hasUser',
@@ -284,7 +284,7 @@
 	/**
 	 *  Adds condition for user field having user not equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasUserNotEqual = acf.Condition.extend( {
 		type: 'hasUserNotEqual',
@@ -304,7 +304,7 @@
 	/**
 	 *  Adds condition for user field containing a specific user.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsUser = acf.Condition.extend( {
 		type: 'containsUser',
@@ -333,7 +333,7 @@
 	/**
 	 *  Adds condition for user field not containing a specific user.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsNotUser = acf.Condition.extend( {
 		type: 'containsNotUser',
@@ -361,7 +361,7 @@
 	/**
 	 *  Adds condition for when any user is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasAnyUser = acf.Condition.extend( {
 		type: 'hasAnyUser',
@@ -385,7 +385,7 @@
 	/**
 	 *  Adds condition for when no user is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasNoUser = acf.Condition.extend( {
 		type: 'hasNoUser',
@@ -409,7 +409,7 @@
 	/**
 	 *  Adds condition for Relationship having Relationship equal to.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var HasRelationship = acf.Condition.extend( {
 		type: 'hasRelationship',
@@ -429,7 +429,7 @@
 	/**
 	 *  Adds condition for selection having Relationship not equal to.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var HasRelationshipNotEqual = acf.Condition.extend( {
 		type: 'hasRelationshipNotEqual',
@@ -449,7 +449,7 @@
 	/**
 	 *  Adds condition for Relationship containing a specific Relationship.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var containsRelationship = acf.Condition.extend( {
 		type: 'containsRelationship',
@@ -476,7 +476,7 @@
 	/**
 	 *  Adds condition for Relationship not containing a specific Relationship.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var containsNotRelationship = acf.Condition.extend( {
 		type: 'containsNotRelationship',
@@ -504,7 +504,7 @@
 	/**
 	 *  Adds condition for when any relation is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasAnyRelation = acf.Condition.extend( {
 		type: 'hasAnyRelation',
@@ -528,7 +528,7 @@
 	/**
 	 *  Adds condition for when no relation is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasNoRelation = acf.Condition.extend( {
 		type: 'hasNoRelation',
@@ -552,7 +552,7 @@
 	/**
 	 *  Adds condition for having post equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasPostObject = acf.Condition.extend( {
 		type: 'hasPostObject',
@@ -574,7 +574,7 @@
 	/**
 	 *  Adds condition for selection having post not equal to.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasPostObjectNotEqual = acf.Condition.extend( {
 		type: 'hasPostObjectNotEqual',
@@ -596,7 +596,7 @@
 	/**
 	 *  Adds condition for Relationship containing a specific Relationship.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsPostObject = acf.Condition.extend( {
 		type: 'containsPostObject',
@@ -627,7 +627,7 @@
 	/**
 	 *  Adds condition for Relationship not containing a specific Relationship.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var containsNotPostObject = acf.Condition.extend( {
 		type: 'containsNotPostObject',
@@ -658,7 +658,7 @@
 	/**
 	 *  Adds condition for when any post is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasAnyPostObject = acf.Condition.extend( {
 		type: 'hasAnyPostObject',
@@ -684,7 +684,7 @@
 	/**
 	 *  Adds condition for when no post is selected.
 	 *
-	 *  @since 6.3
+	 *  @since ACF 6.3
 	 */
 	var HasNoPostObject = acf.Condition.extend( {
 		type: 'hasNoPostObject',
@@ -710,7 +710,7 @@
 	/**
 	 *  Adds condition for taxonomy having term equal to.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var HasTerm = acf.Condition.extend( {
 		type: 'hasTerm',
@@ -730,7 +730,7 @@
 	/**
 	 *  Adds condition for taxonomy having term not equal to.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var hasTermNotEqual = acf.Condition.extend( {
 		type: 'hasTermNotEqual',
@@ -750,7 +750,7 @@
 	/**
 	 *  Adds condition for taxonomy containing a specific term.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var containsTerm = acf.Condition.extend( {
 		type: 'containsTerm',
@@ -776,7 +776,7 @@
 	/**
 	 *  Adds condition for taxonomy not containing a specific term.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var containsNotTerm = acf.Condition.extend( {
 		type: 'containsNotTerm',
@@ -803,7 +803,7 @@
 	/**
 	 *  Adds condition for when any term is selected.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var HasAnyTerm = acf.Condition.extend( {
 		type: 'hasAnyTerm',
@@ -827,7 +827,7 @@
 	/**
 	 *  Adds condition for when no term is selected.
 	 *
-	 *  @since	6.3
+	 *  @since	ACF 6.3
 	 */
 	var HasNoTerm = acf.Condition.extend( {
 		type: 'hasNoTerm',
@@ -852,7 +852,7 @@
 	 *  hasValue
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -903,7 +903,7 @@
 	 *  hasValue
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -923,7 +923,7 @@
 	 *  EqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -959,7 +959,7 @@
 	 *  NotEqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -979,7 +979,7 @@
 	 *  PatternMatch
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1010,7 +1010,7 @@
 	 *  Contains
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1044,7 +1044,7 @@
 	 *  TrueFalseEqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1069,7 +1069,7 @@
 	 *  TrueFalseNotEqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1094,7 +1094,7 @@
 	 *  SelectEqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1154,7 +1154,7 @@
 	 *  SelectNotEqualTo
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1174,7 +1174,7 @@
 	 *  GreaterThan
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1202,7 +1202,7 @@
 	 *  LessThan
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1232,7 +1232,7 @@
 	 *  SelectedGreaterThan
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void
@@ -1257,7 +1257,7 @@
 	 *  SelectionLessThan
 	 *
 	 *  @date	1/2/18
-	 *  @since	5.6.5
+	 *  @since	ACF 5.6.5
 	 *
 	 *  @param	void
 	 *  @return	void

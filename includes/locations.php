@@ -12,7 +12,7 @@ acf_register_store( 'location-types' );
  * Registers a location type.
  *
  * @date    8/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   string $class_name The location class name.
  * @return  (ACF_Location|false)
@@ -47,7 +47,7 @@ function acf_register_location_type( $class_name ) {
 	 * Fires after a location type is registered.
 	 *
 	 * @date    8/4/20
-	 * @since   5.9.0
+	 * @since   ACF 5.9.0
 	 *
 	 * @param   string $name The location type name.
 	 * @param   ACF_Location $location_type The location type instance.
@@ -62,7 +62,7 @@ function acf_register_location_type( $class_name ) {
  * Returns an array of all registered location types.
  *
  * @date    8/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @return  array
  */
@@ -74,7 +74,7 @@ function acf_get_location_types() {
  * Returns a location type for the given name.
  *
  * @date    18/2/19
- * @since   5.7.12
+ * @since   ACF 5.7.12
  *
  * @param   string $name The location type name.
  * @return  (ACF_Location|null)
@@ -87,7 +87,7 @@ function acf_get_location_type( $name ) {
  * Returns a grouped array of all location rule types.
  *
  * @date    8/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @return  array
  */
@@ -125,7 +125,7 @@ function acf_get_location_rule_types() {
 	 * Filters the location rule types.
 	 *
 	 * @date    8/4/20
-	 * @since   5.9.0
+	 * @since   ACF 5.9.0
 	 *
 	 * @param   array $types The location rule types.
 	 */
@@ -136,7 +136,7 @@ function acf_get_location_rule_types() {
  * Returns a validated location rule with all props.
  *
  * @date    8/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   array $rule The location rule.
  * @return  array
@@ -159,7 +159,7 @@ function acf_validate_location_rule( $rule = array() ) {
 	 * Filters the location rule to ensure is valid.
 	 *
 	 * @date    8/4/20
-	 * @since   5.9.0
+	 * @since   ACF 5.9.0
 	 *
 	 * @param   array $rule The location rule.
 	 */
@@ -172,7 +172,7 @@ function acf_validate_location_rule( $rule = array() ) {
  * Returns an array of operators for a given rule.
  *
  * @date    30/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $rule The location rule.
  * @return  array
@@ -190,7 +190,7 @@ function acf_get_location_rule_operators( $rule ) {
 	 * Filters the location rule operators.
 	 *
 	 * @date    30/5/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @param   array $types The location rule operators.
 	 */
@@ -204,7 +204,7 @@ function acf_get_location_rule_operators( $rule ) {
  * Returns an array of values for a given rule.
  *
  * @date    30/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $rule The location rule.
  * @return  array
@@ -222,7 +222,7 @@ function acf_get_location_rule_values( $rule ) {
 	 * Filters the location rule values.
 	 *
 	 * @date    30/5/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @param   array $types The location rule values.
 	 */
@@ -236,7 +236,7 @@ function acf_get_location_rule_values( $rule ) {
  * Returns true if the provided rule matches the screen args.
  *
  * @date    30/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $rule   The location rule.
  * @param   array $screen The screen args.
@@ -256,7 +256,7 @@ function acf_match_location_rule( $rule, $screen, $field_group ) {
 	 * Filters the result.
 	 *
 	 * @date    30/5/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @param   bool $result The match result.
 	 * @param   array $rule The location rule.
@@ -274,7 +274,7 @@ function acf_match_location_rule( $rule, $screen, $field_group ) {
  * Returns ann array of screen args to be used against matching rules.
  *
  * @date    8/4/20
- * @since   5.9.0
+ * @since   ACF 5.9.0
  *
  * @param   array $screen     The screen args.
  * @param   array $deprecated The field group array.
@@ -295,7 +295,7 @@ function acf_get_location_screen( $screen = array(), $deprecated = false ) {
 	 * Filters the result.
 	 *
 	 * @date    30/5/17
-	 * @since   5.6.0
+	 * @since   ACF 5.6.0
 	 *
 	 * @param   array $screen The screen args.
 	 * @param   array $deprecated The field group array.
@@ -307,7 +307,7 @@ function acf_get_location_screen( $screen = array(), $deprecated = false ) {
  * Alias of acf_register_location_type().
  *
  * @date    31/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   string $class_name The location class name.
  * @return  (ACF_Location|false)
@@ -320,7 +320,7 @@ function acf_register_location_rule( $class_name ) {
  * Alias of acf_get_location_type().
  *
  * @date    31/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   string $class_name The location class name.
  * @return  (ACF_Location|false)
@@ -333,7 +333,7 @@ function acf_get_location_rule( $name ) {
  * Alias of acf_validate_location_rule().
  *
  * @date    30/5/17
- * @since   5.6.0
+ * @since   ACF 5.6.0
  *
  * @param   array $rule The location rule.
  * @return  array

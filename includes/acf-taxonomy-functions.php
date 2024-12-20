@@ -2,7 +2,7 @@
 /**
  * Functions for ACF taxonomy objects.
  *
- * @package ACF
+ * @package wordpress/secure-custom-fields
  */
 
 /**
@@ -18,7 +18,7 @@ function acf_get_taxonomy( $id ) {
 /**
  * Retrieves a raw ACF taxonomy.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param   integer|string $id The post ID.
  * @return  array|false The taxonomy array.
@@ -30,7 +30,7 @@ function acf_get_raw_taxonomy( $id ) {
 /**
  * Gets a post object for an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The post ID, key, or name.
  * @return object|boolean The post object, or false on failure.
@@ -42,7 +42,7 @@ function acf_get_taxonomy_post( $id ) {
 /**
  * Returns true if the given identifier is an ACF taxonomy key.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param string $id The identifier.
  * @return boolean
@@ -54,7 +54,7 @@ function acf_is_taxonomy_key( $id ) {
 /**
  * Validates an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return array|boolean
@@ -66,7 +66,7 @@ function acf_validate_taxonomy( array $taxonomy = array() ) {
 /**
  * Translates the settings for an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return array
@@ -78,7 +78,7 @@ function acf_translate_taxonomy( array $taxonomy ) {
 /**
  * Returns an array of ACF taxonomies for the given $filter.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $filter An array of args to filter results by.
  * @return array
@@ -90,7 +90,7 @@ function acf_get_acf_taxonomies( array $filter = array() ) {
 /**
  * Returns an array of raw ACF taxonomies.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @return array
  */
@@ -101,7 +101,7 @@ function acf_get_raw_taxonomies() {
 /**
  * Returns a filtered array of ACF taxonomies based on the given $args.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomies An array of ACF taxonomies.
  * @param array $args       An array of args to filter by.
@@ -114,7 +114,7 @@ function acf_filter_taxonomies( array $taxonomies, array $args = array() ) {
 /**
  * Updates an ACF taxonomy in the database.
  *
- * @since   6.1
+ * @since   ACF 6.1
  *
  * @param array $taxonomy The main ACF taxonomy array.
  * @return array
@@ -126,7 +126,7 @@ function acf_update_taxonomy( array $taxonomy ) {
 /**
  * Deletes all caches for the provided ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return void
@@ -138,7 +138,7 @@ function acf_flush_taxonomy_cache( array $taxonomy ) {
 /**
  * Deletes an ACF taxonomy from the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The ACF taxonomy ID, key or name.
  * @return boolean True if taxonomy was deleted.
@@ -150,7 +150,7 @@ function acf_delete_taxonomy( $id = 0 ) {
 /**
  * Trashes an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The taxonomy ID, key, or name.
  * @return boolean True if taxonomy was trashed.
@@ -162,7 +162,7 @@ function acf_trash_taxonomy( $id = 0 ) {
 /**
  * Restores an ACF taxonomy from the trash.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id The taxonomy ID, key, or name.
  * @return boolean True if taxonomy was untrashed.
@@ -174,7 +174,7 @@ function acf_untrash_taxonomy( $id = 0 ) {
 /**
  * Returns true if the given params match an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return boolean
@@ -186,7 +186,7 @@ function acf_is_taxonomy( $taxonomy ) {
 /**
  * Duplicates an ACF taxonomy.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer|string $id          The ACF taxonomy ID, key or name.
  * @param integer        $new_post_id Optional ID to override.
@@ -210,7 +210,7 @@ function acf_update_taxonomy_active_status( $id, $activate = true ) {
 /**
  * Checks if the current user can edit the taxonomy and returns the edit url.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param integer $post_id The ACF taxonomy ID.
  * @return string
@@ -222,7 +222,7 @@ function acf_get_taxonomy_edit_link( $post_id ) {
 /**
  * Returns a modified ACF taxonomy ready for export.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return array
@@ -234,7 +234,7 @@ function acf_prepare_taxonomy_for_export( array $taxonomy = array() ) {
 /**
  * Exports an ACF taxonomy as PHP.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return string|boolean
@@ -246,7 +246,7 @@ function acf_export_taxonomy_as_php( array $taxonomy ) {
 /**
  * Prepares an ACF taxonomy for the import process.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return array
@@ -258,7 +258,7 @@ function acf_prepare_taxonomy_for_import( array $taxonomy = array() ) {
 /**
  * Imports an ACF taxonomy into the database.
  *
- * @since 6.1
+ * @since ACF 6.1
  *
  * @param array $taxonomy The ACF taxonomy array.
  * @return array The imported taxonomy.

@@ -10,7 +10,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since   5.0.0
+		 * @since   ACF 5.0.0
 		 *
 		 * @param   n/a
 		 * @return  n/a
@@ -37,7 +37,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 *
 		 * @type    function
 		 * @date    16/12/2015
-		 * @since   5.3.2
+		 * @since   ACF 5.3.2
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -102,7 +102,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 * @param   $field - an array holding all the field's data
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
 		function render_field( $field ) {
@@ -130,7 +130,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
 		 * @type    action
-		 * @since   3.6
+		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 *
 		 * @param   $field  - an array holding all the field's data
@@ -182,7 +182,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 * Format the value for use in templates. At this stage, the value has been loaded from the
 		 * database and is being returned by an API function such as get_field(), the_field(), etc.
 		 *
-		 * @since 5.10
+		 * @since ACF 5.10
 		 *
 		 * @param  mixed   $value   The field value
 		 * @param  integer $post_id The post ID
@@ -200,7 +200,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		/**
 		 * Convert either a Hexadecimal or RGBA string to an RGBA array.
 		 *
-		 * @since        5.10
+		 * @since        ACF 5.10
 		 * @date         15/12/20
 		 *
 		 * @param string $value
