@@ -28,8 +28,6 @@ if ( ! class_exists( 'ACF' ) ) {
 	 */
 	#[AllowDynamicProperties]
 	class ACF {
-
-
 		/**
 		 * The plugin version number.
 		 *
@@ -77,14 +75,14 @@ if ( ! class_exists( 'ACF' ) ) {
 		public function initialize() {
 
 			// Define constants.
-			$this->define( 'ACF', true );
-			$this->define( 'ACF_PATH', plugin_dir_path( __FILE__ ) );
-			$this->define( 'ACF_BASENAME', plugin_basename( __FILE__ ) );
-			$this->define( 'ACF_VERSION', $this->version );
-			$this->define( 'ACF_MAJOR_VERSION', 6 );
-			$this->define( 'ACF_FIELD_API_VERSION', 5 );
-			$this->define( 'ACF_UPGRADE_VERSION', '5.5.0' ); // Highest version with an upgrade routine. See upgrades.php.
-			$this->define( 'ACF_PRO', true );
+			defined( 'ACF' ) || define( 'ACF', true );
+			defined( 'ACF_PATH' ) || define( 'ACF_PATH', plugin_dir_path( __FILE__ ) );
+			defined( 'ACF_BASENAME' ) || define( 'ACF_BASENAME', plugin_basename( __FILE__ ) );
+			defined( 'ACF_VERSION' ) || define( 'ACF_VERSION', $this->version );
+			defined( 'ACF_MAJOR_VERSION' ) || define( 'ACF_MAJOR_VERSION', 6 );
+			defined( 'ACF_FIELD_API_VERSION' ) || define( 'ACF_FIELD_API_VERSION', 5 );
+			defined( 'ACF_UPGRADE_VERSION' ) || define( 'ACF_UPGRADE_VERSION', '5.5.0' ); // Highest version with an upgrade routine. See upgrades.php.
+			defined( 'ACF_PRO' ) || define( 'ACF_PRO', true );
 
 			// Register activation hook.
 			register_activation_hook( __FILE__, array( $this, 'acf_plugin_activated' ) );
@@ -582,14 +580,15 @@ if ( ! class_exists( 'ACF' ) ) {
 		/**
 		 * Defines a constant if doesnt already exist.
 		 *
-		 * @date    3/5/17
 		 * @since   ACF 5.5.13
+		 * @deprecated 6.4.1 -- Use vanilla PHP defined() || define() instead.
 		 *
 		 * @param   string $name  The constant name.
 		 * @param   mixed  $value The constant value.
 		 * @return  void
 		 */
 		public function define( $name, $value = true ) {
+			_deprecated_function( __METHOD__, '6.4.1', 'defined() || define()' );
 			if ( ! defined( $name ) ) {
 				define( $name, $value );
 			}
