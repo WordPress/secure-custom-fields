@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -2211,9 +2209,6 @@ msgstr "Bu, mevcut alanları seçmenize ve görüntülemenize olanak tanır. Ver
 msgctxt "noun"
 msgid "Clone"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Çoğalt\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Kopyala"
 
 #: includes/fields.php:331
@@ -4251,9 +4246,6 @@ msgstr "Bloklar"
 #, fuzzy
 msgid "Options"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Ayarlar\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Seçenekler"
 
 #: includes/acf-wp-functions.php:82
@@ -5174,9 +5166,6 @@ msgstr "Yazı güncellendi"
 #, fuzzy
 msgid "Update"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Güncelleme\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Güncelle"
 
 #: includes/forms/form-front.php:54
@@ -5351,9 +5340,6 @@ msgstr "Görsel genişliği en az %dpx olmalı."
 #, fuzzy
 msgid "(no title)"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"(başlık yok)\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "(başlıksız)"
 
 #: includes/api/api-helpers.php:765
@@ -5432,9 +5418,6 @@ msgstr "Ekle"
 #, fuzzy
 msgid "Name"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Bağlantı ismi\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "İsim"
 
 #. translators: %s: Taxonomy name
@@ -6329,9 +6312,6 @@ msgstr "Görsel no"
 #, fuzzy
 msgid "Image URL"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Resim Adresi\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Görsel adresi"
 
 #: includes/fields/class-acf-field-image.php:183
@@ -6627,9 +6607,6 @@ msgstr "Harita yüksekliğini özelleştir"
 #, fuzzy
 msgid "Height"
 msgstr ""
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Ağırlık\n"
-"#-#-#-#-#  acf-tr_TR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Yükseklik"
 
 #: includes/fields/class-acf-field-google-map.php:210

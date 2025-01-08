@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -2211,9 +2209,6 @@ msgstr ""
 msgctxt "noun"
 msgid "Clone"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"تکثیرکردن\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "کپی (هیچ)"
 
 #: includes/fields.php:331
@@ -4572,9 +4567,6 @@ msgstr "محتوای انعطاف پذیر"
 #, fuzzy
 msgid "Repeater"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"تکرار‌کننده\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "زمینه تکرار کننده"
 
 #: includes/admin/views/tools/tools.php:16
@@ -5195,9 +5187,6 @@ msgstr "عنوان"
 #, fuzzy
 msgid "Edit field group"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"ویرایش گروه فیلد\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "ویرایش گروه زمینه"
 
 #: includes/admin/post-types/admin-field-group.php:113
@@ -5925,9 +5914,6 @@ msgstr "هر دو (آرایه)"
 #, fuzzy
 msgid "Label"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"برچسب فیلد\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "برچسب زمینه"
 
 #: includes/fields/class-acf-field-button-group.php:163
@@ -6133,11 +6119,8 @@ msgstr "متن"
 msgid "%1$s requires at least %2$s selection"
 msgid_plural "%1$s requires at least %2$s selections"
 msgstr[0] ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 ""
 msgstr[1] ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 ""
 
 #: includes/fields/class-acf-field-post_object.php:403
@@ -6325,9 +6308,6 @@ msgstr "اندازه پیش نمایش"
 #, fuzzy
 msgid "Image ID"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"شناسه تصویر\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "شناسه(ID) تصویر"
 
 #: includes/fields/class-acf-field-image.php:184
@@ -6611,9 +6591,6 @@ msgstr "چیدمان"
 #, fuzzy
 msgid "Sub Fields"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"فیلدهای زیرمجموعه\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "زمینه‌های زیرمجموعه"
 
 #: includes/fields/class-acf-field-group.php:22
@@ -6770,9 +6747,6 @@ msgstr "فیلد"
 #, fuzzy
 msgid "Fields"
 msgstr ""
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"فیلدها\n"
-"#-#-#-#-#  acf-fa_IR.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "زمینه ها"
 
 #: secure-custom-fields.php:425
