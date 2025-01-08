@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -4251,9 +4249,6 @@ msgstr "Блоки"
 #, fuzzy
 msgid "Options"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Параметри\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Опції"
 
 #: includes/acf-wp-functions.php:82
@@ -5190,9 +5185,6 @@ msgstr "Вміст"
 #, fuzzy
 msgid "Title"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Назва\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Заголовок"
 
 #: includes/assets.php:378
@@ -5352,9 +5344,6 @@ msgstr "Ширина зображення має бути принаймні %dp
 #, fuzzy
 msgid "(no title)"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"(без назви)\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "(без заголовку)"
 
 #: includes/api/api-helpers.php:765
@@ -5433,9 +5422,6 @@ msgstr "Додати"
 #, fuzzy
 msgid "Name"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Ім’я\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Назва"
 
 #. translators: %s: Taxonomy name
@@ -5936,9 +5922,6 @@ msgstr "Галочка"
 #, fuzzy
 msgid "Label"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Мітка\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Ярлик"
 
 #: includes/fields/class-acf-field-button-group.php:163
@@ -6309,9 +6292,6 @@ msgstr "Завантажено до матеріалу"
 #, fuzzy
 msgid "All"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Всі\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Все"
 
 #: includes/fields/class-acf-field-file.php:219
@@ -6612,9 +6592,6 @@ msgstr "Укажіть стиль для візуалізації вибрани
 #, fuzzy
 msgid "Layout"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Компонування\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Шаблон структури"
 
 #: includes/fields/class-acf-field-group.php:391
@@ -6622,9 +6599,6 @@ msgstr ""
 #, fuzzy
 msgid "Sub Fields"
 msgstr ""
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Підполя\n"
-"#-#-#-#-#  acf-uk.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Дочірні поля"
 
 #: includes/fields/class-acf-field-group.php:22

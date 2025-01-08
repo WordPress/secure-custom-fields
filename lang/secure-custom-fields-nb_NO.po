@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -4245,9 +4243,6 @@ msgstr "Blokker"
 #, fuzzy
 msgid "Options"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Alternativer\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Valg"
 
 #: includes/acf-wp-functions.php:82
@@ -4553,9 +4548,6 @@ msgstr "Oppdatering av database er påkrevd"
 #, fuzzy
 msgid "Options Page"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Side for alternativer\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Alternativer-side"
 
 #: includes/admin/views/upgrade/notice.php:14
@@ -4570,9 +4562,6 @@ msgstr "Galleri"
 #, fuzzy
 msgid "Flexible Content"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Fleksibelt Innhold\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Fleksibelt innhold"
 
 #: includes/admin/views/upgrade/notice.php:8
@@ -6236,9 +6225,6 @@ msgstr "Forhold"
 #, fuzzy
 msgid "Comma separated list. Leave blank for all types"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Kommaseparert liste. La være tom for alle typer\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Kommaseparert liste. Tomt for alle typer"
 
 #: includes/fields/class-acf-field-file.php:279
@@ -6270,9 +6256,6 @@ msgstr "Filstørrelse"
 #, fuzzy
 msgid "Restrict which images can be uploaded"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Begrens hvilke bilder som kan lastes opp\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Begrense hvilke bilder som kan lastes opp"
 
 #: includes/fields/class-acf-field-file.php:255
@@ -6287,9 +6270,6 @@ msgstr "Minimum"
 #, fuzzy
 msgid "Uploaded to post"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Lastet opp til innlegget\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Lastet opp til innlegg"
 
 #: includes/fields/class-acf-field-file.php:224
@@ -6312,9 +6292,6 @@ msgstr "Alle"
 #, fuzzy
 msgid "Limit the media library choice"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Begrens mediabibilotekutvalget\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Begrense valg av mediebibliotek"
 
 #: includes/fields/class-acf-field-file.php:218
@@ -6328,9 +6305,6 @@ msgstr "Bibliotek"
 #, fuzzy
 msgid "Preview Size"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Forhåndsvis størrelse\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Forhåndsvisningsstørrelse"
 
 #: includes/fields/class-acf-field-image.php:185
@@ -6348,9 +6322,6 @@ msgstr "Bilde-URL"
 #, fuzzy
 msgid "Image Array"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Bilderekke\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Filtabell"
 
 #: includes/fields/class-acf-field-button-group.php:158
@@ -6607,9 +6578,6 @@ msgstr "Blokk"
 #, fuzzy
 msgid "Specify the style used to render the selected fields"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Spesifiser stil brukt til å gjengi valgte felt\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Angi stilen som brukes til å gjengi de valgte feltene"
 
 #: includes/fields.php:330
@@ -6709,9 +6677,6 @@ msgstr "Formatet returnert via malfunksjoner"
 #, fuzzy
 msgid "Return Format"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Returformat\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Format som skal returneres"
 
 #: includes/fields/class-acf-field-date_picker.php:179
@@ -6788,9 +6753,6 @@ msgstr "Felt"
 #, fuzzy
 msgid "Fields"
 msgstr ""
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Felter\n"
-"#-#-#-#-#  acf-nb_NO.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Felt"
 
 #: secure-custom-fields.php:425

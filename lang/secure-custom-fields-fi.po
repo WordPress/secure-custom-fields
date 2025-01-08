@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -2977,8 +2975,6 @@ msgstr ""
 #, fuzzy
 msgid "Pagination"
 msgstr ""
-"#-#-#-#-#  acf-fi.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"#-#-#-#-#  acf-fi.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Sijainti"
 
 #: includes/admin/views/acf-post-type/advanced-settings.php:1095
