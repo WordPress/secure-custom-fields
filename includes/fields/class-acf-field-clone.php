@@ -224,7 +224,82 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			return $fields;
 		}
 
+		/**
+		 * This function is run when cloning a clone field
+		 * Important to run the acf_clone_field function on sub fields to pass on settings such as 'parent_layout'
+		 *
+		 * @type    function
+		 * @date    28/06/2016
+		 * @since   5.3.8
+		 *
+		 * @param   array $field The field array.
+		 * @param   array $clone_field The clone field array.
+		 * @return  array $field
+		 */
+		public function acf_clone_field( $field, $clone_field ) {
 
+			// bail early if this field is being cloned by some other kind of field (future proof)
+			if ( 'clone' !== $clone_field['type'] ) {
+				return $field;
+			}
+
+			// backup (used later)
+			// - backup only once (cloned clone fields can cause issues)
+			if ( ! isset( $field['__key'] ) ) {
+				$field['__key']   = $field['key'];
+				$field['__name']  = $field['_name'];
+				$field['__label'] = $field['label'];
+			}
+
+			// seamless
+			if ( 'seamless' === $clone_field['display'] ) {
+
+				// modify key
+				// - this will allow sub clone fields to correctly load values for the same cloned field
+				// - the original key will later be restored by acf/prepare_field allowing conditional logic JS to work
+				$field['key'] = $clone_field['key'] . '_' . $field['key'];
+
+				// modify prefix allowing clone field to save sub fields
+				// - only used for parent seamless fields. Block or sub field's prefix will be overriden which also works
+				$field['prefix'] = $clone_field['prefix'] . '[' . $clone_field['key'] . ']';
+
+				// modify parent
+				$field['parent'] = $clone_field['parent'];
+
+				// label_format
+				if ( $clone_field['prefix_label'] ) {
+					$field['label'] = $clone_field['label'] . ' ' . $field['label'];
+				}
+			}
+
+			// prefix_name
+			if ( $clone_field['prefix_name'] ) {
+
+				// modify the field name
+				// - this will allow field to load / save correctly
+				$field['name'] = $clone_field['name'] . '_' . $field['_name'];
+
+				// modify the field _name (orig name)
+				// - this will allow fields to correctly understand the modified field
+				if ( 'seamless' === $clone_field['display'] ) {
+					$field['_name'] = $clone_field['_name'] . '_' . $field['_name'];
+				}
+			}
+
+			// required
+			if ( $clone_field['required'] ) {
+				$field['required'] = 1;
+			}
+
+			// type specific
+			// note: seamless clone fields will not be triggered
+			if ( 'clone' === $field['type'] ) {
+				$field = $this->acf_clone_clone_field( $field, $clone_field );
+			}
+
+			// return
+			return $field;
+		}
 		/**
 		 * This function is run when cloning a clone field
 		 * Important to run the acf_clone_field function on sub fields to pass on settings such as 'parent_layout'
