@@ -44,3 +44,6 @@ jspm_packages/
 assets/build/**/*.css
 assets/build/**/*.map
 assets/build/**/*.js
+
+# PHPUnit result cache
+.phpunit.result.cache
