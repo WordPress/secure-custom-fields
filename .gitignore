@@ -1,7 +1,4 @@
-# Standard gitignore file
-
 # Node.js
-node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -12,6 +9,11 @@ logs/
 
 # Dependency directories
 jspm_packages/
+/vendor/
+/node_modules/
+
+# WorDBless
+/wordpress/
 
 # Optional npm cache directory
 .npm
@@ -42,4 +44,3 @@ jspm_packages/
 assets/build/**/*.css
 assets/build/**/*.map
 assets/build/**/*.js
-/vendor/

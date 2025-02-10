@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<phpunit
+    bootstrap="tests/php/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    convertDeprecationsToExceptions="true"
+    >
+    <testsuites>
+        <testsuite name="secure-custom-fields">
+            <directory prefix="test" suffix=".php">./tests/php/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+                <directory>./node_modules</directory>
+                <directory>./wordpress</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

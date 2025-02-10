@@ -1,0 +1,39 @@
+name: PHPUnit Tests
+
+on:
+  push:
+    branches: [ trunk ]
+  pull_request:
+    branches: [ trunk ]
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          # Minimum supported PHP
+          - php: '7.4'
+          # Latest stable PHP
+          - php: '8.3'
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: |
+          composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Run PHPUnit
+        run: composer test:php
