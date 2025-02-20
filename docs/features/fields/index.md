@@ -7,9 +7,9 @@ Each field type has its own documentation and tutorial showing how to implement 
 ## Available Fields
 
 - [Accordion](accordion) - Group fields into collapsible sections
-- [Clone](clone) - Duplicate and reuse existing field configurations
 - [Button Group](button-group) - Select one option from a group of buttons  
 - [Checkbox](checkbox) - Select one or more choices
+- [Clone](clone) - Duplicate and reuse existing field configurations
 - [Color Picker](color-picker) - Choose colors with a visual picker
 - [Date Picker](date-picker) - Select dates from a calendar
 - [Date/Time Picker](date-time-picker) - Select dates and times
@@ -29,4 +29,16 @@ Each field type has its own documentation and tutorial showing how to implement 
 - [Password](password) - Securely input passwords
 - [Post Object](post-object) - Relate to other posts
 - [Radio](radio) - Select one choice from options
-- [Range](range) - Select a numeric value with a slider 
+- [Range](range) - Select a numeric value with a slider
+- [Repeater](repeater) - Create repeatable groups of fields
+- [Select](select) - Choose from dropdown options
+- [Separator](separator) - Add visual breaks between fields
+- [Tab](tab) - Organize fields into tabbed sections
+- [Taxonomy](taxonomy) - Select taxonomy terms
+- [Text](text) - Single line text input
+- [Textarea](textarea) - Multi-line text input
+- [Time Picker](time-picker) - Select time values
+- [True/False](true-false) - Toggle switch for yes/no choices
+- [URL](url) - Input and validate web addresses
+- [User](user) - Select WordPress users
+- [WYSIWYG](wysiwyg) - Rich text editor 

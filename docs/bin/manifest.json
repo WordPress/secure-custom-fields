@@ -313,5 +313,125 @@
         "slug": "range-tutorial",
         "parent": "range",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/range/tutorial.md"
+    },
+    "features/fields/repeater": {
+        "slug": "repeater",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/repeater/index.md"
+    },
+    "features/fields/repeater/tutorial": {
+        "slug": "repeater-tutorial",
+        "parent": "repeater",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/repeater/tutorial.md"
+    },
+    "features/fields/select": {
+        "slug": "select",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/select/index.md"
+    },
+    "features/fields/select/tutorial": {
+        "slug": "select-tutorial",
+        "parent": "select",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/select/tutorial.md"
+    },
+    "features/fields/separator": {
+        "slug": "separator",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/separator/index.md"
+    },
+    "features/fields/separator/tutorial": {
+        "slug": "separator-tutorial",
+        "parent": "separator",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/separator/tutorial.md"
+    },
+    "features/fields/tab": {
+        "slug": "tab",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/tab/index.md"
+    },
+    "features/fields/tab/tutorial": {
+        "slug": "tab-tutorial",
+        "parent": "tab",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/tab/tutorial.md"
+    },
+    "features/fields/taxonomy": {
+        "slug": "taxonomy",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/taxonomy/index.md"
+    },
+    "features/fields/taxonomy/tutorial": {
+        "slug": "taxonomy-tutorial",
+        "parent": "taxonomy",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/taxonomy/tutorial.md"
+    },
+    "features/fields/text": {
+        "slug": "text",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/text/index.md"
+    },
+    "features/fields/text/tutorial": {
+        "slug": "text-tutorial",
+        "parent": "text",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/text/tutorial.md"
+    },
+    "features/fields/textarea": {
+        "slug": "textarea",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/textarea/index.md"
+    },
+    "features/fields/textarea/tutorial": {
+        "slug": "textarea-tutorial",
+        "parent": "textarea",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/textarea/tutorial.md"
+    },
+    "features/fields/time-picker": {
+        "slug": "time-picker",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/time-picker/index.md"
+    },
+    "features/fields/time-picker/tutorial": {
+        "slug": "time-picker-tutorial",
+        "parent": "time-picker",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/time-picker/tutorial.md"
+    },
+    "features/fields/true-false": {
+        "slug": "true-false",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/true-false/index.md"
+    },
+    "features/fields/true-false/tutorial": {
+        "slug": "true-false-tutorial",
+        "parent": "true-false",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/true-false/tutorial.md"
+    },
+    "features/fields/url": {
+        "slug": "url",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/url/index.md"
+    },
+    "features/fields/url/tutorial": {
+        "slug": "url-tutorial",
+        "parent": "url",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/url/tutorial.md"
+    },
+    "features/fields/user": {
+        "slug": "user",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/user/index.md"
+    },
+    "features/fields/user/tutorial": {
+        "slug": "user-tutorial",
+        "parent": "user",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/user/tutorial.md"
+    },
+    "features/fields/wysiwyg": {
+        "slug": "wysiwyg",
+        "parent": "fields",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/wysiwyg/index.md"
+    },
+    "features/fields/wysiwyg/tutorial": {
+        "slug": "wysiwyg-tutorial",
+        "parent": "wysiwyg",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/fields/wysiwyg/tutorial.md"
     }
 }
