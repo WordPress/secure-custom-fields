@@ -26,6 +26,7 @@ $excludes = array(
 	$root . '/bin/README.md',
 );
 
+// First pass: collect all slugs
 foreach ( $paths as $path_pattern ) {
 	foreach ( glob( $path_pattern ) as $file ) {
 		// Skip specified README.md files and all META.md files.
@@ -34,8 +35,7 @@ foreach ( $paths as $path_pattern ) {
 		}
 
 		$slug = basename( $file, '.md' );
-		// Get relative path from docs directory
-		$key = str_replace( array( $root . '/', '.md' ), '', $file );
+		$key  = str_replace( array( $root . '/', '.md' ), '', $file );
 
 		// Special handling for tutorial files
 		if ( 'tutorial' === $slug ) {
@@ -49,11 +49,60 @@ foreach ( $paths as $path_pattern ) {
 			$key  = implode( '/', $bits ); // Remove /index from key
 		}
 
+		// Check for slug conflicts
+		if ( isset( $slug_map[ $slug ] ) ) {
+			printf( "\nError: Slug conflict detected!\n\n" );
+			printf( "Original entry:\n%s\n\n", json_encode( array( 'key' => $slug_map[ $slug ] ), JSON_PRETTY_PRINT ) );
+			printf( "Conflicting entry:\n%s\n\n", json_encode( array( 'key' => $key ), JSON_PRETTY_PRINT ) );
+			exit( 1 );
+		}
+		$slug_map[ $slug ] = $key;
+	}
+}
+
+// Second pass: build manifest with validated parents
+foreach ( $paths as $path_pattern ) {
+	foreach ( glob( $path_pattern ) as $file ) {
+		if ( in_array( $file, $excludes, true ) || basename( $file ) === 'META.md' ) {
+			continue;
+		}
+
+		$slug = basename( $file, '.md' );
+		$key  = str_replace( array( $root . '/', '.md' ), '', $file );
+
+		// Special handling for tutorial files
+		if ( 'tutorial' === $slug ) {
+			$bits = explode( '/', $key );
+			array_pop( $bits ); // Remove 'tutorial'
+			$slug = end( $bits ) . '-tutorial';
+		} elseif ( 'index' === $slug ) {
+			$bits = explode( '/', $key );
+			array_pop( $bits );
+			$slug = end( $bits );
+			$key  = implode( '/', $bits );
+		}
+
+		// Get parent slug (not path)
 		$parent = null;
 		if ( stripos( $key, '/' ) ) {
 			$bits = explode( '/', $key );
-			array_pop( $bits );
-			$parent = implode( '/', $bits );
+			array_pop( $bits ); // Remove current item
+			$parent_key = implode( '/', $bits );
+
+			// Find the parent's slug
+			foreach ( $slug_map as $potential_parent_slug => $mapped_key ) {
+				if ( $mapped_key === $parent_key ) {
+					$parent = $potential_parent_slug;
+					break;
+				}
+			}
+
+			// Validate parent exists
+			if ( ! isset( $slug_map[ $parent ] ) ) {
+                // phpcs:ignore
+				printf( "\nError: Parent slug '%s' not found for '%s'\n", $parent, $key );
+				exit( 1 );
+			}
 		}
 
 		$manifest[ $key ] = array(
@@ -66,15 +115,6 @@ foreach ( $paths as $path_pattern ) {
 				basename( $file ) === 'index.md' ? '/index.md' : '.md'
 			),
 		);
-
-		// Check for slug conflicts
-		if ( isset( $slug_map[ $slug ] ) ) {
-			printf( "\nError: Slug conflict detected!\n\n" );
-			printf( "Original entry:\n%s\n\n", json_encode( $manifest[ $slug_map[ $slug ] ], JSON_PRETTY_PRINT ) );
-			printf( "Conflicting entry:\n%s\n\n", json_encode( $manifest[ $key ], JSON_PRETTY_PRINT ) );
-			exit( 1 );
-		}
-		$slug_map[ $slug ] = $key;
 	}
 }
 
