@@ -54,7 +54,12 @@ foreach ( $paths as $path_pattern ) {
 		$manifest[ $key ] = array(
 			'slug'            => $slug,
 			'parent'          => $parent,
-			'markdown_source' => sprintf( 'https://github.com/%s/blob/trunk/docs/%s.md', $repo, $key . ( 'index' === basename( $key ) ? '' : '/index' ) ),
+			'markdown_source' => sprintf(
+				'https://github.com/%s/blob/trunk/docs/%s%s',
+				$repo,
+				$key,
+				basename( $file ) === 'index.md' ? '/index.md' : '.md'
+			),
 		);
 	}
 }
