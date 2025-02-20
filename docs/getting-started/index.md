@@ -11,4 +11,4 @@ This section helps you get up and running with Secure Custom Fields (SCF). Wheth
 
 - WordPress 6.0 or later
 - PHP 7.4 or later
-- Basic understanding of WordPress development 
+- Basic understanding of WordPress development

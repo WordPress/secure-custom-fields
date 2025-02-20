@@ -28,4 +28,4 @@ Let's create a simple author bio field group:
 
 - Learn about [field types](../features/fields)
 - Explore [advanced features](../features/README)
-- Read the [security guidelines](../concepts/security) 
+- Read the [security guidelines](../concepts/security)

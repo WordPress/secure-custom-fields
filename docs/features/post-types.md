@@ -31,8 +31,9 @@ Create a custom post type through the admin interface:
 ## Examples
 
 Common use cases for custom post types:
+
 - Products
 - Team Members
 - Portfolio Items
 - Testimonials
-- Events 
+- Events

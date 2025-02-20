@@ -18,7 +18,8 @@ Step-by-step guides for working with Secure Custom Fields.
 ## Best Practices
 
 Each tutorial follows these principles:
+
 - Clear step-by-step instructions
 - Practical examples
 - Security considerations
-- Performance optimization tips 
+- Performance optimization tips

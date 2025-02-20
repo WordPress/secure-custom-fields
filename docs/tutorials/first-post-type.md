@@ -33,4 +33,4 @@ A step-by-step guide to creating a custom post type using Secure Custom Fields.
 
 - Add custom fields to your post type
 - Configure archive displays
-- Set up custom taxonomies 
+- Set up custom taxonomies

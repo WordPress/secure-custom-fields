@@ -50,4 +50,4 @@ This section details all features available in Secure Custom Fields.
 - [Password](fields/password) - Securely input passwords
 - [Post Object](fields/post-object) - Relate to other posts
 - [Radio](fields/radio) - Select one choice from options
-- [Range](fields/range) - Select a numeric value with a slider 
+- [Range](fields/range) - Select a numeric value with a slider

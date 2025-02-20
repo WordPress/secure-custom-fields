@@ -34,4 +34,4 @@ Guide for contributing to Secure Custom Fields development.
 - Follow WordPress coding standards
 - Write unit tests for new features
 - Document all changes
-- Keep pull requests focused 
+- Keep pull requests focused

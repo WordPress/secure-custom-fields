@@ -9,4 +9,4 @@ This section covers the fundamental concepts and architecture of Secure Custom F
 
 ## Overview
 
-Secure Custom Fields is built on several core concepts that ensure security, flexibility, and extensibility. Understanding these concepts will help you make the most of the plugin. 
+Secure Custom Fields is built on several core concepts that ensure security, flexibility, and extensibility. Understanding these concepts will help you make the most of the plugin.

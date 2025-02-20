@@ -33,4 +33,4 @@ After installation:
 
 1. Navigate to Custom Fields in your admin menu
 2. Verify you can access all plugin features
-3. Create a test field group to ensure functionality 
+3. Create a test field group to ensure functionality

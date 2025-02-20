@@ -36,4 +36,4 @@ We follow the [WordPress Documentation Style Guide](https://make.wordpress.org/d
    - API reference
    - Hook documentation
    - Integration guides
-   - Security practices 
+   - Security practices
