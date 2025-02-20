@@ -1,4 +1,9 @@
 {
+    "scf": {
+        "slug": "scf",
+        "parent": null,
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/scf.md"
+    },
     "concepts/architecture": {
         "slug": "architecture",
         "parent": "concepts",
