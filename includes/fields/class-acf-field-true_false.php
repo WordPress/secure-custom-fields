@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			$this->category      = 'choice';
 			$this->description   = __( 'A toggle that allows you to pick a value of 1 or 0 (on or off, true or false, etc). Can be presented as a stylized switch or checkbox.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-true-false.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/true-false/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/true-false/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/true-false/true-false-tutorial/';
 			$this->defaults      = array(
 				'default_value' => 0,
 				'message'       => '',

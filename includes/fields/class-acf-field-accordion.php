@@ -25,7 +25,8 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Allows you to group and organize custom fields into collapsable panels that are shown while editing content. Useful for keeping large datasets tidy.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-accordion.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/accordion/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/accordion/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/accordion/accordion-tutorial/';
 			$this->supports      = array(
 				'required' => false,
 				'bindings' => false,

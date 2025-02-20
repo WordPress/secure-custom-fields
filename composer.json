@@ -20,7 +20,9 @@
     },
     "scripts": {
         "docs-manifest": "php docs/bin/generate-manifest.php",
+        "docs-links": "php docs/bin/update-markdown-links.php",
         "docs": [
+            "@docs-links",
             "@docs-manifest"
         ]
     }

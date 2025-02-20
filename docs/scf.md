@@ -4,4 +4,4 @@ Secure Custom Fields is a WordPress plugin that allows you to create custom fiel
 
 ## Features
 
-- [Fields](features/fields/index.md) - Create and manage custom fields.
+- [Fields](features/fields) - Create and manage custom fields.

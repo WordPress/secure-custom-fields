@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			$this->label         = __( 'Number', 'secure-custom-fields' );
 			$this->description   = __( 'An input limited to numerical values.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-number.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/number/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/number/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/number/number-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'min'           => '',

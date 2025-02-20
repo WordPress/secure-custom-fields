@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$this->category      = 'choice';
 			$this->description   = __( 'A group of checkbox inputs that allow the user to select one, or multiple values that you specify.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-checkbox.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/checkbox/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/checkbox/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/checkbox/checkbox-tutorial/';
 			$this->defaults      = array(
 				'layout'                    => 'vertical',
 				'choices'                   => array(),

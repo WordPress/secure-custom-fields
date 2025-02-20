@@ -30,8 +30,8 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 			$this->category      = 'content';
 			$this->description   = __( 'An interactive interface for managing a collection of attachments, such as images.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-gallery.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/gallery/';
-			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/how-to-use-the-gallery-field/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/gallery/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/gallery/gallery-tutorial/';
 			$this->pro           = true;
 			$this->supports      = array( 'bindings' => false );
 			$this->defaults      = array(

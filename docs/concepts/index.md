@@ -4,8 +4,8 @@ This section covers the fundamental concepts and architecture of Secure Custom F
 
 ## In This Section
 
-- [Architecture](architecture.md) - Understanding SCF's internal structure
-- [Security](security.md) - Security principles and best practices
+- [Architecture](architecture) - Understanding SCF's internal structure
+- [Security](security) - Security principles and best practices
 
 ## Overview
 

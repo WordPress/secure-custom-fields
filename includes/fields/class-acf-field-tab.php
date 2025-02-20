@@ -24,7 +24,8 @@ if ( ! class_exists( 'acf_field_tab' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Allows you to group fields into tabbed sections in the edit screen. Useful for keeping fields organized and structured.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-tabs.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/tab/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/tab/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/tab/tab-tutorial/';
 			$this->supports      = array(
 				'required' => false,
 				'bindings' => false,

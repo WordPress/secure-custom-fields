@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			$this->category      = 'advanced';
 			$this->description   = __( 'An interactive UI for selecting a color, or specifying a Hex value.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-color-picker.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/color-picker/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/color-picker/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/color-picker/color-picker-tutorial/';
 			$this->defaults      = array(
 				'default_value'  => '',
 				'enable_opacity' => false,

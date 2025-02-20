@@ -6,27 +6,27 @@ Each field type has its own documentation and tutorial showing how to implement 
 
 ## Available Fields
 
-- [Accordion](accordion/index.md) - Group fields into collapsible sections
-- [Clone](clone/index.md) - Duplicate and reuse existing field configurations
-- [Button Group](button-group/index.md) - Select one option from a group of buttons  
-- [Checkbox](checkbox/index.md) - Select one or more choices
-- [Color Picker](color-picker/index.md) - Choose colors with a visual picker
-- [Date Picker](date-picker/index.md) - Select dates from a calendar
-- [Date/Time Picker](date-time-picker/index.md) - Select dates and times
-- [Email](email/index.md) - Input and validate email addresses
-- [File](file/index.md) - Upload and manage files
-- [Flexible Content](flexible-content/index.md) - Create flexible content layouts
-- [Gallery](gallery/index.md) - Manage collections of images
-- [Google Map](google-map/index.md) - Add location data with Google Maps
-- [Group](group/index.md) - Group fields together
-- [Icon Picker](icon-picker/index.md) - Select from available icons
-- [Image](image/index.md) - Upload and manage images
-- [Link](link/index.md) - Create links with titles and targets
-- [Message](message/index.md) - Display instructional text
-- [Number](number/index.md) - Input numeric values
-- [oEmbed](oembed/index.md) - Embed external content
-- [Page Link](page-link/index.md) - Link to internal content
-- [Password](password/index.md) - Securely input passwords
-- [Post Object](post-object/index.md) - Relate to other posts
-- [Radio](radio/index.md) - Select one choice from options
-- [Range](range/index.md) - Select a numeric value with a slider 
+- [Accordion](accordion) - Group fields into collapsible sections
+- [Clone](clone) - Duplicate and reuse existing field configurations
+- [Button Group](button-group) - Select one option from a group of buttons  
+- [Checkbox](checkbox) - Select one or more choices
+- [Color Picker](color-picker) - Choose colors with a visual picker
+- [Date Picker](date-picker) - Select dates from a calendar
+- [Date/Time Picker](date-time-picker) - Select dates and times
+- [Email](email) - Input and validate email addresses
+- [File](file) - Upload and manage files
+- [Flexible Content](flexible-content) - Create flexible content layouts
+- [Gallery](gallery) - Manage collections of images
+- [Google Map](google-map) - Add location data with Google Maps
+- [Group](group) - Group fields together
+- [Icon Picker](icon-picker) - Select from available icons
+- [Image](image) - Upload and manage images
+- [Link](link) - Create links with titles and targets
+- [Message](message) - Display instructional text
+- [Number](number) - Input numeric values
+- [oEmbed](oembed) - Embed external content
+- [Page Link](page-link) - Link to internal content
+- [Password](password) - Securely input passwords
+- [Post Object](post-object) - Relate to other posts
+- [Radio](radio) - Select one choice from options
+- [Range](range) - Select a numeric value with a slider 

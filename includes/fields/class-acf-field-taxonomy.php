@@ -22,7 +22,8 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			$this->category      = 'relational';
 			$this->description   = __( 'Allows the selection of one or more taxonomy terms based on the criteria and options specified in the fields settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-taxonomy.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/taxonomy/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/taxonomy/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/taxonomy/taxonomy-tutorial/';
 			$this->defaults      = array(
 				'taxonomy'             => 'category',
 				'field_type'           => 'checkbox',
