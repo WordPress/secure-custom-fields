@@ -12,6 +12,7 @@ $root = dirname( __DIR__ ); // docs directory
 $repo = 'wordpress/secure-custom-fields';
 
 $manifest = array();
+$slug_map = array(); // Track slugs and their sources
 $paths    = array(
 	$root . '/*.md',
 	$root . '/*/*.md',
@@ -36,8 +37,12 @@ foreach ( $paths as $path_pattern ) {
 		// Get relative path from docs directory
 		$key = str_replace( array( $root . '/', '.md' ), '', $file );
 
-		// Handle index.md files specially
-		if ( 'index' === $slug ) {
+		// Special handling for tutorial files
+		if ( 'tutorial' === $slug ) {
+			$bits = explode( '/', $key );
+			array_pop( $bits ); // Remove 'tutorial'
+			$slug = end( $bits ) . '-tutorial'; // Use parent directory name plus -tutorial
+		} elseif ( 'index' === $slug ) { // Handle index.md files specially.
 			$bits = explode( '/', $key );
 			array_pop( $bits ); // Remove 'index'
 			$slug = end( $bits ); // Use parent directory name as slug
@@ -61,6 +66,15 @@ foreach ( $paths as $path_pattern ) {
 				basename( $file ) === 'index.md' ? '/index.md' : '.md'
 			),
 		);
+
+		// Check for slug conflicts
+		if ( isset( $slug_map[ $slug ] ) ) {
+			printf( "\nError: Slug conflict detected!\n\n" );
+			printf( "Original entry:\n%s\n\n", json_encode( $manifest[ $slug_map[ $slug ] ], JSON_PRETTY_PRINT ) );
+			printf( "Conflicting entry:\n%s\n\n", json_encode( $manifest[ $key ], JSON_PRETTY_PRINT ) );
+			exit( 1 );
+		}
+		$slug_map[ $slug ] = $key;
 	}
 }
 
