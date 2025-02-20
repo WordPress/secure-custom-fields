@@ -17,5 +17,11 @@
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
         "sirbrillig/phpcs-changed": "^2.11"
+    },
+    "scripts": {
+        "docs-manifest": "php docs/bin/generate-manifest.php",
+        "docs": [
+            "@docs-manifest"
+        ]
     }
 }
