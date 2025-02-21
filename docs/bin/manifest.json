@@ -1,8 +1,8 @@
 {
-    "scf": {
-        "slug": "scf",
+    "welcome": {
+        "slug": "welcome",
         "parent": null,
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/scf.md"
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome.md"
     },
     "code-reference/acf-bidirectional-functions-file": {
         "slug": "acf-bidirectional-functions-file",
