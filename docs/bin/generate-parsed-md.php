@@ -416,13 +416,16 @@ class DocGenerator {
 			if ( '' === $dir ) {
 				$index_content = '# Code Reference' . "\n\n";
 			} else {
-				$index_content = '#' . ( '.' === $dir ? ' Code Reference' : ' ' . ucwords( str_replace( '/', ' ', $dir ) ) ) . "\n\n";
+				// Format directory name for title
+				$dir_title     = $this->format_directory_title( $dir );
+				$index_content = '# ' . $dir_title . "\n\n";
 			}
+
 			$index_content .= '## Files' . "\n\n";
 
 			foreach ( $files as $file ) {
 				$basename       = basename( $file, '.md' );
-				$title          = ucwords( str_replace( '-', ' ', $basename ) );
+				$title          = $this->format_file_title( $basename );
 				$index_content .= '- [' . $title . '](' . $basename . ')' . "\n";
 			}
 
@@ -437,6 +440,49 @@ class DocGenerator {
 
 			file_put_contents( $index_path, $index_content );
 		}
+	}
+
+	/**
+	 * Format directory title with special cases.
+	 *
+	 * @param string $dir Directory name.
+	 * @return string Formatted title.
+	 */
+	private function format_directory_title( $dir ) {
+		if ( 'rest-api' === $dir ) {
+			return 'REST API';
+		}
+		return '.' === $dir ? 'Code Reference' : ucwords( str_replace( '/', ' ', $dir ) );
+	}
+
+	/**
+	 * Format file title with special cases.
+	 *
+	 * @param string $basename File basename.
+	 * @return string Formatted title.
+	 */
+	private function format_file_title( $basename ) {
+		// Replace common patterns
+		$title = str_replace(
+			array(
+				'rest-api',
+				'acf-rest-api',
+				'class-acf-rest',
+				'-file',
+			),
+			array(
+				'REST API',
+				'ACF REST API',
+				'Class ACF REST',
+				'',
+			),
+			$basename
+		);
+
+		// Convert to title case and handle special words
+		$title = ucwords( str_replace( '-', ' ', $title ) );
+
+		return $title;
 	}
 
 	/**

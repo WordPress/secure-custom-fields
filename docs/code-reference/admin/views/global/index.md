@@ -2,4 +2,4 @@
 
 ## Files
 
-- [Navigation File](navigation-file)
+- [Navigation](navigation-file)
