@@ -1,4 +1,4 @@
-# Global Functions
+# Local Fields Global Functions
 
 ## `acf_enable_local()`
 

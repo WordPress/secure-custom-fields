@@ -1,4 +1,4 @@
-# Global Functions
+# Admin Tools Global Functions
 
 ## `acf_register_admin_tool()`
 

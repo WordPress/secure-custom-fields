@@ -1,4 +1,4 @@
-# Global Functions
+# Upgrades Global Functions
 
 ## `acf_has_upgrade()`
 

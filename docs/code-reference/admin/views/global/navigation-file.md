@@ -1,4 +1,4 @@
-# Global Functions
+# Navigation Global Functions
 
 ## `acf_print_menu_section()`
 

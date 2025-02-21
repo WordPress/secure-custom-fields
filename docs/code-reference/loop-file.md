@@ -1,4 +1,4 @@
-# Global Functions
+# Loop Global Functions
 
 ## `acf_add_loop()`
 

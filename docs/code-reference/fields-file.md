@@ -1,4 +1,4 @@
-# Global Functions
+# Fields Global Functions
 
 ## `acf_register_field_type()`
 

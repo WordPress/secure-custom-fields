@@ -1,4 +1,4 @@
-# Global Functions
+# Deprecated Global Functions
 
 ## `acf_render_field_wrap_label()`
 

@@ -1,4 +1,4 @@
-# Global Functions
+# Local Meta Global Functions
 
 ## `acf_setup_meta()`
 

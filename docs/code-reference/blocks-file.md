@@ -1,4 +1,4 @@
-# Global Functions
+# Blocks Global Functions
 
 ## `acf_add_block_namespace()`
 

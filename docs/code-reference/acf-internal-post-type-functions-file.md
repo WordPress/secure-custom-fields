@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Internal Post Type Functions Global Functions
 
 ## `acf_get_internal_post_type_instance()`
 

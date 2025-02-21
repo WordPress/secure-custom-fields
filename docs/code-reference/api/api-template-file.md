@@ -1,4 +1,4 @@
-# Global Functions
+# API Template Global Functions
 
 ## `get_field()`
 

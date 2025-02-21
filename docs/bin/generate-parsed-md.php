@@ -23,7 +23,7 @@ class DocGenerator {
 	/**
 	 * PHP Parser instance.
 	 *
-	 * @var ParserFactory
+	 * @var \PhpParser\Parser
 	 */
 	private $parser;
 
@@ -96,7 +96,8 @@ class DocGenerator {
 	 * @param string $output_dir Directory where documentation will be generated.
 	 */
 	public function __construct( $output_dir ) {
-		$this->parser    = ( new ParserFactory() )->create( ParserFactory::PREFER_PHP7 );
+		$parser_factory  = new ParserFactory();
+		$this->parser    = $parser_factory->create( ParserFactory::PREFER_PHP7 );
 		$this->traverser = new NodeTraverser();
 		$this->traverser->addVisitor( new NameResolver() );
 		$this->output_dir = rtrim( $output_dir, '/' );
@@ -611,7 +612,7 @@ class DocGenerator {
 				mkdir( $output_dir, 0755, true );
 			}
 
-			$markdown = $this->generate_markdown( $docs );
+			$markdown = $this->generate_markdown( $docs, $relative_path );
 			file_put_contents( $output_path, $markdown );
 
 			// Track files by directory for index generation
@@ -626,15 +627,23 @@ class DocGenerator {
 	/**
 	 * Generate markdown content from documentation array.
 	 *
-	 * @param array $docs Documentation organized by type.
+	 * @param array  $docs         Documentation organized by type.
+	 * @param string $source_path  The relative path to the source file.
 	 * @return string Generated markdown content.
 	 */
-	private function generate_markdown( $docs ) {
+	private function generate_markdown( $docs, $source_path ) {
 		$markdown = '';
 
 		// Generate standalone functions documentation
 		if ( ! empty( $docs['functions'] ) ) {
-			$markdown .= '# Global Functions' . "\n\n";
+			// Convert file path to title
+			// e.g., "api/api-helpers.php" becomes "API Helpers"
+			$file_title = basename( $source_path, self::PHP_EXT );
+			$file_title = str_replace( '-', ' ', $file_title );
+			$file_title = ucwords( $file_title );
+			// Special handling for "api" to become "API"
+			$file_title = preg_replace( '/\b[Aa]pi\b/', 'API', $file_title );
+			$markdown  .= $this->format_title( $file_title . ' Global Functions' ) . "\n\n";
 			foreach ( $docs['functions'] as $name => $doc ) {
 				$markdown .= '## `' . $name . '()`' . "\n\n";
 				$markdown .= trim( $doc ) . "\n\n\n";  // Add extra newline after each function
@@ -642,8 +651,9 @@ class DocGenerator {
 			$markdown .= "---\n\n";
 		}
 
+		// Handle class documentation (unchanged)
 		if ( isset( $docs['class'] ) ) {
-			$markdown .= '# ' . $docs['class']['name'] . "\n\n";
+			$markdown .= $this->format_title( $docs['class']['name'] ) . "\n\n";
 			$markdown .= trim( $docs['class']['doc'] ) . "\n\n";
 
 			// Add properties section
@@ -667,6 +677,18 @@ class DocGenerator {
 		// Ensure file ends with single newline and no trailing spaces
 		$markdown = rtrim( rtrim( $markdown ), "\n" ) . "\n";
 		return $markdown;
+	}
+
+	/**
+	 * Format a title for markdown documentation.
+	 *
+	 * @param string $title The title to format.
+	 * @return string Formatted title.
+	 */
+	private function format_title( $title ) {
+		// Convert "Api" or "api" to "API"
+		$title = preg_replace( '/\b[Aa]pi\b/', 'API', $title );
+		return '# ' . $title;
 	}
 }
 

@@ -1,4 +1,4 @@
-# Global Functions
+# Compatibility Global Functions
 
 ## `acf_get_compatibility()`
 

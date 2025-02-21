@@ -1,4 +1,4 @@
-# Global Functions
+# API Helpers Global Functions
 
 ## `acf_is_array()`
 

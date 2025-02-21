@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Helper Functions Global Functions
 
 ## `acf_is_empty()`
 
