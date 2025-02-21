@@ -141,15 +141,16 @@ class DocGenerator {
 				->in( dirname( dirname( __DIR__ ) ) . '/includes' )
 				->exclude( 'vendor' );
 
+		// First pass: Process all files and collect documentation
 		foreach ( $finder as $file ) {
 			$this->process_file( $file );
 		}
 
-		// Generate META.md with undocumented elements
-		$this->generate_meta_file();
-
-		// After processing all files, generate index files
+		// Second pass: Generate all index files
 		$this->generate_index_files();
+
+		// Finally: Generate META.md with undocumented elements
+		$this->generate_meta_file();
 	}
 
 	/**
@@ -202,9 +203,35 @@ class DocGenerator {
 					$this->track_undocumented( $file_path, 'function', $node->name->toString() );
 				}
 			}
-			// Handle classes
+
+			// Handle namespace nodes
+			if ( $node instanceof Node\Stmt\Namespace_ ) {
+				// Process nodes inside the namespace
+				foreach ( $node->stmts as $stmt ) {
+					if ( $stmt instanceof Node\Stmt\Class_ ) {
+						$class_docs = $this->extract_class_docs( $stmt, $file_path );
+						if ( ! empty( $class_docs ) ) {
+							$docs['class'] = $class_docs;
+						}
+					}
+					// Check for hooks inside namespace
+					$hooks = $this->extract_hooks( $stmt, $file_path );
+					if ( ! empty( $hooks ) ) {
+						if ( ! isset( $docs['hooks'] ) ) {
+							$docs['hooks'] = array();
+						}
+						$docs['hooks'] = array_merge( $docs['hooks'], $hooks );
+					}
+				}
+				continue;
+			}
+
+			// Handle non-namespaced code
 			if ( $node instanceof Node\Stmt\Class_ ) {
-				$docs['class'] = $this->extract_class_docs( $node, $file_path );
+				$class_docs = $this->extract_class_docs( $node, $file_path );
+				if ( ! empty( $class_docs ) ) {
+					$docs['class'] = $class_docs;
+				}
 			}
 			// Handle hooks
 			$hooks = $this->extract_hooks( $node, $file_path );
@@ -228,6 +255,7 @@ class DocGenerator {
 	 */
 	private function extract_class_docs( Node\Stmt\Class_ $node, $file_path ) {
 		$doc = $node->getDocComment();
+
 		if ( ! $doc ) {
 			$this->track_undocumented( $file_path, 'class', $node->name->toString() );
 		}
@@ -400,89 +428,40 @@ class DocGenerator {
 	 * Generate index files for each directory of documentation.
 	 */
 	private function generate_index_files() {
-		foreach ( $this->files_by_directory as $dir => $files ) {
-			// Sort files for consistent order
-			sort( $files );
+		foreach ( $this->files_by_directory as $directory => $files ) {
+			if ( empty( $files ) ) {
+				continue;
+			}
 
-			// Handle root directory differently
-			if ( '' === $dir || '.' === $dir ) {
+			sort( $files ); // Sort files for consistent order
+			$index_path = $this->output_dir . '/' . $directory . '/index.md';
+			$index_dir  = dirname( $index_path );
+
+			if ( ! is_dir( $index_dir ) ) {
+				mkdir( $index_dir, 0755, true );
+			}
+
+			// Generate title from directory name
+			if ( '' === $directory || '.' === $directory ) {
 				$index_path = $this->output_dir . '/index.md';
-			} else {
-				// For subdirectories, just use index.md
-				$index_path = $this->output_dir . '/' . $dir . '/index.md';
 			}
+			$title = $this->format_directory_title( $directory );
 
-			// Special handling for root code reference index
-			if ( '' === $dir ) {
-				$index_content = '# Code Reference' . "\n\n";
-			} else {
-				// Format directory name for title
-				$dir_title     = $this->format_directory_title( $dir );
-				$index_content = '# ' . $dir_title . "\n\n";
-			}
-
-			$index_content .= '## Files' . "\n\n";
+			$markdown = "# {$title}\n\n";
 
 			foreach ( $files as $file ) {
-				$basename       = basename( $file, '.md' );
-				$title          = $this->format_file_title( $basename );
-				$index_content .= '- [' . $title . '](' . $basename . ')' . "\n";
+				if ( 'index.md' === $file ) {
+					continue;
+				}
+				$name = basename( $file, self::MD_EXT );
+				$name = $this->format_title( $name );
+				// Remove the '# ' prefix from the title for the link text
+				$name      = preg_replace( '/^# /', '', $name );
+				$markdown .= "* [{$name}]({$file})\n";
 			}
 
-			// Ensure file ends with single newline and no trailing spaces
-			$index_content = rtrim( rtrim( $index_content ), "\n" ) . "\n";
-
-			// Create directory if it doesn't exist
-			$dir_path = dirname( $index_path );
-			if ( ! is_dir( $dir_path ) ) {
-				mkdir( $dir_path, 0755, true );
-			}
-
-			file_put_contents( $index_path, $index_content );
+			file_put_contents( $index_path, rtrim( $markdown ) . "\n" );
 		}
-	}
-
-	/**
-	 * Format directory title with special cases.
-	 *
-	 * @param string $dir Directory name.
-	 * @return string Formatted title.
-	 */
-	private function format_directory_title( $dir ) {
-		if ( 'rest-api' === $dir ) {
-			return 'REST API';
-		}
-		return '.' === $dir ? 'Code Reference' : ucwords( str_replace( '/', ' ', $dir ) );
-	}
-
-	/**
-	 * Format file title with special cases.
-	 *
-	 * @param string $basename File basename.
-	 * @return string Formatted title.
-	 */
-	private function format_file_title( $basename ) {
-		// Replace common patterns
-		$title = str_replace(
-			array(
-				'rest-api',
-				'acf-rest-api',
-				'class-acf-rest',
-				'-file',
-			),
-			array(
-				'REST API',
-				'ACF REST API',
-				'Class ACF REST',
-				'',
-			),
-			$basename
-		);
-
-		// Convert to title case and handle special words
-		$title = ucwords( str_replace( '-', ' ', $title ) );
-
-		return $title;
 	}
 
 	/**
@@ -587,51 +566,90 @@ class DocGenerator {
 
 			// Save each hook type to its own file
 			foreach ( $grouped_hooks as $type => $hooks ) {
-				$hook_markdown = '# ' . ucfirst( str_replace( '_', ' ', $type ) ) . "\n\n";
-				foreach ( $hooks as $hook ) {
-					$hook_markdown .= "## `{$hook['name']}`\n\n";
-					if ( ! empty( $hook['doc'] ) ) {
-						$hook_markdown .= "{$hook['doc']}\n\n";
-					}
-					// Add file reference
-					$hook_markdown .= '_Defined in: ' . str_replace( dirname( dirname( __DIR__ ) ) . '/includes/', '', $file->getRealPath() ) . "_\n\n";
-				}
-
 				$hook_file = $hooks_dir . '/' . $type . '.md';
 
-				// Load existing content
-				$existing_content = file_exists( $hook_file ) ? file_get_contents( $hook_file ) . "\n" : '';
-
-				$hook_markdown = $existing_content . $hook_markdown;
-
-				// Track hook files for index generation
+				// Track hooks directory for index generation
 				if ( ! isset( $this->files_by_directory['hooks'] ) ) {
 					$this->files_by_directory['hooks'] = array();
 				}
 				if ( ! in_array( basename( $hook_file ), $this->files_by_directory['hooks'], true ) ) {
 					$this->files_by_directory['hooks'][] = basename( $hook_file );
 				}
-			}
 
-			// After processing all hooks, sort each file
-			foreach ( $this->files_by_directory['hooks'] as $hook_file ) {
-				$file_path = $hooks_dir . '/' . $hook_file;
-				if ( file_exists( $file_path ) ) {
-					// Read the file
-					$content = file_get_contents( $file_path );
+				// Get existing content and parse existing hooks with their sources
+				$hook_markdown  = '';
+				$existing_hooks = array();
 
-					// Split into sections (each hook documentation)
-					$sections = preg_split( '/(?=^## )/m', $content );
-
-					// Keep the title section (first section starting with # )
-					$title = array_shift( $sections );
-
-					// Sort the remaining sections
-					sort( $sections, SORT_STRING | SORT_FLAG_CASE );
-
-					// Combine and write back
-					file_put_contents( $file_path, $title . implode( '', $sections ) );
+				if ( file_exists( $hook_file ) ) {
+					$existing_content = file_get_contents( $hook_file );
+					// Parse existing hooks and their sources from the content
+					preg_match_all( '/^## `([^`]+)`\n\n(.*?)(?=\n## |$)/ms', $existing_content, $matches, PREG_SET_ORDER );
+					foreach ( $matches as $match ) {
+						$hook_name                    = $match[1];
+						$content                      = trim( $match[2] );
+						$existing_hooks[ $hook_name ] = $content;
+					}
+					$hook_markdown = $existing_content;
+				} else {
+					// Only add title for new files
+					$hook_markdown = '# ' . ucfirst( str_replace( '_', ' ', $type ) ) . "\n\n";
 				}
+
+				$updated_hooks = array();
+				foreach ( $hooks as $hook ) {
+					$source       = str_replace( dirname( dirname( __DIR__ ) ) . '/includes/', '', $file->getRealPath() );
+					$hook_content = '';
+
+					if ( ! empty( $hook['doc'] ) ) {
+						$hook_content .= "{$hook['doc']}\n\n";
+					}
+					$hook_content .= "### Source Files\n\n";
+					$hook_content .= '* ' . $source . "\n\n";
+
+					if ( isset( $existing_hooks[ $hook['name'] ] ) ) {
+						// If hook exists, append the new source file if not already present
+						if ( strpos( $existing_hooks[ $hook['name'] ], $source ) === false ) {
+							$existing_hooks[ $hook['name'] ] = preg_replace(
+								'/(### Source Files\n\n.*?)(\n\n|$)/s',
+								"$1* $source\n\n",
+								$existing_hooks[ $hook['name'] ]
+							);
+						}
+						$updated_hooks[ $hook['name'] ] = true;
+						continue;
+					}
+
+					$hook_markdown                 .= "## `{$hook['name']}`\n\n" . $hook_content;
+					$updated_hooks[ $hook['name'] ] = true;
+				}
+
+				// Keep only hooks that were updated or added
+				$final_markdown = '';
+				if ( file_exists( $hook_file ) ) {
+					$lines        = explode( "\n", $hook_markdown );
+					$current_hook = null;
+					$buffer       = '';
+
+					foreach ( $lines as $line ) {
+						if ( preg_match( '/^## `([^`]+)`$/', $line, $matches ) ) {
+							if ( $current_hook && isset( $updated_hooks[ $current_hook ] ) ) {
+								$final_markdown .= $buffer;
+							}
+							$current_hook = $matches[1];
+							$buffer       = $line . "\n";
+						} else {
+							$buffer .= $line . "\n";
+						}
+					}
+					// Handle the last hook
+					if ( $current_hook && isset( $updated_hooks[ $current_hook ] ) ) {
+						$final_markdown .= $buffer;
+					}
+
+					$hook_markdown = $final_markdown ? $final_markdown : $hook_markdown;
+				}
+
+				file_put_contents( $hook_file, $hook_markdown );
 			}
 
 			// Remove hooks from docs array so they're not included in the main file
@@ -640,6 +658,7 @@ class DocGenerator {
 
 		// Handle regular documentation
 		if ( ! empty( $docs ) ) {
+			// Keep the original path structure
 			$relative_path = str_replace(
 				dirname( dirname( __DIR__ ) ) . '/includes/',
 				'',
@@ -697,7 +716,7 @@ class DocGenerator {
 			$markdown .= "---\n\n";
 		}
 
-		// Handle class documentation (unchanged)
+		// Handle class documentation
 		if ( isset( $docs['class'] ) ) {
 			$markdown .= $this->format_title( $docs['class']['name'] ) . "\n\n";
 			$markdown .= trim( $docs['class']['doc'] ) . "\n\n";
@@ -732,9 +751,53 @@ class DocGenerator {
 	 * @return string Formatted title.
 	 */
 	private function format_title( $title ) {
+		// Special case handling for common terms
+		$title = str_replace(
+			array(
+				'rest-api',
+				'acf-rest-api',
+				'class-acf-rest',
+				'-file',
+			),
+			array(
+				'REST API',
+				'ACF REST API',
+				'Class ACF REST',
+				'',
+			),
+			$title
+		);
+
+		// Convert to title case and handle special words
+		$title = ucwords( str_replace( '-', ' ', $title ) );
+
 		// Convert "Api" or "api" to "API"
 		$title = preg_replace( '/\b[Aa]pi\b/', 'API', $title );
+
 		return '# ' . $title;
+	}
+
+	/**
+	 * Format directory title with special cases.
+	 *
+	 * @param string $directory Directory name.
+	 * @return string Formatted title.
+	 */
+	private function format_directory_title( $directory ) {
+		if ( '' === $directory || '.' === $directory ) {
+			return 'Code Reference';
+		}
+
+		if ( 'rest-api' === $directory ) {
+			return 'REST API';
+		}
+
+		$title = basename( $directory );
+		$title = str_replace( '-', ' ', $title );
+		$title = ucwords( $title );
+		$title = preg_replace( '/\b[Aa]pi\b/', 'API', $title );
+
+		return $title;
 	}
 }
 

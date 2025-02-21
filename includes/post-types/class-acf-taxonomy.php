@@ -72,7 +72,7 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 
 			parent::__construct();
 
-			add_action( 'acf/init', array( $this, 'register_taxonomies' ), 6 );
+			add_action( 'scf_init', array( $this, 'register_taxonomies' ), 6 );
 		}
 
 		/**

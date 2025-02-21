@@ -43,7 +43,7 @@ if ( ! class_exists( 'ACF_Compatibility' ) ) :
 			add_filter( 'acf/location/validate_rule/type=post_category', array( $this, 'validate_post_taxonomy_location_rule' ), 20, 1 );
 
 			// Update settings
-			add_action( 'acf/init', array( $this, 'init' ) );
+			add_action( 'scf_init', array( $this, 'init' ) );
 		}
 
 		/**

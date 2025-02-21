@@ -1,5 +1,3 @@
-# Admin Views Global
+# Global
 
-## Files
-
-- [Navigation](navigation-file)
+* [Navigation](navigation-file.md)

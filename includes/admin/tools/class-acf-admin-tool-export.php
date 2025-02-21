@@ -399,7 +399,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 				} elseif ( 'acf-post-type' === $post_type || 'acf-taxonomy' === $post_type ) {
 					echo "add_action( 'init', function() {\r\n";
 				} elseif ( 'acf-ui-options-page' === $post_type ) {
-					echo "add_action( 'acf/init', function() {\r\n";
+					echo "add_action( 'scf_init', function() {\r\n";
 				}
 
 				$count = 0;

@@ -1,6 +1,4 @@
 # Hooks
 
-## Files
-
-- [Action](action)
-- [Filter](filter)
+* [Action](action)
+* [Filter](filter)

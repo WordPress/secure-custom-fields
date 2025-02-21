@@ -73,7 +73,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 
 			parent::__construct();
 
-			add_action( 'acf/init', array( $this, 'register_post_types' ), 6 );
+			add_action( 'scf_init', array( $this, 'register_post_types' ), 6 );
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ), 10, 2 );
 		}
 

@@ -1,5 +1,3 @@
 # Fields
 
-## Files
-
-- [Class Acf Repeater Table](class-acf-repeater-table-file)
+* [Class Acf Repeater Table](class-acf-repeater-table-file)

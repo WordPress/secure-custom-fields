@@ -6,9 +6,9 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
-- `acf/bindings/field_not_allowed_message`
-- `acf/bindings/field_not_supported_message`
-- `acf/blocks/binding_value`
+- `scf_bindings_field_not_allowed_message`
+- `scf_bindings_field_not_supported_message`
+- `scf_blocks_binding_value`
 
 ## acf-bidirectional-functions.php
 
@@ -379,6 +379,12 @@ This file tracks code elements that need documentation.
 - `acf/field_group/disable_field_settings_tabs`
 - `acf/field_group/enable_field_browser`
 
+## class-legacy-hooks.php
+
+### Hooks
+
+- `scf_enable_legacy_hooks`
+
 ## fields.php
 
 ### Hooks
@@ -502,6 +508,12 @@ This file tracks code elements that need documentation.
 - `determine_locale`
 - `plugin_locale`
 - `pre_determine_locale`
+
+## legacy/class-hooks.php
+
+### Hooks
+
+- `scf_enable_legacy_hooks`
 
 ## local-json.php
 

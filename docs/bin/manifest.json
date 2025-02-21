@@ -29,6 +29,11 @@
         "parent": null,
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/index.md"
     },
+    "code-reference/Blocks": {
+        "slug": "Blocks",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/Blocks/index.md"
+    },
     "code-reference/acf-bidirectional-functions-file": {
         "slug": "acf-bidirectional-functions-file",
         "parent": "code-reference",
@@ -129,6 +134,11 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/blocks-file.md"
     },
+    "code-reference/class-legacy-hooks-file": {
+        "slug": "class-legacy-hooks-file",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/class-legacy-hooks-file.md"
+    },
     "code-reference/compatibility-file": {
         "slug": "compatibility-file",
         "parent": "code-reference",
@@ -163,6 +173,11 @@
         "slug": "l10n-file",
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/l10n-file.md"
+    },
+    "code-reference/legacy": {
+        "slug": "legacy",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/legacy/index.md"
     },
     "code-reference/local-fields-file": {
         "slug": "local-fields-file",
@@ -259,6 +274,11 @@
         "parent": "welcome",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/quick-start.md"
     },
+    "code-reference/Blocks/Bindings-file": {
+        "slug": "Bindings-file",
+        "parent": "Blocks",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/Blocks/Bindings-file.md"
+    },
     "code-reference/admin/admin-notices-file": {
         "slug": "admin-notices-file",
         "parent": "admin",
@@ -293,6 +313,21 @@
         "slug": "form-front-file",
         "parent": "forms",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/forms/form-front-file.md"
+    },
+    "code-reference/hooks/action": {
+        "slug": "action",
+        "parent": "hooks",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/hooks/action.md"
+    },
+    "code-reference/hooks/filter": {
+        "slug": "filter",
+        "parent": "hooks",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/hooks/filter.md"
+    },
+    "code-reference/legacy/class-hooks-file": {
+        "slug": "class-hooks-file",
+        "parent": "legacy",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/legacy/class-hooks-file.md"
     },
     "code-reference/rest-api/acf-rest-api-functions-file": {
         "slug": "acf-rest-api-functions-file",

@@ -81,7 +81,7 @@ if ( ! class_exists( 'ACF_UI_Options_Page' ) ) {
 
 			parent::__construct();
 
-			add_action( 'acf/init', array( $this, 'register_ui_options_pages' ), 6 );
+			add_action( 'scf_init', array( $this, 'register_ui_options_pages' ), 6 );
 			add_action( 'acf/include_options_pages', array( $this, 'include_json_options_pages' ) );
 		}
 

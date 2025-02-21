@@ -135,6 +135,7 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Include utility functions.
 			include_once ACF_PATH . 'includes/acf-utility-functions.php';
+			include_once ACF_PATH . 'includes/legacy/class-hooks.php';
 
 			// Include previous API functions.
 			acf_include( 'includes/api/api-helpers.php' );
@@ -287,7 +288,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/post-types/class-acf-ui-options-page.php' );
 			}
 			// Add other ACF internal post types.
-			do_action( 'acf/init_internal_post_types' );
+			do_action( 'scf_init_internal_post_types' );
 
 			// Include fields.
 			acf_include( 'includes/fields/class-acf-field-text.php' );
@@ -331,12 +332,11 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after field types have been included.
 			 *
-			 * @date    28/09/13
-			 * @since   ACF 5.0.0
+			 * @since   6.5.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
-			do_action( 'acf/include_field_types', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_field_types', ACF_FIELD_API_VERSION );
 
 			// Include locations.
 			acf_include( 'includes/locations/class-acf-location-post-type.php' );
@@ -366,49 +366,49 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after location types have been included.
 			 *
-			 * @date    28/09/13
-			 * @since   ACF 5.0.0
+			 * @since   6.5.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
-			do_action( 'acf/include_location_rules', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_location_rules', ACF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local fields.
 			 *
-			 * @date    28/09/13
-			 * @since   ACF 5.0.0
+			 * @since   6.5.0
 			 *
 			 * @param   int ACF_FIELD_API_VERSION The field API version.
 			 */
-			do_action( 'acf/include_fields', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_fields', ACF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local post types.
 			 *
-			 * @since ACF 6.1
+			 * @since   6.5.0
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
 			 */
-			do_action( 'acf/include_post_types', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_post_types', ACF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local taxonomies.
 			 *
-			 * @since ACF 6.1
+			 * @since   6.5.0
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
 			 */
-			do_action( 'acf/include_taxonomies', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_taxonomies', ACF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local option pages.
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @since   6.5.0
+			 *
+			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
 			 */
-			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on 6.5 or newer, load block bindings. This will move to an autoloader in 6.3.
+			// If we're on 6.5 or newer, load block bindings.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
@@ -417,12 +417,11 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after ACF is completely "initialized".
 			 *
-			 * @date    28/09/13
-			 * @since   ACF 5.0.0
+			 * @since   6.5.0
 			 *
 			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
 			 */
-			do_action( 'acf/init', ACF_MAJOR_VERSION );
+			do_action( 'scf_init', ACF_MAJOR_VERSION );
 		}
 
 		/**
@@ -737,7 +736,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				if ( null === get_option( 'acf_version', null ) ) {
 					update_option( 'acf_first_activated_version', ACF_VERSION, true );
 
-					do_action( 'acf/first_activated' );
+					do_action( 'scf_first_activated' );
 				}
 			}
 		}
