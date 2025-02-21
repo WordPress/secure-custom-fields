@@ -1,10 +1,9 @@
 <?php
 
-$acf_plugin_name      = 'ACF PRO';
-$acf_plugin_name      = '<strong>' . $acf_plugin_name . ' &mdash;</strong>';
-$acf_learn_how_to_fix = '<a href="' . 'https://www.advancedcustomfields.com/escaping-the-field/' . '" target="_blank">' . __( 'Learn&nbsp;more', 'secure-custom-fields' ) . '</a>';
-$acf_class            = 'notice-error';
-$acf_user_can_acf     = false;
+$acf_plugin_name  = 'Secure Custom Fields';
+$acf_plugin_name  = '<strong>' . $acf_plugin_name . ' &mdash;</strong>';
+$acf_class        = 'notice-error';
+$acf_user_can_acf = false;
 
 if ( current_user_can( acf_get_setting( 'capability' ) ) ) {
 	$acf_user_can_acf = true;
@@ -29,9 +28,8 @@ if ( current_user_can( acf_get_setting( 'capability' ) ) ) {
 
 $acf_error_msg = sprintf(
 	/* translators: %1$s - name of the SCF plugin. %2$s - Link to documentation. */
-	__( '%1$s SCF automatically escapes unsafe HTML when rendered by <code>the_field</code> or the ACF shortcode. We\'ve detected the output of some of your fields has been modified by this change, but this may not be a breaking change. %2$s.', 'secure-custom-fields' ),
-	$acf_plugin_name,
-	$acf_learn_how_to_fix
+	__( '%1$s SCF automatically escapes unsafe HTML when rendered by <code>the_field</code> or the ACF shortcode. We\'ve detected the output of some of your fields has been modified by this change, but this may not be a breaking change.', 'secure-custom-fields' ),
+	$acf_plugin_name
 );
 
 

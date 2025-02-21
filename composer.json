@@ -16,12 +16,22 @@
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "sirbrillig/phpcs-changed": "^2.11"
+        "sirbrillig/phpcs-changed": "^2.11",
+        "nikic/php-parser": "^4.0",
+        "symfony/finder": "^5.0|^6.0"
     },
     "scripts": {
-        "docs-manifest": "php docs/bin/generate-manifest.php",
+        "docs:manifest": "php docs/bin/generate-manifest.php",
+        "docs:links": "php docs/bin/update-markdown-links.php",
+        "docs:parse": "php docs/bin/generate-parsed-md.php --output=${DOCS_OUTPUT_DIR:-docs/code-reference}",
+        "docs:fix": "npm run fix:md",
+        "docs:lint": "npm run lint:md",
         "docs": [
-            "@docs-manifest"
+            "@docs:parse",
+            "@docs:links",
+            "@docs:fix",
+            "@docs:lint",
+            "@docs:manifest"
         ]
     }
 }

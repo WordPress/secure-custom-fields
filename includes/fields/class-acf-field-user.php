@@ -17,7 +17,8 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			$this->category      = 'relational';
 			$this->description   = __( 'Allows the selection of one or more users which can be used to create relationships between data objects.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-user.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/user/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/user/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/user/user-tutorial/';
 			$this->defaults      = array(
 				'role'                 => '',
 				'multiple'             => 0,

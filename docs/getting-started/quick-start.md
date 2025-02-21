@@ -26,6 +26,6 @@ Let's create a simple author bio field group:
 
 ## Next Steps
 
-- Learn about [field types](../features/fields.md)
-- Explore [advanced features](../features/README.md)
-- Read the [security guidelines](../concepts/security.md) 
+- Learn about [field types](../features/fields)
+- Explore [advanced features](../features/README)
+- Read the [security guidelines](../concepts/security)

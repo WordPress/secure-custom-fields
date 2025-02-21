@@ -26,4 +26,4 @@ When working with SCF:
 1. Always use provided escaping functions
 2. Check user capabilities before operations
 3. Validate all data before saving
-4. Use nonces for form submissions 
+4. Use nonces for form submissions

@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			$this->label         = __( 'Text', 'secure-custom-fields' );
 			$this->description   = __( 'A basic text input, useful for storing single string values.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-text.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/text/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/text/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/text/text-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'maxlength'     => '',

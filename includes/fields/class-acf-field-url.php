@@ -19,7 +19,8 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 			$this->label         = __( 'URL', 'secure-custom-fields' );
 			$this->description   = __( 'A text input specifically designed for storing web addresses.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-url.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/url/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/url/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/url/url-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'placeholder'   => '',

@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			$this->category      = 'relational';
 			$this->description   = __( 'An interactive dropdown to select one or more posts, pages, custom post type items or archive URLs, with the option to search.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-page-link.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/page-link/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/page-link/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/page-link/page-link-tutorial/';
 			$this->defaults      = array(
 				'post_type'      => array(),
 				'taxonomy'       => array(),

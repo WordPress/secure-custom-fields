@@ -31,6 +31,8 @@ The field interface aligns with WordPress’s native design, creating an experie
 
 Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors.
 
+Read more about Secure Custom Fields at [developer.wordpress.org/secure-custom-fields](https://developer.wordpress.org/secure-custom-fields/).
+
 = Features =
 * Clear and easy-to-use setup
 * Robust functions for content management

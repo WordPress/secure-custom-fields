@@ -19,7 +19,8 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			$this->category      = 'relational';
 			$this->description   = __( 'A dual-column interface to select one or more posts, pages, or custom post type items to create a relationship with the item that you\'re currently editing. Includes options to search and filter.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-relationship.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/relationship/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/relationship/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/relationship/relationship-tutorial/';
 			$this->defaults      = array(
 				'post_type'            => array(),
 				'taxonomy'             => array(),

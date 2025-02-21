@@ -5,18 +5,21 @@ This document explains the internal architecture of Secure Custom Fields.
 ## Core Components
 
 ### 1. Field Management System
+
 - Field type registration and validation
 - Field rendering and display
 - Data storage and retrieval
 - Value sanitization and escaping
 
 ### 2. Post Type Management
+
 - Custom post type registration
 - Advanced configuration options
 - WordPress core integration
 - Rewrite rules and permalinks
 
 ### 3. Security Layer
+
 - Input validation and sanitization
 - Context-aware output escaping
 - Permission and capability management
@@ -62,21 +65,25 @@ The plugin is organized into several key directories:
 ## Loading Process
 
 ### 1. Plugin Initialization
+
 - Load dependencies
 - Set up autoloader
 - Initialize core classes
 
 ### 2. WordPress Integration
+
 - Register post types
 - Add hooks and filters
 - Set up admin menus
 
 ### 3. Feature Registration
+
 - Register field types
 - Set up API endpoints
 - Initialize components
 
 ### 4. Admin Interface Setup
+
 - Load admin scripts
 - Set up field management
 - Configure settings pages
@@ -101,4 +108,4 @@ The plugin is organized into several key directories:
 4. **Output**
    - Template functions
    - REST API responses
-   - Admin interface 
+   - Admin interface

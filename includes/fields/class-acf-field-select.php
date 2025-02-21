@@ -24,7 +24,8 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			$this->category      = 'choice';
 			$this->description   = __( 'A dropdown list with a selection of choices that you specify.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-select.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/select/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/select/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/select/select-tutorial/';
 			$this->defaults      = array(
 				'multiple'      => 0,
 				'allow_null'    => 0,

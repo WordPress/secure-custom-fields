@@ -4,11 +4,11 @@ This section helps you get up and running with Secure Custom Fields (SCF). Wheth
 
 ## In This Section
 
-- [Installation](installation.md) - How to install and activate SCF
-- [Quick Start](quick-start.md) - Create your first custom field group in minutes
+- [Installation](installation) - How to install and activate SCF
+- [Quick Start](quick-start) - Create your first custom field group in minutes
 
 ## Prerequisites
 
 - WordPress 6.0 or later
 - PHP 7.4 or later
-- Basic understanding of WordPress development 
+- Basic understanding of WordPress development

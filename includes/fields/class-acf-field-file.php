@@ -24,7 +24,8 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			$this->category      = 'content';
 			$this->description   = __( 'Uses the native WordPress media picker to upload, or choose files.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-file.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/file/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/file/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/file/file-tutorial/';
 			$this->defaults      = array(
 				'return_format' => 'array',
 				'library'       => 'all',

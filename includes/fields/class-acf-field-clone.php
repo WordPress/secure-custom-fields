@@ -35,8 +35,8 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Allows you to select and display existing fields. It does not duplicate any fields in the database, but loads and displays the selected fields at run-time. The Clone field can either replace itself with the selected fields or display the selected fields as a group of subfields.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-clone.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/clone/';
-			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/how-to-use-the-clone-field/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/clone/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/clone/clone-tutorial/';
 			$this->pro           = true;
 			$this->supports      = array( 'bindings' => false );
 			$this->defaults      = array(
