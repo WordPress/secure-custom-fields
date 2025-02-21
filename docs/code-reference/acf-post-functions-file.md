@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Post Functions Global Functions
 
 ## `acf_get_post_templates()`
 

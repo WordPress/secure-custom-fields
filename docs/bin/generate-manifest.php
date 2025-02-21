@@ -118,6 +118,42 @@ foreach ( $paths as $path_pattern ) {
 	}
 }
 
+/**
+ * Sort entries hierarchically - null parents first, then by depth.
+ *
+ * @param array $manifest The manifest to sort.
+ * @return array Sorted manifest.
+ */
+function sort_manifest_hierarchically( $manifest ) {
+	// First, group by depth
+	$grouped = array();
+	foreach ( $manifest as $key => $entry ) {
+		$depth = substr_count( $key, '/' );
+		if ( ! isset( $grouped[ $depth ] ) ) {
+			$grouped[ $depth ] = array();
+		}
+		$grouped[ $depth ][ $key ] = $entry;
+	}
+
+	// Sort depths
+	ksort( $grouped );
+
+	// Merge back maintaining order
+	$sorted = array();
+	foreach ( $grouped as $depth => $entries ) {
+		// Sort entries within each depth
+		ksort( $entries );
+		foreach ( $entries as $key => $entry ) {
+			$sorted[ $key ] = $entry;
+		}
+	}
+
+	return $sorted;
+}
+
+// Before writing the manifest, sort it hierarchically
+$manifest = sort_manifest_hierarchically( $manifest );
+
 file_put_contents( $root . '/bin/manifest.json', json_encode( (object) $manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
 
 $count = count( $manifest );

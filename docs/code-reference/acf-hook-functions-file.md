@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Hook Functions Global Functions
 
 ## `acf_add_filter_variations()`
 

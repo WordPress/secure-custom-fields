@@ -1,4 +1,4 @@
-# Global Functions
+# Locations Global Functions
 
 ## `acf_register_location_type()`
 

@@ -1,4 +1,4 @@
-# Global Functions
+# Local Json Global Functions
 
 ## `acf_get_local_json_files()`
 

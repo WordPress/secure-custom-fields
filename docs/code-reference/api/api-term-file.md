@@ -1,4 +1,4 @@
-# Global Functions
+# API Term Global Functions
 
 ## `acf_get_taxonomies()`
 

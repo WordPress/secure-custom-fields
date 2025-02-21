@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Bidirectional Functions Global Functions
 
 ## `acf_update_bidirectional_values()`
 

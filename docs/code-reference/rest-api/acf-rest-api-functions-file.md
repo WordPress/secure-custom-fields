@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Rest API Functions Global Functions
 
 ## `acf_get_field_rest_schema()`
 

@@ -1,4 +1,4 @@
-# Global Functions
+# Assets Global Functions
 
 ## `acf_localize_text()`
 

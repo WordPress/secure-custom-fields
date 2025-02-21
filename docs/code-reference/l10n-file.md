@@ -1,4 +1,4 @@
-# Global Functions
+# L10n Global Functions
 
 ## `acf_get_locale()`
 

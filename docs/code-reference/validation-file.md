@@ -1,4 +1,4 @@
-# Global Functions
+# Validation Global Functions
 
 ## `acf_add_validation_error()`
 

@@ -1,4 +1,4 @@
-# Global Functions
+# Acf Taxonomy Functions Global Functions
 
 ## `acf_get_taxonomy()`
 

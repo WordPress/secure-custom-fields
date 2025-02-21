@@ -1,4 +1,4 @@
-# Global Functions
+# Admin Notices Global Functions
 
 ## `acf_new_admin_notice()`
 
