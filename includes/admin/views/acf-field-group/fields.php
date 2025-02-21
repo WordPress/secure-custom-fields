@@ -71,7 +71,7 @@ if ( $is_subfield ) {
 						sprintf(
 							/* translators: %s url to field types list */
 							__( 'Choose from over 30 field types. <a href="%s" target="_blank">Learn more</a>.', 'secure-custom-fields' ),
-							'https://www.advancedcustomfields.com/resources/'
+							'https://developer.wordpress.org/secure-custom-fields/features/fields/'
 						)
 					);
 					?>

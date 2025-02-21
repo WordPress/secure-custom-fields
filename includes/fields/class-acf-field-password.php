@@ -22,7 +22,8 @@ if ( ! class_exists( 'acf_field_password' ) ) :
 			$this->label         = __( 'Password', 'secure-custom-fields' );
 			$this->description   = __( 'An input for providing a password using a masked field.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-password.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/password/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/password/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/password/password-tutorial/';
 			$this->defaults      = array(
 				'placeholder' => '',
 				'prepend'     => '',

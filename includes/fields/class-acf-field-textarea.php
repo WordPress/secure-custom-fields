@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 			$this->label         = __( 'Text Area', 'secure-custom-fields' );
 			$this->description   = __( 'A basic textarea input for storing paragraphs of text.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-textarea.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/textarea/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/textarea/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/textarea/textarea-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'new_lines'     => '',

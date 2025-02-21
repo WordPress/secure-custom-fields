@@ -22,7 +22,8 @@ if ( ! class_exists( 'acf_field_range' ) ) :
 			$this->label         = __( 'Range', 'secure-custom-fields' );
 			$this->description   = __( 'An input for selecting a numerical value within a specified range using a range slider element.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-range.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/range/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/range/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/range/range-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'min'           => '',

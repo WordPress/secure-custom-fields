@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_email' ) ) :
 			$this->label         = __( 'Email', 'secure-custom-fields' );
 			$this->description   = __( 'A text input specifically designed for storing email addresses.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-email.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/email/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/email/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/email/email-tutorial/';
 			$this->defaults      = array(
 				'default_value' => '',
 				'placeholder'   => '',

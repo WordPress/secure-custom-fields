@@ -17,7 +17,8 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 			$this->category      = 'relational';
 			$this->description   = __( 'An interactive and customizable UI for picking one or many posts, pages or post type items with the option to search. ', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-post-object.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/post-object/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/post-object/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/post-object/post-object-tutorial/';
 			$this->defaults      = array(
 				'post_type'            => array(),
 				'taxonomy'             => array(),

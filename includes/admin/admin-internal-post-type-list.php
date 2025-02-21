@@ -189,7 +189,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 						continue;
 
 						// Ignore not local "json".
-					} elseif ( 'json' === $local ) {
+					} elseif ( 'json' !== $local ) {
 						continue;
 
 						// Append to sync if not yet in database.
