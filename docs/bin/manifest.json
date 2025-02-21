@@ -19,11 +19,6 @@
         "parent": null,
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/index.md"
     },
-    "getting-started": {
-        "slug": "getting-started",
-        "parent": null,
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/getting-started/index.md"
-    },
     "tutorials": {
         "slug": "tutorials",
         "parent": null,
@@ -32,7 +27,7 @@
     "welcome": {
         "slug": "welcome",
         "parent": null,
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome.md"
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/index.md"
     },
     "code-reference/acf-bidirectional-functions-file": {
         "slug": "acf-bidirectional-functions-file",
@@ -249,20 +244,20 @@
         "parent": "features",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/scf-api.md"
     },
-    "getting-started/installation": {
-        "slug": "installation",
-        "parent": "getting-started",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/getting-started/installation.md"
-    },
-    "getting-started/quick-start": {
-        "slug": "quick-start",
-        "parent": "getting-started",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/getting-started/quick-start.md"
-    },
     "tutorials/first-post-type": {
         "slug": "first-post-type",
         "parent": "tutorials",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/tutorials/first-post-type.md"
+    },
+    "welcome/installation": {
+        "slug": "installation",
+        "parent": "welcome",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/installation.md"
+    },
+    "welcome/quick-start": {
+        "slug": "quick-start",
+        "parent": "welcome",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/quick-start.md"
     },
     "code-reference/admin/admin-notices-file": {
         "slug": "admin-notices-file",
