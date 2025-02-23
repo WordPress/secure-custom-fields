@@ -1,2 +1,4 @@
 #!/bin/sh
 . .husky/pre-commit-phpcbf.sh
+composer normalize
+npm run sort-package-json

@@ -1,44 +1,41 @@
 {
     "name": "wordpress/secure-custom-fields",
     "description": "Secure Custom Fields",
-    "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
+    "type": "wordpress-plugin",
     "authors": [
         {
             "name": "WordPress.org"
         }
     ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "automattic/wordbless": "^0.5.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "ergebnis/composer-normalize": "^2.45",
+        "nikic/php-parser": "^4.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1.3",
+        "phpunit/phpunit": "^9.6",
+        "sirbrillig/phpcs-changed": "^2.11",
+        "symfony/finder": "^5.0 || ^6.0",
+        "wp-coding-standards/wpcs": "^3.0",
+        "yoast/phpunit-polyfills": "^1.1.0"
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
             "roots/wordpress-core-installer": true
         },
         "platform": {
             "php": "7.4"
         }
     },
-    "require": {
-        "php": ">=7.4"
-    },
-    "require-dev": {
-        "yoast/phpunit-polyfills": "^1.1.0",
-        "phpunit/phpunit": "^9.6",
-        "wp-coding-standards/wpcs": "^3.0",
-        "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "sirbrillig/phpcs-changed": "^2.11",
-        "nikic/php-parser": "^4.0",
-        "symfony/finder": "^5.0|^6.0",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-        "phpcompatibility/phpcompatibility-wp": "^2.1.3",
-        "sirbrillig/phpcs-changed": "^2.11",
-        "automattic/wordbless": "^0.5.0"
-    },
     "scripts": {
-        "docs:manifest": "php docs/bin/generate-manifest.php",
-        "docs:links": "php docs/bin/update-markdown-links.php",
-        "docs:parse": "php docs/bin/generate-parsed-md.php --output=${DOCS_OUTPUT_DIR:-docs/code-reference}",
-        "docs:fix": "npm run fix:md",
-        "docs:lint": "npm run lint:md",
+        "post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",
+        "post-update-cmd": "WorDBless\\Composer\\InstallDropin::copy",
         "docs": [
             "@docs:parse",
             "@docs:links",
@@ -46,13 +43,27 @@
             "@docs:lint",
             "@docs:manifest"
         ],
-        "test": "@test:php",
-        "test:php": "phpunit",
+        "docs:fix": "npm run fix:md",
+        "docs:links": "php docs/bin/update-markdown-links.php",
+        "docs:lint": "npm run lint:md",
+        "docs:manifest": "php docs/bin/generate-manifest.php",
+        "docs:parse": "php docs/bin/generate-parsed-md.php --output=${DOCS_OUTPUT_DIR:-docs/code-reference}",
+        "format": [
+            "@format:php",
+            "@format:packages"
+        ],
+        "format:packages": [
+            "composer normalize",
+            "npm run sort-package-json"
+        ],
+        "format:php": "phpcbf",
         "lint": "@lint:php",
         "lint:php": "phpcs",
-        "format": "@format:php",
-        "format:php": "phpcbf",
-        "post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",
-        "post-update-cmd": "WorDBless\\Composer\\InstallDropin::copy"
+        "prepare-release": [
+            "@format:packages",
+            "php bin/prepare-release.php"
+        ],
+        "test": "@test:php",
+        "test:php": "phpunit"
     }
 }
