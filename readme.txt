@@ -83,5 +83,5 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Upgrade Notice ==
 
-= 6.4.1-beta6 =
-Corrects issue where Options page would not display in wp-admin and a missing function from the Clone field.
+= 6.4.1-beta7 =
+Corrects issue with syncing SCF options via JSON files.
