@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 			$this->category      = 'content';
 			$this->description   = __( 'An interactive component for embedding videos, images, tweets, audio and other content by making use of the native WordPress oEmbed functionality.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-oembed.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/oembed/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/oembed/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/oembed/oembed-tutorial/';
 			$this->defaults      = array(
 				'width'  => '',
 				'height' => '',

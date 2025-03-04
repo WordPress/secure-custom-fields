@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 			$this->category       = 'advanced';
 			$this->description    = __( 'An interactive UI for selecting a location using Google Maps. Requires a Google Maps API key and additional configuration to display correctly.', 'secure-custom-fields' );
 			$this->preview_image  = acf_get_url() . '/assets/images/field-type-previews/field-preview-google-map.png';
-			$this->doc_url        = 'https://www.advancedcustomfields.com/resources/google-map/';
+			$this->doc_url        = 'https://developer.wordpress.org/secure-custom-fields/features/fields/google-map/';
+			$this->tutorial_url   = 'https://developer.wordpress.org/secure-custom-fields/features/fields/google-map/google-map-tutorial/';
 			$this->defaults       = array(
 				'height'     => '',
 				'center_lat' => '',

@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -4550,9 +4548,6 @@ msgstr "È richiesto un aggiornamento del database"
 #, fuzzy
 msgid "Options Page"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Pagina opzioni\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Pagina Opzioni"
 
 #: includes/admin/views/upgrade/notice.php:14
@@ -4567,9 +4562,6 @@ msgstr "Galleria"
 #, fuzzy
 msgid "Flexible Content"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Contenuto flessibile\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Contenuto Flessibile"
 
 #: includes/admin/views/upgrade/notice.php:8
@@ -4808,9 +4800,6 @@ msgstr "Modifica campo"
 #, fuzzy
 msgid "Drag to reorder"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Trascina per riordinare\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Trascinare per riordinare"
 
 #: includes/admin/post-types/admin-field-group.php:99
@@ -5201,9 +5190,6 @@ msgstr "Titolo"
 #, fuzzy
 msgid "Edit field group"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Modifica gruppo di campi\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Modifica Field Group"
 
 #: includes/admin/post-types/admin-field-group.php:113
@@ -6243,9 +6229,6 @@ msgstr "Relazione"
 #, fuzzy
 msgid "Comma separated list. Leave blank for all types"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Lista con valori separati da virgole. Lascia vuoto per tutti i tipi\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Lista separata da virgole. Lascia bianco per tutti i tipi"
 
 #: includes/fields/class-acf-field-file.php:279
@@ -6270,9 +6253,6 @@ msgstr "Massimo"
 #, fuzzy
 msgid "File size"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Dimensione file\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Dimensione File"
 
 #: includes/fields/class-acf-field-image.php:235
@@ -6294,9 +6274,6 @@ msgstr "Minimo"
 #, fuzzy
 msgid "Uploaded to post"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Caricato nell'articolo\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Caricato al post"
 
 #: includes/fields/class-acf-field-file.php:224
@@ -6319,9 +6296,6 @@ msgstr "Tutti"
 #, fuzzy
 msgid "Limit the media library choice"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Limitare la scelta dalla libreria media\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Limitare la scelta alla libreria multimediale"
 
 #: includes/fields/class-acf-field-file.php:218
@@ -6335,9 +6309,6 @@ msgstr "Libreria"
 #, fuzzy
 msgid "Preview Size"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Dimensione anteprima\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Dimensione Anteprima"
 
 #: includes/fields/class-acf-field-image.php:185
@@ -6345,9 +6316,6 @@ msgstr ""
 #, fuzzy
 msgid "Image ID"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"ID immagine\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "ID Immagine"
 
 #: includes/fields/class-acf-field-image.php:184
@@ -6360,9 +6328,6 @@ msgstr "URL Immagine"
 #, fuzzy
 msgid "Image Array"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Array di immagini\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Array Immagine"
 
 #: includes/fields/class-acf-field-button-group.php:158
@@ -6587,9 +6552,6 @@ msgstr "No"
 #, fuzzy
 msgid "Yes"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Sì\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Si"
 
 #: includes/fields/class-acf-field-true_false.php:22
@@ -6624,9 +6586,6 @@ msgstr "Blocco"
 #, fuzzy
 msgid "Specify the style used to render the selected fields"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Specifica lo stile utilizzato per la visualizzazione dei campi selezionati\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Specificare lo stile utilizzato per il rendering dei campi selezionati"
 
 #: includes/fields.php:330
@@ -6646,9 +6605,6 @@ msgstr "Layout"
 #, fuzzy
 msgid "Sub Fields"
 msgstr ""
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Sottocampi\n"
-"#-#-#-#-#  acf-it_IT.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Campi Sub"
 
 #: includes/fields/class-acf-field-group.php:22

@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Provides a way to structure fields into groups to better organize the data and the edit screen.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-group.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/group/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/group/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/group/group-tutorial/';
 			$this->supports      = array(
 				'bindings' => false,
 			);

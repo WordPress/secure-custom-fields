@@ -152,7 +152,6 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 				array(
 					'fieldTypes'          => acf_get_field_types_info(),
 					'fieldCategoriesL10n' => acf_get_field_categories_i18n(),
-					'PROUpgradeURL'       => 'https://www.advancedcustomfields.com/pro/',
 					'PROFieldTypes'       => acf_get_pro_field_types(),
 					'PROLocationTypes'    => array(
 						'block'        => esc_html__( 'Block', 'secure-custom-fields' ),

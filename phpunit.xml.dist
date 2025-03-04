@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/php/bootstrap.php" backupGlobals="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" convertDeprecationsToExceptions="true" cacheResult="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">.</directory>
+    </include>
+    <exclude>
+      <directory>./tests</directory>
+      <directory>./vendor</directory>
+      <directory>./node_modules</directory>
+      <directory>./wordpress</directory>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="secure-custom-fields">
+      <directory prefix="test" suffix=".php">./tests/php/</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

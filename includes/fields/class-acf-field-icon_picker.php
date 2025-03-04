@@ -25,7 +25,8 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 			$this->category      = 'advanced';
 			$this->description   = __( 'An interactive UI for selecting an icon. Select from Dashicons, the media library, or a standalone URL input.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-icon-picker.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/icon-picker/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/icon-picker/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/icon-picker/icon-picker-tutorial/';
 			$this->defaults      = array(
 				'library'       => 'all',
 				'tabs'          => array_keys( $this->get_tabs() ),
@@ -244,7 +245,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 
 			$return_format_doc = sprintf(
 				'<a href="%s" target="_blank">%s</a>',
-				'https://www.advancedcustomfields.com/resources/icon-picker/',
+				$this->doc_url,
 				__( 'Learn More', 'secure-custom-fields' )
 			);
 

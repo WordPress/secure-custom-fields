@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			$this->category      = 'advanced';
 			$this->description   = __( 'An interactive UI for picking a date. The date return format can be customized using the field settings.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-date-picker.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/date-picker/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/date-picker/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/date-picker/date-picker-tutorial/';
 			$this->defaults      = array(
 				'display_format' => 'd/m/Y',
 				'return_format'  => 'd/m/Y',

@@ -1,5 +1,3 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: Secure Custom Fields\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: WP Engine <support@advancedcustomfields.com>\n"
@@ -2210,9 +2208,6 @@ msgstr "Us permet seleccionar i mostrar els camps existents. No duplica cap camp
 msgctxt "noun"
 msgid "Clone"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Clona\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Clon"
 
 #: includes/fields.php:331
@@ -4553,9 +4548,6 @@ msgstr "Cal actualitzar la base de dades"
 #, fuzzy
 msgid "Options Page"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Pàgina d'opcions\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Pàgina d’opcions"
 
 #: includes/admin/views/upgrade/notice.php:14
@@ -4806,9 +4798,6 @@ msgstr "Edita el camp"
 #, fuzzy
 msgid "Drag to reorder"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Arrossegueu per reordenar\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Arrossegueu per a reordenar"
 
 #: includes/admin/post-types/admin-field-group.php:99
@@ -6236,9 +6225,6 @@ msgstr "Relació"
 #, fuzzy
 msgid "Comma separated list. Leave blank for all types"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Llista separada per comes. Deixeu-ho en blanc per a tots els tipus\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Llista separada amb comes. Deixeu-la en blanc per a tots els tipus"
 
 #: includes/fields/class-acf-field-file.php:279
@@ -6270,9 +6256,6 @@ msgstr "Mida del fitxer"
 #, fuzzy
 msgid "Restrict which images can be uploaded"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Restringeix quines imatges es poden penjar\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Limita quines imatges es poden penjar"
 
 #: includes/fields/class-acf-field-file.php:255
@@ -6287,9 +6270,6 @@ msgstr "Mínim"
 #, fuzzy
 msgid "Uploaded to post"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"S'ha penjat a l'entrada\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Carregats a l’entrada"
 
 #: includes/fields/class-acf-field-file.php:224
@@ -6312,9 +6292,6 @@ msgstr "Tots"
 #, fuzzy
 msgid "Limit the media library choice"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Limita l'elecció d'elements de la mediateca\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Limita l’elecció d’elements de la mediateca"
 
 #: includes/fields/class-acf-field-file.php:218
@@ -6343,9 +6320,6 @@ msgstr "URL de la imatge"
 #, fuzzy
 msgid "Image Array"
 msgstr ""
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields)  #-#-#-#-#\n"
-"Matriu d'imatges\n"
-"#-#-#-#-#  acf-ca.po (Advanced Custom Fields PRO)  #-#-#-#-#\n"
 "Matriu d'imatge"
 
 #: includes/fields/class-acf-field-button-group.php:158

@@ -30,8 +30,8 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Allows you to define, create and manage content with total control by creating layouts that contain subfields that content editors can choose from.', 'secure-custom-fields' ) . ' ' . __( 'We do not recommend using this field in ACF Blocks.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-flexible-content.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/flexible-content/';
-			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/building-layouts-with-the-flexible-content-field-in-a-theme/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/flexible-content/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/flexible-content/flexible-content-tutorial/';
 			$this->pro           = true;
 			$this->supports      = array( 'bindings' => false );
 			$this->defaults      = array(

@@ -37,8 +37,8 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$this->category      = 'layout';
 			$this->description   = __( 'Provides a solution for repeating content such as slides, team members, and call-to-action tiles, by acting as a parent to a set of subfields which can be repeated again and again.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-repeater.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/repeater/';
-			$this->tutorial_url  = 'https://www.advancedcustomfields.com/resources/repeater/how-to-use-the-repeater-field/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/repeater/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/repeater/repeater-tutorial/';
 			$this->pro           = true;
 			$this->supports      = array( 'bindings' => false );
 			$this->defaults      = array(

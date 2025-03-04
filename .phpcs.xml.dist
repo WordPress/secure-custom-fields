@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
-<ruleset>
-	<!-- Check all PHP files in directory tree by default. -->
-	<arg name="extensions" value="php"/>
+<ruleset name="Secure Custom Fields">
 	<file>.</file>
 
 	<!-- Exclude package files -->
-	<exclude-pattern>/vendor/*</exclude-pattern>
-	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
 	<exclude-pattern>/lang/*</exclude-pattern>
 
-	<!-- Confirm PHP compat. -->
-	<config name="testVersion" value="7.4-"/>
-	<rule ref="PHPCompatibilityWP" />
+	<!-- How to scan -->
+	<arg value="sp"/> <!-- Show sniff and progress -->
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
 
-	<!-- Display sniff code -->
-	<arg value="s"/>
-
+	<!-- Rules: WordPress Coding Standards -->
+	<config name="minimum_supported_wp_version" value="6.0"/>
 	<rule ref="WordPress">
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" /> <!-- 'acf/hookname' is used throughout. -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" /> <!-- This is trivial and not really useful today. -->
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" /> <!-- Refactoring of this scale is not in scope yet.-->
 	</rule>
+
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
-		   	<property name="customEscapingFunctions" type="array">
-			   	<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
+			<property name="customEscapingFunctions" type="array">
+				<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
 				<element value="acf_esc_html" />
-		   	</property>
+			</property>
 		</properties>
 	</rule>
+
 	<rule ref="WordPress.Security.ValidatedSanitizedInput">
 		<properties>
 			<property name="customSanitizingFunctions" type="array">
@@ -36,6 +36,7 @@
 			</property>
 		</properties>
 	</rule>
+
 	<rule ref="WordPress.Security.NonceVerification">
 		<properties>
 			<property name="customNonceVerificationFunctions" type="array">
@@ -43,6 +44,12 @@
 			</property>
 		</properties>
 	</rule>
+
+	<!-- Rules: PHPCompatibility -->
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Rules: Text Domain -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">

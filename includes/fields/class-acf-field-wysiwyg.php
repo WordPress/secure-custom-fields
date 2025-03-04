@@ -23,7 +23,8 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			$this->category      = 'content';
 			$this->description   = __( 'Displays the WordPress WYSIWYG editor as seen in Posts and Pages allowing for a rich text-editing experience that also allows for multimedia content.', 'secure-custom-fields' ) . ' ' . __( 'We do not recommend using this field in ACF Blocks.', 'secure-custom-fields' );
 			$this->preview_image = acf_get_url() . '/assets/images/field-type-previews/field-preview-wysiwyg.png';
-			$this->doc_url       = 'https://www.advancedcustomfields.com/resources/wysiwyg-editor/';
+			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/wysiwyg/';
+			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/wysiwyg/wysiwyg-tutorial/';
 			$this->defaults      = array(
 				'tabs'          => 'all',
 				'toolbar'       => 'full',
