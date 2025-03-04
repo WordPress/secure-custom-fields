@@ -21,13 +21,16 @@
         "sirbrillig/phpcs-changed": "^2.11",
         "symfony/finder": "^5.0 || ^6.0",
         "wp-coding-standards/wpcs": "^3.0",
-        "yoast/phpunit-polyfills": "^1.1.0"
+        "yoast/phpunit-polyfills": "^1.1.0",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "phpstan/extension-installer": "^1.4"
     },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "ergebnis/composer-normalize": true,
-            "roots/wordpress-core-installer": true
+            "roots/wordpress-core-installer": true,
+            "phpstan/extension-installer": true
         },
         "platform": {
             "php": "7.4"
@@ -63,7 +66,11 @@
             "@format:packages",
             "php bin/prepare-release.php"
         ],
-        "test": "@test:php",
-        "test:php": "phpunit"
+        "test": [
+            "@test:php",
+            "@test:phpstan"
+        ],
+        "test:php": "phpunit",
+        "test:phpstan": "phpstan analyze --memory-limit=2G"
     }
 }
