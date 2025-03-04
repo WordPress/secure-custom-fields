@@ -649,12 +649,6 @@ parameters:
 			path: ../includes/wpml.php
 
 		-
-			message: '#^Constant ACF_BASENAME not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../secure-custom-fields.php
-
-		-
 			message: '#^Constant ACF_FIELD_API_VERSION not found\.$#'
 			identifier: constant.notFound
 			count: 3
@@ -667,15 +661,9 @@ parameters:
 			path: ../secure-custom-fields.php
 
 		-
-			message: '#^Constant ACF_PATH not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../secure-custom-fields.php
-
-		-
 			message: '#^Constant ACF_VERSION not found\.$#'
 			identifier: constant.notFound
-			count: 2
+			count: 1
 			path: ../secure-custom-fields.php
 
 		-
