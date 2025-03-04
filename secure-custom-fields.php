@@ -584,14 +584,14 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * Defines a constant if doesnt already exist.
 		 *
 		 * @since   ACF 5.5.13
-		 * @deprecated 6.4.1 -- Use vanilla PHP defined() || define() instead.
+		 * @deprecated 6.5.0 -- Use vanilla PHP defined() || define() instead.
 		 *
 		 * @param   string $name  The constant name.
 		 * @param   mixed  $value The constant value.
 		 * @return  void
 		 */
 		public function define( $name, $value = true ) {
-			_deprecated_function( __METHOD__, '6.4.1', 'defined() || define()' );
+			_deprecated_function( __METHOD__, '6.5.0', 'defined() || define()' );
 			if ( ! defined( $name ) ) {
 				define( $name, $value );
 			}
