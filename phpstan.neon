@@ -11,3 +11,5 @@ parameters:
 		- docs
 		- lang
 		- wordpress
+	bootstrapFiles:
+		- bin/phpstan-bootstrap.php
