@@ -6,7 +6,7 @@ To get started with the **Nav Menu Field** in SCF, follow these steps to configu
 
 ### **Step 1: Create a New Field Group**
 
-First, create a new field group in **Advanced Custom Fields (SCF)**. This field group will hold your custom fields, including the **Nav Menu** field.
+First, create a new field group in **Secure Custom Fields (SCF)**. This field group will hold your custom fields, including the **Nav Menu** field.
 
 1. Go to **Custom Fields > Add New** in your WordPress admin panel.
 2. Title your field group and choose the location rules for where this field group should be displayed (e.g., on a specific page or post type).
