@@ -34,6 +34,8 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 				'allow_null'  => 0,
 				'container'   => 'div',
 			);
+
+			add_filter( 'acf/field_wrapper_attributes', array( $this, 'nav_menu_field_wrapper_attributes' ), 10, 2 );
 		}
 
 		/**
@@ -42,6 +44,33 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 		 * @param array $field The array representation of the current Nav Menu Field.
 		 */
 		public function render_field_settings( $field ) {
+			$allow_null = $field['allow_null'];
+			$nav_menus  = wp_get_nav_menus( $allow_null );
+			if ( current_theme_supports( 'menus' ) ) {
+				if ( empty( $nav_menus ) ) {
+					?>
+					<div class="acf-field">
+						<div class="acf-notice">
+							<p>
+								<?php esc_html_e( 'Warning: You don\'t have any menus created please visit', 'secure-custom-fields' ); ?> <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>"><?php esc_html_e( 'this', 'secure-custom-fields' ); ?></a> <?php esc_html_e( 'link to create menus.', 'secure-custom-fields' ); ?>
+							</p>
+						</div>
+					</div>
+					<?php
+				}
+			} else {
+				?>
+				<div class="acf-field">
+					<div class="acf-notice">
+						<p>
+							<?php esc_html_e( 'Warning: The theme does not support navigation menus, the field will not show.', 'secure-custom-fields' ); ?>
+						</p>
+					</div>
+				</div>
+				<?php
+
+			}
+
 			// Register the Return Value format setting
 			acf_render_field_setting(
 				$field,
@@ -111,45 +140,28 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 		public function render_field( $field ) {
 			$allow_null = $field['allow_null'];
 			$nav_menus  = wp_get_nav_menus( $allow_null );
-			if ( current_theme_supports( 'menus' ) ) {
-				if ( empty( $nav_menus ) ) {
-					?>
-					<div class="acf-notice" >
-						<p>
-							<?php esc_html_e( '⚠️ Warning: You don\'t have any menus created please visit', 'secure-custom-fields' ); ?> <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>"><?php esc_html_e( 'this', 'secure-custom-fields' ); ?></a> <?php esc_html_e( 'link to create menus.', 'secure-custom-fields' ); ?>
-						</p>
-					</div>
-
-					<?php
-				} else {
-					?>
-						<select id="<?php esc_attr( $field['id'] ); ?>" class="<?php echo esc_attr( $field['class'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>">
-							<?php
-							if ( $allow_null ) {
-								?>
-								<option value="">
-									<?php esc_html_e( '- Select -', 'secure-custom-fields' ); ?> 
-								</option>
-								<?php
-							}
-							foreach ( $nav_menus as $nav_menu_name ) {
-								?>
-								<option value="<?php echo esc_attr( $nav_menu_name->term_id ); ?>" <?php selected( $field['value'], $nav_menu_name->term_id ); ?>>
-									<?php echo esc_html( $nav_menu_name->name ); ?>
-								</option>
-							<?php } ?>
-						</select>
-					<?php
-				}
-			} else {
-				?>
-				<div class="acf-notice">
-					<p>
-						<?php esc_html_e( '⚠️ Warning: The theme does not support navigation menus.', 'secure-custom-fields' ); ?>
-					</p>
-				</div>
-				<?php
+			if ( ! current_theme_supports( 'menus' ) || empty( $nav_menus ) ) {
+				return; // Don't render the field
 			}
+
+			?>
+				<select id="<?php esc_attr( $field['id'] ); ?>" class="<?php echo esc_attr( $field['class'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>">
+					<?php
+					if ( $allow_null ) {
+						?>
+						<option value="">
+							<?php esc_html_e( '- Select -', 'secure-custom-fields' ); ?> 
+						</option>
+						<?php
+					}
+					foreach ( $nav_menus as $nav_menu_name ) {
+						?>
+						<option value="<?php echo esc_attr( $nav_menu_name->term_id ); ?>" <?php selected( $field['value'], $nav_menu_name->term_id ); ?>>
+							<?php echo esc_html( $nav_menu_name->name ); ?>
+						</option>
+					<?php } ?>
+				</select>
+			<?php
 		}
 
 		/**
@@ -198,6 +210,24 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 
 			// Just return the Nav Menu ID
 			return $value;
+		}
+		/**
+		 * Hide Field if no support
+		 *
+		 * @param array $wrapper Wrapper array that contains all field main wrapper attributes.
+		 * @param array $field main field array will all field data.
+		 */
+		public function nav_menu_field_wrapper_attributes( $wrapper, $field ) {
+			// Check if it's the nav menu field (or any other specific field type)
+			if ( isset( $field['type'] ) && 'nav_menu' === $field['type'] ) {
+				// Check if menus are available and the theme supports them
+				if ( ! current_theme_supports( 'menus' ) ) {
+					// Add inline CSS to hide the field if no menus are available
+					$wrapper['style'] = 'display: none;'; // You can also add additional styles
+				}
+			}
+
+			return $wrapper;
 		}
 	}
 
