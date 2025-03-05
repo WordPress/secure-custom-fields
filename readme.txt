@@ -52,7 +52,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 = 6.4.1 =
-* Unreleased: In beta *
+*Release Date 6 Mar 2024*
 
 * Forked from Advanced Custom Fields®
 * Various updates to coding standards.
@@ -83,5 +83,5 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Upgrade Notice ==
 
-= 6.4.1-beta7 =
-Corrects issue with syncing SCF options via JSON files.
+= 6.4.1 =
+Resolves notice of loading translations too early.
