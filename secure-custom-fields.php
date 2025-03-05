@@ -6,7 +6,7 @@
  * Plugin Name:       Secure Custom Fields
  * Plugin URI:        https://developer.wordpress.org/secure-custom-fields/
  * Description:       Secure Custom Fields (SCF) offers an intuitive way for developers to enhance WordPress content management by adding extra fields and options without coding requirements.
- * Version:           6.4.1-beta6
+ * Version:           6.4.1-beta7
  * Author:            WordPress.org
  * Author URI:        https://wordpress.org/
  * Text Domain:       secure-custom-fields
@@ -35,7 +35,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '6.4.1-beta6';
+		public $version = '6.4.1-beta7';
 
 		/**
 		 * The plugin settings array.
@@ -91,7 +91,7 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Define settings.
 			$this->settings = array(
-				'name'                    => __( 'Secure Custom Fields', 'secure-custom-fields' ),
+				'name'                    => 'Secure Custom Fields', // Will be updated in the init hook to i18n string.
 				'slug'                    => dirname( ACF_BASENAME ),
 				'version'                 => ACF_VERSION,
 				'basename'                => ACF_BASENAME,
@@ -207,18 +207,6 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/ajax/class-acf-ajax-query-users.php' );
 			acf_include( 'includes/ajax/class-acf-ajax-local-json-diff.php' );
 
-			// Include forms.
-			acf_include( 'includes/forms/form-attachment.php' );
-			acf_include( 'includes/forms/form-comment.php' );
-			acf_include( 'includes/forms/form-customizer.php' );
-			acf_include( 'includes/forms/form-front.php' );
-			acf_include( 'includes/forms/form-nav-menu.php' );
-			acf_include( 'includes/forms/form-post.php' );
-			acf_include( 'includes/forms/form-gutenberg.php' );
-			acf_include( 'includes/forms/form-taxonomy.php' );
-			acf_include( 'includes/forms/form-user.php' );
-			acf_include( 'includes/forms/form-widget.php' );
-
 			// Include admin.
 			if ( is_admin() ) {
 				acf_include( 'includes/admin/admin.php' );
@@ -269,6 +257,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Load textdomain file.
 			acf_load_textdomain();
 
+			// Update the name setting now that we're in the init hook.
+			acf_update_setting( 'name', __( 'Secure Custom Fields', 'secure-custom-fields' ) );
+
 			// Include 3rd party compatiblity.
 			acf_include( 'includes/third-party.php' );
 
@@ -276,6 +267,18 @@ if ( ! class_exists( 'ACF' ) ) {
 			if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 				acf_include( 'includes/wpml.php' );
 			}
+
+			// Include forms.
+			acf_include( 'includes/forms/form-attachment.php' );
+			acf_include( 'includes/forms/form-comment.php' );
+			acf_include( 'includes/forms/form-customizer.php' );
+			acf_include( 'includes/forms/form-front.php' );
+			acf_include( 'includes/forms/form-nav-menu.php' );
+			acf_include( 'includes/forms/form-post.php' );
+			acf_include( 'includes/forms/form-gutenberg.php' );
+			acf_include( 'includes/forms/form-taxonomy.php' );
+			acf_include( 'includes/forms/form-user.php' );
+			acf_include( 'includes/forms/form-widget.php' );
 
 			// Add post types and taxonomies.
 			if ( acf_get_setting( 'enable_post_types' ) ) {
