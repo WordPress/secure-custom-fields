@@ -49,12 +49,6 @@ parameters:
 			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Constant ACF_PATH not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: ../includes/acf-helper-functions.php
-
-		-
 			message: '#^Function acf_set_filters\(\) should return array but return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
@@ -127,20 +121,8 @@ parameters:
 			path: ../includes/acf-user-functions.php
 
 		-
-			message: '#^Constant ACF_PATH not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: ../includes/acf-utility-functions.php
-
-		-
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin-internal-post-type-list.php
-
-		-
-			message: '#^Constant ACF_PATH not found\.$#'
-			identifier: constant.notFound
 			count: 1
 			path: ../includes/admin/admin-internal-post-type-list.php
 
@@ -166,12 +148,6 @@ parameters:
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
 			count: 2
-			path: ../includes/admin/admin-upgrade.php
-
-		-
-			message: '#^Constant ACF_UPGRADE_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 1
 			path: ../includes/admin/admin-upgrade.php
 
 		-
@@ -289,12 +265,6 @@ parameters:
 			path: ../includes/admin/views/tools/tools.php
 
 		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../includes/admin/views/upgrade/network.php
-
-		-
 			message: '#^Variable \$button_text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -311,12 +281,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../includes/admin/views/upgrade/notice.php
-
-		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: ../includes/admin/views/upgrade/upgrade.php
 
 		-
 			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
@@ -359,12 +323,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: ../includes/api/api-term.php
-
-		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 3
-			path: ../includes/blocks.php
 
 		-
 			message: '#^Access to an undefined property ACF_Data\:\:\$site_aliases\.$#'
@@ -619,24 +577,6 @@ parameters:
 			path: ../includes/revisions.php
 
 		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: ../includes/third-party.php
-
-		-
-			message: '#^Constant ACF_UPGRADE_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../includes/upgrades.php
-
-		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 3
-			path: ../includes/upgrades.php
-
-		-
 			message: '#^Access to an undefined property acf_validation\:\:\$errors\.$#'
 			identifier: property.notFound
 			count: 3
@@ -647,36 +587,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: ../includes/wpml.php
-
-		-
-			message: '#^Constant ACF_BASENAME not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Constant ACF_FIELD_API_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 3
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Constant ACF_MAJOR_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 4
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Constant ACF_PATH not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Constant ACF_VERSION not found\.$#'
-			identifier: constant.notFound
-			count: 2
-			path: ../secure-custom-fields.php
 
 		-
 			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
