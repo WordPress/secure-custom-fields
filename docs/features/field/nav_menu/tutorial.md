@@ -11,7 +11,7 @@
 
 ## Common Use Cases
 
-1. Use to output wordpress menu anywhere
+1. Use to output WordPress navigation menu anywhere.
 
 ## Tips
 
