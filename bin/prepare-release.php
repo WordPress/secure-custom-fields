@@ -271,8 +271,8 @@ class Release_Preparation {
 	private function update_stable_tag( $version ) {
 		$readme = file_get_contents( 'readme.txt' );
 		$readme = preg_replace(
-			'/(Stable tag: )[^\s\n]+/',
-			'$1' . $version,
+			'/^Stable tag:.*$/m',
+			'Stable tag: ' . $version,
 			$readme
 		);
 		file_put_contents( 'readme.txt', $readme );
