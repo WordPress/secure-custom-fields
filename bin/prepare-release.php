@@ -43,6 +43,8 @@ class Release_Preparation {
 	 * Run the release preparation
 	 */
 	public function run() {
+		$this->check_uncommitted_changes();
+		$this->format_packages();
 		$this->check_requirements();
 		$this->build_assets();
 		$this->run_tests();
@@ -88,6 +90,36 @@ class Release_Preparation {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "\nRelease preparation complete!\n";
+	}
+
+	/**
+	 * Format package files
+	 */
+	private function format_packages() {
+		echo "Formatting package files...\n";
+		passthru( 'composer normalize', $return );
+		if ( 0 !== $return ) {
+			exit( $return );
+		}
+		passthru( 'npm run sort-package-json', $return );
+		if ( 0 !== $return ) {
+			exit( $return );
+		}
+	}
+
+	/**
+	 * Check for uncommitted changes and abort if found
+	 */
+	private function check_uncommitted_changes() {
+		exec( 'git status --porcelain', $output, $return );
+		if ( ! empty( $output ) ) {
+			echo "Error: You have uncommitted changes. Please commit or stash them before running this script.\n";
+			echo "Changes found:\n";
+			foreach ( $output as $line ) {
+				echo "  {$line}\n";
+			}
+			exit( 1 );
+		}
 	}
 
 	/**
