@@ -581,15 +581,3 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: ../includes/wpml.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 7
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Path in require_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../secure-custom-fields.php
