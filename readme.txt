@@ -52,7 +52,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 = 6.4.1 =
-*Release Date 6 Mar 2024*
+*Release Date 7 Mar 2024*
 
 * Forked from Advanced Custom Fields®
 * Various updates to coding standards.
