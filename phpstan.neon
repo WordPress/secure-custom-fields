@@ -5,11 +5,11 @@ parameters:
 	paths:
 		- .
 	excludePaths:
-		- node_modules
+		- node_modules (?)
 		- assets
 		- vendor
 		- docs
 		- lang
-		- wordpress
+		- wordpress (?)
 	bootstrapFiles:
 		- bin/phpstan-bootstrap.php
