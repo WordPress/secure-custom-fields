@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 6.4.1-beta7
+Stable tag: 6.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 = 6.4.1 =
-* Unreleased: In beta *
+*Release Date 7 Mar 2024*
 
 * Forked from Advanced Custom Fields®
 * Various updates to coding standards.
@@ -83,5 +83,5 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Upgrade Notice ==
 
-= 6.4.1-beta7 =
-Corrects issue with syncing SCF options via JSON files.
+= 6.4.1 =
+Resolves notice of loading translations too early.
