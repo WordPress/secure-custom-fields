@@ -22,6 +22,13 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 	class ACF_WPML_Compatibility {
 
 		/**
+		 * Translation ID reference mapping.
+		 *
+		 * @var array Storage for translation ID references
+		 */
+		public $trid_ref = array();
+
+		/**
 		 * Sets up the class functionality.
 		 *
 		 * @date    23/06/12

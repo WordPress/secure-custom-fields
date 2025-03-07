@@ -319,24 +319,6 @@ parameters:
 			path: ../includes/api/api-term.php
 
 		-
-			message: '#^Access to an undefined property ACF_Data\:\:\$site_aliases\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/class-acf-data.php
-
-		-
-			message: '#^Access to an undefined property ACF_Data\:\:\$site_data\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/class-acf-data.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/class-acf-internal-post-type.php
-
-		-
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
 			count: 1
@@ -529,12 +511,6 @@ parameters:
 			path: ../includes/local-meta.php
 
 		-
-			message: '#^Expected 2 @param tags, found 1\.$#'
-			identifier: paramTag.count
-			count: 2
-			path: ../includes/locations.php
-
-		-
 			message: '#^Access to an undefined property \$this\(ACF_Legacy_Location\)\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 3
@@ -575,9 +551,3 @@ parameters:
 			identifier: property.notFound
 			count: 3
 			path: ../includes/validation.php
-
-		-
-			message: '#^Access to an undefined property ACF_WPML_Compatibility\:\:\$trid_ref\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/wpml.php
