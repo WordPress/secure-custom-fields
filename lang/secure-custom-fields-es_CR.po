@@ -5366,7 +5366,7 @@ msgid "This data is logged as we detect values that have been changed during out
 msgstr ""
 
 #: includes/admin/views/global/navigation.php:142
-msgid "Seecure Custom Fields logo"
+msgid "Secure Custom Fields logo"
 msgstr ""
 
 #: includes/ajax/class-acf-ajax-check-screen.php:37
