@@ -2,7 +2,7 @@
 /**
  * ACF Admin Taxonomy Class
  *
- * @class       ACF_Admin_Taxonomiy
+ * @class       ACF_Admin_Taxonomy
  *
  * @package     ACF
  * @subpackage  Admin

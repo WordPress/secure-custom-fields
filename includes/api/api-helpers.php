@@ -899,7 +899,7 @@ function acf_get_taxonomy_terms( $taxonomies = array() ) {
 			continue;
 		}
 
-		// sort into hierachial order!
+		// sort into hierarchical order!
 		if ( $is_hierarchical ) {
 			$terms = _get_term_children( 0, $terms, $taxonomy );
 		}
@@ -1203,7 +1203,7 @@ function acf_get_posts( $args = array() ) {
  * _acf_query_remove_post_type
  *
  * This function will remove the 'wp_posts.post_type' WHERE clause completely
- * When using 'post__in', this clause is unneccessary and slow.
+ * When using 'post__in', this clause is unnecessary and slow.
  *
  * @since   ACF 5.1.5
  *
@@ -1311,7 +1311,7 @@ function acf_get_grouped_posts( $args ) {
 			continue;
 		}
 
-		// sort into hierachial order!
+		// sort into hierarchical order!
 		// this will fail if a search has taken place because parents wont exist
 		if ( is_post_type_hierarchical( $post_type ) && empty( $args['s'] ) ) {
 
@@ -1344,7 +1344,7 @@ function acf_get_grouped_posts( $args ) {
 			// order posts
 			$ordered_posts = get_page_children( $parent_id, $all_posts );
 
-			// compare aray lengths
+			// compare array lengths
 			// if $ordered_posts is smaller than $all_posts, WP has lost posts during the get_page_children() function
 			// this is possible when get_post( $args ) filter out parents (via taxonomy, meta and other search parameters)
 			if ( count( $ordered_posts ) == count( $all_posts ) ) {
@@ -1451,10 +1451,10 @@ function acf_order_by_search( $array, $search ) {
 		// detect search match
 		if ( $strpos !== false ) {
 
-			// set eright to length of match
+			// set weight to length of match
 			$weight = strlen( $search );
 
-			// increase weight if match starts at begining of string
+			// increase weight if match starts at beginning of string
 			if ( $strpos == 0 ) {
 				++$weight;
 			}
@@ -1823,8 +1823,8 @@ function acf_decode_choices( $string = '', $array_keys = false ) {
  * acf_str_replace
  *
  * This function will replace an array of strings much like str_replace
- * The difference is the extra logic to avoid replacing a string that has alread been replaced
- * This is very useful for replacing date characters as they overlap with eachother
+ * The difference is the extra logic to avoid replacing a string that has already been replaced
+ * This is very useful for replacing date characters as they overlap with each other
  *
  * @since   ACF 5.3.8
  *
@@ -1847,7 +1847,7 @@ function acf_str_replace( $string = '', $search_replace = array() ) {
 			continue;
 		}
 
-		// bail early if subsctring not found
+		// bail early if substring not found
 		if ( strpos( $string, $search ) === false ) {
 			continue;
 		}
@@ -1923,7 +1923,7 @@ acf_update_setting(
 /**
  * acf_split_date_time
  *
- * This function will split a format string into seperate date and time
+ * This function will split a format string into separate date and time
  *
  * @since   ACF 5.3.8
  *
@@ -1970,7 +1970,7 @@ function acf_split_date_time( $date_time = '' ) {
 /**
  * acf_convert_date_to_php
  *
- * This fucntion converts a date format string from JS to PHP
+ * This function converts a date format string from JS to PHP
  *
  * @since   ACF 5.0.0
  *
@@ -1990,7 +1990,7 @@ function acf_convert_date_to_php( $date = '' ) {
 /**
  * acf_convert_date_to_js
  *
- * This fucntion converts a date format string from PHP to JS
+ * This function converts a date format string from PHP to JS
  *
  * @since   ACF 5.0.0
  *
@@ -2009,7 +2009,7 @@ function acf_convert_date_to_js( $date = '' ) {
 /**
  * acf_convert_time_to_php
  *
- * This fucntion converts a time format string from JS to PHP
+ * This function converts a time format string from JS to PHP
  *
  * @since   ACF 5.0.0
  *
@@ -2029,7 +2029,7 @@ function acf_convert_time_to_php( $time = '' ) {
 /**
  * acf_convert_time_to_js
  *
- * This fucntion converts a date format string from PHP to JS
+ * This function converts a date format string from PHP to JS
  *
  * @since   ACF 5.0.0
  *
@@ -2369,7 +2369,7 @@ function acf_upload_files( $ancestors = array() ) {
 /**
  * acf_upload_file
  *
- * This function will uploade a $_FILE
+ * This function will upload a $_FILE
  *
  * @since   ACF 5.0.9
  *
@@ -3000,7 +3000,7 @@ function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
 	 * @param   array $file An array of data for a single file.
 	 * @param   array $attachment An array of attachment data which differs based on the context.
 	 * @param   array $field The field array.
-	 * @param   string $context The curent context (uploading, preparing)
+	 * @param   string $context The current context (uploading, preparing)
 	 */
 	$errors = apply_filters( "acf/validate_attachment/type={$field['type']}", $errors, $file, $attachment, $field, $context );
 	$errors = apply_filters( "acf/validate_attachment/name={$field['_name']}", $errors, $file, $attachment, $field, $context );
@@ -3043,8 +3043,8 @@ function _acf_settings_uploader( $uploader ) {
  *
  * @since   ACF 5.3.2
  *
- * @param   $string (mixed) string or array containins strings to be translated
- * @return  $string
+ * @param   mixed $string String or array containing strings to be translated.
+ * @return  mixed
  */
 function acf_translate( $string ) {
 
@@ -3067,29 +3067,12 @@ function acf_translate( $string ) {
 		return array_map( 'acf_translate', $string );
 	}
 
-	// bail early if not string
-	if ( ! is_string( $string ) ) {
-		return $string;
-	}
-
 	// bail early if empty
-	if ( $string === '' ) {
+	if ( '' === $string ) {
 		return $string;
 	}
 
-	// allow for var_export export
-	if ( acf_get_setting( 'l10n_var_export' ) ) {
-
-		// bail early if already translated
-		if ( substr( $string, 0, 7 ) === '!!__(!!' ) {
-			return $string;
-		}
-
-		// return
-		return "!!__(!!'" . $string . "!!', !!'" . $textdomain . "!!')!!";
-	}
-
-	// vars
+	// translate
 	return __( $string, $textdomain );
 }
 
@@ -3167,7 +3150,7 @@ function acf_get_attachment_image( $attachment_id = 0, $size = 'thumbnail' ) {
 /**
  * acf_get_post_thumbnail
  *
- * This function will return a thumbail image url for a given post
+ * This function will return a thumbnail image url for a given post
  *
  * @since   ACF 5.3.8
  *
@@ -3264,7 +3247,7 @@ function acf_get_browser() {
 /**
  * acf_is_ajax
  *
- * This function will reutrn true if performing a wp ajax call
+ * This function will return true if performing a wp ajax call
  *
  * @since   ACF 5.3.8
  *
@@ -3620,8 +3603,8 @@ function acf_remove_array_key_prefix( $array, $prefix ) {
 }
 
 /**
- * This function will connect an attacment (image etc) to the post
- * Used to connect attachements uploaded directly to media that have not been attaced to a post
+ * This function will connect an attachment (image etc) to the post
+ * Used to connect attachments uploaded directly to media that have not been attached to a post
  *
  * @since   ACF 5.8.0 Added filter to prevent connection.
  * @since   ACF 5.5.4
@@ -3758,7 +3741,7 @@ function acf_parse_markdown( $text = '' ) {
 		'/= (.+?) =/'                => '<h4>$1</h4>',                   // headings
 		'/\[([^\[]+)\]\(([^\)]+)\)/' => '<a href="$2">$1</a>',           // links
 		'/(\*\*)(.*?)\1/'            => '<strong>$2</strong>',           // bold
-		'/(\*)(.*?)\1/'              => '<em>$2</em>',                   // intalic
+		'/(\*)(.*?)\1/'              => '<em>$2</em>',                   // italic
 		'/`(.*?)`/'                  => '<code>$1</code>',               // inline code
 		'/\n\*(.*)/'                 => "\n<ul>\n\t<li>$1</li>\n</ul>",  // ul lists
 		'/\n[0-9]+\.(.*)/'           => "\n<ol>\n\t<li>$1</li>\n</ol>",  // ol lists
@@ -3852,7 +3835,7 @@ function acf_convert_rules_to_groups( $rules, $anyorall = 'any' ) {
 /**
  * acf_register_ajax
  *
- * Regsiters an ajax callback.
+ * Registers an ajax callback.
  *
  * @since   ACF 5.7.7
  *
@@ -3893,7 +3876,7 @@ function acf_str_camel_case( $string = '' ) {
 /**
  * acf_array_camel_case
  *
- * Converts all aray keys to camelCase.
+ * Converts all array keys to camelCase.
  *
  * @since   ACF 5.8.0
  *

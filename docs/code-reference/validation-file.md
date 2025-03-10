@@ -8,7 +8,7 @@ Add validation error.
 * @type    function
 * @date 6/10/13
 * @since ACF 5.0.0
-* @param   string $input name attribute of DOM elmenet.
+* @param   string $input name attribute of DOM element.
 * @param string $message error message.
 * @return void
 
@@ -31,7 +31,7 @@ Get the validation error.
 * @date 6/10/13
 * @since ACF 5.0.0
 * @since 6.4.1 Added the $input parameter, which is required in the get_error method.
-* @param   string $input name attribute of DOM elmenet.
+* @param   string $input name attribute of DOM element.
 * @return  string|bool
 
 ## `acf_reset_validation_errors()`

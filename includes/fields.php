@@ -80,7 +80,7 @@ if ( ! class_exists( 'acf_fields' ) ) :
 
 		/**
 		 * This function will store a basic array of info about the field type
-		 * to later be overriden by the above register_field_type function
+		 * to later be overridden by the above register_field_type function
 		 *
 		 * @type    function
 		 * @date    29/5/17
@@ -336,7 +336,7 @@ function acf_get_field_categories_i18n() {
 
 
 /**
- * Returns an multi-dimentional array of field types "name => label" grouped by category
+ * Returns an multi-dimensional array of field types "name => label" grouped by category
  *
  * @since   ACF 5.0.0
  *
