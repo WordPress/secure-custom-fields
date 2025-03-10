@@ -74,7 +74,7 @@ acf_enable_filter
 * Enables a filter with the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifer name.
+* @param   string name The modifier name.
 * @return void
 
 ## `acf_disable_filter()`
@@ -84,7 +84,7 @@ acf_disable_filter
 * Disables a filter with the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifer name.
+* @param   string name The modifier name.
 * @return void
 
 ## `acf_is_filter_enabled()`
@@ -94,7 +94,7 @@ acf_is_filter_enabled
 * Returns the state of a filter for the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifer name.
+* @param   string name The modifier name.
 * @return array
 
 ## `acf_get_filters()`
@@ -113,7 +113,7 @@ acf_set_filters
 * Sets an array of filter states.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   array $filters An Array of modifers
+* @param   array $filters An Array of modifiers
 * @return array
 
 ## `acf_disable_filters()`
@@ -132,7 +132,7 @@ acf_enable_filters
 * Enables all or an array of specific filters and returns the previous state.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   array $filters An Array of modifers
+* @param   array $filters An Array of modifiers
 * @return array
 
 ## `acf_idval()`
@@ -221,7 +221,7 @@ Returns the length of a string that has been submitted via $_POST.
 1. Unslash the string because posted values will be slashed.
 2. Decode special characters because wp_kses() will normalize entities.
 3. Treat line-breaks as a single character instead of two.
-4. Use mb_strlen() to accomodate special characters.
+4. Use mb_strlen() to accommodate special characters.
 
 * @date    04/06/2020
 * @since ACF 5.9.0
