@@ -170,7 +170,7 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 		 * @date    29/1/19
 		 * @since   ACF 5.7.117.11
 		 *
-		 * @param   (bool|string) Whether the value is vaid or not.
+		 * @param   (bool|string) Whether the value is valid or not.
 		 * @param   mixed                                          $value The field value.
 		 * @param   array                                          $field The field array.
 		 * @param   string                                         $input The HTML input name.

@@ -150,7 +150,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 		function get_results( $args ) {
 			$results = array();
 
-			// Prepare args for quey.
+			// Prepare args for query.
 			$args = $this->prepare_args( $args );
 
 			// Get result groups.
@@ -160,7 +160,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 				$roles = acf_get_user_role_labels();
 			}
 
-			// Return a flat array of results when searching or when queriying one group only.
+			// Return a flat array of results when searching or when querying one group only.
 			if ( $this->is_search || count( $roles ) === 1 ) {
 
 				// Query users and append to results.
@@ -177,7 +177,7 @@ if ( ! class_exists( 'ACF_Ajax_Query_Users' ) ) :
 				// Otherwise, group results via role.
 			} else {
 
-				// Unset args that will interfer with query results.
+				// Unset args that will interfere with query results.
 				unset( $args['role__in'], $args['role__not_in'] );
 
 				$args['search'] = $this->search ? $this->search : '';

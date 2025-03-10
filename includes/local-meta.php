@@ -41,7 +41,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * @date    8/10/18
 		 * @since   ACF 5.8.0
 		 *
-		 * @param   array   $meta    An array of metdata to store.
+		 * @param   array   $meta    An array of metadata to store.
 		 * @param   mixed   $post_id The post_id for this data.
 		 * @param   boolean $is_main Makes this postmeta visible to get_field() without a $post_id value.
 		 * @return  array
@@ -73,7 +73,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 		 * @date    11/3/19
 		 * @since   ACF 5.7.14
 		 *
-		 * @param   array $meta An array of metdata to check.
+		 * @param   array $meta An array of metadata to check.
 		 * @return  boolean
 		 */
 		function is_request( $meta = array() ) {

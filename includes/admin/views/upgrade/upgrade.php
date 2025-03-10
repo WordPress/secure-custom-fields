@@ -2,7 +2,7 @@
 /**
  * Admin Database Upgrade
  *
- * Shows the databse upgrade process.
+ * Shows the database upgrade process.
  *
  * @package wordpress/secure-custom-fields
  */

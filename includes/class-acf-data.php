@@ -83,7 +83,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		/**
 		 * _key
 		 *
-		 * Returns a key for the given name allowing aliasses to work.
+		 * Returns a key for the given name allowing aliases to work.
 		 *
 		 * @date    18/1/19
 		 * @since   ACF 5.7.10

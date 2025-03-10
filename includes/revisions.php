@@ -344,7 +344,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 			// save
 			if ( $revision ) {
 
-				// copy postmeta from revision to latest revision (potentialy may be the same, but most likely are different)
+				// copy postmeta from revision to latest revision (potentially may be the same, but most likely are different)
 				acf_copy_postmeta( $revision_id, $revision->ID );
 			}
 		}

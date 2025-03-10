@@ -139,7 +139,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 */
 			$post = apply_filters( "acf/load_{$this->hook_name}", $post );
 
-			// Store field group using aliasses to also find via key, ID and name.
+			// Store field group using aliases to also find via key, ID and name.
 			$store->set( $post['key'], $post );
 			$store->alias( $post['key'], $post['ID'] );
 

@@ -51,7 +51,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			$buttons  = array();
 			$value    = esc_attr( $field['value'] );
 
-			// bail ealrly if no choices
+			// bail early if no choices
 			if ( empty( $field['choices'] ) ) {
 				return;
 			}
@@ -89,7 +89,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			if ( $field['allow_null'] ) {
 				$div['data-allow_null'] = 1; }
 
-			// hdden input
+			// hidden input
 			$html .= acf_get_hidden_input( array( 'name' => $field['name'] ) );
 
 			// open
@@ -216,7 +216,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $field before it is saved to the database
+		 * This filter is applied to the $field before it is saved to the database
 		 *
 		 * @date    18/9/17
 		 * @since   ACF 5.6.3
@@ -231,7 +231,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db
+		 * This filter is applied to the $value after it is loaded from the db
 		 *
 		 * @date    18/9/17
 		 * @since   ACF 5.6.3
@@ -263,7 +263,7 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @date    18/9/17
 		 * @since   ACF 5.6.3

@@ -201,7 +201,7 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 				return $path;
 			}
 
-			// ammend
+			// amend
 			$path = untrailingslashit( $path ) . '/' . acf_get_setting( 'current_language' );
 
 			// make dir if does not exist
@@ -261,8 +261,8 @@ if ( ! class_exists( 'ACF_WPML_Compatibility' ) ) :
 			// duplicate field group specifying the $post_id
 			acf_duplicate_field_group( $master_post_id, $id );
 
-			// always translate independately to avoid many many bugs!
-			// - translation post gets a new key (post_name) when origional post is saved
+			// always translate independently to avoid many many bugs!
+			// - translation post gets a new key (post_name) when original post is saved
 			// - local json creates new files due to changed key
 			// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase -- Variable name is from WPML.
 			global $iclTranslationManagement;

@@ -60,7 +60,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$field['value']   = acf_get_array( $field['value'] );
 			$field['choices'] = acf_get_array( $field['choices'] );
 
-			// hiden input
+			// hidden input
 			acf_hidden_input( array( 'name' => $field['name'] ) );
 
 			// vars
@@ -191,7 +191,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			// loop
 			foreach ( $field['value'] as $value ) {
 
-				// ignore if already eixsts
+				// ignore if already exists
 				if ( isset( $field['choices'][ $value ] ) ) {
 					continue;
 				}
@@ -428,7 +428,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $field before it is saved to the database
+		 * This filter is applied to the $field before it is saved to the database
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -449,7 +449,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value before it is updated in the db
+		 * This filter is applied to the $value before it is updated in the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -490,7 +490,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 				// loop
 				foreach ( $value as $v ) {
 
-					// ignore if already eixsts
+					// ignore if already exists
 					if ( isset( $field['choices'][ $v ] ) ) {
 						continue;
 					}
@@ -531,7 +531,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
