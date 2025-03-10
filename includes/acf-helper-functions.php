@@ -200,7 +200,7 @@ function acf_get_filters() {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   array $filters An Array of modifiers
+ * @param   array $filters An Array of modifiers.
  * @return  array
  */
 function acf_set_filters( $filters = array() ) {
@@ -237,7 +237,7 @@ function acf_disable_filters() {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   array $filters An Array of modifiers
+ * @param   array $filters An Array of modifiers.
  * @return  array
  */
 function acf_enable_filters( $filters = array() ) {

@@ -428,9 +428,9 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 		/**
 		 * Additional validation for the image field when submitted via REST.
 		 *
-		 * @param  boolean $valid The current validity boolean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity boolean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP_Error
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {

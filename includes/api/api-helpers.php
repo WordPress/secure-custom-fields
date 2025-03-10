@@ -3043,7 +3043,7 @@ function _acf_settings_uploader( $uploader ) {
  *
  * @since   ACF 5.3.2
  *
- * @param   $string (mixed) string or array containing strings to be translated
+ * @param   $string mixed string or array containing strings to be translated.
  * @return  $string
  */
 function acf_translate( $string ) {

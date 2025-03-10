@@ -425,9 +425,9 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 		/**
 		 * Validates file fields updated via the REST API.
 		 *
-		 * @param  boolean $valid The current validity boolean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity boolean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP_Error
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {
