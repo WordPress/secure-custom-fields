@@ -3043,8 +3043,8 @@ function _acf_settings_uploader( $uploader ) {
  *
  * @since   ACF 5.3.2
  *
- * @param   $string mixed string or array containing strings to be translated.
- * @return  $string
+ * @param   mixed $string String or array containing strings to be translated.
+ * @return  mixed
  */
 function acf_translate( $string ) {
 
@@ -3067,29 +3067,12 @@ function acf_translate( $string ) {
 		return array_map( 'acf_translate', $string );
 	}
 
-	// bail early if not string
-	if ( ! is_string( $string ) ) {
-		return $string;
-	}
-
 	// bail early if empty
-	if ( $string === '' ) {
+	if ( '' === $string ) {
 		return $string;
 	}
 
-	// allow for var_export export
-	if ( acf_get_setting( 'l10n_var_export' ) ) {
-
-		// bail early if already translated
-		if ( substr( $string, 0, 7 ) === '!!__(!!' ) {
-			return $string;
-		}
-
-		// return
-		return "!!__(!!'" . $string . "!!', !!'" . $textdomain . "!!')!!";
-	}
-
-	// vars
+	// translate
 	return __( $string, $textdomain );
 }
 
