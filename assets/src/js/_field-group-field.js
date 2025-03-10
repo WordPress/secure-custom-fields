@@ -31,8 +31,8 @@
 
 		// data
 		data: {
-			// Similar to ID, but used for HTML puposes.
-			// It is possbile for a new field to have an ID of 0, but an id of 'field_123' */
+			// Similar to ID, but used for HTML purposes.
+			// It is possible for a new field to have an ID of 0, but an id of 'field_123' */
 			id: 0,
 
 			// The field key ('field_123')

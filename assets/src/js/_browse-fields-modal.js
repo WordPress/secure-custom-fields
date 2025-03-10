@@ -234,7 +234,7 @@
 			}
 
 			// Select first tab with selected field type
-			// If type selected is wthin Popular, select Popular Tab
+			// If type selected is within Popular, select Popular Tab
 			// Else select first tab the type belongs
 			const fieldTypes = this.getFieldTypes();
 			const isFieldTypePopular =

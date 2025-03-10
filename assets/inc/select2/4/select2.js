@@ -5238,7 +5238,7 @@
 						'data'
 					);
 
-					// Don't re-select already selected resulte
+					// Don't re-select already selected result
 					if (
 						( data.element != null && data.element.selected ) ||
 						( data.element == null && data.selected )

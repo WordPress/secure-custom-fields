@@ -8,7 +8,7 @@
 	 *  @since	ACF 5.6.9
 	 *
 	 *  @param	object instance The object to modify.
-	 *  @param	object compatibilty Optional. The compatibilty layer.
+	 *  @param	object compatibilty Optional. The compatibility layer.
 	 *  @return	object compatibilty
 	 */
 
@@ -94,7 +94,7 @@
 		k1 = k1 || '';
 		k2 = k2 || '';
 
-		// compability
+		// compatibility
 		var compatKey = k2 ? k1 + '.' + k2 : k1;
 		var compats = {
 			'image.select': 'Select Image',
@@ -281,7 +281,7 @@
 	/*
 	 *  acf.model
 	 *
-	 *  This model acts as a scafold for action.event driven modules
+	 *  This model acts as a scaffold for action.event driven modules
 	 *
 	 *  @type	object
 	 *  @date	8/09/2014
