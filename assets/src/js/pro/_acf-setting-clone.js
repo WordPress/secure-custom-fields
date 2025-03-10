@@ -90,7 +90,7 @@
 	/**
 	 *  cloneFieldSelectHelper
 	 *
-	 *  Customizes the clone field setting Select2 isntance
+	 *  Customizes the clone field setting Select2 instance
 	 *
 	 *  @date	18/4/18
 	 *  @since	ACF 5.6.9

@@ -290,7 +290,7 @@
 				this.$el.select2( 'destroy' );
 			}
 
-			// destory via HTML (duplicating HTML does not contain data)
+			// destroy via HTML (duplicating HTML does not contain data)
 			this.$el.siblings( '.select2-container' ).remove();
 		},
 	} );
