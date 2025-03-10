@@ -201,7 +201,7 @@
 			// add _acfuploader
 			// this is super wack!
 			// if you add _acfuploader to the options.library args, new uploads will not be added to the library view.
-			// this has been traced back to the wp.media.model.Query initialize function (which can't be override)
+			// this has been traced back to the wp.media.model.Query initialize function (which can't be overridden)
 			// Adding any custom args will cause the Attachments to not observe the uploader queue
 			// To bypass this security issue, we add in the args AFTER the Query has been initialized
 			// options.library._acfuploader = settings.field;
