@@ -404,7 +404,7 @@ if ( ! function_exists( 'acf_get_options_pages' ) ) :
 			$page = acf_get_options_page( $slug );
 		}
 
-		// calculate parent => child redirectes
+		// calculate parent => child redirects
 		foreach ( $pages as $slug => &$page ) {
 
 			// bail early if is child

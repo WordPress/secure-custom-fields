@@ -973,7 +973,7 @@ function acf_ajax_fetch_block() {
 	// Vars.
 	$response = array( 'clientId' => $client_id );
 
-	// Check if we've recieved serialised form data
+	// Check if we've received serialised form data
 	$use_post_data = false;
 	if ( ! empty( $block['data'] ) && is_array( $block['data'] ) ) {
 		// Ensure we've got field keys posted.

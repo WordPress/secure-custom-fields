@@ -57,7 +57,7 @@ function acf_get_field( $id = 0 ) {
 	 */
 	$field = apply_filters( 'acf/load_field', $field );
 
-	// Store field using aliasses to also find via key, ID and name.
+	// Store field using aliases to also find via key, ID and name.
 	$store->set( $field['key'], $field );
 	$store->alias( $field['key'], $field['ID'], $field['name'] );
 

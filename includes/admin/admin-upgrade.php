@@ -50,7 +50,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		/**
 		 * Function admin_menu
 		 *
-		 * Setus up logic if DB Upgrade is needed on a single site.
+		 * Setup up logic if DB Upgrade is needed on a single site.
 		 *
 		 * @date    24/8/18
 		 * @since   ACF 5.7.4
@@ -59,7 +59,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 */
 		public function admin_menu() {
 
-			// check if upgrade is avaialble
+			// check if upgrade is available
 			if ( acf_has_upgrade() ) {
 
 				// add notice
