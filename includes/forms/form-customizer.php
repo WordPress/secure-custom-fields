@@ -115,7 +115,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 
 
 		/**
-		 * This function will return an array of cutomizer settings that include ACF data
+		 * This function will return an array of customizer settings that include ACF data
 		 * similar to `$customizer->settings();`
 		 *
 		 * @type    function
@@ -299,7 +299,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 
 
 		/**
-		 * This function will remove the [acf] data from widget insance
+		 * This function will remove the [acf] data from widget instance
 		 *
 		 * @type    function
 		 * @date    22/03/2016
@@ -353,11 +353,11 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 	acf.unload.active = 0;
 	
 	
-	// hack customizer function to remove bug caused by WYSIWYG field using aunique ID
+	// hack customizer function to remove bug caused by WYSIWYG field using a unique ID
 	// customizer compares returned AJAX HTML with the HTML of the widget form.
 	// the _getInputsSignature() function is used to generate a string based of input name + id.
 	// because ACF generates a unique ID on the WYSIWYG field, this string will not match causing the preview function to bail.
-	// an attempt was made to remove the WYSIWYG unique ID, but this caused multiple issues in the wp-admin and altimately doesn't make sense with the tinymce rule that all editors must have a unique ID.
+	// an attempt was made to remove the WYSIWYG unique ID, but this caused multiple issues in the wp-admin and ultimately doesn't make sense with the tinymce rule that all editors must have a unique ID.
 	// source: wp-admin/js/customize-widgets.js
 	
 	// vars
@@ -409,7 +409,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 	
 	
 	// modify _setInputState
-	// this function deosn't seem to run on widget title/content, only custom fields
+	// this function doesn't seem to run on widget title/content, only custom fields
 	// either way, this function is not needed and will break ACF fields 
 	WidgetControl._setInputState = function( input, state ) {
 		

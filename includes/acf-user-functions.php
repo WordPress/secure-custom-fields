@@ -79,7 +79,7 @@ function acf_get_user_role_labels( $roles = array() ) {
 		$roles = array_keys( $all_roles );
 	}
 
-	// Loop over roles and populare labels.
+	// Loop over roles and populate labels.
 	$lables = array();
 	foreach ( $roles as $role ) {
 		if ( isset( $all_roles[ $role ] ) ) {

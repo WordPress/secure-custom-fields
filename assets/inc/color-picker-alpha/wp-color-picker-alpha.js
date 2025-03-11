@@ -76,7 +76,7 @@
 		 * @since ACF 3.0.0
 		 * @access private
 		 *
-		 * @param {Object|*} The color instance if not defined return the cuurent color.
+		 * @param {Object|*} The color instance if not defined return the current color.
 		 *
 		 * @return {string} The element's color.
 		 */

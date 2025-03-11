@@ -317,7 +317,7 @@ This function will add a row of data to a field
 
 ## `create_field()`
 
-Depreciated Functions
+Deprecated Functions
 
 * These functions are outdated
 * @since   ACF 1.0.0

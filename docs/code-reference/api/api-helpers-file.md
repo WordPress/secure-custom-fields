@@ -734,8 +734,8 @@ acf_translate
 * This function will translate a string using the new 'l10n_textdomain' setting
 Also works for arrays which is great for fields - select -> choices
 * @since   ACF 5.3.2
-* @param   $string (mixed) string or array containing strings to be translated
-* @return $string
+* @param   mixed $string String or array containing strings to be translated.
+* @return mixed
 
 ## `acf_maybe_add_action()`
 

@@ -32,7 +32,7 @@ if ( ! class_exists( 'ACF_Media' ) ) :
 		}
 
 		/**
-		 * Fires when ACF scrtips are enqueued.
+		 * Fires when ACF scripts are enqueued.
 		 *
 		 * @date    27/4/18
 		 * @since   ACF 5.6.9

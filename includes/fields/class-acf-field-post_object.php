@@ -475,7 +475,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @since ACF 3.6
 		 *
@@ -497,7 +497,7 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 				$value = $this->get_posts( $value, $field );
 			}
 
-			// convert back from array if neccessary
+			// convert back from array if necessary
 			if ( ! $field['multiple'] && is_array( $value ) ) {
 				$value = current( $value );
 			}
@@ -579,9 +579,9 @@ if ( ! class_exists( 'acf_field_post_object' ) ) :
 		 *
 		 * @since ACF 5.11
 		 *
-		 * @param  boolean $valid The current validity booleean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity boolean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP_Error
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {

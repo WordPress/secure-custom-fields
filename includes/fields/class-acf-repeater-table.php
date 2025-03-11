@@ -325,7 +325,7 @@ class ACF_Repeater_Table {
 
 		$this->row_handle( $i );
 
-		echo $before_fields; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string only contains guarenteed safe HTML.
+		echo $before_fields; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string only contains guaranteed safe HTML.
 
 		foreach ( $this->sub_fields as $sub_field ) {
 			if ( isset( $row[ $sub_field['key'] ] ) ) {
@@ -340,7 +340,7 @@ class ACF_Repeater_Table {
 			acf_render_field_wrap( $sub_field, $el );
 		}
 
-		echo $after_fields; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string only contains guarenteed safe HTML.
+		echo $after_fields; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string only contains guaranteed safe HTML.
 
 		$this->row_actions();
 

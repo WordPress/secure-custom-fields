@@ -332,10 +332,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after field types have been included.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_field_types', ACF_FIELD_API_VERSION );
 
@@ -367,20 +366,18 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after location types have been included.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_location_rules', ACF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local fields.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_fields', ACF_FIELD_API_VERSION );
 
@@ -389,7 +386,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @since ACF 6.1
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_post_types', ACF_MAJOR_VERSION );
 
@@ -398,14 +395,14 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @since ACF 6.1
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_taxonomies', ACF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local option pages.
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
@@ -418,10 +415,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after ACF is completely "initialized".
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param   int $version The major version of ACF.
 			 */
 			do_action( 'acf/init', ACF_MAJOR_VERSION );
 		}
@@ -788,6 +784,7 @@ if ( ! function_exists( 'scf_deactivate_other_instances' ) ) {
 		} elseif ( is_plugin_active( 'advanced-custom-fields/acf.php' ) ) {
 			// Check if the plugin to deactivate is 'advanced-custom-fields/acf.php' but the title is 'Secure Custom Fields'.
 			if ( ! function_exists( 'get_plugin_data' ) ) {
+				/** @phpstan-ignore-next-line */ // phpcs:ignore
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_to_deactivate );

@@ -206,10 +206,10 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 * @date    29/1/19
 		 * @since   ACF 5.7.11
 		 *
-		 * @param   (bool|string) Whether the value is vaid or not.
-		 * @param   mixed                                          $value The field value.
-		 * @param   array                                          $field The field array.
-		 * @param   string                                         $input The HTML input name.
+		 * @param   mixed  $valid Whether the value is valid or not.
+		 * @param   mixed  $value The field value.
+		 * @param   array  $field The field array.
+		 * @param   string $input The HTML input name.
 		 * @return  (bool|string)
 		 */
 		function validate_value( $valid, $value, $field, $input ) {

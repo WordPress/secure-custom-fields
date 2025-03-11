@@ -96,7 +96,7 @@
 		var fieldType = field.get( 'type' );
 		var operator = rule.operator;
 
-		// get avaibale conditions
+		// get available conditions
 		var conditionTypes = acf.getConditionTypes( {
 			fieldType: fieldType,
 			operator: operator,
@@ -211,7 +211,7 @@
 			operator: '',
 		} );
 
-		// clonse available types
+		// clone available types
 		var types = [];
 
 		// loop

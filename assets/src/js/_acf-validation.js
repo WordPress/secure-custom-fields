@@ -286,7 +286,7 @@
 		/**
 		 *  validate
 		 *
-		 *  Vaildates the form via AJAX.
+		 *  Validates the form via AJAX.
 		 *
 		 *  @date	4/9/18
 		 *  @since	ACF 5.7.5
@@ -596,7 +596,7 @@
 	/**
 	 *  acf.lockForm
 	 *
-	 *  Locks a form by disabeling its primary inputs and showing a spinner.
+	 *  Locks a form by disabling its primary inputs and showing a spinner.
 	 *
 	 *  @date	4/9/18
 	 *  @since	ACF 5.7.5
@@ -622,7 +622,7 @@
 	/**
 	 *  acf.unlockForm
 	 *
-	 *  Unlocks a form by enabeling its primary inputs and hiding all spinners.
+	 *  Unlocks a form by enabling its primary inputs and hiding all spinners.
 	 *
 	 *  @date	4/9/18
 	 *  @since	ACF 5.7.5
@@ -1034,7 +1034,7 @@
 				return;
 			}
 
-			// Custommize the editor.
+			// Customize the editor.
 			this.customizeEditor();
 		},
 		customizeEditor: function () {
@@ -1129,7 +1129,7 @@
 								} );
 							}
 
-							// Rejext promise and prevent savePost().
+							// Reject promise and prevent savePost().
 							reject( 'Validation failed.' );
 						},
 						success: function () {

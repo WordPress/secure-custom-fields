@@ -213,7 +213,7 @@ function acf_get_grouped_terms( $args ) {
 			continue;
 		}
 
-		// sort into hierachial order
+		// sort into hierarchical order
 		// this will fail if a search has taken place because parents wont exist
 		if ( is_taxonomy_hierarchical( $taxonomy ) && empty( $args['s'] ) ) {
 
@@ -246,7 +246,7 @@ function acf_get_grouped_terms( $args ) {
 			$parent        = acf_maybe_get( $args, 'child_of', $parent );
 			$ordered_terms = _get_term_children( $parent, $all_terms, $taxonomy );
 
-			// compare aray lengths
+			// compare array lengths
 			// if $ordered_posts is smaller than $all_posts, WP has lost posts during the get_page_children() function
 			// this is possible when get_post( $args ) filter out parents (via taxonomy, meta and other search parameters)
 			if ( count( $ordered_terms ) == count( $all_terms ) ) {

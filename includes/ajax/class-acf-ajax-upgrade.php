@@ -29,7 +29,7 @@ if ( ! class_exists( 'ACF_Ajax_Upgrade' ) ) :
 				switch_to_blog( $request['blog_id'] );
 			}
 
-			// Bail early if no upgrade avaiable.
+			// Bail early if no upgrade available.
 			if ( ! acf_has_upgrade() ) {
 				return new WP_Error( 'upgrade_error', __( 'No updates available.', 'secure-custom-fields' ) );
 			}

@@ -334,7 +334,7 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -391,7 +391,7 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value before it is updated in the db
+		 * This filter is applied to the $value before it is updated in the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -428,9 +428,9 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 		/**
 		 * Additional validation for the image field when submitted via REST.
 		 *
-		 * @param  boolean $valid The current validity booleean
-		 * @param  integer $value The value of the field
-		 * @param  array   $field The field array
+		 * @param  boolean $valid The current validity boolean.
+		 * @param  integer $value The value of the field.
+		 * @param  array   $field The field array.
 		 * @return boolean|WP_Error
 		 */
 		public function validate_rest_value( $valid, $value, $field ) {

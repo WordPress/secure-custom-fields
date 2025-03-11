@@ -74,7 +74,7 @@ acf_enable_filter
 * Enables a filter with the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifier name.
+* @param   string $name The modifier name.
 * @return void
 
 ## `acf_disable_filter()`
@@ -84,7 +84,7 @@ acf_disable_filter
 * Disables a filter with the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifier name.
+* @param   string $name The modifier name.
 * @return void
 
 ## `acf_is_filter_enabled()`
@@ -94,7 +94,7 @@ acf_is_filter_enabled
 * Returns the state of a filter for the given name.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   string name The modifier name.
+* @param   string $name The modifier name.
 * @return array
 
 ## `acf_get_filters()`
@@ -113,7 +113,7 @@ acf_set_filters
 * Sets an array of filter states.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   array $filters An Array of modifiers
+* @param   array $filters An Array of modifiers.
 * @return array
 
 ## `acf_disable_filters()`
@@ -132,7 +132,7 @@ acf_enable_filters
 * Enables all or an array of specific filters and returns the previous state.
 * @date    14/7/16
 * @since ACF 5.4.0
-* @param   array $filters An Array of modifiers
+* @param   array $filters An Array of modifiers.
 * @return array
 
 ## `acf_idval()`

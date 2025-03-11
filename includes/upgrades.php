@@ -3,7 +3,7 @@
 /**
  * acf_has_upgrade
  *
- * Returns true if this site has an upgrade avaialble.
+ * Returns true if this site has an upgrade available.
  *
  * @date    24/8/18
  * @since   ACF 5.7.4
