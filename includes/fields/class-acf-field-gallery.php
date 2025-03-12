@@ -249,7 +249,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		}
 
 		/**
-		 * Renders the sidebar HTML shown when selecting an attachmemnt.
+		 * Renders the sidebar HTML shown when selecting an attachment.
 		 *
 		 * @date    13/12/2013
 		 * @since   ACF 5.0.0
@@ -259,7 +259,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 * @return  void
 		 */
 		public function render_attachment( $id, $field ) {
-			// Load attachmenet data.
+			// Load attachment data.
 			$attachment = wp_prepare_attachment_for_js( $id );
 			$compat     = get_compat_media_markup( $id );
 
@@ -391,7 +391,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 				'data-nonce'        => wp_create_nonce( $field['key'] ),
 			);
 
-			// Set gallery height with deafult of 400px and minimum of 200px.
+			// Set gallery height with default of 400px and minimum of 200px.
 			$height         = acf_get_user_setting( 'gallery_height', 400 );
 			$height         = max( $height, 200 );
 			$attrs['style'] = "height:{$height}px";
@@ -413,7 +413,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 					)
 				);
 
-				// Load attatchment data for each post.
+				// Load attachment data for each post.
 				$attachments = array_map( 'acf_get_attachment', $posts );
 			}
 
@@ -794,7 +794,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value before it is updated in the db
+		 * This filter is applied to the $value before it is updated in the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -829,7 +829,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		/**
 		 * Validates file fields updated via the REST API.
 		 *
-		 * @param  boolean $valid The current validity booleean.
+		 * @param  boolean $valid The current validity boolean.
 		 * @param  integer $value The value of the field.
 		 * @param  array   $field The field array.
 		 * @return boolean|WP

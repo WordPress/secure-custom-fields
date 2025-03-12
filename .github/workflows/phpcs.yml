@@ -1,6 +1,13 @@
 name: Code Standards
 on:
+  push:
+    branches:
+      - trunk
+      - 'branch/*'
   pull_request:
+    branches:
+      - trunk
+      - 'branch/*'
 
 jobs:
   phpcs:

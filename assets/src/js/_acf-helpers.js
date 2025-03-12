@@ -29,7 +29,7 @@
 	/**
 	 * mountHelper
 	 *
-	 * Adds compatiblity for the 'unmount' and 'remount' actions added in 5.8.0
+	 * Adds compatibility for the 'unmount' and 'remount' actions added in 5.8.0
 	 *
 	 * @date	7/3/19
 	 * @since	ACF 5.7.14
@@ -164,7 +164,7 @@
 				return false;
 			}
 
-			// visiblity
+			// visibility
 			$ths.each( function ( i ) {
 				// vars
 				var $th = $( this );

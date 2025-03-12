@@ -395,7 +395,7 @@ acf_get_posts
 _acf_query_remove_post_type
 
 * This function will remove the 'wp_posts.post_type' WHERE clause completely
-When using 'post__in', this clause is unneccessary and slow.
+When using 'post__in', this clause is unnecessary and slow.
 * @since   ACF 5.1.5
 * @param   $sql (string)
 * @return $sql
@@ -494,8 +494,8 @@ acf_encode_choices
 acf_str_replace
 
 * This function will replace an array of strings much like str_replace
-The difference is the extra logic to avoid replacing a string that has alread been replaced
-This is very useful for replacing date characters as they overlap with eachother
+The difference is the extra logic to avoid replacing a string that has already been replaced
+This is very useful for replacing date characters as they overlap with each other
 * @since   ACF 5.3.8
 * @param   $post_id (int)
 * @return $post_id (int)
@@ -504,7 +504,7 @@ This is very useful for replacing date characters as they overlap with eachother
 
 acf_split_date_time
 
-* This function will split a format string into seperate date and time
+* This function will split a format string into separate date and time
 * @since   ACF 5.3.8
 * @param   $date_time (string)
 * @return $formats (array)
@@ -513,7 +513,7 @@ acf_split_date_time
 
 acf_convert_date_to_php
 
-* This fucntion converts a date format string from JS to PHP
+* This function converts a date format string from JS to PHP
 * @since   ACF 5.0.0
 * @param   $date (string)
 * @return (string)
@@ -522,7 +522,7 @@ acf_convert_date_to_php
 
 acf_convert_date_to_js
 
-* This fucntion converts a date format string from PHP to JS
+* This function converts a date format string from PHP to JS
 * @since   ACF 5.0.0
 * @param   $date (string)
 * @return (string)
@@ -531,7 +531,7 @@ acf_convert_date_to_js
 
 acf_convert_time_to_php
 
-* This fucntion converts a time format string from JS to PHP
+* This function converts a time format string from JS to PHP
 * @since   ACF 5.0.0
 * @param   $time (string)
 * @return (string)
@@ -540,7 +540,7 @@ acf_convert_time_to_php
 
 acf_convert_time_to_js
 
-* This fucntion converts a date format string from PHP to JS
+* This function converts a date format string from PHP to JS
 * @since   ACF 5.0.0
 * @param   $time (string)
 * @return (string)
@@ -611,7 +611,7 @@ This function will walk through the $_FILES data and upload each found.
 
 acf_upload_file
 
-* This function will uploade a $_FILE
+* This function will upload a $_FILE
 * @since   ACF 5.0.9
 * @param   $uploaded_file (array) array found from $_FILE data
 * @return $id (int) new attachment ID
@@ -734,8 +734,8 @@ acf_translate
 * This function will translate a string using the new 'l10n_textdomain' setting
 Also works for arrays which is great for fields - select -> choices
 * @since   ACF 5.3.2
-* @param   $string (mixed) string or array containins strings to be translated
-* @return $string
+* @param   mixed $string String or array containing strings to be translated.
+* @return mixed
 
 ## `acf_maybe_add_action()`
 
@@ -769,7 +769,7 @@ Return an image tag for the provided attachment ID
 
 acf_get_post_thumbnail
 
-* This function will return a thumbail image url for a given post
+* This function will return a thumbnail image url for a given post
 * @since   ACF 5.3.8
 * @param   $post (obj)
 * @param $size (mixed)
@@ -787,7 +787,7 @@ acf_get_browser
 
 acf_is_ajax
 
-* This function will reutrn true if performing a wp ajax call
+* This function will return true if performing a wp ajax call
 * @since   ACF 5.3.8
 * @param   n/a
 * @return (boolean)
@@ -910,8 +910,8 @@ Useful to preserve numeric keys when performing array_multisort
 
 ## `acf_connect_attachment_to_post()`
 
-This function will connect an attacment (image etc) to the post
-Used to connect attachements uploaded directly to media that have not been attaced to a post
+This function will connect an attachment (image etc) to the post
+Used to connect attachments uploaded directly to media that have not been attached to a post
 
 * @since   ACF 5.8.0 Added filter to prevent connection.
 * @since ACF 5.5.4
@@ -970,7 +970,7 @@ acf_convert_rules_to_groups
 
 acf_register_ajax
 
-* Regsiters an ajax callback.
+* Registers an ajax callback.
 * @since   ACF 5.7.7
 * @param   string  $name     The ajax action name.
 * @param array   $callback The callback function or array.
@@ -991,7 +991,7 @@ Thanks to <https://stackoverflow.com/questions/31274782/convert-array-keys-from-
 
 acf_array_camel_case
 
-* Converts all aray keys to camelCase.
+* Converts all array keys to camelCase.
 * @since   ACF 5.8.0
 * @param   array $array The array to convert.
 * @return array

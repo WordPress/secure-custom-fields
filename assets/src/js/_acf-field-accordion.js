@@ -19,7 +19,7 @@
 			// bail early if is cell
 			if ( this.$el.is( 'td' ) ) return;
 
-			// enpoint
+			// endpoint
 			if ( this.get( 'endpoint' ) ) {
 				return this.remove();
 			}
@@ -201,7 +201,7 @@
 		},
 
 		onClick: function ( e, $el ) {
-			// prevent Defailt
+			// prevent Default
 			e.preventDefault();
 
 			// open close

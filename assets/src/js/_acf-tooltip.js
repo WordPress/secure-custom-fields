@@ -96,7 +96,7 @@
 				.removeClass( 'right left bottom top' )
 				.css( { top: 0, left: 0 } );
 
-			// Declare tollerance to edge of screen.
+			// Declare tolerance to edge of screen.
 			var tolerance = 10;
 
 			// Find target position.
@@ -142,7 +142,7 @@
 				$tooltip.addClass( 'bottom' );
 				top = targetTop + targetHeight - tooltipTop;
 
-				// No colision with edges.
+				// No collision with edges.
 			} else {
 				$tooltip.addClass( 'top' );
 			}

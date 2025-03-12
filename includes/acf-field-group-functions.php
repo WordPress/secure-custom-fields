@@ -135,7 +135,7 @@ function acf_get_raw_field_groups() {
 /**
  * acf_filter_field_groups
  *
- * Returns a filtered aray of field groups based on the given $args.
+ * Returns a filtered array of field groups based on the given $args.
  *
  * @date    29/11/2013
  * @since   ACF 5.0.0
@@ -467,7 +467,7 @@ function acf_prepare_field_group_for_import( $field_group ) {
 /**
  * acf_import_field_group
  *
- * Imports a field group into the databse.
+ * Imports a field group into the database.
  *
  * @date    11/03/2014
  * @since   ACF 5.0.0

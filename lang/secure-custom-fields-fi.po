@@ -7378,7 +7378,7 @@ msgid "%1$s SCF automatically escapes unsafe HTML when rendered by <code>the_fie
 msgstr ""
 
 #: includes/admin/views/global/navigation.php:142
-msgid "Seecure Custom Fields logo"
+msgid "Secure Custom Fields logo"
 msgstr ""
 
 #: includes/class-acf-site-health.php:234

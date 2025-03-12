@@ -142,7 +142,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
-		 * Enqueues a script and sets up actions for priting supplemental scripts.
+		 * Enqueues a script and sets up actions for printing supplemental scripts.
 		 *
 		 * @date    27/4/20
 		 * @since   ACF 5.9.0
@@ -192,7 +192,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		/**
 		 * Extends the add_action() function with two additional features:
 		 * 1. Renames $action depending on the current page (customizer, login, front-end).
-		 * 2. Alters the priotiry or calls the method directly if the action has already passed.
+		 * 2. Alters the priority or calls the method directly if the action has already passed.
 		 *
 		 * @date    28/4/20
 		 * @since   ACF 5.9.0

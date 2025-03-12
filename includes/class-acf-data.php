@@ -1,4 +1,11 @@
 <?php
+/**
+ * ACF Data Class
+ *
+ * Handles data storage and retrieval with support for aliases and multisite.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -6,19 +13,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'ACF_Data' ) ) :
 	#[AllowDynamicProperties]
+	/**
+	 * ACF Data Class
+	 *
+	 * Provides a flexible data storage system with support for aliases and multisite.
+	 *
+	 * @since   ACF 5.7.10
+	 */
 	class ACF_Data {
 
-		/** @var string Unique identifier. */
-		var $cid = '';
+		/**
+		 * Unique identifier.
+		 *
+		 * @var string Unique identifier for this instance.
+		 */
+		public $cid = '';
 
-		/** @var array Storage for data. */
-		var $data = array();
+		/**
+		 * Data storage.
+		 *
+		 * @var array Storage for data values.
+		 */
+		public $data = array();
 
-		/** @var array Storage for data aliases. */
-		var $aliases = array();
+		/**
+		 * Data aliases.
+		 *
+		 * @var array Storage for data key aliases.
+		 */
+		public $aliases = array();
 
-		/** @var boolean Enables unique data per site. */
-		var $multisite = false;
+		/**
+		 * Site-specific data storage.
+		 *
+		 * @var array Storage for data values per site.
+		 */
+		public $site_data = array();
+
+		/**
+		 * Site-specific aliases storage.
+		 *
+		 * @var array Storage for data key aliases per site.
+		 */
+		public $site_aliases = array();
+
+		/**
+		 * Multisite support.
+		 *
+		 * @var boolean Whether to enable unique data per site.
+		 */
+		public $multisite = false;
 
 		/**
 		 * __construct
@@ -31,7 +75,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   array $data Optional data to set.
 		 * @return  void
 		 */
-		function __construct( $data = false ) {
+		public function __construct( $data = false ) {
 
 			// Set cid.
 			$this->cid = acf_uniqid();
@@ -46,7 +90,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * initialize
+		 * Initialize
 		 *
 		 * Called during constructor to setup class functionality.
 		 *
@@ -55,12 +99,12 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 *
 		 * @return  void
 		 */
-		function initialize() {
+		public function initialize() {
 			// Do nothing.
 		}
 
 		/**
-		 * prop
+		 * Prop
 		 *
 		 * Sets a property for the given name and returns $this for chaining.
 		 *
@@ -71,7 +115,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   mixed          $value The data value.
 		 * @return  ACF_Data
 		 */
-		function prop( $name = '', $value = null ) {
+		public function prop( $name = '', $value = null ) {
 
 			// Update property.
 			$this->{$name} = $value;
@@ -81,22 +125,22 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * _key
+		 * Key
 		 *
-		 * Returns a key for the given name allowing aliasses to work.
+		 * Returns a key for the given name allowing aliases to work.
 		 *
 		 * @date    18/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @param   string $name The name to get key for.
+		 * @return  string The key for the given name.
 		 */
-		function _key( $name = '' ) {
+		public function _key( $name = '' ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 			return isset( $this->aliases[ $name ] ) ? $this->aliases[ $name ] : $name;
 		}
 
 		/**
-		 * has
+		 * Has
 		 *
 		 * Returns true if this has data for the given name.
 		 *
@@ -106,28 +150,28 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   string $name The data name.
 		 * @return  boolean
 		 */
-		function has( $name = '' ) {
+		public function has( $name = '' ) {
 			$key = $this->_key( $name );
 			return isset( $this->data[ $key ] );
 		}
 
 		/**
-		 * is
+		 * Is
 		 *
 		 * Similar to has() but does not check aliases.
 		 *
 		 * @date    7/2/19
 		 * @since   ACF 5.7.11
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @param   string $key The key to check.
+		 * @return  boolean True if key exists.
 		 */
-		function is( $key = '' ) {
+		public function is( $key = '' ) {
 			return isset( $this->data[ $key ] );
 		}
 
 		/**
-		 * get
+		 * Get
 		 *
 		 * Returns data for the given name of null if doesn't exist.
 		 *
@@ -137,10 +181,10 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   string $name The data name.
 		 * @return  mixed
 		 */
-		function get( $name = false ) {
+		public function get( $name = false ) {
 
 			// Get all.
-			if ( $name === false ) {
+			if ( false === $name ) {
 				return $this->data;
 
 				// Get specific.
@@ -151,7 +195,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * get_data
+		 * Get Data
 		 *
 		 * Returns an array of all data.
 		 *
@@ -160,12 +204,12 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 *
 		 * @return  array
 		 */
-		function get_data() {
+		public function get_data() {
 			return $this->data;
 		}
 
 		/**
-		 * set
+		 * Set
 		 *
 		 * Sets data for the given name and returns $this for chaining.
 		 *
@@ -176,7 +220,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   mixed          $value The data value.
 		 * @return  ACF_Data
 		 */
-		function set( $name = '', $value = null ) {
+		public function set( $name = '', $value = null ) {
 
 			// Set multiple.
 			if ( is_array( $name ) ) {
@@ -192,7 +236,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * append
+		 * Append
 		 *
 		 * Appends data for the given name and returns $this for chaining.
 		 *
@@ -202,7 +246,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   mixed $value The data value.
 		 * @return  ACF_Data
 		 */
-		function append( $value = null ) {
+		public function append( $value = null ) {
 
 			// Append.
 			$this->data[] = $value;
@@ -212,7 +256,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * remove
+		 * Remove
 		 *
 		 * Removes data for the given name.
 		 *
@@ -222,7 +266,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @param   string $name The data name.
 		 * @return  ACF_Data
 		 */
-		function remove( $name = '' ) {
+		public function remove( $name = '' ) {
 
 			// Remove data.
 			unset( $this->data[ $name ] );
@@ -232,7 +276,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * reset
+		 * Reset
 		 *
 		 * Resets the data.
 		 *
@@ -241,13 +285,13 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 *
 		 * @return  void
 		 */
-		function reset() {
+		public function reset() {
 			$this->data    = array();
 			$this->aliases = array();
 		}
 
 		/**
-		 * count
+		 * Count
 		 *
 		 * Returns the data count.
 		 *
@@ -256,41 +300,39 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 *
 		 * @return  integer
 		 */
-		function count() {
+		public function count() {
 			return count( $this->data );
 		}
 
 		/**
-		 * query
+		 * Query
 		 *
 		 * Returns a filtered array of data based on the set of key => value arguments.
 		 *
 		 * @date    23/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @return  integer
+		 * @param   array  $args     The query arguments.
+		 * @param   string $operator The logical operator. Accepts 'AND' or 'OR'.
+		 * @return  array
 		 */
-		function query( $args, $operator = 'AND' ) {
+		public function query( $args, $operator = 'AND' ) {
 			return wp_list_filter( $this->data, $args, $operator );
 		}
 
 		/**
-		 * alias
+		 * Alias
 		 *
 		 * Sets an alias for the given name allowing data to be found via multiple identifiers.
 		 *
 		 * @date    18/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @param   string $name     The name to create aliases for.
+		 * @param   string ...$args  Additional aliases to map to the name.
+		 * @return  ACF_Data
 		 */
-		function alias( $name = '' /*, $alias, $alias2, etc */ ) {
-
-			// Get all aliases.
-			$args = func_get_args();
-			array_shift( $args );
-
+		public function alias( $name = '', ...$args ) {
 			// Loop over aliases and add to data.
 			foreach ( $args as $alias ) {
 				$this->aliases[ $alias ] = $name;
@@ -301,18 +343,18 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		}
 
 		/**
-		 * switch_site
+		 * Switch Site
 		 *
 		 * Triggered when switching between sites on a multisite installation.
 		 *
 		 * @date    13/2/19
 		 * @since   ACF 5.7.11
 		 *
-		 * @param   integer                       $site_id New blog ID.
-		 * @param   int prev_blog_id Prev blog ID.
+		 * @param   integer $site_id      New blog ID.
+		 * @param   integer $prev_site_id Previous blog ID.
 		 * @return  void
 		 */
-		function switch_site( $site_id, $prev_site_id ) {
+		public function switch_site( $site_id, $prev_site_id ) {
 
 			// Bail early if not multisite compatible.
 			if ( ! $this->multisite ) {

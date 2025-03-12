@@ -266,7 +266,7 @@ class ACF_Rest_Api {
 		}
 
 		// Determine the object context (type & ID). If the context can't be determined from the current request, throw an
-		// error as the fields are not updateable. This handles in line with WordPress' \WP_REST_Request::sanitize_params().
+		// error as the fields are not updatable. This handles in line with WordPress' \WP_REST_Request::sanitize_params().
 		$object_id   = acf_get_object_id( $object );
 		$object_type = $this->request->object_type;
 		if ( ! $object_id or ! $object_type ) {
@@ -284,7 +284,7 @@ class ACF_Rest_Api {
 		// Allow unrestricted update of fields by field key when saving via the WordPress admin. Admin mode will
 		// update fields using their field keys to lookup the field. The field lookup is not scoped to field groups
 		// located on the given object so any field can be updated. Given the field keys are not defined in the
-		// schema, core validation/sanitisation are also bypassed.
+		// schema, core validation/sanitization are also bypassed.
 		// if ( $this->is_admin_mode( $data ) ) {
 		// Loop through payload and save fields using field keys.
 		// foreach ( $data as $field_key => $value ) {
