@@ -187,7 +187,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		public function edit_form_after_title() {
 
 			// globals
-			global $post, $wp_meta_boxes;
+			global $post;
 
 			// render post data
 			acf_form_data(
@@ -262,31 +262,29 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 */
 		public function allow_save_post( $post ) {
 
-			// vars
 			$allow = true;
 
-			// restrict post types
+			// Restricted post types.
 			$restrict = array( 'auto-draft', 'revision', 'acf-field', 'acf-field-group' );
-			if ( in_array( $post->post_type, $restrict ) ) {
+			if ( in_array( $post->post_type, $restrict, true ) ) {
 				$allow = false;
 			}
 
-			// disallow if the $_POST ID value does not match the $post->ID
+			// Disallow if the $_POST ID value does not match the $post->ID.
 			$form_post_id = (int) acf_maybe_get_POST( 'post_ID' );
 			if ( $form_post_id && $form_post_id !== $post->ID ) {
 				$allow = false;
 			}
 
-			// revision (preview)
-			if ( $post->post_type == 'revision' ) {
+			// Revision (preview).
+			if ( 'revision' === $post->post_type ) {
 
 				// allow if doing preview and this $post is a child of the $_POST ID
-				if ( acf_maybe_get_POST( 'wp-preview' ) == 'dopreview' && $form_post_id === $post->post_parent ) {
+				if ( 'dopreview' === acf_maybe_get_POST( 'wp-preview' ) && $form_post_id === $post->post_parent ) {
 					$allow = true;
 				}
 			}
 
-			// return
 			return $allow;
 		}
 
