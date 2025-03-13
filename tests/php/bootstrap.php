@@ -13,3 +13,6 @@ require_once dirname( dirname( __DIR__ ) ) . '/vendor/autoload.php';
 
 // Load our plugin.
 require dirname( dirname( __DIR__ ) ) . '/secure-custom-fields.php';
+
+// Load the ACF_Form_Post class.
+require dirname( dirname( __DIR__ ) ) . '/includes/forms/form-post.php';
