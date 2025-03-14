@@ -12,7 +12,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 	 * Handles the functionality for adding custom fields to post edit screens.
 	 *
 	 * @package ACF
-	 * @since 5.0.0
+	 * @since ACF 5.0.0
 	 */
 	class ACF_Form_Post {
 
