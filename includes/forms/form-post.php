@@ -118,7 +118,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 					$priority = 'high';                         // high, core, default, low
 
 					// Reduce priority for sidebar metaboxes for best position.
-					if ( $context == 'side' ) {
+					if ( 'side' === $context ) {
 						$priority = 'core';
 					}
 
@@ -309,7 +309,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			}
 
 			// Validate for published post (allow draft to save without validation).
-			if ( $post->post_status === 'publish' ) {
+			if ( 'publish' === $post->post_status ) {
 				// Bail early if validation fails.
 				if ( ! acf_validate_save_post() ) {
 					return;
