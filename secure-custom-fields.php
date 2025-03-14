@@ -258,7 +258,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Update the name setting now that we're in the init hook.
 			acf_update_setting( 'name', __( 'Secure Custom Fields', 'secure-custom-fields' ) );
 
-			// Include 3rd party compatiblity.
+			// Include 3rd party compatibility.
 			acf_include( 'includes/third-party.php' );
 
 			// Include wpml support.
@@ -406,7 +406,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on 6.5 or newer, load block bindings. This will move to an autoloader in 6.3.
+			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in SCF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
@@ -670,7 +670,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function get_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
+		public function get_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arguments.
 			$name = strtolower( $class );
 			return isset( $this->instances[ $name ] ) ? $this->instances[ $name ] : null;
 		}
@@ -684,7 +684,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function new_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
+		public function new_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arguments.
 			$instance                 = new $class();
 			$name                     = strtolower( $class );
 			$this->instances[ $name ] = $instance;
