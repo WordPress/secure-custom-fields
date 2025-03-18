@@ -63,7 +63,7 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 				<div class="acf-field">
 					<div class="acf-notice">
 						<p>
-							<?php esc_html_e( 'Warning: The theme does not support navigation menus, the field will not show.', 'secure-custom-fields' ); ?>
+							<?php esc_html_e( 'Warning: The theme does not support navigation menus, the field will not display.', 'secure-custom-fields' ); ?>
 						</p>
 					</div>
 				</div>
