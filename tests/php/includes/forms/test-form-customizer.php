@@ -201,6 +201,93 @@ class Test_Form_Customizer extends BaseTestCase {
 	}
 
 	/**
+	 * Test the customize_preview_init method.
+	 */
+	public function test_customize_preview_init() {
+		$form_customizer = new ACF_Form_Customizer();
+
+		// Test case 1: Should do nothing when no settings exist
+		$customizer_no_settings = $this->getMockBuilder( stdClass::class )
+		->getMock();
+
+		// Mock the settings method to return false (no settings)
+		$form_customizer_mock = $this->getMockBuilder( 'ACF_Form_Customizer' )
+		->setMethods( array( 'settings' ) )
+		->getMock();
+		$form_customizer_mock->method( 'settings' )->willReturn( false );
+
+		// Ensure preview_values are empty before
+		$this->assertEmpty( $form_customizer_mock->preview_values );
+
+		// Run the method
+		$form_customizer_mock->customize_preview_init( $customizer_no_settings );
+
+		// Verify preview_values are still empty
+		$this->assertEmpty( $form_customizer_mock->preview_values );
+
+		// Test case 2: Should populate preview values and fields when settings exist
+		// Create mock settings with ACF data
+		$setting1      = new stdClass();
+		$setting1->id  = 'widget_1';
+		$setting1->acf = array(
+			'post_id' => 'widget_widget-1',
+			'values'  => array( 'field_123' => 'value1' ),
+			'fields'  => array( 'field_name' => 'field_123' ),
+		);
+
+		$setting2      = new stdClass();
+		$setting2->id  = 'nav_menu_1';
+		$setting2->acf = array(
+			'post_id' => 'nav_menu_nav-1',
+			'values'  => array( 'field_456' => 'value2' ),
+			'fields'  => array( 'another_field' => 'field_456' ),
+		);
+
+		// Set up form_customizer with mocked settings method
+		$form_customizer_with_settings = $this->getMockBuilder( 'ACF_Form_Customizer' )
+		->setMethods( array( 'settings' ) )
+		->getMock();
+		$form_customizer_with_settings->method( 'settings' )
+		->willReturn( array( $setting1, $setting2 ) );
+
+		// Record filter state before
+		$has_pre_load_value_filter_before     = has_filter( 'acf/pre_load_value', array( $form_customizer_with_settings, 'pre_load_value' ) );
+		$has_pre_load_reference_filter_before = has_filter( 'acf/pre_load_reference', array( $form_customizer_with_settings, 'pre_load_reference' ) );
+
+		// Run the method
+		$form_customizer_with_settings->customize_preview_init( $customizer_no_settings );
+
+		// Verify preview_values were populated correctly
+		$this->assertNotEmpty( $form_customizer_with_settings->preview_values );
+		$this->assertNotEmpty( $form_customizer_with_settings->preview_fields );
+
+		// Check specific values
+		$this->assertArrayHasKey( 'widget_widget-1', $form_customizer_with_settings->preview_values );
+		$this->assertEquals( array( 'field_123' => 'value1' ), $form_customizer_with_settings->preview_values['widget_widget-1'] );
+
+		$this->assertArrayHasKey( 'nav_menu_nav-1', $form_customizer_with_settings->preview_values );
+		$this->assertEquals( array( 'field_456' => 'value2' ), $form_customizer_with_settings->preview_values['nav_menu_nav-1'] );
+
+		// Check fields
+		$this->assertArrayHasKey( 'widget_widget-1', $form_customizer_with_settings->preview_fields );
+		$this->assertEquals( array( 'field_name' => 'field_123' ), $form_customizer_with_settings->preview_fields['widget_widget-1'] );
+
+		$this->assertArrayHasKey( 'nav_menu_nav-1', $form_customizer_with_settings->preview_fields );
+		$this->assertEquals( array( 'another_field' => 'field_456' ), $form_customizer_with_settings->preview_fields['nav_menu_nav-1'] );
+
+		// Verify filters were added
+		$has_pre_load_value_filter_after     = has_filter( 'acf/pre_load_value', array( $form_customizer_with_settings, 'pre_load_value' ) );
+		$has_pre_load_reference_filter_after = has_filter( 'acf/pre_load_reference', array( $form_customizer_with_settings, 'pre_load_reference' ) );
+
+		$this->assertTrue( false !== $has_pre_load_value_filter_after );
+		$this->assertTrue( false !== $has_pre_load_reference_filter_after );
+
+		// Clean up filters
+		remove_filter( 'acf/pre_load_value', array( $form_customizer_with_settings, 'pre_load_value' ) );
+		remove_filter( 'acf/pre_load_reference', array( $form_customizer_with_settings, 'pre_load_reference' ) );
+	}
+
+	/**
 	 * Helper method to create a mock setting object with a proper post_value method.
 	 *
 	 * @param string $id    The setting ID.
