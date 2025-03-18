@@ -52,7 +52,13 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 					<div class="acf-field">
 						<div class="acf-notice">
 							<p>
-								<?php esc_html_e( 'Warning: You don\'t have any menus created please visit', 'secure-custom-fields' ); ?> <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>"><?php esc_html_e( 'this', 'secure-custom-fields' ); ?></a> <?php esc_html_e( 'link to create menus.', 'secure-custom-fields' ); ?>
+							<?php
+							printf(
+							/* translators: %s is a link to the WordPress menu creation page in the admin dashboard. */
+								esc_html_x( 'Warning: No menus have been created yet. Please visit %s to set up your site navigation.', 'Admin menu creation notice', 'secure-custom-fields' ),
+								'<a href="' . esc_url( admin_url( 'nav-menus.php' ) ) . '">' . esc_html__( 'the menu settings page', 'secure-custom-fields' ) . '</a>'
+							);
+							?>
 							</p>
 						</div>
 					</div>
