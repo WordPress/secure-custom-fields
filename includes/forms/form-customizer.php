@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-add_action( 'customize_register', '__return_true' );
+
 if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Customizer' ) ) :
 	/**
 	 * ACF Form Customizer Class
