@@ -13,7 +13,7 @@ Support can take place in forums.
 
 ## Contributing
 
-If you have a patch, or stumbled upon an issue with SCF core, you can contribute this back to the code. Please create a new github issue with as much information as possible, and a PR if appropriate.
+If you have a patch, or stumbled upon an issue with SCF core, you can contribute this back to the code. Please create a new github issue with as much information as possible, and a PR if appropriate ([local environment setup](https://github.com/WordPress/secure-custom-fields/blob/trunk/docs/contributing/index.md#development-setup)).
 
 ## Translations
 
