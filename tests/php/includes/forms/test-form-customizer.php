@@ -288,6 +288,174 @@ class Test_Form_Customizer extends BaseTestCase {
 	}
 
 	/**
+	 * Test the pre_load_value method.
+	 */
+	public function test_pre_load_value() {
+		$form_customizer = new ACF_Form_Customizer();
+
+		// Set up preview values
+		$form_customizer->preview_values = array(
+			'widget_test-1' => array(
+				'field_123' => 'preview value 1',
+				'field_456' => 'preview value 2',
+			),
+			'nav_menu_1'    => array(
+				'field_789' => 'menu preview value',
+			),
+		);
+
+		// Test case 1: Should return the preview value when it exists
+		$post_id        = 'widget_test-1';
+		$field          = array( 'key' => 'field_123' );
+		$original_value = 'original value';
+
+		$result = $form_customizer->pre_load_value( $original_value, $post_id, $field );
+		$this->assertEquals( 'preview value 1', $result, 'Should return the preview value when it exists' );
+
+		// Test case 2: Should return the original value when post_id doesn't have preview values
+		$post_id        = 'non_existent_post';
+		$field          = array( 'key' => 'field_123' );
+		$original_value = 'original value';
+
+		$result = $form_customizer->pre_load_value( $original_value, $post_id, $field );
+		$this->assertEquals( $original_value, $result, 'Should return the original value when post_id doesn\'t have preview values' );
+
+		// Test case 3: Should return the original value when field key doesn't have preview values
+		$post_id        = 'widget_test-1';
+		$field          = array( 'key' => 'non_existent_field' );
+		$original_value = 'original value';
+
+		$result = $form_customizer->pre_load_value( $original_value, $post_id, $field );
+		$this->assertEquals( $original_value, $result, 'Should return the original value when field key doesn\'t have preview values' );
+
+		// Test case 4: Verify another field and post_id combination works
+		$post_id        = 'nav_menu_1';
+		$field          = array( 'key' => 'field_789' );
+		$original_value = 'original menu value';
+
+		$result = $form_customizer->pre_load_value( $original_value, $post_id, $field );
+		$this->assertEquals( 'menu preview value', $result, 'Should correctly return preview values for different post_id and field combinations' );
+	}
+
+	/**
+	 * Test the pre_load_reference method.
+	 */
+	public function test_pre_load_reference() {
+		$form_customizer = new ACF_Form_Customizer();
+
+		// Set up preview fields
+		$form_customizer->preview_fields = array(
+			'widget_test-1' => array(
+				'title_field'   => 'field_123',
+				'content_field' => 'field_456',
+			),
+			'nav_menu_1'    => array(
+				'menu_name' => 'field_789',
+			),
+		);
+
+		// Test case 1: Should return the preview field key when it exists
+		$field_key  = 'some_other_key';
+		$field_name = 'title_field';
+		$post_id    = 'widget_test-1';
+
+		$result = $form_customizer->pre_load_reference( $field_key, $field_name, $post_id );
+		$this->assertEquals( 'field_123', $result, 'Should return the preview field key when it exists' );
+
+		// Test case 2: Should return the original field key when post_id doesn't have preview fields
+		$field_key  = 'original_key';
+		$field_name = 'title_field';
+		$post_id    = 'non_existent_post';
+
+		$result = $form_customizer->pre_load_reference( $field_key, $field_name, $post_id );
+		$this->assertEquals( $field_key, $result, 'Should return the original field key when post_id doesn\'t have preview fields' );
+
+		// Test case 3: Should return the original field key when field name doesn't have preview fields
+		$field_key  = 'original_key';
+		$field_name = 'non_existent_field';
+		$post_id    = 'widget_test-1';
+
+		$result = $form_customizer->pre_load_reference( $field_key, $field_name, $post_id );
+		$this->assertEquals( $field_key, $result, 'Should return the original field key when field name doesn\'t have preview fields' );
+
+		// Test case 4: Verify another field name and post_id combination works
+		$field_key  = 'some_menu_key';
+		$field_name = 'menu_name';
+		$post_id    = 'nav_menu_1';
+
+		$result = $form_customizer->pre_load_reference( $field_key, $field_name, $post_id );
+		$this->assertEquals( 'field_789', $result, 'Should correctly return preview field keys for different post_id and field name combinations' );
+	}
+
+	/**
+	 * Test the customize_save method.
+	 */
+	public function test_customize_save() {
+
+		$form_customizer = new ACF_Form_Customizer();
+
+		// Test case 1: Should do nothing when no settings exist
+		$customizer_no_settings = $this->getMockBuilder( stdClass::class )
+		->getMock();
+
+		// Mock the settings method to return false (no settings)
+		$form_customizer_mock = $this->getMockBuilder( 'ACF_Form_Customizer' )
+		->setMethods( array( 'settings' ) )
+		->getMock();
+		$form_customizer_mock->method( 'settings' )->willReturn( false );
+
+		// Run the method - should not produce errors
+		$form_customizer_mock->customize_save( $customizer_no_settings );
+
+		// Test case 2: Should save ACF data and add filters when settings exist
+		// Create mock settings with ACF data and id_data method
+		$setting1      = $this->getMockBuilder( stdClass::class )
+		->addMethods( array( 'id_data' ) )
+		->getMock();
+		$setting1->id  = 'widget_1';
+		$setting1->acf = array(
+			'post_id' => 'widget_widget-1',
+			'values'  => array( 'field_123' => 'value1' ),
+		);
+		$setting1->method( 'id_data' )->willReturn( array( 'base' => 'widget_text' ) );
+
+		$setting2      = $this->getMockBuilder( stdClass::class )
+		->addMethods( array( 'id_data' ) )
+		->getMock();
+		$setting2->id  = 'nav_menu_1';
+		$setting2->acf = array(
+			'post_id' => 'nav_menu_nav-1',
+			'values'  => array( 'field_456' => 'value2' ),
+		);
+		$setting2->method( 'id_data' )->willReturn( array( 'base' => 'nav_menu_widgets' ) );
+
+		// Set up form_customizer with mocked settings method
+		$form_customizer_with_settings = $this->getMockBuilder( 'ACF_Form_Customizer' )
+		->setMethods( array( 'settings' ) )
+		->getMock();
+		$form_customizer_with_settings->method( 'settings' )
+		->willReturn( array( $setting1, $setting2 ) );
+
+		// Record filter state before
+		$has_filter_widget_text_before = has_filter( 'pre_update_option_widget_text', array( $form_customizer_with_settings, 'pre_update_option' ) );
+		$has_filter_nav_menu_before    = has_filter( 'pre_update_option_nav_menu_widgets', array( $form_customizer_with_settings, 'pre_update_option' ) );
+
+		// Run the method
+		$form_customizer_with_settings->customize_save( $customizer_no_settings );
+
+		// Verify filters were added
+		$has_filter_widget_text_after = has_filter( 'pre_update_option_widget_text', array( $form_customizer_with_settings, 'pre_update_option' ) );
+		$has_filter_nav_menu_after    = has_filter( 'pre_update_option_nav_menu_widgets', array( $form_customizer_with_settings, 'pre_update_option' ) );
+
+		$this->assertTrue( false !== $has_filter_widget_text_after, 'Filter should be added for widget_text' );
+		$this->assertTrue( false !== $has_filter_nav_menu_after, 'Filter should be added for nav_menu_widgets' );
+
+		// Clean up filters
+		remove_filter( 'pre_update_option_widget_text', array( $form_customizer_with_settings, 'pre_update_option' ) );
+		remove_filter( 'pre_update_option_nav_menu_widgets', array( $form_customizer_with_settings, 'pre_update_option' ) );
+	}
+
+	/**
 	 * Helper method to create a mock setting object with a proper post_value method.
 	 *
 	 * @param string $id    The setting ID.
