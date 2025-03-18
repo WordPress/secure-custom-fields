@@ -106,6 +106,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		public function save_widget( $instance, $new_instance, $old_instance, $widget ) {
 			// bail early if not valid (customize + acf values + nonce)
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce is verified in acf_verify_nonce.
 			if ( ! isset( $_POST['wp_customize'] ) || ! isset( $new_instance['acf'] ) || ! acf_verify_nonce( 'widget' ) ) {
 				return $instance;
 			}
