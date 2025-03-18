@@ -91,12 +91,12 @@ class Test_Form_Customizer extends BaseTestCase {
 	public function test_pre_update_option() {
 		$form_customizer = new ACF_Form_Customizer();
 
-		// Test case 1: Should return value unchanged when value is empty
+		// Test case 1: Should return value unchanged when value is empty.
 		$empty_value = array();
 		$result      = $form_customizer->pre_update_option( $empty_value );
 		$this->assertEquals( $empty_value, $result, 'Should return value unchanged when value is empty' );
 
-		// Test case 2: Should return value unchanged when no widgets have acf data
+		// Test case 2: Should return value unchanged when no widgets have acf data.
 		$value_without_acf = array(
 			0 => array( 'title' => 'Widget 1' ),
 			1 => array( 'title' => 'Widget 2' ),
@@ -104,7 +104,7 @@ class Test_Form_Customizer extends BaseTestCase {
 		$result            = $form_customizer->pre_update_option( $value_without_acf );
 		$this->assertEquals( $value_without_acf, $result, 'Should return value unchanged when no widgets have acf data' );
 
-		// Test case 3: Should remove acf data from widgets
+		// Test case 3: Should remove acf data from widgets.
 		$value_with_acf = array(
 			0 => array(
 				'title' => 'Widget 1',
@@ -127,5 +127,94 @@ class Test_Form_Customizer extends BaseTestCase {
 
 		$result = $form_customizer->pre_update_option( $value_with_acf );
 		$this->assertEquals( $expected_result, $result, 'Should remove acf data from widgets' );
+	}
+
+	/**
+	 * Test the settings method.
+	 */
+	public function test_settings() {
+		$form_customizer = new ACF_Form_Customizer();
+
+		// Create a mock WP_Customize_Manager object.
+		$customizer = $this->getMockBuilder( stdClass::class )
+			->addMethods( array( 'settings' ) )
+			->getMock();
+
+		// Test case 1: Should return false when no settings exist.
+		$customizer->method( 'settings' )->willReturn( array() );
+		$result = $form_customizer->settings( $customizer );
+		$this->assertFalse( $result, 'Should return false when no settings exist' );
+
+		// Test case 2: Should return false when no settings with ACF data exist.
+		// Create settings without ACF data.
+		$setting1 = $this->createMockSetting( 'widget_1', array( 'title' => 'Widget 1' ) );
+		$setting2 = $this->createMockSetting( 'nav_menu_1', array( 'name' => 'Main Menu' ) );
+		$setting3 = $this->createMockSetting( 'other_setting', 'some value' );
+
+		$customizer = $this->getMockBuilder( stdClass::class )
+			->addMethods( array( 'settings' ) )
+			->getMock();
+		$customizer->method( 'settings' )->willReturn( array( $setting1, $setting2, $setting3 ) );
+
+		$result = $form_customizer->settings( $customizer );
+		$this->assertFalse( $result, 'Should return false when no settings with ACF data exist' );
+
+		// Test case 3: Should return array of settings with ACF data.
+		// Create settings with ACF data.
+		$setting1 = $this->createMockSetting(
+			'widget_1',
+			array(
+				'title' => 'Widget 1',
+				'acf'   => array( 'field_123' => 'value1' ),
+			)
+		);
+		$setting2 = $this->createMockSetting(
+			'nav_menu_1',
+			array(
+				'name' => 'Main Menu',
+				'acf'  => array( 'field_456' => 'value2' ),
+			)
+		);
+		$setting3 = $this->createMockSetting(
+			'other_setting',
+			array(
+				'acf' => array( 'field_789' => 'value3' ),
+			)
+		);
+
+		$customizer = $this->getMockBuilder( stdClass::class )
+			->addMethods( array( 'settings' ) )
+			->getMock();
+		$customizer->method( 'settings' )->willReturn( array( $setting1, $setting2, $setting3 ) );
+
+		$result = $form_customizer->settings( $customizer );
+
+		// Only widget_1 and nav_menu_1 should be included (other_setting doesn't start with widget or nav_menu)
+		$this->assertIsArray( $result, 'Should return an array of settings with ACF data' );
+		$this->assertCount( 2, $result, 'Should only include widget and nav_menu settings with ACF data' );
+
+		// Check that the settings have the acf property set
+		$this->assertObjectHasProperty( 'acf', $result[0], 'Settings should have acf property' );
+		$this->assertEquals( array( 'field_123' => 'value1' ), $result[0]->acf, 'ACF data should be set on the setting object' );
+		$this->assertObjectHasProperty( 'acf', $result[1], 'Settings should have acf property' );
+		$this->assertEquals( array( 'field_456' => 'value2' ), $result[1]->acf, 'ACF data should be set on the setting object' );
+	}
+
+	/**
+	 * Helper method to create a mock setting object with a proper post_value method.
+	 *
+	 * @param string $id    The setting ID.
+	 * @param mixed  $value The value to return from post_value.
+	 * @return object Mock setting object.
+	 */
+	private function createMockSetting( $id, $value ) {
+		$setting = $this->getMockBuilder( stdClass::class )
+			->addMethods( array( 'post_value' ) )
+			->getMock();
+
+		$setting->id = $id;
+		$setting->method( 'post_value' )->willReturn( $value );
+
+		return $setting;
 	}
 }
