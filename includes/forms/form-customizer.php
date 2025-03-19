@@ -172,11 +172,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 				// vars
 				$id = $setting->id;
 				// Only process widget and nav_menu settings
-				// Skip all other setting types
-				$is_widget   = 'widget' === substr( $id, 0, 6 );
-				$is_nav_menu = 'nav_menu' === substr( $id, 0, 8 );
-
-				if ( ! $is_widget && ! $is_nav_menu ) {
+				if ( 'widget' !== substr( $id, 0, 6 ) && 'nav_menu' !== substr( $id, 0, 7 ) ) {
 					continue;
 				}
 
