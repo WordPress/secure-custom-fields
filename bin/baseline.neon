@@ -81,12 +81,6 @@ parameters:
 		-
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin-tools.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
 			count: 2
 			path: ../includes/admin/admin-upgrade.php
 
