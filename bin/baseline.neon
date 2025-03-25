@@ -79,12 +79,6 @@ parameters:
 			path: ../includes/acf-input-functions.php
 
 		-
-			message: '#^Result of function acf_add_validation_error \(void\) is used\.$#'
-			identifier: function.void
-			count: 1
-			path: ../includes/acf-internal-post-type-functions.php
-
-		-
 			message: '#^Result of function acf_copy_metadata \(void\) is used\.$#'
 			identifier: function.void
 			count: 1
