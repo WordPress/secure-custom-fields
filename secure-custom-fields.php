@@ -328,6 +328,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/fields/class-acf-field-flexible-content.php' );
 			acf_include( 'includes/fields/class-acf-field-gallery.php' );
 			acf_include( 'includes/fields/class-acf-field-clone.php' );
+			acf_include( 'includes/fields/class-acf-field-nav-menu.php' );
 
 			/**
 			 * Fires after field types have been included.
