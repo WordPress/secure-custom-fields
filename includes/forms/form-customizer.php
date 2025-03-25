@@ -12,7 +12,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 	 * It manages preview values, fields, and errors for the customizer interface, and handles
 	 * saving ACF data when customizer changes are applied.
 	 *
-	 * @package Advanced Custom Fields
+	 * @package wordpress/secure-custom-fields
 	 * @since ACF 3.6.0
 	 */
 	class ACF_Form_Customizer {
@@ -101,7 +101,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 * @param array  $new_instance (array) widget settings.
 		 * @param array  $old_instance (array) widget settings.
 		 * @param object $widget (object) widget info.
-		 * @return array                                $instance Widget settings.
+		 * @return array $instance Widget settings.
 		 */
 		public function save_widget( $instance, $new_instance, $old_instance, $widget ) {
 			// bail early if not valid (customize + acf values + nonce)
@@ -152,7 +152,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param Object $customizer WordPress object.
+		 * @param WP_Customize_Manager $customizer Customizer object.
 		 * @return Mixed boolean | array. The sCustomizer Settings Object.
 		 */
 		public function settings( $customizer ) {
@@ -210,7 +210,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param Object $customizer WordPress object.
+		 * @param WP_Customize_Manager $customizer Customizer object.
 		 * @return void
 		 */
 		public function customize_preview_init( $customizer ) {
