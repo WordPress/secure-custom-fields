@@ -37,12 +37,6 @@ parameters:
 			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_set_filters\(\) should return array but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-helper-functions.php
-
-		-
 			message: '#^Action callback returns mixed but should not return anything\.$#'
 			identifier: return.void
 			count: 1
