@@ -37,12 +37,6 @@ parameters:
 			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Action callback returns mixed but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/acf-hook-functions.php
-
-		-
 			message: '#^Function acf_checkbox_input\(\) should return string but return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
