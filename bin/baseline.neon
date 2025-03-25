@@ -79,12 +79,6 @@ parameters:
 			path: ../includes/acf-input-functions.php
 
 		-
-			message: '#^Result of function acf_copy_metadata \(void\) is used\.$#'
-			identifier: function.void
-			count: 1
-			path: ../includes/acf-meta-functions.php
-
-		-
 			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
 			identifier: phpDoc.parseError
 			count: 1
