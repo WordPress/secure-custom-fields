@@ -79,12 +79,6 @@ parameters:
 			path: ../includes/acf-input-functions.php
 
 		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/acf-user-functions.php
-
-		-
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
 			count: 1
