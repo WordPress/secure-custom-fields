@@ -360,23 +360,6 @@ parameters:
 			count: 1
 			path: ../includes/fields/class-acf-field-wysiwyg.php
 
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_errors\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/forms/form-customizer.php
-
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/forms/form-customizer.php
-
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_values\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/forms/form-customizer.php
 
 		-
 			message: '#^Action callback returns type but should not return anything\.$#'

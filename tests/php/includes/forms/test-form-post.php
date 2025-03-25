@@ -8,7 +8,7 @@
 use WorDBless\BaseTestCase;
 
 // Load the ACF_Form_Post class.
-require_once dirname( __DIR__, 4 ) . '/includes/forms/form-post.php';
+acf_include( '/includes/forms/form-post.php' );
 
 /**
  * Class Test_Form_Post
