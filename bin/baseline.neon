@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/acf-bidirectional-functions.php
-
-		-
 			message: '#^@param array \$sub_field does not accept actual type of parameter\: int\|false\.$#'
 			identifier: parameter.phpDocType
 			count: 1
