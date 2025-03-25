@@ -174,7 +174,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 */
 		public function admin_load() {
 
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
 			// remove prompt
 			remove_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -195,7 +195,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 */
 		public function network_admin_load() {
 
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
 			// remove prompt
 			remove_action( 'network_admin_notices', array( $this, 'network_admin_notices' ) );

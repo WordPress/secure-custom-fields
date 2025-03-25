@@ -79,18 +79,6 @@ parameters:
 			path: ../includes/acf-input-functions.php
 
 		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 2
-			path: ../includes/admin/admin-upgrade.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin.php
-
-		-
 			message: '#^Access to an undefined property ACF_Admin_Field_Groups\:\:\$not_found_label\.$#'
 			identifier: property.notFound
 			count: 1
