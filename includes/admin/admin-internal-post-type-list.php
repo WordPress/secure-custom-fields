@@ -146,7 +146,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 
 			// Add hooks.
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 			add_filter( "views_edit-{$this->post_type}", array( $this, 'admin_table_views' ), 10, 1 );
 			add_filter( "manage_{$this->post_type}_posts_columns", array( $this, 'admin_table_columns' ), 10, 1 );
 			add_action( "manage_{$this->post_type}_posts_custom_column", array( $this, 'admin_table_columns_html' ), 10, 2 );

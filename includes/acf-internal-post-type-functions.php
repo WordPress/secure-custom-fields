@@ -642,7 +642,7 @@ function acf_add_internal_post_type_validation_error( $name, $message = '', $pos
 		$name = "{$input_prefix}[$name]";
 	}
 
-	return acf_add_validation_error( $name, $message );
+	acf_add_validation_error( $name, $message );
 }
 
 /**

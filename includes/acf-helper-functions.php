@@ -201,7 +201,7 @@ function acf_get_filters() {
  * @since   ACF 5.4.0
  *
  * @param   array $filters An Array of modifiers.
- * @return  array
+ * @return  void
  */
 function acf_set_filters( $filters = array() ) {
 	acf_get_store( 'filters' )->set( $filters );

@@ -91,7 +91,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 			acf_disable_filters();
 			acf_enqueue_scripts();
 
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 			add_action( 'acf/input/admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'acf/input/admin_head', array( $this, 'admin_head' ) );
 			add_action( 'acf/input/form_data', array( $this, 'form_data' ) );
@@ -164,10 +164,11 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type' ) ) :
 		 * @since   ACF 5.3.8
 		 *
 		 * @param array $l10n The array of translated strings.
-		 * @return void
+		 * @return mixed
 		 */
 		public function admin_l10n( $l10n ) {
 			// Override as necessary.
+			return $l10n;
 		}
 
 		/**
