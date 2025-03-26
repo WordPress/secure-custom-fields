@@ -56,3 +56,4 @@ assets/build/**/*.php
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/artifacts/
