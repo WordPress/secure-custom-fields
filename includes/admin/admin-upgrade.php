@@ -39,7 +39,7 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 */
 		public function __construct() {
 
-			$this->network_upgrade_needed_transient = 'acf_network_upgrade_needed_' . ACF_UPGRADE_VERSION;
+			$this->network_upgrade_needed_transient = 'acf_network_upgrade_needed_' . SCF_UPGRADE_VERSION;
 
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 			if ( is_multisite() ) {
@@ -112,10 +112,10 @@ if ( ! class_exists( 'ACF_Admin_Upgrade' ) ) :
 		 * multisite network.
 		 *
 		 * Stores the result in `$this->network_upgrade_needed_transient`,
-		 * which is version-linked to ACF_UPGRADE_VERSION: the highest ACF
+		 * which is version-linked to SCF_UPGRADE_VERSION: the highest SCF
 		 * version that requires an upgrade function to run. Bumping
-		 * ACF_UPGRADE_VERSION will trigger new upgrade checks but incrementing
-		 * ACF_VERSION alone will not.
+		 * SCF_UPGRADE_VERSION will trigger new upgrade checks but incrementing
+		 * SCF_VERSION alone will not.
 		 *
 		 * @since ACF 6.0.0
 		 * @return string 'yes' if any site in the network requires an upgrade,

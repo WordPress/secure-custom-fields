@@ -618,7 +618,7 @@ function acf_maybe_unserialize( $data ) {
  * @return boolean True if the current install version contains a dash, indicating a alpha, beta or RC release.
  */
 function acf_is_beta() {
-	return defined( 'ACF_VERSION' ) && strpos( ACF_VERSION, '-' ) !== false;
+	return defined( 'SCF_VERSION' ) && strpos( SCF_VERSION, '-' ) !== false;
 }
 
 /**
@@ -633,7 +633,7 @@ function acf_is_beta() {
 function acf_get_version_when_first_activated() {
 	// Check if ACF is network-activated on a multisite.
 	if ( is_multisite() ) {
-		$acf_dir_and_filename = basename( ACF_PATH ) . '/acf.php';
+		$acf_dir_and_filename = basename( SCF_PATH ) . '/acf.php';
 		$plugins              = get_site_option( 'active_sitewide_plugins' );
 
 		if ( isset( $plugins[ $acf_dir_and_filename ] ) ) {

@@ -258,7 +258,7 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 
 			$fields['version'] = array(
 				'label' => __( 'Plugin Version', 'secure-custom-fields' ),
-				'value' => defined( 'ACF_VERSION' ) ? ACF_VERSION : '',
+				'value' => defined( 'SCF_VERSION' ) ? SCF_VERSION : '',
 			);
 
 			$fields['wp_version'] = array(

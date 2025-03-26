@@ -82,7 +82,16 @@ if ( ! class_exists( 'ACF' ) ) {
 			defined( 'ACF_MAJOR_VERSION' ) || define( 'ACF_MAJOR_VERSION', 6 );
 			defined( 'ACF_FIELD_API_VERSION' ) || define( 'ACF_FIELD_API_VERSION', 5 );
 			defined( 'ACF_UPGRADE_VERSION' ) || define( 'ACF_UPGRADE_VERSION', '5.5.0' ); // Highest version with an upgrade routine. See upgrades.php.
-			defined( 'ACF_PRO' ) || define( 'ACF_PRO', true );
+			defined( 'ACF_PRO' ) || define( 'ACF_PRO', true ); // Legacy. Always true in SCF.
+
+			// Temporary: define SCF constants based on ACF values. @todo Add ACF constants to the legacy class.
+			defined( 'SCF' ) || define( 'SCF', true );
+			defined( 'SCF_PATH' ) || define( 'SCF_PATH', ACF_PATH );
+			defined( 'SCF_BASENAME' ) || define( 'SCF_BASENAME', ACF_BASENAME );
+			defined( 'SCF_VERSION' ) || define( 'SCF_VERSION', ACF_VERSION );
+			defined( 'SCF_MAJOR_VERSION' ) || define( 'SCF_MAJOR_VERSION', ACF_MAJOR_VERSION );
+			defined( 'SCF_FIELD_API_VERSION' ) || define( 'SCF_FIELD_API_VERSION', ACF_FIELD_API_VERSION );
+			defined( 'SCF_UPGRADE_VERSION' ) || define( 'SCF_UPGRADE_VERSION', ACF_UPGRADE_VERSION );
 
 			// Register activation hook.
 			register_activation_hook( __FILE__, array( $this, 'acf_plugin_activated' ) );
@@ -90,10 +99,10 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Define settings.
 			$this->settings = array(
 				'name'                    => 'Secure Custom Fields', // Will be updated in the init hook to i18n string.
-				'slug'                    => dirname( ACF_BASENAME ),
-				'version'                 => ACF_VERSION,
-				'basename'                => ACF_BASENAME,
-				'path'                    => ACF_PATH,
+				'slug'                    => dirname( SCF_BASENAME ),
+				'version'                 => SCF_VERSION,
+				'basename'                => SCF_BASENAME,
+				'path'                    => SCF_PATH,
 				'file'                    => __FILE__,
 				'url'                     => plugin_dir_url( __FILE__ ),
 				'show_admin'              => true,
@@ -132,8 +141,8 @@ if ( ! class_exists( 'ACF' ) ) {
 			);
 
 			// Include utility functions.
-			include_once ACF_PATH . 'includes/acf-utility-functions.php';
-			include_once ACF_PATH . 'includes/legacy/class-hooks.php';
+			include_once SCF_PATH . 'includes/acf-utility-functions.php';
+			include_once SCF_PATH . 'includes/legacy/class-hooks.php';
 
 			// Include previous API functions.
 			acf_include( 'includes/api/api-helpers.php' );
@@ -338,7 +347,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param   int $version The field API version.
 			 */
-			do_action( 'scf_include_field_types', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_field_types', SCF_FIELD_API_VERSION );
 
 			// Include locations.
 			acf_include( 'includes/locations/class-acf-location-post-type.php' );
@@ -372,7 +381,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param   int $version The field API version.
 			 */
-			do_action( 'scf_include_location_rules', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_location_rules', SCF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local fields.
@@ -381,7 +390,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param   int $version The field API version.
 			 */
-			do_action( 'scf_include_fields', ACF_FIELD_API_VERSION );
+			do_action( 'scf_include_fields', SCF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local post types.
@@ -390,7 +399,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param int $version The major version of ACF.
 			 */
-			do_action( 'scf_include_post_types', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_post_types', SCF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local taxonomies.
@@ -399,7 +408,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param int $version The major version of ACF.
 			 */
-			do_action( 'scf_include_taxonomies', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_taxonomies', SCF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local option pages.
@@ -408,7 +417,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param   int $version The major version of ACF.
 			 */
-			do_action( 'scf_include_options_pages', ACF_MAJOR_VERSION );
+			do_action( 'scf_include_options_pages', SCF_MAJOR_VERSION );
 
 			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader later.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
@@ -423,7 +432,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @param   int $version The major version of ACF.
 			 */
-			do_action( 'scf_init', ACF_MAJOR_VERSION );
+			do_action( 'scf_init', SCF_MAJOR_VERSION );
 		}
 
 		/**
@@ -737,7 +746,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			if ( null === get_option( 'acf_first_activated_version', null ) ) {
 				// If acf_version is set, this isn't the first activated version, so leave it unset so it's legacy.
 				if ( null === get_option( 'acf_version', null ) ) {
-					update_option( 'acf_first_activated_version', ACF_VERSION, true );
+					update_option( 'acf_first_activated_version', SCF_VERSION, true );
 
 					do_action( 'scf_first_activated' );
 				}

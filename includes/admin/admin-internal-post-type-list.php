@@ -307,7 +307,7 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 			$view = $this->post_type . '/list-empty';
 
 			if ( $this->is_pro_feature ) {
-				$view = ACF_PATH . 'pro/admin/views/' . $view . '.php';
+				$view = SCF_PATH . 'pro/admin/views/' . $view . '.php';
 			}
 
 			acf_get_view( $view );

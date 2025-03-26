@@ -13,12 +13,12 @@
 function acf_has_upgrade() {
 	$db_version = acf_get_db_version();
 
-	if ( $db_version && acf_version_compare( $db_version, '<', ACF_UPGRADE_VERSION ) ) {
+	if ( $db_version && acf_version_compare( $db_version, '<', SCF_UPGRADE_VERSION ) ) {
 		return true;
 	}
 
-	if ( $db_version !== ACF_VERSION ) {
-		acf_update_db_version( ACF_VERSION );
+	if ( SCF_VERSION !== $db_version ) {
+		acf_update_db_version( SCF_VERSION );
 	}
 
 	return false;
@@ -56,16 +56,16 @@ function acf_upgrade_all() {
 	}
 
 	/**
-	 * When adding new upgrade routines here, increment the ACF_UPGRADE_VERSION
+	 * When adding new upgrade routines here, increment the SCF_UPGRADE_VERSION
 	 * constant in `acf.php` to the new highest upgrade version.
 	 */
 
 	// upgrade DB version once all updates are complete
-	acf_update_db_version( ACF_VERSION );
+	acf_update_db_version( SCF_VERSION );
 
 	if ( is_multisite() ) {
 		// Clears the network upgrade notification banner after site upgrades.
-		delete_site_transient( 'acf_network_upgrade_needed_' . ACF_UPGRADE_VERSION );
+		delete_site_transient( 'acf_network_upgrade_needed_' . SCF_UPGRADE_VERSION );
 	}
 
 	// log

@@ -144,7 +144,7 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		 */
 		public function doing_dark_mode() {
 			$min = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
-			wp_enqueue_style( 'acf-dark', acf_get_url( 'assets/css/acf-dark' . $min . '.css' ), array(), ACF_VERSION );
+			wp_enqueue_style( 'acf-dark', acf_get_url( 'assets/css/acf-dark' . $min . '.css' ), array(), SCF_VERSION );
 		}
 	}
 

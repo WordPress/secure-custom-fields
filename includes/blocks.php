@@ -826,7 +826,7 @@ function acf_enqueue_block_assets() {
 
 	$blocks_js_path = acf_get_url( "assets/build/js/pro/acf-pro-blocks{$min}.js" );
 
-	wp_enqueue_script( 'acf-blocks', $blocks_js_path, array( 'acf-input', 'wp-blocks' ), ACF_VERSION, true );
+	wp_enqueue_script( 'acf-blocks', $blocks_js_path, array( 'acf-input', 'wp-blocks' ), SCF_VERSION, true );
 
 	// Enqueue block assets.
 	array_map( 'acf_enqueue_block_type_assets', $block_types );
@@ -858,12 +858,12 @@ function acf_enqueue_block_type_assets( $block_type ) {
 
 	// Enqueue style.
 	if ( $block_type['enqueue_style'] ) {
-		wp_enqueue_style( $handle, $block_type['enqueue_style'], array(), ACF_VERSION, 'all' );
+		wp_enqueue_style( $handle, $block_type['enqueue_style'], array(), SCF_VERSION, 'all' );
 	}
 
 	// Enqueue script.
 	if ( $block_type['enqueue_script'] ) {
-		wp_enqueue_script( $handle, $block_type['enqueue_script'], array(), ACF_VERSION, true );
+		wp_enqueue_script( $handle, $block_type['enqueue_script'], array(), SCF_VERSION, true );
 	}
 
 	// Enqueue assets callback.

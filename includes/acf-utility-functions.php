@@ -115,7 +115,7 @@ add_action( 'switch_blog', 'acf_switch_stores', 10, 2 );
  * @return  string
  */
 function acf_get_path( $filename = '' ) {
-	return ACF_PATH . ltrim( $filename, '/' );
+	return SCF_PATH . ltrim( $filename, '/' );
 }
 
 /**

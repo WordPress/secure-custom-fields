@@ -74,7 +74,7 @@
 				<td>
 				<?php if ( acf_has_upgrade() ) : ?>
 					<?php // translators: %1 current db version, %2 available db version ?>
-					<span class="response"><?php echo esc_html( printf( __( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ), acf_get_db_version(), ACF_VERSION ) ); ?></span>
+					<span class="response"><?php echo esc_html( printf( __( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ), acf_get_db_version(), SCF_VERSION ) ); ?></span>
 				<?php else : ?>
 					<?php esc_html_e( 'Site is up to date', 'secure-custom-fields' ); ?>
 				<?php endif; ?>
@@ -145,7 +145,7 @@
 				
 				// show loading
 				<?php // translators: %s the version being upgraded to. ?>
-				$row.find('.response').html('<i class="acf-loading"></i></span> <?php printf( esc_attr__( 'Upgrading data to version %s', 'secure-custom-fields' ), esc_attr( ACF_VERSION ) ); ?>');
+				$row.find('.response').html('<i class="acf-loading"></i></span> <?php printf( esc_attr__( 'Upgrading data to version %s', 'secure-custom-fields' ), esc_attr( SCF_VERSION ) ); ?>');
 				
 				// send ajax request to upgrade DB
 				$.ajax({

@@ -23,14 +23,6 @@ class Test_Legacy_Hooks extends BaseTestCase {
 	private $legacy_hooks;
 
 	/**
-	 * Set up each test.
-	 */
-	public function set_up() {
-		parent::set_up();
-		$this->legacy_hooks = new Hooks();
-	}
-
-	/**
 	 * Test that legacy filters are called when new filters are applied
 	 */
 	public function test_legacy_filter_called() {
@@ -93,7 +85,7 @@ class Test_Legacy_Hooks extends BaseTestCase {
 	 * Test that action arguments are passed correctly
 	 */
 	public function test_action_arguments_passed() {
-		$version = \ACF_MAJOR_VERSION;
+		$version = \SCF_MAJOR_VERSION;
 
 		add_action(
 			'acf/init',

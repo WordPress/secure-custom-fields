@@ -8,11 +8,15 @@
 namespace WordPress\SCF\Legacy;
 
 /**
- * Class to handle legacy hook mappings
+ * Class to handle legacy hook mappings.
+ *
+ * @since 6.5.0
  */
 class Hooks {
 	/**
 	 * Hook mappings from new to legacy format.
+	 *
+	 * @since 6.5.0
 	 *
 	 * @var array
 	 */
@@ -49,6 +53,8 @@ class Hooks {
 
 	/**
 	 * Constructor.
+	 *
+	 * @since 6.5.0
 	 */
 	public function __construct() {
 		if ( ! $this->is_legacy_hooks_enabled() ) {
@@ -61,11 +67,15 @@ class Hooks {
 	/**
 	 * Check if legacy hooks should be enabled.
 	 *
+	 * @since 6.5.0
+	 *
 	 * @return bool
 	 */
 	private function is_legacy_hooks_enabled() {
 		/**
 		 * Filter whether legacy hooks should be enabled.
+		 *
+		 * @since 6.5.0
 		 *
 		 * @param bool $enabled Whether legacy hooks are enabled.
 		 */
@@ -74,6 +84,8 @@ class Hooks {
 
 	/**
 	 * Setup all legacy hook mappings.
+	 *
+	 * @since 6.5.0
 	 */
 	private function setup_legacy_hooks() {
 		foreach ( $this->hook_mappings['filters'] as $new_hook => $config ) {
@@ -92,6 +104,8 @@ class Hooks {
 
 	/**
 	 * Setup a legacy filter mapping.
+	 *
+	 * @since 6.5.0
 	 *
 	 * @param string $new_hook New hook name.
 	 * @param string $legacy_hook Legacy hook name.
@@ -119,6 +133,8 @@ class Hooks {
 	/**
 	 * Setup a legacy action mapping.
 	 *
+	 * @since 6.5.0
+	 *
 	 * @param string $new_hook New hook name.
 	 * @param string $legacy_hook Legacy hook name.
 	 * @param int    $accepted_args Number of arguments the action accepts.
@@ -139,3 +155,5 @@ class Hooks {
 		);
 	}
 }
+
+new Hooks();
