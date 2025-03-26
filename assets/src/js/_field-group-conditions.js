@@ -140,7 +140,7 @@
 					choice.disabled = true;
 				}
 
-				// calulate indents
+				// calculate indents
 				var indents = fieldObject.getParents().length;
 				choice.text = '- '.repeat( indents ) + choice.text;
 
@@ -331,7 +331,7 @@
 		},
 
 		onClickAdd: function ( e, $el ) {
-			// duplciate
+			// duplicate
 			var $rule = acf.duplicate( $el.closest( '.rule' ) );
 
 			// render

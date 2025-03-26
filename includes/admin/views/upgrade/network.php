@@ -2,7 +2,7 @@
 /**
  * Network Admin Database Upgrade
  *
- * Shows the databse upgrade process.
+ * Shows the database upgrade process.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -20,7 +20,7 @@
 	
 	<h1><?php esc_html_e( 'Upgrade Database', 'secure-custom-fields' ); ?></h1>
 	
-	<?php // translators: %s The button label name, translated seperately ?>
+	<?php // translators: %s The button label name, translated separately ?>
 	<p><?php printf( esc_html__( 'The following sites require a DB upgrade. Check the ones you want to update and then click %s.', 'secure-custom-fields' ), '"' . esc_html__( 'Upgrade Sites', 'secure-custom-fields' ) . '"' ); ?></p>
 	<p><input type="submit" name="upgrade" value="<?php esc_attr_e( 'Upgrade Sites', 'secure-custom-fields' ); ?>" class="button" id="upgrade-sites"></p>
 	

@@ -5230,7 +5230,7 @@
 						'data'
 					);
 
-					// Don't re-select already selected resulte
+					// Don't re-select already selected result
 					if (
 						( data.element != null && data.element.selected ) ||
 						( data.element == null && data.selected )
@@ -7546,7 +7546,7 @@
 					deltaY = 0;
 				}
 
-				// Set delta to be deltaY or deltaX if deltaY is 0 for backwards compatabilitiy
+				// Set delta to be deltaY or deltaX if deltaY is 0 for backwards compatibility
 				delta = deltaY === 0 ? deltaX : deltaY;
 
 				// New school wheel delta (wheel event)
@@ -7658,7 +7658,7 @@
 			}
 
 			function shouldAdjustOldDeltas( orgEvent, absDelta ) {
-				// If this is an older event and the delta is divisable by 120,
+				// If this is an older event and the delta is divisible by 120,
 				// then we are assuming that the browser is treating this as an
 				// older mouse wheel event and that we should divide the deltas
 				// by 40 to try and get a more usable deltaFactor.

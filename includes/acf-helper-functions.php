@@ -141,7 +141,7 @@ acf_register_store( 'filters' );
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   string name The modifer name.
+ * @param   string $name The modifier name.
  * @return  void
  */
 function acf_enable_filter( $name = '' ) {
@@ -156,7 +156,7 @@ function acf_enable_filter( $name = '' ) {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   string name The modifer name.
+ * @param   string $name The modifier name.
  * @return  void
  */
 function acf_disable_filter( $name = '' ) {
@@ -171,7 +171,7 @@ function acf_disable_filter( $name = '' ) {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   string name The modifer name.
+ * @param   string $name The modifier name.
  * @return  array
  */
 function acf_is_filter_enabled( $name = '' ) {
@@ -200,8 +200,8 @@ function acf_get_filters() {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   array $filters An Array of modifers
- * @return  array
+ * @param   array $filters An Array of modifiers.
+ * @return  void
  */
 function acf_set_filters( $filters = array() ) {
 	acf_get_store( 'filters' )->set( $filters );
@@ -222,7 +222,7 @@ function acf_disable_filters() {
 	// Get state.
 	$prev_state = acf_get_filters();
 
-	// Set all modifers as false.
+	// Set all modifiers as false.
 	acf_set_filters( array_map( '__return_false', $prev_state ) );
 
 	// Return prev state.
@@ -237,7 +237,7 @@ function acf_disable_filters() {
  * @date    14/7/16
  * @since   ACF 5.4.0
  *
- * @param   array $filters An Array of modifers
+ * @param   array $filters An Array of modifiers.
  * @return  array
  */
 function acf_enable_filters( $filters = array() ) {
@@ -249,7 +249,7 @@ function acf_enable_filters( $filters = array() ) {
 	if ( $filters ) {
 		acf_set_filters( $filters );
 
-		// Set all modifers as true.
+		// Set all modifiers as true.
 	} else {
 		acf_set_filters( array_map( '__return_true', $prev_state ) );
 	}
@@ -416,7 +416,7 @@ function acf_did( $name ) {
 	if ( acf_get_data( "acf_did_$name" ) ) {
 		return true;
 
-		// Otherwise, update store and return false (alowing event).
+		// Otherwise, update store and return false (allowing event).
 	} else {
 		acf_set_data( "acf_did_$name", true );
 		return false;
@@ -430,7 +430,7 @@ function acf_did( $name ) {
  * 1. Unslash the string because posted values will be slashed.
  * 2. Decode special characters because wp_kses() will normalize entities.
  * 3. Treat line-breaks as a single character instead of two.
- * 4. Use mb_strlen() to accomodate special characters.
+ * 4. Use mb_strlen() to accommodate special characters.
  *
  * @date    04/06/2020
  * @since   ACF 5.9.0

@@ -284,7 +284,7 @@ function acf_copy_metadata( $from_post_id = 0, $to_post_id = 0 ) {
  * @return  void
  */
 function acf_copy_postmeta( $from_post_id = 0, $to_post_id = 0 ) {
-	return acf_copy_metadata( $from_post_id, $to_post_id );
+	acf_copy_metadata( $from_post_id, $to_post_id );
 }
 
 /**

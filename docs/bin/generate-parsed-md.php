@@ -519,7 +519,12 @@ class DocGenerator {
 			ksort( $types );
 
 			foreach ( $types as $type => $elements ) {
-				$markdown .= '### ' . ucfirst( $type ) . "s\n\n";
+				// Make `class` plural manually.
+				if ( 'class' === strtolower( $type ) ) {
+					$markdown .= '### ' . ucfirst( 'classes' ) . "\n\n";
+				} else {
+					$markdown .= '### ' . ucfirst( $type ) . "s\n\n";
+				}
 
 				// Sort elements alphabetically
 				sort( $elements );

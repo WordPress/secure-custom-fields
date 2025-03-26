@@ -38,7 +38,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    25/11/2013
 		 * @since   ACF 5.0.0
 		 *
-		 * @param   string $input name attribute of DOM elmenet.
+		 * @param   string $input name attribute of DOM element.
 		 * @param   string $message error message.
 		 */
 		public function add_error( $input, $message ) {
@@ -58,7 +58,7 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @date    5/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param   string $input name attribute of DOM elmenet.
+		 * @param   string $input name attribute of DOM element.
 		 * @return  array|bool
 		 */
 		public function get_error( $input ) {
@@ -192,7 +192,7 @@ endif; // class_exists check
  * @date    6/10/13
  * @since   ACF 5.0.0
  *
- * @param   string $input name attribute of DOM elmenet.
+ * @param   string $input name attribute of DOM element.
  * @param   string $message error message.
  * @return  void
  */
@@ -225,7 +225,7 @@ function acf_get_validation_errors() {
  * @since   ACF 5.0.0
  * @since   6.4.1 Added the $input parameter, which is required in the get_error method.
  *
- * @param   string $input name attribute of DOM elmenet.
+ * @param   string $input name attribute of DOM element.
  *
  * @return  string|bool
  */

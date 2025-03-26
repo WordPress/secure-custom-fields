@@ -40,7 +40,7 @@ class Bindings {
 	}
 
 	/**
-	 * Handle returing the block binding value for an ACF meta value.
+	 * Handle returning the block binding value for an ACF meta value.
 	 *
 	 * @since ACF 6.2.8
 	 *

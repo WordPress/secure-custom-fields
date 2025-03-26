@@ -1,0 +1,15 @@
+includes:
+	- bin/baseline.neon
+parameters:
+	level: 1
+	paths:
+		- .
+	excludePaths:
+		- node_modules (?)
+		- assets
+		- vendor
+		- docs
+		- lang
+		- wordpress (?)
+	bootstrapFiles:
+		- bin/phpstan-bootstrap.php

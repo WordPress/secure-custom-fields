@@ -313,7 +313,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 				return $term_id;
 			}
 
-			// valied and show errors
+			// validate and show errors
 			acf_validate_save_post( true );
 
 			// save

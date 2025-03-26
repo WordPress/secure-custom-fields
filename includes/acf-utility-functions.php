@@ -3,7 +3,7 @@
 // Globals.
 global $acf_stores, $acf_instances;
 
-// Initialize plaeholders.
+// Initialize placeholders.
 $acf_stores    = array();
 $acf_instances = array();
 

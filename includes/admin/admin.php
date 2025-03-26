@@ -17,7 +17,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 			add_action( 'current_screen', array( $this, 'current_screen' ) );
 			add_action( 'admin_notices', array( $this, 'maybe_show_escaped_html_notice' ) );
 			add_action( 'admin_init', array( $this, 'dismiss_escaped_html_notice' ) );

@@ -15,6 +15,8 @@
  * @param integer|string $post_id         The ACF encoded origin post, user or term ID.
  * @param array          $field           The field being updated on the origin post, user or term ID.
  * @param string|false   $target_prefix   The ACF prefix for a post, user or term ID required for the update_field call for this field type.
+ *
+ * @return void
  */
 function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $target_prefix = false ) {
 
@@ -201,7 +203,7 @@ function acf_build_bidirectional_relationship_field_target_args( $results, $opti
 	return $results;
 }
 
-add_action( 'acf/fields/select/query/key=_acf_bidirectional_target', 'acf_build_bidirectional_relationship_field_target_args', 10, 2 );
+add_filter( 'acf/fields/select/query/key=_acf_bidirectional_target', 'acf_build_bidirectional_relationship_field_target_args', 10, 2 );
 
 /**
  * Renders the field settings required for bidirectional fields
@@ -209,6 +211,8 @@ add_action( 'acf/fields/select/query/key=_acf_bidirectional_target', 'acf_build_
  * @since ACF 6.2
  *
  * @param array $field The field object passed into field setting functions.
+ *
+ * @return void
  */
 function acf_render_bidirectional_field_settings( $field ) {
 	if ( ! acf_get_setting( 'enable_bidirection' ) ) {

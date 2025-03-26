@@ -260,7 +260,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 				$field['key'] = $clone_field['key'] . '_' . $field['key'];
 
 				// modify prefix allowing clone field to save sub fields
-				// - only used for parent seamless fields. Block or sub field's prefix will be overriden which also works
+				// - only used for parent seamless fields. Block or sub field's prefix will be overridden which also works
 				$field['prefix'] = $clone_field['prefix'] . '[' . $clone_field['key'] . ']';
 
 				// modify parent
@@ -412,7 +412,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type  filter
 		 * @since ACF 3.6 3.6
@@ -522,7 +522,7 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 					// empty
 				} else {
 
-					// input is not set (hidden by conditioanl logic)
+					// input is not set (hidden by conditional logic)
 					continue;
 				}
 

@@ -109,7 +109,7 @@ Returns an array of localised field categories.
 
 ## `acf_get_grouped_field_types()`
 
-Returns an multi-dimentional array of field types "name => label" grouped by category
+Returns an multi-dimensional array of field types "name => label" grouped by category
 
 * @since   ACF 5.0.0
 * @return  array

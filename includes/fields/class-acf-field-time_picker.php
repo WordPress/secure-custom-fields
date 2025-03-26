@@ -136,7 +136,7 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6

@@ -262,7 +262,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value before it is updated in the db
+		 * This filter is applied to the $value before it is updated in the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6

@@ -585,7 +585,7 @@ This file tracks code elements that need documentation.
 
 ## rest-api/class-acf-rest-api.php
 
-### Classs
+### Classes
 
 - `ACF_Rest_Api`
 

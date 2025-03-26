@@ -142,7 +142,7 @@
 			// add events
 			this.addFrameEvents( frame, options );
 
-			// strore frame
+			// store frame
 			this.frame = frame;
 		},
 
@@ -201,8 +201,8 @@
 			// add _acfuploader
 			// this is super wack!
 			// if you add _acfuploader to the options.library args, new uploads will not be added to the library view.
-			// this has been traced back to the wp.media.model.Query initialize function (which can't be overriden)
-			// Adding any custom args will cause the Attahcments to not observe the uploader queue
+			// this has been traced back to the wp.media.model.Query initialize function (which can't be overridden)
+			// Adding any custom args will cause the Attachments to not observe the uploader queue
 			// To bypass this security issue, we add in the args AFTER the Query has been initialized
 			// options.library._acfuploader = settings.field;
 			if (
@@ -447,7 +447,7 @@
 				filter.props._acfuploader = field;
 			} );
 
-			// add _acfuplaoder to search
+			// add _acfuploader to search
 			var search = toolbar.get( 'search' );
 			search.model.attributes._acfuploader = field;
 
@@ -715,7 +715,7 @@
 					//	data[ pair.name ] = pair.value;
 					//});
 
-					// Serialize data more thoroughly to allow chckbox inputs to save.
+					// Serialize data more thoroughly to allow checkbox inputs to save.
 					data = acf.serializeForAjax( this.$el );
 
 					this.controller.trigger( 'attachment:compat:waiting', [

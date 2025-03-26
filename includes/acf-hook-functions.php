@@ -29,7 +29,7 @@ function acf_add_filter_variations( $filter = '', $variations = array(), $index 
 	);
 
 	// Add generic handler.
-	// Use a priotiry of 10, and accepted args of 10 (ignored by WP).
+	// Use a priority of 10, and accepted args of 10 (ignored by WP).
 	add_filter( $filter, '_acf_apply_hook_variations', 10, 10 );
 }
 
@@ -59,7 +59,8 @@ function acf_add_action_variations( $action = '', $variations = array(), $index 
 	);
 
 	// Add generic handler.
-	// Use a priotiry of 10, and accepted args of 10 (ignored by WP).
+	// Use a priority of 10, and accepted args of 10 (ignored by WP).
+	// @phpstan-ignore return.void
 	add_action( $action, '_acf_apply_hook_variations', 10, 10 );
 }
 
@@ -105,7 +106,7 @@ function _acf_apply_hook_variations() {
 		}
 
 		// Apply filters.
-		if ( $type === 'filter' ) {
+		if ( 'filters' === $type ) {
 			$args[0] = apply_filters_ref_array( "$filter/$variation=$value", $args );
 
 			// Or do action.

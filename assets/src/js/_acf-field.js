@@ -43,7 +43,7 @@
 			// inherit $field data
 			this.inherit( $field );
 
-			// inherit controll data
+			// inherit control data
 			this.inherit( this.$control() );
 		},
 
@@ -511,7 +511,7 @@
 			// hasValue: true
 		} );
 
-		// clonse available types
+		// clone available types
 		var types = [];
 
 		// loop

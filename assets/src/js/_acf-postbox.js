@@ -90,7 +90,7 @@
 		},
 
 		setup: function ( props ) {
-			// compatibilty
+			// compatibility
 			if ( props.editLink ) {
 				props.edit = props.editLink;
 			}

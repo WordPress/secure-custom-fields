@@ -838,7 +838,7 @@
 	 *  @date	17/12/18
 	 *  @since	ACF 5.8.0
 	 *
-	 *  @param	jQUery $el The element or form to serialize.
+	 *  @param	jQuery $el The element or form to serialize.
 	 *  @return	object
 	 */
 	acf.serializeForAjax = function ( $el ) {
@@ -2012,7 +2012,7 @@
 	/**
 	 *  acf.renderSelect
 	 *
-	 *  Renders the innter html for a select field.
+	 *  Renders the inner html for a select field.
 	 *
 	 *  @date	19/2/18
 	 *  @since	ACF 5.6.9
@@ -2266,7 +2266,7 @@
 	/**
 	 * acf.onceInView
 	 *
-	 * Watches for a dom element to become visible in the browser and then excecutes the passed callback.
+	 * Watches for a dom element to become visible in the browser and then executes the passed callback.
 	 *
 	 * @date	28/8/19
 	 * @since	ACF 5.8.1

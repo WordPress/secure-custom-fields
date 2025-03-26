@@ -78,7 +78,7 @@
 			 * @since	ACF 5.0.0
 			 *
 			 * @param	object|string val The new value.
-			 * @param	object map The Google Map isntance.
+			 * @param	object map The Google Map instance.
 			 * @param	object field The field instance.
 			 */
 			acf.doAction( 'google_map_change', val, this.map, this );
@@ -223,7 +223,7 @@
 			 * @date	12/02/2014
 			 * @since	ACF 5.0.0
 			 *
-			 * @param	object map The Google Map isntance.
+			 * @param	object map The Google Map instance.
 			 * @param	object marker The Google Map marker isntance.
 			 * @param	object field The field instance.
 			 */
@@ -560,12 +560,12 @@
 	/**
 	 * withAPI
 	 *
-	 * Loads the Google Maps API library and troggers callback.
+	 * Loads the Google Maps API library and triggers callback.
 	 *
 	 * @date	28/3/19
 	 * @since	ACF 5.7.14
 	 *
-	 * @param	function callback The callback to excecute.
+	 * @param	function callback The callback to execute.
 	 * @return	void
 	 */
 
