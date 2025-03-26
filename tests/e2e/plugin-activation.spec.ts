@@ -31,7 +31,7 @@ test.describe('Plugin Activation', () => {
     await expect(pluginRow).toBeVisible();
     
     // Check if plugin is activated
-    const isActive = await pluginRow.locator('.deactivate span').isVisible();
+    const isActive = await pluginRow.locator('.deactivate a').isVisible();
     expect(isActive).toBeTruthy();
   });
 
