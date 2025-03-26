@@ -50,3 +50,9 @@ assets/build/**/*.php
 
 # PHPUnit result cache
 .phpunit.result.cache
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
