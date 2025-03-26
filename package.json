@@ -6,7 +6,8 @@
     "lint:md": "markdownlint 'docs/**/*.md' --config .markdownlint.json",
     "prepare": "husky",
     "sort-package-json": "sort-package-json",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "md5": "^2.3.0"
@@ -15,7 +16,9 @@
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.7",
+    "@playwright/test": "^1.51.1",
     "@wordpress/dependency-extraction-webpack-plugin": "^6.20.0",
+    "@wordpress/e2e-test-utils-playwright": "^1.20.0",
     "babel-loader": "^9.2.1",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
