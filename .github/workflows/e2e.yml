@@ -6,6 +6,7 @@ on:
 
 jobs:
   test:
+    name: Playwrite e2e Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
