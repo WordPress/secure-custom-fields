@@ -1,15 +1,28 @@
-import { test, expect } from '@playwright/test';
+/**
+ * WordPress dependencies
+ */
+const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 test.describe('Plugin Activation', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, requestUtils }) => {
     // Login to WordPress admin
     await page.goto('/wp-admin');
     await page.fill('#user_login', 'admin');
     await page.fill('#user_pass', 'password');
     await page.click('#wp-submit');
+    await requestUtils.activatePlugin(
+			'secure-custom-fields'
+		);
+  });
+
+  test.afterAll(async ({ requestUtils }) => {
+    await requestUtils.deactivatePlugin(
+			'secure-custom-fields'
+		);
   });
 
   test('should be able to access plugin settings', async ({ page }) => {
+  
     // Navigate to plugins page
     await page.goto('/wp-admin/plugins.php');
     
