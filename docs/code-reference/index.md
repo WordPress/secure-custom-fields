@@ -18,7 +18,6 @@
 * [Acf Wp Functions](acf-wp-functions-file)
 * [Assets](assets-file)
 * [Blocks](blocks-file)
-* [Class Legacy Hooks](class-legacy-hooks-file)
 * [Compatibility](compatibility-file)
 * [Deprecated](deprecated-file)
 * [Fields](fields-file)

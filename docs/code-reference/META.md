@@ -379,12 +379,6 @@ This file tracks code elements that need documentation.
 - `acf/field_group/disable_field_settings_tabs`
 - `acf/field_group/enable_field_browser`
 
-## class-legacy-hooks.php
-
-### Hooks
-
-- `scf_enable_legacy_hooks`
-
 ## fields.php
 
 ### Hooks
@@ -419,6 +413,12 @@ This file tracks code elements that need documentation.
 
 - `acf/fields/icon_picker/dashicons`
 - `acf/fields/icon_picker/tabs`
+
+## fields/class-acf-field-nav-menu.php
+
+### Hooks
+
+- `wp_nav_menu_container_allowed_tags`
 
 ## fields/class-acf-field-page_link.php
 

@@ -134,11 +134,6 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/blocks-file.md"
     },
-    "code-reference/class-legacy-hooks-file": {
-        "slug": "class-legacy-hooks-file",
-        "parent": "code-reference",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/class-legacy-hooks-file.md"
-    },
     "code-reference/compatibility-file": {
         "slug": "compatibility-file",
         "parent": "code-reference",
@@ -434,6 +429,11 @@
         "parent": "field",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/message/index.md"
     },
+    "features/field/nav_menu": {
+        "slug": "nav_menu",
+        "parent": "field",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/nav_menu/index.md"
+    },
     "features/field/number": {
         "slug": "number",
         "parent": "field",
@@ -613,6 +613,11 @@
         "slug": "message-tutorial",
         "parent": "message",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/message/tutorial.md"
+    },
+    "features/field/nav_menu/tutorial": {
+        "slug": "nav_menu-tutorial",
+        "parent": "nav_menu",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/nav_menu/tutorial.md"
     },
     "features/field/number/tutorial": {
         "slug": "number-tutorial",
