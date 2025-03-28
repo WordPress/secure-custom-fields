@@ -122,7 +122,7 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 		 */
 		public function load() {
 
-			add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 
 			// disable filters (default to raw data)
 			acf_disable_filters();

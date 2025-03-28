@@ -109,26 +109,149 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
 			$version = acf_get_setting( 'version' );
 
+			// Define path patterns.
+			$js_path_patterns    = array(
+				'pro'  => 'assets/build/js/pro/%s' . $suffix . '.js',
+				'base' => 'assets/build/js/%s' . $suffix . '.js',
+			);
+			$css_path_patterns   = array(
+				'pro'  => 'assets/build/css/pro/%s.css',
+				'base' => 'assets/build/css/%s' . $suffix . '.css',
+			);
+			$asset_path_patterns = array(
+				'pro'  => 'assets/build/js/pro/%s.asset.php',
+				'base' => 'assets/build/js/%s.asset.php',
+			);
+
+			// Define script registrations.
+			$scripts = array(
+				'acf-pro-input'           => array(
+					'handle'     => 'acf-pro-input',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-pro-input' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-pro-input' ) ),
+					'deps'       => array( 'acf-input' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+				'acf-pro-field-group'     => array(
+					'handle'     => 'acf-pro-field-group',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-pro-field-group' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-pro-field-group' ) ),
+					'deps'       => array( 'acf-field-group' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+				'acf-pro-ui-options-page' => array(
+					'handle'     => 'acf-pro-ui-options-page',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-pro-ui-options-page' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-pro-ui-options-page' ) ),
+					'deps'       => array( 'acf-input' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+				'acf'                     => array(
+					'handle'     => 'acf',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf' ) ),
+					'deps'       => array( 'jquery' ),
+					'version'    => $version,
+					'in_footer'  => false,
+				),
+				'acf-input'               => array(
+					'handle'     => 'acf-input',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-input' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf-input' ) ),
+					'deps'       => array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-resizable', 'acf', 'wp-a11y' ),
+					'version'    => $version,
+					'in_footer'  => false,
+				),
+				'acf-field-group'         => array(
+					'handle'     => 'acf-field-group',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-field-group' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf-field-group' ) ),
+					'deps'       => array( 'acf-input' ),
+					'version'    => $version,
+					'in_footer'  => false,
+				),
+				'acf-internal-post-type'  => array(
+					'handle'     => 'acf-internal-post-type',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-internal-post-type' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf-internal-post-type' ) ),
+					'deps'       => array( 'acf-input' ),
+					'version'    => $version,
+					'in_footer'  => false,
+				),
+				'acf-escaped-html-notice' => array(
+					'handle'     => 'acf-escaped-html-notice',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-escaped-html-notice' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf-escaped-html-notice' ) ),
+					'deps'       => array( 'jquery' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+			);
+
+			// Define style registrations.
+			$styles = array(
+				'acf-pro-input'       => array(
+					'handle'  => 'acf-pro-input',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['pro'], 'acf-pro-input' ) ),
+					'deps'    => array( 'acf-input' ),
+					'version' => $version,
+				),
+				'acf-pro-field-group' => array(
+					'handle'  => 'acf-pro-field-group',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['pro'], 'acf-pro-field-group' ) ),
+					'deps'    => array( 'acf-input' ),
+					'version' => $version,
+				),
+				'acf-global'          => array(
+					'handle'  => 'acf-global',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['base'], 'acf-global' ) ),
+					'deps'    => array( 'dashicons' ),
+					'version' => $version,
+				),
+				'acf-input'           => array(
+					'handle'  => 'acf-input',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['base'], 'acf-input' ) ),
+					'deps'    => array( 'acf-global' ),
+					'version' => $version,
+				),
+				'acf-field-group'     => array(
+					'handle'  => 'acf-field-group',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['base'], 'acf-field-group' ) ),
+					'deps'    => array( 'acf-input' ),
+					'version' => $version,
+				),
+			);
+
 			// Register scripts.
-			wp_register_script( 'acf-pro-input', acf_get_url( 'assets/build/js/pro/acf-pro-input' . $suffix . '.js' ), array( 'acf-input' ), $version, true );
-			wp_register_script( 'acf-pro-field-group', acf_get_url( 'assets/build/js/pro/acf-pro-field-group' . $suffix . '.js' ), array( 'acf-field-group' ), $version, true );
-			wp_register_script( 'acf-pro-ui-options-page', acf_get_url( 'assets/build/js/pro/acf-pro-ui-options-page' . $suffix . '.js' ), array( 'acf-input' ), $version, true );
+			foreach ( $scripts as $script ) {
+				// Load asset file if it exists.
+				$asset = file_exists( $script['asset_file'] ) ? require $script['asset_file'] : null;
+
+				// Merge dependencies if asset file exists.
+				$deps = $asset ? array_merge( $asset['dependencies'], $script['deps'] ) : $script['deps'];
+				$ver  = $asset ? $asset['version'] : $script['version'];
+
+				wp_register_script(
+					$script['handle'],
+					$script['src'],
+					$deps,
+					$ver,
+					$script['in_footer']
+				);
+			}
 
 			// Register styles.
-			wp_register_style( 'acf-pro-input', acf_get_url( 'assets/build/css/pro/acf-pro-input.css' ), array( 'acf-input' ), $version );
-			wp_register_style( 'acf-pro-field-group', acf_get_url( 'assets/build/css/pro/acf-pro-field-group.css' ), array( 'acf-input' ), $version );
-
-			// Register scripts.
-			wp_register_script( 'acf', acf_get_url( 'assets/build/js/acf' . $suffix . '.js' ), array( 'jquery' ), $version );
-			wp_register_script( 'acf-input', acf_get_url( 'assets/build/js/acf-input' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-resizable', 'acf', 'wp-a11y' ), $version );
-			wp_register_script( 'acf-field-group', acf_get_url( 'assets/build/js/acf-field-group' . $suffix . '.js' ), array( 'acf-input' ), $version );
-			wp_register_script( 'acf-internal-post-type', acf_get_url( 'assets/build/js/acf-internal-post-type' . $suffix . '.js' ), array( 'acf-input' ), $version );
-			wp_register_script( 'acf-escaped-html-notice', acf_get_url( 'assets/build/js/acf-escaped-html-notice' . $suffix . '.js' ), array( 'jquery' ), $version, true );
-
-			// Register styles.
-			wp_register_style( 'acf-global', acf_get_url( 'assets/build/css/acf-global' . $suffix . '.css' ), array( 'dashicons' ), $version );
-			wp_register_style( 'acf-input', acf_get_url( 'assets/build/css/acf-input' . $suffix . '.css' ), array( 'acf-global' ), $version );
-			wp_register_style( 'acf-field-group', acf_get_url( 'assets/build/css/acf-field-group' . $suffix . '.css' ), array( 'acf-input' ), $version );
+			foreach ( $styles as $style ) {
+				wp_register_style(
+					$style['handle'],
+					$style['src'],
+					$style['deps'],
+					$style['version']
+				);
+			}
 
 			/**
 			 * Fires after core scripts and styles have been registered.
