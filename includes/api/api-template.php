@@ -1084,7 +1084,7 @@ function acf_shortcode( $atts ) {
 		if ( is_preview() ) {
 			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 		} else {
-			return;
+			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . sprintf( esc_html__( 'You need to enable "Allow Access to Value in Editor UI" in the "%s" field parameters to display it in the ACF Shortcode.', 'secure-custom-fields' ), $field[ 'label' ] ) . ']' );
 		}
 	}
 
