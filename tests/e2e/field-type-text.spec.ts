@@ -11,22 +11,6 @@ const MOVIE_FIELD_LABEL = 'Movie Title';
 test.describe('Field Group > Input Text', () => {
   
   test.beforeEach(async ({ page, requestUtils }) => {
-    // Login to WordPress admin
-    await page.goto('/wp-admin');
-    await page.waitForLoadState('networkidle');
-    
-    // Wait for login form to be ready
-    await page.waitForSelector('#user_login');
-    await page.fill('#user_login', 'admin');
-    await page.fill('#user_pass', 'password');
-    
-    // Wait for submit button and click it
-    await page.waitForSelector('#wp-submit');
-    await page.click('#wp-submit');
-    
-    // Wait for admin dashboard to load
-    await page.waitForSelector('.wp-admin');
-    
     // Activate plugin and wait for success
     await requestUtils.activatePlugin(PLUGIN_SLUG);
   });
@@ -45,12 +29,16 @@ test.describe('Field Group > Input Text', () => {
     await addNewButton.waitFor({ state: 'visible' });
     await addNewButton.click();
     
-    // Wait for navigation and new page to load
+    // Wait for navigation and ensure we're on the correct page
+    await page.waitForURL('**/post-new.php?post_type=acf-field-group');
     await page.waitForLoadState('networkidle');
     await page.waitForLoadState('domcontentloaded');
     
+    // Wait for ACF form to be ready
+    await page.waitForSelector('#poststuff');
+    
     // Wait for title field and fill it using a more reliable selector
-    const titleInput = page.locator('input#title');
+    const titleInput = page.locator('#title');
     await titleInput.waitFor({ state: 'visible', timeout: 10000 });
     await titleInput.fill(FIELD_GROUP_LABEL);
     
