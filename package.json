@@ -7,7 +7,8 @@
     "prepare": "husky",
     "sort-package-json": "sort-package-json",
     "watch": "webpack --watch",
-    "test:e2e": "playwright test"
+    "test:e2e": "wp-scripts test-playwright",
+    "test:e2e:debug": "wp-scripts test-playwright --debug"
   },
   "dependencies": {
     "md5": "^2.3.0"
