@@ -42,8 +42,8 @@ test.describe('Post Type Creation', () => {
     await page.click('button.acf-btn.acf-publish[type="submit"]');
     
     // Wait for the success notification
-    // await page.waitForSelector('.updated.notice');
-    // await expect(page.locator('.updated.notice')).toContainText('Movies post type created');
+    await page.waitForSelector('.updated.notice');
+    await expect(page.locator('.updated.notice')).toContainText('Movies post type created');
     
     // Verify the post type was created by checking if it appears in the list
     // await admin.visitAdminPage('edit.php', 'post_type=acf-post-type');
