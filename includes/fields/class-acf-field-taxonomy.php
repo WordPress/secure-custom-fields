@@ -131,7 +131,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				'hide_empty' => false,
 			);
 
-			// Don't bother for hierarchial terms, we will need to load all terms anyway.
+			// Don't bother for hierarchical terms, we will need to load all terms anyway.
 			if ( $is_pagination && ! $is_hierarchical ) {
 				$args['number'] = $limit;
 				$args['offset'] = $offset;
@@ -156,7 +156,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 
 			$terms = acf_get_terms( $args );
 
-			// Sort hierachial.
+			// Sort hierarchical.
 			if ( $is_hierarchical ) {
 				$limit  = acf_maybe_get( $args, 'number', $limit );
 				$offset = acf_maybe_get( $args, 'offset', $offset );
@@ -271,7 +271,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db
+		 * This filter is applied to the $value after it is loaded from the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -330,7 +330,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				$value = $term_ids;
 			}
 
-			// convert back from array if neccessary
+			// convert back from array if necessary
 			if ( $field['field_type'] == 'select' || $field['field_type'] == 'radio' ) {
 				$value = array_shift( $value );
 			}
@@ -422,7 +422,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		}
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -451,7 +451,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				$value = $this->get_terms( $value, $field['taxonomy'] );
 			}
 
-			// convert back from array if neccessary
+			// convert back from array if necessary
 			if ( $field['field_type'] == 'select' || $field['field_type'] == 'radio' ) {
 				$value = array_shift( $value );
 			}
@@ -828,7 +828,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 				// load term
 				$term = get_term( $data['term_id'] );
 
-				// prepend ancenstors count to term name
+				// prepend ancestors count to term name
 				$prefix    = '';
 				$ancestors = get_ancestors( $term->term_id, $term->taxonomy );
 				if ( ! empty( $ancestors ) ) {

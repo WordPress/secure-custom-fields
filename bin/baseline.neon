@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Path in include_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../acf.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/acf-bidirectional-functions.php
-
-		-
 			message: '#^@param array \$sub_field does not accept actual type of parameter\: int\|false\.$#'
 			identifier: parameter.phpDocType
 			count: 1
@@ -47,18 +35,6 @@ parameters:
 			identifier: phpDoc.parseError
 			count: 2
 			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Function acf_set_filters\(\) should return array but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-helper-functions.php
-
-		-
-			message: '#^Action callback returns mixed but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/acf-hook-functions.php
 
 		-
 			message: '#^Function acf_checkbox_input\(\) should return string but return statement is missing\.$#'
@@ -101,60 +77,6 @@ parameters:
 			identifier: return.missing
 			count: 1
 			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Result of function acf_add_validation_error \(void\) is used\.$#'
-			identifier: function.void
-			count: 1
-			path: ../includes/acf-internal-post-type-functions.php
-
-		-
-			message: '#^Result of function acf_copy_metadata \(void\) is used\.$#'
-			identifier: function.void
-			count: 1
-			path: ../includes/acf-meta-functions.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/acf-user-functions.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin-internal-post-type-list.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin-internal-post-type.php
-
-		-
-			message: '#^Filter callback return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/admin/admin-internal-post-type.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin-tools.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 2
-			path: ../includes/admin/admin-upgrade.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/admin.php
 
 		-
 			message: '#^Access to an undefined property ACF_Admin_Field_Groups\:\:\$not_found_label\.$#'
@@ -325,24 +247,6 @@ parameters:
 			path: ../includes/api/api-term.php
 
 		-
-			message: '#^Access to an undefined property ACF_Data\:\:\$site_aliases\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/class-acf-data.php
-
-		-
-			message: '#^Access to an undefined property ACF_Data\:\:\$site_data\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/class-acf-data.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/class-acf-internal-post-type.php
-
-		-
 			message: '#^Action callback returns string but should not return anything\.$#'
 			identifier: return.void
 			count: 1
@@ -456,23 +360,6 @@ parameters:
 			count: 1
 			path: ../includes/fields/class-acf-field-wysiwyg.php
 
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_errors\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/forms/form-customizer.php
-
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/forms/form-customizer.php
-
-		-
-			message: '#^Access to an undefined property acf_form_customizer\:\:\$preview_values\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/forms/form-customizer.php
 
 		-
 			message: '#^Action callback returns type but should not return anything\.$#'
@@ -535,12 +422,6 @@ parameters:
 			path: ../includes/local-meta.php
 
 		-
-			message: '#^Expected 2 @param tags, found 1\.$#'
-			identifier: paramTag.count
-			count: 2
-			path: ../includes/locations.php
-
-		-
 			message: '#^Access to an undefined property \$this\(ACF_Legacy_Location\)\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 3
@@ -581,21 +462,3 @@ parameters:
 			identifier: property.notFound
 			count: 3
 			path: ../includes/validation.php
-
-		-
-			message: '#^Access to an undefined property ACF_WPML_Compatibility\:\:\$trid_ref\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/wpml.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 7
-			path: ../secure-custom-fields.php
-
-		-
-			message: '#^Path in require_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../secure-custom-fields.php

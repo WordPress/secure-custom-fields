@@ -6,7 +6,7 @@
  * Plugin Name:       Secure Custom Fields
  * Plugin URI:        https://developer.wordpress.org/secure-custom-fields/
  * Description:       Secure Custom Fields (SCF) offers an intuitive way for developers to enhance WordPress content management by adding extra fields and options without coding requirements.
- * Version:           6.4.1-beta7
+ * Version:           6.4.1
  * Author:            WordPress.org
  * Author URI:        https://wordpress.org/
  * Text Domain:       secure-custom-fields
@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '6.4.1-beta7';
+		public $version = '6.4.1';
 
 		/**
 		 * The plugin settings array.
@@ -258,7 +258,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Update the name setting now that we're in the init hook.
 			acf_update_setting( 'name', __( 'Secure Custom Fields', 'secure-custom-fields' ) );
 
-			// Include 3rd party compatiblity.
+			// Include 3rd party compatibility.
 			acf_include( 'includes/third-party.php' );
 
 			// Include wpml support.
@@ -328,14 +328,14 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/fields/class-acf-field-flexible-content.php' );
 			acf_include( 'includes/fields/class-acf-field-gallery.php' );
 			acf_include( 'includes/fields/class-acf-field-clone.php' );
+			acf_include( 'includes/fields/class-acf-field-nav-menu.php' );
 
 			/**
 			 * Fires after field types have been included.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_field_types', ACF_FIELD_API_VERSION );
 
@@ -367,20 +367,18 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after location types have been included.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_location_rules', ACF_FIELD_API_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local fields.
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_FIELD_API_VERSION The field API version.
+			 * @param   int $version The field API version.
 			 */
 			do_action( 'acf/include_fields', ACF_FIELD_API_VERSION );
 
@@ -389,7 +387,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @since ACF 6.1
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_post_types', ACF_MAJOR_VERSION );
 
@@ -398,18 +396,18 @@ if ( ! class_exists( 'ACF' ) ) {
 			 *
 			 * @since ACF 6.1
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_taxonomies', ACF_MAJOR_VERSION );
 
 			/**
 			 * Fires during initialization. Used to add local option pages.
 			 *
-			 * @param int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param int $version The major version of ACF.
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on 6.5 or newer, load block bindings. This will move to an autoloader in 6.3.
+			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in SCF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
@@ -418,10 +416,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			/**
 			 * Fires after ACF is completely "initialized".
 			 *
-			 * @date    28/09/13
 			 * @since   ACF 5.0.0
 			 *
-			 * @param   int ACF_MAJOR_VERSION The major version of ACF.
+			 * @param   int $version The major version of ACF.
 			 */
 			do_action( 'acf/init', ACF_MAJOR_VERSION );
 		}
@@ -674,7 +671,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function get_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
+		public function get_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arguments.
 			$name = strtolower( $class );
 			return isset( $this->instances[ $name ] ) ? $this->instances[ $name ] : null;
 		}
@@ -688,7 +685,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @param   string $class The instance class name.
 		 * @return  object
 		 */
-		public function new_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arugments.
+		public function new_instance( $class ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.classFound -- Opting not to rename due to PHP 8.0 named arguments.
 			$instance                 = new $class();
 			$name                     = strtolower( $class );
 			$this->instances[ $name ] = $instance;
@@ -788,6 +785,7 @@ if ( ! function_exists( 'scf_deactivate_other_instances' ) ) {
 		} elseif ( is_plugin_active( 'advanced-custom-fields/acf.php' ) ) {
 			// Check if the plugin to deactivate is 'advanced-custom-fields/acf.php' but the title is 'Secure Custom Fields'.
 			if ( ! function_exists( 'get_plugin_data' ) ) {
+				/** @phpstan-ignore-next-line */ // phpcs:ignore
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_to_deactivate );

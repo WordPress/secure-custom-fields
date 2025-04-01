@@ -50,7 +50,7 @@
 	/**
 	 *  Model
 	 *
-	 *  Base class for all inheritence
+	 *  Base class for all inheritance
 	 *
 	 *  @date	14/12/17
 	 *  @since	ACF 5.6.5
@@ -60,7 +60,7 @@
 	 */
 
 	var Model = ( acf.Model = function () {
-		// generate uique client id
+		// generate unique client id
 		this.cid = acf.uniqueId( 'acf' );
 
 		// set vars to avoid modifying prototype
@@ -743,7 +743,7 @@
 		/**
 		 *  remove
 		 *
-		 *  Removes the element and listenters
+		 *  Removes the element and listeners
 		 *
 		 *  @date	19/12/17
 		 *  @since	ACF 5.6.5

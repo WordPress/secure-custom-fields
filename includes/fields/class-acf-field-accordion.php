@@ -114,7 +114,7 @@ if ( ! class_exists( 'acf_field__accordion' ) ) :
 
 
 		/**
-		 * This filter is appied to the $field after it is loaded from the database
+		 * This filter is applied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6

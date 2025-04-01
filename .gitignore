@@ -28,6 +28,7 @@ jspm_packages/
 .env
 .env.test
 .env.production
+.wp-env.override.json
 
 # MacOS
 .DS_Store
@@ -39,11 +40,20 @@ jspm_packages/
 *.ntvs*
 *.njsproj
 *.sln
+.cursorrules
 
 # Assets build directory
 assets/build/**/*.css
 assets/build/**/*.map
 assets/build/**/*.js
+assets/build/**/*.php
 
 # PHPUnit result cache
 .phpunit.result.cache
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/artifacts/

@@ -41,7 +41,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $field after it is loaded from the database
+		 * This filter is applied to the $field after it is loaded from the database
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -104,7 +104,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -143,7 +143,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $value before it is updated in the db
+		 * This filter is applied to the $value before it is updated in the db
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6
@@ -187,7 +187,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 					// empty
 				} else {
 
-					// input is not set (hidden by conditioanl logic)
+					// input is not set (hidden by conditional logic)
 					continue;
 				}
 
@@ -468,7 +468,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 
 
 		/**
-		 * This filter is appied to the $field before it is duplicated and saved to the database
+		 * This filter is applied to the $field before it is duplicated and saved to the database
 		 *
 		 * @type    filter
 		 * @since   ACF 3.6

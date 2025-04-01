@@ -4,10 +4,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'acf_form_customizer' ) ) :
-	#[AllowDynamicProperties]
-	class acf_form_customizer {
+if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Customizer' ) ) :
+	/**
+	 * ACF Form Customizer Class
+	 *
+	 * This class handles the integration of Advanced Custom Fields with the WordPress Customizer.
+	 * It manages preview values, fields, and errors for the customizer interface, and handles
+	 * saving ACF data when customizer changes are applied.
+	 *
+	 * @package wordpress/secure-custom-fields
+	 * @since ACF 3.6.0
+	 */
+	class ACF_Form_Customizer {
 
+
+		/**
+		 * Values to be used in the preview.
+		 *
+		 * @var array
+		 */
+		public $preview_values;
+
+		/**
+		 * Fields to be used in the preview.
+		 *
+		 * @var array
+		 */
+		public $preview_fields;
+
+
+		/**
+		 * Errors to be used in the preview.
+		 *
+		 * @var array
+		 */
+		public $preview_errors;
 
 		/**
 		 * This function will setup the class functionality
@@ -19,7 +50,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @param   n/a
 		 * @return  n/a
 		 */
-		function __construct() {
+		public function __construct() {
 
 			// vars
 			$this->preview_values = array();
@@ -43,11 +74,9 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @type    action (admin_enqueue_scripts)
 		 * @date    26/01/13
 		 * @since   ACF 3.6.0
-		 *
-		 * @param   N/A
-		 * @return  N/A
+		 * @return  void
 		 */
-		function customize_controls_init() {
+		public function customize_controls_init() {
 
 			// load acf scripts
 			acf_enqueue_scripts(
@@ -68,15 +97,16 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @date    27/05/2015
 		 * @since   ACF 5.2.3
 		 *
-		 * @param   $instance (array) widget settings
-		 * @param   $new_instance (array) widget settings
-		 * @param   $old_instance (array) widget settings
-		 * @param   $widget (object) widget info
-		 * @return  $instance
+		 * @param array  $instance (array) widget settings.
+		 * @param array  $new_instance (array) widget settings.
+		 * @param array  $old_instance (array) widget settings.
+		 * @param object $widget (object) widget info.
+		 * @return array $instance Widget settings.
 		 */
-		function save_widget( $instance, $new_instance, $old_instance, $widget ) {
-
+		public function save_widget( $instance, $new_instance, $old_instance, $widget ) {
 			// bail early if not valid (customize + acf values + nonce)
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce is verified in acf_verify_nonce.
 			if ( ! isset( $_POST['wp_customize'] ) || ! isset( $new_instance['acf'] ) || ! acf_verify_nonce( 'widget' ) ) {
 				return $instance;
 			}
@@ -115,17 +145,17 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 
 
 		/**
-		 * This function will return an array of cutomizer settings that include ACF data
+		 * This function will return an array of customizer settings that include ACF data
 		 * similar to `$customizer->settings();`
 		 *
 		 * @type    function
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param   $customizer (object)
-		 * @return  $value (mixed)
+		 * @param WP_Customize_Manager $customizer Customizer object.
+		 * @return Mixed boolean | array. The sCustomizer Settings Object.
 		 */
-		function settings( $customizer ) {
+		public function settings( $customizer ) {
 
 			// vars
 			$data     = array();
@@ -141,13 +171,12 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 
 				// vars
 				$id = $setting->id;
-
-				// verify settings type
-				if ( substr( $id, 0, 6 ) == 'widget' || substr( $id, 0, 7 ) == 'nav_menu' ) {
-					// allow
-				} else {
+				// Only process widget and nav_menu settings
+				if ( 'widget' !== substr( $id, 0, 6 ) && 'nav_menu' !== substr( $id, 0, 7 ) ) {
 					continue;
 				}
+
+				// At this point, we're dealing with either a widget or nav_menu setting
 
 				// get value
 				$value = $setting->post_value();
@@ -181,10 +210,10 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param   $customizer (object)
-		 * @return  n/a
+		 * @param WP_Customize_Manager $customizer Customizer object.
+		 * @return void
 		 */
-		function customize_preview_init( $customizer ) {
+		public function customize_preview_init( $customizer ) {
 
 			// get customizer settings (widgets)
 			$settings = $this->settings( $customizer );
@@ -216,17 +245,19 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		}
 
 		/**
-		 * pre_load_value
+		 * Pre load value function.
 		 *
-		 * Used to inject preview value
+		 * Used to inject preview value.
 		 *
 		 * @date    2/2/18
 		 * @since   ACF 5.6.5
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @param mixed $value   The value to check.
+		 * @param int   $post_id The post ID.
+		 * @param array $field   The field array.
+		 * @return mixed The preview value if exists, otherwise the original value.
 		 */
-		function pre_load_value( $value, $post_id, $field ) {
+		public function pre_load_value( $value, $post_id, $field ) {
 
 			// check
 			if ( isset( $this->preview_values[ $post_id ][ $field['key'] ] ) ) {
@@ -238,17 +269,19 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		}
 
 		/**
-		 * pre_load_reference
+		 * Pre load reference function.
 		 *
-		 * Used to inject preview value
+		 * Used to inject reference value.
 		 *
 		 * @date    2/2/18
 		 * @since   ACF 5.6.5
 		 *
-		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @param string $field_key  The field key.
+		 * @param string $field_name The field name.
+		 * @param int    $post_id    The post ID.
+		 * @return string The field key if preview field exists, otherwise the original field key.
 		 */
-		function pre_load_reference( $field_key, $field_name, $post_id ) {
+		public function pre_load_reference( $field_key, $field_name, $post_id ) {
 
 			// check
 			if ( isset( $this->preview_fields[ $post_id ][ $field_name ] ) ) {
@@ -269,10 +302,10 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param   $customizer (object)
-		 * @return  n/a
+		 * @param WP_Customize_Manager $customizer The WordPress customizer manager object.
+		 * @return void
 		 */
-		function customize_save( $customizer ) {
+		public function customize_save( $customizer ) {
 
 			// get customizer settings (widgets)
 			$settings = $this->settings( $customizer );
@@ -293,22 +326,22 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 
 				// remove [acf] data from saved widget array
 				$id_data = $setting->id_data();
-				add_filter( 'pre_update_option_' . $id_data['base'], array( $this, 'pre_update_option' ), 10, 3 );
+				add_filter( 'pre_update_option_' . $id_data['base'], array( $this, 'pre_update_option' ), 10, 1 );
 			}
 		}
 
 
 		/**
-		 * This function will remove the [acf] data from widget insance
+		 * This function will remove the [acf] data from widget instance
 		 *
 		 * @type    function
 		 * @date    22/03/2016
 		 * @since   ACF 5.3.2
 		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
+		 * @param mixed $value     The new option value.
+		 * @return mixed The filtered option value.
 		 */
-		function pre_update_option( $value, $option, $old_value ) {
+		public function pre_update_option( $value ) {
 
 			// bail early if no value
 			if ( empty( $value ) ) {
@@ -343,7 +376,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		 * @param   n/a
 		 * @return  n/a
 		 */
-		function admin_footer() {
+		public function admin_footer() {
 
 			?>
 <script type="text/javascript">
@@ -353,11 +386,11 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 	acf.unload.active = 0;
 	
 	
-	// hack customizer function to remove bug caused by WYSIWYG field using aunique ID
+	// hack customizer function to remove bug caused by WYSIWYG field using a unique ID
 	// customizer compares returned AJAX HTML with the HTML of the widget form.
 	// the _getInputsSignature() function is used to generate a string based of input name + id.
 	// because ACF generates a unique ID on the WYSIWYG field, this string will not match causing the preview function to bail.
-	// an attempt was made to remove the WYSIWYG unique ID, but this caused multiple issues in the wp-admin and altimately doesn't make sense with the tinymce rule that all editors must have a unique ID.
+	// an attempt was made to remove the WYSIWYG unique ID, but this caused multiple issues in the wp-admin and ultimately doesn't make sense with the tinymce rule that all editors must have a unique ID.
 	// source: wp-admin/js/customize-widgets.js
 	
 	// vars
@@ -409,7 +442,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 	
 	
 	// modify _setInputState
-	// this function deosn't seem to run on widget title/content, only custom fields
+	// this function doesn't seem to run on widget title/content, only custom fields
 	// either way, this function is not needed and will break ACF fields 
 	WidgetControl._setInputState = function( input, state ) {
 		
@@ -423,7 +456,7 @@ if ( ! class_exists( 'acf_form_customizer' ) ) :
 		}
 	}
 
-	new acf_form_customizer();
+	new ACF_Form_Customizer();
 endif;
 
 ?>

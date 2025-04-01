@@ -2,7 +2,7 @@
 
 /**
  * This function will return a custom field value for a specific field name/key + post_id.
- * There is a 3rd parameter to turn on/off formating. This means that an image field will not use
+ * There is a 3rd parameter to turn on/off formatting. This means that an image field will not use
  * its 'return option' to format the value but return only what was saved in the database
  *
  * @since   ACF 3.6
@@ -1517,7 +1517,7 @@ function delete_sub_row( $selector, $i = 1, $post_id = false ) {
 
 
 /**
- * Depreceated Functions
+ * Deprecated Functions
  *
  * These functions are outdated
  *

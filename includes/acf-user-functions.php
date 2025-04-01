@@ -79,7 +79,7 @@ function acf_get_user_role_labels( $roles = array() ) {
 		$roles = array_keys( $all_roles );
 	}
 
-	// Loop over roles and populare labels.
+	// Loop over roles and populate labels.
 	$lables = array();
 	foreach ( $roles as $role ) {
 		if ( isset( $all_roles[ $role ] ) ) {
@@ -92,11 +92,8 @@ function acf_get_user_role_labels( $roles = array() ) {
 }
 
 /**
- * acf_allow_unfiltered_html
- *
  * Returns true if the current user is allowed to save unfiltered HTML.
  *
- * @date    9/1/19
  * @since   ACF 5.7.10
  *
  * @return  boolean
@@ -112,7 +109,7 @@ function acf_allow_unfiltered_html() {
 	 * @date    9/1/19
 	 * @since   ACF 5.7.10
 	 *
-	 * @param   bool allow_unfiltered_html The result.
+	 * @param   bool $allow_unfiltered_html Can the current user save unfiltered HTML.
 	 */
 	return apply_filters( 'acf/allow_unfiltered_html', $allow_unfiltered_html );
 }
