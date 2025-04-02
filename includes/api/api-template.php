@@ -1040,7 +1040,7 @@ function acf_shortcode( $atts ) {
 			'format_value' => true,
 		),
 		$atts,
-		'secure-custom-fields'
+		'acf'
 	);
 
 	// Decode the post ID for filtering.
