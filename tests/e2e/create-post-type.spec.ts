@@ -35,6 +35,9 @@ test.describe('Post Type Creation', () => {
     
     // SECTION: Clean up - delete the post type
     await deletePostType(page, admin);
+
+    // SECTION: Trash all post types created
+    await trashAllPostTypes(page, admin);
   });
 });
 
@@ -109,4 +112,16 @@ async function deletePostType(page, admin) {
   const deleteMessage = page.locator('.updated.notice');
   await expect(deleteMessage).toBeVisible({ timeout: 5000 });
   await expect(deleteMessage).toContainText('moved to the Trash');
+}
+
+/**
+ * Helper function to trash all post types created.
+ */
+async function trashAllPostTypes(page, admin) {
+  await admin.visitAdminPage('edit.php', 'post_status=trash&post_type=acf-post-type');
+  const emptyTrashButton = page.locator('.tablenav.bottom input[name="delete_all"][value="Empty Trash"]');
+  await emptyTrashButton.waitFor({ state: 'visible' });
+  await emptyTrashButton.click();
+  // Verify trash is empty. 
+  await expect(page.locator('.wp-list-table tbody tr td')).toHaveText('No Post Types found in Trash');
 }
