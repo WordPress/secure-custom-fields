@@ -122,6 +122,7 @@ async function trashAllPostTypes(page, admin) {
   const emptyTrashButton = page.locator('.tablenav.bottom input[name="delete_all"][value="Empty Trash"]');
   await emptyTrashButton.waitFor({ state: 'visible' });
   await emptyTrashButton.click();
-  // Verify trash is empty. 
-  await expect(page.locator('.wp-list-table tbody tr td')).toHaveText('No Post Types found in Trash');
+  const successNotice = page.locator('.notice.updated p');
+  await expect(successNotice).toBeVisible();
+  await expect(successNotice).toHaveText(/post permanently deleted/);
 }
