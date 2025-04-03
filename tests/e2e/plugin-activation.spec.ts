@@ -36,4 +36,4 @@ test.describe('Plugin Activation', () => {
     const pluginName = page.locator(`tr[data-plugin="${PLUGIN_PATH}"] .plugin-title strong`);
     await expect(pluginName).toHaveText('Secure Custom Fields');
   });
-});   
+});
