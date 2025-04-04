@@ -9,9 +9,11 @@ const FIELD_GROUP_LABEL = 'Movie Details';
 const FIELD_LABEL = 'Movie Title';
 
 test.describe('Field Type > Text', () => {
-  test.beforeEach(async ({ requestUtils }) => {
+  test.beforeEach(async ({ requestUtils, page, admin }) => {
     await requestUtils.activatePlugin(PLUGIN_SLUG);
     await requestUtils.activatePlugin(TEST_PLUGIN_SLUG);
+    await deleteFieldGroups(page, admin);
+    await emptyTrash(page, admin);
   });
 
   test.afterAll(async ({ requestUtils }) => {
@@ -54,22 +56,18 @@ test.describe('Field Type > Text', () => {
     await expect(fieldGroupRow).toBeVisible();
     
     await createAndVerifyMoviePost(page, admin, editor, requestUtils);
-
-    await deleteFieldGroup(page, admin);
-    await emptyTrash(page, admin);
   });
 });
 
 /**
  * Helper function to delete the field group
  */
-async function deleteFieldGroup(page, admin) {
+async function deleteFieldGroups(page, admin) {
   await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
   
   // Find and select the field group row
-  const fieldGroupRow = page.locator(`tr.type-acf-field-group:has(a.row-title:text("${FIELD_GROUP_LABEL}"))`);
-  await expect(fieldGroupRow).toBeVisible({ timeout: 5000 });
-  await fieldGroupRow.locator('th.check-column input[type="checkbox"]').check();
+  await expect(page.locator('#cb-select-all-1')).toBeVisible({ timeout: 5000 });
+  await page.locator('#cb-select-all-1').check();
   
   // Use bulk actions to trash the field group
   await page.selectOption('#bulk-action-selector-bottom', 'trash');
