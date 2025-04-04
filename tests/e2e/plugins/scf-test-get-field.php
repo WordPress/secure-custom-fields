@@ -7,8 +7,6 @@
  * @package scf-test-plugins
  */
 
-add_filter( 'the_content', 'scf_add_get_field_at_the_end' );
-
 /**
  * Add post-formats support to pages
  */
@@ -21,19 +19,12 @@ function scf_add_get_field_at_the_end() {
 		$field = get_field( 'movie_title' );
 
 		// Ensure we have a string value and sanitize it.
-		$field = is_string( $field ) ? $field : '';
+		$field = is_string( $field ) ? sanitize_text_field( $field ) : '';
 
-		// Sanitize the field value using WordPress sanitization functions.
-		$field = sanitize_text_field( $field );
-
-		// Escape the output for HTML context.
-		$escaped_field = esc_html( $field );
-
-		// Use wp_kses_post to allow safe HTML if needed, but escape by default.
-		$output = wp_kses_post( '<br><p id="scf-test-movie-title">Movie title: ' . $escaped_field . '</p>' );
-
-		return $output;
+		return '<p id="scf-test-movie-title">Movie title: ' . $field . '</p>';
 	}
 
 	return '';
 }
+
+add_filter( 'the_content', 'scf_add_get_field_at_the_end' );
