@@ -121,9 +121,6 @@ async function createAndVerifyMoviePost(page, admin, editor, requestUtils) {
   const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
   await movieTitleField.fill('The Shawshank Redemption');
 
-  // Save Draft
-  await editor.saveDraft();
-
   // Verify the movie title is displayed
   const previewPage = await editor.openPreviewPage();
 
