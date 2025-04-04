@@ -3,7 +3,6 @@
  */
 const { test, expect } = require('@wordpress/e2e-test-utils-playwright');
 
-// Constants
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-movie-title';
 const FIELD_GROUP_LABEL = 'Movie Details';
@@ -11,7 +10,6 @@ const FIELD_LABEL = 'Movie Title';
 
 test.describe('Field Type > Text', () => {
   test.beforeEach(async ({ requestUtils }) => {
-    // Activate plugin
     await requestUtils.activatePlugin(PLUGIN_SLUG);
     await requestUtils.activatePlugin(TEST_PLUGIN_SLUG);
   });
@@ -41,10 +39,6 @@ test.describe('Field Type > Text', () => {
     const fieldType = page.locator('select[id^="acf_fields-field_"][id$="-type"]');
     await fieldType.selectOption('text');
 
-    // Set location rule to post type: post (it's default, but let's be explicit).
-    await page.selectOption('select[id^="acf_field_group-location-group"][id$="-param"]', 'post_type');
-    await page.selectOption('select[id^="acf_field_group-location-group"][id$="-value"]', 'post');
-
     // Submit form.
     const publishButton = page.locator('button.acf-btn.acf-publish[type="submit"]');
     await publishButton.click();
@@ -58,12 +52,10 @@ test.describe('Field Type > Text', () => {
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
     const fieldGroupRow = page.locator(`tr:has-text("${FIELD_GROUP_LABEL}")`);
     await expect(fieldGroupRow).toBeVisible();
+    
     await createAndVerifyMoviePost(page, admin, editor, requestUtils);
 
-    // Clean up - delete the field group
     await deleteFieldGroup(page, admin);
-
-    // Empty trash
     await emptyTrash(page, admin);
   });
 });
