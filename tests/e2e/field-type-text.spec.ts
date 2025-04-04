@@ -9,19 +9,21 @@ const FIELD_GROUP_LABEL = 'Movie Details';
 const FIELD_LABEL = 'Movie Title';
 
 test.describe('Field Type > Text', () => {
-  test.beforeEach(async ({ requestUtils, page, admin }) => {
+  test.beforeAll(async ({ requestUtils }) => {
     await requestUtils.activatePlugin(PLUGIN_SLUG);
     await requestUtils.activatePlugin(TEST_PLUGIN_SLUG);
-    await deleteFieldGroups(page, admin);
-    await emptyTrash(page, admin);
   });
 
   test.afterAll(async ({ requestUtils }) => {
     await requestUtils.deactivatePlugin(PLUGIN_SLUG);
     await requestUtils.deactivatePlugin(TEST_PLUGIN_SLUG);
+    await requestUtils.deleteAllPosts();
   });
 
-  
+  test.beforeEach(async ({ page, admin, editor, requestUtils }) => {
+    await deleteFieldGroups(page, admin);
+  });
+
   test('should create a text field and verify it in admin', async ({ page, admin, editor, requestUtils }) => {
     // Navigate to Field Groups and create new.
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
@@ -56,6 +58,7 @@ test.describe('Field Type > Text', () => {
     await expect(fieldGroupRow).toBeVisible();
     
     await createAndVerifyMoviePost(page, admin, editor, requestUtils);
+
   });
 });
 
@@ -66,17 +69,23 @@ async function deleteFieldGroups(page, admin) {
   await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
   
   // Find and select the field group row
-  await expect(page.locator('#cb-select-all-1')).toBeVisible({ timeout: 5000 });
-  await page.locator('#cb-select-all-1').check();
+  const allFieldGroupsCheckbox = page.locator('input#cb-select-all-1');
+
+  if (await allFieldGroupsCheckbox.isVisible()) {
+    await allFieldGroupsCheckbox.check();
+    // Use bulk actions to trash the field group
+    await page.selectOption('#bulk-action-selector-bottom', 'trash');
+    await page.click('#doaction2');
+
+    // Verify deletion success message
+    const deleteMessage = page.locator('.updated.notice');
+    await expect(deleteMessage).toBeVisible({ timeout: 5000 });
+    await expect(deleteMessage).toContainText('moved to the Trash');
+
+    await emptyTrash(page, admin);
+  }
+
   
-  // Use bulk actions to trash the field group
-  await page.selectOption('#bulk-action-selector-bottom', 'trash');
-  await page.click('#doaction2');
-  
-  // Verify deletion success message
-  const deleteMessage = page.locator('.updated.notice');
-  await expect(deleteMessage).toBeVisible({ timeout: 5000 });
-  await expect(deleteMessage).toContainText('moved to the Trash');
 }
 
 /**
@@ -91,7 +100,7 @@ async function emptyTrash(page, admin) {
   // Verify success notice
   const successNotice = page.locator('.notice.updated p');
   await expect(successNotice).toBeVisible();
-  await expect(successNotice).toHaveText(/post permanently deleted/);
+  await expect(successNotice).toHaveText(/permanently deleted/);
 }
 
 
