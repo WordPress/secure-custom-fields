@@ -54,36 +54,10 @@ test.describe('Field Type > Text', () => {
     await expect(successNotice).toBeVisible();
     await expect(successNotice).toContainText('Field group published');
 
-    const post = await requestUtils.createPost({
-      title: 'Movie 1',
-      status: 'draft',
-    });
-
-    // Navigate to edit post page
-    await admin.visitAdminPage('post.php', `post=${post.id}&action=edit`);
-
-    // Fill in the movie title field using data-name attribute
-    const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
-    await movieTitleField.fill('The Shawshank Redemption');
-
-    // Save Draft
-    await editor.saveDraft();
-
-    // Verify the movie title is displayed
-    const previewPage = await editor.openPreviewPage();
-
-    const movieTitleElement = previewPage.locator('#scf-test-movie-title');
-    await expect(movieTitleElement).toBeVisible();
-    await expect(movieTitleElement).toContainText('Movie title: The Shawshank Redemption');
-
-    // Close the preview tab
-    await previewPage.close();
-
     // Verify field group appears in the list.
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
     const fieldGroupRow = page.locator(`tr:has-text("${FIELD_GROUP_LABEL}")`);
     await expect(fieldGroupRow).toBeVisible();
-
     await createAndVerifyMoviePost(page, admin, editor, requestUtils);
 
     // Clean up - delete the field group
