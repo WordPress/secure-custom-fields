@@ -20,7 +20,7 @@ test.describe('Field Type > Text', () => {
     await requestUtils.deleteAllPosts();
   });
 
-  test.beforeEach(async ({ page, admin, editor, requestUtils }) => {
+  test.beforeEach(async ({ page, admin }) => {
     await deleteFieldGroups(page, admin);
   });
 
@@ -57,7 +57,28 @@ test.describe('Field Type > Text', () => {
     const fieldGroupRow = page.locator(`tr:has-text("${FIELD_GROUP_LABEL}")`);
     await expect(fieldGroupRow).toBeVisible();
     
-    await createAndVerifyMoviePost(page, admin, editor, requestUtils);
+    // Create a new post
+    const post = await requestUtils.createPost({
+      title: 'Movie 1',
+      status: 'draft',
+    });
+
+    // Navigate to edit post page
+    await admin.visitAdminPage('post.php', `post=${post.id}&action=edit`);
+
+    // Fill in the movie title field using data-name attribute
+    const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
+    await movieTitleField.fill('The Shawshank Redemption');
+
+    // Verify the movie title is displayed
+    const previewPage = await editor.openPreviewPage();
+
+    const movieTitleElement = previewPage.locator('#scf-test-movie-title');
+    await expect(movieTitleElement).toBeVisible();
+    await expect(movieTitleElement).toContainText('Movie title: The Shawshank Redemption');
+
+    // Close the preview tab
+    await previewPage.close();
 
   });
 });
@@ -101,33 +122,4 @@ async function emptyTrash(page, admin) {
   const successNotice = page.locator('.notice.updated p');
   await expect(successNotice).toBeVisible();
   await expect(successNotice).toHaveText(/permanently deleted/);
-}
-
-
-/**
- * Helper function to create a post with movie title and verify it on frontend
- */
-async function createAndVerifyMoviePost(page, admin, editor, requestUtils) {
-  // Create a new post
-  const post = await requestUtils.createPost({
-    title: 'Movie 1',
-    status: 'draft',
-  });
-
-  // Navigate to edit post page
-  await admin.visitAdminPage('post.php', `post=${post.id}&action=edit`);
-
-  // Fill in the movie title field using data-name attribute
-  const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
-  await movieTitleField.fill('The Shawshank Redemption');
-
-  // Verify the movie title is displayed
-  const previewPage = await editor.openPreviewPage();
-
-  const movieTitleElement = previewPage.locator('#scf-test-movie-title');
-  await expect(movieTitleElement).toBeVisible();
-  await expect(movieTitleElement).toContainText('Movie title: The Shawshank Redemption');
-
-  // Close the preview tab
-  await previewPage.close();
 }
