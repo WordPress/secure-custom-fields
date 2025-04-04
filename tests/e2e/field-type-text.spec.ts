@@ -12,6 +12,7 @@ test.describe('Field Type > Text', () => {
   test.beforeAll(async ({ requestUtils }) => {
     await requestUtils.activatePlugin(PLUGIN_SLUG);
     await requestUtils.activatePlugin(TEST_PLUGIN_SLUG);
+    
   });
 
   test.afterAll(async ({ requestUtils }) => {
@@ -25,6 +26,7 @@ test.describe('Field Type > Text', () => {
   });
 
   test('should create a text field and verify it in admin', async ({ page, admin, editor, requestUtils }) => {
+
     // Navigate to Field Groups and create new.
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
     const addNewButton = page.locator('a.acf-btn:has-text("Add New")');
@@ -61,10 +63,11 @@ test.describe('Field Type > Text', () => {
     const post = await requestUtils.createPost({
       title: 'Movie 1',
       status: 'draft',
+      showWelcomeGuide: false,
     });
 
     // Navigate to edit post page
-    await admin.visitAdminPage('post.php', `post=${post.id}&action=edit`);
+    await admin.editPost(post.id);
 
     // Fill in the movie title field using data-name attribute
     const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
