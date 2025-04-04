@@ -1,4 +1,12 @@
 {
-	"$schema": "./schemas/json/wp-env.json",
-	"plugins": [ "." ]
+  "$schema": "./schemas/json/wp-env.json",
+  "plugins": ["."],
+  "env": {
+    "tests": {
+      "mappings": {
+        "wp-content/plugins/secure-custom-fields": ".",
+        "wp-content/plugins/scf-test-plugins": "./tests/e2e/plugins"
+      }
+    }
+  }
 }

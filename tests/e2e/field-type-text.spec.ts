@@ -5,22 +5,56 @@ const { test, expect } = require('@wordpress/e2e-test-utils-playwright');
 
 // Constants
 const PLUGIN_SLUG = 'secure-custom-fields';
+const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-movie-title';
 const FIELD_GROUP_LABEL = 'Movie Details';
 const FIELD_LABEL = 'Movie Title';
 const FIELD_NAME = 'movie_title';
 const FIELD_INSTRUCTIONS = 'Enter the movie title';
 
+/**
+ * Helper function to create a post with movie title and verify it on frontend
+ */
+async function createAndVerifyMoviePost(page, admin, editor, requestUtils) {
+  // Create a new post
+  const post = await requestUtils.createPost({
+    title: 'Movie 1',
+    status: 'draft',
+  });
+
+  // Navigate to edit post page
+  await admin.visitAdminPage('post.php', `post=${post.id}&action=edit`);
+
+  // Fill in the movie title field using data-name attribute
+  const movieTitleField = page.locator('.acf-field[data-name="movie_title"] input[type="text"]');
+  await movieTitleField.fill('The Shawshank Redemption');
+
+  // Save Draft
+  await editor.saveDraft();
+
+  // Verify the movie title is displayed
+  const previewPage = await editor.openPreviewPage();
+
+  const movieTitleElement = previewPage.locator('#scf-test-movie-title');
+  await expect(movieTitleElement).toBeVisible();
+  await expect(movieTitleElement).toContainText('Movie title: The Shawshank Redemption');
+
+  // Close the preview tab
+  await previewPage.close();
+}
+
 test.describe('Field Type > Text', () => {
   test.beforeEach(async ({ requestUtils }) => {
     // Activate plugin
     await requestUtils.activatePlugin(PLUGIN_SLUG);
+    await requestUtils.activatePlugin(TEST_PLUGIN_SLUG);
   });
 
   test.afterAll(async ({ requestUtils }) => {
     await requestUtils.deactivatePlugin(PLUGIN_SLUG);
+    await requestUtils.deactivatePlugin(TEST_PLUGIN_SLUG);
   });
 
-  test('should create a text field and verify it in admin', async ({ page, admin }) => {
+  test('should create a text field and verify it in admin', async ({ page, admin, editor, requestUtils }) => {
     // Navigate to Field Groups and create new.
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
     const addNewButton = page.locator('a.acf-btn:has-text("Add New")');
@@ -51,6 +85,9 @@ test.describe('Field Type > Text', () => {
     const successNotice = page.locator('.updated.notice');
     await expect(successNotice).toBeVisible();
     await expect(successNotice).toContainText('Field group published');
+
+    // Create and verify post with movie title
+    await createAndVerifyMoviePost(page, admin, editor, requestUtils);
 
     // Verify field group appears in the list.
     await admin.visitAdminPage('edit.php', 'post_type=acf-field-group');
