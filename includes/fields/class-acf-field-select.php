@@ -583,13 +583,13 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			// value
 			$return_format = isset( $field['return_format'] ) ? $field['return_format'] : 'value';
 
-			if ( isset( $return_format ) && 'value' === $return_format ) {
+			if ( 'value' === $return_format ) {
 				// do nothing
 				return $value;
-			} elseif ( isset( $return_format ) && 'label' === $return_format ) {
+			} elseif ( 'label' === $return_format ) {
 				// label
 				$value = $label;
-			} elseif ( isset( $return_format ) && 'array' === $return_format ) {
+			} elseif ( 'array' === $return_format ) {
 				// array
 				$value = array(
 					'value' => $value,
