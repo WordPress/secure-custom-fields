@@ -61,7 +61,7 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 				'value' => 0,
 			);
 
-			$active = $field['value'] ? true : false;
+			$active = isset( $field['value'] ) && $field['value'] ? true : false;
 			$switch = '';
 
 			// checked
@@ -70,13 +70,13 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 			}
 
 			// ui
-			if ( $field['ui'] ) {
+			if ( isset( $field['ui'] ) && $field['ui'] ) {
 
 				// vars
-				if ( $field['ui_on_text'] === '' ) {
+				if ( isset( $field['ui_on_text'] ) && '' === $field['ui_on_text'] ) {
 					$field['ui_on_text'] = __( 'Yes', 'secure-custom-fields' );
 				}
-				if ( $field['ui_off_text'] === '' ) {
+				if ( isset( $field['ui_off_text'] ) && '' === $field['ui_off_text'] ) {
 					$field['ui_off_text'] = __( 'No', 'secure-custom-fields' );
 				}
 
@@ -84,8 +84,8 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 				$input['class'] .= ' acf-switch-input';
 				// $input['style'] = 'display:none;';
 				$switch .= '<div class="acf-switch' . ( $active ? ' -on' : '' ) . '">';
-				$switch .= '<span class="acf-switch-on">' . $field['ui_on_text'] . '</span>';
-				$switch .= '<span class="acf-switch-off">' . $field['ui_off_text'] . '</span>';
+				$switch .= '<span class="acf-switch-on">' . ( isset( $field['ui_on_text'] ) ? $field['ui_on_text'] : '' ) . '</span>';
+				$switch .= '<span class="acf-switch-off">' . ( isset( $field['ui_off_text'] ) ? $field['ui_off_text'] : '' ) . '</span>';
 				$switch .= '<div class="acf-switch-slider"></div>';
 				$switch .= '</div>';
 			}
@@ -100,7 +100,7 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 				echo acf_esc_html( $switch );}
 			?>
 			<?php
-			if ( $field['message'] ) :
+			if ( isset( $field['message'] ) && $field['message'] ) :
 				?>
 				<span class="message"><?php echo acf_esc_html( $field['message'] ); ?></span><?php endif; ?>
 	</label>

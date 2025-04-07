@@ -70,26 +70,28 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			);
 
 			// append to class
-			$ul['class'] .= ' ' . ( $field['layout'] == 'horizontal' ? 'acf-hl' : 'acf-bl' );
-			$ul['class'] .= ' ' . $field['class'];
+			$ul['class'] .= ' ' . ( isset( $field['layout'] ) && 'horizontal' === $field['layout'] ? 'acf-hl' : 'acf-bl' );
+			$ul['class'] .= ' ' . ( isset( $field['class'] ) ? $field['class'] : '' );
 
 			// checkbox saves an array
-			$field['name'] .= '[]';
+			if ( isset( $field['name'] ) ) {
+				$field['name'] .= '[]';
+			}
 
 			// choices
-			if ( ! empty( $field['choices'] ) ) {
+			if ( isset( $field['choices'] ) && ! empty( $field['choices'] ) ) {
 
 				// choices
 				$li .= $this->render_field_choices( $field );
 
 				// toggle
-				if ( $field['toggle'] ) {
+				if ( isset( $field['toggle'] ) && $field['toggle'] ) {
 					$li = $this->render_field_toggle( $field ) . $li;
 				}
 			}
 
 			// custom
-			if ( $field['allow_custom'] ) {
+			if ( isset( $field['allow_custom'] ) && $field['allow_custom'] ) {
 				$li .= $this->render_field_custom( $field );
 			}
 
@@ -159,7 +161,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			);
 
 			// custom label
-			if ( is_string( $field['toggle'] ) ) {
+			if ( isset( $field['toggle'] ) && is_string( $field['toggle'] ) ) {
 				$atts['label'] = $field['toggle'];
 			}
 
@@ -189,31 +191,34 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$html = '';
 
 			// loop
-			foreach ( $field['value'] as $value ) {
+			if ( isset( $field['value'] ) && is_array( $field['value'] ) ) {
+				foreach ( $field['value'] as $value ) {
 
-				// ignore if already exists
-				if ( isset( $field['choices'][ $value ] ) ) {
-					continue;
+					// ignore if already exists
+					if ( isset( $field['choices'][ $value ] ) ) {
+						continue;
+					}
+
+					// vars
+					$esc_value  = esc_attr( $value );
+					$text_input = array(
+						'name'  => isset( $field['name'] ) ? $field['name'] : '',
+						'value' => $value,
+					);
+
+					// bail early if choice already exists
+					if ( in_array( $esc_value, $this->_values, true ) ) {
+						continue;
+					}
+
+					// append
+					$html .= '<li><input class="acf-checkbox-custom" type="checkbox" checked="checked" />' . acf_get_text_input( $text_input ) . '</li>' . "\n";
 				}
-
-				// vars
-				$esc_value  = esc_attr( $value );
-				$text_input = array(
-					'name'  => $field['name'],
-					'value' => $value,
-				);
-
-				// bail early if choice already exists
-				if ( in_array( $esc_value, $this->_values ) ) {
-					continue;
-				}
-
-				// append
-				$html .= '<li><input class="acf-checkbox-custom" type="checkbox" checked="checked" />' . acf_get_text_input( $text_input ) . '</li>' . "\n";
 			}
 
 			// append button
-			$html .= '<li><a href="#" class="button acf-add-checkbox">' . esc_attr( $field['custom_choice_button_text'] ) . '</a></li>' . "\n";
+			// We need to check if is better to just not display the li if the button text is empty. But for now let's keep it as stable as possible.
+			$html .= '<li><a href="#" class="button acf-add-checkbox">' . esc_attr( isset( $field['custom_choice_button_text'] ) ? $field['custom_choice_button_text'] : '' ) . '</a></li>' . "\n";
 
 			// return
 			return $html;

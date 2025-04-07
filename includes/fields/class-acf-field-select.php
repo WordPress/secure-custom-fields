@@ -171,7 +171,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			$s       = null;
 
 			// search.
-			if ( $options['s'] !== '' ) {
+			if ( isset( $options['s'] ) && '' !== $options['s'] ) {
 
 				// strip slashes (search may be integer)
 				$s = strval( $options['s'] );
@@ -231,12 +231,12 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			// prepend empty choice
 			// - only for single selects
 			// - have tried array_merge but this causes keys to re-index if is numeric (post ID's)
-			if ( $field['allow_null'] && ! $field['multiple'] ) {
+			if ( isset( $field['allow_null'] ) && $field['allow_null'] && isset( $field['multiple'] ) && ! $field['multiple'] ) {
 				$choices = array( '' => "- {$field['placeholder']} -" ) + $choices;
 			}
 
 			// clean up choices if using ajax
-			if ( $field['ui'] && $field['ajax'] ) {
+			if ( isset( $field['ui'] ) && $field['ui'] && isset( $field['ajax'] ) && $field['ajax'] ) {
 				$minimal = array();
 				foreach ( $value as $key ) {
 					if ( isset( $choices[ $key ] ) ) {
@@ -248,14 +248,14 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// vars
 			$select = array(
-				'id'               => $field['id'],
-				'class'            => $field['class'],
-				'name'             => $field['name'],
-				'data-ui'          => $field['ui'],
-				'data-ajax'        => $field['ajax'],
-				'data-multiple'    => $field['multiple'],
-				'data-placeholder' => $field['placeholder'],
-				'data-allow_null'  => $field['allow_null'],
+				'id'               => isset( $field['id'] ) ? $field['id'] : '',
+				'class'            => isset( $field['class'] ) ? $field['class'] : '',
+				'name'             => isset( $field['name'] ) ? $field['name'] : '',
+				'data-ui'          => isset( $field['ui'] ) ? $field['ui'] : '',
+				'data-ajax'        => isset( $field['ajax'] ) ? $field['ajax'] : '',
+				'data-multiple'    => isset( $field['multiple'] ) ? $field['multiple'] : '',
+				'data-placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
+				'data-allow_null'  => isset( $field['allow_null'] ) ? $field['allow_null'] : '',
 			);
 
 			if ( ! empty( $field['aria-label'] ) ) {
@@ -263,13 +263,13 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			}
 
 			// multiple
-			if ( $field['multiple'] ) {
+			if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 				$select['multiple'] = 'multiple';
 				$select['size']     = 5;
 				$select['name']    .= '[]';
 
 				// Reduce size to single line if UI.
-				if ( $field['ui'] ) {
+				if ( isset( $field['ui'] ) && $field['ui'] ) {
 					$select['size'] = 1;
 				}
 			}
@@ -287,7 +287,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			if ( ! empty( $field['nonce'] ) ) {
 				$select['data-nonce'] = $field['nonce'];
 			}
-			if ( $field['ajax'] && empty( $field['nonce'] ) && acf_is_field_key( $field['key'] ) ) {
+			if ( isset( $field['ajax'] ) && $field['ajax'] && empty( $field['nonce'] ) && isset( $field['key'] ) && acf_is_field_key( $field['key'] ) ) {
 				$select['data-nonce'] = wp_create_nonce( $field['key'] );
 			}
 			if ( ! empty( $field['hide_search'] ) ) {
@@ -295,7 +295,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			}
 
 			// hidden input is needed to allow validation to see <select> element with no selected value
-			if ( $field['multiple'] || $field['ui'] ) {
+			if ( ( isset( $field['multiple'] ) && $field['multiple'] ) || ( isset( $field['ui'] ) && $field['ui'] ) ) {
 				acf_hidden_input(
 					array(
 						'id'   => $field['id'] . '-input',
@@ -581,15 +581,16 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			$label = acf_maybe_get( $field['choices'], $value, $value );
 
 			// value
-			if ( $field['return_format'] == 'value' ) {
+			$return_format = isset( $field['return_format'] ) ? $field['return_format'] : 'value';
 
+			if ( isset( $return_format ) && 'value' === $return_format ) {
 				// do nothing
+				return $value;
+			} elseif ( isset( $return_format ) && 'label' === $return_format ) {
 				// label
-			} elseif ( $field['return_format'] == 'label' ) {
 				$value = $label;
-
+			} elseif ( isset( $return_format ) && 'array' === $return_format ) {
 				// array
-			} elseif ( $field['return_format'] == 'array' ) {
 				$value = array(
 					'value' => $value,
 					'label' => $label,
@@ -614,6 +615,10 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 				return $valid;
 			}
 
+			if ( ! isset( $field['choices'] ) ) {
+				return $valid;
+			}
+
 			$option_keys = array_diff(
 				array_keys( $field['choices'] ),
 				array_values( $field['choices'] )
@@ -622,12 +627,14 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			$allowed = empty( $option_keys ) ? $field['choices'] : $option_keys;
 
 			if ( ! in_array( $value, $allowed ) ) {
-				$param = sprintf( '%s[%s]', $field['prefix'], $field['name'] );
-				$data  = array(
+				$prefix = isset( $field['prefix'] ) ? $field['prefix'] : '';
+				$name   = isset( $field['name'] ) ? $field['name'] : '';
+				$param  = sprintf( '%s[%s]', $prefix, $name );
+				$data   = array(
 					'param' => $param,
 					'value' => $value,
 				);
-				$error = sprintf(
+				$error  = sprintf(
 					/* translators: 1: parameter, 2: allowed values */
 					__( '%1$s is not one of %2$s', 'secure-custom-fields' ),
 					$param,

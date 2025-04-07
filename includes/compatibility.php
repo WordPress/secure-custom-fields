@@ -192,7 +192,7 @@ if ( ! class_exists( 'ACF_Compatibility' ) ) :
 			}
 
 			// object is now array
-			if ( $field['return_format'] == 'object' ) {
+			if ( isset( $field['return_format'] ) && 'object' === $field['return_format'] ) {
 				$field['return_format'] = 'array';
 			}
 

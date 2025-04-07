@@ -48,15 +48,15 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			$html = '';
 
 			// Prepend text.
-			if ( $field['prepend'] !== '' ) {
-				$field['class'] .= ' acf-is-prepended';
-				$html           .= '<div class="acf-input-prepend">' . acf_esc_html( $field['prepend'] ) . '</div>';
+			if ( isset( $field['prepend'] ) && '' !== $field['prepend'] ) {
+				$field['class'] = isset( $field['class'] ) ? $field['class'] . ' acf-is-prepended' : 'acf-is-prepended';
+				$html          .= '<div class="acf-input-prepend">' . acf_esc_html( $field['prepend'] ) . '</div>';
 			}
 
 			// Append text.
-			if ( $field['append'] !== '' ) {
-				$field['class'] .= ' acf-is-appended';
-				$html           .= '<div class="acf-input-append">' . acf_esc_html( $field['append'] ) . '</div>';
+			if ( isset( $field['append'] ) && '' !== $field['append'] ) {
+				$field['class'] = isset( $field['class'] ) ? $field['class'] . ' acf-is-appended' : 'acf-is-appended';
+				$html          .= '<div class="acf-input-append">' . acf_esc_html( $field['append'] ) . '</div>';
 			}
 
 			// Input.
@@ -179,7 +179,7 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 		function validate_value( $valid, $value, $field, $input ) {
 
 			// Check maxlength
-			if ( $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
+			if ( isset( $field['maxlength'] ) && $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
 				/* translators: %d: the maximum number of characters */
 				return sprintf( __( 'Value must not exceed %d characters', 'secure-custom-fields' ), $field['maxlength'] );
 			}

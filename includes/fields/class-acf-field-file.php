@@ -95,8 +95,8 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 
 			$div = array(
 				'class'           => 'acf-file-uploader',
-				'data-library'    => $field['library'],
-				'data-mime_types' => $field['mime_types'],
+				'data-library'    => isset( $field['library'] ) ? $field['library'] : '',
+				'data-mime_types' => isset( $field['mime_types'] ) ? $field['mime_types'] : '',
 				'data-uploader'   => $uploader,
 			);
 
