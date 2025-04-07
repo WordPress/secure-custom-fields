@@ -9,10 +9,6 @@ const PLUGIN_PATH = `${PLUGIN_SLUG}/${PLUGIN_SLUG}.php`;
 test.describe('Plugin Activation', () => {
   test.beforeEach(async ({ page, requestUtils }) => {
     // Login to WordPress admin
-    await page.goto('/wp-admin');
-    await page.fill('#user_login', 'admin');
-    await page.fill('#user_pass', 'password');
-    await page.click('#wp-submit');
     await requestUtils.activatePlugin(PLUGIN_SLUG);
   });
 
@@ -20,9 +16,9 @@ test.describe('Plugin Activation', () => {
     await requestUtils.deactivatePlugin(PLUGIN_SLUG);
   });
 
-  test('should be able to access plugin settings', async ({ page }) => {
+  test('should be able to access plugin settings', async ({ page, admin }) => {
     // Navigate to plugins page
-    await page.goto('/wp-admin/plugins.php');
+    await admin.visitAdminPage('plugins.php');
     
     // Check if our plugin is active
     const pluginRow = page.locator(`tr[data-plugin="${PLUGIN_PATH}"]`);
@@ -32,12 +28,12 @@ test.describe('Plugin Activation', () => {
     await expect(pluginRow.locator('.deactivate a')).toBeVisible();
   });
 
-  test('should have correct plugin name in admin', async ({ page }) => {
+  test('should have correct plugin name in admin', async ({ page, admin }) => {
     // Navigate to plugins page
-    await page.goto('/wp-admin/plugins.php');
+    await admin.visitAdminPage('plugins.php');
     
     // Check plugin name
     const pluginName = page.locator(`tr[data-plugin="${PLUGIN_PATH}"] .plugin-title strong`);
     await expect(pluginName).toHaveText('Secure Custom Fields');
   });
-});   
+});
