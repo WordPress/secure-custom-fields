@@ -84,8 +84,8 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 				$input['class'] .= ' acf-switch-input';
 				// $input['style'] = 'display:none;';
 				$switch .= '<div class="acf-switch' . ( $active ? ' -on' : '' ) . '">';
-				$switch .= '<span class="acf-switch-on">' . ( isset( $field['ui_on_text'] ) ? $field['ui_on_text'] : '' ) . '</span>';
-				$switch .= '<span class="acf-switch-off">' . ( isset( $field['ui_off_text'] ) ? $field['ui_off_text'] : '' ) . '</span>';
+				$switch .= '<span class="acf-switch-on">' . acf_maybe_get( $field, 'ui_on_text', '' ) . '</span>';
+				$switch .= '<span class="acf-switch-off">' . acf_maybe_get( $field, 'ui_off_text', '' ) . '</span>';
 				$switch .= '<div class="acf-switch-slider"></div>';
 				$switch .= '</div>';
 			}
@@ -100,7 +100,7 @@ if ( ! class_exists( 'acf_field_true_false' ) ) :
 				echo acf_esc_html( $switch );}
 			?>
 			<?php
-			if ( isset( $field['message'] ) && $field['message'] ) :
+			if ( acf_maybe_get( $field, 'message' ) ) :
 				?>
 				<span class="message"><?php echo acf_esc_html( $field['message'] ); ?></span><?php endif; ?>
 	</label>
