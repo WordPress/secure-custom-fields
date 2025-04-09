@@ -70,22 +70,23 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			);
 
 			// append to class
-			$ul['class'] .= ' ' . ( isset( $field['layout'] ) && 'horizontal' === $field['layout'] ? 'acf-hl' : 'acf-bl' );
-			$ul['class'] .= ' ' . ( isset( $field['class'] ) ? $field['class'] : '' );
+			$ul['class'] .= ' ' . ( 'horizontal' === acf_maybe_get( $field, 'layout' ) ? 'acf-hl' : 'acf-bl' );
+			$ul['class'] .= ' ' . acf_maybe_get( $field, 'class', '' );
 
 			// checkbox saves an array
-			if ( isset( $field['name'] ) ) {
+			if ( acf_maybe_get( $field, 'name' ) ) {
 				$field['name'] .= '[]';
 			}
 
 			// choices
-			if ( isset( $field['choices'] ) && ! empty( $field['choices'] ) ) {
+			$choices = acf_maybe_get( $field, 'choices', array() );
+			if ( ! empty( $choices ) ) {
 
 				// choices
 				$li .= $this->render_field_choices( $field );
 
 				// toggle
-				if ( isset( $field['toggle'] ) && $field['toggle'] ) {
+				if ( acf_maybe_get( $field, 'toggle' ) ) {
 					$li = $this->render_field_toggle( $field ) . $li;
 				}
 			}
@@ -161,8 +162,9 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			);
 
 			// custom label
-			if ( isset( $field['toggle'] ) && is_string( $field['toggle'] ) ) {
-				$atts['label'] = $field['toggle'];
+			$toggle = acf_maybe_get( $field, 'toggle' );
+			if ( is_string( $toggle ) ) {
+				$atts['label'] = $toggle;
 			}
 
 			// checked
@@ -191,19 +193,21 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$html = '';
 
 			// loop
-			if ( isset( $field['value'] ) && is_array( $field['value'] ) ) {
-				foreach ( $field['value'] as $value ) {
+			$value = acf_maybe_get( $field, 'value', array() );
+			if ( is_array( $value ) ) {
+				foreach ( $value as $item ) {
 
 					// ignore if already exists
-					if ( isset( $field['choices'][ $value ] ) ) {
+					$choices = acf_maybe_get( $field, 'choices', array() );
+					if ( isset( $choices[ $item ] ) ) {
 						continue;
 					}
 
 					// vars
-					$esc_value  = esc_attr( $value );
+					$esc_value  = esc_attr( $item );
 					$text_input = array(
-						'name'  => isset( $field['name'] ) ? $field['name'] : '',
-						'value' => $value,
+						'name'  => acf_maybe_get( $field, 'name', '' ),
+						'value' => $item,
 					);
 
 					// bail early if choice already exists
@@ -218,7 +222,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 			// append button
 			// We need to check if is better to just not display the li if the button text is empty. But for now let's keep it as stable as possible.
-			$html .= '<li><a href="#" class="button acf-add-checkbox">' . esc_attr( isset( $field['custom_choice_button_text'] ) ? $field['custom_choice_button_text'] : '' ) . '</a></li>' . "\n";
+			$html .= '<li><a href="#" class="button acf-add-checkbox">' . esc_attr( acf_maybe_get( $field, 'custom_choice_button_text', '' ) ) . '</a></li>' . "\n";
 
 			// return
 			return $html;
