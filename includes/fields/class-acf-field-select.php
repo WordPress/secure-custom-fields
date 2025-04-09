@@ -248,14 +248,14 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// vars
 			$select = array(
-				'id'               => isset( $field['id'] ) ? $field['id'] : '',
-				'class'            => isset( $field['class'] ) ? $field['class'] : '',
-				'name'             => isset( $field['name'] ) ? $field['name'] : '',
-				'data-ui'          => isset( $field['ui'] ) ? $field['ui'] : '',
-				'data-ajax'        => isset( $field['ajax'] ) ? $field['ajax'] : '',
-				'data-multiple'    => isset( $field['multiple'] ) ? $field['multiple'] : '',
-				'data-placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
-				'data-allow_null'  => isset( $field['allow_null'] ) ? $field['allow_null'] : '',
+				'id'               => acf_maybe_get( $field, 'id', '' ),
+				'class'            => acf_maybe_get( $field, 'class', '' ),
+				'name'             => acf_maybe_get( $field, 'name', '' ),
+				'data-ui'          => acf_maybe_get( $field, 'ui', '' ),
+				'data-ajax'        => acf_maybe_get( $field, 'ajax', '' ),
+				'data-multiple'    => acf_maybe_get( $field, 'multiple', '' ),
+				'data-placeholder' => acf_maybe_get( $field, 'placeholder', '' ),
+				'data-allow_null'  => acf_maybe_get( $field, 'allow_null', '' ),
 			);
 
 			if ( ! empty( $field['aria-label'] ) ) {
@@ -615,7 +615,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 				return $valid;
 			}
 
-			if ( ! isset( $field['choices'] ) ) {
+			if ( ! acf_maybe_get( $field, 'choices' ) ) {
 				return $valid;
 			}
 
