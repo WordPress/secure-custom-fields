@@ -192,7 +192,7 @@ if ( ! class_exists( 'ACF_Compatibility' ) ) :
 			}
 
 			// object is now array
-			if ( $field['return_format'] == 'object' ) {
+			if ( 'object' === acf_maybe_get( $field, 'return_format' ) ) {
 				$field['return_format'] = 'array';
 			}
 

@@ -55,18 +55,18 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 			$html  = '';
 
 			// step
-			if ( ! $field['step'] ) {
+			if ( ! isset( $field['step'] ) || ! $field['step'] ) {
 				$field['step'] = 'any';
 			}
 
 			// prepend
-			if ( $field['prepend'] !== '' ) {
-				$field['class'] .= ' acf-is-prepended';
-				$html           .= '<div class="acf-input-prepend">' . acf_esc_html( $field['prepend'] ) . '</div>';
+			if ( isset( $field['prepend'] ) && '' !== $field['prepend'] ) {
+				$field['class'] = isset( $field['class'] ) ? $field['class'] . ' acf-is-prepended' : 'acf-is-prepended';
+				$html          .= '<div class="acf-input-prepend">' . acf_esc_html( $field['prepend'] ) . '</div>';
 			}
 
 			// append
-			if ( $field['append'] !== '' ) {
+			if ( isset( $field['append'] ) && '' !== $field['append'] ) {
 				$field['class'] .= ' acf-is-appended';
 				$html           .= '<div class="acf-input-append">' . acf_esc_html( $field['append'] ) . '</div>';
 			}
