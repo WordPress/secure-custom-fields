@@ -213,6 +213,8 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-experiments.php' );
+				acf_include( 'includes/admin/admin-experiments-functions.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
 
