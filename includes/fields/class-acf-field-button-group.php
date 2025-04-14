@@ -75,19 +75,22 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 			}
 
 			// maybe select initial value
-			if ( ! $field['allow_null'] && $selected === null ) {
+			if ( ( ! isset( $field['allow_null'] ) || ! $field['allow_null'] ) && null === $selected ) {
 				$buttons[0]['checked'] = true;
 			}
 
 			// div
 			$div = array( 'class' => 'acf-button-group' );
 
-			if ( $field['layout'] == 'vertical' ) {
-				$div['class'] .= ' -vertical'; }
-			if ( $field['class'] ) {
-				$div['class'] .= ' ' . $field['class']; }
-			if ( $field['allow_null'] ) {
-				$div['data-allow_null'] = 1; }
+			if ( 'vertical' === acf_maybe_get( $field, 'layout' ) ) {
+				$div['class'] .= ' -vertical';
+			}
+			if ( acf_maybe_get( $field, 'class' ) ) {
+				$div['class'] .= ' ' . acf_maybe_get( $field, 'class' );
+			}
+			if ( acf_maybe_get( $field, 'allow_null' ) ) {
+				$div['data-allow_null'] = 1;
+			}
 
 			// hidden input
 			$html .= acf_get_hidden_input( array( 'name' => $field['name'] ) );
