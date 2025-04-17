@@ -50,6 +50,8 @@ class Release_Preparation {
 		$this->run_tests();
 		$this->generate_docs();
 		$this->update_translations();
+		// need to return to correct directory after running `update_translations`.
+		exec( chdir( dirname( __DIR__ ) ) );
 		$this->commit_changes();
 
 		$current_version = $this->get_current_version();
