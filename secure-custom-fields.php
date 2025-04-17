@@ -245,19 +245,6 @@ if ( ! class_exists( 'ACF' ) ) {
 				return;
 			}
 
-			// Enqueue necessary WordPress dependencies for the command palette
-			wp_enqueue_script( 'wp-plugins' );
-			wp_enqueue_script( 'wp-element' );
-			wp_enqueue_script( 'wp-components' );
-			wp_enqueue_script( 'wp-data' );
-			wp_enqueue_script( 'wp-commands' );
-			wp_enqueue_script( 'wp-i18n' );
-			wp_enqueue_script( 'wp-dom-ready' );
-
-			// Prepare the script URL with proper suffix
-			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
-			$version = acf_get_setting( 'version' );
-
 			// Get all SCF custom post types to add to command palette
 			$custom_post_types = array();
 
@@ -276,37 +263,45 @@ if ( ! class_exists( 'ACF' ) ) {
 							'label'          => $plural_label,
 							'singular_label' => $singular_label,
 							'icon'           => $post_type['menu_icon'] ?? '',
-							'source'         => 'scf',
 						);
 					}
 				}
 			}
 
-			// Localize the data for the command palette
+			// Enqueue necessary WordPress dependencies for the command palette
+			wp_enqueue_script( 'wp-plugins' );
+			wp_enqueue_script( 'wp-element' );
+			wp_enqueue_script( 'wp-components' );
+			wp_enqueue_script( 'wp-data' );
+			wp_enqueue_script( 'wp-commands' );
+			wp_enqueue_script( 'wp-i18n' );
+			wp_enqueue_script( 'wp-dom-ready' );
+
+			// Register and enqueue our command palette script
+			$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+			$version = acf_get_setting( 'version' );
+
+			// First deregister the script if it was registered before
+			wp_deregister_script( 'acf-command-palette' );
+
+			wp_register_script(
+				'acf-command-palette',
+				acf_get_setting( 'url' ) . "assets/build/js/acf-command-palette{$suffix}.js",
+				array( 'wp-data', 'wp-i18n', 'wp-dom-ready' ),
+				$version,
+				true
+			);
+
+			// Localize minimal data needed for commands
 			wp_localize_script(
 				'acf-command-palette',
-				'scfCommandPaletteData',
+				'_scfData',
 				array(
-					'customPostTypes'   => $custom_post_types,
-					'version'           => acf_get_setting( 'version' ),
-					'isDevelopmentMode' => defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE,
-					'pluginUrl'         => acf_get_setting( 'url' ),
-					'adminUrl'          => admin_url(),
-					'ajaxUrl'           => admin_url( 'admin-ajax.php' ),
-					'currentScreen'     => array(
-						'id'   => function_exists( 'get_current_screen' ) ? get_current_screen()->id : '',
-						'base' => function_exists( 'get_current_screen' ) ? get_current_screen()->base : '',
-					),
-					'debug'             => array(
-						'enabled'      => defined( 'WP_DEBUG' ) && WP_DEBUG,
-						'scriptLoaded' => true,
-						'timestamp'    => time(),
-					),
+					'customPostTypes' => $custom_post_types,
+					'adminUrl'        => admin_url(),
 				)
 			);
 
-			// Enqueue the command palette script which was registered in assets.php
-			// The script uses the WordPress plugins API to properly integrate with the command palette
 			wp_enqueue_script( 'acf-command-palette' );
 		}
 
