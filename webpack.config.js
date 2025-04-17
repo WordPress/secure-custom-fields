@@ -15,6 +15,7 @@ const commonConfig = {
 		'js/acf-input': './assets/src/js/acf-input.js',
 		'js/acf-internal-post-type':
 			'./assets/src/js/acf-internal-post-type.js',
+		'js/acf-command-palette': './assets/src/js/acf-command-palette.js',
 		'js/acf': './assets/src/js/acf.js',
 		'js/pro/acf-pro-blocks': './assets/src/js/pro/acf-pro-blocks.js',
 		'js/pro/acf-pro-field-group':

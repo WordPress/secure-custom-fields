@@ -229,6 +229,38 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
+
+			// Load command palette
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_command_palette' ) );
+		}
+
+		/**
+		 * Loads the command palette script and its dependencies
+		 *
+		 * @since 6.4.1
+		 */
+		public function load_command_palette() {
+			// Only load on admin screens
+			if ( ! is_admin() ) {
+				return;
+			}
+
+			// Enqueue necessary WordPress dependencies for the command palette
+			wp_enqueue_script( 'wp-plugins' );
+			wp_enqueue_script( 'wp-element' );
+			wp_enqueue_script( 'wp-components' );
+			wp_enqueue_script( 'wp-data' );
+			wp_enqueue_script( 'wp-commands' );
+			wp_enqueue_script( 'wp-i18n' );
+			wp_enqueue_script( 'wp-dom-ready' );
+
+			// Prepare the script URL with proper suffix
+			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
+			$version = acf_get_setting( 'version' );
+
+			// Enqueue the command palette script which was registered in assets.php
+			// The script uses the WordPress plugins API to properly integrate with the command palette
+			wp_enqueue_script( 'acf-command-palette' );
 		}
 
 		/**

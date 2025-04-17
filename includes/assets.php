@@ -242,6 +242,12 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					$script['in_footer']
 				);
 			}
+			wp_register_script( 'acf', acf_get_url( 'assets/build/js/acf' . $suffix . '.js' ), array( 'jquery' ), $version, false );
+			wp_register_script( 'acf-input', acf_get_url( 'assets/build/js/acf-input' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-resizable', 'acf', 'wp-a11y' ), $version, false );
+			wp_register_script( 'acf-command-palette', acf_get_url( 'assets/build/js/acf-command-palette' . $suffix . '.js' ), array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ), $version, true );
+			wp_register_script( 'acf-field-group', acf_get_url( 'assets/build/js/acf-field-group' . $suffix . '.js' ), array( 'acf-input' ), $version, false );
+			wp_register_script( 'acf-internal-post-type', acf_get_url( 'assets/build/js/acf-internal-post-type' . $suffix . '.js' ), array( 'acf-input' ), $version, false );
+			wp_register_script( 'acf-escaped-html-notice', acf_get_url( 'assets/build/js/acf-escaped-html-notice' . $suffix . '.js' ), array( 'jquery' ), $version, true );
 
 			// Register styles.
 			foreach ( $styles as $style ) {
@@ -262,6 +268,13 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			 * @param   string $suffix The potential ".min" filename suffix.
 			 */
 			do_action( 'acf/register_scripts', $version, $suffix );
+
+			// Ensure WordPress scripts needed for command palette integration are available
+			if ( function_exists( 'wp_enqueue_script' ) ) {
+				wp_enqueue_script( 'wp-commands' );
+				wp_enqueue_script( 'wp-i18n' );
+				wp_enqueue_script( 'wp-dom-ready' );
+			}
 		}
 
 		/**
