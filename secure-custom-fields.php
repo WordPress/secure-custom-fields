@@ -292,14 +292,18 @@ if ( ! class_exists( 'ACF' ) ) {
 				true
 			);
 
-			// Localize minimal data needed for commands
-			wp_localize_script(
+			// Set up data as a property of wp object to follow WordPress conventions
+			wp_add_inline_script(
 				'acf-command-palette',
-				'_scfData',
-				array(
-					'customPostTypes' => $custom_post_types,
-					'adminUrl'        => admin_url(),
-				)
+				'window.wp = window.wp || {}; wp.scf = ' . wp_json_encode(
+					array(
+						'commandData' => array(
+							'customPostTypes' => $custom_post_types,
+							'adminUrl'        => admin_url(),
+						),
+					)
+				) . ';',
+				'before'
 			);
 
 			wp_enqueue_script( 'acf-command-palette' );
