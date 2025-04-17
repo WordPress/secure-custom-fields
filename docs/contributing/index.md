@@ -33,6 +33,13 @@ Guide for contributing to Secure Custom Fields development.
 4. Run test suite
    - `composer run test`
 
+## Release Management
+
+There are some prerequisites for a release:
+1. You will need npm, composer and GH cli (https://github.com/cli/cli?tab=readme-ov-file#installation) installed.
+2. Use the scripts provided `composer prepare-release` (which includes `update-translations`) or `composer update-translations` to prepare the release.
+3. Follow the instructions in the script to create a release.
+
 ## Contribution Guidelines
 
 - Follow WordPress coding standards
