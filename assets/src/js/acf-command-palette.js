@@ -11,18 +11,21 @@
 wp.domReady(() => {
 	// Make sure required WordPress dependencies are available
 	if (!wp.data || !wp.data.dispatch || !wp.data.dispatch('core/commands')) {
-		console.warn('SCF Command Palette: WordPress Commands API not available');
 		return;
 	}
 
-	// Access the WordPress i18n functions
+	// Access the WordPress i18n functions and components
 	const { __ } = wp.i18n;
+	const { createElement } = wp.element;
 
 	// Get the commands store
 	const commandStore = wp.data.dispatch('core/commands');
 	
+	// Get WP Components
+	const { Icon } = wp.components;
+
 	// Command definitions for SCF admin pages with improved metadata
-	const commands = [
+	let commands = [
 		{ 
 			name: 'field-groups', 
 			label: __('Field Groups', 'secure-custom-fields'), 
@@ -113,12 +116,65 @@ wp.domReady(() => {
 		}
 	];
 	
+	// Add commands for user-created custom post types if available
+	if (window.scfCommandPaletteData && window.scfCommandPaletteData.customPostTypes) {
+		const customPostTypes = window.scfCommandPaletteData.customPostTypes;
+		
+		// Validate the customPostTypes is an array
+		if (!Array.isArray(customPostTypes)) {
+			return;
+		}
+		
+		// Add each custom post type as a command
+		customPostTypes.forEach((postType, index) => {
+			// Validate postType is an object
+			if (!postType || typeof postType !== 'object') {
+				return;
+			}
+			
+			// Skip if postType.name is missing or invalid
+			if (!postType.name || typeof postType.name !== 'string') {
+				return;
+			}
+			
+			// Determine label with fallback
+			const pluralLabel = postType.label ? postType.label : postType.name;
+			const singularLabel = postType.singular_label || pluralLabel;
+			
+			// Add command to view all posts of this type
+			commands.push({
+				name: `cpt-${postType.name}`,
+				label: pluralLabel,
+				url: `edit.php?post_type=${postType.name}`,
+				icon: 'admin-page', // Using standard dashicon for better visibility
+				description: __('SCF: View all', 'secure-custom-fields') + ` ${pluralLabel}`,
+				keywords: ['post type', 'content', 'cpt', postType.name, postType.label || '']
+			});
+			
+			// Also add command to add new post of this type
+			commands.push({
+				name: `new-${postType.name}`,
+				label: __('Add New', 'secure-custom-fields') + ` ${singularLabel}`,
+				url: `post-new.php?post_type=${postType.name}`,
+				icon: 'plus',
+				description: __('SCF: Create a new', 'secure-custom-fields') + ` ${singularLabel}`,
+				keywords: ['add', 'new', 'create', 'content', postType.name, postType.label || '']
+			});
+		});
+	}
+	
+	// Create icon component function
+	const createIconComponent = (iconName) => {
+		// Return a function that creates the icon element
+		return createElement(Icon, { icon: iconName });
+	};
+
 	// Register each command with enhanced metadata
 	commands.forEach(command => {
 		commandStore.registerCommand({
 			name: 'scf/' + command.name,
 			label: command.label,
-			icon: command.icon,
+			icon: createIconComponent(command.icon),
 			context: 'admin',
 			description: command.description,
 			keywords: command.keywords,
