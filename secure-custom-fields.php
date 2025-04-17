@@ -237,7 +237,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		/**
 		 * Loads the command palette script and its dependencies
 		 *
-		 * @since 6.4.1
+		 * @since 6.5.0
 		 */
 		public function load_command_palette() {
 			// Only load on admin screens
