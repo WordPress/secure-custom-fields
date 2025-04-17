@@ -12,9 +12,6 @@ namespace WordPress\SCF\Scripts;
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 // phpcs:disable WordPress.WP.AlternativeFunctions
 
-// Ensure we're in the right directory.
-chdir( dirname( dirname( __DIR__ ) ) );
-
 /**
  * Handles the translation update process for Secure Custom Fields.
  */
