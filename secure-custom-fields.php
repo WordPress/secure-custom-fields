@@ -273,16 +273,11 @@ if ( ! class_exists( 'ACF' ) ) {
 				}
 			}
 
-			// Set up data under the wp.scf namespace following WordPress best practices
-			wp_add_inline_script(
-				'acf-command-palette',
-				'window.wp = window.wp || {}; window.wp.scf = window.wp.scf || {}; window.wp.scf.commands = ' . wp_json_encode(
-					array(
-						'postTypes' => $custom_post_types,
-						'adminUrl'  => admin_url(),
-					)
-				) . ';',
-				'before'
+			// Add custom post types data to ACF object
+			acf_localize_data(
+				array(
+					'customPostTypes' => $custom_post_types,
+				)
 			);
 
 			// Enqueue the command palette script which was registered in assets.php

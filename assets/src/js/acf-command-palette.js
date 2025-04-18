@@ -20,9 +20,9 @@ wp.domReady(() => {
 	const { Icon } = wp.components;
 	const commandStore = wp.data.dispatch('core/commands');
 	
-	// Get data from namespace
-	const adminUrl = wp.scf?.commands?.adminUrl || '';
-	const postTypes = wp.scf?.commands?.postTypes || [];
+	// Get data from ACF object
+	const adminUrl = acf?.data?.admin_url || '';
+	const postTypes = acf?.data?.customPostTypes || [];
 
 	// Command definitions for SCF admin pages with improved metadata
 	let commands = [
