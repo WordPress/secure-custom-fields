@@ -245,6 +245,11 @@ if ( ! class_exists( 'ACF' ) ) {
 				return;
 			}
 
+			// Dependencies are automatically loaded by WordPress
+			// since they're specified in the script registration
+
+			// Script is already registered in assets.php
+
 			// Get all SCF custom post types to add to command palette
 			$custom_post_types = array();
 
@@ -268,44 +273,20 @@ if ( ! class_exists( 'ACF' ) ) {
 				}
 			}
 
-			// Enqueue necessary WordPress dependencies for the command palette
-			wp_enqueue_script( 'wp-plugins' );
-			wp_enqueue_script( 'wp-element' );
-			wp_enqueue_script( 'wp-components' );
-			wp_enqueue_script( 'wp-data' );
-			wp_enqueue_script( 'wp-commands' );
-			wp_enqueue_script( 'wp-i18n' );
-			wp_enqueue_script( 'wp-dom-ready' );
-
-			// Register and enqueue our command palette script
-			$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-			$version = acf_get_setting( 'version' );
-
-			// First deregister the script if it was registered before
-			wp_deregister_script( 'acf-command-palette' );
-
-			wp_register_script(
-				'acf-command-palette',
-				acf_get_setting( 'url' ) . "assets/build/js/acf-command-palette{$suffix}.js",
-				array( 'wp-data', 'wp-i18n', 'wp-dom-ready' ),
-				$version,
-				true
-			);
-
-			// Set up data as a property of wp object to follow WordPress conventions
+			// Set up data under the wp.scf namespace following WordPress best practices
 			wp_add_inline_script(
 				'acf-command-palette',
-				'window.wp = window.wp || {}; wp.scf = ' . wp_json_encode(
+				'window.wp = window.wp || {}; window.wp.scf = window.wp.scf || {}; window.wp.scf.commands = ' . wp_json_encode(
 					array(
-						'commandData' => array(
-							'customPostTypes' => $custom_post_types,
-							'adminUrl'        => admin_url(),
-						),
+						'postTypes' => $custom_post_types,
+						'adminUrl'  => admin_url(),
 					)
 				) . ';',
 				'before'
 			);
 
+			// Enqueue the command palette script which was registered in assets.php
+			// The script uses the WordPress plugins API to properly integrate with the command palette
 			wp_enqueue_script( 'acf-command-palette' );
 		}
 
