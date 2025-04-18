@@ -45,7 +45,7 @@ wp.domReady(() => {
 		{ 
 			name: 'post-types', 
 			label: __('Post Types', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-post-types`,
+			url: `${adminUrl}edit.php?post_type=acf-post-type`,
 			icon: 'admin-post',
 			description: __('SCF: Manage custom post types', 'secure-custom-fields'),
 			keywords: ['cpt', 'content types', 'manage post types']
@@ -53,7 +53,7 @@ wp.domReady(() => {
 		{ 
 			name: 'new-post-type', 
 			label: __('Create New Post Type', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-post-type`,
+			url: `${adminUrl}post-new.php?post_type=acf-post-type`,
 			icon: 'plus',
 			description: __('SCF: Create a new custom post type', 'secure-custom-fields'),
 			keywords: ['add', 'new', 'create', 'cpt', 'content type']
@@ -61,7 +61,7 @@ wp.domReady(() => {
 		{ 
 			name: 'taxonomies', 
 			label: __('Taxonomies', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-taxonomies`,
+			url: `${adminUrl}edit.php?post_type=acf-taxonomy`,
 			icon: 'category',
 			description: __('SCF: Manage custom taxonomies for organizing content', 'secure-custom-fields'),
 			keywords: ['categories', 'tags', 'terms', 'custom taxonomies']
@@ -69,7 +69,7 @@ wp.domReady(() => {
 		{ 
 			name: 'new-taxonomy', 
 			label: __('Create New Taxonomy', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-taxonomy`,
+			url: `${adminUrl}post-new.php?post_type=acf-taxonomy`,
 			icon: 'plus',
 			description: __('SCF: Create a new custom taxonomy', 'secure-custom-fields'),
 			keywords: ['add', 'new', 'create', 'taxonomy', 'categories', 'tags']
@@ -77,7 +77,7 @@ wp.domReady(() => {
 		{ 
 			name: 'options-pages', 
 			label: __('Options Pages', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-options-pages`,
+			url: `${adminUrl}edit.php?post_type=acf-ui-options-page`,
 			icon: 'admin-settings',
 			description: __('SCF: Manage custom options pages for global settings', 'secure-custom-fields'),
 			keywords: ['settings', 'global options', 'site options']
@@ -85,7 +85,7 @@ wp.domReady(() => {
 		{ 
 			name: 'new-options-page', 
 			label: __('Create New Options Page', 'secure-custom-fields'), 
-			url: `${adminUrl}admin.php?page=acf-ui-options-page`,
+			url: `${adminUrl}post-new.php?post_type=acf-ui-options-page`,
 			icon: 'plus',
 			description: __('SCF: Create a new custom options page', 'secure-custom-fields'),
 			keywords: ['add', 'new', 'create', 'options', 'settings page']
@@ -158,8 +158,9 @@ wp.domReady(() => {
 			context: 'admin',
 			description: command.description,
 			keywords: command.keywords,
-			callback: () => {
-				window.location.href = command.url;
+			callback: ({ close }) => {
+				document.location = command.url;
+				close();
 			}
 		});
 	});
