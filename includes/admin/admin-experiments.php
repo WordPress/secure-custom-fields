@@ -137,7 +137,7 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return string
 		 */
 		public function admin_body_class( $classes ) {
-			$classes .= ' scf-admin-page';
+			$classes .= ' acf-admin-page';
 			return $classes;
 		}
 
