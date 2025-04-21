@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
 /**
  * Admin Experiments
  *
@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
+	#[AllowDynamicProperties]
 	/**
 	 * Class SCF_Admin_Experiments
 	 *
@@ -38,7 +39,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * This function will setup the class functionality
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -51,7 +51,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * This function will store an experiment class instance in the experiments array.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @param   string $experiment Class name.
@@ -65,7 +64,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * This function will return an experiment class or null if not found.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @param   string $name Name of experiment.
@@ -78,7 +76,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * This function will return an array of all experiment instances.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  array
@@ -91,7 +88,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * This function will add the SCF experiments menu item to the WP admin
 		 *
 		 * @type    action (admin_menu)
-		 * @date    28/09/13
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -112,7 +108,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * Loads the admin experiments page.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -149,7 +144,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * Includes various experiment-related files.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -165,7 +159,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * Verifies the nonces and submits the value if it passes.
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -186,7 +179,6 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		/**
 		 * Admin Experiments html
 		 *
-		 * @date    10/10/17
 		 * @since   SCF 6.4.2
 		 *
 		 * @return  void
@@ -239,3 +231,44 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 	// initialize
 	acf()->admin_experiments = new SCF_Admin_Experiments();
 endif; // class_exists check
+
+/**
+ * Alias of acf()->admin_experiments->register_experiment()
+ *
+ * @type    function
+ * @date    31/5/17
+ * @since   SCF 6.4.2
+ *
+ * @param   string $experiment The experiment class.
+ * @return  void
+ */
+function scf_register_admin_experiment( $experiment ) {
+	acf()->admin_experiments->register_experiment( $experiment );
+}
+
+/**
+ * This function will return the admin URL to the experiments page
+ *
+ * @type    function
+ * @date    31/5/17
+ * @since   SCF 6.4.2
+ *
+ * @return  string The URL to the experiments page.
+ */
+function scf_get_admin_experiments_url() {
+	return admin_url( 'edit.php?post_type=acf-field-group&page=scf-experiments' );
+}
+
+/**
+ * This function will return the admin URL to a specific experiment page
+ *
+ * @type    function
+ * @date    31/5/17
+ * @since   SCF 6.4.2
+ *
+ * @param   string $experiment The experiment name.
+ * @return  string The URL to a particular experiment's page.
+ */
+function scf_get_admin_experiment_url( $experiment = '' ) {
+	return scf_get_admin_experiments_url() . '&experiment=' . $experiment;
+}
