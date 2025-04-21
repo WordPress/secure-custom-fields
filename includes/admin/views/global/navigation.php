@@ -173,8 +173,10 @@ global $plugin_page;
 $screen = get_current_screen();
 
 if ( ! in_array( $screen->id, acf_get_internal_post_types(), true ) ) {
-	if ( $plugin_page == 'acf-tools' ) {
+	if ( 'acf-tools' === $plugin_page ) {
 		$acf_page_title = __( 'Tools', 'secure-custom-fields' );
+	} elseif ( 'scf-experiments' === $plugin_page ) {
+		$acf_page_title = __( 'Experiments', 'secure-custom-fields' );
 	}
 	acf_get_view( 'global/header' );
 }
