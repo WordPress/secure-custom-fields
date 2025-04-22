@@ -151,9 +151,24 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		public function include_experiments() {
 			// include
 			acf_include( 'includes/admin/experiments/class-scf-admin-experiment.php' );
+			acf_include( 'includes/admin/experiments/class-scf-admin-experiment-editor-sidebar.php' );
+
+			// Register experiments
+			add_action( 'scf/include_admin_experiments', array( $this, 'register_experiments' ) );
 
 			// action
 			do_action( 'scf/include_admin_experiments' );
+		}
+
+		/**
+		 * Register default experiments.
+		 *
+		 * @since   SCF 6.4.2
+		 *
+		 * @return  void
+		 */
+		public function register_experiments() {
+			scf_register_admin_experiment( 'SCF_Admin_Experiment_Editor_Sidebar' );
 		}
 
 		/**
@@ -164,16 +179,40 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return  void
 		 */
 		public function check_submit() {
-			// loop
-			foreach ( $this->get_experiments() as $experiment ) {
-				// load
-				$experiment->load();
+			// Check if form was submitted
+			if ( ! isset( $_POST['scf_experiments_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['scf_experiments_nonce'] ), 'scf_experiments_update' ) ) {
+				return;
+			}
 
-				// submit
-				if ( acf_verify_nonce( $experiment->name ) ) {
-					$experiment->submit();
+			$experiments = $this->get_experiments();
+			$updated     = false;
+
+			foreach ( $experiments as $experiment ) {
+				$enabled = isset( $_POST['scf_experiments'][ $experiment->name ] );
+				if ( $experiment->is_enabled() !== $enabled ) {
+					$experiment->set_enabled( $enabled );
+					$updated = true;
 				}
 			}
+
+			if ( $updated ) {
+				add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+			}
+		}
+
+		/**
+		 * Display admin notices.
+		 *
+		 * @since   SCF 6.4.2
+		 *
+		 * @return  void
+		 */
+		public function admin_notices() {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php esc_html_e( 'Experiment settings updated successfully.', 'secure-custom-fields' ); ?></p>
+			</div>
+			<?php
 		}
 
 		/**

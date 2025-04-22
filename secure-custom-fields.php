@@ -842,3 +842,24 @@ if ( ! function_exists( 'scf_plugin_deactivated_notice' ) ) {
 
 	add_action( 'pre_current_active_plugins', 'scf_plugin_deactivated_notice' );
 }
+
+/**
+ * Clean up plugin data on uninstall
+ */
+register_uninstall_hook( __FILE__, 'scf_plugin_uninstall' );
+
+/**
+ * Cleanup function that runs when the plugin is uninstalled
+ */
+function scf_plugin_uninstall() {
+	// List of known experiments
+	$experiments = array(
+		'editor-sidebar',
+		// Add other experiments here as they are created
+	);
+
+	// Delete options for known experiments
+	foreach ( $experiments as $experiment ) {
+		delete_option( 'scf_experiment_' . $experiment . '_enabled' );
+	}
+}
