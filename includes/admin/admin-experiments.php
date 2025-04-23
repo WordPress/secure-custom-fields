@@ -44,8 +44,8 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return  void
 		 */
 		public function __construct() {
-			// actions
-			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			// Temporarily disabled - will be enabled when experiments feature is ready
+			// add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		}
 
 		/**
@@ -118,14 +118,44 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// disable filters (default to raw data)
 			acf_disable_filters();
 
-			// include experiments
-			$this->include_experiments();
+			// Temporarily disabled - will be enabled when experiments feature is ready
+			// $this->include_experiments();
 
 			// check submit
 			$this->check_submit();
 
 			// load acf scripts
 			acf_enqueue_scripts();
+
+			// Enqueue experiments script. Uncomment to enable in production when ready.
+			// acf_enqueue_script( 'acf-experiments' );
+
+			// Localize experiments data. Uncomment to enable in production when ready.
+			// $this->enqueue_experiments_script();
+		}
+
+		/**
+		 * Enqueues the experiments JavaScript file and localizes data.
+		 *
+		 * @since   SCF 6.4.2
+		 *
+		 * @return  void
+		 */
+		public function enqueue_experiments_script() {
+			// Prepare experiments data for JavaScript - simplified to just enabled status
+			$experiments_data = array();
+			foreach ( $this->get_experiments() as $name => $experiment ) {
+				$experiments_data[ $name ] = $experiment->is_enabled();
+			}
+
+			// Localize the script with experiments data
+			wp_localize_script(
+				'acf-experiments',
+				'scfExperiments',
+				array(
+					'data' => $experiments_data,
+				)
+			);
 		}
 
 		/**

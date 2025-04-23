@@ -22,7 +22,7 @@ const commonConfig = {
 		'js/pro/acf-pro-input': './assets/src/js/pro/acf-pro-input.js',
 		'js/pro/acf-pro-ui-options-page':
 			'./assets/src/js/pro/acf-pro-ui-options-page.js',
-
+		'js/acf-experiments': './assets/src/js/_acf-experiments.ts',
 		// CSS files
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',
 		'css/acf-field-group': './assets/src/sass/acf-field-group.scss',
@@ -38,12 +38,15 @@ const commonConfig = {
 	module: {
 		rules: [
 			{
-				test: /\.(js|jsx)$/,
+				test: /\.(js|jsx|ts|tsx)$/,
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-react' ],
+						presets: [
+							'@babel/preset-react',
+							'@babel/preset-typescript',
+						],
 					},
 				},
 			},
@@ -61,6 +64,9 @@ const commonConfig = {
 				],
 			},
 		],
+	},
+	resolve: {
+		extensions: [ '.js', '.jsx', '.ts', '.tsx' ],
 	},
 };
 
