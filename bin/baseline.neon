@@ -1,46 +1,40 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Function acf_checkbox_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^@param array \$sub_field does not accept actual type of parameter\: int\|false\.$#'
+			identifier: parameter.phpDocType
 			count: 1
-			path: ../includes/acf-input-functions.php
+			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_file_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^Action callback returns array but should not return anything\.$#'
+			identifier: return.void
 			count: 1
-			path: ../includes/acf-input-functions.php
+			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_hidden_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^Expected 2 @param tags, found 1\.$#'
+			identifier: paramTag.count
 			count: 1
-			path: ../includes/acf-input-functions.php
+			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_radio_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^Function wp_trash_post invoked with 2 parameters, 0\-1 required\.$#'
+			identifier: arguments.count
 			count: 1
-			path: ../includes/acf-input-functions.php
+			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_select_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^Function wp_untrash_post invoked with 2 parameters, 0\-1 required\.$#'
+			identifier: arguments.count
 			count: 1
-			path: ../includes/acf-input-functions.php
+			path: ../includes/acf-field-functions.php
 
 		-
-			message: '#^Function acf_text_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_textarea_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
+			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
+			identifier: phpDoc.parseError
+			count: 2
+			path: ../includes/acf-field-functions.php
 
 		-
 			message: '#^Access to an undefined property ACF_Admin_Field_Groups\:\:\$not_found_label\.$#'
