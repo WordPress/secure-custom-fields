@@ -265,7 +265,13 @@ if ( ! class_exists( 'ACF' ) ) {
 
 						// Only add post types that the user has access to
 						$post_type_obj = get_post_type_object( $post_type['post_type'] );
-						if ( $post_type_obj && current_user_can( $post_type_obj->cap->edit_posts ) ) {
+						// Three conditions must be met to include this post type in the command palette:
+						// 1. Post type object must exist
+						// 2. Current user must have permission to edit posts of this type
+						// 3. Post type must have admin UI enabled (show_ui setting)
+						if ( $post_type_obj &&
+							current_user_can( $post_type_obj->cap->edit_posts ) &&
+							$post_type_obj->show_ui ) {
 							$custom_post_types[] = array(
 								'name'           => $post_type['post_type'],
 								'label'          => $plural_label,
