@@ -128,7 +128,7 @@ add_filter( 'wp_kses_allowed_html', '_acf_kses_allowed_html', 0, 2 );
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_hidden_input( $attrs = array() ) {
 	echo acf_get_hidden_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -158,7 +158,7 @@ function acf_get_hidden_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_text_input( $attrs = array() ) {
 	echo acf_get_text_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -197,7 +197,7 @@ function acf_get_text_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_file_input( $attrs = array() ) {
 	echo acf_get_file_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -262,7 +262,7 @@ function acf_get_file_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_textarea_input( $attrs = array() ) {
 	echo acf_get_textarea_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -297,7 +297,7 @@ function acf_get_textarea_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_checkbox_input( $attrs = array() ) {
 	echo acf_get_checkbox_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -345,7 +345,7 @@ function acf_get_checkbox_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void echos out value.
  */
 function acf_radio_input( $attrs = array() ) {
 	echo acf_get_radio_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
@@ -376,7 +376,7 @@ function acf_get_radio_input( $attrs = array() ) {
  * @since   ACF 5.0.0
  *
  * @param   array $attrs The array of attrs.
- * @return  string
+ * @return  void
  */
 function acf_select_input( $attrs = array() ) {
 	echo acf_get_select_input( $attrs ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by input generation function.
