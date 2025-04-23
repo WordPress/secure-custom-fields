@@ -82,11 +82,11 @@ const unminifiedConfig = {
 		new RemoveEmptyScriptsPlugin(),
 		new MiniCssExtractPlugin( {
 			filename: '[name].css', // Output CSS as .css
-		}),
-		new DependencyExtractionWebpackPlugin({
+		} ),
+		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useCombinedAssetFile: true,
-		}),
+		} ),
 	],
 };
 
@@ -116,11 +116,11 @@ const minifiedConfig = {
 		new RemoveEmptyScriptsPlugin(),
 		new MiniCssExtractPlugin( {
 			filename: '[name].min.css', // Changed to output .min.css files
-		}),
-		new DependencyExtractionWebpackPlugin({
+		} ),
+		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useCombinedAssetFile: true,
-		}),
+		} ),
 	],
 };
 
