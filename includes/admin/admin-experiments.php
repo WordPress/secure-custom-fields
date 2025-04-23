@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
-	#[AllowDynamicProperties]
 	/**
 	 * Class SCF_Admin_Experiments
 	 *
@@ -127,10 +126,10 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// load acf scripts
 			acf_enqueue_scripts();
 
-			// Enqueue experiments script. Uncomment to enable in production when ready.
+			// Temporarily disabled. Uncomment to enable in production when ready.
 			// acf_enqueue_script( 'acf-experiments' );
 
-			// Localize experiments data. Uncomment to enable in production when ready.
+			// Temporarily disabled. Localize experiments data. Uncomment to enable in production when ready.
 			// $this->enqueue_experiments_script();
 		}
 
