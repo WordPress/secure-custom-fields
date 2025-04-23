@@ -41,7 +41,6 @@ The TypeScript files are compiled to JavaScript using the WordPress build proces
 
 - `_acf-experiments.ts`: Core experiments functionality
 - `acf-experiments.ts`: Main entry point for experiments
-- `_acf-experiment-example.ts`: Example of using experiments in TypeScript
 
 ## Implementation Details
 
@@ -53,6 +52,5 @@ The experiments functionality is implemented using:
 
 ## Future Improvements
 
-- Move more JavaScript code to TypeScript
-- Add unit tests for TypeScript code
-- Implement more sophisticated experiment tracking 
+- Move more JavaScript code to TypeScript.
+- Add unit tests for TypeScript code.
