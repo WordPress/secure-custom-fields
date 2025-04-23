@@ -245,10 +245,10 @@ if ( ! class_exists( 'ACF' ) ) {
 				return;
 			}
 
-			// Dependencies are automatically loaded by WordPress
-			// since they're specified in the script registration
+			// Check if current user has capability to access SCF admin
+			$user_can_admin = current_user_can( acf_get_setting( 'capability' ) );
 
-			// Script is already registered in assets.php
+			// Admin capabilities required for core commands, but all users can see post type commands
 
 			// Get all SCF custom post types to add to command palette
 			$custom_post_types = array();
@@ -263,12 +263,16 @@ if ( ! class_exists( 'ACF' ) ) {
 						$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
 						$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
 
-						$custom_post_types[] = array(
-							'name'           => $post_type['post_type'],
-							'label'          => $plural_label,
-							'singular_label' => $singular_label,
-							'icon'           => $post_type['menu_icon'] ?? '',
-						);
+						// Only add post types that the user has access to
+						$post_type_obj = get_post_type_object( $post_type['post_type'] );
+						if ( $post_type_obj && current_user_can( $post_type_obj->cap->edit_posts ) ) {
+							$custom_post_types[] = array(
+								'name'           => $post_type['post_type'],
+								'label'          => $plural_label,
+								'singular_label' => $singular_label,
+								'icon'           => $post_type['menu_icon'] ?? '',
+							);
+						}
 					}
 				}
 			}
@@ -280,9 +284,17 @@ if ( ! class_exists( 'ACF' ) ) {
 				)
 			);
 
-			// Enqueue the command palette script which was registered in assets.php
-			// The script uses the WordPress plugins API to properly integrate with the command palette
-			wp_enqueue_script( 'acf-command-palette' );
+			// Always enqueue the core command palette
+			// We have at least one custom post type the user can access
+			if ( ! empty( $custom_post_types ) ) {
+				// Enqueue the post types command palette
+				wp_enqueue_script( 'acf-command-palette-post-types' );
+			}
+
+			// Only load admin commands if user has SCF admin capabilities
+			if ( $user_can_admin ) {
+				wp_enqueue_script( 'acf-command-palette-core' );
+			}
 		}
 
 		/**

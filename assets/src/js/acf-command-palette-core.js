@@ -1,8 +1,7 @@
 /**
- * SCF Command Palette integration
+ * SCF Core Command Palette integration
  *
- * Uses WordPress Commands API to add Secure Custom Fields commands to the WordPress command palette.
- * Enhances the user experience with icons, descriptions, and keywords for better discoverability.
+ * Core WordPress admin commands for Secure Custom Fields.
  * 
  * @since 6.5.0
  */
@@ -14,6 +13,11 @@ wp.domReady(() => {
 		return;
 	}
 
+	// Wait for ACF to be ready
+	if (typeof acf === 'undefined') {
+		return;
+	}
+
 	// Access essential WordPress functions and data
 	const { __ } = wp.i18n;
 	const { createElement } = wp.element;
@@ -22,10 +26,9 @@ wp.domReady(() => {
 	
 	// Get data from ACF object
 	const adminUrl = acf?.data?.admin_url || '';
-	const postTypes = acf?.data?.customPostTypes || [];
 
-	// Command definitions for SCF admin pages with improved metadata
-	let commands = [
+	// Core command definitions for SCF admin pages
+	const commands = [
 		{ 
 			name: 'field-groups', 
 			label: __('Field Groups', 'secure-custom-fields'), 
@@ -116,39 +119,6 @@ wp.domReady(() => {
 		}
 	];
 	
-	// Add commands for user-created custom post types
-	if (postTypes && postTypes.length > 0) {
-		// Add each custom post type as a command
-		postTypes.forEach(postType => {
-			// Skip invalid post types
-			if (!postType?.name) return;
-			
-			// Get labels
-			const pluralLabel = postType.label || postType.name;
-			const singularLabel = postType.singular_label || pluralLabel;
-			
-			// Add command to view all posts of this type
-			commands.push({
-				name: `cpt-${postType.name}`,
-				label: pluralLabel,
-				url: `${adminUrl}edit.php?post_type=${postType.name}`,
-				icon: 'admin-page', // Using standard dashicon for better visibility
-				description: __('SCF: View all', 'secure-custom-fields') + ` ${pluralLabel}`,
-				keywords: ['post type', 'content', 'cpt', postType.name, postType.label || '']
-			});
-			
-			// Also add command to add new post of this type
-			commands.push({
-				name: `new-${postType.name}`,
-				label: __('Add New', 'secure-custom-fields') + ` ${singularLabel}`,
-				url: `${adminUrl}post-new.php?post_type=${postType.name}`,
-				icon: 'plus',
-				description: __('SCF: Create a new', 'secure-custom-fields') + ` ${singularLabel}`,
-				keywords: ['add', 'new', 'create', 'content', postType.name, postType.label || '']
-			});
-		});
-	}
-	
 	// Register each command
 	commands.forEach(command => {
 		commandStore.registerCommand({
@@ -164,4 +134,4 @@ wp.domReady(() => {
 			}
 		});
 	});
-});
+}); 
