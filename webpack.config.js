@@ -1,9 +1,9 @@
-const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
-const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
+const path = require( 'path' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const CssMinimizerPlugin = require( 'css-minimizer-webpack-plugin' );
+const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 // Common configuration for both builds
 const commonConfig = {
@@ -33,7 +33,7 @@ const commonConfig = {
 		'css/pro/acf-pro-input': './assets/src/sass/pro/acf-pro-input.scss',
 	},
 	output: {
-		path: path.resolve(__dirname, 'assets/build/'),
+		path: path.resolve( __dirname, 'assets/build/' ),
 	},
 	module: {
 		rules: [
@@ -43,7 +43,7 @@ const commonConfig = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['@babel/preset-react'],
+						presets: [ '@babel/preset-react' ],
 					},
 				},
 			},
@@ -78,13 +78,13 @@ const unminifiedConfig = {
 	},
 	plugins: [
 		new RemoveEmptyScriptsPlugin(),
-		new MiniCssExtractPlugin({
+		new MiniCssExtractPlugin( {
 			filename: '[name].css', // Output CSS as .css
-		}),
-		new DependencyExtractionWebpackPlugin({
+		} ),
+		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useCombinedAssetFile: true,
-		}),
+		} ),
 	],
 };
 
@@ -99,28 +99,28 @@ const minifiedConfig = {
 	optimization: {
 		minimize: true, // Enable minification
 		minimizer: [
-			new TerserPlugin({
+			new TerserPlugin( {
 				terserOptions: {
 					format: {
 						comments: false, // Remove comments
 					},
 				},
 				extractComments: false,
-			}),
+			} ),
 			new CssMinimizerPlugin(), // Minify CSS
 		],
 	},
 	plugins: [
 		new RemoveEmptyScriptsPlugin(),
-		new MiniCssExtractPlugin({
+		new MiniCssExtractPlugin( {
 			filename: '[name].min.css', // Changed to output .min.css files
-		}),
-		new DependencyExtractionWebpackPlugin({
+		} ),
+		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useCombinedAssetFile: true,
-		}),
+		} ),
 	],
 };
 
 // Export both configurations
-module.exports = [unminifiedConfig, minifiedConfig];
+module.exports = [ unminifiedConfig, minifiedConfig ];
