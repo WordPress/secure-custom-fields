@@ -327,24 +327,11 @@ function acf_translate_field( $field = array() ) {
 	return $field;
 }
 
-/**
- *
- * _acf_translate_field
- *
- * Helper function to use with action.
- *
- * @param array $field The field array.
- * @return void
- */
-function _acf_translate_field( $field = array() ) {
-	acf_translate_field( $field );
-}
-
 // Register variation.
 acf_add_filter_variations( 'acf/translate_field', array( 'type' ), 0 );
 
 // Translate fields passing through validation.
-add_action( 'acf/validate_field', '_acf_translate_field' );
+add_filter( 'acf/validate_field', 'acf_translate_field' );
 
 /**
  * acf_get_fields
