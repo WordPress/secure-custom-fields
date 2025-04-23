@@ -53,7 +53,7 @@ function acf_get_field( $id = 0 ) {
 	 * @date    12/02/2014
 	 * @since   ACF 5.0.0
 	 *
-	 * @param   array The field array.
+	 * @param   array $field The field array.
 	 */
 	$field = apply_filters( 'acf/load_field', $field );
 
@@ -327,11 +327,24 @@ function acf_translate_field( $field = array() ) {
 	return $field;
 }
 
+/**
+ *
+ * _acf_translate_field
+ *
+ * Helper function to use with action.
+ *
+ * @param array $field The field array.
+ * @return void
+ */
+function _acf_translate_field( $field = array() ) {
+	acf_translate_field( $field );
+}
+
 // Register variation.
 acf_add_filter_variations( 'acf/translate_field', array( 'type' ), 0 );
 
 // Translate fields passing through validation.
-add_action( 'acf/validate_field', 'acf_translate_field' );
+add_action( 'acf/validate_field', '_acf_translate_field' );
 
 /**
  * acf_get_fields
@@ -379,6 +392,7 @@ function acf_get_fields( $parent ) {
 	 * @since   ACF 5.0.0
 	 *
 	 * @param   array $fields The array of fields.
+	 * @param   array $parent The field group or field settings.
 	 */
 	$fields = apply_filters( 'acf/load_fields', $fields, $parent );
 
@@ -865,7 +879,7 @@ function acf_get_field_label( $field, $context = '' ) {
 	 * @date    21/1/19
 	 * @since   ACF 5.7.10
 	 *
-	 * @param   string The label HTML.
+	 * @param   string $label The label HTML.
 	 * @param   array $field The field array.
 	 * @param   string $context The output context (admin).
 	 */
@@ -1190,7 +1204,7 @@ function acf_trash_field( $id = 0 ) {
 	}
 
 	// Trash post.
-	wp_trash_post( $field['ID'], true );
+	wp_trash_post( $field['ID'] );
 
 	/**
 	 * Fires immediately after a field has been trashed.
@@ -1228,7 +1242,7 @@ function acf_untrash_field( $id = 0 ) {
 	}
 
 	// Untrash post.
-	wp_untrash_post( $field['ID'], true );
+	wp_untrash_post( $field['ID'] );
 
 	// Flush field cache.
 	acf_flush_field_cache( $field );
@@ -1315,8 +1329,8 @@ function acf_get_sub_field( $id, $field ) {
 	 * @date    12/02/2014
 	 * @since   ACF 5.0.0
 	 *
-	 * @param   array $sub_field The found sub field array.
-	 * @param   string $selector The selector used to search.
+	 * @param   (array|false) $sub_field The found sub field array.
+	 * @param   string $id The selector used to search.
 	 * @param   array $field The parent field array.
 	 */
 	$sub_field = apply_filters( 'acf/get_sub_field', $sub_field, $id, $field );
