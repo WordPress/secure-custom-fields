@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 6.5.0
  */
 function acf_command_palette_init() {
-	// Only load on admin screens
+	// Only load on admin screens.
 	if ( ! is_admin() ) {
 		return;
 	}
@@ -42,7 +42,6 @@ function acf_command_palette_init() {
 				continue;
 			}
 
-			// Get post type labels
 			$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
 			$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
 
@@ -50,8 +49,8 @@ function acf_command_palette_init() {
 
 			// Three conditions must be met to include this post type in the command palette:
 			// 1. Post type object must exist
-			// 2. Current user must have permission to edit posts of this type
-			// 3. Post type must have admin UI enabled (show_ui setting)
+			// 2. Current user must have permission to edit posts of this type.
+			// 3. Post type must have admin UI enabled (show_ui setting).
 			if ( $post_type_obj &&
 				current_user_can( $post_type_obj->cap->edit_posts ) &&
 				$post_type_obj->show_ui ) {
@@ -75,7 +74,7 @@ function acf_command_palette_init() {
 		wp_enqueue_script( 'acf-command-palette-post-types' );
 	}
 
-	// Only load admin commands if user has SCF admin capabilities
+	// Only load admin commands if user has SCF admin capabilities.
 	if ( current_user_can( acf_get_setting( 'capability' ) ) ) {
 		wp_enqueue_script( 'acf-command-palette-core' );
 	}
