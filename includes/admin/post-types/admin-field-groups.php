@@ -40,7 +40,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 7 );
 			add_action( 'load-edit.php', array( $this, 'handle_redirection' ) );
-			add_action( 'post_class', array( $this, 'get_admin_table_post_classes' ), 10, 3 );
+			add_filter( 'post_class', array( $this, 'get_admin_table_post_classes' ), 10, 3 );
 
 			parent::__construct();
 		}
