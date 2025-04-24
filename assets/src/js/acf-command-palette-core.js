@@ -10,10 +10,12 @@
 
 wp.domReady( () => {
 	// Make sure required WordPress dependencies are available
+	// This ensures we only register commands where the command palette is supported
 	if (
 		! wp.data ||
 		! wp.data.dispatch ||
-		! wp.data.dispatch( 'core/commands' )
+		! wp.data.dispatch( 'core/commands' ) ||
+		typeof wp.commands === 'undefined'
 	) {
 		return;
 	}

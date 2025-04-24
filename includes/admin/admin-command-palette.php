@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * providing navigation commands for SCF admin pages and custom post types.
  *
  * The implementation follows these principles:
- * 1. Only loads in admin screens
- * 2. Performs capability checks to ensure users only see commands they can access
- * 3. Core administrative commands are only shown to users with SCF admin capabilities
- * 4. Custom post type commands are conditionally shown based on edit_posts capability
- *    for each specific post type
- * 5. Post types must have UI enabled (show_ui setting) to appear in the command palette
+ * 1. Only loads in screens where command palette is available.
+ * 2. Performs capability checks to ensure users only see commands they can access.
+ * 3. Core administrative commands are only shown to users with SCF admin capabilities.
+ * 4. Custom post type commands are conditionally shown based on edit_posts capability.
+ *    for each specific post type.
+ * 5. Post types must have UI enabled (show_ui setting) to appear in the command palette.
  *
  * @since 6.5.0
  */
@@ -31,13 +31,18 @@ function acf_command_palette_init() {
 		return;
 	}
 
+	// Ensure we only load our commands where the palette is available.
+	if ( ! wp_script_is( 'wp-commands', 'registered' ) ) {
+		return;
+	}
+
 	$custom_post_types = array();
 
 	if ( function_exists( 'acf_get_acf_post_types' ) ) {
 		$scf_post_types = acf_get_acf_post_types();
 
 		foreach ( $scf_post_types as $post_type ) {
-			// Skip if post type name is not set (in theory it should always be) or post type is inactive.
+			// Skip if post type name is not set (in theory it should always be, defensive) or post type is inactive.
 			if ( empty( $post_type['post_type'] ) || ( isset( $post_type['active'] ) && ! $post_type['active'] ) ) {
 				continue;
 			}
