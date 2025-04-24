@@ -5,8 +5,7 @@
  * This file contains the admin experiments functionality for Secure Custom Fields.
  *
  * @package    Secure Custom Fields
- * @subpackage Admin
- * @since      6.4.2
+ * @since      6.4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -126,10 +125,10 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// load acf scripts
 			acf_enqueue_scripts();
 
-			// Temporarily disabled. Uncomment to enable in production when ready.
+			// Temporarily disabled - Uncomment to enable in production when ready.
 			// acf_enqueue_script( 'acf-experiments' );
 
-			// Temporarily disabled. Localize experiments data. Uncomment to enable in production when ready.
+			// Temporarily disabled - Localize experiments data. Uncomment to enable in production when ready.
 			// $this->enqueue_experiments_script();
 		}
 
@@ -150,7 +149,7 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// Localize the script with experiments data
 			wp_localize_script(
 				'acf-experiments',
-				'scfExperiments',
+				'acfExperiments',
 				array(
 					'data' => $experiments_data,
 				)

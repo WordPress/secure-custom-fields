@@ -3,8 +3,7 @@
  * Admin Experiments View
  *
  * @package    Secure Custom Fields
- * @subpackage Admin
- * @since      6.4.2
+ * @since      6.4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
