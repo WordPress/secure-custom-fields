@@ -127,18 +127,6 @@ parameters:
 			path: ../includes/admin/views/upgrade/notice.php
 
 		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
 			message: '#^Path in include_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
 			identifier: includeOnce.fileNotFound
 			count: 1
@@ -161,12 +149,6 @@ parameters:
 			identifier: requireOnce.fileNotFound
 			count: 1
 			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-term.php
 
 		-
 			message: '#^Action callback returns string but should not return anything\.$#'
