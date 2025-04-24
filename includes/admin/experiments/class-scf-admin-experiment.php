@@ -5,8 +5,7 @@
  * This class serves as the base for all experiments in Secure Custom Fields.
  *
  * @package    Secure Custom Fields
- * @subpackage Admin
- * @since      6.4.2
+ * @since      6.4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +20,7 @@ if ( ! class_exists( 'SCF_Admin_Experiment' ) ) :
 	 * for managing experiment settings and UI.
 	 *
 	 * @package    Secure Custom Fields
-	 * @subpackage Admin
-	 * @since      6.4.2
+	 * @since      6.4.3
 	 */
 	class SCF_Admin_Experiment {
 

@@ -5,8 +5,7 @@
  * This experiment allows moving field group elements to the editor sidebar.
  *
  * @package    Secure Custom Fields
- * @subpackage Admin
- * @since      6.4.2
+ * @since      6.4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +20,7 @@ if ( ! class_exists( 'SCF_Admin_Experiment_Editor_Sidebar' ) ) :
 	 * for a cleaner interface.
 	 *
 	 * @package    Secure Custom Fields
-	 * @subpackage Admin
-	 * @since      6.4.2
+	 * @since      6.4.3
 	 */
 	class SCF_Admin_Experiment_Editor_Sidebar extends SCF_Admin_Experiment {
 
