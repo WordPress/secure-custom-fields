@@ -237,6 +237,17 @@ if ( ! class_exists( 'ACF' ) ) {
 		/**
 		 * Loads the command palette script and its dependencies
 		 *
+		 * This method handles the integration with WordPress Command Palette (Cmd+K / Ctrl+K),
+		 * providing navigation commands for SCF admin pages and custom post types.
+		 *
+		 * The implementation follows these principles:
+		 * 1. Only loads in admin screens
+		 * 2. Performs capability checks to ensure users only see commands they can access
+		 * 3. Core administrative commands are only shown to users with SCF admin capabilities
+		 * 4. Custom post type commands are conditionally shown based on edit_posts capability
+		 *    for each specific post type
+		 * 5. Post types must have UI enabled (show_ui setting) to appear in the command palette
+		 *
 		 * @since 6.5.0
 		 */
 		public function load_command_palette() {
@@ -250,10 +261,8 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Admin capabilities required for core commands, but all users can see post type commands
 
-			// Get all SCF custom post types to add to command palette
 			$custom_post_types = array();
 
-			// Get SCF post type definitions
 			if ( function_exists( 'acf_get_acf_post_types' ) ) {
 				$scf_post_types = acf_get_acf_post_types();
 
@@ -283,17 +292,13 @@ if ( ! class_exists( 'ACF' ) ) {
 				}
 			}
 
-			// Add custom post types data to ACF object
 			acf_localize_data(
 				array(
 					'customPostTypes' => $custom_post_types,
 				)
 			);
 
-			// Always enqueue the core command palette
-			// We have at least one custom post type the user can access
 			if ( ! empty( $custom_post_types ) ) {
-				// Enqueue the post types command palette
 				wp_enqueue_script( 'acf-command-palette-post-types' );
 			}
 
