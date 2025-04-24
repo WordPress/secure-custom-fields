@@ -1,16 +1,16 @@
 /**
- * SCF Core Command Palette integration
+ * SCF Admin Commands
  *
- * Core WordPress admin commands for Secure Custom Fields.
- * This file registers static commands for all primary SCF admin pages,
- * enabling quick navigation through the command palette (Cmd+K / Ctrl+K).
+ * Core WordPress commands for Secure Custom Fields administration.
+ * This file registers navigation commands for all primary SCF admin screens,
+ * enabling quick access through the WordPress commands interface (Cmd+K / Ctrl+K).
  *
  * @since 6.5.0
  */
 
 wp.domReady( () => {
 	// Make sure required WordPress dependencies are available
-	// This ensures we only register commands where the command palette is supported
+	// This ensures we only register commands where the commands API is supported
 	if (
 		! wp.data ||
 		! wp.data.dispatch ||
@@ -176,7 +176,7 @@ wp.domReady( () => {
 
 	commands.forEach( ( command ) => {
 		commandStore.registerCommand( {
-			name: 'scf/' + command.name,
+			name: 'acf/' + command.name,
 			label: command.label,
 			icon: createElement( Icon, { icon: command.icon } ),
 			context: 'admin',

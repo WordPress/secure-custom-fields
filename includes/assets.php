@@ -250,18 +250,18 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			wp_register_script( 'acf-internal-post-type', acf_get_url( 'assets/build/js/acf-internal-post-type' . $suffix . '.js' ), array( 'acf-input' ), $version, false );
 			wp_register_script( 'acf-escaped-html-notice', acf_get_url( 'assets/build/js/acf-escaped-html-notice' . $suffix . '.js' ), array( 'jquery' ), $version, true );
 
-			// Register command palette scripts
+			// Register WordPress commands integration
 			wp_register_script(
-				'acf-command-palette-core',
-				acf_get_url( 'assets/build/js/acf-command-palette-core' . $suffix . '.js' ),
+				'commands-admin',
+				acf_get_url( 'assets/build/js/commands/admin' . $suffix . '.js' ),
 				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
 				$version,
 				true
 			);
 
 			wp_register_script(
-				'acf-command-palette-post-types',
-				acf_get_url( 'assets/build/js/acf-command-palette-post-types' . $suffix . '.js' ),
+				'commands-custom-post-types',
+				acf_get_url( 'assets/build/js/commands/custom-post-types' . $suffix . '.js' ),
 				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
 				$version,
 				true

@@ -1,9 +1,9 @@
 /**
- * SCF Dynamic Post Type Command Palette integration
+ * SCF Post Type Commands
  *
  * Dynamic commands for user-created custom post types in Secure Custom Fields.
- * This file generates commands for each registered post type that the current user
- * has access to, creating both "View All" and "Add New" commands for each type.
+ * This file generates navigation commands for each registered post type that 
+ * the current user has access to, creating both "View All" and "Add New" commands.
  *
  * Post type data is provided via acf.data.customPostTypes, which is populated
  * by the PHP side after capability checks ensure the user has appropriate access.
@@ -13,7 +13,7 @@
 
 wp.domReady( () => {
 	// Make sure required WordPress dependencies are available
-	// This ensures we only register commands where the command palette is supported
+	// This ensures we only register commands where the commands API is supported
 	if (
 		! wp.data ||
 		! wp.data.dispatch ||
@@ -48,8 +48,9 @@ wp.domReady( () => {
 		const pluralLabel = postType.label || postType.name;
 		const singularLabel = postType.singular_label || pluralLabel;
 
+		// Register "View All" command for this post type
 		commandStore.registerCommand( {
-			name: `scf/cpt-${ postType.name }`,
+			name: `acf/cpt-${ postType.name }`,
 			label: pluralLabel,
 			icon: createElement( Icon, { icon: 'admin-page' } ),
 			context: 'admin',
@@ -74,8 +75,9 @@ wp.domReady( () => {
 			},
 		} );
 
+		// Register "Add New" command for this post type
 		commandStore.registerCommand( {
-			name: `scf/new-${ postType.name }`,
+			name: `acf/new-${ postType.name }`,
 			label:
 				/* translators: %s: Post type singular label */
 				sprintf(
