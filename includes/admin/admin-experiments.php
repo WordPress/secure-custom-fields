@@ -96,10 +96,8 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 				return;
 			}
 
-			// add page
 			$page = add_submenu_page( 'edit.php?post_type=acf-field-group', __( 'Experiments', 'secure-custom-fields' ), __( 'Experiments', 'secure-custom-fields' ), acf_get_setting( 'capability' ), 'scf-experiments', array( $this, 'html' ) );
 
-			// actions
 			add_action( 'load-' . $page, array( $this, 'load' ) );
 		}
 
@@ -119,10 +117,8 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// Temporarily disabled - will be enabled when experiments feature is ready
 			// $this->include_experiments();
 
-			// check submit
 			$this->check_submit();
 
-			// load acf scripts
 			acf_enqueue_scripts();
 
 			// Temporarily disabled - Uncomment to enable in production when ready.
@@ -140,13 +136,11 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return  void
 		 */
 		public function enqueue_experiments_script() {
-			// Prepare experiments data for JavaScript - simplified to just enabled status
 			$experiments_data = array();
 			foreach ( $this->get_experiments() as $name => $experiment ) {
 				$experiments_data[ $name ] = $experiment->is_enabled();
 			}
 
-			// Localize the script with experiments data
 			wp_localize_script(
 				'acf-experiments',
 				'acfExperiments',
@@ -177,14 +171,11 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return  void
 		 */
 		public function include_experiments() {
-			// include
 			acf_include( 'includes/admin/experiments/class-scf-admin-experiment.php' );
 			acf_include( 'includes/admin/experiments/class-scf-admin-experiment-editor-sidebar.php' );
 
-			// Register experiments
 			add_action( 'scf/include_admin_experiments', array( $this, 'register_experiments' ) );
 
-			// action
 			do_action( 'scf/include_admin_experiments' );
 		}
 
@@ -207,7 +198,7 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 * @return  void
 		 */
 		public function check_submit() {
-			// Check if form was submitted
+			// Check if form was submitted.
 			if ( ! isset( $_POST['scf_experiments_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['scf_experiments_nonce'] ), 'scf_experiments_update' ) ) {
 				return;
 			}
@@ -261,18 +252,14 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 				'active'    => $active,
 			);
 
-			// register metaboxes
 			foreach ( $this->get_experiments() as $experiment ) {
-				// check active
 				if ( $active && $active !== $experiment->name ) {
 					continue;
 				}
 
-				// add metabox
 				add_meta_box( 'scf-admin-experiment-' . $experiment->name, acf_esc_html( $experiment->title ), array( $this, 'metabox_html' ), $screen->id, 'normal', 'default', array( 'experiment' => $experiment->name ) );
 			}
 
-			// view
 			acf_get_view( 'experiments/experiments', $view );
 		}
 
