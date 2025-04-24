@@ -22,7 +22,7 @@ const commonConfig = {
 		'js/pro/acf-pro-input': './assets/src/js/pro/acf-pro-input.js',
 		'js/pro/acf-pro-ui-options-page':
 			'./assets/src/js/pro/acf-pro-ui-options-page.js',
-		'js/acf-experiments': './assets/src/js/_acf-experiments.ts',
+		'js/acf-experiments': './assets/src/js/experiments',
 		// CSS files
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',
 		'css/acf-field-group': './assets/src/sass/acf-field-group.scss',
