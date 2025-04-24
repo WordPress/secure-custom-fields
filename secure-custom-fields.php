@@ -852,13 +852,11 @@ register_uninstall_hook( __FILE__, 'scf_plugin_uninstall' );
  * Cleanup function that runs when the plugin is uninstalled
  */
 function scf_plugin_uninstall() {
-	// List of known experiments
+	// List of known experiments.
 	$experiments = array(
 		'editor-sidebar',
-		// Add other experiments here as they are created
 	);
 
-	// Delete options for known experiments
 	foreach ( $experiments as $experiment ) {
 		delete_option( 'scf_experiment_' . $experiment . '_enabled' );
 	}
