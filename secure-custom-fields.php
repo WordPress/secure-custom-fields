@@ -213,6 +213,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-command-palette.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
 
@@ -229,84 +230,8 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
-
-			// Load command palette
-			add_action( 'admin_enqueue_scripts', array( $this, 'load_command_palette' ) );
 		}
 
-		/**
-		 * Loads the command palette script and its dependencies
-		 *
-		 * This method handles the integration with WordPress Command Palette (Cmd+K / Ctrl+K),
-		 * providing navigation commands for SCF admin pages and custom post types.
-		 *
-		 * The implementation follows these principles:
-		 * 1. Only loads in admin screens
-		 * 2. Performs capability checks to ensure users only see commands they can access
-		 * 3. Core administrative commands are only shown to users with SCF admin capabilities
-		 * 4. Custom post type commands are conditionally shown based on edit_posts capability
-		 *    for each specific post type
-		 * 5. Post types must have UI enabled (show_ui setting) to appear in the command palette
-		 *
-		 * @since 6.5.0
-		 */
-		public function load_command_palette() {
-			// Only load on admin screens
-			if ( ! is_admin() ) {
-				return;
-			}
-
-			// Check if current user has capability to access SCF admin
-			$user_can_admin = current_user_can( acf_get_setting( 'capability' ) );
-
-			// Admin capabilities required for core commands, but all users can see post type commands
-
-			$custom_post_types = array();
-
-			if ( function_exists( 'acf_get_acf_post_types' ) ) {
-				$scf_post_types = acf_get_acf_post_types();
-
-				foreach ( $scf_post_types as $post_type ) {
-					if ( isset( $post_type['post_type'] ) && isset( $post_type['active'] ) && $post_type['active'] ) {
-						// Get both plural and singular labels using null coalescing operator
-						$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
-						$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
-
-						// Only add post types that the user has access to
-						$post_type_obj = get_post_type_object( $post_type['post_type'] );
-						// Three conditions must be met to include this post type in the command palette:
-						// 1. Post type object must exist
-						// 2. Current user must have permission to edit posts of this type
-						// 3. Post type must have admin UI enabled (show_ui setting)
-						if ( $post_type_obj &&
-							current_user_can( $post_type_obj->cap->edit_posts ) &&
-							$post_type_obj->show_ui ) {
-							$custom_post_types[] = array(
-								'name'           => $post_type['post_type'],
-								'label'          => $plural_label,
-								'singular_label' => $singular_label,
-								'icon'           => $post_type['menu_icon'] ?? '',
-							);
-						}
-					}
-				}
-			}
-
-			acf_localize_data(
-				array(
-					'customPostTypes' => $custom_post_types,
-				)
-			);
-
-			if ( ! empty( $custom_post_types ) ) {
-				wp_enqueue_script( 'acf-command-palette-post-types' );
-			}
-
-			// Only load admin commands if user has SCF admin capabilities
-			if ( $user_can_admin ) {
-				wp_enqueue_script( 'acf-command-palette-core' );
-			}
-		}
 
 		/**
 		 * Completes the setup process on "init" of earlier.
