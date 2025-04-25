@@ -53,7 +53,7 @@ wp.domReady( () => {
 				'content',
 				'cpt',
 				postType.name,
-				postType.label || '',
+				...(postType.label ? [postType.label] : []),
 			],
 			callback: ( { close } ) => {
 				document.location = `${ adminUrl }edit.php?post_type=${ encodeURIComponent(
