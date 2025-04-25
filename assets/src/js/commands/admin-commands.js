@@ -15,12 +15,18 @@ import { __ } from '@wordpress/i18n';
 import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
-import domReady from '@wordpress/dom-ready';
+import { createQueue } from '@wordpress/priority-queue';
+
+/**
+ * Initialize deferred execution queue and context
+ */
+const queue = createQueue();
+const context = {};
 
 /**
  * Register admin commands for SCF
  */
-domReady( () => {
+queue.add( context, () => {
 	if ( ! dispatch( 'core/commands' ) || ! window.acf?.data ) {
 		return;
 	}

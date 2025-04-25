@@ -256,7 +256,10 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				acf_get_url( 'assets/build/js/commands/admin' . $suffix . '.js' ),
 				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
 				$version,
-				true
+				array(
+					'in_footer' => true,
+					'defer'     => true,
+				)
 			);
 
 			wp_register_script(
@@ -264,7 +267,10 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				acf_get_url( 'assets/build/js/commands/custom-post-types' . $suffix . '.js' ),
 				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
 				$version,
-				true
+				array(
+					'in_footer' => true,
+					'defer'     => true,
+				)
 			);
 
 			// Register styles.
