@@ -69,13 +69,12 @@ function acf_commands_init() {
 		}
 	}
 
-	acf_localize_data(
-		array(
-			'customPostTypes' => $custom_post_types,
-		)
-	);
-
 	if ( ! empty( $custom_post_types ) ) {
+		acf_localize_data(
+			array(
+				'customPostTypes' => $custom_post_types,
+			)
+		);
 		wp_enqueue_script( 'commands-custom-post-types' );
 	}
 
