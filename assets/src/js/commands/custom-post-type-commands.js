@@ -1,8 +1,8 @@
 /**
- * SCF Post Type Commands
+ * Custom Post Type Commands
  *
  * Dynamic commands for user-created custom post types in Secure Custom Fields.
- * This file generates navigation commands for each registered post type that 
+ * This file generates navigation commands for each registered post type that
  * the current user has access to, creating both "View All" and "Add New" commands.
  *
  * Post type data is provided via acf.data.customPostTypes, which is populated
@@ -12,19 +12,11 @@
  */
 
 wp.domReady( () => {
-	// Make sure required WordPress dependencies are available
-	// This ensures we only register commands where the commands API is supported
+	// Only proceed when WordPress commands API and there are custom post types accessible
 	if (
-		! wp.data ||
-		! wp.data.dispatch ||
-		! wp.data.dispatch( 'core/commands' ) ||
-		typeof wp.commands === 'undefined'
+		! wp.data?.dispatch?.( 'core/commands' ) ||
+		! acf?.data?.customPostTypes?.length
 	) {
-		return;
-	}
-
-	// Wait for ACF to be ready
-	if ( typeof acf === 'undefined' ) {
 		return;
 	}
 
@@ -32,18 +24,14 @@ wp.domReady( () => {
 	const { createElement } = wp.element;
 	const { Icon } = wp.components;
 	const commandStore = wp.data.dispatch( 'core/commands' );
-
-	const adminUrl = acf?.data?.admin_url || '';
-	const postTypes = acf?.data?.customPostTypes || [];
-
-	// Skip if no custom post types
-	if ( ! postTypes || postTypes.length === 0 ) {
-		return;
-	}
+	const adminUrl = acf.data.admin_url || '';
+	const postTypes = acf.data.customPostTypes;
 
 	postTypes.forEach( ( postType ) => {
 		// Skip invalid post types
-		if ( ! postType?.name ) return;
+		if ( ! postType?.name ) {
+			return;
+		}
 
 		const pluralLabel = postType.label || postType.name;
 		const singularLabel = postType.singular_label || pluralLabel;

@@ -1,5 +1,5 @@
 /**
- * SCF Admin Commands
+ * Admin Commands
  *
  * Core WordPress commands for Secure Custom Fields administration.
  * This file registers navigation commands for all primary SCF admin screens,
@@ -9,19 +9,7 @@
  */
 
 wp.domReady( () => {
-	// Make sure required WordPress dependencies are available
-	// This ensures we only register commands where the commands API is supported
-	if (
-		! wp.data ||
-		! wp.data.dispatch ||
-		! wp.data.dispatch( 'core/commands' ) ||
-		typeof wp.commands === 'undefined'
-	) {
-		return;
-	}
-
-	// Wait for ACF to be ready
-	if ( typeof acf === 'undefined' ) {
+	if ( ! wp.data?.dispatch?.( 'core/commands' ) || ! acf?.data ) {
 		return;
 	}
 
