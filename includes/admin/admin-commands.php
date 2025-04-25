@@ -75,12 +75,12 @@ function acf_commands_init() {
 				'customPostTypes' => $custom_post_types,
 			)
 		);
-		wp_enqueue_script( 'commands-custom-post-types' );
+		wp_enqueue_script( 'scf-commands-custom-post-types' );
 	}
 
 	// Only load admin commands if user has SCF admin capabilities.
 	if ( current_user_can( acf_get_setting( 'capability' ) ) ) {
-		wp_enqueue_script( 'commands-admin' );
+		wp_enqueue_script( 'scf-commands-admin' );
 	}
 }
 
