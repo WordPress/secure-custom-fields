@@ -79,7 +79,30 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  array
 		 */
 		public function get_beta_features() {
+			// Include beta features
+			$this->include_beta_features();
+
 			return $this->beta_features;
+		}
+
+		/**
+		 * Localizes the beta features data.
+		 *
+		 * @since   SCF 6.4.2
+		 *
+		 * @return  void
+		 */
+		public function localize_beta_features() {
+			$beta_features = array();
+			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
+				$beta_features[ $name ] = $beta_feature->is_enabled();
+			}
+
+			acf_localize_data(
+				array(
+					'betaFeatures' => $beta_features,
+				)
+			);
 		}
 
 		/**
@@ -99,7 +122,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$page = add_submenu_page( 'edit.php?post_type=acf-field-group', __( 'Beta Features', 'secure-custom-fields' ), __( 'Beta Features', 'secure-custom-fields' ), acf_get_setting( 'capability' ), 'scf-beta-features', array( $this, 'html' ) );
 
 			add_action( 'load-' . $page, array( $this, 'load' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'localize_beta_features' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'localize_beta_features' ), 20 );
 		}
 
 		/**
@@ -118,26 +141,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$this->include_beta_features();
 
 			$this->check_submit();
-		}
-
-		/**
-		 * Localizes beta features data without enqueueing scripts.
-		 *
-		 * @since   SCF 6.4.2
-		 *
-		 * @return  void
-		 */
-		public function localize_beta_features() {
-			$beta_features = array();
-
-			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
-				$beta_features[ $name ] = $beta_feature->is_enabled();
-			}
-			acf_localize_data(
-				array(
-					'betaFeatures' => $beta_features,
-				)
-			);
 		}
 
 		/**
@@ -240,12 +243,12 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 				'active'    => $active,
 			);
 
-			foreach ( $this->get_beta_features() as $beta_feature ) {
-				if ( $active && $active !== $beta_feature->name ) {
+			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
+				if ( $active && $active !== $name ) {
 					continue;
 				}
 
-				add_meta_box( 'scf-admin-beta-feature-' . $beta_feature->name, acf_esc_html( $beta_feature->title ), array( $this, 'metabox_html' ), $screen->id, 'normal', 'default', array( 'beta_feature' => $beta_feature->name ) );
+				add_meta_box( 'scf-admin-beta-feature-' . $name, acf_esc_html( $beta_feature->title ), array( $this, 'metabox_html' ), $screen->id, 'normal', 'default', array( 'beta_feature' => $name ) );
 			}
 
 			acf_get_view( 'beta-features/beta-features', $view );
