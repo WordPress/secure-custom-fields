@@ -189,14 +189,6 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => true,
 				),
-				'acf-experiments'         => array(
-					'handle'     => 'acf-experiments',
-					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-experiments' ) ),
-					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'acf-experiments' ) ),
-					'deps'       => array( 'jquery', 'acf' ),
-					'version'    => $version,
-					'in_footer'  => true,
-				),
 			);
 
 			// Define style registrations.

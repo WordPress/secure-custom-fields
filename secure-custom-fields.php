@@ -213,7 +213,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
-				acf_include( 'includes/admin/admin-experiments.php' );
+				acf_include( 'includes/admin/beta-features.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
 
@@ -852,12 +852,12 @@ register_uninstall_hook( __FILE__, 'scf_plugin_uninstall' );
  * Cleanup function that runs when the plugin is uninstalled
  */
 function scf_plugin_uninstall() {
-	// List of known experiments.
-	$experiments = array(
+	// List of known beta features.
+	$beta_features = array(
 		'editor-sidebar',
 	);
 
-	foreach ( $experiments as $experiment ) {
-		delete_option( 'scf_experiment_' . $experiment . '_enabled' );
+	foreach ( $beta_features as $beta_feature ) {
+		delete_option( 'scf_beta_feature_' . $beta_feature . '_enabled' );
 	}
 }

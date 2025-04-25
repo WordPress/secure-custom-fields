@@ -1,8 +1,8 @@
 <?php
 /**
- * Editor Sidebar Experiment
+ * Editor Sidebar Beta Feature
  *
- * This experiment allows moving field group elements to the editor sidebar.
+ * This beta feature allows moving field group elements to the editor sidebar.
  *
  * @package    Secure Custom Fields
  * @since      6.4.3
@@ -12,20 +12,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'SCF_Admin_Experiment_Editor_Sidebar' ) ) :
+if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 	/**
-	 * Class SCF_Admin_Experiment_Editor_Sidebar
+	 * Class SCF_Admin_Beta_Feature_Editor_Sidebar
 	 *
-	 * Implements an experiment to move field group elements to the editor sidebar
+	 * Implements a beta feature to move field group elements to the editor sidebar
 	 * for a cleaner interface.
 	 *
 	 * @package    Secure Custom Fields
 	 * @since      6.4.3
 	 */
-	class SCF_Admin_Experiment_Editor_Sidebar extends SCF_Admin_Experiment {
+	class SCF_Admin_Beta_Feature_Editor_Sidebar extends SCF_Admin_Beta_Feature {
 
 		/**
-		 * Initialize the experiment.
+		 * Initialize the beta feature.
 		 *
 		 * @return void
 		 */
@@ -35,17 +35,17 @@ if ( ! class_exists( 'SCF_Admin_Experiment_Editor_Sidebar' ) ) :
 			$this->description = __( 'Moves field group elements to the editor sidebar for a cleaner interface.', 'secure-custom-fields' );
 
 			if ( $this->is_enabled() ) {
-				add_action( 'admin_init', array( $this, 'setup_experiment' ) );
+				add_action( 'admin_init', array( $this, 'setup_beta_feature' ) );
 			}
 		}
 
 		/**
-		 * Set up the experiment functionality when enabled.
+		 * Set up the beta feature functionality when enabled.
 		 *
 		 * @return void
 		 */
-		public function setup_experiment() {
-			// Add hooks to move elements to sidebar when the experiment is enabled
+		public function setup_beta_feature() {
+			// Add hooks to move elements to sidebar when the beta feature is enabled
 			// This will be implemented in a future update
 		}
 	}
