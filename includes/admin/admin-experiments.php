@@ -43,7 +43,7 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 */
 		public function __construct() {
 			// Temporarily disabled - will be enabled when experiments feature is ready
-			// add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		}
 
 		/**
@@ -115,11 +115,11 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			acf_disable_filters();
 
 			// Temporarily disabled - will be enabled when experiments feature is ready
-			// $this->include_experiments();
+			$this->include_experiments();
 
 			$this->check_submit();
 			// Temporarily disabled - Localize experiments data. Uncomment to enable in production when ready.
-			// $this->enqueue_and_localize_experiments_script();
+			$this->enqueue_and_localize_experiments_script();
 		}
 
 		/**
@@ -286,7 +286,6 @@ endif; // class_exists check
  * Alias of acf()->admin_experiments->register_experiment()
  *
  * @type    function
- * @date    31/5/17
  * @since   SCF 6.4.2
  *
  * @param   string $experiment The experiment class.
@@ -300,7 +299,6 @@ function scf_register_admin_experiment( $experiment ) {
  * This function will return the admin URL to the experiments page
  *
  * @type    function
- * @date    31/5/17
  * @since   SCF 6.4.2
  *
  * @return  string The URL to the experiments page.
@@ -313,7 +311,6 @@ function scf_get_admin_experiments_url() {
  * This function will return the admin URL to a specific experiment page
  *
  * @type    function
- * @date    31/5/17
  * @since   SCF 6.4.2
  *
  * @param   string $experiment The experiment name.
