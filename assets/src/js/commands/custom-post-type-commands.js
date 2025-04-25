@@ -38,7 +38,7 @@ wp.domReady( () => {
 
 		// Register "View All" command for this post type
 		commandStore.registerCommand( {
-			name: `acf/cpt-${ postType.name }`,
+			name: `scf/cpt-${ postType.name }`,
 			label: pluralLabel,
 			icon: createElement( Icon, { icon: 'admin-page' } ),
 			context: 'admin',
