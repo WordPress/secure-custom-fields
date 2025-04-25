@@ -99,6 +99,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$page = add_submenu_page( 'edit.php?post_type=acf-field-group', __( 'Beta Features', 'secure-custom-fields' ), __( 'Beta Features', 'secure-custom-fields' ), acf_get_setting( 'capability' ), 'scf-beta-features', array( $this, 'html' ) );
 
 			add_action( 'load-' . $page, array( $this, 'load' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'localize_beta_features' ) );
 		}
 
 		/**
@@ -110,16 +111,13 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		public function load() {
 			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
-
 			// disable filters (default to raw data)
 			acf_disable_filters();
 
-			// Temporarily disabled - will be enabled when beta features feature is ready
+			// Include and register beta features before checking submit
 			$this->include_beta_features();
 
 			$this->check_submit();
-			// Temporarily disabled - Localize beta features data. Uncomment to enable in production when ready.
-			$this->localize_beta_features();
 		}
 
 		/**
@@ -198,12 +196,10 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$beta_features = $this->get_beta_features();
 			$updated       = false;
 
-			foreach ( $beta_features as $beta_feature ) {
-				$enabled = isset( $_POST['scf_beta_features'][ $beta_feature->name ] );
-				if ( $beta_feature->is_enabled() !== $enabled ) {
-					$beta_feature->set_enabled( $enabled );
-					$updated = true;
-				}
+			foreach ( $beta_features as $name => $beta_feature ) {
+				$enabled = isset( $_POST['scf_beta_features'][ $name ] ) && '1' === $_POST['scf_beta_features'][ $name ];
+				$beta_feature->set_enabled( $enabled );
+				$updated = true;
 			}
 
 			if ( $updated ) {

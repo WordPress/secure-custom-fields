@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Get current screen and beta features.
-$screen        = get_current_screen();
 $beta_features = acf()->admin_beta_features->get_beta_features();
 ?>
 <div class="wrap" id="scf-admin-beta-features">
