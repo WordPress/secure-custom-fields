@@ -5,31 +5,11 @@
  * @since      6.4.3
  */
 
-interface ExperimentsData {
-	[ key: string ]: boolean;
-}
+import type { ExperimentsObject, ACF, ExperimentsData } from './types';
 
-interface ExperimentsObject {
-	[ key: string ]: boolean | ( ( name: string ) => boolean );
-	isEnabled: ( name: string ) => boolean;
-}
-
-interface ACF {
-	experiments?: ExperimentsObject;
-	[ key: string ]: any;
-}
-
-declare global {
-	interface Window {
-		acf: ACF;
-		acfExperiments?: ExperimentsData; // Variable created by wp_localize_script in admin-experiments.php L150.
-	}
-	var acf: ACF;
-	var acfExperiments: ExperimentsData | undefined;
-}
-
-// Create a module to avoid global scope augmentation issues.
-export {};
+// Declare global variables that are defined elsewhere
+declare const acf: ACF;
+declare const acfExperiments: { data: ExperimentsData };
 
 ( function () {
 	if ( typeof acf !== 'object' || acf === null ) {
@@ -40,7 +20,7 @@ export {};
 		isEnabled: function ( name: string ): boolean {
 			return this.hasOwnProperty( name ) && this[ name ] === true;
 		},
-	};
+	} as ExperimentsObject;
 
 	document.addEventListener( 'DOMContentLoaded', function () {
 		if ( ! acf.experiments || typeof acfExperiments === 'undefined' ) {

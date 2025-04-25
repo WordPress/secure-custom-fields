@@ -28,7 +28,7 @@ $experiments = acf()->admin_experiments->get_experiments();
 				<p><?php esc_html_e( 'No beta features are currently available.', 'secure-custom-fields' ); ?></p>
 			</div>
 		<?php else : ?>
-		<form method="post" action="">
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=scf-experiments' ) ); ?>">
 			<?php wp_nonce_field( 'scf_experiments_update', 'scf_experiments_nonce' ); ?>
 			<table class="widefat scf-experiments-table">
 				<thead>
