@@ -118,14 +118,8 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 			// $this->include_experiments();
 
 			$this->check_submit();
-
-			acf_enqueue_scripts();
-
-			// Temporarily disabled - Uncomment to enable in production when ready.
-			// acf_enqueue_script( 'acf-experiments' );
-
 			// Temporarily disabled - Localize experiments data. Uncomment to enable in production when ready.
-			// $this->enqueue_experiments_script();
+			// $this->enqueue_and_localize_experiments_script();
 		}
 
 		/**
@@ -135,7 +129,9 @@ if ( ! class_exists( 'SCF_Admin_Experiments' ) ) :
 		 *
 		 * @return  void
 		 */
-		public function enqueue_experiments_script() {
+		public function enqueue_and_localize_experiments_script() {
+			acf_enqueue_scripts();
+			acf_enqueue_script( 'acf-experiments' );
 			$experiments_data = array();
 			foreach ( $this->get_experiments() as $name => $experiment ) {
 				$experiments_data[ $name ] = $experiment->is_enabled();
