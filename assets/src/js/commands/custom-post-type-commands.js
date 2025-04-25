@@ -53,7 +53,7 @@ wp.domReady( () => {
 				'content',
 				'cpt',
 				postType.name,
-				...(postType.label ? [postType.label] : []),
+				...( postType.label ? [ postType.label ] : [] ),
 			],
 			callback: ( { close } ) => {
 				document.location = `${ adminUrl }edit.php?post_type=${ encodeURIComponent(
@@ -65,7 +65,7 @@ wp.domReady( () => {
 
 		// Register "Add New" command for this post type
 		commandStore.registerCommand( {
-			name: `acf/new-${ postType.name }`,
+			name: `scf/new-${ postType.name }`,
 			label:
 				/* translators: %s: Post type singular label */
 				sprintf(
@@ -86,7 +86,7 @@ wp.domReady( () => {
 				'create',
 				'content',
 				postType.name,
-				postType.label || '',
+				...( postType.label ? [ postType.label ] : [] ),
 			],
 			callback: ( { close } ) => {
 				document.location = `${ adminUrl }post-new.php?post_type=${ encodeURIComponent(
