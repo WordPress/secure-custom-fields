@@ -8,17 +8,25 @@
  * @since 6.5.0
  */
 
-wp.domReady( () => {
-	if ( ! wp.data?.dispatch?.( 'core/commands' ) || ! acf?.data ) {
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+import { createElement } from '@wordpress/element';
+import { Icon } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
+
+/**
+ * Register admin commands for SCF
+ */
+domReady( () => {
+	if ( ! dispatch( 'core/commands' ) || ! window.acf?.data ) {
 		return;
 	}
 
-	const { __ } = wp.i18n;
-	const { createElement } = wp.element;
-	const { Icon } = wp.components;
-	const commandStore = wp.data.dispatch( 'core/commands' );
-
-	const adminUrl = acf?.data?.admin_url || '';
+	const commandStore = dispatch( 'core/commands' );
+	const adminUrl = window.acf?.data?.admin_url || '';
 
 	const commands = [
 		{

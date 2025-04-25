@@ -11,21 +11,30 @@
  * @since 6.5.0
  */
 
-wp.domReady( () => {
+/**
+ * WordPress dependencies
+ */
+import { __, sprintf } from '@wordpress/i18n';
+import { createElement } from '@wordpress/element';
+import { Icon } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
+
+/**
+ * Register custom post type commands
+ */
+domReady( () => {
 	// Only proceed when WordPress commands API and there are custom post types accessible
 	if (
-		! wp.data?.dispatch?.( 'core/commands' ) ||
-		! acf?.data?.customPostTypes?.length
+		! dispatch( 'core/commands' ) ||
+		! window.acf?.data?.customPostTypes?.length
 	) {
 		return;
 	}
 
-	const { __, sprintf } = wp.i18n;
-	const { createElement } = wp.element;
-	const { Icon } = wp.components;
-	const commandStore = wp.data.dispatch( 'core/commands' );
-	const adminUrl = acf.data.admin_url || '';
-	const postTypes = acf.data.customPostTypes;
+	const commandStore = dispatch( 'core/commands' );
+	const adminUrl = window.acf.data.admin_url || '';
+	const postTypes = window.acf.data.customPostTypes;
 
 	postTypes.forEach( ( postType ) => {
 		// Skip invalid post types
