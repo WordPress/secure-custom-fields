@@ -164,7 +164,7 @@ wp.domReady( () => {
 
 	commands.forEach( ( command ) => {
 		commandStore.registerCommand( {
-			name: 'acf/' + command.name,
+			name: 'scf/' + command.name,
 			label: command.label,
 			icon: createElement( Icon, { icon: command.icon } ),
 			context: 'admin',
