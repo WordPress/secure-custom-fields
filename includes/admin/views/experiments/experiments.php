@@ -20,9 +20,14 @@ $experiments = acf()->admin_experiments->get_experiments();
 
 	<div class="scf-experiments-list">
 		<div class="scf-experiments-header">
-			<p><?php esc_html_e( 'Enable or disable experimental features. These features are in development and may change in future releases.', 'secure-custom-fields' ); ?></p>
+			<p><?php esc_html_e( 'Enable or disable beta features. These features are in development and may change in future releases.', 'secure-custom-fields' ); ?></p>
 		</div>
-
+		
+		<?php if ( empty( $experiments ) ) : ?>
+			<div class="scf-no-experiments">
+				<p><?php esc_html_e( 'No beta features are currently available.', 'secure-custom-fields' ); ?></p>
+			</div>
+		<?php else : ?>
 		<form method="post" action="">
 			<?php wp_nonce_field( 'scf_experiments_update', 'scf_experiments_nonce' ); ?>
 			<table class="widefat scf-experiments-table">
@@ -58,6 +63,7 @@ $experiments = acf()->admin_experiments->get_experiments();
 				<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Changes', 'secure-custom-fields' ); ?>" />
 			</p>
 		</form>
+		<?php endif; ?>
 	</div>
 </div>
 
@@ -93,5 +99,13 @@ $experiments = acf()->admin_experiments->get_experiments();
 .scf-experiment-info .description {
 	margin: 4px 0 0;
 	color: #646970;
+}
+.scf-no-experiments {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	margin-top: 20px;
+	text-align: center;
 }
 </style> 
