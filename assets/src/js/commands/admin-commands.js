@@ -38,7 +38,7 @@ queue.add( context, () => {
 		{
 			name: 'field-groups',
 			label: __( 'Field Groups', 'secure-custom-fields' ),
-			url: `${ adminUrl }edit.php?post_type=acf-field-group`,
+			url: 'edit.php?post_type=acf-field-group',
 			icon: 'layout',
 			description: __(
 				'SCF: View and manage custom field groups',
@@ -54,7 +54,7 @@ queue.add( context, () => {
 		{
 			name: 'new-field-group',
 			label: __( 'Create New Field Group', 'secure-custom-fields' ),
-			url: `${ adminUrl }post-new.php?post_type=acf-field-group`,
+			url: 'post-new.php?post_type=acf-field-group',
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new field group to organize custom fields',
@@ -71,7 +71,7 @@ queue.add( context, () => {
 		{
 			name: 'post-types',
 			label: __( 'Post Types', 'secure-custom-fields' ),
-			url: `${ adminUrl }edit.php?post_type=acf-post-type`,
+			url: 'edit.php?post_type=acf-post-type',
 			icon: 'admin-post',
 			description: __(
 				'SCF: Manage custom post types',
@@ -82,7 +82,7 @@ queue.add( context, () => {
 		{
 			name: 'new-post-type',
 			label: __( 'Create New Post Type', 'secure-custom-fields' ),
-			url: `${ adminUrl }post-new.php?post_type=acf-post-type`,
+			url: 'post-new.php?post_type=acf-post-type',
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom post type',
@@ -93,7 +93,7 @@ queue.add( context, () => {
 		{
 			name: 'taxonomies',
 			label: __( 'Taxonomies', 'secure-custom-fields' ),
-			url: `${ adminUrl }edit.php?post_type=acf-taxonomy`,
+			url: 'edit.php?post_type=acf-taxonomy',
 			icon: 'category',
 			description: __(
 				'SCF: Manage custom taxonomies for organizing content',
@@ -104,7 +104,7 @@ queue.add( context, () => {
 		{
 			name: 'new-taxonomy',
 			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
-			url: `${ adminUrl }post-new.php?post_type=acf-taxonomy`,
+			url: 'post-new.php?post_type=acf-taxonomy',
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom taxonomy',
@@ -122,7 +122,7 @@ queue.add( context, () => {
 		{
 			name: 'options-pages',
 			label: __( 'Options Pages', 'secure-custom-fields' ),
-			url: `${ adminUrl }edit.php?post_type=acf-ui-options-page`,
+			url: 'edit.php?post_type=acf-ui-options-page',
 			icon: 'admin-settings',
 			description: __(
 				'SCF: Manage custom options pages for global settings',
@@ -133,7 +133,7 @@ queue.add( context, () => {
 		{
 			name: 'new-options-page',
 			label: __( 'Create New Options Page', 'secure-custom-fields' ),
-			url: `${ adminUrl }post-new.php?post_type=acf-ui-options-page`,
+			url: 'post-new.php?post_type=acf-ui-options-page',
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom options page',
@@ -144,7 +144,7 @@ queue.add( context, () => {
 		{
 			name: 'tools',
 			label: __( 'SCF Tools', 'secure-custom-fields' ),
-			url: `${ adminUrl }admin.php?page=acf-tools`,
+			url: 'admin.php?page=acf-tools',
 			icon: 'admin-tools',
 			description: __(
 				'SCF: Access SCF utility tools',
@@ -155,7 +155,7 @@ queue.add( context, () => {
 		{
 			name: 'import',
 			label: __( 'Import SCF Data', 'secure-custom-fields' ),
-			url: `${ adminUrl }admin.php?page=acf-tools&tool=import`,
+			url: 'admin.php?page=acf-tools&tool=import',
 			icon: 'upload',
 			description: __(
 				'SCF: Import field groups, post types, taxonomies, and options pages',
@@ -166,7 +166,7 @@ queue.add( context, () => {
 		{
 			name: 'export',
 			label: __( 'Export SCF Data', 'secure-custom-fields' ),
-			url: `${ adminUrl }admin.php?page=acf-tools&tool=export`,
+			url: 'admin.php?page=acf-tools&tool=export',
 			icon: 'download',
 			description: __(
 				'SCF: Export field groups, post types, taxonomies, and options pages',
@@ -185,7 +185,7 @@ queue.add( context, () => {
 			description: command.description,
 			keywords: command.keywords,
 			callback: ( { close } ) => {
-				document.location = command.url;
+				document.location = adminUrl + command.url;
 				close();
 			},
 		} );

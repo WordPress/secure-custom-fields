@@ -71,9 +71,11 @@ queue.add( context, () => {
 				...( postType.label ? [ postType.label ] : [] ),
 			],
 			callback: ( { close } ) => {
-				document.location = `${ adminUrl }edit.php?post_type=${ encodeURIComponent(
-					postType.name
-				) }`;
+				document.location =
+					adminUrl +
+					`edit.php?post_type=${ encodeURIComponent(
+						postType.name
+					) }`;
 				close();
 			},
 		} );
@@ -104,9 +106,11 @@ queue.add( context, () => {
 				...( postType.label ? [ postType.label ] : [] ),
 			],
 			callback: ( { close } ) => {
-				document.location = `${ adminUrl }post-new.php?post_type=${ encodeURIComponent(
-					postType.name
-				) }`;
+				document.location =
+					adminUrl +
+					`post-new.php?post_type=${ encodeURIComponent(
+						postType.name
+					) }`;
 				close();
 			},
 		} );
