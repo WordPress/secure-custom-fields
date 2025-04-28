@@ -218,7 +218,8 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * @date    21/5/19
 			 * @since   ACF 5.8.1
 			 *
-			 * @param   array $args The query args.
+			 * @param   string  $item['text'] The user text.
+			 * @param   WP_User $user The user object.
 			 * @param   array $field The ACF field related to this query.
 			 * @param   (int|string) $post_id The post_id being edited.
 			 */
@@ -487,7 +488,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			 * @date    21/5/19
 			 * @since   ACF 5.8.1
 			 *
-			 * @param   string The result text.
+			 * @param   string $item['text'] The result text.
 			 * @param   WP_User $user The user object.
 			 * @param   array $field The ACF field related to this query.
 			 * @param   (int|string) $post_id The post_id being edited.

@@ -10,6 +10,13 @@ if ( ! class_exists( 'acf_validation' ) ) :
 	 * Validation Class
 	 */
 	class acf_validation {
+
+		/**
+		 * Vars.
+		 *
+		 * @var array $errors Array of errors.
+		 */
+		public $errors = array();
 		/**
 		 * This function will setup the class functionality
 		 *

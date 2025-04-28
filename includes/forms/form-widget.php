@@ -12,7 +12,24 @@
 if ( ! class_exists( 'acf_form_widget' ) ) :
 	#[AllowDynamicProperties]
 	class acf_form_widget {
-
+		/**
+		 * Vars.
+		 *
+		 * @var array $preview_values Preview values.
+		 */
+		public $preview_values = array();
+		/**
+		 * Vars.
+		 *
+		 * @var array $preview_reference Preview reference.
+		 */
+		public $preview_reference = array();
+		/**
+		 * Vars.
+		 *
+		 * @var array $preview_errors Preview errors.
+		 */
+		public $preview_errors = array();
 
 		/**
 		 * This function will setup the class functionality

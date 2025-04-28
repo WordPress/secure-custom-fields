@@ -8,6 +8,12 @@ if ( ! class_exists( 'ACF_Legacy_Location' ) ) :
 	abstract class ACF_Legacy_Location {
 
 		/**
+		 * Vars.
+		 *
+		 * @var string $name
+		 */
+		public $name = '';
+		/**
 		 * Constructor.
 		 *
 		 * @date    5/03/2014

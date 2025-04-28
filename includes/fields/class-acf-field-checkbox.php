@@ -4,6 +4,18 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 
 	class acf_field_checkbox extends acf_field {
 
+		/**
+		 * Vars.
+		 *
+		 * @var $values (string) The values of the checkboxes.
+		 */
+		public $values = '';
+		/**
+		 * Vars.
+		 *
+		 * @var $all_checked (bool) Whether all checkboxes are checked.
+		 */
+		public $all_checked = false;
 
 		/**
 		 * This function will setup the field type data
@@ -53,8 +65,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		function render_field( $field ) {
 
 			// reset vars
-			$this->_values      = array();
-			$this->_all_checked = true;
+			$this->values      = array();
+			$this->all_checked = true;
 
 			// ensure array
 			$field['value']   = acf_get_array( $field['value'] );
@@ -168,7 +180,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			}
 
 			// checked
-			if ( $this->_all_checked ) {
+			if ( $this->all_checked ) {
 				$atts['checked'] = 'checked';
 			}
 
@@ -211,7 +223,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					);
 
 					// bail early if choice already exists
-					if ( in_array( $esc_value, $this->_values, true ) ) {
+					if ( in_array( $esc_value, $this->values, true ) ) {
 						continue;
 					}
 
@@ -286,7 +298,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					if ( in_array( $esc_value, $args['value'] ) ) {
 						$atts['checked'] = 'checked';
 					} else {
-						$this->_all_checked = false;
+						$this->all_checked = false;
 					}
 
 					// disabled
@@ -295,7 +307,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					}
 
 					// store value added
-					$this->_values[] = $esc_value;
+					$this->values[] = $esc_value;
 
 					// append
 					$html .= acf_get_checkbox_input( $atts );
