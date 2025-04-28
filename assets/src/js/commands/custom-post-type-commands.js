@@ -18,18 +18,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
-import { createQueue } from '@wordpress/priority-queue';
-
-/**
- * Initialize deferred execution queue and context
- */
-const queue = createQueue();
-const context = {};
 
 /**
  * Register custom post type commands
  */
-queue.add( context, () => {
+const registerPostTypeCommands = () => {
 	// Only proceed when WordPress commands API and there are custom post types accessible
 	if (
 		! dispatch( 'core/commands' ) ||
@@ -115,4 +108,10 @@ queue.add( context, () => {
 			},
 		} );
 	} );
-} );
+};
+
+if ( 'requestIdleCallback' in window ) {
+	window.requestIdleCallback( registerPostTypeCommands, { timeout: 500 } );
+} else {
+	setTimeout( registerPostTypeCommands, 500 );
+}
