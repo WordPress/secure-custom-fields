@@ -9,9 +9,9 @@ if ( ! class_exists( 'acf_loop' ) ) :
 	class acf_loop {
 
 		/**
-		 * Vars.
+		 * Array of loops.
 		 *
-		 * @var array $loops Array of loops.
+		 * @var array $loops
 		 */
 		public $loops = array();
 		/**

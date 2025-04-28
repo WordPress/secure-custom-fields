@@ -5,15 +5,15 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 	class acf_field_checkbox extends acf_field {
 
 		/**
-		 * Vars.
+		 * The values of the checkboxes.
 		 *
-		 * @var $values (string) The values of the checkboxes.
+		 * @var $values (string)
 		 */
 		public $values = '';
 		/**
-		 * Vars.
+		 * Whether all checkboxes are checked.
 		 *
-		 * @var $all_checked (bool) Whether all checkboxes are checked.
+		 * @var $all_checked (bool)
 		 */
 		public $all_checked = false;
 

@@ -5,9 +5,9 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 	class acf_field__group extends acf_field {
 
 		/**
-		 * Vars.
+		 * Have_rows array.
 		 *
-		 * @var public $have_rows = array();
+		 * @var public $have_rows
 		 */
 		public $have_rows = array();
 		/**

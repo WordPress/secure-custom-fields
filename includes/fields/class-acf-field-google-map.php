@@ -5,7 +5,7 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 	class acf_field_google_map extends acf_field {
 
 		/**
-		 * Vars.
+		 * Default values.
 		 *
 		 * @var string $default_values
 		 */

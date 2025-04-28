@@ -6,8 +6,6 @@
  *
  * @package wordpress/secure-custom-fields
  * @since 5.0.0
- * @var array $cloning Array to keep track of fields being cloned.
- * @var string $have_rows The type of rows the field supports.
  */
 
 // phpcs:disable PEAR.NamingConventions.ValidClassName
@@ -22,15 +20,15 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 	class acf_field_clone extends acf_field {
 
 		/**
-		 * Var.
+		 * Array to keep track of fields being cloned.
 		 *
-		 * @var array $cloning Array to keep track of fields being cloned.
+		 * @var array $cloning
 		 */
 		public $cloning = array();
 		/**
-		 * Var.
+		 * The type of rows the field supports.
 		 *
-		 * @var array $have_rows The type of rows the field supports.
+		 * @var array $have_rows
 		 */
 		public $have_rows = 'single';
 		/**

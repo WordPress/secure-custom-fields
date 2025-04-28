@@ -12,9 +12,9 @@ if ( ! class_exists( 'acf_validation' ) ) :
 	class acf_validation {
 
 		/**
-		 * Vars.
+		 * Array of errors.
 		 *
-		 * @var array $errors Array of errors.
+		 * @var array $errors
 		 */
 		public $errors = array();
 		/**

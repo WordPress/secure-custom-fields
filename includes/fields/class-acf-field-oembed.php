@@ -6,13 +6,13 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 
 		/**
 		 *
-		 * Vars.
+		 * Oembed width.
 		 *
 		 * @var int $width
 		 */
 		public $width = 0;
 		/**
-		 * Vars.
+		 * Oembed height.
 		 *
 		 * @var int $height
 		 */
