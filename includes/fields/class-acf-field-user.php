@@ -2,7 +2,10 @@
 
 if ( ! class_exists( 'ACF_Field_User' ) ) :
 
-	class ACF_Field_User extends ACF_Field {
+	/**
+	 * ACF_Field_User Class
+	 */
+	class ACF_Field_User extends acf_field {
 
 
 		/**
