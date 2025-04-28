@@ -33,34 +33,32 @@ function acf_commands_init() {
 
 	$custom_post_types = array();
 
-	if ( function_exists( 'acf_get_acf_post_types' ) ) {
-		$scf_post_types = acf_get_acf_post_types();
+	$scf_post_types = acf_get_acf_post_types();
 
-		foreach ( $scf_post_types as $post_type ) {
-			// Skip if post type name is not set (defensive) or post type is inactive.
-			if ( empty( $post_type['post_type'] ) || ( isset( $post_type['active'] ) && ! $post_type['active'] ) ) {
-				continue;
-			}
+	foreach ( $scf_post_types as $post_type ) {
+		// Skip if post type name is not set (defensive) or post type is inactive.
+		if ( empty( $post_type['post_type'] ) || ( isset( $post_type['active'] ) && ! $post_type['active'] ) ) {
+			continue;
+		}
 
-			$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
-			$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
+		$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
+		$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
 
-			$post_type_obj = get_post_type_object( $post_type['post_type'] );
+		$post_type_obj = get_post_type_object( $post_type['post_type'] );
 
-			// Three conditions must be met to include this post type in the commands:
-			// 1. Post type object must exist
-			// 2. Current user must have permission to edit posts of this type.
-			// 3. Post type must have admin UI enabled (show_ui setting).
-			if ( $post_type_obj &&
-				current_user_can( $post_type_obj->cap->edit_posts ) &&
-				$post_type_obj->show_ui ) {
-				$custom_post_types[] = array(
-					'name'           => $post_type['post_type'],
-					'label'          => $plural_label,
-					'singular_label' => $singular_label,
-					'icon'           => $post_type['menu_icon'] ?? '',
-				);
-			}
+		// Three conditions must be met to include this post type in the commands:
+		// 1. Post type object must exist
+		// 2. Current user must have permission to edit posts of this type.
+		// 3. Post type must have admin UI enabled (show_ui setting).
+		if ( $post_type_obj &&
+			current_user_can( $post_type_obj->cap->edit_posts ) &&
+			$post_type_obj->show_ui ) {
+			$custom_post_types[] = array(
+				'name'           => $post_type['post_type'],
+				'label'          => $plural_label,
+				'singular_label' => $singular_label,
+				'icon'           => $post_type['menu_icon'] ?? '',
+			);
 		}
 	}
 
