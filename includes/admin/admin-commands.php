@@ -26,11 +26,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 6.5.0
  */
 function acf_commands_init() {
-	// Only load on admin screens.
-	if ( ! is_admin() ) {
-		return;
-	}
-
 	// Ensure we only load our commands where the WordPress commands API is available.
 	if ( ! wp_script_is( 'wp-commands', 'registered' ) ) {
 		return;
