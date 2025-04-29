@@ -5,7 +5,7 @@
  * This file contains the admin beta features functionality for Secure Custom Fields.
  *
  * @package    Secure Custom Fields
- * @since      6.4.3
+ * @since      6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -127,9 +127,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		public function load() {
 			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
-			// disable filters (default to raw data)
-			acf_disable_filters();
-
 			// Include and register beta features before checking submit
 			$this->include_beta_features();
 
