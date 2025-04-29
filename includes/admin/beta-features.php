@@ -180,7 +180,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 *
 		 * @return  void
 		 */
-		private function check_submit() {
+		public function check_submit() {
 			// Check if form was submitted.
 			if ( ! isset( $_POST['scf_beta_features_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['scf_beta_features_nonce'] ), 'scf_beta_features_update' ) ) {
 				return;
