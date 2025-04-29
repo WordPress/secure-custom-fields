@@ -241,7 +241,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Output the metabox HTML for specific beta features
 		 *
-		 * @since SCF 6.4.2
+		 * @since SCF 6.5.0
 		 *
 		 * @param mixed $post    The post this metabox is being displayed on, should be an empty string always for us on an beta features page.
 		 * @param array $metabox An array of the metabox attributes.
