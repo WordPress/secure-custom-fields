@@ -36,7 +36,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		public function __construct() {
 			// Temporarily disabled - will be enabled when beta feature is ready
-			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			// add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		}
 
 		/**
