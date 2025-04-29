@@ -5,7 +5,7 @@
  * This beta feature allows moving field group elements to the editor sidebar.
  *
  * @package    Secure Custom Fields
- * @since      6.4.3
+ * @since      6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 	 * for a cleaner interface.
 	 *
 	 * @package    Secure Custom Fields
-	 * @since      6.4.3
+	 * @since      6.5.0
 	 */
 	class SCF_Admin_Beta_Feature_Editor_Sidebar extends SCF_Admin_Beta_Feature {
 
@@ -29,7 +29,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 		 *
 		 * @return void
 		 */
-		public function initialize() {
+		protected function initialize() {
 			$this->name        = 'editor-sidebar';
 			$this->title       = __( 'Move Elements to Editor Sidebar', 'secure-custom-fields' );
 			$this->description = __( 'Moves field group elements to the editor sidebar for a cleaner interface.', 'secure-custom-fields' );
@@ -44,7 +44,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 		 *
 		 * @return void
 		 */
-		public function setup_beta_feature() {
+		private function setup_beta_feature() {
 			// Add hooks to move elements to sidebar when the beta feature is enabled
 			// This will be implemented in a future update
 		}
