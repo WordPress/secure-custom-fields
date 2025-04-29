@@ -38,15 +38,5 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 				add_action( 'admin_init', array( $this, 'setup_beta_feature' ) );
 			}
 		}
-
-		/**
-		 * Set up the beta feature functionality when enabled.
-		 *
-		 * @return void
-		 */
-		private function setup_beta_feature() {
-			// Add hooks to move elements to sidebar when the beta feature is enabled
-			// This will be implemented in a future update
-		}
 	}
 endif;
