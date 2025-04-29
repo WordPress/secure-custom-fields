@@ -36,7 +36,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		public function __construct() {
 			// Temporarily disabled - will be enabled when beta feature is ready
-			// add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		}
 
 		/**
@@ -180,7 +180,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 *
 		 * @return  void
 		 */
-		public function check_submit() {
+		private function check_submit() {
 			// Check if form was submitted.
 			if ( ! isset( $_POST['scf_beta_features_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['scf_beta_features_nonce'] ), 'scf_beta_features_update' ) ) {
 				return;
