@@ -28,16 +28,9 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		private $beta_features = array();
 
 		/**
-		 * The active beta feature.
-		 *
-		 * @var string
-		 */
-		private $active = '';
-
-		/**
 		 * This function will setup the class functionality
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -49,7 +42,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * This function will store an beta feature class instance in the beta features array.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @param   string $beta_feature Class name.
 		 * @return  void
@@ -62,7 +55,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * This function will return an beta feature class or null if not found.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @param   string $name Name of beta feature.
 		 * @return  mixed (SCF_Admin_Beta_Feature|null)
@@ -74,7 +67,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * This function will return an array of all beta feature instances.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  array
 		 */
@@ -88,7 +81,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Localizes the beta features data.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -109,7 +102,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * This function will add the SCF beta features menu item to the WP admin
 		 *
 		 * @type    action (admin_menu)
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -128,7 +121,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Loads the admin beta features page.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -146,7 +139,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Modifies the admin body class.
 		 *
-		 * @since SCF 6.4.2
+		 * @since SCF 6.5.0
 		 *
 		 * @param string $classes Space-separated list of CSS classes.
 		 * @return string
@@ -159,7 +152,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Includes various beta feature-related files.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -175,7 +168,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Register default beta features.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -186,7 +179,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Verifies the nonces and submits the value if it passes.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -213,7 +206,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Display admin notices.
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
@@ -228,26 +221,20 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		/**
 		 * Admin Beta Features html
 		 *
-		 * @since   SCF 6.4.2
+		 * @since   SCF 6.5.0
 		 *
 		 * @return  void
 		 */
 		public function html() {
 			// vars
 			$screen = get_current_screen();
-			$active = acf_maybe_get_GET( 'beta_feature' );
 
 			// view
 			$view = array(
 				'screen_id' => $screen->id,
-				'active'    => $active,
 			);
 
 			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
-				if ( $active && $active !== $name ) {
-					continue;
-				}
-
 				add_meta_box( 'scf-admin-beta-feature-' . $name, acf_esc_html( $beta_feature->title ), array( $this, 'metabox_html' ), $screen->id, 'normal', 'default', array( 'beta_feature' => $name ) );
 			}
 
@@ -281,7 +268,7 @@ endif; // class_exists check
  * Alias of acf()->admin_beta_features->register_beta_feature()
  *
  * @type    function
- * @since   SCF 6.4.2
+ * @since   SCF 6.5.0
  *
  * @param   string $beta_feature The beta feature class.
  * @return  void
@@ -294,23 +281,10 @@ function scf_register_admin_beta_feature( $beta_feature ) {
  * This function will return the admin URL to the beta features page
  *
  * @type    function
- * @since   SCF 6.4.2
+ * @since   SCF 6.5.0
  *
  * @return  string The URL to the beta features page.
  */
 function scf_get_admin_beta_features_url() {
 	return admin_url( 'edit.php?post_type=acf-field-group&page=scf-beta-features' );
-}
-
-/**
- * This function will return the admin URL to a specific beta feature page
- *
- * @type    function
- * @since   SCF 6.4.2
- *
- * @param   string $beta_feature The beta feature name.
- * @return  string The URL to a particular beta feature's page.
- */
-function scf_get_admin_beta_feature_url( $beta_feature = '' ) {
-	return scf_get_admin_beta_features_url() . '&beta_feature=' . $beta_feature;
 }
