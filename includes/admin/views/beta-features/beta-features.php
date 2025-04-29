@@ -3,7 +3,7 @@
  * Admin Beta Features View
  *
  * @package    Secure Custom Fields
- * @since      6.4.3
+ * @since      6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
