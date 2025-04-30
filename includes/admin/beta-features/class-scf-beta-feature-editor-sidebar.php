@@ -33,10 +33,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 			$this->name        = 'editor-sidebar';
 			$this->title       = __( 'Move Elements to Editor Sidebar', 'secure-custom-fields' );
 			$this->description = __( 'Moves field group elements to the editor sidebar for a cleaner interface.', 'secure-custom-fields' );
-
-			if ( $this->is_enabled() ) {
-				add_action( 'admin_init', array( $this, 'setup_beta_feature' ) );
-			}
 		}
 	}
 endif;
