@@ -160,7 +160,7 @@ class SCF_Rest_Types_Endpoint {
 	 *
 	 * @since 6.5.0
 	 *
-	 * @param array $object The post type object.
+	 * @param array $post_type_object The post type object.
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
