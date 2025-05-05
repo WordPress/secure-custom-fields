@@ -29,8 +29,8 @@ class SCF_Rest_Types_Endpoint {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
 
-		// Add early filter to process types requests directly by route
-		add_filter( 'rest_request_before_callbacks', array( $this, 'pre_process_types_request' ), 10, 3 );
+		// Add filter to process REST API requests by route
+		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
 		
 		// Add filter to process each post type individually (WP 6.5+ compatibility)
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
@@ -40,16 +40,16 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Process types requests before dispatch to filter by origin
+	 * Filter post types requests (both collection and individual)
 	 *
 	 * @since 6.5.0
 	 *
 	 * @param mixed           $response The current response, either response or null.
-	 * @param array           $handler The handler for the route.
-	 * @param WP_REST_Request $request The request object.
+	 * @param array           $handler  The handler for the route.
+	 * @param WP_REST_Request $request  The request object.
 	 * @return mixed The response or null.
 	 */
-	public function pre_process_types_request( $response, $handler, $request ) {
+	public function filter_types_request( $response, $handler, $request ) {
 		// Check if this is a types endpoint request
 		$route          = $request->get_route();
 		$is_collection  = '/wp/v2/types' === $route;
@@ -77,7 +77,7 @@ class SCF_Rest_Types_Endpoint {
 		$origin_post_types = $origin_post_types_cache[ $origin ];
 
 		// For single post type requests, check if it matches the origin
-		if ( $is_single_type && isset( $matches[1] ) ) {
+		if ( $is_single_type ) {
 			$requested_type = $matches[1];
 
 			// If the requested type doesn't match the origin, return 404
@@ -93,7 +93,7 @@ class SCF_Rest_Types_Endpoint {
 			add_filter(
 				'rest_pre_serve_request',
 				function ( $served, $result ) use ( $origin_post_types ) {
-					if ( ! $served && isset( $result->data ) && is_array( $result->data ) ) {
+					if ( ! $served && is_array( $result->data ) ) {
 						// Filter the response to keep only post types from our filtered list
 						$result->data = array_intersect_key(
 							$result->data,
