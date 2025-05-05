@@ -30,7 +30,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 		 * @return void
 		 */
 		protected function initialize() {
-			$this->name        = 'editor-sidebar';
+			$this->name        = 'editor_sidebar';
 			$this->title       = __( 'Move Elements to Editor Sidebar', 'secure-custom-fields' );
 			$this->description = __( 'Moves field group elements to the editor sidebar for a cleaner interface.', 'secure-custom-fields' );
 		}
