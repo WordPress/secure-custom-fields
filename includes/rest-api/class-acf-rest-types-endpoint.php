@@ -26,32 +26,28 @@ class SCF_Rest_Types_Endpoint {
 	 * @since 6.5.0
 	 */
 	public function __construct() {
-		add_filter( 'rest_pre_dispatch', array( $this, 'initialize' ), 5, 3 );
+		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
+		add_filter( 'rest_request_after_callbacks', array( $this, 'filter_response' ), 10, 3 );
 	}
 
 	/**
-	 * Initialize the endpoint extension.
+	 * Filter REST API response for types endpoint.
 	 *
 	 * @since 6.5.0
 	 *
-	 * @param mixed           $response The response object.
-	 * @param object          $server The REST server instance.
-	 * @param WP_REST_Request $request The request object.
-	 * @return mixed The response object.
+	 * @param WP_REST_Response|WP_Error $response The response data.
+	 * @param array                     $handler  Route handler used for the request.
+	 * @param WP_REST_Request           $request  Request used to generate the response.
+	 * @return WP_REST_Response|WP_Error The filtered response.
 	 */
-	public function initialize( $response, $server = null, $request = null ) {
-		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
+	public function filter_response( $response, $handler, $request ) {
+		// Only filter responses for the types endpoint
+		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
 			return $response;
 		}
 
-		// Apply origin filter if needed
-		$response = $this->maybe_filter_by_origin( $response, $request );
-
-		// Register extra fields
-		$this->register_extra_fields();
-
-		return $response;
+		return $this->maybe_filter_by_origin( $response, $request );
 	}
 
 	/**
@@ -64,12 +60,21 @@ class SCF_Rest_Types_Endpoint {
 	 * @return mixed Filtered response object.
 	 */
 	private function maybe_filter_by_origin( $response, $request ) {
-		// Skip filtering if conditions aren't met
-		if ( ! $request || ! $request->get_param( 'origin' ) || is_wp_error( $response ) || empty( $response->data ) ) {
-			return $response;
+		// Get origin parameter from request URL query params directly if not available in request params
+		$origin = $request->get_param( 'origin' );
+
+		if ( ! $origin ) {
+			// Try to get from request URL if it's not in the params
+			$url_params = $request->get_query_params();
+			if ( isset( $url_params['origin'] ) ) {
+				$origin = $url_params['origin'];
+			}
 		}
 
-		$origin = $request->get_param( 'origin' );
+		// Skip filtering if conditions aren't met
+		if ( ! $origin || is_wp_error( $response ) || empty( $response->data ) ) {
+			return $response;
+		}
 
 		// Skip filtering for unsupported origin values
 		if ( in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
@@ -144,7 +149,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		// Register field to get field groups
 		register_rest_field(
 			'type',
 			'scf_field_groups',
@@ -164,28 +168,14 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
-		// Get the post type from the object.
-		$post_type = $post_type_object['slug'];
-
-		// Get all field groups that are assigned to this post type.
-		$field_groups = acf_get_field_groups(
-			array(
-				'post_type' => $post_type,
-			)
-		);
-
-		// Initialize an array to store all field groups with their fields.
+		$post_type         = $post_type_object['slug'];
+		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
 
-		// Loop through each field group.
 		foreach ( $field_groups as $field_group ) {
-			// Get all fields for this field group.
-			$fields = acf_get_fields( $field_group );
-
-			// Initialize an array to store fields for this group.
+			$fields       = acf_get_fields( $field_group );
 			$group_fields = array();
 
-			// Loop through each field and extract label and type.
 			foreach ( $fields as $field ) {
 				$group_fields[] = array(
 					'label' => $field['label'],
@@ -193,14 +183,12 @@ class SCF_Rest_Types_Endpoint {
 				);
 			}
 
-			// Add this field group with its fields to the main array.
 			$field_groups_data[] = array(
 				'title'  => $field_group['title'],
 				'fields' => $group_fields,
 			);
 		}
 
-		// Return the array of field groups with their fields.
 		return $field_groups_data;
 	}
 
