@@ -19,7 +19,5 @@ acf_include( 'includes/rest-api/class-acf-rest-types-endpoint.php' );
 // Initialize.
 acf_new_instance( 'ACF_Rest_Api' );
 
-// Initialize SCF_Rest_Types_Endpoint only if the editor sidebar beta feature is enabled
-if ( get_option( 'scf_beta_feature_editor-sidebar_enabled', false ) ) {
-	acf_new_instance( 'SCF_Rest_Types_Endpoint' );
-}
+// Initialize SCF_Rest_Types_Endpoint
+acf_new_instance( 'SCF_Rest_Types_Endpoint' );
