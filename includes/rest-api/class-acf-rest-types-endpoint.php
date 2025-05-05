@@ -29,7 +29,7 @@ class SCF_Rest_Types_Endpoint {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
 
-		// Add filter to process each post type individually
+		// Add filter to process each post type individually. We are using this filter since rest_post_types_query was introduced in WP 6.5
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
 	}
 
@@ -52,8 +52,13 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get post types for the requested origin
-		$origin_post_types = $this->get_origin_post_types( $origin );
+		// Static cache for origin post types
+		static $origin_post_types = null;
+
+		// Get post types for the requested origin (using cache if available)
+		if ( null === $origin_post_types ) {
+			$origin_post_types = $this->get_origin_post_types( $origin );
+		}
 
 		// For a post type to pass, its name must be in the origin post types list
 		$post_type_name = $post_type->name;
@@ -76,14 +81,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array An array of post type names for the specified origin.
 	 */
 	private function get_origin_post_types( $origin ) {
-		// Cache for performance
-		static $cached_types = array();
-
-		// Return cached results if available
-		if ( isset( $cached_types[ $origin ] ) ) {
-			return $cached_types[ $origin ];
-		}
-
 		$core_types = array();
 		$scf_types  = array();
 
@@ -122,9 +119,6 @@ class SCF_Rest_Types_Endpoint {
 			default:
 				$result = array();
 		}
-
-		// Cache the result
-		$cached_types[ $origin ] = $result;
 
 		return $result;
 	}
