@@ -28,117 +28,105 @@ class SCF_Rest_Types_Endpoint {
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
-		add_filter( 'rest_request_after_callbacks', array( $this, 'filter_response' ), 10, 3 );
+
+		// Add filter to process each post type individually
+		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
 	}
 
 	/**
-	 * Filter REST API response for types endpoint.
+	 * Filter each post type in the response.
 	 *
 	 * @since 6.5.0
 	 *
-	 * @param WP_REST_Response|WP_Error $response The response data.
-	 * @param array                     $handler  Route handler used for the request.
-	 * @param WP_REST_Request           $request  Request used to generate the response.
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post_Type     $post_type The post type object.
+	 * @param WP_REST_Request  $request The request object.
 	 * @return WP_REST_Response|WP_Error The filtered response.
 	 */
-	public function filter_response( $response, $handler, $request ) {
-		// Only filter responses for the types endpoint
-		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
-			return $response;
-		}
-
-		return $this->maybe_filter_by_origin( $response, $request );
-	}
-
-	/**
-	 * Filter response by origin if requested.
-	 *
-	 * @since 6.5.0
-	 *
-	 * @param mixed           $response The response object.
-	 * @param WP_REST_Request $request The request object.
-	 * @return mixed Filtered response object.
-	 */
-	private function maybe_filter_by_origin( $response, $request ) {
-		// Get origin parameter from request URL query params directly if not available in request params
+	public function filter_post_type( $response, $post_type, $request ) {
+		// Get the origin parameter
 		$origin = $request->get_param( 'origin' );
 
-		if ( ! $origin ) {
-			// Try to get from request URL if it's not in the params
-			$url_params = $request->get_query_params();
-			if ( isset( $url_params['origin'] ) ) {
-				$origin = $url_params['origin'];
-			}
-		}
-
-		// Skip filtering if conditions aren't met
-		if ( ! $origin || is_wp_error( $response ) || empty( $response->data ) ) {
+		// Only apply filtering if origin parameter is provided and valid
+		if ( ! $origin || ! in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
 			return $response;
 		}
 
-		// Skip filtering for unsupported origin values
-		if ( in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
-			// Pre-calculate lists of post types by origin (only as needed)
-			$core_types = array();
-			$scf_types  = array();
+		// Get post types for the requested origin
+		$origin_post_types = $this->get_origin_post_types( $origin );
 
-			// Only get core post types if needed
-			if ( 'core' === $origin || 'other' === $origin ) {
-				$all_post_types = get_post_types( array( '_builtin' => true ), 'objects' );
-				foreach ( $all_post_types as $post_type ) {
-					$core_types[] = $post_type->name;
-				}
-			}
+		// For a post type to pass, its name must be in the origin post types list
+		$post_type_name = $post_type->name;
 
-			// Get all SCF-managed post types (only if we need them)
-			if ( 'scf' === $origin || 'other' === $origin ) {
-				$scf_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
-				foreach ( $scf_post_types as $scf_post_type ) {
-					if ( isset( $scf_post_type['post_type'] ) ) {
-						$scf_types[] = $scf_post_type['post_type'];
-					}
-				}
-			}
-
-			// Define a simple function to check if a post type matches the requested origin
-			$matches_origin = function ( $post_type_name ) use ( $origin, $core_types, $scf_types ) {
-				$result = false;
-
-				switch ( $origin ) {
-					case 'core':
-						$result = in_array( $post_type_name, $core_types, true );
-						break;
-					case 'scf':
-						$result = in_array( $post_type_name, $scf_types, true );
-						break;
-					case 'other':
-						$result = ! in_array( $post_type_name, $core_types, true ) && ! in_array( $post_type_name, $scf_types, true );
-						break;
-				}
-
-				return $result;
-			};
-
-			// Handle single item response and collections separately
-			if ( isset( $response->data['slug'] ) ) {
-				if ( ! $matches_origin( $response->data['slug'] ) ) {
-					$response = new WP_Error(
-						'rest_post_type_invalid_origin',
-						__( 'The requested post type is not of the specified origin.', 'secure-custom-fields' ),
-						array( 'status' => 404 )
-					);
-				}
-			} elseif ( is_array( $response->data ) ) {
-				$response->data = array_filter(
-					$response->data,
-					function ( $post_type_data ) use ( $matches_origin ) {
-						return $matches_origin( $post_type_data['slug'] );
-					}
-				);
-			}
+		// If this post type doesn't match the origin, return null to filter it out
+		if ( ! in_array( $post_type_name, $origin_post_types, true ) ) {
+			// Return null to indicate this post type should be filtered out
+			return null;
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Get an array of post types for each origin.
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param string $origin The origin to get post types for.
+	 * @return array An array of post type names for the specified origin.
+	 */
+	private function get_origin_post_types( $origin ) {
+		// Cache for performance
+		static $cached_types = array();
+
+		// Return cached results if available
+		if ( isset( $cached_types[ $origin ] ) ) {
+			return $cached_types[ $origin ];
+		}
+
+		$core_types = array();
+		$scf_types  = array();
+
+		// Get core post types (only if needed)
+		if ( 'core' === $origin || 'other' === $origin ) {
+			$all_post_types = get_post_types( array( '_builtin' => true ), 'objects' );
+			foreach ( $all_post_types as $post_type ) {
+				$core_types[] = $post_type->name;
+			}
+		}
+
+		// Get SCF-managed post types (only if needed)
+		if ( 'scf' === $origin || 'other' === $origin ) {
+			$scf_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
+			foreach ( $scf_post_types as $scf_post_type ) {
+				if ( isset( $scf_post_type['post_type'] ) ) {
+					$scf_types[] = $scf_post_type['post_type'];
+				}
+			}
+		}
+
+		// Return appropriate post types based on origin
+		switch ( $origin ) {
+			case 'core':
+				$result = $core_types;
+				break;
+			case 'scf':
+				$result = $scf_types;
+				break;
+			case 'other':
+				$result = array_diff(
+					array_keys( get_post_types( array(), 'objects' ) ),
+					array_merge( $core_types, $scf_types )
+				);
+				break;
+			default:
+				$result = array();
+		}
+
+		// Cache the result
+		$cached_types[ $origin ] = $result;
+
+		return $result;
 	}
 
 	/**
