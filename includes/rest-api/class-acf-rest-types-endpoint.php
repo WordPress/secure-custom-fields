@@ -26,9 +26,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @since 6.5.0
 	 */
 	public function __construct() {
-		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
-			return;
-		}
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 	}
 
@@ -40,6 +37,9 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
+		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
+			return;
+		}
 		register_rest_field(
 			'type',
 			'scf_field_groups',
