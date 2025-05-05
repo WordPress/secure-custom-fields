@@ -224,7 +224,7 @@ class SCF_Rest_Types_Endpoint {
 	 */
 	public function register_extra_fields() {
 		// Only register the field groups field if the editor sidebar beta feature is enabled
-		if ( ! (bool) get_option( 'scf_beta_feature_editor-sidebar_enabled', false ) ) {
+		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
 			return;
 		}
 
