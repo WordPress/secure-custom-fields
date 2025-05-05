@@ -31,6 +31,12 @@ class SCF_Rest_Types_Endpoint {
 
 		// Add filter to process REST API requests by route
 		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
+		
+		// As a fallback, also add filter for individual post types (introduced in WP 6.5)
+		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
+		
+		// Clean up null entries from the response
+		add_filter( 'rest_pre_echo_response', array( $this, 'clean_types_response' ), 10, 3 );
 	}
 
 	/**
@@ -61,8 +67,14 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get filtered types by origin
-		$origin_post_types = $this->get_origin_post_types( $origin );
+		// Static cache for origin post types within this request
+		static $origin_post_types_cache = array();
+
+		// Get filtered types by origin (using cache if available)
+		if ( ! isset( $origin_post_types_cache[ $origin ] ) ) {
+			$origin_post_types_cache[ $origin ] = $this->get_origin_post_types( $origin );
+		}
+		$origin_post_types = $origin_post_types_cache[ $origin ];
 
 		// For single post type requests, check if it matches the origin
 		if ( $is_single_type && isset( $matches[1] ) ) {
@@ -97,6 +109,41 @@ class SCF_Rest_Types_Endpoint {
 
 		return $response;
 	}
+	
+	/**
+	 * Filter individual post type in the response (WP 6.5+ compatibility).
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post_Type     $post_type The post type object.
+	 * @param WP_REST_Request  $request The request object.
+	 * @return WP_REST_Response|null The filtered response or null to filter it out.
+	 */
+	public function filter_post_type( $response, $post_type, $request ) {
+		// Get the origin parameter
+		$origin = $request->get_param( 'origin' );
+
+		// Only apply filtering if origin parameter is provided and valid
+		if ( ! $origin || ! in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
+			return $response;
+		}
+		
+		// Static cache for origin post types within this request
+		static $origin_post_types_cache = array();
+
+		// Get filtered types by origin (using cache if available)
+		if ( ! isset( $origin_post_types_cache[ $origin ] ) ) {
+			$origin_post_types_cache[ $origin ] = $this->get_origin_post_types( $origin );
+		}
+		
+		// If this post type doesn't match the origin, return null to filter it out
+		if ( ! in_array( $post_type->name, $origin_post_types_cache[ $origin ], true ) ) {
+			return null;
+		}
+
+		return $response;
+	}
 
 	/**
 	 * Get an array of post types for each origin.
@@ -107,7 +154,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array An array of post type names for the specified origin.
 	 */
 	private function get_origin_post_types( $origin ) {
-		// Cache for performance
+		// Cache for performance across requests
 		static $cached_types = array();
 
 		// Return cached results if available
@@ -304,7 +351,7 @@ class SCF_Rest_Types_Endpoint {
 			$param['validate_callback'] = 'rest_validate_request_arg';
 			$param['sanitize_callback'] = 'sanitize_text_field';
 			$param['default']           = null;
-			$param['in']                = 'query';
+			$param['in']                => 'query';
 		}
 
 		return $param;
@@ -346,5 +393,49 @@ class SCF_Rest_Types_Endpoint {
 	public function add_collection_params( $query_params ) {
 		$query_params['origin'] = $this->get_origin_param_definition( true );
 		return $query_params;
+	}
+
+	/**
+	 * Clean up null entries from the response
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param array|WP_REST_Response $response The response data.
+	 * @param WP_REST_Server         $server   The REST server instance.
+	 * @param WP_REST_Request        $request  The original request.
+	 * @return array|WP_REST_Response The filtered response data.
+	 */
+	public function clean_types_response( $response, $server, $request ) {
+		// Only process types endpoint responses
+		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
+			return $response;
+		}
+
+		// Get response data
+		if ( is_a( $response, 'WP_REST_Response' ) ) {
+			$data = $response->get_data();
+		} else {
+			$data = $response;
+		}
+
+		// Check if we're dealing with a collection of types
+		if ( is_array( $data ) && ! isset( $data['slug'] ) ) {
+			// Remove null entries
+			$data = array_filter(
+				$data,
+				function ( $entry ) {
+					return null !== $entry;
+				}
+			);
+		}
+
+		// Put the filtered data back into the response
+		if ( is_a( $response, 'WP_REST_Response' ) ) {
+			$response->set_data( $data );
+		} else {
+			$response = $data;
+		}
+
+		return $response;
 	}
 }
