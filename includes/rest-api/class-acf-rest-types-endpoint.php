@@ -65,7 +65,7 @@ class SCF_Rest_Types_Endpoint {
 		$origin_post_types = $this->get_origin_post_types( $origin );
 
 		// For single post type requests, check if it matches the origin
-		if ( $is_single_type ) {
+		if ( $is_single_type && isset( $matches[1] ) ) {
 			$requested_type = $matches[1];
 
 			// If the requested type does not match the origin, return 404
@@ -81,7 +81,7 @@ class SCF_Rest_Types_Endpoint {
 			add_filter(
 				'rest_pre_serve_request',
 				function ( $served, $result ) use ( $origin_post_types ) {
-					if ( ! $served && is_array( $result->data ) ) {
+					if ( ! $served && isset( $result->data ) && is_array( $result->data ) ) {
 						// Filter the response to keep only post types from our filtered list
 						$result->data = array_intersect_key(
 							$result->data,
@@ -260,6 +260,33 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
+	 * Get the origin parameter definition
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param bool $include_validation Whether to include validation callbacks.
+	 * @return array Parameter definition
+	 */
+	private function get_origin_param_definition( $include_validation = false ) {
+		$param = array(
+			'description' => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
+			'type'        => 'string',
+			'enum'        => array( 'core', 'scf', 'other' ),
+			'required'    => false,
+		);
+
+		// Add validation for API use (not needed for documentation)
+		if ( $include_validation ) {
+			$param['validate_callback'] = 'rest_validate_request_arg';
+			$param['sanitize_callback'] = 'sanitize_text_field';
+			$param['default']           = null;
+			$param['in']                = 'query';
+		}
+
+		return $param;
+	}
+
+	/**
 	 * Add origin parameter directly to the endpoints for proper documentation
 	 *
 	 * @since 6.5.0
@@ -268,28 +295,15 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Modified endpoints
 	 */
 	public function add_parameter_to_endpoints( $endpoints ) {
-		// Define the origin parameter
-		$origin_param = array(
-			'description' => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
-			'type'        => 'string',
-			'enum'        => array( 'core', 'scf', 'other' ),
-			'required'    => false,
-		);
+		$origin_param        = $this->get_origin_param_definition();
+		$endpoints_to_modify = array( '/wp/v2/types', '/wp/v2/types/(?P<type>[\w-]+)' );
 
-		// Add to the types collection endpoint
-		if ( isset( $endpoints['/wp/v2/types'] ) ) {
-			foreach ( $endpoints['/wp/v2/types'] as &$endpoint ) {
-				if ( isset( $endpoint['args'] ) ) {
-					$endpoint['args']['origin'] = $origin_param;
-				}
-			}
-		}
-
-		// Add to the individual type endpoint
-		if ( isset( $endpoints['/wp/v2/types/(?P<type>[\w-]+)'] ) ) {
-			foreach ( $endpoints['/wp/v2/types/(?P<type>[\w-]+)'] as &$endpoint ) {
-				if ( isset( $endpoint['args'] ) ) {
-					$endpoint['args']['origin'] = $origin_param;
+		foreach ( $endpoints_to_modify as $route ) {
+			if ( isset( $endpoints[ $route ] ) ) {
+				foreach ( $endpoints[ $route ] as &$endpoint ) {
+					if ( isset( $endpoint['args'] ) ) {
+						$endpoint['args']['origin'] = $origin_param;
+					}
 				}
 			}
 		}
@@ -306,17 +320,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Modified collection parameters.
 	 */
 	public function add_collection_params( $query_params ) {
-		$query_params['origin'] = array(
-			'description'       => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
-			'type'              => 'string',
-			'enum'              => array( 'core', 'scf', 'other' ),
-			'validate_callback' => 'rest_validate_request_arg',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => null,
-			'required'          => false,
-			'in'                => 'query',
-		);
-
+		$query_params['origin'] = $this->get_origin_param_definition( true );
 		return $query_params;
 	}
 }
