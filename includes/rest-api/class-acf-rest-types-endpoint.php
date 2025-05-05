@@ -31,10 +31,10 @@ class SCF_Rest_Types_Endpoint {
 
 		// Add filter to process REST API requests by route
 		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
-		
+
 		// Add filter to process each post type individually (WP 6.5+ compatibility)
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
-		
+
 		// Clean up null entries from the response
 		add_filter( 'rest_pre_echo_response', array( $this, 'clean_types_response' ), 10, 3 );
 	}
@@ -109,7 +109,7 @@ class SCF_Rest_Types_Endpoint {
 
 		return $response;
 	}
-	
+
 	/**
 	 * Filter individual post type in the response (WP 6.5+ compatibility).
 	 *
@@ -128,7 +128,7 @@ class SCF_Rest_Types_Endpoint {
 		if ( ! $origin || ! in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
 			return $response;
 		}
-		
+
 		// Static cache for origin post types within this request
 		static $origin_post_types_cache = array();
 
@@ -136,7 +136,7 @@ class SCF_Rest_Types_Endpoint {
 		if ( ! isset( $origin_post_types_cache[ $origin ] ) ) {
 			$origin_post_types_cache[ $origin ] = $this->get_origin_post_types( $origin );
 		}
-		
+
 		// If this post type doesn't match the origin, return null to filter it out
 		if ( ! in_array( $post_type->name, $origin_post_types_cache[ $origin ], true ) ) {
 			return null;
@@ -161,7 +161,7 @@ class SCF_Rest_Types_Endpoint {
 		if ( isset( $cached_types[ $origin ] ) ) {
 			return $cached_types[ $origin ];
 		}
-		
+
 		$core_types = array();
 		$scf_types  = array();
 
@@ -176,7 +176,7 @@ class SCF_Rest_Types_Endpoint {
 		// Get SCF-managed post types (only if needed)
 		if ( 'scf' === $origin || 'other' === $origin ) {
 			$scf_post_types = array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy', 'acf-ui-options-page' );
-			
+
 			// Get SCF-created post types
 			if ( function_exists( 'acf_get_internal_post_type_posts' ) ) {
 				$scf_defined_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
@@ -186,7 +186,7 @@ class SCF_Rest_Types_Endpoint {
 					}
 				}
 			}
-			
+
 			// Combine with SCF internal post types
 			$scf_types = array_unique( array_merge( $scf_post_types, $scf_types ) );
 		}
@@ -208,7 +208,7 @@ class SCF_Rest_Types_Endpoint {
 			default:
 				$result = array();
 		}
-		
+
 		// Cache the result
 		$cached_types[ $origin ] = $result;
 
@@ -227,7 +227,7 @@ class SCF_Rest_Types_Endpoint {
 		if ( ! (bool) get_option( 'scf_beta_feature_editor-sidebar_enabled', false ) ) {
 			return;
 		}
-		
+
 		register_rest_field(
 			'type',
 			'scf_field_groups',
