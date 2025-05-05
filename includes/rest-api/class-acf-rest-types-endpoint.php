@@ -228,6 +228,47 @@ class SCF_Rest_Types_Endpoint {
 		// Register the query parameter with the REST API
 		add_filter( 'rest_type_collection_params', array( $this, 'add_collection_params' ) );
 		add_filter( 'rest_types_collection_params', array( $this, 'add_collection_params' ) );
+
+		// Direct registration for OpenAPI documentation
+		add_filter( 'rest_endpoints', array( $this, 'add_parameter_to_endpoints' ) );
+	}
+
+	/**
+	 * Add origin parameter directly to the endpoints for proper documentation
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param array $endpoints The REST API endpoints.
+	 * @return array Modified endpoints
+	 */
+	public function add_parameter_to_endpoints( $endpoints ) {
+		// Define the origin parameter
+		$origin_param = array(
+			'description' => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
+			'type'        => 'string',
+			'enum'        => array( 'core', 'scf', 'other' ),
+			'required'    => false,
+		);
+
+		// Add to the types collection endpoint
+		if ( isset( $endpoints['/wp/v2/types'] ) ) {
+			foreach ( $endpoints['/wp/v2/types'] as &$endpoint ) {
+				if ( isset( $endpoint['args'] ) ) {
+					$endpoint['args']['origin'] = $origin_param;
+				}
+			}
+		}
+
+		// Add to the individual type endpoint
+		if ( isset( $endpoints['/wp/v2/types/(?P<type>[\w-]+)'] ) ) {
+			foreach ( $endpoints['/wp/v2/types/(?P<type>[\w-]+)'] as &$endpoint ) {
+				if ( isset( $endpoint['args'] ) ) {
+					$endpoint['args']['origin'] = $origin_param;
+				}
+			}
+		}
+
+		return $endpoints;
 	}
 
 	/**
@@ -240,9 +281,14 @@ class SCF_Rest_Types_Endpoint {
 	 */
 	public function add_collection_params( $query_params ) {
 		$query_params['origin'] = array(
-			'description' => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
-			'type'        => 'string',
-			'enum'        => array( 'core', 'scf', 'other' ),
+			'description'       => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
+			'type'              => 'string',
+			'enum'              => array( 'core', 'scf', 'other' ),
+			'validate_callback' => 'rest_validate_request_arg',
+			'sanitize_callback' => 'sanitize_text_field',
+			'default'           => null,
+			'required'          => false,
+			'in'                => 'query',
 		);
 
 		return $query_params;
