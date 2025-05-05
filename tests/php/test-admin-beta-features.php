@@ -37,7 +37,7 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	 * Clean up after each test.
 	 */
 	public function tear_down() {
-		delete_option( 'scf_beta_feature_editor-sidebar_enabled' );
+		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
 		parent::tear_down();
 	}
 
@@ -47,8 +47,8 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	public function test_register_beta_feature() {
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 		$beta_features = $this->beta_features->get_beta_features();
-		$this->assertArrayHasKey( 'editor-sidebar', $beta_features );
-		$this->assertInstanceOf( 'SCF_Admin_Beta_Feature_Editor_Sidebar', $beta_features['editor-sidebar'] );
+		$this->assertArrayHasKey( 'editor_sidebar', $beta_features );
+		$this->assertInstanceOf( 'SCF_Admin_Beta_Feature_Editor_Sidebar', $beta_features['editor_sidebar'] );
 	}
 
 	/**
@@ -57,9 +57,9 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	public function test_beta_feature_initialization() {
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor-sidebar' );
+		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
 
-		$this->assertEquals( 'editor-sidebar', $beta_feature->name );
+		$this->assertEquals( 'editor_sidebar', $beta_feature->name );
 		$this->assertEquals( 'Move Elements to Editor Sidebar', $beta_feature->title );
 		$this->assertNotEmpty( $beta_feature->description );
 	}
@@ -70,17 +70,17 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	public function test_beta_feature_enable_disable() {
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor-sidebar' );
+		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
 
 		$this->assertFalse( $beta_feature->is_enabled() );
 
 		$beta_feature->set_enabled( true );
 		$this->assertTrue( $beta_feature->is_enabled() );
-		$this->assertTrue( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertTrue( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 
 		$beta_feature->set_enabled( false );
 		$this->assertFalse( $beta_feature->is_enabled() );
-		$this->assertFalse( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 	}
 
 	/**
@@ -105,17 +105,17 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor-sidebar' );
+		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
 
 		$this->assertFalse( $beta_feature->is_enabled() );
 
 		$_POST['scf_beta_features_nonce'] = wp_create_nonce( 'scf_beta_features_update' );
-		$_POST['scf_beta_features']       = array( 'editor-sidebar' => '1' );
+		$_POST['scf_beta_features']       = array( 'editor_sidebar' => '1' );
 
 		$this->beta_features->check_submit();
 
 		$this->assertTrue( $beta_feature->is_enabled() );
-		$this->assertTrue( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertTrue( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 	}
 
 	/**
@@ -124,14 +124,14 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	public function test_beta_feature_cleanup() {
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor-sidebar' );
+		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
 
 		$beta_feature->set_enabled( true );
-		$this->assertTrue( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertTrue( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 
 		$beta_feature->cleanup();
 
-		$this->assertFalse( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 	}
 
 	/**
@@ -140,16 +140,16 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	public function test_beta_feature_nonce_verification() {
 		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor-sidebar' );
+		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
 
 		$this->assertFalse( $beta_feature->is_enabled() );
 
 		$_POST['scf_beta_features_nonce'] = 'invalid_nonce';
-		$_POST['scf_beta_features']       = array( 'editor-sidebar' => '1' );
+		$_POST['scf_beta_features']       = array( 'editor_sidebar' => '1' );
 
 		$this->beta_features->check_submit();
 
 		$this->assertFalse( $beta_feature->is_enabled() );
-		$this->assertFalse( get_option( 'scf_beta_feature_editor-sidebar_enabled' ) );
+		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 	}
 }
