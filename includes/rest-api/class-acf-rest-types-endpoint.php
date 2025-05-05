@@ -31,6 +31,9 @@ class SCF_Rest_Types_Endpoint {
 
 		// Add filter to process each post type individually. We are using this filter since rest_post_types_query was introduced in WP 6.5
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
+
+		// Clean up null entries from the response
+		add_filter( 'rest_pre_echo_response', array( $this, 'clean_types_response' ), 10, 3 );
 	}
 
 	/**
@@ -292,5 +295,49 @@ class SCF_Rest_Types_Endpoint {
 		);
 
 		return $query_params;
+	}
+
+	/**
+	 * Clean up null entries from the response
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param array|WP_REST_Response $response The response data.
+	 * @param WP_REST_Server         $server   The REST server instance.
+	 * @param WP_REST_Request        $request  The original request.
+	 * @return array|WP_REST_Response The filtered response data.
+	 */
+	public function clean_types_response( $response, $server, $request ) {
+		// Only process types endpoint responses
+		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
+			return $response;
+		}
+
+		// Get response data
+		if ( is_a( $response, 'WP_REST_Response' ) ) {
+			$data = $response->get_data();
+		} else {
+			$data = $response;
+		}
+
+		// Check if we're dealing with a collection of types
+		if ( is_array( $data ) && ! isset( $data['slug'] ) ) {
+			// Remove null entries
+			$data = array_filter(
+				$data,
+				function ( $entry ) {
+					return null !== $entry;
+				}
+			);
+		}
+
+		// Put the filtered data back into the response
+		if ( is_a( $response, 'WP_REST_Response' ) ) {
+			$response->set_data( $data );
+		} else {
+			$response = $data;
+		}
+
+		return $response;
 	}
 }
