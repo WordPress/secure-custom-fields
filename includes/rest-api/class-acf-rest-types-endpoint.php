@@ -37,7 +37,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		// Register field to get field groups
 		register_rest_field(
 			'type',
 			'scf_field_groups',
@@ -57,28 +56,14 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
-		// Get the post type from the object.
-		$post_type = $post_type_object['slug'];
-
-		// Get all field groups that are assigned to this post type.
-		$field_groups = acf_get_field_groups(
-			array(
-				'post_type' => $post_type,
-			)
-		);
-
-		// Initialize an array to store all field groups with their fields.
+		$post_type         = $post_type_object['slug'];
+		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
 
-		// Loop through each field group.
 		foreach ( $field_groups as $field_group ) {
-			// Get all fields for this field group.
-			$fields = acf_get_fields( $field_group );
-
-			// Initialize an array to store fields for this group.
+			$fields       = acf_get_fields( $field_group );
 			$group_fields = array();
 
-			// Loop through each field and extract label and type.
 			foreach ( $fields as $field ) {
 				$group_fields[] = array(
 					'label' => $field['label'],
@@ -86,14 +71,12 @@ class SCF_Rest_Types_Endpoint {
 				);
 			}
 
-			// Add this field group with its fields to the main array.
 			$field_groups_data[] = array(
 				'title'  => $field_group['title'],
 				'fields' => $group_fields,
 			);
 		}
 
-		// Return the array of field groups with their fields.
 		return $field_groups_data;
 	}
 
