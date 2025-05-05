@@ -58,3 +58,6 @@ assets/build/**/*.php
 /blob-report/
 /playwright/.cache/
 /artifacts/
+
+# Claude settings
+**/.claude/settings.local.json

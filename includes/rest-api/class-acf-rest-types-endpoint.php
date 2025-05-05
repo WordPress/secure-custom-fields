@@ -29,10 +29,10 @@ class SCF_Rest_Types_Endpoint {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
 
-		// Add filter to process REST API requests by route
-		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
+		// Add early filter to process types requests directly by route
+		add_filter( 'rest_request_before_callbacks', array( $this, 'pre_process_types_request' ), 10, 3 );
 		
-		// As a fallback, also add filter for individual post types (introduced in WP 6.5)
+		// Add filter to process each post type individually (WP 6.5+ compatibility)
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
 		
 		// Clean up null entries from the response
@@ -40,16 +40,16 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Filter post types requests (both collection and individual)
+	 * Process types requests before dispatch to filter by origin
 	 *
 	 * @since 6.5.0
 	 *
 	 * @param mixed           $response The current response, either response or null.
-	 * @param array           $handler  The handler for the route.
-	 * @param WP_REST_Request $request  The request object.
+	 * @param array           $handler The handler for the route.
+	 * @param WP_REST_Request $request The request object.
 	 * @return mixed The response or null.
 	 */
-	public function filter_types_request( $response, $handler, $request ) {
+	public function pre_process_types_request( $response, $handler, $request ) {
 		// Check if this is a types endpoint request
 		$route          = $request->get_route();
 		$is_collection  = '/wp/v2/types' === $route;
@@ -80,7 +80,7 @@ class SCF_Rest_Types_Endpoint {
 		if ( $is_single_type && isset( $matches[1] ) ) {
 			$requested_type = $matches[1];
 
-			// If the requested type does not match the origin, return 404
+			// If the requested type doesn't match the origin, return 404
 			if ( ! in_array( $requested_type, $origin_post_types, true ) ) {
 				return new WP_Error(
 					'rest_post_type_invalid',
