@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class SCF_Rest_Types_Endpoint
  *
- * Extends the /wp/v2/types endpoint to include SCF fields and origin filtering.
+ * Extends the /wp/v2/types endpoint to include SCF fields and source filtering.
  *
  * @since 6.5.0
  */
@@ -59,29 +59,29 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get the origin parameter
-		$origin = $request->get_param( 'origin' );
+		// Get the source parameter
+		$source = $request->get_param( 'source' );
 
-		// Only proceed if origin parameter is provided and valid
-		if ( ! $origin || ! in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
+		// Only proceed if source parameter is provided and valid
+		if ( ! $source || ! in_array( $source, array( 'core', 'scf', 'other' ), true ) ) {
 			return $response;
 		}
 
-		// Static cache for origin post types within this request
-		static $origin_post_types_cache = array();
+		// Static cache for source post types within this request
+		static $source_post_types_cache = array();
 
-		// Get filtered types by origin (using cache if available)
-		if ( ! isset( $origin_post_types_cache[ $origin ] ) ) {
-			$origin_post_types_cache[ $origin ] = $this->get_origin_post_types( $origin );
+		// Get filtered types by source (using cache if available)
+		if ( ! isset( $source_post_types_cache[ $source ] ) ) {
+			$source_post_types_cache[ $source ] = $this->get_source_post_types( $source );
 		}
-		$origin_post_types = $origin_post_types_cache[ $origin ];
+		$source_post_types = $source_post_types_cache[ $source ];
 
-		// For single post type requests, check if it matches the origin
+		// For single post type requests, check if it matches the source
 		if ( $is_single_type && isset( $matches[1] ) ) {
 			$requested_type = $matches[1];
 
-			// If the requested type doesn't match the origin, return 404
-			if ( ! in_array( $requested_type, $origin_post_types, true ) ) {
+			// If the requested type doesn't match the source, return 404
+			if ( ! in_array( $requested_type, $source_post_types, true ) ) {
 				return new WP_Error(
 					'rest_post_type_invalid',
 					__( 'Invalid post type.', 'secure-custom-fields' ),
@@ -92,12 +92,12 @@ class SCF_Rest_Types_Endpoint {
 			// For collection requests, add a filter to process the response
 			add_filter(
 				'rest_pre_serve_request',
-				function ( $served, $result ) use ( $origin_post_types ) {
+				function ( $served, $result ) use ( $source_post_types ) {
 					if ( ! $served && isset( $result->data ) && is_array( $result->data ) ) {
 						// Filter the response to keep only post types from our filtered list
 						$result->data = array_intersect_key(
 							$result->data,
-							array_flip( $origin_post_types )
+							array_flip( $source_post_types )
 						);
 					}
 					return $served;
@@ -121,24 +121,24 @@ class SCF_Rest_Types_Endpoint {
 	 * @return WP_REST_Response|null The filtered response or null to filter it out.
 	 */
 	public function filter_post_type( $response, $post_type, $request ) {
-		// Get the origin parameter
-		$origin = $request->get_param( 'origin' );
+		// Get the source parameter
+		$source = $request->get_param( 'source' );
 
-		// Only apply filtering if origin parameter is provided and valid
-		if ( ! $origin || ! in_array( $origin, array( 'core', 'scf', 'other' ), true ) ) {
+		// Only apply filtering if source parameter is provided and valid
+		if ( ! $source || ! in_array( $source, array( 'core', 'scf', 'other' ), true ) ) {
 			return $response;
 		}
 
-		// Static cache for origin post types within this request
-		static $origin_post_types_cache = array();
+		// Static cache for source post types within this request
+		static $source_post_types_cache = array();
 
-		// Get filtered types by origin (using cache if available)
-		if ( ! isset( $origin_post_types_cache[ $origin ] ) ) {
-			$origin_post_types_cache[ $origin ] = $this->get_origin_post_types( $origin );
+		// Get filtered types by source (using cache if available)
+		if ( ! isset( $source_post_types_cache[ $source ] ) ) {
+			$source_post_types_cache[ $source ] = $this->get_source_post_types( $source );
 		}
 
-		// If this post type doesn't match the origin, return null to filter it out
-		if ( ! in_array( $post_type->name, $origin_post_types_cache[ $origin ], true ) ) {
+		// If this post type doesn't match the source, return null to filter it out
+		if ( ! in_array( $post_type->name, $source_post_types_cache[ $source ], true ) ) {
 			return null;
 		}
 
@@ -146,27 +146,27 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Get an array of post types for each origin.
+	 * Get an array of post types for each source.
 	 *
 	 * @since 6.5.0
 	 *
-	 * @param string $origin The origin to get post types for.
-	 * @return array An array of post type names for the specified origin.
+	 * @param string $source The source to get post types for.
+	 * @return array An array of post type names for the specified source.
 	 */
-	private function get_origin_post_types( $origin ) {
+	private function get_source_post_types( $source ) {
 		// Cache for performance across requests
 		static $cached_types = array();
 
 		// Return cached results if available
-		if ( isset( $cached_types[ $origin ] ) ) {
-			return $cached_types[ $origin ];
+		if ( isset( $cached_types[ $source ] ) ) {
+			return $cached_types[ $source ];
 		}
 
 		$core_types = array();
 		$scf_types  = array();
 
 		// Get core post types (only if needed)
-		if ( 'core' === $origin || 'other' === $origin ) {
+		if ( 'core' === $source || 'other' === $source ) {
 			$all_post_types = get_post_types( array( '_builtin' => true ), 'objects' );
 			foreach ( $all_post_types as $post_type ) {
 				$core_types[] = $post_type->name;
@@ -174,7 +174,7 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		// Get SCF-managed post types (only if needed)
-		if ( 'scf' === $origin || 'other' === $origin ) {
+		if ( 'scf' === $source || 'other' === $source ) {
 			$scf_post_types = array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy', 'acf-ui-options-page' );
 
 			// Get SCF-created post types
@@ -191,8 +191,8 @@ class SCF_Rest_Types_Endpoint {
 			$scf_types = array_unique( array_merge( $scf_post_types, $scf_types ) );
 		}
 
-		// Return appropriate post types based on origin
-		switch ( $origin ) {
+		// Return appropriate post types based on source
+		switch ( $source ) {
 			case 'core':
 				$result = $core_types;
 				break;
@@ -210,7 +210,7 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		// Cache the result
-		$cached_types[ $origin ] = $result;
+		$cached_types[ $source ] = $result;
 
 		return $result;
 	}
@@ -313,7 +313,7 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Register the origin parameter for the post types endpoint.
+	 * Register the source parameter for the post types endpoint.
 	 *
 	 * @since 6.5.0
 	 */
@@ -331,16 +331,16 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Get the origin parameter definition
+	 * Get the source parameter definition
 	 *
 	 * @since 6.5.0
 	 *
 	 * @param bool $include_validation Whether to include validation callbacks.
 	 * @return array Parameter definition
 	 */
-	private function get_origin_param_definition( $include_validation = false ) {
+	private function get_source_param_definition( $include_validation = false ) {
 		$param = array(
-			'description' => __( 'Filter post types by their origin.', 'secure-custom-fields' ),
+			'description' => __( 'Filter post types by their source.', 'secure-custom-fields' ),
 			'type'        => 'string',
 			'enum'        => array( 'core', 'scf', 'other' ),
 			'required'    => false,
@@ -358,7 +358,7 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Add origin parameter directly to the endpoints for proper documentation
+	 * Add source parameter directly to the endpoints for proper documentation
 	 *
 	 * @since 6.5.0
 	 *
@@ -366,14 +366,14 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Modified endpoints
 	 */
 	public function add_parameter_to_endpoints( $endpoints ) {
-		$origin_param        = $this->get_origin_param_definition();
+		$source_param        = $this->get_source_param_definition();
 		$endpoints_to_modify = array( '/wp/v2/types', '/wp/v2/types/(?P<type>[\w-]+)' );
 
 		foreach ( $endpoints_to_modify as $route ) {
 			if ( isset( $endpoints[ $route ] ) ) {
 				foreach ( $endpoints[ $route ] as &$endpoint ) {
 					if ( isset( $endpoint['args'] ) ) {
-						$endpoint['args']['origin'] = $origin_param;
+						$endpoint['args']['source'] = $source_param;
 					}
 				}
 			}
@@ -383,7 +383,7 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Add origin parameter to the collection parameters for the types endpoint.
+	 * Add source parameter to the collection parameters for the types endpoint.
 	 *
 	 * @since 6.5.0
 	 *
@@ -391,7 +391,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Modified collection parameters.
 	 */
 	public function add_collection_params( $query_params ) {
-		$query_params['origin'] = $this->get_origin_param_definition( true );
+		$query_params['source'] = $this->get_source_param_definition( true );
 		return $query_params;
 	}
 
