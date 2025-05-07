@@ -33,16 +33,16 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			// Add listeners.
 			add_action( 'acf/update_field_group', array( $this, 'update_field_group' ) );
 			add_action( 'acf/untrash_field_group', array( $this, 'update_field_group' ) );
-			add_action( 'acf/trash_field_group', array( $this, 'delete_field_group' ) );
-			add_action( 'acf/delete_field_group', array( $this, 'delete_field_group' ) );
-			add_action( 'acf/update_post_type', array( $this, 'update_internal_post_type' ) );
-			add_action( 'acf/untrash_post_type', array( $this, 'update_internal_post_type' ) );
-			add_action( 'acf/trash_post_type', array( $this, 'delete_internal_post_type' ) );
-			add_action( 'acf/delete_post_type', array( $this, 'delete_internal_post_type' ) );
-			add_action( 'acf/update_taxonomy', array( $this, 'update_internal_post_type' ) );
-			add_action( 'acf/untrash_taxonomy', array( $this, 'update_internal_post_type' ) );
-			add_action( 'acf/trash_taxonomy', array( $this, 'delete_internal_post_type' ) );
-			add_action( 'acf/delete_taxonomy', array( $this, 'delete_internal_post_type' ) );
+			add_filter( 'acf/trash_field_group', array( $this, 'delete_field_group' ) );
+			add_filter( 'acf/delete_field_group', array( $this, 'delete_field_group' ) );
+			add_filter( 'acf/update_post_type', array( $this, 'update_internal_post_type' ) );
+			add_filter( 'acf/untrash_post_type', array( $this, 'update_internal_post_type' ) );
+			add_filter( 'acf/trash_post_type', array( $this, 'delete_internal_post_type' ) );
+			add_filter( 'acf/delete_post_type', array( $this, 'delete_internal_post_type' ) );
+			add_filter( 'acf/update_taxonomy', array( $this, 'update_internal_post_type' ) );
+			add_filter( 'acf/untrash_taxonomy', array( $this, 'update_internal_post_type' ) );
+			add_filter( 'acf/trash_taxonomy', array( $this, 'delete_internal_post_type' ) );
+			add_filter( 'acf/delete_taxonomy', array( $this, 'delete_internal_post_type' ) );
 
 			// Include fields.
 			add_action( 'acf/include_fields', array( $this, 'include_fields' ) );

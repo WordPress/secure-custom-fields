@@ -18,6 +18,19 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 	 * @since 5.0.0
 	 */
 	class acf_field_clone extends acf_field {
+
+		/**
+		 * Array to keep track of fields being cloned.
+		 *
+		 * @var array $cloning
+		 */
+		public $cloning = array();
+		/**
+		 * The type of rows the field supports.
+		 *
+		 * @var array $have_rows
+		 */
+		public $have_rows = 'single';
 		/**
 		 * Initialize the field type.
 		 *

@@ -295,17 +295,17 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		 *
 		 * @param integer $post_id The post ID.
 		 * @param WP_Post $post    The post object.
-		 * @return integer
+		 * @return void
 		 */
 		public function save_post( $post_id, $post ) {
 			// Bail early if not allowed to save this post type.
 			if ( ! $this->allow_save_post( $post ) ) {
-				return $post_id;
+				return;
 			}
 
 			// Verify nonce.
 			if ( ! acf_verify_nonce( 'post' ) ) {
-				return $post_id;
+				return;
 			}
 
 			// Validate for published post (allow draft to save without validation).
@@ -322,8 +322,6 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			if ( version_compare( get_bloginfo( 'version' ), '6.4', '<' ) && post_type_supports( $post->post_type, 'revisions' ) ) {
 				acf_save_post_revision( $post_id );
 			}
-
-			return $post_id;
 		}
 	}
 
