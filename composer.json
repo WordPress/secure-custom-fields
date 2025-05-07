@@ -69,6 +69,7 @@
         ],
         "test:php": "phpunit",
         "test:phpstan": "phpstan analyze --memory-limit=2G",
-        "test:phpstan:baseline": "phpstan analyze --memory-limit=2G --generate-baseline=bin/baseline.neon"
+        "test:phpstan:baseline": "phpstan analyze --memory-limit=2G --generate-baseline=bin/baseline.neon",
+        "update-translations": "php bin/update-translations.php"
     }
 }

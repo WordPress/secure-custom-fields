@@ -1,120 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^@param array \$sub_field does not accept actual type of parameter\: int\|false\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Expected 2 @param tags, found 1\.$#'
-			identifier: paramTag.count
-			count: 1
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Function wp_trash_post invoked with 2 parameters, 0\-1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Function wp_untrash_post invoked with 2 parameters, 0\-1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 2
-			path: ../includes/acf-field-functions.php
-
-		-
-			message: '#^Function acf_checkbox_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_file_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_hidden_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_radio_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_select_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_text_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Function acf_textarea_input\(\) should return string but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/acf-input-functions.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_Field_Groups\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-field-groups.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/post-types/admin-field-groups.php
-
-		-
-			message: '#^Class ACF_Admin_Post_type referenced with incorrect case\: ACF_Admin_Post_Type\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: ../includes/admin/post-types/admin-post-type.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_Post_Types\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-post-types.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_Taxonomies\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-taxonomies.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_UI_Options_Pages\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/class-acf-admin-ui-options-pages.php
-
-		-
 			message: '#^Variable \$field might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -205,18 +91,6 @@ parameters:
 			path: ../includes/admin/views/upgrade/notice.php
 
 		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
 			message: '#^Path in include_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
 			identifier: includeOnce.fileNotFound
 			count: 1
@@ -239,12 +113,6 @@ parameters:
 			identifier: requireOnce.fileNotFound
 			count: 1
 			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-term.php
 
 		-
 			message: '#^Action callback returns string but should not return anything\.$#'

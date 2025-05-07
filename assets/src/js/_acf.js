@@ -673,9 +673,8 @@
 	 *  @return	string Translated text.
 	 */
 
-	if ( window.acfL10n == undefined ) {
-		acfL10n = {};
-	}
+	// Make sure a global acfL10n object exists to prevent errors in other scopes
+	window.acfL10n = window.acfL10n || {};
 
 	acf.__ = function ( text ) {
 		return acfL10n[ text ] || text;

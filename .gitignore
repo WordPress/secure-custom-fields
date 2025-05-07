@@ -41,6 +41,7 @@ jspm_packages/
 *.njsproj
 *.sln
 .cursorrules
+.cursorignore
 
 # Assets build directory
 assets/build/**/*.css

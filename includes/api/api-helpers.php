@@ -1289,7 +1289,7 @@ function acf_get_grouped_posts( $args ) {
 
 	// remove this filter (only once)
 	if ( ! $is_single_post_type ) {
-		remove_filter( 'posts_orderby', '_acf_orderby_post_type', 10, 2 );
+		remove_filter( 'posts_orderby', '_acf_orderby_post_type', 10 );
 	}
 
 	// loop
@@ -2605,7 +2605,7 @@ function acf_get_attachment( $attachment ) {
 		 *
 		 * @since ACF 6.2.2
 		 *
-		 * @param int|null The default filesize.
+		 * @param int|null $shortcut_filesize The default filesize.
 		 * @param WP_Post $attachment The attachment post object we're looking for the filesize for.
 		 */
 		$shortcut_filesize = apply_filters( 'acf/filesize', null, $attachment );

@@ -49,6 +49,7 @@ class Release_Preparation {
 		$this->build_assets();
 		$this->run_tests();
 		$this->generate_docs();
+		$this->update_translations();
 		$this->commit_changes();
 
 		$current_version = $this->get_current_version();
@@ -186,7 +187,7 @@ class Release_Preparation {
 			if ( 0 !== $return ) {
 				exit( $return );
 			}
-			passthru( 'git commit -m "Build assets and documentation"', $return );
+			passthru( 'git commit -m "Build assets, documentation, and translations"', $return );
 			if ( 0 !== $return ) {
 				exit( $return );
 			}
@@ -345,6 +346,15 @@ class Release_Preparation {
 		$line   = strtolower( trim( fgets( $handle ) ) );
 		fclose( $handle );
 		return 'y' === $line;
+	}
+
+	/**
+	 * Update plugin translations and cleanup
+	 */
+	private function update_translations() {
+		require_once __DIR__ . '/update-translations.php';
+		$updater = new Translation_Updater();
+		$updater->run();
 	}
 }
 

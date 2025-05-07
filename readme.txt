@@ -2,9 +2,9 @@
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 6.4.1
+Stable tag: 6.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,12 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.4.2 =
+*Release Date 14 Apr 2025*
+
+* Resolved issue with shortcode translation not parsing correctly.
+* Improve validation for an URL on field admin.
+
 = 6.4.1 =
 *Release Date 7 Mar 2025*
 
@@ -83,5 +89,5 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Upgrade Notice ==
 
-= 6.4.1 =
-Resolves notice of loading translations too early.
+= 6.4.2 =
+Security: improves validation of an URL in an admin field.
