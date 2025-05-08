@@ -26,7 +26,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Constructs the location.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 */
 	public function __construct() {
 		add_filter( 'acf/decode_post_id', array( $this, 'decode_woo_order_id' ), 10, 2 );
@@ -36,7 +36,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Checks numerical post IDs to see if they belong to a WC order.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param array          $decoded The decoded post ID props.
 	 * @param integer|string $post_id The original post ID.
@@ -64,7 +64,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Retrieves all ACF meta for the provided object ID.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id The ID of the object to get meta from.
 	 * @return array
@@ -98,7 +98,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Retrieves a field value from the database.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id The ID of the object the metadata is for.
 	 * @param array          $field     The field array.
@@ -117,7 +117,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Gets a reference key for the provided field name.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id  The ID of the object to get the reference key from.
 	 * @param string         $field_name The name of the field to get the reference for.
@@ -137,7 +137,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Updates an object ID with the provided meta array.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id The ID of the object the metadata is for.
 	 * @param array          $meta      The metadata to save to the object.
@@ -161,7 +161,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Updates a field value in the database.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id The ID of the object the metadata is for.
 	 * @param array          $field     The field array.
@@ -186,7 +186,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Updates a reference key in the database.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id  The ID of the object the metadata is for.
 	 * @param string         $field_name The name of the field to update the reference for.
@@ -201,7 +201,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Deletes a field value from the database.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id The ID of the object the metadata is for.
 	 * @param array          $field     The field array.
@@ -223,7 +223,7 @@ class WooOrder extends MetaLocation {
 	/**
 	 * Deletes a reference key from the database.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer|string $object_id  The ID of the object the metadata is for.
 	 * @param string         $field_name The name of the field to delete the reference from.

@@ -18,7 +18,7 @@ class WC_Order {
 	/**
 	 * Constructs the ACF_Form_WC_Order class.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 */
 	public function __construct() {
 		add_action( 'load-woocommerce_page_wc-orders', array( $this, 'initialize' ) );
@@ -29,7 +29,7 @@ class WC_Order {
 	 * Enqueues ACF scripts on the WooCommerce order page and
 	 * registers actions specific to that page.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @return void
 	 */
@@ -41,7 +41,7 @@ class WC_Order {
 	/**
 	 * Adds ACF metaboxes to the WooCommerce Order pages.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param string   $post_type The current post type.
 	 * @param \WP_Post $post      The WP_Post object or the WC_Order object.
@@ -85,7 +85,7 @@ class WC_Order {
 				/**
 				 * Filters the metabox priority.
 				 *
-				 * @since 6.4
+				 * @since 6.5
 				 *
 				 * @param string $priority    The metabox priority (high, core, default, low).
 				 * @param array  $field_group The field group array.
@@ -145,7 +145,7 @@ class WC_Order {
 	/**
 	 * Renders hidden fields.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param \WC_Order $order The WooCommerce order object.
 	 * @return void
@@ -163,7 +163,7 @@ class WC_Order {
 	/**
 	 * Renders the ACF metabox HTML.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param \WP_Post|\WC_Order $post_or_order Can be a standard \WP_Post object or the \WC_Order object.
 	 * @param array              $metabox       The add_meta_box() args.
@@ -181,7 +181,7 @@ class WC_Order {
 	/**
 	 * Saves ACF fields to the current order.
 	 *
-	 * @since 6.4
+	 * @since 6.5
 	 *
 	 * @param integer $order_id The order ID.
 	 * @return void
