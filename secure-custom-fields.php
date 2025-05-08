@@ -227,6 +227,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );
 			add_action( 'init', array( $this, 'init' ), 5 );
 			add_action( 'init', array( $this, 'register_post_types' ), 5 );
+			add_action( 'woocommerce_init', array( $this, 'init_hpos_integration' ), 99 );
 
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
@@ -740,6 +741,21 @@ if ( ! class_exists( 'ACF' ) ) {
 					do_action( 'acf/first_activated' );
 				}
 			}
+		}
+
+		/**
+		 * Initializes the ACF WooCommerce HPOS integration.
+		 *
+		 * @since 6.5
+		 *
+		 * @return void
+		 */
+		public function init_hpos_integration() {
+			acf_include( 'includes/meta/location.php' );
+			acf_include( 'includes/meta/woo-order.php' );
+			acf_include( 'includes/forms/form-wc-order.php' );
+			acf_new_instance( 'SCF\Meta\WooOrder' );
+			acf_new_instance( 'SCF\Forms\WC_Order' );
 		}
 	}
 
