@@ -21,6 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SCF_Rest_Types_Endpoint {
 
 	/**
+	 * Cached post types for the current request
+	 *
+	 * @var array|null
+	 */
+	private $cached_post_types = null;
+
+	/**
 	 * Initialize the class.
 	 *
 	 * @since 6.5.0
@@ -67,14 +74,11 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Static cache for source post types within this request
-		static $source_post_types_cache = array();
-
-		// Get filtered types by source (using cache if available)
-		if ( ! isset( $source_post_types_cache[ $source ] ) ) {
-			$source_post_types_cache[ $source ] = $this->get_source_post_types( $source );
+		// Get post types, calculating once and reusing for the entire request
+		if ( null === $this->cached_post_types ) {
+			$this->cached_post_types = $this->get_source_post_types( $source );
 		}
-		$source_post_types = $source_post_types_cache[ $source ];
+		$source_post_types = $this->cached_post_types;
 
 		// For single post type requests, check if it matches the source
 		if ( $is_single_type && isset( $matches[1] ) ) {
@@ -88,24 +92,10 @@ class SCF_Rest_Types_Endpoint {
 					array( 'status' => 404 )
 				);
 			}
-		} else {
-			// For collection requests, add a filter to process the response
-			add_filter(
-				'rest_pre_serve_request',
-				function ( $served, $result ) use ( $source_post_types ) {
-					if ( ! $served && isset( $result->data ) && is_array( $result->data ) ) {
-						// Filter the response to keep only post types from our filtered list
-						$result->data = array_intersect_key(
-							$result->data,
-							array_flip( $source_post_types )
-						);
-					}
-					return $served;
-				},
-				10,
-				2
-			);
 		}
+		// For collection requests, we don't need to add any filter here
+		// as clean_types_response will handle removing null values from the response
+		// and filter_post_type will handle individual filtering
 
 		return $response;
 	}
@@ -129,16 +119,14 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Static cache for source post types within this request
-		static $source_post_types_cache = array();
-
-		// Get filtered types by source (using cache if available)
-		if ( ! isset( $source_post_types_cache[ $source ] ) ) {
-			$source_post_types_cache[ $source ] = $this->get_source_post_types( $source );
+		// Get post types, calculating once and reusing for the entire request
+		if ( null === $this->cached_post_types ) {
+			$this->cached_post_types = $this->get_source_post_types( $source );
 		}
+		$source_post_types = $this->cached_post_types;
 
 		// If this post type doesn't match the source, return null to filter it out
-		if ( ! in_array( $post_type->name, $source_post_types_cache[ $source ], true ) ) {
+		if ( ! in_array( $post_type->name, $source_post_types, true ) ) {
 			return null;
 		}
 
@@ -154,13 +142,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array An array of post type names for the specified source.
 	 */
 	private function get_source_post_types( $source ) {
-		// Cache for performance across requests
-		static $cached_types = array();
-
-		// Return cached results if available
-		if ( isset( $cached_types[ $source ] ) ) {
-			return $cached_types[ $source ];
-		}
 
 		$core_types = array();
 		$scf_types  = array();
@@ -208,9 +189,6 @@ class SCF_Rest_Types_Endpoint {
 			default:
 				$result = array();
 		}
-
-		// Cache the result
-		$cached_types[ $source ] = $result;
 
 		return $result;
 	}
@@ -400,10 +378,10 @@ class SCF_Rest_Types_Endpoint {
 	 *
 	 * @since 6.5.0
 	 *
-	 * @param array|WP_REST_Response $response The response data.
-	 * @param WP_REST_Server         $server   The REST server instance.
-	 * @param WP_REST_Request        $request  The original request.
-	 * @return array|WP_REST_Response The filtered response data.
+	 * @param array           $response The response data.
+	 * @param WP_REST_Server  $server   The REST server instance.
+	 * @param WP_REST_Request $request  The original request.
+	 * @return array            The filtered response data.
 	 */
 	public function clean_types_response( $response, $server, $request ) {
 		// Only process types endpoint responses
@@ -411,29 +389,16 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get response data
-		if ( is_a( $response, 'WP_REST_Response' ) ) {
-			$data = $response->get_data();
-		} else {
-			$data = $response;
-		}
-
-		// Check if we're dealing with a collection of types
-		if ( is_array( $data ) && ! isset( $data['slug'] ) ) {
-			// Remove null entries
-			$data = array_filter(
-				$data,
+		// Only process collection responses (not single post type responses)
+		// Single post type responses have a 'slug' property, collections don't
+		if ( is_array( $response ) && ! isset( $response['slug'] ) ) {
+			// Remove null entries using array_filter
+			$response = array_filter(
+				$response,
 				function ( $entry ) {
 					return null !== $entry;
 				}
 			);
-		}
-
-		// Put the filtered data back into the response
-		if ( is_a( $response, 'WP_REST_Response' ) ) {
-			$response->set_data( $data );
-		} else {
-			$response = $data;
 		}
 
 		return $response;
