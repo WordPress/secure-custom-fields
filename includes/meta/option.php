@@ -1,66 +1,28 @@
 <?php
 /**
- * A class that can be extended to add support
- * for different meta types/locations in SCF.
+ * Adds support for saving/retrieving values from options.
  *
  * @package    SCF
+ * @since      6.5
  * @subpackage Meta
  */
 
 namespace SCF\Meta;
 
 /**
- * The MetaType base class.
+ * A class to add support for saving to options.
  */
-class MetaLocation {
+class Option extends MetaLocation {
 
 	/**
 	 * The unique slug/name of the meta location.
 	 *
 	 * @var string
 	 */
-	public string $location_type = '';
+	public string $location_type = 'option';
 
 	/**
-	 * The prefix to use for SCF reference keys/hidden meta.
-	 *
-	 * @var string
-	 */
-	public string $reference_prefix = '_';
-
-	/**
-	 * Constructs the location.
-	 *
-	 * @since 6.5
-	 */
-	public function __construct() {
-		$this->register();
-	}
-
-	/**
-	 * Registers the meta location with SCF, so it can be used by
-	 * various CRUD helper functions.
-	 *
-	 * @since 6.5
-	 *
-	 * @return void
-	 */
-	public function register() {
-		if ( empty( $this->location_type ) ) {
-			return;
-		}
-
-		$store = acf_get_store( 'acf-meta-locations' );
-
-		if ( ! $store ) {
-			$store = acf_register_store( 'acf-meta-locations' );
-		}
-
-		$store->set( $this->location_type, get_class( $this ) );
-	}
-
-	/**
-	 * Retrieves all SCF meta for the provided object ID.
+	 * Retrieves all ACF meta for the provided object ID.
 	 *
 	 * @since 6.5
 	 *
@@ -68,21 +30,19 @@ class MetaLocation {
 	 * @return array
 	 */
 	public function get_meta( $object_id = 0 ): array {
+		$all_meta = acf_get_option_meta( $object_id );
 		$meta     = array();
-		$all_meta = get_metadata( $this->location_type, $object_id );
 
-		if ( $all_meta ) {
-			foreach ( $all_meta as $key => $value ) {
-				// If a reference exists for this value, add it to the meta array.
-				if ( isset( $all_meta[ $this->reference_prefix . $key ] ) ) {
-					$meta[ $key ]                           = $value[0];
-					$meta[ $this->reference_prefix . $key ] = $all_meta[ $this->reference_prefix . $key ][0];
-				}
+		foreach ( $all_meta as $key => $value ) {
+			// If a reference exists for this value, add it to the meta array.
+			if ( isset( $all_meta[ $this->reference_prefix . $key ] ) ) {
+				$meta[ $key ]                           = $value[0];
+				$meta[ $this->reference_prefix . $key ] = $all_meta[ $this->reference_prefix . $key ][0];
 			}
 		}
 
-		// Unserialize results and return.
-		return array_map( 'acf_maybe_unserialize', $meta );
+		// Return results.
+		return $meta;
 	}
 
 	/**
@@ -95,8 +55,7 @@ class MetaLocation {
 	 * @return mixed
 	 */
 	public function get_value( $object_id = 0, array $field = array() ) {
-		$meta = get_metadata( $this->location_type, $object_id, $field['name'] );
-		return $meta[0] ?? null;
+		return get_option( $object_id . '_' . $field['name'], null );
 	}
 
 	/**
@@ -106,11 +65,10 @@ class MetaLocation {
 	 *
 	 * @param integer|string $object_id  The ID of the object to get the reference key from.
 	 * @param string         $field_name The name of the field to get the reference for.
-	 * @return string|null
+	 * @return string|boolean
 	 */
-	public function get_reference( $object_id = 0, $field_name = '' ) {
-		$reference = get_metadata( $this->location_type, $object_id, $this->reference_prefix . $field_name );
-		return $reference[0] ?? null;
+	public function get_reference( $object_id = '', $field_name = '' ) {
+		return get_option( $this->reference_prefix . $object_id . '_' . $field_name, null );
 	}
 
 	/**
@@ -123,11 +81,11 @@ class MetaLocation {
 	 * @return void
 	 */
 	public function update_meta( $object_id = 0, array $meta = array() ) {
-		// Slash data. WP expects all data to be slashed and will unslash it (fixes '\' character issues).
-		$meta = wp_slash( $meta );
+		$autoload = (bool) acf_get_setting( 'autoload' );
 
 		foreach ( $meta as $name => $value ) {
-			update_metadata( $this->location_type, $object_id, $name, $value );
+			$value = wp_unslash( $value );
+			update_option( $object_id . '_' . $name, $value, $autoload );
 		}
 	}
 
@@ -142,7 +100,10 @@ class MetaLocation {
 	 * @return integer|boolean
 	 */
 	public function update_value( $object_id = 0, array $field = array(), $value = '' ) {
-		return update_metadata( $this->location_type, $object_id, $field['name'], $value );
+		$value    = wp_unslash( $value );
+		$autoload = (bool) acf_get_setting( 'autoload' );
+
+		return update_option( $object_id . '_' . $field['name'], $value, $autoload );
 	}
 
 	/**
@@ -156,7 +117,8 @@ class MetaLocation {
 	 * @return integer|boolean
 	 */
 	public function update_reference( $object_id = 0, string $field_name = '', string $value = '' ) {
-		return update_metadata( $this->location_type, $object_id, $this->reference_prefix . $field_name, $value );
+		$autoload = (bool) acf_get_setting( 'autoload' );
+		return update_option( $this->reference_prefix . $object_id . '_' . $field_name, $value, $autoload );
 	}
 
 	/**
@@ -169,7 +131,7 @@ class MetaLocation {
 	 * @return boolean
 	 */
 	public function delete_value( $object_id = 0, array $field = array() ): bool {
-		return delete_metadata( $this->location_type, $object_id, $field['name'] );
+		return delete_option( $object_id . '_' . $field['name'] );
 	}
 
 	/**
@@ -182,6 +144,6 @@ class MetaLocation {
 	 * @return boolean
 	 */
 	public function delete_reference( $object_id = 0, string $field_name = '' ): bool {
-		return delete_metadata( $this->location_type, $object_id, $this->reference_prefix . $field_name );
+		return delete_option( $this->reference_prefix . $object_id . '_' . $field_name );
 	}
 }

@@ -148,8 +148,23 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/locations/abstract-acf-legacy-location.php' );
 			acf_include( 'includes/locations/abstract-acf-location.php' );
 
+			// Include meta classes.
+			acf_include( 'includes/meta/meta-location.php' );
+			acf_include( 'includes/meta/comment.php' );
+			acf_include( 'includes/meta/option.php' );
+			acf_include( 'includes/meta/term.php' );
+			acf_include( 'includes/meta/user.php' );
+			acf_include( 'includes/meta/post.php' );
+
 			// Include functions.
 			acf_include( 'includes/acf-helper-functions.php' );
+
+			acf_new_instance( 'SCF\Meta\Comment' );
+			acf_new_instance( 'SCF\Meta\Post' );
+			acf_new_instance( 'SCF\Meta\Term' );
+			acf_new_instance( 'SCF\Meta\User' );
+			acf_new_instance( 'SCF\Meta\Option' );
+
 			acf_include( 'includes/acf-hook-functions.php' );
 			acf_include( 'includes/acf-field-functions.php' );
 			acf_include( 'includes/acf-bidirectional-functions.php' );
@@ -751,7 +766,6 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @return void
 		 */
 		public function init_hpos_integration() {
-			acf_include( 'includes/meta/location.php' );
 			acf_include( 'includes/meta/woo-order.php' );
 			acf_include( 'includes/forms/form-wc-order.php' );
 			acf_new_instance( 'SCF\Meta\WooOrder' );
