@@ -133,7 +133,7 @@ class WC_Order {
 		 * Fires after metaboxes have been added.
 		 *
 		 * @date    13/12/18
-		 * @since   5.8.0
+		 * @since   ACF 5.8.0
 		 *
 		 * @param string   $post_type    The post type.
 		 * @param \WP_Post $post         The post being edited.

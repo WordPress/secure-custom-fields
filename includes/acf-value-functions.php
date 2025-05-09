@@ -47,7 +47,7 @@ function acf_get_reference( $field_name, $post_id ) {
 	 * Filters the reference value.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param   string $reference The reference value.
 	 * @param   string $field_name The field name.
@@ -128,7 +128,7 @@ function acf_get_value( $post_id, $field ) {
 	 * Filters the $value after it has been loaded.
 	 *
 	 * @date    28/09/13
-	 * @since   5.0.0
+	 * @since   ACF 5.0.0
 	 *
 	 * @param   mixed $value The value to preview.
 	 * @param   string $post_id The post ID for this value.
