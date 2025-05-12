@@ -39,7 +39,7 @@ class SCF_Rest_Types_Endpoint {
 		// Add filter to process REST API requests by route
 		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
 
-		// Add filter to process each post type individually (WP 6.5+ compatibility)
+		// Add filter to process each post type individually
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
 
 		// Clean up null entries from the response
@@ -101,7 +101,7 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Filter individual post type in the response (WP 6.5+ compatibility).
+	 * Filter individual post type in the response.
 	 *
 	 * @since 6.5.0
 	 *
