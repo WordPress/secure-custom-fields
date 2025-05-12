@@ -156,20 +156,17 @@ class SCF_Rest_Types_Endpoint {
 
 		// Get SCF-managed post types (only if needed)
 		if ( 'scf' === $source || 'other' === $source ) {
-			$scf_post_types = array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy', 'acf-ui-options-page' );
+			$scf_types = array();
 
-			// Get SCF-created post types
+			// Get SCF-managed post types
 			if ( function_exists( 'acf_get_internal_post_type_posts' ) ) {
-				$scf_defined_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
-				foreach ( $scf_defined_post_types as $scf_post_type ) {
+				$scf_managed_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
+				foreach ( $scf_managed_post_types as $scf_post_type ) {
 					if ( isset( $scf_post_type['post_type'] ) ) {
 						$scf_types[] = $scf_post_type['post_type'];
 					}
 				}
 			}
-
-			// Combine with SCF internal post types
-			$scf_types = array_unique( array_merge( $scf_post_types, $scf_types ) );
 		}
 
 		// Return appropriate post types based on source

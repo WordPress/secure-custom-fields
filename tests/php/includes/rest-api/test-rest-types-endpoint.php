@@ -123,13 +123,7 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 
 		$this->assertIsArray( $scf_types, 'SCF types should be an array' );
 
-		// Check for SCF post types.
-		$this->assertContains( 'acf-field-group', $scf_types );
-		$this->assertContains( 'acf-post-type', $scf_types );
-		$this->assertContains( 'acf-taxonomy', $scf_types );
-		$this->assertContains( 'acf-ui-options-page', $scf_types );
-
-		// Should not include core types.
+		// Should not include core types
 		$this->assertNotContains( 'post', $scf_types );
 		$this->assertNotContains( 'page', $scf_types );
 	}
@@ -171,10 +165,9 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 		// Should include our test post type.
 		$this->assertContains( $this->test_post_type, $other_types );
 
-		// Should not include core or SCF types.
+		// Should not include core types
 		$this->assertNotContains( 'post', $other_types );
 		$this->assertNotContains( 'page', $other_types );
-		$this->assertNotContains( 'acf-field-group', $other_types );
 	}
 
 	/**
