@@ -126,7 +126,9 @@ test.describe( 'Field Type > Text', () => {
 		await previewPage.waitForSelector( '#scf-test-option-title' );
 		await expect(
 			previewPage.locator( '#scf-test-option-title' )
-		).toContainText( 'Option title: My Option Title Value' );
+		).toContainText( 'Option title: My Option Title Value' )
+
+		await deleteOptionsPages( page, admin );
 	} );
 } );
 
