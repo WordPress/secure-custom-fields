@@ -96,7 +96,7 @@ test.describe( 'Field Type > Text', () => {
         await expect( termUpdateNotice ).toContainText( 'Category updated' );
 
 		// Create a post to use the category field on the post content through the plugin.
-		const post = await requestUtils.createPost( {
+		await requestUtils.createPost( {
 			title: 'Movie 1',
 			status: 'publish',
 			showWelcomeGuide: false,

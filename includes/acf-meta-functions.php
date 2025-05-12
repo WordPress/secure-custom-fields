@@ -31,7 +31,7 @@ function acf_get_meta( $post_id = 0 ) {
 	 * Filters the $meta array after it has been loaded.
 	 *
 	 * @date    25/1/19
-	 * @since   5.7.11
+	 * @since   ACF 5.7.11
 	 *
 	 * @param array  $meta    The array of loaded meta.
 	 * @param string $post_id The $post_id for this meta.
