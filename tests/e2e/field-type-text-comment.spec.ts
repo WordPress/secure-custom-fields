@@ -52,10 +52,19 @@ test.describe( 'Field Type > Text', () => {
 		);
 		await fieldType.selectOption( 'text' );
 
-    // Set comment as post type.
-    await page.selectOption('select[id^="acf_field_group-location-group_0-rule_0-param"]', 'comment');
-		await page.selectOption('select[id^="acf_field_group-location-group_0-rule_0-operator"]', '==');
-		await page.selectOption('select[id^="acf_field_group-location-group_0-rule_0-value"]', 'all');
+		// Set comment as post type.
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-param"]',
+			'comment'
+		);
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-operator"]',
+			'=='
+		);
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-value"]',
+			'all'
+		);
 
 		// Submit form.
 		const publishButton = page.locator(
@@ -81,21 +90,27 @@ test.describe( 'Field Type > Text', () => {
 			showWelcomeGuide: false,
 		} );
 
-    await admin.editPost(post.id);
+		await admin.editPost( post.id );
 
-    const previewPage = await editor.openPreviewPage();
-    
-    await previewPage.waitForSelector('.acf-field[data-name="comment_title"] input');
-    await previewPage.fill('.acf-field[data-name="comment_title"] input', 'Awesome movie');
-    
-    await previewPage.fill('textarea#comment', 'This is a test comment');
-    await previewPage.click('input#submit');
-  
-    
-    // Verify the custom field value appears in the comment
-    await previewPage.waitForSelector('#scf-test-comment-title');
-    await expect(previewPage.locator('#scf-test-comment-title')).toContainText('Comment title: Awesome movie');
-    } );
+		const previewPage = await editor.openPreviewPage();
+
+		await previewPage.waitForSelector(
+			'.acf-field[data-name="comment_title"] input'
+		);
+		await previewPage.fill(
+			'.acf-field[data-name="comment_title"] input',
+			'Awesome movie'
+		);
+
+		await previewPage.fill( 'textarea#comment', 'This is a test comment' );
+		await previewPage.click( 'input#submit' );
+
+		// Verify the custom field value appears in the comment
+		await previewPage.waitForSelector( '#scf-test-comment-title' );
+		await expect(
+			previewPage.locator( '#scf-test-comment-title' )
+		).toContainText( 'Comment title: Awesome movie' );
+	} );
 } );
 
 /**
@@ -121,6 +136,7 @@ async function deleteFieldGroups( page, admin ) {
 		await emptyTrash( page, admin );
 	}
 }
+
 
 /**
  * Helper function to empty trash
