@@ -408,7 +408,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in SCF 6.3.
+			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in ACF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
