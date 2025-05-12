@@ -16,14 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Extends the /wp/v2/types endpoint to include SCF fields.
  *
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 class SCF_Rest_Types_Endpoint {
 
 	/**
 	 * Initialize the class.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
@@ -32,7 +32,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Register extra SCF fields for the post types endpoint.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @return void
 	 */
@@ -53,7 +53,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get SCF fields for a post type.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array $post_type_object The post type object.
 	 * @return array Array of field data.
@@ -86,7 +86,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get the schema for the SCF fields.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @return array The schema for the SCF fields.
 	 */
