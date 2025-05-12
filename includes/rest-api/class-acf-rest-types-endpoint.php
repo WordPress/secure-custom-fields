@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Extends the /wp/v2/types endpoint to include SCF fields and source filtering.
  *
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 class SCF_Rest_Types_Endpoint {
 
@@ -30,7 +30,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Initialize the class.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
@@ -49,7 +49,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Filter post types requests (both collection and individual)
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param mixed           $response The current response, either response or null.
 	 * @param array           $handler  The handler for the route.
@@ -103,7 +103,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Filter individual post type in the response.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param WP_REST_Response $response The response object.
 	 * @param WP_Post_Type     $post_type The post type object.
@@ -136,7 +136,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get an array of post types for each source.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param string $source The source to get post types for.
 	 * @return array An array of post type names for the specified source.
@@ -193,7 +193,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Register extra SCF fields for the post types endpoint.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @return void
 	 */
@@ -216,7 +216,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get SCF fields for a post type.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array $post_type_object The post type object.
 	 * @return array Array of field data.
@@ -249,7 +249,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get the schema for the SCF fields.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @return array The schema for the SCF fields.
 	 */
@@ -290,7 +290,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Register the source parameter for the post types endpoint.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 */
 	public function register_parameters() {
 		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
@@ -308,7 +308,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get the source parameter definition
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param bool $include_validation Whether to include validation callbacks.
 	 * @return array Parameter definition
@@ -335,7 +335,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Add source parameter directly to the endpoints for proper documentation
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array $endpoints The REST API endpoints.
 	 * @return array Modified endpoints
@@ -360,7 +360,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Add source parameter to the collection parameters for the types endpoint.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array $query_params JSON Schema-formatted collection parameters.
 	 * @return array Modified collection parameters.
@@ -373,7 +373,7 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Clean up null entries from the response
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array           $response The response data.
 	 * @param WP_REST_Server  $server   The REST server instance.
