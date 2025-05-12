@@ -61,8 +61,8 @@ const registerPostTypeCommands = () => {
 				'content',
 				'cpt',
 				postType.name,
-				...( postType.label ? [ postType.label ] : [] ),
-			],
+				postType.label,
+			].filter( Boolean ),
 			callback: ( { close } ) => {
 				document.location =
 					adminUrl +
