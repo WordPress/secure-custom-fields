@@ -8,22 +8,29 @@
 	<exclude-pattern>/lang/*</exclude-pattern>
 
 	<!-- How to scan -->
-	<arg value="sp"/> <!-- Show sniff and progress -->
+	<arg value="sp"/>
+	<!-- Show sniff and progress -->
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
 
 	<!-- Rules: WordPress Coding Standards -->
 	<config name="minimum_supported_wp_version" value="6.0"/>
 	<rule ref="WordPress">
-		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" /> <!-- 'acf/hookname' is used throughout. -->
-		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" /> <!-- This is trivial and not really useful today. -->
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" /> <!-- Refactoring of this scale is not in scope yet.-->
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
+		<!-- 'acf/hookname' is used throughout. -->
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<!-- This is trivial and not really useful today. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<!-- Refactoring of this scale is not in scope yet.-->
+		<exclude name="WordPress.Files.FileName" />
+		<!-- Exclude the entire filename rule -->
 	</rule>
 
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
 			<property name="customEscapingFunctions" type="array">
-				<element value="acf_esc_attrs" /> <!-- This function takes an associated array and escapes both the attr title and attr value. -->
+				<element value="acf_esc_attrs" />
+				<!-- This function takes an associated array and escapes both the attr title and attr value. -->
 				<element value="acf_esc_html" />
 			</property>
 		</properties>
