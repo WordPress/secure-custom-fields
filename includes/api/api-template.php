@@ -205,7 +205,7 @@ function _acf_update_escaped_html_log( $escaped = array() ) {
 
 /**
  * Deletes the array of instances where HTML was altered due to escaping in the_field or a shortcode.
- * Since 6.2.7, also clears the legacy `acf_will_escape_html_log` option to clean up.
+ * Since ACF 6.2.7, also clears the legacy `acf_will_escape_html_log` option to clean up.
  *
  * @since ACF 6.2.5
  *
@@ -1072,8 +1072,11 @@ function acf_shortcode( $atts ) {
 
 	$field_type = is_array( $field ) && isset( $field['type'] ) ? $field['type'] : 'text';
 
+	// Allow config errors to show for appropriate caps checked users.
+	$display_errors_to_user = apply_filters( 'acf/shortcode/display_admin_errors', 'manage_options' );
+
 	if ( ! acf_field_type_supports( $field_type, 'bindings', true ) ) {
-		if ( is_preview() ) {
+		if ( is_preview() || current_user_can( $display_errors_to_user ) ) {
 			return apply_filters( 'acf/shortcode/field_not_supported_message', '[' . esc_html__( 'The requested ACF field type does not support output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 		} else {
 			return;
@@ -1081,7 +1084,7 @@ function acf_shortcode( $atts ) {
 	}
 
 	if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
-		if ( is_preview() ) {
+		if ( is_preview() || current_user_can( $display_errors_to_user ) ) {
 			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
 		} else {
 			return;

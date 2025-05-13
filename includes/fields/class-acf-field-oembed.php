@@ -4,6 +4,19 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 	#[AllowDynamicProperties]
 	class acf_field_oembed extends acf_field {
 
+		/**
+		 *
+		 * Oembed width.
+		 *
+		 * @var int $width
+		 */
+		public $width = 0;
+		/**
+		 * Oembed height.
+		 *
+		 * @var int $height
+		 */
+		public $height = 0;
 
 		/**
 		 * This function will setup the field type data

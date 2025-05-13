@@ -30,15 +30,15 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 		 * @since ACF 6.3
 		 */
 		public function __construct() {
-			add_action( 'debug_information', array( $this, 'render_tab_content' ) );
-			add_action( 'acf_update_site_health_data', array( $this, 'update_site_health_data' ) );
+			add_filter( 'debug_information', array( $this, 'render_tab_content' ) );
+			add_filter( 'acf_update_site_health_data', array( $this, 'update_site_health_data' ) );
 
 			if ( ! wp_next_scheduled( 'acf_update_site_health_data' ) ) {
 				wp_schedule_event( time(), 'weekly', 'acf_update_site_health_data' );
 			}
 
 			// ACF events.
-			add_action( 'acf/first_activated', array( $this, 'add_activation_event' ) );
+			add_filter( 'acf/first_activated', array( $this, 'add_activation_event' ) );
 			add_filter( 'acf/pre_update_field_group', array( $this, 'pre_update_acf_internal_cpt' ) );
 			add_filter( 'acf/pre_update_post_type', array( $this, 'pre_update_acf_internal_cpt' ) );
 			add_filter( 'acf/pre_update_taxonomy', array( $this, 'pre_update_acf_internal_cpt' ) );

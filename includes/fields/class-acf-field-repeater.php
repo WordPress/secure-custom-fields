@@ -1042,7 +1042,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 *
 		 * @since ACF 6.0.0
 		 *
-		 * @return void|WP_Error
+		 * @return void
 		 */
 		public function ajax_get_rows() {
 			$args = acf_request_args(

@@ -192,7 +192,7 @@ function acf_get_grouped_terms( $args ) {
 
 	// remove this filter (only once)
 	if ( ! $is_single ) {
-		remove_filter( 'terms_clauses', '_acf_terms_clauses', 10, 3 );
+		remove_filter( 'terms_clauses', '_acf_terms_clauses', 10 );
 	}
 
 	// loop

@@ -8,7 +8,12 @@ if ( ! class_exists( 'acf_loop' ) ) :
 	#[AllowDynamicProperties]
 	class acf_loop {
 
-
+		/**
+		 * Array of loops.
+		 *
+		 * @var array $loops
+		 */
+		public $loops = array();
 		/**
 		 * This function will setup the class functionality
 		 *
@@ -34,7 +39,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 * @since   ACF 5.3.2
 		 *
 		 * @param   n/a
-		 * @return  (boolean)
+		 * @return  bool
 		 */
 		function is_empty() {
 
@@ -202,7 +207,7 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 * @since   ACF 5.3.2
 		 *
 		 * @param   $i (mixed)
-		 * @return  (boolean) true on success
+		 * @return  bool|void false on failure
 		 */
 		function remove_loop( $i = 'active' ) {
 
@@ -289,7 +294,7 @@ function acf_get_loop( $i = 'active', $key = null ) {
  * @since   ACF 5.0.0
  *
  * @param   n/a
- * @return  n/a
+ * @return  bool
  */
 function acf_remove_loop( $i = 'active' ) {
 

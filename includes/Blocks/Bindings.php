@@ -8,6 +8,9 @@
 
 namespace ACF\Blocks;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
  * The core SCF Blocks binding class.
  */

@@ -10,6 +10,13 @@ if ( ! class_exists( 'acf_validation' ) ) :
 	 * Validation Class
 	 */
 	class acf_validation {
+
+		/**
+		 * Array of errors.
+		 *
+		 * @var array $errors
+		 */
+		public $errors = array();
 		/**
 		 * This function will setup the class functionality
 		 *
@@ -223,7 +230,7 @@ function acf_get_validation_errors() {
  * @type    function
  * @date    6/10/13
  * @since   ACF 5.0.0
- * @since   6.4.1 Added the $input parameter, which is required in the get_error method.
+ * @since   SCF 6.4.1 Added the $input parameter, which is required in the get_error method.
  *
  * @param   string $input name attribute of DOM element.
  *

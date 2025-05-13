@@ -30,7 +30,7 @@ Get the validation error.
 * @type    function
 * @date 6/10/13
 * @since ACF 5.0.0
-* @since 6.4.1 Added the $input parameter, which is required in the get_error method.
+* @since SCF 6.4.1 Added the $input parameter, which is required in the get_error method.
 * @param   string $input name attribute of DOM element.
 * @return  string|bool
 

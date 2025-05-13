@@ -12,4 +12,5 @@ parameters:
 		- lang
 		- wordpress (?)
 	bootstrapFiles:
+		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 		- bin/phpstan-bootstrap.php
