@@ -131,6 +131,9 @@ if ( ! class_exists( 'ACF' ) ) {
 				'pro'                     => true,
 			);
 
+			// Include autoloader.
+			include_once __DIR__ . '/vendor/autoload.php';
+
 			// Include utility functions.
 			include_once ACF_PATH . 'includes/acf-utility-functions.php';
 
@@ -147,14 +150,6 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/fields/class-acf-field.php' );
 			acf_include( 'includes/locations/abstract-acf-legacy-location.php' );
 			acf_include( 'includes/locations/abstract-acf-location.php' );
-
-			// Include meta classes.
-			acf_include( 'includes/meta/meta-location.php' );
-			acf_include( 'includes/meta/comment.php' );
-			acf_include( 'includes/meta/option.php' );
-			acf_include( 'includes/meta/term.php' );
-			acf_include( 'includes/meta/user.php' );
-			acf_include( 'includes/meta/post.php' );
 
 			// Include functions.
 			acf_include( 'includes/acf-helper-functions.php' );
