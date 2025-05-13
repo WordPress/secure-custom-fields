@@ -3,8 +3,8 @@
  * Adds support for saving/retrieving values from options.
  *
  * @package    SCF
- * @since      6.5
  * @subpackage Meta
+ * @since      SCF 6.5
  */
 
 namespace SCF\Meta;

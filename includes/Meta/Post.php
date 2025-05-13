@@ -4,7 +4,7 @@
  *
  * @package    SCF
  * @subpackage Meta
- * @since      6.5
+ * @since      SCF 6.5
  */
 
 namespace SCF\Meta;

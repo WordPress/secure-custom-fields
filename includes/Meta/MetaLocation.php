@@ -4,8 +4,8 @@
  * for different meta types/locations in SCF.
  *
  * @package    SCF
- * @since      6.5
  * @subpackage Meta
+ * @since      SCF 6.5
  */
 
 namespace SCF\Meta;
