@@ -5,7 +5,7 @@
  * This beta feature allows moving field group elements to the editor sidebar.
  *
  * @package    Secure Custom Fields
- * @since      6.5.0
+ * @since      SCF 6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Editor_Sidebar' ) ) :
 	 * for a cleaner interface.
 	 *
 	 * @package    Secure Custom Fields
-	 * @since      6.5.0
+	 * @since      SCF 6.5.0
 	 */
 	class SCF_Admin_Beta_Feature_Editor_Sidebar extends SCF_Admin_Beta_Feature {
 

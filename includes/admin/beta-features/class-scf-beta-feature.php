@@ -5,7 +5,7 @@
  * This class serves as the base for all beta features in Secure Custom Fields.
  *
  * @package    Secure Custom Fields
- * @since      6.5.0
+ * @since      SCF 6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature' ) ) :
 	 * for managing beta feature settings and UI.
 	 *
 	 * @package    Secure Custom Fields
-	 * @since      6.5.0
+	 * @since      SCF 6.5.0
 	 */
 	class SCF_Admin_Beta_Feature {
 

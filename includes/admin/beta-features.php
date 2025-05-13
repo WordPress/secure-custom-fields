@@ -5,7 +5,7 @@
  * This file contains the admin beta features functionality for Secure Custom Fields.
  *
  * @package    Secure Custom Fields
- * @since      6.5.0
+ * @since      SCF 6.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -205,7 +205,7 @@ function _acf_update_escaped_html_log( $escaped = array() ) {
 
 /**
  * Deletes the array of instances where HTML was altered due to escaping in the_field or a shortcode.
- * Since 6.2.7, also clears the legacy `acf_will_escape_html_log` option to clean up.
+ * Since ACF 6.2.7, also clears the legacy `acf_will_escape_html_log` option to clean up.
  *
  * @since ACF 6.2.5
  *

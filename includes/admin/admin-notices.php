@@ -131,7 +131,7 @@ add_action( 'admin_notices', 'acf_render_admin_notices', 99 );
  * @param   string  $text        The admin notice text.
  * @param   string  $type        The type of notice (warning, error, success, info).
  * @param   boolean $dismissible Is this notification dismissible (default true) (since 5.11.0).
- * @param   boolean $persisted   Store once a notice has been dismissed per user and prevent showing it again. (since 6.1.0).
+ * @param   boolean $persisted   Store once a notice has been dismissed per user and prevent showing it again. (since ACF 6.1.0).
  * @return  ACF_Admin_Notice
  */
 function acf_add_admin_notice( $text = '', $type = 'info', $dismissible = true, $persisted = false ) {
