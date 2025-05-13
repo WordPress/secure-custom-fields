@@ -761,7 +761,6 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @return void
 		 */
 		public function init_hpos_integration() {
-			acf_include( 'includes/meta/woo-order.php' );
 			acf_include( 'includes/forms/form-wc-order.php' );
 			acf_new_instance( 'SCF\Meta\WooOrder' );
 			acf_new_instance( 'SCF\Forms\WC_Order' );
