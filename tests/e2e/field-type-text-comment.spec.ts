@@ -4,9 +4,9 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
-const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-movie-title';
-const FIELD_GROUP_LABEL = 'Movie Details';
-const FIELD_LABEL = 'Movie Title';
+const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-comment-title';
+const FIELD_GROUP_LABEL = 'Comment Details';
+const FIELD_LABEL = 'Comment Title';
 
 test.describe( 'Field Type > Text', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
@@ -24,7 +24,7 @@ test.describe( 'Field Type > Text', () => {
 		await deleteFieldGroups( page, admin );
 	} );
 
-	test( 'should create a text field and verify it in admin', async ( {
+	test( 'should create a text field for comments, add content to it, and verify it displays on the frontend', async ( {
 		page,
 		admin,
 		editor,
@@ -52,6 +52,20 @@ test.describe( 'Field Type > Text', () => {
 		);
 		await fieldType.selectOption( 'text' );
 
+		// Set comment as post type.
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-param"]',
+			'comment'
+		);
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-operator"]',
+			'=='
+		);
+		await page.selectOption(
+			'select[id^="acf_field_group-location-group_0-rule_0-value"]',
+			'all'
+		);
+
 		// Submit form.
 		const publishButton = page.locator(
 			'button.acf-btn.acf-publish[type="submit"]'
@@ -70,35 +84,32 @@ test.describe( 'Field Type > Text', () => {
 		);
 		await expect( fieldGroupRow ).toBeVisible();
 
-		// Create a new post
 		const post = await requestUtils.createPost( {
 			title: 'Movie 1',
-			status: 'draft',
+			status: 'publish',
 			showWelcomeGuide: false,
 		} );
 
-		// Navigate to edit post page
 		await admin.editPost( post.id );
 
-		// Fill in the movie title field using data-name attribute
-		const movieTitleField = page.locator(
-			'.acf-field[data-name="movie_title"] input[type="text"]'
-		);
-		await movieTitleField.fill( 'The Shawshank Redemption' );
-
-		// Verify the movie title is displayed
 		const previewPage = await editor.openPreviewPage();
 
-		const movieTitleElement = previewPage.locator(
-			'#scf-test-movie-title'
+		await previewPage.waitForSelector(
+			'.acf-field[data-name="comment_title"] input'
 		);
-		await expect( movieTitleElement ).toBeVisible();
-		await expect( movieTitleElement ).toContainText(
-			'Movie title: The Shawshank Redemption'
+		await previewPage.fill(
+			'.acf-field[data-name="comment_title"] input',
+			'Awesome movie'
 		);
 
-		// Close the preview tab
-		await previewPage.close();
+		await previewPage.fill( 'textarea#comment', 'This is a test comment' );
+		await previewPage.click( 'input#submit' );
+
+		// Verify the custom field value appears in the comment
+		await previewPage.waitForSelector( '#scf-test-comment-title' );
+		await expect(
+			previewPage.locator( '#scf-test-comment-title' )
+		).toContainText( 'Comment title: Awesome movie' );
 	} );
 } );
 
@@ -125,6 +136,7 @@ async function deleteFieldGroups( page, admin ) {
 		await emptyTrash( page, admin );
 	}
 }
+
 
 /**
  * Helper function to empty trash
