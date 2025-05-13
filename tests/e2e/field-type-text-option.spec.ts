@@ -25,7 +25,7 @@ test.describe( 'Field Type > Text', () => {
 		await deleteOptionsPages( page, admin );
 	} );
 
-	test( 'should create a text field and verify it in admin', async ( {
+	test( 'should create a text field as an option, and verify it in admin and in frontend', async ( {
 		page,
 		admin,
 		editor,

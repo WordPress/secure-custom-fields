@@ -24,7 +24,7 @@ test.describe( 'Field Type > Text', () => {
 		await deleteFieldGroups( page, admin );
 	} );
 
-	test( 'should create a text field and verify it in admin', async ( {
+	test( 'should create a text field for comments, add content to it, and verify it displays on the frontend', async ( {
 		page,
 		admin,
 		editor,
