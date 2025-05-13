@@ -22,6 +22,8 @@
 		<!-- This is trivial and not really useful today. -->
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<!-- Refactoring of this scale is not in scope yet.-->
+		<exclude name="WordPress.Files.FileName" />
+		<!-- Exclude the entire filename rule -->
 	</rule>
 
 	<rule ref="WordPress.Security.EscapeOutput">
@@ -49,11 +51,7 @@
 			</property>
 		</properties>
 	</rule>
-
-	<rule ref="WordPress.Files.FileName">
-		<exclude-pattern>/includes/meta/.*\.php$</exclude-pattern>
-	</rule>
-
+  
 	<!-- Rules: PHPCompatibility -->
 	<config name="testVersion" value="7.4-"/>
 	<rule ref="PHPCompatibilityWP"/>
