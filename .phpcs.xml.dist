@@ -51,6 +51,7 @@
 			</property>
 		</properties>
 	</rule>
+
 	<!-- Rules: PHPCompatibility -->
 	<config name="testVersion" value="7.4-"/>
 	<rule ref="PHPCompatibilityWP"/>
