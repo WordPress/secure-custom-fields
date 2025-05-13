@@ -14,6 +14,8 @@
 	"autoload": {
 		"psr-4": {
 			"SCF\\": "includes/",
+			"SCF\\Forms\\": "includes/forms/",
+			"SCF\\Meta\\": "includes/meta/",
 			"ACF\\Blocks\\": "includes/Blocks/"
 		}
 	},
