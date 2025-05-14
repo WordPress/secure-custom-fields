@@ -145,7 +145,7 @@ add_filter( 'acf/settings/show_updates', '__return_false', 100 );
 - If you are bundling SCF inside your plugin or theme and want to **control all the custom fields yourself** without allowing clients or users to modify them.
 - If you want to **maintain full control** over SCF versions and updates to avoid compatibility issues caused by manual updates.
 
-> **Note:** Hiding updates means you are responsible for manually updating SCF when necessary to keep your project secure and compatible.
+> **Note:** Hiding updates means you are responsible for manually updating SCF when necessary to keep your project secure and compatible, but it also helps avoid potential conflicts between Composer and the built-in updater.
 
 
 ## Verify Your Installation
