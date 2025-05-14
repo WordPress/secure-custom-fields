@@ -107,7 +107,7 @@ if ( ! class_exists( 'ACF_Local_Meta' ) ) :
 			}
 
 			// Remove listener filter.
-			remove_filter( 'acf/pre_update_metadata', array( $this, 'capture_update_metadata' ), 1, 5 );
+			remove_filter( 'acf/pre_update_metadata', array( $this, 'capture_update_metadata' ), 1 );
 
 			// Return meta.
 			return $this->meta[ $post_id ];

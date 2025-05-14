@@ -70,6 +70,13 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 		public $is_pro_feature = false;
 
 		/**
+		 * The label for the "not found" message.
+		 *
+		 * @var string
+		 */
+		public $not_found_label = '';
+
+		/**
 		 * Constructs the class.
 		 */
 		public function __construct() {

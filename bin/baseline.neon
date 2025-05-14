@@ -1,42 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to an undefined property ACF_Admin_Field_Groups\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-field-groups.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/admin/post-types/admin-field-groups.php
-
-		-
-			message: '#^Class ACF_Admin_Post_type referenced with incorrect case\: ACF_Admin_Post_Type\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: ../includes/admin/post-types/admin-post-type.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_Post_Types\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-post-types.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_Taxonomies\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/admin-taxonomies.php
-
-		-
-			message: '#^Access to an undefined property ACF_Admin_UI_Options_Pages\:\:\$not_found_label\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/admin/post-types/class-acf-admin-ui-options-pages.php
-
-		-
 			message: '#^Variable \$field might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -127,18 +91,6 @@ parameters:
 			path: ../includes/admin/views/upgrade/notice.php
 
 		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
 			message: '#^Path in include_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
 			identifier: includeOnce.fileNotFound
 			count: 1
@@ -163,191 +115,16 @@ parameters:
 			path: ../includes/api/api-helpers.php
 
 		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/api/api-term.php
-
-		-
-			message: '#^Action callback returns string but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/class-acf-internal-post-type.php
-
-		-
-			message: '#^Expected 2 @param tags, found 1\.$#'
-			identifier: paramTag.count
-			count: 1
-			path: ../includes/class-acf-internal-post-type.php
-
-		-
-			message: '#^Expected 3 @param tags, found 2\.$#'
-			identifier: paramTag.count
-			count: 1
-			path: ../includes/class-acf-internal-post-type.php
-
-		-
-			message: '#^Action callback returns array but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/class-acf-site-health.php
-
-		-
-			message: '#^Action callback returns bool but should not return anything\.$#'
-			identifier: return.void
-			count: 2
-			path: ../includes/class-acf-site-health.php
-
-		-
-			message: '#^Access to an undefined property acf_field_checkbox\:\:\$_all_checked\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/fields/class-acf-field-checkbox.php
-
-		-
-			message: '#^Access to an undefined property acf_field_checkbox\:\:\$_values\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/fields/class-acf-field-checkbox.php
-
-		-
-			message: '#^Access to an undefined property acf_field_clone\:\:\$cloning\.$#'
-			identifier: property.notFound
-			count: 2
-			path: ../includes/fields/class-acf-field-clone.php
-
-		-
-			message: '#^Access to an undefined property acf_field_clone\:\:\$have_rows\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/fields/class-acf-field-clone.php
-
-		-
 			message: '#^Offset ''thumb'' on array\{alt\: string, author\: string, authorName\: string, caption\: string, compat\: array, context\: string, date\: int, dateFormatted\: string, \.\.\.\}\|null in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../includes/fields/class-acf-field-gallery.php
 
 		-
-			message: '#^Access to an undefined property acf_field_google_map\:\:\$default_values\.$#'
-			identifier: property.notFound
-			count: 6
-			path: ../includes/fields/class-acf-field-google-map.php
-
-		-
-			message: '#^Access to an undefined property acf_field__group\:\:\$have_rows\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/fields/class-acf-field-group.php
-
-		-
-			message: '#^Access to an undefined property acf_field_oembed\:\:\$height\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/fields/class-acf-field-oembed.php
-
-		-
-			message: '#^Access to an undefined property acf_field_oembed\:\:\$width\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/fields/class-acf-field-oembed.php
-
-		-
-			message: '#^Action callback returns void\|WP_Error but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/fields/class-acf-field-repeater.php
-
-		-
-			message: '#^Class acf_field referenced with incorrect case\: ACF_Field\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: ../includes/fields/class-acf-field-user.php
-
-		-
-			message: '#^Expected 4 @param tags, found 3\.$#'
-			identifier: paramTag.count
-			count: 1
-			path: ../includes/fields/class-acf-field-user.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/fields/class-acf-field-user.php
-
-		-
 			message: '#^Path in require\(\) "\./wp\-admin/includes/media\.php" is not a file or it does not exist\.$#'
 			identifier: require.fileNotFound
 			count: 1
 			path: ../includes/fields/class-acf-field-wysiwyg.php
-
-
-		-
-			message: '#^Action callback returns type but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/forms/form-nav-menu.php
-
-		-
-			message: '#^Method acf_form_nav_menu\:\:wp_nav_menu_item_custom_fields\(\) should return type but return statement is missing\.$#'
-			identifier: return.missing
-			count: 2
-			path: ../includes/forms/form-nav-menu.php
-
-		-
-			message: '#^Action callback returns int but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../includes/forms/form-post.php
-
-		-
-			message: '#^Access to an undefined property acf_form_widget\:\:\$preview_errors\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/forms/form-widget.php
-
-		-
-			message: '#^Access to an undefined property acf_form_widget\:\:\$preview_reference\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/forms/form-widget.php
-
-		-
-			message: '#^Access to an undefined property acf_form_widget\:\:\$preview_values\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../includes/forms/form-widget.php
-
-		-
-			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../includes/l10n.php
-
-		-
-			message: '#^Function acf_add_local_fields\(\) should return array but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../includes/local-fields.php
-
-		-
-			message: '#^Action callback returns bool but should not return anything\.$#'
-			identifier: return.void
-			count: 10
-			path: ../includes/local-json.php
-
-		-
-			message: '#^Function remove_filter invoked with 4 parameters, 2\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/local-meta.php
-
-		-
-			message: '#^Access to an undefined property \$this\(ACF_Legacy_Location\)\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/locations/abstract-acf-legacy-location.php
 
 		-
 			message: '#^Undefined variable\: \$method$#'
@@ -360,27 +137,3 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../includes/locations/abstract-acf-legacy-location.php
-
-		-
-			message: '#^Access to an undefined property acf_loop\:\:\$loops\.$#'
-			identifier: property.notFound
-			count: 7
-			path: ../includes/loop.php
-
-		-
-			message: '#^Method acf_loop\:\:remove_loop\(\) should return bool but return statement is missing\.$#'
-			identifier: return.missing
-			count: 2
-			path: ../includes/loop.php
-
-		-
-			message: '#^Callback expects 1 parameter, \$accepted_args is set to 2\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../includes/revisions.php
-
-		-
-			message: '#^Access to an undefined property acf_validation\:\:\$errors\.$#'
-			identifier: property.notFound
-			count: 3
-			path: ../includes/validation.php

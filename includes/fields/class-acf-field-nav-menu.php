@@ -3,7 +3,7 @@
  * This is a PHP file containing the code for the acf_field_nav_menu class.
  *
  * @package wordpress/secure-custom-fields
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 
 if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 		 *
 		 * @type    function
 		 * @date    5/03/2014
-		 * @since  6.5.0
+		 * @since  SCF 6.5.0
 		 */
 		public function initialize() {
 

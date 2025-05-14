@@ -4,7 +4,12 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 	#[AllowDynamicProperties]
 	class acf_field__group extends acf_field {
 
-
+		/**
+		 * Have_rows array.
+		 *
+		 * @var public $have_rows
+		 */
+		public $have_rows = array();
 		/**
 		 * This function will setup the field type data
 		 *
