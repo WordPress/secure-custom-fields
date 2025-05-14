@@ -8,28 +8,39 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 	#[AllowDynamicProperties]
 	class acf_form_front {
 
-		/** @var array An array of registered form settings */
+		/**
+		 * An array of registered form settings.
+		 *
+		 * @var array
+		 */
 		private $forms = array();
 
-		/** @var array An array of default fields */
+		/**
+		 * An array of default fields.
+		 *
+		 * @var array
+		 */
 		public $fields = array();
 
+		/**
+		 * Constructs the class.
+		 *
+		 * @since ACF 5.0.0
+		 */
+		public function __construct() {
+			add_action( 'acf/validate_save_post', array( $this, 'validate_save_post' ), 1 );
+			add_filter( 'acf/pre_save_post', array( $this, 'pre_save_post' ), 5, 2 );
+		}
 
 		/**
-		 * This function will setup the class functionality
+		 * Returns fields used by frontend forms.
 		 *
-		 * @type    function
-		 * @date    5/03/2014
-		 * @since   ACF 5.0.0
+		 * @since SCF 6.5
 		 *
-		 * @param   n/a
-		 * @return  n/a
+		 * @return array
 		 */
-		function __construct() {
-
-			// vars
+		public function get_default_fields(): array {
 			$this->fields = array(
-
 				'_post_title'     => array(
 					'prefix'   => 'acf',
 					'name'     => '_post_title',
@@ -56,19 +67,13 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 					'value'   => '',
 					'wrapper' => array( 'style' => 'display:none !important;' ),
 				),
-
 			);
 
-			// actions
-			add_action( 'acf/validate_save_post', array( $this, 'validate_save_post' ), 1 );
-
-			// filters
-			add_filter( 'acf/pre_save_post', array( $this, 'pre_save_post' ), 5, 2 );
+			return $this->fields;
 		}
 
-
 		/**
-		 * description
+		 * Validates form arguments and applies defaults.
 		 *
 		 * @type    function
 		 * @date    28/2/17
@@ -183,6 +188,15 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			return $this->forms[ $id ];
 		}
 
+		/**
+		 * Returns all registered forms.
+		 *
+		 * @type    function
+		 * @date    28/2/17
+		 * @since   ACF 5.5.8
+		 *
+		 * @return forms (array)
+		 */
 		function get_forms() {
 			return $this->forms;
 		}
@@ -200,7 +214,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		function validate_save_post() {
 
 			// register field if isset in $_POST
-			foreach ( $this->fields as $k => $field ) {
+			foreach ( $this->get_default_fields() as $k => $field ) {
 
 				// bail early if no in $_POST
 				if ( ! isset( $_POST['acf'][ $k ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
@@ -444,7 +458,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			acf_update_setting( 'uploader', $args['uploader'] );
 
 			// Register local fields.
-			foreach ( $this->fields as $k => $field ) {
+			foreach ( $this->get_default_fields() as $k => $field ) {
 				acf_add_local_field( $field );
 			}
 
@@ -513,9 +527,9 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 
 			// display form
 			if ( $args['form'] ) : ?>
-		<form <?php echo acf_esc_attrs( $args['form_attributes'] ); ?>>
+				<form <?php echo acf_esc_attrs( $args['form_attributes'] ); ?>>
 				<?php
-		endif;
+			endif;
 
 			// Render hidde form data.
 			acf_form_data(
@@ -533,12 +547,12 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 				<?php echo $args['html_after_fields']; ?><?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- designed to contain potentially unsafe HTML, set by developers. ?>
 			</div>
 			<?php if ( $args['form'] ) : ?>
-			<div class="acf-form-submit">
-				<?php printf( $args['html_submit_button'], $args['submit_value'] ); ?><?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- designed to contain potentially unsafe HTML, set by developers. ?>
-				<?php echo $args['html_submit_spinner']; ?><?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- designed to contain potentially unsafe HTML, set by developers. ?>
-			</div>
-		</form>
-		<?php endif;
+				<div class="acf-form-submit">
+					<?php printf( $args['html_submit_button'], $args['submit_value'] ); ?><?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- designed to contain potentially unsafe HTML, set by developers. ?>
+					<?php echo $args['html_submit_spinner']; ?><?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- designed to contain potentially unsafe HTML, set by developers. ?>
+				</div>
+				</form>
+			<?php endif;
 		}
 	}
 

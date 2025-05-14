@@ -131,13 +131,19 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 */
 		public function ajax_validate_save_post() {
 			if ( ! acf_verify_ajax() ) {
+				if ( empty( $_REQUEST['nonce'] ) ) {
+					$nonce_error = __( 'SCF was unable to perform validation because no nonce was received by the server.', 'secure-custom-fields' );
+				} else {
+					$nonce_error = __( 'SCF was unable to perform validation because the provided nonce failed verification.', 'secure-custom-fields' );
+				}
+
 				wp_send_json_success(
 					array(
 						'valid'  => 0,
 						'errors' => array(
 							array(
 								'input'   => false,
-								'message' => __( 'ACF was unable to perform validation due to an invalid security nonce being provided.', 'secure-custom-fields' ),
+								'message' => __( 'SCF was unable to perform validation due to an invalid security nonce being provided.', 'secure-custom-fields' ),
 							),
 						),
 					)
