@@ -38,23 +38,17 @@ const registerPostTypeCommands = () => {
 
 	postTypes.forEach( ( postType ) => {
 		// Skip invalid post types or those missing required labels
-		if ( ! postType?.name || ! postType?.label || ! postType?.singular_label ) {
+		if ( ! postType?.name || ! postType?.all_items || ! postType?.add_new_item ) {
 			return;
 		}
 
 		// Register "View All" command for this post type
 		commandStore.registerCommand( {
 			name: `scf/cpt-${ postType.name }`,
-			label: sprintf(
-				__( 'All %s', 'secure-custom-fields' ),
-				postType.label
-			),
+			label: postType.all_items,
 			icon: createElement( Icon, { icon: 'admin-page' } ),
 			context: 'admin',
-			description: sprintf(
-				__( 'All %s', 'secure-custom-fields' ),
-				postType.label
-			),
+			description: postType.all_items,
 			keywords: [
 				'post type',
 				'content',
@@ -73,16 +67,10 @@ const registerPostTypeCommands = () => {
 		// Register "Add New" command for this post type
 		commandStore.registerCommand( {
 			name: `scf/new-${ postType.name }`,
-			label: sprintf(
-				__( 'Add %s', 'secure-custom-fields' ),
-				postType.singular_label
-			),
+			label: postType.add_new_item,
 			icon: createElement( Icon, { icon: 'plus' } ),
 			context: 'admin',
-			description: sprintf(
-				__( 'Add %s', 'secure-custom-fields' ),
-				postType.singular_label
-			),
+			description: postType.add_new_item,
 			keywords: [
 				'add',
 				'new',

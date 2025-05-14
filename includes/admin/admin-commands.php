@@ -54,10 +54,10 @@ function acf_commands_init() {
 			$labels = get_post_type_labels( $post_type_obj );
 
 			$custom_post_types[] = array(
-				'name'           => $post_type['post_type'],
-				'label'          => $labels->name,
-				'singular_label' => $labels->singular_name,
-				'icon'           => $post_type['menu_icon'] ?? '',
+				'name'         => $post_type['post_type'],
+				'all_items'    => $labels->all_items,
+				'add_new_item' => $labels->add_new_item,
+				'icon'         => $post_type['menu_icon'] ?? '',
 			);
 		}
 	}
