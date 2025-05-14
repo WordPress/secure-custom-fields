@@ -41,9 +41,6 @@ function acf_commands_init() {
 			continue;
 		}
 
-		$plural_label   = $post_type['labels']['name'] ?? $post_type['label'] ?? $post_type['post_type'];
-		$singular_label = $post_type['labels']['singular_name'] ?? $post_type['singular_label'] ?? $plural_label;
-
 		$post_type_obj = get_post_type_object( $post_type['post_type'] );
 
 		// Three conditions must be met to include this post type in the commands:
@@ -53,10 +50,13 @@ function acf_commands_init() {
 		if ( $post_type_obj &&
 			current_user_can( $post_type_obj->cap->edit_posts ) &&
 			$post_type_obj->show_ui ) {
+
+			$labels = get_post_type_labels( $post_type_obj );
+
 			$custom_post_types[] = array(
 				'name'           => $post_type['post_type'],
-				'label'          => $plural_label,
-				'singular_label' => $singular_label,
+				'label'          => $labels->name,
+				'singular_label' => $labels->singular_name,
 				'icon'           => $post_type['menu_icon'] ?? '',
 			);
 		}
