@@ -18,6 +18,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Register custom post type commands
@@ -64,11 +65,9 @@ const registerPostTypeCommands = () => {
 				postType.label,
 			].filter( Boolean ),
 			callback: ( { close } ) => {
-				document.location =
-					adminUrl +
-					`edit.php?post_type=${ encodeURIComponent(
-						postType.name
-					) }`;
+				document.location = addQueryArgs(adminUrl + 'edit.php', {
+					post_type: postType.name
+				});
 				close();
 			},
 		} );
@@ -99,11 +98,9 @@ const registerPostTypeCommands = () => {
 				...( postType.label ? [ postType.label ] : [] ),
 			],
 			callback: ( { close } ) => {
-				document.location =
-					adminUrl +
-					`post-new.php?post_type=${ encodeURIComponent(
-						postType.name
-					) }`;
+				document.location = addQueryArgs(adminUrl + 'post-new.php', {
+					post_type: postType.name
+				});
 				close();
 			},
 		} );

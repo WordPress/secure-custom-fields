@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Register admin commands for SCF
@@ -31,7 +32,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'field-groups',
 			label: __( 'Field Groups', 'secure-custom-fields' ),
-			url: 'edit.php?post_type=acf-field-group',
+			url: 'edit.php',
+			urlArgs: { post_type: 'acf-field-group' },
 			icon: 'layout',
 			description: __(
 				'SCF: View and manage custom field groups',
@@ -47,7 +49,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'new-field-group',
 			label: __( 'Create New Field Group', 'secure-custom-fields' ),
-			url: 'post-new.php?post_type=acf-field-group',
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-field-group' },
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new field group to organize custom fields',
@@ -64,7 +67,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'post-types',
 			label: __( 'Post Types', 'secure-custom-fields' ),
-			url: 'edit.php?post_type=acf-post-type',
+			url: 'edit.php',
+			urlArgs: { post_type: 'acf-post-type' },
 			icon: 'admin-post',
 			description: __(
 				'SCF: Manage custom post types',
@@ -75,7 +79,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'new-post-type',
 			label: __( 'Create New Post Type', 'secure-custom-fields' ),
-			url: 'post-new.php?post_type=acf-post-type',
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-post-type' },
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom post type',
@@ -86,7 +91,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'taxonomies',
 			label: __( 'Taxonomies', 'secure-custom-fields' ),
-			url: 'edit.php?post_type=acf-taxonomy',
+			url: 'edit.php',
+			urlArgs: { post_type: 'acf-taxonomy' },
 			icon: 'category',
 			description: __(
 				'SCF: Manage custom taxonomies for organizing content',
@@ -97,7 +103,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'new-taxonomy',
 			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
-			url: 'post-new.php?post_type=acf-taxonomy',
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-taxonomy' },
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom taxonomy',
@@ -115,7 +122,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'options-pages',
 			label: __( 'Options Pages', 'secure-custom-fields' ),
-			url: 'edit.php?post_type=acf-ui-options-page',
+			url: 'edit.php',
+			urlArgs: { post_type: 'acf-ui-options-page' },
 			icon: 'admin-settings',
 			description: __(
 				'SCF: Manage custom options pages for global settings',
@@ -126,7 +134,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'new-options-page',
 			label: __( 'Create New Options Page', 'secure-custom-fields' ),
-			url: 'post-new.php?post_type=acf-ui-options-page',
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-ui-options-page' },
 			icon: 'plus',
 			description: __(
 				'SCF: Create a new custom options page',
@@ -137,7 +146,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'tools',
 			label: __( 'SCF Tools', 'secure-custom-fields' ),
-			url: 'admin.php?page=acf-tools',
+			url: 'admin.php',
+			urlArgs: { page: 'acf-tools' },
 			icon: 'admin-tools',
 			description: __(
 				'SCF: Access SCF utility tools',
@@ -148,7 +158,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'import',
 			label: __( 'Import SCF Data', 'secure-custom-fields' ),
-			url: 'admin.php?page=acf-tools&tool=import',
+			url: 'admin.php',
+			urlArgs: { page: 'acf-tools', tool: 'import' },
 			icon: 'upload',
 			description: __(
 				'SCF: Import field groups, post types, taxonomies, and options pages',
@@ -159,7 +170,8 @@ const registerAdminCommands = () => {
 		{
 			name: 'export',
 			label: __( 'Export SCF Data', 'secure-custom-fields' ),
-			url: 'admin.php?page=acf-tools&tool=export',
+			url: 'admin.php',
+			urlArgs: { page: 'acf-tools', tool: 'export' },
 			icon: 'download',
 			description: __(
 				'SCF: Export field groups, post types, taxonomies, and options pages',
@@ -178,7 +190,9 @@ const registerAdminCommands = () => {
 			description: command.description,
 			keywords: command.keywords,
 			callback: ( { close } ) => {
-				document.location = adminUrl + command.url;
+				document.location = command.urlArgs
+					? addQueryArgs( adminUrl + command.url, command.urlArgs )
+					: adminUrl + command.url;
 				close();
 			},
 		} );
