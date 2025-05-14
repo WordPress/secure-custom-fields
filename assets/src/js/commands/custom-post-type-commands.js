@@ -37,26 +37,23 @@ const registerPostTypeCommands = () => {
 	const postTypes = window.acf.data.customPostTypes;
 
 	postTypes.forEach( ( postType ) => {
-		// Skip invalid post types
-		if ( ! postType?.name ) {
+		// Skip invalid post types or those missing required labels
+		if ( ! postType?.name || ! postType?.label || ! postType?.singular_label ) {
 			return;
 		}
-
-		const pluralLabel = postType.label || postType.name;
-		const singularLabel = postType.singular_label || pluralLabel;
 
 		// Register "View All" command for this post type
 		commandStore.registerCommand( {
 			name: `scf/cpt-${ postType.name }`,
 			label: sprintf(
 				__( 'All %s', 'secure-custom-fields' ),
-				pluralLabel
+				postType.label
 			),
 			icon: createElement( Icon, { icon: 'admin-page' } ),
 			context: 'admin',
 			description: sprintf(
 				__( 'All %s', 'secure-custom-fields' ),
-				pluralLabel
+				postType.label
 			),
 			keywords: [
 				'post type',
@@ -78,13 +75,13 @@ const registerPostTypeCommands = () => {
 			name: `scf/new-${ postType.name }`,
 			label: sprintf(
 				__( 'Add %s', 'secure-custom-fields' ),
-				singularLabel
+				postType.singular_label
 			),
 			icon: createElement( Icon, { icon: 'plus' } ),
 			context: 'admin',
 			description: sprintf(
 				__( 'Add %s', 'secure-custom-fields' ),
-				singularLabel
+				postType.singular_label
 			),
 			keywords: [
 				'add',
