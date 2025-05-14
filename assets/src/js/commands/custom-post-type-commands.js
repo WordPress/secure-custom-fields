@@ -48,15 +48,16 @@ const registerPostTypeCommands = () => {
 		// Register "View All" command for this post type
 		commandStore.registerCommand( {
 			name: `scf/cpt-${ postType.name }`,
-			label: pluralLabel,
+			label: sprintf(
+				__( 'All %s', 'secure-custom-fields' ),
+				pluralLabel
+			),
 			icon: createElement( Icon, { icon: 'admin-page' } ),
 			context: 'admin',
-			description:
-				/* translators: %s: Post type plural label */
-				sprintf(
-					__( 'SCF: View all %s', 'secure-custom-fields' ),
-					pluralLabel
-				),
+			description: sprintf(
+				__( 'All %s', 'secure-custom-fields' ),
+				pluralLabel
+			),
 			keywords: [
 				'post type',
 				'content',
@@ -75,20 +76,16 @@ const registerPostTypeCommands = () => {
 		// Register "Add New" command for this post type
 		commandStore.registerCommand( {
 			name: `scf/new-${ postType.name }`,
-			label:
-				/* translators: %s: Post type singular label */
-				sprintf(
-					__( 'Add New %s', 'secure-custom-fields' ),
-					singularLabel
-				),
+			label: sprintf(
+				__( 'Add %s', 'secure-custom-fields' ),
+				singularLabel
+			),
 			icon: createElement( Icon, { icon: 'plus' } ),
 			context: 'admin',
-			description:
-				/* translators: %s: Post type singular label */
-				sprintf(
-					__( 'SCF: Create a new %s', 'secure-custom-fields' ),
-					singularLabel
-				),
+			description: sprintf(
+				__( 'Add %s', 'secure-custom-fields' ),
+				singularLabel
+			),
 			keywords: [
 				'add',
 				'new',
