@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    for each specific post type.
  * 5. Post types must have UI enabled (show_ui setting) to appear in commands.
  *
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 function acf_commands_init() {
 	// Ensure we only load our commands where the WordPress commands API is available.

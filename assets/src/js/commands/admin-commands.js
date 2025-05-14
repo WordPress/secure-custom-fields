@@ -5,7 +5,7 @@
  * This file registers navigation commands for all primary SCF admin screens,
  * enabling quick access through the WordPress commands interface (Cmd+K / Ctrl+K).
  *
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 
 /**

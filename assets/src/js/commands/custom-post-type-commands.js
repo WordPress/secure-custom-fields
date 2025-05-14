@@ -8,7 +8,7 @@
  * Post type data is provided via acf.data.customPostTypes, which is populated
  * by the PHP side after capability checks ensure the user has appropriate access.
  *
- * @since 6.5.0
+ * @since SCF 6.5.0
  */
 
 /**
