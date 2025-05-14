@@ -79,7 +79,7 @@ Add the following configuration to your `composer.json` file:
     }
   },
   "require": {
-    "wpackagist-plugin/secure-custom-fields": "6.4.1"
+    "wpackagist-plugin/secure-custom-fields": "^6.4"
   },
   "config": {
     "allow-plugins": {
