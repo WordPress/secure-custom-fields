@@ -107,7 +107,7 @@ test.describe( 'Field Type > Text', () => {
 		await page.click('body', { position: { x: 0, y: 0 } });
 		
 		// Let's also make sure we give the editor a moment to save the field data.
-		await page.waitForTimeout(200);
+		await page.waitForTimeout(500);
 
 		const previewPage = await editor.openPreviewPage();
 
