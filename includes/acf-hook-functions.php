@@ -106,7 +106,7 @@ function _acf_apply_hook_variations() {
 		}
 
 		// Apply filters.
-		if ( 'filters' === $type ) {
+		if ( 'filter' === $type ) {
 			$args[0] = apply_filters_ref_array( "$filter/$variation=$value", $args );
 
 			// Or do action.

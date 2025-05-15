@@ -1,0 +1,16 @@
+{
+	"name": "scf/movie-title-block",
+	"title": "My Test Plugin Movie Title Block",
+	"description": "A custom block that uses SCF fields.",
+	"category": "layout",
+	"icon": "admin-comments",
+	"keywords": [ "custom", "scf", "block" ],
+	"acf": {
+		"mode": "edit",
+		"renderTemplate": "template.php"
+	},
+	"supports": {
+		"align": true
+	},
+	"textdomain": "secure-custom-fields"
+}

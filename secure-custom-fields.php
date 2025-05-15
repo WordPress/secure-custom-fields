@@ -223,6 +223,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-commands.php' );
 				acf_include( 'includes/admin/beta-features.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
@@ -242,6 +243,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		}
+
 
 		/**
 		 * Completes the setup process on "init" of earlier.
@@ -865,7 +867,6 @@ if ( ! function_exists( 'scf_plugin_deactivated_notice' ) ) {
 
 	add_action( 'pre_current_active_plugins', 'scf_plugin_deactivated_notice' );
 }
-
 /**
  * Clean up plugin data on uninstall
  */
