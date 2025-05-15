@@ -103,6 +103,11 @@ test.describe( 'Field Type > Text', () => {
 			'.acf-field[data-name="movie_title"] input',
 			'Awesome movie'
 		);
+		// Add a blur event to trigger the field's onchange handlers.
+		await page.click('body', { position: { x: 0, y: 0 } });
+		
+		// Let's also make sure we give the editor a moment to save the field data.
+		await page.waitForTimeout(200);
 
 		const previewPage = await editor.openPreviewPage();
 
@@ -125,11 +130,11 @@ async function deleteFieldGroups( page, admin ) {
 
 	if ( await allFieldGroupsCheckbox.isVisible() ) {
 		await allFieldGroupsCheckbox.check();
-		// Use bulk actions to trash the field group
+		// Use bulk actions to trash the field group.
 		await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 		await page.click( '#doaction2' );
 
-		// Verify deletion success message
+		// Verify deletion success message.
 		const deleteMessage = page.locator( '.updated.notice' );
 		await expect( deleteMessage ).toBeVisible( { timeout: 5000 } );
 		await expect( deleteMessage ).toContainText( 'moved to the Trash' );
@@ -153,7 +158,7 @@ async function emptyTrash( page, admin ) {
 	await emptyTrashButton.waitFor( { state: 'visible' } );
 	await emptyTrashButton.click();
 
-	// Verify success notice
+	// Verify success notice.
 	const successNotice = page.locator( '.notice.updated p' );
 	await expect( successNotice ).toBeVisible();
 	await expect( successNotice ).toHaveText( /permanently deleted/ );
