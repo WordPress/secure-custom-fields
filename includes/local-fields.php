@@ -391,7 +391,7 @@ function acf_get_local_internal_post_type( $key = '', $post_type = 'acf-field-gr
  * @since   ACF 5.7.10
  *
  * @param   array $fields An array of un prepared fields.
- * @return  array
+ * @return  void|array
  */
 function acf_add_local_fields( $fields = array() ) {
 

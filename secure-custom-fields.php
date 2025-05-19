@@ -131,6 +131,9 @@ if ( ! class_exists( 'ACF' ) ) {
 				'pro'                     => true,
 			);
 
+			// Include autoloader.
+			include_once __DIR__ . '/vendor/autoload.php';
+
 			// Include utility functions.
 			include_once ACF_PATH . 'includes/acf-utility-functions.php';
 
@@ -150,6 +153,13 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Include functions.
 			acf_include( 'includes/acf-helper-functions.php' );
+
+			acf_new_instance( 'SCF\Meta\Comment' );
+			acf_new_instance( 'SCF\Meta\Post' );
+			acf_new_instance( 'SCF\Meta\Term' );
+			acf_new_instance( 'SCF\Meta\User' );
+			acf_new_instance( 'SCF\Meta\Option' );
+
 			acf_include( 'includes/acf-hook-functions.php' );
 			acf_include( 'includes/acf-field-functions.php' );
 			acf_include( 'includes/acf-bidirectional-functions.php' );
@@ -213,6 +223,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-commands.php' );
 				acf_include( 'includes/admin/beta-features.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
@@ -227,10 +238,12 @@ if ( ! class_exists( 'ACF' ) ) {
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );
 			add_action( 'init', array( $this, 'init' ), 5 );
 			add_action( 'init', array( $this, 'register_post_types' ), 5 );
+			add_action( 'woocommerce_init', array( $this, 'init_hpos_integration' ), 99 );
 
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		}
+
 
 		/**
 		 * Completes the setup process on "init" of earlier.
@@ -408,7 +421,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in SCF 6.3.
+			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in ACF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
@@ -741,6 +754,18 @@ if ( ! class_exists( 'ACF' ) ) {
 				}
 			}
 		}
+
+		/**
+		 * Initializes the ACF WooCommerce HPOS integration.
+		 *
+		 * @since 6.5
+		 *
+		 * @return void
+		 */
+		public function init_hpos_integration() {
+			acf_new_instance( 'SCF\Meta\WooOrder' );
+			acf_new_instance( 'SCF\Forms\WC_Order' );
+		}
 	}
 
 	/**
@@ -842,7 +867,6 @@ if ( ! function_exists( 'scf_plugin_deactivated_notice' ) ) {
 
 	add_action( 'pre_current_active_plugins', 'scf_plugin_deactivated_notice' );
 }
-
 /**
  * Clean up plugin data on uninstall
  */

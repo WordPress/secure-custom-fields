@@ -4,6 +4,12 @@ if ( ! class_exists( 'acf_field_google_map' ) ) :
 	#[AllowDynamicProperties]
 	class acf_field_google_map extends acf_field {
 
+		/**
+		 * Default values.
+		 *
+		 * @var string $default_values
+		 */
+		public $default_values = array();
 
 		/**
 		 * This function will setup the field type data

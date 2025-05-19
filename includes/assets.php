@@ -243,6 +243,28 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				);
 			}
 
+			wp_register_script(
+				'scf-commands-admin',
+				acf_get_url( 'assets/build/js/commands/scf-admin' . $suffix . '.js' ),
+				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
+				$version,
+				array(
+					'in_footer' => true,
+					'defer'     => true,
+				)
+			);
+
+			wp_register_script(
+				'scf-commands-custom-post-types',
+				acf_get_url( 'assets/build/js/commands/scf-custom-post-types' . $suffix . '.js' ),
+				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
+				$version,
+				array(
+					'in_footer' => true,
+					'defer'     => true,
+				)
+			);
+
 			// Register styles.
 			foreach ( $styles as $style ) {
 				wp_register_style(

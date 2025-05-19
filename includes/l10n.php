@@ -18,7 +18,7 @@ if ( ! function_exists( 'determine_locale' ) ) :
 		 *
 		 * @since ACF 5.0.0
 		 *
-		 * @param string|null The locale to return and short-circuit, or null as default.
+		 * @param string|null $determined_locale The locale to return and short-circuit, or null as default.
 		 */
 		$determined_locale = apply_filters( 'pre_determine_locale', null );
 		if ( ! empty( $determined_locale ) && is_string( $determined_locale ) ) {

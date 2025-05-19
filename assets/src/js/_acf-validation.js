@@ -168,7 +168,7 @@
 		 *
 		 *  @since	ACF 5.7.5
 		 *
-		 *  @param	{string} [location=before] - The location to add the error, before or after the input. Default before. Since 6.3.
+		 *  @param	{string} [location=before] - The location to add the error, before or after the input. Default before. Since ACF 6.3.
 		 *  @return	void
 		 */
 		showErrors: function ( location = 'before' ) {

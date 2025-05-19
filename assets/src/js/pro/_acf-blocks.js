@@ -110,7 +110,7 @@ const md5 = require( 'md5' );
 	 * @return boolean
 	 */
 	function isSiteEditor() {
-		return typeof pagenow === 'string' && pagenow === 'site-editor';
+		return document.querySelectorAll( 'iframe[name="editor-canvas"]' ).length > 0;
 	}
 
 	/**
@@ -758,9 +758,7 @@ const md5 = require( 'md5' );
 
 			if (
 				isBlockInQueryLoop( clientId ) ||
-				isSiteEditor() ||
-				isiFramedMobileDevicePreview() ||
-				isEditingTemplate()
+				isSiteEditor()
 			) {
 				restrictMode( [ 'preview' ] );
 			} else {
@@ -783,9 +781,7 @@ const md5 = require( 'md5' );
 			const blockType = getBlockType( name );
 			const forcePreview =
 				isBlockInQueryLoop( clientId ) ||
-				isSiteEditor() ||
-				isiFramedMobileDevicePreview() ||
-				isEditingTemplate();
+				isSiteEditor();
 			let { mode } = attributes;
 
 			if ( forcePreview ) {

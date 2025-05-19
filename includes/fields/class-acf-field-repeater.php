@@ -142,8 +142,10 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 * @param array $field An array holding all the field's data.
 		 */
 		public function render_field( $field ) {
+			$_field              = $field;
 			$field['orig_name']  = $this->get_field_name_from_input_name( $field['name'] );
-			$field['total_rows'] = (int) acf_get_metadata( $this->post_id, $field['orig_name'] );
+			$_field['name']      = $field['orig_name'];
+			$field['total_rows'] = (int) acf_get_metadata_by_field( $this->post_id, $_field );
 			$table               = new ACF_Repeater_Table( $field );
 			$table->render();
 		}
@@ -610,7 +612,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			}
 
 			$new_value = 0;
-			$old_value = (int) acf_get_metadata( $post_id, $field['name'] );
+			$old_value = (int) acf_get_metadata_by_field( $post_id, $field );
 
 			if ( ! empty( $field['pagination'] ) && did_action( 'acf/save_post' ) && ! isset( $_POST['_acf_form'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Value not used.
 				$old_rows       = acf_get_value( $post_id, $field );
@@ -778,7 +780,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 */
 		public function delete_value( $post_id, $key, $field ) {
 			// Get the old value from the database.
-			$old_value = (int) acf_get_metadata( $post_id, $field['name'] );
+			$old_value = (int) acf_get_metadata_by_field( $post_id, $field );
 
 			// Bail early if no rows or no subfields.
 			if ( ! $old_value || empty( $field['sub_fields'] ) ) {
@@ -1042,7 +1044,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		 *
 		 * @since ACF 6.0.0
 		 *
-		 * @return void|WP_Error
+		 * @return void
 		 */
 		public function ajax_get_rows() {
 			$args = acf_request_args(

@@ -33,7 +33,7 @@ if ( ! class_exists( 'acf_field_output' ) ) :
 		 */
 		public function render_field( $field ) {
 
-			// Deprecated since 6.3.2 and will be removed in a future release.
+			// Deprecated since ACF 6.3.2 and will be removed in a future release.
 			_deprecated_function( __FUNCTION__, '6.3.2' );
 			return false;
 		}
