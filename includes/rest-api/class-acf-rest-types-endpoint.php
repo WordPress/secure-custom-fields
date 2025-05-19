@@ -111,7 +111,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return WP_REST_Response|null The filtered response or null to filter it out.
 	 */
 	public function filter_post_type( $response, $post_type, $request ) {
-		// Get the source parameter
 		$source = $request->get_param( 'source' );
 
 		// Only apply filtering if source parameter is provided and valid
@@ -119,13 +118,11 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get post types, calculating once and reusing for the entire request
 		if ( null === $this->cached_post_types ) {
 			$this->cached_post_types = $this->get_source_post_types( $source );
 		}
 		$source_post_types = $this->cached_post_types;
 
-		// If this post type doesn't match the source, return null to filter it out
 		if ( ! in_array( $post_type->name, $source_post_types, true ) ) {
 			return null;
 		}
@@ -146,7 +143,6 @@ class SCF_Rest_Types_Endpoint {
 		$core_types = array();
 		$scf_types  = array();
 
-		// Get core post types (only if needed)
 		if ( 'core' === $source || 'other' === $source ) {
 			$all_post_types = get_post_types( array( '_builtin' => true ), 'objects' );
 			foreach ( $all_post_types as $post_type ) {
@@ -154,7 +150,6 @@ class SCF_Rest_Types_Endpoint {
 			}
 		}
 
-		// Get SCF-managed post types (only if needed)
 		if ( 'scf' === $source || 'other' === $source ) {
 			$scf_types = array();
 
@@ -169,7 +164,6 @@ class SCF_Rest_Types_Endpoint {
 			}
 		}
 
-		// Return appropriate post types based on source
 		switch ( $source ) {
 			case 'core':
 				$result = $core_types;
@@ -198,7 +192,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		// Only register the field groups field if the editor sidebar beta feature is enabled
 		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
 			return;
 		}
@@ -321,7 +314,7 @@ class SCF_Rest_Types_Endpoint {
 			'required'    => false,
 		);
 
-		// Add validation for API use (not needed for documentation)
+		// Not needed for OpenAPI documentation
 		if ( $include_validation ) {
 			$param['validate_callback'] = 'rest_validate_request_arg';
 			$param['sanitize_callback'] = 'sanitize_text_field';
@@ -381,7 +374,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array            The filtered response data.
 	 */
 	public function clean_types_response( $response, $server, $request ) {
-		// Only process types endpoint responses
 		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
 			return $response;
 		}
@@ -389,7 +381,6 @@ class SCF_Rest_Types_Endpoint {
 		// Only process collection responses (not single post type responses)
 		// Single post type responses have a 'slug' property, collections don't
 		if ( is_array( $response ) && ! isset( $response['slug'] ) ) {
-			// Remove null entries using array_filter
 			$response = array_filter(
 				$response,
 				function ( $entry ) {
