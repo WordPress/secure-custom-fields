@@ -31,7 +31,6 @@ class Bindings {
 	 * Hooked to acf/init, register our binding sources.
 	 */
 	public function register_binding_sources() {
-		if ( acf_get_setting( 'enable_block_bindings' ) ) {
 			register_block_bindings_source(
 				'acf/field',
 				array(
@@ -39,7 +38,6 @@ class Bindings {
 					'get_value_callback' => array( $this, 'get_value' ),
 				)
 			);
-		}
 	}
 
 	/**
