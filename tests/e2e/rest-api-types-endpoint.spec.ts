@@ -37,7 +37,6 @@ test.describe('REST API Types Endpoint', () => {
       expect(types.post).toHaveProperty('slug');
       expect(types.post).toHaveProperty('rest_base');
     } catch (error) {
-      console.error('REST API error:', error);
       throw error;
     }
   });
@@ -60,7 +59,6 @@ test.describe('REST API Types Endpoint', () => {
         }
       }
     } catch (error) {
-      console.error('REST API error:', error);
       throw error;
     }
   });
@@ -87,10 +85,6 @@ test.describe('REST API Types Endpoint', () => {
         params: { source: 'other' }
       });
       
-      console.log('All types:', Object.keys(allTypes));
-      console.log('SCF types:', Object.keys(scfTypes));
-      console.log('Core types:', Object.keys(coreTypes));
-      console.log('Other types:', Object.keys(otherTypes));
       
       // Each post type should only be in one source collection
       const allPostTypes = Object.keys(allTypes);
@@ -105,7 +99,6 @@ test.describe('REST API Types Endpoint', () => {
         expect(sourceCount).toBe(1);
       }
     } catch (error) {
-      console.error('REST API error:', error);
       throw error;
     }
   });
@@ -153,10 +146,8 @@ test.describe('REST API Types Endpoint', () => {
         // Should succeed if our test post type is properly registered with SCF
         expect(typeWithScfSource).toHaveProperty('slug', customTestType);
       } else {
-        console.log(`Test post type ${customTestType} not found - skipping SCF single post type tests`);
       }
     } catch (error) {
-      console.log(`Error checking SCF test type: ${error.message}`);
     }
   });
   
@@ -184,7 +175,6 @@ test.describe('REST API Types Endpoint', () => {
         path: '/wp/v2/types'
       });
       
-      console.log('All post types:', Object.keys(allTypes));
       
       // Get types with source=scf
       const scfTypes = await requestUtils.rest({
@@ -192,7 +182,6 @@ test.describe('REST API Types Endpoint', () => {
         params: { source: 'scf' }
       });
       
-      console.log('SCF post types:', Object.keys(scfTypes));
       
       // Get types with source=core
       const coreTypes = await requestUtils.rest({
@@ -200,7 +189,6 @@ test.describe('REST API Types Endpoint', () => {
         params: { source: 'core' }
       });
       
-      console.log('Core post types:', Object.keys(coreTypes));
       
       // Get types with source=other
       const otherTypes = await requestUtils.rest({
@@ -208,7 +196,6 @@ test.describe('REST API Types Endpoint', () => {
         params: { source: 'other' }
       });
       
-      console.log('Other post types:', Object.keys(otherTypes));
       
       // Verify core post types are in the core source
       expect(coreTypes).toHaveProperty('post');
@@ -218,17 +205,13 @@ test.describe('REST API Types Endpoint', () => {
       const hasSCFTestType = SCF_TEST_POST_TYPE in allTypes;
       const hasOtherTestType = OTHER_TEST_POST_TYPE in allTypes;
       
-      console.log(`SCF test type exists: ${hasSCFTestType}`);
-      console.log(`Other test type exists: ${hasOtherTestType}`);
       
       // Test that our other test post type is in Other source
       if (hasOtherTestType) {
         expect(otherTypes).toHaveProperty(OTHER_TEST_POST_TYPE);
         expect(scfTypes).not.toHaveProperty(OTHER_TEST_POST_TYPE);
         expect(coreTypes).not.toHaveProperty(OTHER_TEST_POST_TYPE);
-        console.log(`✅ Other post type correctly found in Other source`);
       } else {
-        console.log(`⚠️ Other test post type not found - skipping test`);
       }
       
       // Test that SCF post type is in SCF source (if it exists)
@@ -236,9 +219,7 @@ test.describe('REST API Types Endpoint', () => {
         expect(scfTypes).toHaveProperty(SCF_TEST_POST_TYPE);
         expect(coreTypes).not.toHaveProperty(SCF_TEST_POST_TYPE);
         expect(otherTypes).not.toHaveProperty(SCF_TEST_POST_TYPE);
-        console.log(`✅ SCF post type correctly found in SCF source`);
       } else {
-        console.log(`⚠️ SCF test post type not found - skipping test`);
       }
       
       // Verify post type properties if they exist
@@ -265,26 +246,22 @@ test.describe('REST API Types Endpoint', () => {
       const allTypes = await requestUtils.rest({
         path: '/wp/v2/types'
       });
-      console.log('All post types:', Object.keys(allTypes));
       
       // Get each source type
       const scfTypes = await requestUtils.rest({
         path: '/wp/v2/types',
         params: { source: 'scf' }
       });
-      console.log('SCF post types:', Object.keys(scfTypes));
       
       const coreTypes = await requestUtils.rest({
         path: '/wp/v2/types',
         params: { source: 'core' }
       });
-      console.log('Core post types:', Object.keys(coreTypes));
       
       const otherTypes = await requestUtils.rest({
         path: '/wp/v2/types',
         params: { source: 'other' }
       });
-      console.log('Other post types:', Object.keys(otherTypes));
       
       // Test 1: Core source should include post and page
       expect(coreTypes).toHaveProperty('post');
@@ -306,10 +283,6 @@ test.describe('REST API Types Endpoint', () => {
         const inCore = customTestType in coreTypes;
         const inOther = customTestType in otherTypes;
         
-        console.log(`Test post type ${customTestType} found in:`, {
-          'SCF source': inScf,
-          'Core source': inCore, 
-          'Other source': inOther
         });
         
         // Test that it only appears in one source
@@ -323,12 +296,9 @@ test.describe('REST API Types Endpoint', () => {
         expect(inScf || inOther).toBe(true);
         
         if (inScf) {
-          console.log(`✅ Perfect! Test post type is in SCF source as desired`);
         } else if (inOther) {
-          console.log(`⚠️ Acceptable: Test post type in other source (our filter hook didn't work)`);
         }
       } else {
-        console.log(`⚠️ Test post type ${customTestType} not found - skipping this part of the test`);
       }
       
       // Test 4: Verify that each post type only appears in ONE source collection
@@ -403,10 +373,6 @@ test.describe('REST API Types Endpoint', () => {
         const inScf = customTestType in scfTypes;
         const inOther = customTestType in otherTypes;
         
-        console.log(`For single endpoint test, ${customTestType} is in:`, { 
-          'SCF source': inScf, 
-          'Other source': inOther 
-        });
         
         if (inScf) {
           // If in SCF source, test it works with source=scf
@@ -415,7 +381,6 @@ test.describe('REST API Types Endpoint', () => {
             params: { source: 'scf' }
           });
           expect(customTypeWithScf).toHaveProperty('slug', customTestType);
-          console.log('✅ Custom type works with source=scf as expected');
           
           // And should NOT work with other or core
           try {
@@ -434,7 +399,6 @@ test.describe('REST API Types Endpoint', () => {
             params: { source: 'other' }
           });
           expect(customTypeWithOther).toHaveProperty('slug', customTestType);
-          console.log('⚠️ Custom type works with source=other (not ideal but acceptable)');
           
           // And should NOT work with scf or core
           try {
@@ -460,7 +424,6 @@ test.describe('REST API Types Endpoint', () => {
           expect(error.data).toHaveProperty('status', 404);
         }
       } else {
-        console.log(`Test post type ${customTestType} not found - skipping single endpoint tests for it`);
       }
     });
   });
