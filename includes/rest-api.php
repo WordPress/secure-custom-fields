@@ -3,7 +3,7 @@
  * REST API
  *
  * @package    Secure Custom Fields
- * @since      6.5.0
+ * @since      SCF 6.5.0
  */
 
 // Exit if accessed directly.
