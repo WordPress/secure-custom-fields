@@ -283,8 +283,6 @@ test.describe('REST API Types Endpoint', () => {
         const inCore = customTestType in coreTypes;
         const inOther = customTestType in otherTypes;
         
-        });
-        
         // Test that it only appears in one source
         const sourceCount = (inScf ? 1 : 0) + (inCore ? 1 : 0) + (inOther ? 1 : 0);
         expect(sourceCount).toBe(1);
