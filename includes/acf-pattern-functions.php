@@ -198,26 +198,6 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 			$block_content  = preg_replace_callback(
 				'/<\?php\s+echo\s+esc_html\(\s*(?:the_title\(\)|\$(\w+))\s*\)\s*;\s*\?>|<\?php\s+echo\s+esc_url\(\s*\$(\w+)\s*\)\s*;\s*\?>|<\?php\s+echo\s+\$(\w+)\s*;\s*\?>|<\?php\s+the_title\(\)\s*;\s*\?>/',
 				function ( $echo_matches ) use ( $field_mappings, &$attributes, $block_name, &$block_modified ) {
-					// Handle different types of PHP echoes
-					if ( ! empty( $echo_matches[0] ) && ( strpos( $echo_matches[0], 'the_title()' ) !== false ) ) {
-						// Handle the_title() - bind to post title
-						if ( 'core/image' === $block_name ) {
-							$attributes['metadata']['bindings']['alt'] = array(
-								'source' => 'core/post-meta',
-								'args'   => array( 'key' => 'title' ),
-							);
-						} else {
-							$binding_attributes                                       = scf_get_binding_attribute_for_block( $block_name );
-							$primary_attribute                                        = $binding_attributes[0] ?? 'content';
-							$attributes['metadata']['bindings'][ $primary_attribute ] = array(
-								'source' => 'core/post-meta',
-								'args'   => array( 'key' => 'title' ),
-							);
-						}
-						$block_modified = true;
-						return 'Post Title';
-					}
-
 					// Extract variable name from different echo patterns
 					$variable = '';
 					for ( $i = 1; $i <= 4; $i++ ) {
@@ -231,7 +211,7 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 						$field_name = $field_mappings[ $variable ];
 
 						// Handle special cases for image blocks
-						if ( 'core/image' === $block_name ) {
+						if ( 'image' === $block_name ) {
 							if ( strpos( $echo_matches[0], 'esc_url' ) !== false ) {
 								$attributes['metadata']['bindings']['url'] = array(
 									'source' => 'scf/field',
@@ -265,7 +245,7 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 			);
 
 			// For image blocks, ensure we have the proper structure
-			if ( 'core/image' === $block_name ) {
+			if ( 'image' === $block_name ) {
 				// If we have bindings but no proper image structure, fix it
 				if ( isset( $attributes['metadata']['bindings'] ) && ! strpos( $block_content, '<img' ) ) {
 					$block_content = '<figure class="wp-block-image"><img src="/api/placeholder/400/300" alt="Post Title"/></figure>';
