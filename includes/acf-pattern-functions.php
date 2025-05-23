@@ -143,6 +143,15 @@ function scf_extract_field_mappings( $php_content ) {
 		$mappings[ $variable ] = $field_name;
 	}
 
+	// Match get_the_terms patterns
+	preg_match_all( '/\$(\w+)\s*=\s*get_the_terms\([^,]+,\s*[\'"]([^\'"]+)[\'"]\)/', $php_content, $terms_matches, PREG_SET_ORDER );
+
+	foreach ( $terms_matches as $match ) {
+		$variable              = $match[1];
+		$taxonomy_name         = $match[2];
+		$mappings[ $variable ] = $taxonomy_name;
+	}
+
 	return $mappings;
 }
 
@@ -187,11 +196,31 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 			// Now process PHP echoes in this block's direct content
 			$block_modified = false;
 			$block_content  = preg_replace_callback(
-				'/<\?php\s+echo\s+(?:esc_html|esc_attr|esc_url|esc_js|esc_textarea)\(\s*\$(\w+)\s*\)\s*;\s*\?>|<\?php\s+echo\s+\$(\w+)\s*;\s*\?>/',
+				'/<\?php\s+echo\s+esc_html\(\s*(?:the_title\(\)|\$(\w+))\s*\)\s*;\s*\?>|<\?php\s+echo\s+esc_url\(\s*\$(\w+)\s*\)\s*;\s*\?>|<\?php\s+echo\s+\$(\w+)\s*;\s*\?>|<\?php\s+the_title\(\)\s*;\s*\?>/',
 				function ( $echo_matches ) use ( $field_mappings, &$attributes, $block_name, &$block_modified ) {
+					// Handle different types of PHP echoes
+					if ( ! empty( $echo_matches[0] ) && ( strpos( $echo_matches[0], 'the_title()' ) !== false ) ) {
+						// Handle the_title() - bind to post title
+						if ( 'core/image' === $block_name ) {
+							$attributes['metadata']['bindings']['alt'] = array(
+								'source' => 'core/post-meta',
+								'args'   => array( 'key' => 'title' ),
+							);
+						} else {
+							$binding_attributes                                       = scf_get_binding_attribute_for_block( $block_name );
+							$primary_attribute                                        = $binding_attributes[0] ?? 'content';
+							$attributes['metadata']['bindings'][ $primary_attribute ] = array(
+								'source' => 'core/post-meta',
+								'args'   => array( 'key' => 'title' ),
+							);
+						}
+						$block_modified = true;
+						return 'Post Title';
+					}
+
 					// Extract variable name from different echo patterns
 					$variable = '';
-					for ( $i = 1; $i <= 2; $i++ ) {
+					for ( $i = 1; $i <= 4; $i++ ) {
 						if ( ! empty( $echo_matches[ $i ] ) ) {
 							$variable = $echo_matches[ $i ];
 							break;
@@ -200,34 +229,32 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 
 					if ( $variable && isset( $field_mappings[ $variable ] ) ) {
 						$field_name = $field_mappings[ $variable ];
-						$escape_type = '';
 
-						// Determine the escape type
-						if ( preg_match( '/esc_(\w+)\(/', $echo_matches[0], $escape_match ) ) {
-							$escape_type = $escape_match[1];
-						}
-
-						// Get block binding configuration
-						$binding_config = scf_get_block_binding_config( $block_name, $escape_type );
-						
-						if ( $binding_config ) {
-							// Apply the binding configuration
-							foreach ( $binding_config['attributes'] as $attr_name => $attr_config ) {
-								$attributes['metadata']['bindings'][ $attr_name ] = array(
-									'source' => $attr_config['source'],
+						// Handle special cases for image blocks
+						if ( 'core/image' === $block_name ) {
+							if ( strpos( $echo_matches[0], 'esc_url' ) !== false ) {
+								$attributes['metadata']['bindings']['url'] = array(
+									'source' => 'scf/field',
 									'args'   => array( 'field' => $field_name ),
 								);
+								$block_modified                            = true;
+								return '/api/placeholder/400/300';
+							} elseif ( strpos( $echo_matches[0], 'esc_html' ) !== false ) {
+								// This is the image ID
+								$attributes['id'] = 0; // Set a placeholder ID
+								$block_modified   = true;
+								return '0';
 							}
-
-							// Set any additional attributes
-							if ( isset( $binding_config['additional_attributes'] ) ) {
-								foreach ( $binding_config['additional_attributes'] as $attr_name => $attr_value ) {
-									$attributes[ $attr_name ] = $attr_value;
-								}
-							}
-
+						} else {
+							// For non-image blocks, use the standard binding
+							$binding_attributes                                       = scf_get_binding_attribute_for_block( $block_name );
+							$primary_attribute                                        = $binding_attributes[0] ?? 'content';
+							$attributes['metadata']['bindings'][ $primary_attribute ] = array(
+								'source' => 'scf/field',
+								'args'   => array( 'field' => $field_name ),
+							);
 							$block_modified = true;
-							return $binding_config['placeholder'] ?? scf_get_placeholder_for_field( $field_name, $binding_config['primary_attribute'] ?? 'content' );
+							return scf_get_placeholder_for_field( $field_name, $primary_attribute );
 						}
 					}
 
@@ -237,8 +264,13 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 				$block_content
 			);
 
-			// Ensure proper block structure based on bindings
-			$block_content = scf_ensure_block_structure( $block_name, $block_content, $attributes );
+			// For image blocks, ensure we have the proper structure
+			if ( 'core/image' === $block_name ) {
+				// If we have bindings but no proper image structure, fix it
+				if ( isset( $attributes['metadata']['bindings'] ) && ! strpos( $block_content, '<img' ) ) {
+					$block_content = '<figure class="wp-block-image"><img src="/api/placeholder/400/300" alt="Post Title"/></figure>';
+				}
+			}
 
 			// Rebuild block
 			$attributes_json = ! empty( $attributes ) ? wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES ) : '';
@@ -250,103 +282,6 @@ function scf_process_blocks_recursively( $content, $field_mappings ) {
 		},
 		$content
 	);
-}
-
-/**
- * Get block binding configuration based on block type and escape function.
- *
- * @param string $block_name The name of the block.
- * @param string $escape_type The type of escaping function used.
- * @return array|null The binding configuration or null if not supported.
- */
-function scf_get_block_binding_config( $block_name, $escape_type ) {
-	$configs = array(
-		'core/image' => array(
-			'url' => array(
-				'attributes' => array(
-					'url' => array( 'source' => 'scf/field' ),
-				),
-				'placeholder' => '/api/placeholder/400/300',
-			),
-			'alt' => array(
-				'attributes' => array(
-					'alt' => array( 'source' => 'scf/field' ),
-				),
-				'placeholder' => 'Image description',
-			),
-			'id' => array(
-				'attributes' => array(
-					'id' => array( 'source' => 'scf/field' ),
-				),
-				'additional_attributes' => array(
-					'id' => 0,
-				),
-				'placeholder' => '0',
-			),
-		),
-		'core/heading' => array(
-			'content' => array(
-				'attributes' => array(
-					'content' => array( 'source' => 'scf/field' ),
-				),
-				'primary_attribute' => 'content',
-			),
-		),
-		'core/paragraph' => array(
-			'content' => array(
-				'attributes' => array(
-					'content' => array( 'source' => 'scf/field' ),
-				),
-				'primary_attribute' => 'content',
-			),
-		),
-		'core/button' => array(
-			'url' => array(
-				'attributes' => array(
-					'url' => array( 'source' => 'scf/field' ),
-				),
-				'primary_attribute' => 'url',
-			),
-			'text' => array(
-				'attributes' => array(
-					'text' => array( 'source' => 'scf/field' ),
-				),
-				'primary_attribute' => 'text',
-			),
-		),
-	);
-
-	// Default configuration for unsupported blocks
-	$default_config = array(
-		'content' => array(
-			'attributes' => array(
-				'content' => array( 'source' => 'scf/field' ),
-			),
-			'primary_attribute' => 'content',
-		),
-	);
-
-	// Get block-specific config or default
-	$block_config = $configs[ $block_name ] ?? $default_config;
-
-	// Return specific escape type config or default content config
-	return $block_config[ $escape_type ] ?? $block_config['content'] ?? null;
-}
-
-/**
- * Ensure proper block structure based on bindings.
- *
- * @param string $block_name The name of the block.
- * @param string $content The block content.
- * @param array  $attributes The block attributes.
- * @return string The properly structured block content.
- */
-function scf_ensure_block_structure( $block_name, $content, $attributes ) {
-	if ( 'core/image' === $block_name && isset( $attributes['metadata']['bindings'] ) && ! strpos( $content, '<img' ) ) {
-		return '<figure class="wp-block-image"><img src="/api/placeholder/400/300" alt="Image description"/></figure>';
-	}
-
-	return $content;
 }
 
 /**
