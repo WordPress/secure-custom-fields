@@ -277,18 +277,14 @@ window.wp.blocks = new Proxy(originalBlocks, {
 		console.log("Intercepted getBlockBindingsSources", result);
 		if (result?.["acf/field"]) {
 				result["acf/field"]["getFieldsList"] = function() {
-					return {
-						isbn: {
-							label: "ISBN (SCF)",
-							value: "978-3-16-148410-0",
-							type: "string",
-						},
-						author: {
-							label: "Author (SCF)",
-							value: "John Doe",
-							type: "string",
-						},
-					};
+					return acf.getFields().reduce( (acc, { data, $el }) => {
+						acc[data.name] = {
+							label: $el.find("label").text(),
+							value: $el.find("input").val() || "",
+							type: data.type === "text" ? "string" : data.type,
+						};
+						return acc;
+					}, {} );
 				};
 		}
         return result;
