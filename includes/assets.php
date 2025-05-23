@@ -274,7 +274,6 @@ window.wp.blocks = new Proxy(originalBlocks, {
     if (prop === "getBlockBindingsSources") {
       return function(...args) {
         const result = target.getBlockBindingsSources(...args);
-		console.log("Intercepted getBlockBindingsSources", result);
 		if (result?.["acf/field"]) {
 				result["acf/field"]["getFieldsList"] = function() {
 					return acf.getFields().reduce( (acc, { data, $el }) => {
