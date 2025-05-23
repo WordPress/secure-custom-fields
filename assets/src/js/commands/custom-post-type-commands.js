@@ -3,7 +3,7 @@
  *
  * Dynamic commands for user-created custom post types in Secure Custom Fields.
  * This file generates navigation commands for each registered post type that
- * the current user has access to, creating both "View All" and "Add New" commands.
+ * the current user has access to, creating "View All", "Add New", and "Edit" commands.
  *
  * Post type data is provided via acf.data.customPostTypes, which is populated
  * by the PHP side after capability checks ensure the user has appropriate access.
@@ -77,11 +77,36 @@ const registerPostTypeCommands = () => {
 				'create',
 				'content',
 				postType.name,
-				...( postType.label ? [ postType.label ] : [] ),
+				postType.label,
 			],
 			callback: ( { close } ) => {
 				document.location = addQueryArgs(adminUrl + 'post-new.php', {
 					post_type: postType.name
+				});
+				close();
+			},
+		} );
+
+		// Register "Edit Post Type" command for registered CPTs
+		commandStore.registerCommand( {
+			name: `scf/edit-${ postType.name }`,
+			label: sprintf(__('Edit post type: %s', 'secure-custom-fields'), postType.label),
+			icon: createElement( Icon, { icon: 'edit' } ),
+			context: 'admin',
+			description: sprintf(__('Edit the %s post type settings', 'secure-custom-fields'), postType.label),
+			keywords: [
+				'edit',
+				'modify',
+				'post type',
+				'cpt',
+				'settings',
+				postType.name,
+				postType.label,
+			],
+			callback: ( { close } ) => {
+				document.location = addQueryArgs(adminUrl + 'post.php', {
+					post: postType.id,
+					action: 'edit'
 				});
 				close();
 			},

@@ -58,6 +58,8 @@ function acf_commands_init() {
 				'all_items'    => $labels->all_items,
 				'add_new_item' => $labels->add_new_item,
 				'icon'         => $post_type['menu_icon'] ?? '',
+				'label'        => $labels->name,
+				'id'           => $post_type['ID'],
 			);
 		}
 	}
