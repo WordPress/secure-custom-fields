@@ -265,6 +265,42 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				)
 			);
 
+			wp_add_inline_script(
+				'wp-blocks',
+				'const originalBlocks = window.wp.blocks;
+
+window.wp.blocks = new Proxy(originalBlocks, {
+  get(target, prop, receiver) {
+    if (prop === "getBlockBindingsSources") {
+      return function(...args) {
+        const result = target.getBlockBindingsSources(...args);
+		console.log("Intercepted getBlockBindingsSources", result);
+		if (result?.["acf/field"]) {
+				result["acf/field"]["getFieldsList"] = function() {
+					return {
+						isbn: {
+							label: "ISBN (SCF)",
+							value: "978-3-16-148410-0",
+							type: "string",
+						},
+						author: {
+							label: "Author (SCF)",
+							value: "John Doe",
+							type: "string",
+						},
+					};
+				};
+		}
+        return result;
+      };
+    }
+
+    return Reflect.get(target, prop, receiver);
+  }
+});',
+				'after'
+			);
+
 			// Register styles.
 			foreach ( $styles as $style ) {
 				wp_register_style(
