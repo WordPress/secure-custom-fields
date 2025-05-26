@@ -8,22 +8,13 @@
  * @package wordpress/secure-custom-fields
  *
  * IMPORTANT NOTE:
- * This plugin uses a hacky approach to create a test post type that SCF will recognize as its own:
+ * This plugin uses a hacky approach to create a test post type that SCF will recognize as its own, don't replicate in production code:
  *
- * 1. We use SCF's internal APIs (acf_get_internal_post_type_instance) that aren't meant for public use
+ * - We use SCF's internal APIs (acf_get_internal_post_type_instance) that aren't meant for public use
  *    and could change between versions without notice.
  *
- * 2. We're directly creating database entries that SCF normally manages through its UI,
+ * - We're directly creating database entries that SCF normally manages through its UI,
  *    bypassing the normal workflow and validation that the UI might provide.
- *
- * 3. This approach requires intimate knowledge of SCF's internal data structures to know
- *    exactly what fields the post type configuration needs.
- *
- * 4. The REST API endpoint determines SCF post types by calling acf_get_internal_post_type_posts(),
- *    so we need to create a database entry that this function will return.
- *
- * This works for testing purposes but should NOT be considered a recommended pattern for
- * working with SCF in production environments.
  */
 
 // Exit if accessed directly
