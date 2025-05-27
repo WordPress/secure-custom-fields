@@ -394,7 +394,7 @@ test.describe( 'REST API Types Endpoint', () => {
 		await requestUtils.rest( {
 			path: '/wp/v2/settings',
 			method: 'POST',
-			data: { scf_test_post_types_created: false },
+			data: { scf_test_post_type_created: false },
 		} );
 	} );
 } );
