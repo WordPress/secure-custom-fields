@@ -151,10 +151,7 @@ test.describe( 'REST API Types Endpoint', () => {
 		} );
 
 		// Should succeed if our test post type is properly registered with SCF
-		expect( typeWithScfSource ).toHaveProperty(
-			'slug',
-			customTestType
-		);
+		expect( typeWithScfSource ).toHaveProperty( 'slug', customTestType );
 	} );
 
 	test( 'should validate source parameter values', async ( {
@@ -283,9 +280,7 @@ test.describe( 'REST API Types Endpoint', () => {
 
 			// Test that it only appears in one source
 			const sourceCount =
-				( inScf ? 1 : 0 ) +
-				( inCore ? 1 : 0 ) +
-				( inOther ? 1 : 0 );
+				( inScf ? 1 : 0 ) + ( inCore ? 1 : 0 ) + ( inOther ? 1 : 0 );
 			expect( sourceCount ).toBe( 1 );
 
 			// It should never be in core source
@@ -355,7 +350,10 @@ test.describe( 'REST API Types Endpoint', () => {
 				path: `/wp/v2/types/${ customTestType }`,
 				params: { source: 'scf' },
 			} );
-			expect( customTypeWithScf ).toHaveProperty( 'slug', customTestType );
+			expect( customTypeWithScf ).toHaveProperty(
+				'slug',
+				customTestType
+			);
 
 			// SCF test type should NOT be accessible with other source
 			try {
@@ -386,15 +384,7 @@ test.describe( 'REST API Types Endpoint', () => {
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
-		// Deactivate the plugins
 		await requestUtils.deactivatePlugin( 'scf-test-setup-post-types' );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
-
-		// Clean up by deleting the option that marks the post types as created
-		await requestUtils.rest( {
-			path: '/wp/v2/settings',
-			method: 'POST',
-			data: { scf_test_post_type_created: false },
-		} );
 	} );
 } );

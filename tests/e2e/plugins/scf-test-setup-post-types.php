@@ -98,11 +98,26 @@ function scf_test_create_scf_post_type_entry() {
 	$result = $instance->update_post( $post_type_config );
 
 	if ( is_array( $result ) && isset( $result['ID'] ) ) {
-		// Mark as created so we don't duplicate it
-		update_option( 'scf_test_post_type_created', true );
+		// Store the post ID so we can delete it later
+		update_option( 'scf_test_post_type_created', $result['ID'] );
 	}
+}
+
+/**
+ * Clean up on plugin deactivation
+ */
+function scf_test_cleanup() {
+	// Get the stored post ID and delete the post
+	$post_id = get_option( 'scf_test_post_type_created' );
+	if ( $post_id ) {
+		wp_delete_post( $post_id, true );
+	}
+
+	// Clean up the option
+	delete_option( 'scf_test_post_type_created' );
 }
 
 // Register hooks
 add_action( 'init', 'scf_test_register_post_types', 20 );
 add_action( 'acf/init', 'scf_test_create_scf_post_type_entry', 15 );
+register_deactivation_hook( __FILE__, 'scf_test_cleanup' );
