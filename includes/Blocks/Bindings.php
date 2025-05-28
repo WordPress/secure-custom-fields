@@ -39,7 +39,7 @@ class Bindings {
 				)
 			);
 			register_block_bindings_source(
-				'scf/field',
+				'scf/experimental-field',
 				array(
 					'label'              => _x( 'SCF Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
 					'uses_context'       => array( 'postId', 'postType' ),
@@ -77,7 +77,6 @@ class Bindings {
 		switch ( $attribute_name ) {
 			case 'content':
 				return is_array( $value ) ? ( $value['alt'] ?? '' ) : (string) $value;
-			case 'src':
 			case 'url':
 				if ( is_array( $value ) && isset( $value['url'] ) ) {
 					return $value['url'];
@@ -92,6 +91,14 @@ class Bindings {
 				}
 				if ( is_numeric( $value ) ) {
 					return get_post_meta( $value, '_wp_attachment_image_alt', true );
+				}
+				return '';
+			case 'id':
+				if ( is_array( $value ) && isset( $value['id'] ) ) {
+					return (string) $value['id'];
+				}
+				if ( is_numeric( $value ) ) {
+					return (string) $value;
 				}
 				return '';
 			default:

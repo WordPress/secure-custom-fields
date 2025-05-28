@@ -58,7 +58,7 @@ function experimental_scf_register_pattern( $pattern_directory ) {
 	);
 }
 
-function experimental_create_block_with_binding( string $tag, string $source, array $bindings_args = array(), string $inner_content = '' ) {
+function experimental_create_block_with_binding( string $tag, array $bindings_args = array(), string $inner_content = '' ) {
     // If tag is specified, map it to the appropriate block type
     $block = 'core/paragraph'; // Default block type
     $wrapper_tag = 'p'; // Default HTML wrapper tag
@@ -163,7 +163,8 @@ function experimental_create_block_with_binding( string $tag, string $source, ar
             // Check if this is a properly formatted binding
             if (isset($binding['attribute']) && isset($binding['field'])) {
                 $attributes['metadata']['bindings'][$binding['attribute']] = array(
-                    'source' => $source,
+                    // TODO: We can pass the source as a variable so it will work with any binding source.
+                    'source' => 'scf/experimental-field',
                     'args' => array(
                         'field' => $binding['field']
                     )
