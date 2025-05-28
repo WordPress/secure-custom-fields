@@ -169,7 +169,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/acf-field-group-functions.php' );
 			acf_include( 'includes/acf-form-functions.php' );
 			acf_include( 'includes/acf-meta-functions.php' );
-			acf_include( 'includes/acf-pattern-functions.php' );
+			if ( get_option( 'scf_beta_feature_code_patterns_enabled' ) ) {
+				acf_include( 'includes/acf-pattern-functions.php' );
+			}
 			acf_include( 'includes/acf-post-functions.php' );
 			acf_include( 'includes/acf-user-functions.php' );
 			acf_include( 'includes/acf-value-functions.php' );
@@ -880,6 +882,7 @@ function scf_plugin_uninstall() {
 	// List of known beta features.
 	$beta_features = array(
 		'editor_sidebar',
+		'code_patterns',
 	);
 
 	foreach ( $beta_features as $beta_feature ) {

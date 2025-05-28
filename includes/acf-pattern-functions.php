@@ -12,7 +12,7 @@
  * @param string $pattern_directory The directory containing the pattern file.
  * @return array|WP_Error The pattern registration result or a WP_Error if the pattern is invalid.
  */
-function scf_register_smart_pattern( $pattern_directory ) {
+function experimental_scf_register_pattern( $pattern_directory ) {
 	if ( ! file_exists( $pattern_directory ) || ! is_readable( $pattern_directory ) ) {
 		return new WP_Error( 'pattern_not_found', 'Pattern file not found' );
 	}
@@ -58,7 +58,7 @@ function scf_register_smart_pattern( $pattern_directory ) {
 	);
 }
 
-function create_block_with_binding( string $tag, string $source, array $bindings_args = array(), string $inner_content = '' ) {
+function experimental_create_block_with_binding( string $tag, string $source, array $bindings_args = array(), string $inner_content = '' ) {
     // If tag is specified, map it to the appropriate block type
     $block = 'core/paragraph'; // Default block type
     $wrapper_tag = 'p'; // Default HTML wrapper tag
