@@ -15,8 +15,10 @@ const commonConfig = {
 		'js/acf-input': './assets/src/js/acf-input.js',
 		'js/acf-internal-post-type':
 			'./assets/src/js/acf-internal-post-type.js',
+		'js/scf-bindings': './assets/src/js/bindings/index.js',
 		'js/commands/scf-admin': './assets/src/js/commands/admin-commands.js',
-		'js/commands/scf-custom-post-types': './assets/src/js/commands/custom-post-type-commands.js',
+		'js/commands/scf-custom-post-types':
+			'./assets/src/js/commands/custom-post-type-commands.js',
 		'js/acf': './assets/src/js/acf.js',
 		'js/pro/acf-pro-blocks': './assets/src/js/pro/acf-pro-blocks.js',
 		'js/pro/acf-pro-field-group':

@@ -189,6 +189,14 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => true,
 				),
+				'scf-bindings'            => array(
+					'handle'     => 'scf-bindings',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'scf-bindings' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'scf-bindings' ) ),
+					'version'    => $version,
+					'deps'       => array(),
+					'in_footer'  => true,
+				),
 			);
 
 			// Define style registrations.
@@ -537,6 +545,10 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				 * @since   ACF 5.6.9
 				 */
 				do_action( 'acf/input/admin_enqueue_scripts' );
+			}
+
+			if ( get_option( 'scf_beta_feature_code_patterns_enabled' ) ) {
+				wp_enqueue_script( 'scf-bindings' );
 			}
 
 			/**

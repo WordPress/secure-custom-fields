@@ -6,4 +6,3 @@ import './_acf-modal.js';
 import './_acf-panel.js';
 import './_acf-notice.js';
 import './_acf-tooltip.js';
-import './custom-sources.js';
