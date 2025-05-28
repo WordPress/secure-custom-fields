@@ -163,7 +163,7 @@ function experimental_create_block_with_binding( string $tag, array $bindings_ar
             // Check if this is a properly formatted binding
             if (isset($binding['attribute']) && isset($binding['field'])) {
                 $attributes['metadata']['bindings'][$binding['attribute']] = array(
-                    // TODO: We can pass the source as a variable so it will work with any binding source.
+                    // TODO: We can pass the source as a variable so it will work with any source.
                     'source' => 'scf/experimental-field',
                     'args' => array(
                         'field' => $binding['field']
@@ -223,17 +223,25 @@ function scf_load_pattern_from_file( $pattern_file ) {
                 return $output;
             };
             
-            return $sandbox( $pattern_file );
+            $pattern_content = $sandbox( $pattern_file );
         } catch ( Exception $e ) {
             return new WP_Error( 'pattern_execution_error', $e->getMessage() );
         }
-    }
-
-    // For non-PHP files (like HTML), only now do we read the file
-    $file_content = file_get_contents( $pattern_file );
-    if ( false === $file_content ) {
-        return new WP_Error( 'pattern_read_error', 'Unable to read pattern file contents' );
+    } else {
+        // For non-PHP files (like HTML), only now do we read the file
+        $pattern_content = file_get_contents( $pattern_file );
+        if ( false === $pattern_content ) {
+            return new WP_Error( 'pattern_read_error', 'Unable to read pattern file contents' );
+        }
     }
     
-    return $file_content;
+    // Wrap the pattern content in a group block if it's not already a group block
+    if (!preg_match('/^<!-- wp:core\/group|^<!-- wp:group/', trim($pattern_content))) {
+        $pattern_content = sprintf(
+            "<!-- wp:group {\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group\">%s</div>\n<!-- /wp:group -->",
+            $pattern_content
+        );
+    }
+    
+    return $pattern_content;
 }
