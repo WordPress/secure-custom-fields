@@ -4,6 +4,9 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
+import { store as editorStore } from '@wordpress/editor';
+import { addAction, removeAction } from '@wordpress/hooks';
+import { select, dispatch } from '@wordpress/data';
 
 /**
  * Register SCF Custom Fields block binding source.
@@ -11,7 +14,6 @@ import { store as coreDataStore } from '@wordpress/core-data';
  * This allows blocks to bind to custom fields managed by
  * the Secure Custom Fields plugin.
  */
-console.log( 'Registering SCF Custom Fields block binding source...' );
 registerBlockBindingsSource( {
 	name: 'scf/experimental-field',
 	label: 'SCF Custom Fields',
@@ -81,5 +83,73 @@ registerBlockBindingsSource( {
 		} );
 
 		return result;
+	},
+	setValues: function ( { context, bindings, dispatch, select } ) {
+		const { getEditedEntityRecord } = select( coreDataStore );
+
+		// Make sure we have bindings and context
+		if ( ! bindings || ! context?.postType || ! context?.postId ) {
+			return;
+		}
+
+		const postType = context.postType;
+		const postId = context.postId;
+
+		// Get the current post data to preserve existing values
+		const currentPost = getEditedEntityRecord(
+			'postType',
+			postType,
+			postId
+		);
+		const currentAcfData = currentPost?.acf || {};
+
+		// Prepare the fields object to update
+		const fieldsToUpdate = {};
+
+		// Process each binding
+		Object.keys( bindings ).forEach( ( attribute ) => {
+			const binding = bindings[ attribute ];
+			const fieldName = binding?.args?.field;
+			const newValue = binding?.newValue;
+
+			// Skip if no field name or new value
+			if ( ! fieldName || newValue === undefined ) {
+				return;
+			}
+
+			// For image fields, we need special handling since multiple attributes
+			// might refer to the same field
+			if ( ! fieldsToUpdate[ fieldName ] ) {
+				// First attribute for this field
+				fieldsToUpdate[ fieldName ] = newValue;
+			} else if (
+				attribute === 'url' &&
+				typeof fieldsToUpdate[ fieldName ] === 'object'
+			) {
+				// For image fields, update the url property if it's already an object
+				fieldsToUpdate[ fieldName ] = {
+					...fieldsToUpdate[ fieldName ],
+					url: newValue,
+				};
+			} else if ( attribute === 'id' && typeof newValue === 'number' ) {
+				// If it's an image ID, store just the ID
+				fieldsToUpdate[ fieldName ] = newValue;
+			}
+			dispatch( coreDataStore ).editEntityRecord(
+				'postType',
+				postType,
+				postId,
+				{
+					acf: {
+						...currentAcfData,
+						...fieldsToUpdate,
+					},
+					meta: { _acf_changed: 1 },
+				}
+			);
+		} );
+	},
+	canUserEditValue: function () {
+		return true;
 	},
 } );
