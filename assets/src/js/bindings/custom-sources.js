@@ -84,7 +84,7 @@ registerBlockBindingsSource( {
 
 		return result;
 	},
-	setValues: function ( { context, bindings, dispatch, select } ) {
+	setValues: async function ( { context, bindings, dispatch, select } ) {
 		const { getEditedEntityRecord } = select( coreDataStore );
 
 		// Make sure we have bindings and context
@@ -107,7 +107,7 @@ registerBlockBindingsSource( {
 		const fieldsToUpdate = {};
 
 		// Process each binding
-		Object.keys( bindings ).forEach( ( attribute ) => {
+		Object.keys( bindings ).forEach( async ( attribute ) => {
 			const binding = bindings[ attribute ];
 			const fieldName = binding?.args?.field;
 			const newValue = binding?.newValue;
