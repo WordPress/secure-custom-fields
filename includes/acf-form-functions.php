@@ -129,6 +129,11 @@ function acf_save_post( $post_id = 0, $values = null ) {
 		return false;
 	}
 
+	// Prevent auto-save, as we do it before in custom-sources.js.
+	if ( get_option( 'scf_beta_feature_code_patterns_enabled' ) ) {
+		return false;
+	}
+
 	// Set form data (useful in various filters/actions).
 	acf_set_form_data( 'post_id', $post_id );
 
