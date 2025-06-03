@@ -175,7 +175,7 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		function acf_validate_save_post() {
 
 			// Check if current request came from Gutenberg.
-			if ( isset( $_GET['meta-box-loader'] ) && get_option ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified elsewhere.
+			if ( isset( $_GET['meta-box-loader'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified elsewhere.
 				acf_reset_validation_errors();
 			}
 		}

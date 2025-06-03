@@ -119,6 +119,12 @@ registerBlockBindingsSource( {
 
 			// For image fields, we need special handling since multiple attributes
 			// might refer to the same field
+
+			// TODO: Remove metabox, use just the sidebar.
+			document
+				.querySelector( `[data-name="${ fieldName }"] input` )
+				.setAttribute( 'value', newValue );
+
 			if ( ! fieldsToUpdate[ fieldName ] ) {
 				// First attribute for this field
 				fieldsToUpdate[ fieldName ] = newValue;
@@ -135,6 +141,7 @@ registerBlockBindingsSource( {
 				// If it's an image ID, store just the ID
 				fieldsToUpdate[ fieldName ] = newValue;
 			}
+
 			dispatch( coreDataStore ).editEntityRecord(
 				'postType',
 				postType,

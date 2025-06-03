@@ -10,7 +10,7 @@
  *
  * @since SCF 6.5.0
  * @param string $pattern_directory The directory containing the pattern file.
- * @return array|WP_Error The pattern registration result or a WP_Error if the pattern is invalid.
+ * @return bool|WP_Error The pattern registration result or a WP_Error if the pattern is invalid.
  */
 function experimental_scf_register_pattern( $pattern_directory ) {
 	if ( ! file_exists( $pattern_directory ) || ! is_readable( $pattern_directory ) ) {
@@ -46,7 +46,7 @@ function experimental_scf_register_pattern( $pattern_directory ) {
 		array_map( 'trim', explode( ',', $meta_data['keywords'] ) ) : array();
 
 	// Register pattern
-	register_block_pattern(
+	return register_block_pattern(
 		$meta_data['slug'],
 		array(
 			'title'       => $meta_data['title'],
