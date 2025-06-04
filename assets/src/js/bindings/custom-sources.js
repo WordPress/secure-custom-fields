@@ -112,5 +112,27 @@ registerBlockBindingsSource( {
 			}
 		);
 	},
-	canUserEditValue: () => true,
+	canUserEditValue( { select, context, args } ) {
+		// Lock editing in query loop.
+		if ( context?.query || context?.queryId ) {
+			return false;
+		}
+
+		// Lock editing when `postType` is not defined.
+		if ( ! context?.postType ) {
+			return false;
+		}
+
+		// Check that the user has the capability to edit post meta.
+		const canUserEdit = select( coreDataStore ).canUser( 'update', {
+			kind: 'postType',
+			name: context?.postType,
+			id: context?.postId,
+		} );
+		if ( ! canUserEdit ) {
+			return false;
+		}
+
+		return true;
+	},
 } );
