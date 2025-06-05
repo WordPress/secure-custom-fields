@@ -73,12 +73,10 @@ registerBlockBindingsSource( {
 		const { getEditedEntityRecord } = select( coreDataStore );
 		if ( ! bindings || ! context?.postType || ! context?.postId ) return;
 
-		const postType = context.postType;
-		const postId = context.postId;
 		const currentPost = getEditedEntityRecord(
 			'postType',
-			postType,
-			postId
+			context.postType,
+			context.postId
 		);
 		const currentAcfData = currentPost?.acf || {};
 		const fieldsToUpdate = {};
@@ -102,12 +100,68 @@ registerBlockBindingsSource( {
 			}
 		}
 
+		// Format ACF data properly before saving
+		const formattedAcfData = { ...currentAcfData };
+
+		// Process all ACF fields to ensure proper types
+		const allAcfFields = { ...formattedAcfData, ...fieldsToUpdate };
+		const processedAcfData = {};
+
+		for ( const [ key, value ] of Object.entries( allAcfFields ) ) {
+			// Handle specific field types requiring proper type conversion
+			if ( value === '' ) {
+				// Convert empty strings to appropriate types based on field name
+				if (
+					key === 'number' ||
+					key.includes( '_number' ) ||
+					/number$/.test( key )
+				) {
+					// Number fields should be null when empty
+					processedAcfData[ key ] = null;
+				} else if ( key.includes( 'range' ) || key === 'range_type' ) {
+					// Range fields should be null when empty
+					processedAcfData[ key ] = null;
+				} else if ( key.includes( '_date' ) ) {
+					// Date fields should be null when empty
+					processedAcfData[ key ] = null;
+				} else if ( key.includes( 'email' ) || key === 'email_type' ) {
+					// Handle email fields
+					processedAcfData[ key ] = null;
+				} else if ( key.includes( 'url' ) || key === 'url_type' ) {
+					// Handle URL fields
+					processedAcfData[ key ] = null;
+				} else {
+					// Other fields can remain as empty strings
+					processedAcfData[ key ] = value;
+				}
+			} else if ( value === 0 || value ) {
+				// Non-empty values - ensure numbers are actually numbers
+				if (
+					( key === 'number' ||
+						key.includes( '_number' ) ||
+						/number$/.test( key ) ) &&
+					value !== null
+				) {
+					// Convert string numbers to actual numbers if needed
+					const numValue = parseFloat( value );
+					processedAcfData[ key ] = isNaN( numValue )
+						? null
+						: numValue;
+				} else {
+					processedAcfData[ key ] = value;
+				}
+			} else {
+				// null, undefined, etc.
+				processedAcfData[ key ] = value;
+			}
+		}
+
 		dispatch( coreDataStore ).editEntityRecord(
 			'postType',
-			postType,
-			postId,
+			context.postType,
+			context.postId,
 			{
-				acf: { ...currentAcfData, ...fieldsToUpdate },
+				acf: processedAcfData,
 				meta: { _acf_changed: 1 },
 			}
 		);
