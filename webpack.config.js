@@ -16,7 +16,8 @@ const commonConfig = {
 		'js/acf-internal-post-type':
 			'./assets/src/js/acf-internal-post-type.js',
 		'js/commands/scf-admin': './assets/src/js/commands/admin-commands.js',
-		'js/commands/scf-custom-post-types': './assets/src/js/commands/custom-post-type-commands.js',
+		'js/commands/scf-custom-post-types':
+			'./assets/src/js/commands/custom-post-type-commands.js',
 		'js/acf': './assets/src/js/acf.js',
 		'js/pro/acf-pro-blocks': './assets/src/js/pro/acf-pro-blocks.js',
 		'js/pro/acf-pro-field-group':
@@ -24,6 +25,7 @@ const commonConfig = {
 		'js/pro/acf-pro-input': './assets/src/js/pro/acf-pro-input.js',
 		'js/pro/acf-pro-ui-options-page':
 			'./assets/src/js/pro/acf-pro-ui-options-page.js',
+		'js/scf-bindings': './assets/src/js/bindings/index.js',
 
 		// CSS files
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',

@@ -189,6 +189,14 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => true,
 				),
+				'scf-bindings'            => array(
+					'handle'     => 'scf-bindings',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'scf-bindings' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'scf-bindings' ) ),
+					'version'    => $version,
+					'deps'       => array(),
+					'in_footer'  => true,
+				),
 			);
 
 			// Define style registrations.
@@ -529,6 +537,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
+				wp_enqueue_script( 'scf-bindings' );
 				wp_enqueue_style( 'acf-pro-input' );
 
 				/**
