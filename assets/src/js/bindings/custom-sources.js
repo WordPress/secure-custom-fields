@@ -49,24 +49,30 @@ registerBlockBindingsSource( {
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {
 				const fieldName = args?.field;
-				const fieldValue = getFieldValue( fields, fieldName );
+				console.log( 'fieldName', fieldName );
 
+				const fieldValue = getFieldValue( fields, fieldName );
 				if ( typeof fieldValue === 'object' && fieldValue !== null ) {
 					result[ attribute ] =
 						( fieldValue[ attribute ] ??
 							( attribute === 'content' && fieldValue.url ) ) ||
 						'';
 				} else if ( typeof fieldValue === 'number' ) {
-					const imageObj = getMedia( fieldValue );
-					result[ attribute ] = resolveImageAttribute(
-						imageObj,
-						attribute
-					);
+					if ( attribute === 'content' ) {
+						result[ attribute ] = fieldValue.toString() || '';
+					} else {
+						const imageObj = getMedia( fieldValue );
+						result[ attribute ] = resolveImageAttribute(
+							imageObj,
+							attribute
+						);
+					}
 				} else {
 					result[ attribute ] = fieldValue || '';
 				}
 			}
 		);
+		console.log( 'result', result );
 		return result;
 	},
 	async setValues( { context, bindings, dispatch, select } ) {
