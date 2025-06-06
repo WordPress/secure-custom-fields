@@ -49,7 +49,6 @@ registerBlockBindingsSource( {
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {
 				const fieldName = args?.field;
-				console.log( 'fieldName', fieldName );
 
 				const fieldValue = getFieldValue( fields, fieldName );
 				if ( typeof fieldValue === 'object' && fieldValue !== null ) {
@@ -72,7 +71,6 @@ registerBlockBindingsSource( {
 				}
 			}
 		);
-		console.log( 'result', result );
 		return result;
 	},
 	async setValues( { context, bindings, dispatch, select } ) {
