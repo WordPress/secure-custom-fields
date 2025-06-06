@@ -69,7 +69,9 @@ if ( ! class_exists( 'ACF_Form_Gutenberg' ) ) :
 		function add_meta_boxes() {
 
 			// Remove 'edit_form_after_title' action.
-			remove_action( 'edit_form_after_title', array( acf_get_instance( 'ACF_Form_Post' ), 'edit_form_after_title' ) );
+			if ( ! get_option( 'scf_beta_feature_code_patterns_enabled' ) ) {
+				remove_action( 'edit_form_after_title', array( acf_get_instance( 'ACF_Form_Post' ), 'edit_form_after_title' ) );
+			}
 		}
 
 		/**

@@ -31,7 +31,6 @@ class Bindings {
 	 * Hooked to acf/init, register our binding sources.
 	 */
 	public function register_binding_sources() {
-		if ( acf_get_setting( 'enable_block_bindings' ) ) {
 			register_block_bindings_source(
 				'acf/field',
 				array(
@@ -39,6 +38,71 @@ class Bindings {
 					'get_value_callback' => array( $this, 'get_value' ),
 				)
 			);
+			register_block_bindings_source(
+				'scf/experimental-field',
+				array(
+					'label'              => _x( 'SCF Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
+					'uses_context'       => array( 'postId', 'postType' ),
+					'get_value_callback' => array( $this, 'scf_get_block_binding_value' ),
+				)
+			);
+	}
+
+	/**
+	 * Handle returning the block binding value for an ACF meta value.
+	 *
+	 * @since SCF 6.5
+	 *
+	 * @param array     $source_attrs     An array of the source attributes requested.
+	 * @param \WP_Block $block_instance  The block instance.
+	 * @param string    $attribute_name The block's bound attribute name.
+	 * @return string|null The block binding value or an empty string on failure.
+	 */
+	public function scf_get_block_binding_value( $source_attrs, $block_instance, $attribute_name ) {
+		$post_id = $block_instance->context['postId'] ?? get_the_ID();
+
+		// Ensure we're using the parent post ID if this is a revision
+		if ( $post_id && wp_is_post_revision( $post_id ) ) {
+			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		$field_name = $source_attrs['field'] ?? '';
+
+		if ( ! $post_id || ! $field_name ) {
+			return '';
+		}
+
+		$value = get_field( $field_name, $post_id );
+		// Handle different field types based on attribute
+		switch ( $attribute_name ) {
+			case 'content':
+				return is_array( $value ) ? ( $value['alt'] ?? '' ) : (string) $value;
+			case 'url':
+				if ( is_array( $value ) && isset( $value['url'] ) ) {
+					return $value['url'];
+				}
+				if ( is_numeric( $value ) ) {
+					return wp_get_attachment_url( $value );
+				}
+				return (string) $value;
+			case 'alt':
+				if ( is_array( $value ) && isset( $value['alt'] ) ) {
+					return $value['alt'];
+				}
+				if ( is_numeric( $value ) ) {
+					return get_post_meta( $value, '_wp_attachment_image_alt', true );
+				}
+				return '';
+			case 'id':
+				if ( is_array( $value ) && isset( $value['id'] ) ) {
+					return (string) $value['id'];
+				}
+				if ( is_numeric( $value ) ) {
+					return (string) $value;
+				}
+				return '';
+			default:
+				return is_string( $value ) ? $value : '';
 		}
 	}
 
