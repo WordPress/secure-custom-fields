@@ -104,11 +104,7 @@ registerBlockBindingsSource( {
 			}
 		}
 
-		// Format ACF data properly before saving
-		const formattedAcfData = { ...currentAcfData };
-
-		// Process all ACF fields to ensure proper types
-		const allAcfFields = { ...formattedAcfData, ...fieldsToUpdate };
+		const allAcfFields = { ...currentAcfData, ...fieldsToUpdate };
 		const processedAcfData = {};
 
 		for ( const [ key, value ] of Object.entries( allAcfFields ) ) {
