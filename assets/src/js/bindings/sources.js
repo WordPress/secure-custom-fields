@@ -43,7 +43,6 @@ registerBlockBindingsSource( {
 				  )
 				: undefined;
 		const result = {};
-		debugger;
 
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {

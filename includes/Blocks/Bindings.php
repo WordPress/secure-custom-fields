@@ -103,10 +103,7 @@ class Bindings {
 
 					if ( is_array( $value ) ) {
 						$value = wp_json_encode( $value );
-					}
-
-					// Ensure we're returning a scalar value.
-					if ( ! is_scalar( $value ) && null !== $value ) {
+					} elseif ( ! is_scalar( $value ) && null !== $value ) {
 						$value = '';
 					}
 			}
