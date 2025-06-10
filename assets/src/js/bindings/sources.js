@@ -51,10 +51,15 @@ registerBlockBindingsSource( {
 
 				const fieldValue = getFieldValue( fields, fieldName );
 				if ( typeof fieldValue === 'object' && fieldValue !== null ) {
-					result[ attribute ] =
-						( fieldValue[ attribute ] ??
-							( attribute === 'content' && fieldValue.url ) ) ||
-						'';
+					let value = '';
+
+					if ( fieldValue[ attribute ] ) {
+						value = fieldValue[ attribute ];
+					} else if ( attribute === 'content' && fieldValue.url ) {
+						value = fieldValue.url;
+					}
+
+					result[ attribute ] = value;
 				} else if ( typeof fieldValue === 'number' ) {
 					if ( attribute === 'content' ) {
 						result[ attribute ] = fieldValue.toString() || '';

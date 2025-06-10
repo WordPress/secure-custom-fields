@@ -81,20 +81,14 @@ class Bindings {
 
 			switch ( $attribute_name ) {
 				case 'id':
-					// The value is the field value.
-					$value = $field['value']['id'] ?? '';
-					break;
 				case 'alt':
-					// The label is the field label.
-					$value = $field['value']['alt'] ?? '';
+				case 'title':
+					// The value is in the field of the same name.
+					$value = $field['value'][ $attribute_name ] ?? '';
 					break;
 				case 'url':
 					// The URL is the field value.
 					$value = $field['value']['url'] ?? $field['value'] ?? '';
-					break;
-				case 'title':
-					// The title is the field value.
-					$value = $field['value']['title'] ?? '';
 					break;
 				case 'rel':
 					// Handle checkbox field for rel attribute by joining array values.
