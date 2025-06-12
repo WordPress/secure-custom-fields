@@ -40,8 +40,9 @@ class SCF_Rest_Types_Endpoint {
 		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
 			return;
 		}
+		$post_types = get_post_types( array( 'show_in_rest' => true ) );
 		register_rest_field(
-			'type',
+			$post_types,
 			'scf_field_groups',
 			array(
 				'get_callback' => array( $this, 'get_scf_fields' ),
@@ -50,16 +51,19 @@ class SCF_Rest_Types_Endpoint {
 		);
 	}
 
-	/**
-	 * Get SCF fields for a post type.
-	 *
-	 * @since SCF 6.5.0
-	 *
-	 * @param array $post_type_object The post type object.
-	 * @return array Array of field data.
-	 */
+		/**
+		 * Get SCF fields for a post type.
+		 *
+		 * @since 6.5.0
+		 *
+		 * @param array $post_type_object The post type object.
+		 * @return array Array of field data.
+		 */
 	public function get_scf_fields( $post_type_object ) {
-		$post_type         = $post_type_object['slug'];
+		if ( ! isset( $post_type_object['id'] ) || ! isset( $post_type_object['type'] ) ) {
+			return array();
+		}
+		$post_type         = $post_type_object['type'];
 		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
 
@@ -71,6 +75,7 @@ class SCF_Rest_Types_Endpoint {
 				$group_fields[] = array(
 					'label' => $field['label'],
 					'type'  => $field['type'],
+					'name'  => $field['name'],
 				);
 			}
 
