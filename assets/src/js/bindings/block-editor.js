@@ -3,7 +3,10 @@
  */
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	useBlockBindingsUtils,
+} from '@wordpress/block-editor';
 import { PanelBody, MenuGroup, FormTokenField } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
@@ -28,33 +31,13 @@ const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 function getBindableAttributes( blockName ) {
 	return BLOCK_BINDINGS_ALLOWED_BLOCKS[ blockName ];
 }
-
-/**
- * Add custom attributes to all blocks
- */
-const addCustomAttributes = ( settings ) => {
-	// Add custom attribute to all blocks
-	if ( settings.attributes ) {
-		settings.attributes.customAttribute = {
-			type: 'string',
-			default: '',
-		};
-	}
-	return settings;
-};
-
-addFilter(
-	'blocks.registerBlockType',
-	'secure-custom-fields/add-custom-attributes',
-	addCustomAttributes
-);
-
 /**
  * Add custom controls to all blocks
  */
 const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const bindableAttributes = getBindableAttributes( props.name );
+		const { updateBlockBindings } = useBlockBindingsUtils();
 
 		const { postType, postId } = useSelect( ( select ) => {
 			const { getCurrentPostType, getCurrentPostId } =
@@ -107,11 +90,18 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 									label={ attribute }
 									maxLength={ 1 }
 									onChange={ ( value ) => {
-										console.log( 'change' );
-										console.log( value );
+										updateBlockBindings( {
+											[ attribute ]: {
+												source: 'acf/field',
+												args: {
+													key: value[ 0 ],
+												},
+											},
+										} );
 									} }
 									suggestions={ fieldsSuggestions }
 									value={ [] }
+									key={ `scf-field-${ attribute }` }
 								/>
 							) ) }
 						</MenuGroup>
