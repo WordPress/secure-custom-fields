@@ -7,7 +7,12 @@ import {
 	InspectorControls,
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
-import { PanelBody, MenuGroup, FormTokenField } from '@wordpress/components';
+import {
+	PanelBody,
+	BaseControl,
+	FormTokenField,
+	MenuItem,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
@@ -79,32 +84,30 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						initialOpen={ true }
 					>
-						<MenuGroup>
-							{ bindableAttributes.map( ( attribute ) => (
-								<FormTokenField
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									__experimentalShowHowTo={ false }
-									__experimentalExpandOnFocus={ true }
-									__experimentalAutoSelectFirstMatch={ true }
-									label={ attribute }
-									maxLength={ 1 }
-									onChange={ ( value ) => {
-										updateBlockBindings( {
-											[ attribute ]: {
-												source: 'acf/field',
-												args: {
-													key: value[ 0 ],
-												},
+						{ bindableAttributes.map( ( attribute ) => (
+							<FormTokenField
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom={ false }
+								__experimentalShowHowTo={ false }
+								__experimentalExpandOnFocus={ true }
+								__experimentalAutoSelectFirstMatch={ true }
+								label={ attribute }
+								maxLength={ 1 }
+								onChange={ ( value ) => {
+									updateBlockBindings( {
+										[ attribute ]: {
+											source: 'acf/field',
+											args: {
+												key: value[ 0 ],
 											},
-										} );
-									} }
-									suggestions={ fieldsSuggestions }
-									value={ [] }
-									key={ `scf-field-${ attribute }` }
-								/>
-							) ) }
-						</MenuGroup>
+										},
+									} );
+								} }
+								suggestions={ fieldsSuggestions }
+								value={ [] }
+								key={ `scf-field-${ attribute }` }
+							/>
+						) ) }
 					</PanelBody>
 				</InspectorControls>
 			</>
