@@ -8,7 +8,12 @@ import {
 	InspectorControls,
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
-import { PanelBody, ComboboxControl, PanelRow } from '@wordpress/components';
+import {
+	PanelBody,
+	ComboboxControl,
+	PanelRow,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
@@ -38,7 +43,8 @@ function getBindableAttributes( blockName ) {
 const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const bindableAttributes = getBindableAttributes( props.name );
-		const { updateBlockBindings } = useBlockBindingsUtils();
+		const { updateBlockBindings, removeAllBlockBindings } =
+			useBlockBindingsUtils();
 
 		const { postType, postId } = useSelect( ( select ) => {
 			const { getCurrentPostType, getCurrentPostId } =
@@ -180,6 +186,21 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 								/>
 							</PanelRow>
 						) ) }
+						<PanelRow>
+							<Button
+								onClick={ () => {
+									removeAllBlockBindings();
+									setBoundFields( {} );
+								} }
+								__next40pxDefaultSize
+								isDestructive
+							>
+								{ __(
+									'Clear All Fields',
+									'secure-custom-fields'
+								) }
+							</Button>
+						</PanelRow>
 					</PanelBody>
 				</InspectorControls>
 			</>
