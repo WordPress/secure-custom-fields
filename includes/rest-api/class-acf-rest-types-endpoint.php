@@ -73,9 +73,10 @@ class SCF_Rest_Types_Endpoint {
 
 			foreach ( $fields as $field ) {
 				$group_fields[] = array(
-					'label' => $field['label'],
-					'type'  => $field['type'],
-					'name'  => $field['name'],
+					'label'          => $field['label'],
+					'type'           => $field['type'],
+					'name'           => $field['name'],
+					'display_format' => isset( $field['display_format'] ) ? $field['display_format'] : '',
 				);
 			}
 

@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
+import { dateI18n } from '@wordpress/date';
 
 /**
  * Get the value of a specific field from the ACF fields.
@@ -43,12 +44,19 @@ registerBlockBindingsSource( {
 				  )
 				: undefined;
 		const result = {};
-
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {
 				const fieldName = args?.key;
-
+				const mergedFields = fields?.scf_field_groups
+					? Object.fromEntries(
+							fields.scf_field_groups
+								.flatMap( ( group ) => group.fields || [] )
+								.map( ( field ) => [ field.name, field ] )
+					  )
+					: {};
 				const fieldValue = getFieldValue( fields, fieldName );
+				const fieldType = mergedFields[ fieldName ]?.type;
+
 				if ( typeof fieldValue === 'object' && fieldValue !== null ) {
 					let value = '';
 
@@ -59,7 +67,7 @@ registerBlockBindingsSource( {
 					}
 
 					result[ attribute ] = value;
-				} else if ( typeof fieldValue === 'number' ) {
+				} else if ( 'number' === typeof fieldValue ) {
 					if ( attribute === 'content' ) {
 						result[ attribute ] = fieldValue.toString() || '';
 					} else {
@@ -69,6 +77,12 @@ registerBlockBindingsSource( {
 							attribute
 						);
 					}
+				} else if ( 'date_picker' === fieldType && fieldValue ) {
+					result[ attribute ] =
+						dateI18n(
+							mergedFields[ fieldName ]?.display_format,
+							fieldValue
+						) || '';
 				} else {
 					result[ attribute ] = fieldValue || '';
 				}
