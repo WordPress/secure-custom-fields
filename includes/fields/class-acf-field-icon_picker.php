@@ -169,7 +169,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 				}
 
 				$wrapper_class = str_replace( '_', '-', $name );
-				echo '<div class="acf-icon-picker-tabs acf-icon-picker-' . esc_attr( $wrapper_class ) . '-tabs">';
+				echo '<div class="acf-icon-picker-tabs acf-icon-picker-' . esc_attr( $wrapper_class ) . '-tabs" data-tab="' . esc_attr( $name ) . '">';
 
 				switch ( $name ) {
 					case 'dashicons':
