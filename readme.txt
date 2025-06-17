@@ -29,7 +29,7 @@ Beyond custom fields, SCF allows you to register new post types and taxonomies d
 **Accessible and user-friendly design.**
 The field interface aligns with WordPress’s native design, creating an experience that’s both accessible and easy for content creators to use.
 
-Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors.
+Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors (this is the same behavior as ACF Pro).
 
 Read more about Secure Custom Fields at [developer.wordpress.org/secure-custom-fields](https://developer.wordpress.org/secure-custom-fields/).
 
