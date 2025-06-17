@@ -228,6 +228,18 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 						break;
 					default:
 						do_action( 'acf/fields/icon_picker/tab/' . $name, $field );
+
+						$custom_icons = apply_filters( 'acf/fields/icon_picker/' . $name . '/icons', array(), $field );
+
+						if ( is_array( $custom_icons ) && ! empty( $custom_icons ) ) {
+							$this->render_icon_list_tab( $name, $custom_icons );
+
+							acf_localize_data(
+								array(
+									'iconPickerIcons_' . $name  => $custom_icons,
+								)
+							);
+						}
 				}
 
 				echo '</div>';
