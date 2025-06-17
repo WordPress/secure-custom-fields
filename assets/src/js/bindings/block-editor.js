@@ -165,26 +165,49 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						initialOpen={ true }
 					>
 						{ bindableAttributes.map( ( attribute ) => (
-							<PanelRow key={ `scf-field-${ attribute }` }>
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									__experimentalShowHowTo={ false }
-									__experimentalExpandOnFocus={ true }
-									__experimentalAutoSelectFirstMatch={ true }
-									label={ attribute }
-									placeholder={ __(
-										'Select a field',
-										'secure-custom-fields'
-									) }
-									options={ fieldsSuggestions }
-									value={ boundFields[ attribute ] || '' }
-									onChange={ ( value ) =>
-										handleFieldChange( attribute, value )
-									}
-									key={ `scf-field-${ attribute }` }
-								/>
-							</PanelRow>
+							<>
+								<PanelRow key={ `scf-field-${ attribute }` }>
+									<ComboboxControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										__experimentalShowHowTo={ false }
+										__experimentalExpandOnFocus={ true }
+										__experimentalAutoSelectFirstMatch={
+											true
+										}
+										label={ attribute }
+										placeholder={ __(
+											'Select a field',
+											'secure-custom-fields'
+										) }
+										options={ fieldsSuggestions }
+										value={ boundFields[ attribute ] || '' }
+										onChange={ ( value ) =>
+											handleFieldChange(
+												attribute,
+												value
+											)
+										}
+										key={ `scf-field-${ attribute }` }
+									/>
+								</PanelRow>
+								{ boundFields[ attribute ] && (
+									<PanelRow>
+										<Button
+											onClick={ () => {
+												console.log( 'edit' );
+											} }
+											__next40pxDefaultSize
+											variant="secondary"
+										>
+											{ __(
+												'Edit field',
+												'secure-custom-fields'
+											) }
+										</Button>
+									</PanelRow>
+								) }
+							</>
 						) ) }
 						<PanelRow>
 							<Button
