@@ -68,6 +68,43 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		}
 
 		/**
+		 * Renders an icon list tab (i.e. dashicons, custom icons).
+		 *
+		 * @since ACF 6.4
+		 *
+		 * @param string $tab_name The name of the tab being rendered.
+		 * @return void
+		 */
+		public function render_icon_list_tab( $tab_name ) {
+			?>
+			<div class="acf-icon-list-search-wrap">
+				<?php
+				acf_text_input(
+					array(
+						'class'       => 'acf-icon-list-search-input',
+						'placeholder' => esc_html__( 'Search icons...', 'secure-custom-fields' ),
+						'type'        => 'search',
+					)
+				);
+				?>
+			</div>
+			<div class="acf-icon-list" role="radiogroup" data-parent-tab="<?php echo esc_attr( $tab_name ); ?>"></div>
+			<div class="acf-icon-list-empty">
+				<img src="<?php echo esc_url( acf_get_url( 'assets/images/face-sad.svg' ) ); ?>" />
+				<p class="acf-no-results-text">
+					<?php
+					printf(
+						/* translators: %s: The invalid search term */
+						esc_html__( "No search results for '%s'", 'secure-custom-fields' ),
+						'<span class="acf-invalid-icon-list-search-term"></span>'
+					);
+					?>
+				</p>
+			</div>
+			<?php
+		}
+
+		/**
 		 * Renders icon picker field
 		 *
 		 * @since ACF 6.3
@@ -136,31 +173,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 
 				switch ( $name ) {
 					case 'dashicons':
-						echo '<div class="acf-dashicons-search-wrap">';
-							acf_text_input(
-								array(
-									'class'       => 'acf-dashicons-search-input',
-									'placeholder' => esc_html__( 'Search icons...', 'secure-custom-fields' ),
-									'type'        => 'search',
-								)
-							);
-						echo '</div>';
-						echo '<div class="acf-dashicons-list"></div>';
-						?>
-						<div class="acf-dashicons-list-empty">
-							<img src="<?php echo esc_url( acf_get_url( 'assets/images/face-sad.svg' ) ); ?>" />
-							<p class="acf-no-results-text">
-								<?php
-								printf(
-									/* translators: %s: The invalid search term */
-									esc_html__( "No search results for '%s'", 'secure-custom-fields' ),
-									'<span class="acf-invalid-dashicon-search-term"></span>'
-								);
-								?>
-							</p>
-						</div>
-
-						<?php
+						$this->render_icon_list_tab( $name );
 						break;
 					case 'media_library':
 						?>
