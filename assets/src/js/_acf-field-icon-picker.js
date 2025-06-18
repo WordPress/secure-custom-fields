@@ -187,12 +187,10 @@
 		},
 
 		getIconsList( tabName ) {
-			let icons;
-
 			if ( 'dashicons' === tabName ) {
 				const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
 
-				icons = Object.entries( iconPickeri10n ).map(
+				return Object.entries( iconPickeri10n ).map(
 					( [ key, value ] ) => {
 						return {
 							key,
@@ -200,11 +198,9 @@
 						};
 					}
 				);
-			} else {
-				icons = acf.get( `iconPickerIcons_${ tabName }` );
 			}
 
-			return icons;
+			return acf.get( `iconPickerIcons_${ tabName }` );
 		},
 
 		getDashiconsBySearch( searchTerm ) {
