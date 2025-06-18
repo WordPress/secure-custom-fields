@@ -37,6 +37,7 @@
 					multiple: this.get( 'multiple' ),
 					placeholder: this.get( 'placeholder' ),
 					allowNull: this.get( 'allow_null' ),
+					tags: this.get( 'create_options' ),
 					ajaxAction: ajaxAction,
 				} );
 			}
