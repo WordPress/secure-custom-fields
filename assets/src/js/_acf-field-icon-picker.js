@@ -43,8 +43,8 @@
 			return this.$( '.acf-icon-picker-list-icon.active input' );
 		},
 
-		$dashiconsList() {
-			return this.$( '.acf-icon-list' );
+		$iconsList() {
+			return this.$( '.acf-icon-list:visible' );
 		},
 
 		$mediaLibraryButton() {
@@ -120,7 +120,7 @@
 				return;
 			}
 
-			const scrollingDiv = this.$dashiconsList();
+			const scrollingDiv = this.$iconsList();
 			scrollingDiv.scrollTop( 0 );
 
 			const distance = innerElement.position().top - 50;
@@ -177,9 +177,9 @@
 		renderDashiconList() {
 			const dashicons = this.get( 'dashicons' );
 
-			this.$dashiconsList().empty();
+			this.$iconsList().empty();
 			dashicons.forEach( ( dashicon ) => {
-				this.$dashiconsList().append(
+				this.$iconsList().append(
 					this.renderDashiconHTML( dashicon )
 				);
 			} );
@@ -216,7 +216,7 @@
 			this.set( 'selectedDashicon', dashicon );
 
 			// Select the new one.
-			const $newIcon = this.$dashiconsList().find(
+			const $newIcon = this.$iconsList().find(
 				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 			$newIcon.addClass( 'active' );
@@ -235,7 +235,7 @@
 
 		unselectDashicon() {
 			// Remove the currently active dashicon, if any.
-			this.$dashiconsList()
+			this.$iconsList()
 				.find( '.acf-icon-picker-list-icon' )
 				.removeClass( 'active' );
 			this.set( 'selectedDashicon', false );
@@ -244,7 +244,7 @@
 		onDashiconRadioFocus( e ) {
 			const dashicon = e.target.value;
 
-			const $newIcon = this.$dashiconsList().find(
+			const $newIcon = this.$iconsList().find(
 				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 			$newIcon.addClass( 'focus' );
@@ -269,7 +269,7 @@
 			const icon = this.$( e.target );
 			const dashicon = icon.find( 'input' ).val();
 
-			const $newIcon = this.$dashiconsList().find(
+			const $newIcon = this.$iconsList().find(
 				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 
