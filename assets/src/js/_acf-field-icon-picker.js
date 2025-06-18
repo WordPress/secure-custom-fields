@@ -251,17 +251,21 @@
 		},
 
 		onIconRadioFocus( e ) {
-			const dashicon = e.target.value;
+			const icon = e.target.value;
+			const $tabs = this.$( e.target ).closest(
+				'.acf-icon-picker-tabs'
+			);
+			const $iconsList = $tabs.find( '.acf-icon-list' );
 
-			const $newIcon = this.$iconsList().find(
-				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
+			const $newIcon = $iconsList().find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 			$newIcon.addClass( 'focus' );
 
 			// If this is a different icon than previously selected, select it.
-			if ( this.get( 'selectedIcon' ) !== dashicon ) {
+			if ( this.get( 'selectedIcon' ) !== icon ) {
 				this.unselectIcon();
-				this.selectIcon( dashicon );
+				this.selectIcon( $iconsList, icon );
 			}
 		},
 
