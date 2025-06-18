@@ -133,10 +133,22 @@
 		},
 
 		initializeIconLists( typeAndValue ) {
-			const dashicons = this.getIconsList() || [];
-			this.set( 'dashicons', dashicons );
-			this.renderIconList();
-			this.initializeSelectedDashicon( typeAndValue );
+			const self = this;
+
+			this.$( '.acf-icon-list' ).each( function( i ) {
+				const tabName = $( this ).data( 'parent-tab' );
+				const icons = self.getIconsList( tabName ) || [];
+				self.set( tabName, icons );
+				self.renderIconList( $( this ) );
+
+				if ( typeAndValue.type === tabName ) {
+					// Select the correct icon.
+					self.selectIcon( tabName, typeAndValue.value, false ).then( () => {
+						// Scroll to the selected dashicon.
+						self.scrollToSelectedIcon();
+					} );
+				}
+			} );
 		},
 
 		initializeSelectedDashicon( typeAndValue ) {
