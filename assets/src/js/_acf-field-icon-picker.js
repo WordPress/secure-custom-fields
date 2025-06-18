@@ -157,7 +157,7 @@
 			}
 		},
 
-		renderDashiconHTML( dashicon ) {
+		renderIconHTML( dashicon ) {
 			const id = `${ this.get( 'name' ) }-${ dashicon.key }`;
 			return `<div class="dashicons ${ acf.strEscape(
 				dashicon.key
