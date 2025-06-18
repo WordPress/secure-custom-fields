@@ -5,14 +5,14 @@
 		wait: 'load',
 
 		events: {
-			showField: 'scrollToSelectedDashicon',
+			showField: 'scrollToSelectedIcon',
 			'input .acf-icon_url': 'onUrlChange',
-			'click .acf-icon-picker-list-icon': 'onDashiconClick',
-			'focus .acf-icon-picker-list-icon-radio': 'onDashiconRadioFocus',
-			'blur .acf-icon-picker-list-icon-radio': 'onDashiconRadioBlur',
-			'keydown .acf-icon-picker-list-icon-radio': 'onDashiconKeyDown',
-			'input .acf-icon-list-search-input': 'onDashiconSearch',
-			'keydown .acf-icon-list-search-input': 'onDashiconSearchKeyDown',
+			'click .acf-icon-picker-list-icon': 'onIconClick',
+			'focus .acf-icon-picker-list-icon-radio': 'onIconRadioFocus',
+			'blur .acf-icon-picker-list-icon-radio': 'onIconRadioBlur',
+			'keydown .acf-icon-picker-list-icon-radio': 'onIconKeyDown',
+			'input .acf-icon-list-search-input': 'onIconSearch',
+			'keydown .acf-icon-list-search-input': 'onIconSearchKeyDown',
 			'click .acf-icon-picker-media-library-button':
 				'onMediaLibraryButtonClick',
 			'click .acf-icon-picker-media-library-preview':
@@ -112,7 +112,7 @@
 			this.set( 'typeAndValue', typeAndValue );
 		},
 
-		scrollToSelectedDashicon() {
+		scrollToSelectedIcon() {
 			const innerElement = this.$selectedIcon();
 
 			// If no icon is selected, do nothing.
@@ -146,7 +146,7 @@
 			// Select the correct dashicon.
 			this.selectDashicon( typeAndValue.value, false ).then( () => {
 				// Scroll to the selected dashicon.
-				this.scrollToSelectedDashicon();
+				this.scrollToSelectedIcon();
 			} );
 		},
 
@@ -241,7 +241,7 @@
 			this.set( 'selectedDashicon', false );
 		},
 
-		onDashiconRadioFocus( e ) {
+		onIconRadioFocus( e ) {
 			const dashicon = e.target.value;
 
 			const $newIcon = this.$iconsList().find(
@@ -256,14 +256,14 @@
 			}
 		},
 
-		onDashiconRadioBlur( e ) {
+		onIconRadioBlur( e ) {
 			const icon = this.$( e.target );
 			const iconParent = icon.parent();
 
 			iconParent.removeClass( 'focus' );
 		},
 
-		onDashiconClick( e ) {
+		onIconClick( e ) {
 			e.preventDefault();
 
 			const icon = this.$( e.target );
@@ -273,11 +273,11 @@
 				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 
-			// By forcing focus on the input, we fire onDashiconRadioFocus.
+			// By forcing focus on the input, we fire onIconRadioFocus.
 			$newIcon.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
 		},
 
-		onDashiconSearch( e ) {
+		onIconSearch( e ) {
 			const searchTerm = e.target.value;
 			const filteredDashicons = this.getDashiconsBySearch( searchTerm );
 
@@ -315,7 +315,7 @@
 			}
 		},
 
-		onDashiconSearchKeyDown( e ) {
+		onIconSearchKeyDown( e ) {
 			// Check if the pressed key is Enter (key code 13)
 			if ( e.which === 13 ) {
 				// Prevent submitting the entire form if someone presses enter after searching.
@@ -323,7 +323,7 @@
 			}
 		},
 
-		onDashiconKeyDown( e ) {
+		onIconKeyDown( e ) {
 			if ( e.which === 13 ) {
 				// If someone presses enter while an icon is focused, prevent the form from submitting.
 				e.preventDefault();
