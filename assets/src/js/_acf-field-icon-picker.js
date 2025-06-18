@@ -175,15 +175,17 @@
 			</div>`;
 		},
 
-		renderIconList() {
-			const dashicons = this.get( 'dashicons' );
+		renderIconList( $el ) {
+			const tabName = $el.data( 'parent-tab' );
+			const icons = this.get( tabName );
 
-			this.$iconsList().empty();
-			dashicons.forEach( ( dashicon ) => {
-				this.$iconsList().append(
-					this.renderDashiconHTML( dashicon )
-				);
-			} );
+			$el.empty();
+			if ( icons ) {
+				icons.forEach( ( icon ) => {
+					const iconHTML = this.renderIconHTML( tabName, icon );
+					$el.append( iconHTML );
+				} );
+			}
 		},
 
 		getIconsList( tabName ) {
