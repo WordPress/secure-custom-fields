@@ -157,20 +157,24 @@
 			}
 		},
 
-		renderIconHTML( dashicon ) {
-			const id = `${ this.get( 'name' ) }-${ dashicon.key }`;
-			return `<div class="dashicons ${ acf.strEscape(
-				dashicon.key
-			) } acf-icon-picker-list-icon" data-icon="${ acf.strEscape(
-				dashicon.key
+		renderIconHTML( tabName, icon ) {
+			const id = `${ this.get( 'name' ) }-${ icon.key }`;
+			return `<div class="${ tabName } ${ acf.strEscape(
+				icon.key
+			) } acf-icon-picker-list-icon" role="radio" data-icon="${ acf.strEscape(
+				icon.key
+			) }" style="background: center / contain url( ${ acf.strEscape(
+				icon.url
+			) } ) no-repeat;" title="${ acf.strEscape(
+				icon.label
 			) }">
 				<label for="${ acf.strEscape( id ) }">${ acf.strEscape(
-					dashicon.label
+					icon.label
 				) }</label>
 				<input id="${ acf.strEscape(
 					id
 				) }" type="radio" class="acf-icon-picker-list-icon-radio" name="acf-icon-picker-list-icon-radio" value="${ acf.strEscape(
-					dashicon.key
+					icon.key
 				) }">
 			</div>`;
 		},
