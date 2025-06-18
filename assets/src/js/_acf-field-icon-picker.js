@@ -7,12 +7,12 @@
 		events: {
 			showField: 'scrollToSelectedDashicon',
 			'input .acf-icon_url': 'onUrlChange',
-			'click .acf-icon-picker-dashicon': 'onDashiconClick',
-			'focus .acf-icon-picker-dashicon-radio': 'onDashiconRadioFocus',
-			'blur .acf-icon-picker-dashicon-radio': 'onDashiconRadioBlur',
-			'keydown .acf-icon-picker-dashicon-radio': 'onDashiconKeyDown',
-			'input .acf-dashicons-search-input': 'onDashiconSearch',
-			'keydown .acf-dashicons-search-input': 'onDashiconSearchKeyDown',
+			'click .acf-icon-picker-list-icon': 'onDashiconClick',
+			'focus .acf-icon-picker-list-icon-radio': 'onDashiconRadioFocus',
+			'blur .acf-icon-picker-list-icon-radio': 'onDashiconRadioBlur',
+			'keydown .acf-icon-picker-list-icon-radio': 'onDashiconKeyDown',
+			'input .acf-icon-list-search-input': 'onDashiconSearch',
+			'keydown .acf-icon-list-search-input': 'onDashiconSearchKeyDown',
 			'click .acf-icon-picker-media-library-button':
 				'onMediaLibraryButtonClick',
 			'click .acf-icon-picker-media-library-preview':
@@ -36,15 +36,15 @@
 		},
 
 		$selectedIcon() {
-			return this.$( '.acf-icon-picker-dashicon.active' );
+			return this.$( '.acf-icon-picker-list-icon.active' );
 		},
 
 		$selectedRadio() {
-			return this.$( '.acf-icon-picker-dashicon.active input' );
+			return this.$( '.acf-icon-picker-list-icon.active input' );
 		},
 
 		$dashiconsList() {
-			return this.$( '.acf-dashicons-list' );
+			return this.$( '.acf-icon-list' );
 		},
 
 		$mediaLibraryButton() {
@@ -160,7 +160,7 @@
 			const id = `${ this.get( 'name' ) }-${ dashicon.key }`;
 			return `<div class="dashicons ${ acf.strEscape(
 				dashicon.key
-			) } acf-icon-picker-dashicon" data-icon="${ acf.strEscape(
+			) } acf-icon-picker-list-icon" data-icon="${ acf.strEscape(
 				dashicon.key
 			) }">
 				<label for="${ acf.strEscape( id ) }">${ acf.strEscape(
@@ -168,7 +168,7 @@
 				) }</label>
 				<input id="${ acf.strEscape(
 					id
-				) }" type="radio" class="acf-icon-picker-dashicon-radio" name="acf-icon-picker-dashicon-radio" value="${ acf.strEscape(
+				) }" type="radio" class="acf-icon-picker-list-icon-radio" name="acf-icon-picker-list-icon-radio" value="${ acf.strEscape(
 					dashicon.key
 				) }">
 			</div>`;
@@ -217,7 +217,7 @@
 
 			// Select the new one.
 			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 			$newIcon.addClass( 'active' );
 
@@ -236,7 +236,7 @@
 		unselectDashicon() {
 			// Remove the currently active dashicon, if any.
 			this.$dashiconsList()
-				.find( '.acf-icon-picker-dashicon' )
+				.find( '.acf-icon-picker-list-icon' )
 				.removeClass( 'active' );
 			this.set( 'selectedDashicon', false );
 		},
@@ -245,7 +245,7 @@
 			const dashicon = e.target.value;
 
 			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 			$newIcon.addClass( 'focus' );
 
@@ -270,7 +270,7 @@
 			const dashicon = icon.find( 'input' ).val();
 
 			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
 			);
 
 			// By forcing focus on the input, we fire onDashiconRadioFocus.
@@ -283,8 +283,8 @@
 
 			if ( filteredDashicons.length > 0 || ! searchTerm ) {
 				this.set( 'dashicons', filteredDashicons );
-				this.$( '.acf-dashicons-list-empty' ).hide();
-				this.$( '.acf-dashicons-list ' ).show();
+				this.$( '.acf-icon-list-empty' ).hide();
+				this.$( '.acf-icon-list ' ).show();
 				this.renderDashiconList();
 
 				// Announce change of data to screen readers.
@@ -300,12 +300,12 @@
 						? searchTerm.substring( 0, 30 ) + '&hellip;'
 						: searchTerm;
 
-				this.$( '.acf-dashicons-list ' ).hide();
-				this.$( '.acf-dashicons-list-empty' )
+				this.$( '.acf-icon-list ' ).hide();
+				this.$( '.acf-icon-list-empty' )
 					.find( '.acf-invalid-dashicon-search-term' )
 					.text( visualSearchTerm );
-				this.$( '.acf-dashicons-list-empty' ).css( 'display', 'flex' );
-				this.$( '.acf-dashicons-list-empty' ).show();
+				this.$( '.acf-icon-list-empty' ).css( 'display', 'flex' );
+				this.$( '.acf-icon-list-empty' ).show();
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
