@@ -64,9 +64,9 @@
 			// Store the type and value object.
 			this.set( 'typeAndValue', typeAndValue );
 
-			// Any time any acf tab is clicked, we will re-scroll to the selected dashicon.
+			// Any time any acf tab is clicked, we will re-scroll to the selected icons.
 			$( '.acf-tab-button' ).on( 'click', () => {
-				this.initializeDashiconsTab( this.get( 'typeAndValue' ) );
+				this.initializeIconLists( this.get( 'typeAndValue' ) );
 			} );
 
 			// Fire the action which lets people know the state has been updated.
@@ -75,7 +75,7 @@
 				typeAndValue
 			);
 
-			this.initializeDashiconsTab( typeAndValue );
+			this.initializeIconLists( typeAndValue );
 			this.alignMediaLibraryTabToCurrentValue( typeAndValue );
 		},
 
@@ -85,7 +85,7 @@
 				this.get( 'name' ) + '/type_and_value_change',
 				( newTypeAndValue ) => {
 					// Align the visual state of each tab to the current value.
-					this.alignDashiconsTabToCurrentValue( newTypeAndValue );
+					this.alignIconListTabsToCurrentValue( newTypeAndValue );
 					this.alignMediaLibraryTabToCurrentValue( newTypeAndValue );
 					this.alignUrlTabToCurrentValue( newTypeAndValue );
 				}
@@ -132,10 +132,10 @@
 			scrollingDiv.scrollTop( distance );
 		},
 
-		initializeDashiconsTab( typeAndValue ) {
-			const dashicons = this.getDashiconsList() || [];
+		initializeIconLists( typeAndValue ) {
+			const dashicons = this.getIconsList() || [];
 			this.set( 'dashicons', dashicons );
-			this.renderDashiconList();
+			this.renderIconList();
 			this.initializeSelectedDashicon( typeAndValue );
 		},
 
@@ -144,15 +144,15 @@
 				return;
 			}
 			// Select the correct dashicon.
-			this.selectDashicon( typeAndValue.value, false ).then( () => {
+			this.selectIcon( typeAndValue.value, false ).then( () => {
 				// Scroll to the selected dashicon.
 				this.scrollToSelectedIcon();
 			} );
 		},
 
-		alignDashiconsTabToCurrentValue( typeAndValue ) {
+		alignIconListTabsToCurrentValue( typeAndValue ) {
 			if ( typeAndValue.type !== 'dashicons' ) {
-				this.unselectDashicon();
+				this.unselectIcon();
 			}
 		},
 
@@ -174,7 +174,7 @@
 			</div>`;
 		},
 
-		renderDashiconList() {
+		renderIconList() {
 			const dashicons = this.get( 'dashicons' );
 
 			this.$iconsList().empty();
@@ -185,7 +185,7 @@
 			} );
 		},
 
-		getDashiconsList() {
+		getIconsList() {
 			const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
 
 			const dashicons = Object.entries( iconPickeri10n ).map(
@@ -202,7 +202,7 @@
 
 		getDashiconsBySearch( searchTerm ) {
 			const lowercaseSearchTerm = searchTerm.toLowerCase();
-			const dashicons = this.getDashiconsList();
+			const dashicons = this.getIconsList();
 
 			const filteredDashicons = dashicons.filter( function ( icon ) {
 				const lowercaseIconLabel = icon.label.toLowerCase();
@@ -212,8 +212,8 @@
 			return filteredDashicons;
 		},
 
-		selectDashicon( dashicon, setFocus = true ) {
-			this.set( 'selectedDashicon', dashicon );
+		selectIcon( dashicon, setFocus = true ) {
+			this.set( 'selectedIcon', dashicon );
 
 			// Select the new one.
 			const $newIcon = this.$iconsList().find(
@@ -233,12 +233,12 @@
 			return thePromise;
 		},
 
-		unselectDashicon() {
+		unselectIcon() {
 			// Remove the currently active dashicon, if any.
 			this.$iconsList()
 				.find( '.acf-icon-picker-list-icon' )
 				.removeClass( 'active' );
-			this.set( 'selectedDashicon', false );
+			this.set( 'selectedIcon', false );
 		},
 
 		onIconRadioFocus( e ) {
@@ -250,9 +250,9 @@
 			$newIcon.addClass( 'focus' );
 
 			// If this is a different icon than previously selected, select it.
-			if ( this.get( 'selectedDashicon' ) !== dashicon ) {
-				this.unselectDashicon();
-				this.selectDashicon( dashicon );
+			if ( this.get( 'selectedIcon' ) !== dashicon ) {
+				this.unselectIcon();
+				this.selectIcon( dashicon );
 			}
 		},
 
@@ -285,7 +285,7 @@
 				this.set( 'dashicons', filteredDashicons );
 				this.$( '.acf-icon-list-empty' ).hide();
 				this.$( '.acf-icon-list ' ).show();
-				this.renderDashiconList();
+				this.renderIconList();
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
