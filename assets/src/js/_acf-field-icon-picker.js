@@ -257,7 +257,7 @@
 			);
 			const $iconsList = $tabs.find( '.acf-icon-list' );
 
-			const $newIcon = $iconsList().find(
+			const $newIcon = $iconsList.find(
 				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 			$newIcon.addClass( 'focus' );
