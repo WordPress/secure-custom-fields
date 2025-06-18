@@ -209,16 +209,16 @@
 			return acf.get( `iconPickerIcons_${ tabName }` );
 		},
 
-		getDashiconsBySearch( searchTerm ) {
+		getIconsBySearch( searchTerm, tabName ) {
 			const lowercaseSearchTerm = searchTerm.toLowerCase();
-			const dashicons = this.getIconsList();
+			const icons = this.getIconsList( tabName);
 
-			const filteredDashicons = dashicons.filter( function ( icon ) {
+			const filteredIcons = icons.filter( function ( icon ) {
 				const lowercaseIconLabel = icon.label.toLowerCase();
 				return lowercaseIconLabel.indexOf( lowercaseSearchTerm ) > -1;
 			} );
 
-			return filteredDashicons;
+			return filteredIcons;
 		},
 
 		selectIcon( $el, icon, setFocus = true ) {
@@ -293,14 +293,19 @@
 		},
 
 		onIconSearch( e ) {
+			const $tabs = this.$( e.target ).closest(
+				'.acf-icon-picker-tabs'
+			);
+			const $iconsList = $tabs.find( '.acf-icon-list' );
+			const tabName = $tabs.data( 'tab' );
 			const searchTerm = e.target.value;
-			const filteredDashicons = this.getDashiconsBySearch( searchTerm );
+			const filteredIcons = this.getIconsBySearch( searchTerm, tabName );
 
-			if ( filteredDashicons.length > 0 || ! searchTerm ) {
-				this.set( 'dashicons', filteredDashicons );
+			if ( filteredIcons.length > 0 || ! searchTerm ) {
+				this.set( 'icons', filteredIcons );
 				this.$( '.acf-icon-list-empty' ).hide();
 				this.$( '.acf-icon-list ' ).show();
-				this.renderIconList();
+				this.renderIconList( $iconsList );
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
@@ -317,7 +322,7 @@
 
 				this.$( '.acf-icon-list ' ).hide();
 				this.$( '.acf-icon-list-empty' )
-					.find( '.acf-invalid-dashicon-search-term' )
+					.find( '.acf-invalid-icon-list-search-term' )
 					.text( visualSearchTerm );
 				this.$( '.acf-icon-list-empty' ).css( 'display', 'flex' );
 				this.$( '.acf-icon-list-empty' ).show();
