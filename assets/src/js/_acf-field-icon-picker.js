@@ -278,16 +278,18 @@
 
 		onIconClick( e ) {
 			e.preventDefault();
+			const $iconList = this.$( e.target ).closest(
+				'.acf-icon-list'
+			);
+			const $iconElement = this.$( e.target );
+			const icon = $iconElement.find( 'input' ).val();
 
-			const icon = this.$( e.target );
-			const dashicon = icon.find( 'input' ).val();
-
-			const $newIcon = this.$iconsList().find(
-				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
+			const $newIconElement = this.$iconsList().find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 
 			// By forcing focus on the input, we fire onIconRadioFocus.
-			$newIcon.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
+			$newIconElement.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
 		},
 
 		onIconSearch( e ) {
