@@ -242,9 +242,9 @@
 			return thePromise;
 		},
 
-		unselectIcon() {
+		unselectIcon( $el ) {
 			// Remove the currently active dashicon, if any.
-			this.$iconsList()
+			$el
 				.find( '.acf-icon-picker-list-icon' )
 				.removeClass( 'active' );
 			this.set( 'selectedIcon', false );
