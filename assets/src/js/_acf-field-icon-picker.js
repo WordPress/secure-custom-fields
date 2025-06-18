@@ -151,17 +151,6 @@
 			} );
 		},
 
-		initializeSelectedDashicon( typeAndValue ) {
-			if ( typeAndValue.type !== 'dashicons' ) {
-				return;
-			}
-			// Select the correct dashicon.
-			this.selectIcon( typeAndValue.value, false ).then( () => {
-				// Scroll to the selected dashicon.
-				this.scrollToSelectedIcon();
-			} );
-		},
-
 		alignIconListTabsToCurrentValue( typeAndValue ) {
 			if ( typeAndValue.type !== 'dashicons' ) {
 				this.unselectIcon();
