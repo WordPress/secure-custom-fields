@@ -143,7 +143,7 @@
 
 				if ( typeAndValue.type === tabName ) {
 					// Select the correct icon.
-					self.selectIcon( tabName, typeAndValue.value, false ).then( () => {
+					self.selectIcon( $( this ), typeAndValue.value, false ).then( () => {
 						// Scroll to the selected dashicon.
 						self.scrollToSelectedIcon();
 					} );
@@ -221,12 +221,12 @@
 			return filteredDashicons;
 		},
 
-		selectIcon( dashicon, setFocus = true ) {
-			this.set( 'selectedIcon', dashicon );
+		selectIcon( $el, icon, setFocus = true ) {
+			this.set( 'selectedIcon', icon );
 
 			// Select the new one.
-			const $newIcon = this.$iconsList().find(
-				'.acf-icon-picker-list-icon[data-icon="' + dashicon + '"]'
+			const $newIcon = $el.find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 			$newIcon.addClass( 'active' );
 
@@ -237,7 +237,7 @@
 				$input.trigger( 'focus' );
 			}
 
-			this.updateTypeAndValue( 'dashicons', dashicon );
+			this.updateTypeAndValue( $el.data( 'parent-tab' ), icon );
 
 			return thePromise;
 		},
