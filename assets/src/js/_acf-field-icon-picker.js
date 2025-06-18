@@ -264,7 +264,7 @@
 
 			// If this is a different icon than previously selected, select it.
 			if ( this.get( 'selectedIcon' ) !== icon ) {
-				this.unselectIcon();
+				this.unselectIcon( $iconsList );
 				this.selectIcon( $iconsList, icon );
 			}
 		},
