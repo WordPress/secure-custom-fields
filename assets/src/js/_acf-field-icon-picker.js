@@ -186,19 +186,25 @@
 			} );
 		},
 
-		getIconsList() {
-			const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
+		getIconsList( tabName ) {
+			let icons;
 
-			const dashicons = Object.entries( iconPickeri10n ).map(
-				( [ key, value ] ) => {
-					return {
-						key,
-						label: value,
-					};
-				}
-			);
+			if ( 'dashicons' === tabName ) {
+				const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
 
-			return dashicons;
+				icons = Object.entries( iconPickeri10n ).map(
+					( [ key, value ] ) => {
+						return {
+							key,
+							label: value,
+						};
+					}
+				);
+			} else {
+				icons = acf.get( `iconPickerIcons_${ tabName }` );
+			}
+
+			return icons;
 		},
 
 		getDashiconsBySearch( searchTerm ) {
