@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "652899b34da171aac8f751a6c639281f",
+    "content-hash": "f324620205a0da3fe8f94583046f472a",
     "packages": [],
     "packages-dev": [
         {
@@ -3474,6 +3474,49 @@
                 }
             ],
             "time": "2025-01-23T17:04:15+00:00"
+        },
+        {
+            "name": "stellarwp/php-stubs-woocommerce-subscriptions",
+            "version": "6.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stellarwp/php-stubs-woocommerce-subscriptions.git",
+                "reference": "59674dd9d870d5437d2d9a3e433f2ed9ddd4e3fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stellarwp/php-stubs-woocommerce-subscriptions/zipball/59674dd9d870d5437d2d9a3e433f2ed9ddd4e3fb",
+                "reference": "59674dd9d870d5437d2d9a3e433f2ed9ddd4e3fb",
+                "shasum": ""
+            },
+            "require": {
+                "php-stubs/wordpress-stubs": "^5.3 || ^6.0"
+            },
+            "require-dev": {
+                "php-stubs/generator": "^0.8.4"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "StellarWP",
+                    "email": "vendors@stellarwp.com"
+                }
+            ],
+            "description": "PHP tags for WooCommerce Subscriptions for use in PHPStan",
+            "keywords": [
+                "PHPStan",
+                "static analysis",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/stellarwp/php-stubs-woocommerce-subscriptions/issues",
+                "source": "https://github.com/stellarwp/php-stubs-woocommerce-subscriptions/tree/6.7.0"
+            },
+            "time": "2024-11-26T00:22:36+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
