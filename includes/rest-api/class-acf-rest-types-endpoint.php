@@ -50,7 +50,8 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Filter post types requests (both collection and individual)
+	 * Filter post types requests, fires for both collection and individual requests.
+	 * We only want to handle individual requets to ensure the post type requested matches the source.
 	 *
 	 * @since SCF 6.5.0
 	 *
@@ -60,16 +61,12 @@ class SCF_Rest_Types_Endpoint {
 	 * @return mixed The response or null.
 	 */
 	public function filter_types_request( $response, $handler, $request ) {
-		// Check if this is a types endpoint request
-		$route          = $request->get_route();
-		$is_collection  = '/wp/v2/types' === $route;
-		$is_single_type = preg_match( '#^/wp/v2/types/([^/]+)$#', $route, $matches );
-
-		if ( ! $is_collection && ! $is_single_type ) {
+		// We only want to handle individual requests
+		$route = $request->get_route();
+		if ( ! preg_match( '#^/wp/v2/types/([^/]+)$#', $route, $matches ) ) {
 			return $response;
 		}
 
-		// Get the source parameter
 		$source = $request->get_param( 'source' );
 
 		// Only proceed if source parameter is provided and valid
@@ -83,22 +80,15 @@ class SCF_Rest_Types_Endpoint {
 		}
 		$source_post_types = $this->cached_post_types;
 
-		// For single post type requests, check if it matches the source
-		if ( $is_single_type && isset( $matches[1] ) ) {
-			$requested_type = $matches[1];
-
-			// If the requested type doesn't match the source, return 404
-			if ( ! in_array( $requested_type, $source_post_types, true ) ) {
-				return new WP_Error(
-					'rest_post_type_invalid',
-					__( 'Invalid post type.', 'secure-custom-fields' ),
-					array( 'status' => 404 )
-				);
-			}
+		// Check if the requested type matches the source
+		$requested_type = $matches[1];
+		if ( ! in_array( $requested_type, $source_post_types, true ) ) {
+			return new WP_Error(
+				'rest_post_type_invalid',
+				__( 'Invalid post type.', 'secure-custom-fields' ),
+				array( 'status' => 404 )
+			);
 		}
-		// For collection requests, we don't need to add any filter here
-		// as clean_types_response will handle removing null values from the response
-		// and filter_post_type will handle individual filtering
 
 		return $response;
 	}
@@ -155,8 +145,6 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		if ( 'scf' === $source || 'other' === $source ) {
-			$scf_types = array();
-
 			// Get SCF-managed post types
 			if ( function_exists( 'acf_get_internal_post_type_posts' ) ) {
 				$scf_managed_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
