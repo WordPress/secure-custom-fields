@@ -11,9 +11,7 @@ parameters:
 		- docs
 		- lang
 		- wordpress (?)
+		- includes/forms/WC_Order.php
 	bootstrapFiles:
 		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
-		- vendor/stellarwp/php-stubs-woocommerce-subscriptions/woocommerce-subscriptions.php
 		- bin/phpstan-bootstrap.php
-	ignoreErrors:
-		- '#Declaration of WC_Product_Subscription_Variation_Legacy::get_parent_id#'
