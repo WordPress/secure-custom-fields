@@ -22,6 +22,7 @@ class WC_Order {
 	 */
 	public function __construct() {
 		add_action( 'load-woocommerce_page_wc-orders', array( $this, 'initialize' ) );
+		add_action( 'load-woocommerce_page_wc-orders--shop_subscription', array( $this, 'initialize' ) );
 		add_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10, 1 );
 	}
 
