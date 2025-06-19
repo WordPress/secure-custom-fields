@@ -152,9 +152,17 @@
 		},
 
 		alignIconListTabsToCurrentValue( typeAndValue ) {
-			if ( typeAndValue.type !== 'dashicons' ) {
-				this.unselectIcon();
-			}
+			const icons = this.$( '.acf-icon-list' ).filter(
+				function () {
+					return (
+						$( this ).data( 'parent-tab' ) !== typeAndValue.type
+					);
+				}
+			);
+			self = this;
+			icons.each( function () {
+				self.unselectIcon( $( this ) );
+			} );
 		},
 
 		renderIconHTML( tabName, icon ) {
