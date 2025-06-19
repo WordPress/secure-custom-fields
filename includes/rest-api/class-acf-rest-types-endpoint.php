@@ -44,6 +44,9 @@ class SCF_Rest_Types_Endpoint {
 
 		// Clean up null entries from the response
 		add_filter( 'rest_pre_echo_response', array( $this, 'clean_types_response' ), 10, 3 );
+
+		// Clear cache after each request to make the endpoint stateless
+		add_action( 'rest_request_after_callbacks', array( $this, 'clear_cache_for_types_request' ), 10, 1 );
 	}
 
 	/**
@@ -74,7 +77,7 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
-		// Get post types, calculating once and reusing for the entire request
+		// Get post types with caching within this single request
 		if ( null === $this->cached_post_types ) {
 			$this->cached_post_types = $this->get_source_post_types( $source );
 		}
@@ -118,6 +121,7 @@ class SCF_Rest_Types_Endpoint {
 			return $response;
 		}
 
+		// Get post types with caching within this single request
 		if ( null === $this->cached_post_types ) {
 			$this->cached_post_types = $this->get_source_post_types( $source );
 		}
@@ -389,6 +393,19 @@ class SCF_Rest_Types_Endpoint {
 			);
 		}
 
+		return $response;
+	}
+
+	/**
+	 * Clear cache for types endpoint requests to prevent cross-contamination
+	 *
+	 * @since SCF 6.5.0
+	 *
+	 * @param mixed $response The current response.
+	 */
+	public function clear_cache_for_types_request( $response ) {
+		// Clear cache to prevent cross-contamination and make the endpoint stateless
+		$this->cached_post_types = null;
 		return $response;
 	}
 }
