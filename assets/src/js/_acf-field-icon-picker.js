@@ -298,7 +298,7 @@
 			const $iconElement = this.$( e.target );
 			const icon = $iconElement.find( 'input' ).val();
 
-			const $newIconElement = this.$iconsList().find(
+			const $newIconElement = $iconList.find(
 				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 
@@ -310,16 +310,16 @@
 			const $tabs = this.$( e.target ).closest(
 				'.acf-icon-picker-tabs'
 			);
-			const $iconsList = $tabs.find( '.acf-icon-list' );
+			const $iconList = $tabs.find( '.acf-icon-list' );
 			const tabName = $tabs.data( 'tab' );
 			const searchTerm = e.target.value;
 			const filteredIcons = this.getIconsBySearch( searchTerm, tabName );
 
 			if ( filteredIcons.length > 0 || ! searchTerm ) {
 				this.set( tabName, filteredIcons );
-				this.$( '.acf-icon-list-empty' ).hide();
-				this.$( '.acf-icon-list ' ).show();
-				this.renderIconList( $iconsList );
+				$tabs.find( '.acf-icon-list-empty' ).hide();
+				$tabs.find( '.acf-icon-list ' ).show();
+				this.renderIconList( $iconList );
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
@@ -334,12 +334,12 @@
 						? searchTerm.substring( 0, 30 ) + '&hellip;'
 						: searchTerm;
 
-				this.$( '.acf-icon-list ' ).hide();
-				this.$( '.acf-icon-list-empty' )
+				$tabs.find( '.acf-icon-list ' ).hide();
+				$tabs.find( '.acf-icon-list-empty' )
 					.find( '.acf-invalid-icon-list-search-term' )
 					.text( visualSearchTerm );
-				this.$( '.acf-icon-list-empty' ).css( 'display', 'flex' );
-				this.$( '.acf-icon-list-empty' ).show();
+				$tabs.find( '.acf-icon-list-empty' ).css( 'display', 'flex' );
+				$tabs.find( '.acf-icon-list-empty' ).show();
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
