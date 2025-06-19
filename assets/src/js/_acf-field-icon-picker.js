@@ -159,7 +159,7 @@
 					);
 				}
 			);
-			self = this;
+			const self = this;
 			icons.each( function () {
 				self.unselectIcon( $( this ) );
 			} );
