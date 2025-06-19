@@ -64,7 +64,7 @@
 			// Store the type and value object.
 			this.set( 'typeAndValue', typeAndValue );
 
-			// Any time any acf tab is clicked, we will re-scroll to the selected icons.
+			// Any time any acf tab is clicked, we will re-scroll to the selected icon.
 			$( '.acf-tab-button' ).on( 'click', () => {
 				this.initializeIconLists( this.get( 'typeAndValue' ) );
 			} );
@@ -144,7 +144,7 @@
 				if ( typeAndValue.type === tabName ) {
 					// Select the correct icon.
 					self.selectIcon( $( this ), typeAndValue.value, false ).then( () => {
-						// Scroll to the selected dashicon.
+						// Scroll to the selected icon.
 						self.scrollToSelectedIcon();
 					} );
 				}
