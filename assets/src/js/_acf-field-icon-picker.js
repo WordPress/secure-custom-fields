@@ -120,7 +120,7 @@
 				return;
 			}
 
-			const scrollingDiv = this.$iconsList();
+			const scrollingDiv = innerElement.closest( '.acf-icon-list' );
 			scrollingDiv.scrollTop( 0 );
 
 			const distance = innerElement.position().top - 50;
