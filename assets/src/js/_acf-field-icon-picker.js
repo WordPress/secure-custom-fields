@@ -302,7 +302,7 @@
 			const filteredIcons = this.getIconsBySearch( searchTerm, tabName );
 
 			if ( filteredIcons.length > 0 || ! searchTerm ) {
-				this.set( 'icons', filteredIcons );
+				this.set( tabName, filteredIcons );
 				this.$( '.acf-icon-list-empty' ).hide();
 				this.$( '.acf-icon-list ' ).show();
 				this.renderIconList( $iconsList );
