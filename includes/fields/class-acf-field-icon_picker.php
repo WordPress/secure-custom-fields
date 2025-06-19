@@ -232,7 +232,7 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 						$custom_icons = apply_filters( 'acf/fields/icon_picker/' . $name . '/icons', array(), $field );
 
 						if ( is_array( $custom_icons ) && ! empty( $custom_icons ) ) {
-							$this->render_icon_list_tab( $name, $custom_icons );
+							$this->render_icon_list_tab( $name );
 
 							acf_localize_data(
 								array(
