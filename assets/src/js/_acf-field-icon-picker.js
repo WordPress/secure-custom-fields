@@ -5,14 +5,14 @@
 		wait: 'load',
 
 		events: {
-			showField: 'scrollToSelectedDashicon',
+			showField: 'scrollToSelectedIcon',
 			'input .acf-icon_url': 'onUrlChange',
-			'click .acf-icon-picker-dashicon': 'onDashiconClick',
-			'focus .acf-icon-picker-dashicon-radio': 'onDashiconRadioFocus',
-			'blur .acf-icon-picker-dashicon-radio': 'onDashiconRadioBlur',
-			'keydown .acf-icon-picker-dashicon-radio': 'onDashiconKeyDown',
-			'input .acf-dashicons-search-input': 'onDashiconSearch',
-			'keydown .acf-dashicons-search-input': 'onDashiconSearchKeyDown',
+			'click .acf-icon-picker-list-icon': 'onIconClick',
+			'focus .acf-icon-picker-list-icon-radio': 'onIconRadioFocus',
+			'blur .acf-icon-picker-list-icon-radio': 'onIconRadioBlur',
+			'keydown .acf-icon-picker-list-icon-radio': 'onIconKeyDown',
+			'input .acf-icon-list-search-input': 'onIconSearch',
+			'keydown .acf-icon-list-search-input': 'onIconSearchKeyDown',
 			'click .acf-icon-picker-media-library-button':
 				'onMediaLibraryButtonClick',
 			'click .acf-icon-picker-media-library-preview':
@@ -36,15 +36,15 @@
 		},
 
 		$selectedIcon() {
-			return this.$( '.acf-icon-picker-dashicon.active' );
+			return this.$( '.acf-icon-picker-list-icon.active' );
 		},
 
 		$selectedRadio() {
-			return this.$( '.acf-icon-picker-dashicon.active input' );
+			return this.$( '.acf-icon-picker-list-icon.active input' );
 		},
 
-		$dashiconsList() {
-			return this.$( '.acf-dashicons-list' );
+		$iconsList() {
+			return this.$( '.acf-icon-list:visible' );
 		},
 
 		$mediaLibraryButton() {
@@ -64,9 +64,9 @@
 			// Store the type and value object.
 			this.set( 'typeAndValue', typeAndValue );
 
-			// Any time any acf tab is clicked, we will re-scroll to the selected dashicon.
+			// Any time any acf tab is clicked, we will re-scroll to the selected icon.
 			$( '.acf-tab-button' ).on( 'click', () => {
-				this.initializeDashiconsTab( this.get( 'typeAndValue' ) );
+				this.initializeIconLists( this.get( 'typeAndValue' ) );
 			} );
 
 			// Fire the action which lets people know the state has been updated.
@@ -75,7 +75,7 @@
 				typeAndValue
 			);
 
-			this.initializeDashiconsTab( typeAndValue );
+			this.initializeIconLists( typeAndValue );
 			this.alignMediaLibraryTabToCurrentValue( typeAndValue );
 		},
 
@@ -85,7 +85,7 @@
 				this.get( 'name' ) + '/type_and_value_change',
 				( newTypeAndValue ) => {
 					// Align the visual state of each tab to the current value.
-					this.alignDashiconsTabToCurrentValue( newTypeAndValue );
+					this.alignIconListTabsToCurrentValue( newTypeAndValue );
 					this.alignMediaLibraryTabToCurrentValue( newTypeAndValue );
 					this.alignUrlTabToCurrentValue( newTypeAndValue );
 				}
@@ -112,7 +112,7 @@
 			this.set( 'typeAndValue', typeAndValue );
 		},
 
-		scrollToSelectedDashicon() {
+		scrollToSelectedIcon() {
 			const innerElement = this.$selectedIcon();
 
 			// If no icon is selected, do nothing.
@@ -120,7 +120,7 @@
 				return;
 			}
 
-			const scrollingDiv = this.$dashiconsList();
+			const scrollingDiv = innerElement.closest( '.acf-icon-list' );
 			scrollingDiv.scrollTop( 0 );
 
 			const distance = innerElement.position().top - 50;
@@ -132,92 +132,115 @@
 			scrollingDiv.scrollTop( distance );
 		},
 
-		initializeDashiconsTab( typeAndValue ) {
-			const dashicons = this.getDashiconsList() || [];
-			this.set( 'dashicons', dashicons );
-			this.renderDashiconList();
-			this.initializeSelectedDashicon( typeAndValue );
-		},
+		initializeIconLists( typeAndValue ) {
+			const self = this;
 
-		initializeSelectedDashicon( typeAndValue ) {
-			if ( typeAndValue.type !== 'dashicons' ) {
-				return;
-			}
-			// Select the correct dashicon.
-			this.selectDashicon( typeAndValue.value, false ).then( () => {
-				// Scroll to the selected dashicon.
-				this.scrollToSelectedDashicon();
+			this.$( '.acf-icon-list' ).each( function( i ) {
+				const tabName = $( this ).data( 'parent-tab' );
+				const icons = self.getIconsList( tabName ) || [];
+				self.set( tabName, icons );
+				self.renderIconList( $( this ) );
+
+				if ( typeAndValue.type === tabName ) {
+					// Select the correct icon.
+					self.selectIcon( $( this ), typeAndValue.value, false ).then( () => {
+						// Scroll to the selected icon.
+						self.scrollToSelectedIcon();
+					} );
+				}
 			} );
 		},
 
-		alignDashiconsTabToCurrentValue( typeAndValue ) {
-			if ( typeAndValue.type !== 'dashicons' ) {
-				this.unselectDashicon();
-			}
+		alignIconListTabsToCurrentValue( typeAndValue ) {
+			const icons = this.$( '.acf-icon-list' ).filter(
+				function () {
+					return (
+						$( this ).data( 'parent-tab' ) !== typeAndValue.type
+					);
+				}
+			);
+			const self = this;
+			icons.each( function () {
+				self.unselectIcon( $( this ) );
+			} );
 		},
 
-		renderDashiconHTML( dashicon ) {
-			const id = `${ this.get( 'name' ) }-${ dashicon.key }`;
-			return `<div class="dashicons ${ acf.strEscape(
-				dashicon.key
-			) } acf-icon-picker-dashicon" data-icon="${ acf.strEscape(
-				dashicon.key
+		renderIconHTML( tabName, icon ) {
+			const id = `${ this.get( 'name' ) }-${ icon.key }`;
+
+			let style = '';
+			if ( 'dashicons' !== tabName ) {
+				style = `background: center / contain url( ${ acf.strEscape(
+					icon.url
+				) } ) no-repeat;`;
+			}
+
+			return `<div class="${ tabName } ${ acf.strEscape(
+				icon.key
+			) } acf-icon-picker-list-icon" role="radio" data-icon="${ acf.strEscape(
+				icon.key
+			) }" style="${ style }" title="${ acf.strEscape(
+				icon.label
 			) }">
 				<label for="${ acf.strEscape( id ) }">${ acf.strEscape(
-					dashicon.label
+					icon.label
 				) }</label>
 				<input id="${ acf.strEscape(
 					id
-				) }" type="radio" class="acf-icon-picker-dashicon-radio" name="acf-icon-picker-dashicon-radio" value="${ acf.strEscape(
-					dashicon.key
+				) }" type="radio" class="acf-icon-picker-list-icon-radio" name="acf-icon-picker-list-icon-radio" value="${ acf.strEscape(
+					icon.key
 				) }">
 			</div>`;
 		},
 
-		renderDashiconList() {
-			const dashicons = this.get( 'dashicons' );
+		renderIconList( $el ) {
+			const tabName = $el.data( 'parent-tab' );
+			const icons = this.get( tabName );
 
-			this.$dashiconsList().empty();
-			dashicons.forEach( ( dashicon ) => {
-				this.$dashiconsList().append(
-					this.renderDashiconHTML( dashicon )
+			$el.empty();
+			if ( icons ) {
+				icons.forEach( ( icon ) => {
+					const iconHTML = this.renderIconHTML( tabName, icon );
+					$el.append( iconHTML );
+				} );
+			}
+		},
+
+		getIconsList( tabName ) {
+			if ( 'dashicons' === tabName ) {
+				const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
+
+				return Object.entries( iconPickeri10n ).map(
+					( [ key, value ] ) => {
+						return {
+							key,
+							label: value,
+						};
+					}
 				);
-			} );
+			}
+
+			return acf.get( `iconPickerIcons_${ tabName }` );
 		},
 
-		getDashiconsList() {
-			const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
-
-			const dashicons = Object.entries( iconPickeri10n ).map(
-				( [ key, value ] ) => {
-					return {
-						key,
-						label: value,
-					};
-				}
-			);
-
-			return dashicons;
-		},
-
-		getDashiconsBySearch( searchTerm ) {
+		getIconsBySearch( searchTerm, tabName ) {
 			const lowercaseSearchTerm = searchTerm.toLowerCase();
-			const dashicons = this.getDashiconsList();
+			const icons = this.getIconsList( tabName);
 
-			const filteredDashicons = dashicons.filter( function ( icon ) {
+			const filteredIcons = icons.filter( function ( icon ) {
 				const lowercaseIconLabel = icon.label.toLowerCase();
 				return lowercaseIconLabel.indexOf( lowercaseSearchTerm ) > -1;
 			} );
 
-			return filteredDashicons;
+			return filteredIcons;
 		},
 
-		selectDashicon( dashicon, setFocus = true ) {
-			this.set( 'selectedDashicon', dashicon );
+		selectIcon( $el, icon, setFocus = true ) {
+			this.set( 'selectedIcon', icon );
 
 			// Select the new one.
-			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+			const $newIcon = $el.find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 			$newIcon.addClass( 'active' );
 
@@ -228,64 +251,75 @@
 				$input.trigger( 'focus' );
 			}
 
-			this.updateTypeAndValue( 'dashicons', dashicon );
+			this.updateTypeAndValue( $el.data( 'parent-tab' ), icon );
 
 			return thePromise;
 		},
 
-		unselectDashicon() {
+		unselectIcon( $el ) {
 			// Remove the currently active dashicon, if any.
-			this.$dashiconsList()
-				.find( '.acf-icon-picker-dashicon' )
+			$el
+				.find( '.acf-icon-picker-list-icon' )
 				.removeClass( 'active' );
-			this.set( 'selectedDashicon', false );
+			this.set( 'selectedIcon', false );
 		},
 
-		onDashiconRadioFocus( e ) {
-			const dashicon = e.target.value;
+		onIconRadioFocus( e ) {
+			const icon = e.target.value;
+			const $tabs = this.$( e.target ).closest(
+				'.acf-icon-picker-tabs'
+			);
+			const $iconsList = $tabs.find( '.acf-icon-list' );
 
-			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+			const $newIcon = $iconsList.find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 			$newIcon.addClass( 'focus' );
 
 			// If this is a different icon than previously selected, select it.
-			if ( this.get( 'selectedDashicon' ) !== dashicon ) {
-				this.unselectDashicon();
-				this.selectDashicon( dashicon );
+			if ( this.get( 'selectedIcon' ) !== icon ) {
+				this.unselectIcon( $iconsList );
+				this.selectIcon( $iconsList, icon );
 			}
 		},
 
-		onDashiconRadioBlur( e ) {
+		onIconRadioBlur( e ) {
 			const icon = this.$( e.target );
 			const iconParent = icon.parent();
 
 			iconParent.removeClass( 'focus' );
 		},
 
-		onDashiconClick( e ) {
+		onIconClick( e ) {
 			e.preventDefault();
+			const $iconList = this.$( e.target ).closest(
+				'.acf-icon-list'
+			);
+			const $iconElement = this.$( e.target );
+			const icon = $iconElement.find( 'input' ).val();
 
-			const icon = this.$( e.target );
-			const dashicon = icon.find( 'input' ).val();
-
-			const $newIcon = this.$dashiconsList().find(
-				'.acf-icon-picker-dashicon[data-icon="' + dashicon + '"]'
+			const $newIconElement = $iconList.find(
+				'.acf-icon-picker-list-icon[data-icon="' + icon + '"]'
 			);
 
-			// By forcing focus on the input, we fire onDashiconRadioFocus.
-			$newIcon.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
+			// By forcing focus on the input, we fire onIconRadioFocus.
+			$newIconElement.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
 		},
 
-		onDashiconSearch( e ) {
+		onIconSearch( e ) {
+			const $tabs = this.$( e.target ).closest(
+				'.acf-icon-picker-tabs'
+			);
+			const $iconList = $tabs.find( '.acf-icon-list' );
+			const tabName = $tabs.data( 'tab' );
 			const searchTerm = e.target.value;
-			const filteredDashicons = this.getDashiconsBySearch( searchTerm );
+			const filteredIcons = this.getIconsBySearch( searchTerm, tabName );
 
-			if ( filteredDashicons.length > 0 || ! searchTerm ) {
-				this.set( 'dashicons', filteredDashicons );
-				this.$( '.acf-dashicons-list-empty' ).hide();
-				this.$( '.acf-dashicons-list ' ).show();
-				this.renderDashiconList();
+			if ( filteredIcons.length > 0 || ! searchTerm ) {
+				this.set( tabName, filteredIcons );
+				$tabs.find( '.acf-icon-list-empty' ).hide();
+				$tabs.find( '.acf-icon-list ' ).show();
+				this.renderIconList( $iconList );
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
@@ -300,12 +334,12 @@
 						? searchTerm.substring( 0, 30 ) + '&hellip;'
 						: searchTerm;
 
-				this.$( '.acf-dashicons-list ' ).hide();
-				this.$( '.acf-dashicons-list-empty' )
-					.find( '.acf-invalid-dashicon-search-term' )
+				$tabs.find( '.acf-icon-list ' ).hide();
+				$tabs.find( '.acf-icon-list-empty' )
+					.find( '.acf-invalid-icon-list-search-term' )
 					.text( visualSearchTerm );
-				this.$( '.acf-dashicons-list-empty' ).css( 'display', 'flex' );
-				this.$( '.acf-dashicons-list-empty' ).show();
+				$tabs.find( '.acf-icon-list-empty' ).css( 'display', 'flex' );
+				$tabs.find( '.acf-icon-list-empty' ).show();
 
 				// Announce change of data to screen readers.
 				wp.a11y.speak(
@@ -315,7 +349,7 @@
 			}
 		},
 
-		onDashiconSearchKeyDown( e ) {
+		onIconSearchKeyDown( e ) {
 			// Check if the pressed key is Enter (key code 13)
 			if ( e.which === 13 ) {
 				// Prevent submitting the entire form if someone presses enter after searching.
@@ -323,7 +357,7 @@
 			}
 		},
 
-		onDashiconKeyDown( e ) {
+		onIconKeyDown( e ) {
 			if ( e.which === 13 ) {
 				// If someone presses enter while an icon is focused, prevent the form from submitting.
 				e.preventDefault();
