@@ -1058,7 +1058,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				)
 			);
 
-			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'] ) ) {
+			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) ) {
 				$error = array( 'error' => __( 'Invalid nonce.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 401 );
 			}
