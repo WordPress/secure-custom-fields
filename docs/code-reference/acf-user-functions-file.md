@@ -32,11 +32,9 @@ acf_get_user_role_labels
 
 ## `acf_allow_unfiltered_html()`
 
-acf_allow_unfiltered_html
+Returns true if the current user is allowed to save unfiltered HTML.
 
-* Returns true if the current user is allowed to save unfiltered HTML.
-* @date    9/1/19
-* @since ACF 5.7.10
+* @since   ACF 5.7.10
 * @return  boolean
 
 ---

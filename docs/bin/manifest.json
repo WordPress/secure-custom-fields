@@ -259,6 +259,11 @@
         "parent": "welcome",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/quick-start.md"
     },
+    "code-reference/admin/admin-commands-file": {
+        "slug": "admin-commands-file",
+        "parent": "admin",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/admin/admin-commands-file.md"
+    },
     "code-reference/admin/admin-notices-file": {
         "slug": "admin-notices-file",
         "parent": "admin",
@@ -268,6 +273,11 @@
         "slug": "admin-tools-file",
         "parent": "admin",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/admin/admin-tools-file.md"
+    },
+    "code-reference/admin/beta-features-file": {
+        "slug": "beta-features-file",
+        "parent": "admin",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/admin/beta-features-file.md"
     },
     "code-reference/api/api-helpers-file": {
         "slug": "api-helpers-file",
@@ -313,6 +323,11 @@
         "slug": "class-acf-rest-request-file",
         "parent": "rest-api",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/rest-api/class-acf-rest-request-file.md"
+    },
+    "code-reference/rest-api/class-acf-rest-types-endpoint-file": {
+        "slug": "class-acf-rest-types-endpoint-file",
+        "parent": "rest-api",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/rest-api/class-acf-rest-types-endpoint-file.md"
     },
     "features/field/accordion": {
         "slug": "accordion",
@@ -398,6 +413,11 @@
         "slug": "message",
         "parent": "field",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/message/index.md"
+    },
+    "features/field/nav_menu": {
+        "slug": "nav_menu",
+        "parent": "field",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/nav_menu/index.md"
     },
     "features/field/number": {
         "slug": "number",
@@ -578,6 +598,11 @@
         "slug": "message-tutorial",
         "parent": "message",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/message/tutorial.md"
+    },
+    "features/field/nav_menu/tutorial": {
+        "slug": "nav_menu-tutorial",
+        "parent": "nav_menu",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/nav_menu/tutorial.md"
     },
     "features/field/number/tutorial": {
         "slug": "number-tutorial",

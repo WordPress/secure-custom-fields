@@ -38,6 +38,6 @@ alias of acf()->loop->remove_loop()
 * @date 6/10/13
 * @since ACF 5.0.0
 * @param   n/a
-* @return n/a
+* @return bool
 
 ---
