@@ -69,7 +69,7 @@ Returns true if the provided rule matches the screen args.
 * @since ACF 5.6.0
 * @param   array $rule   The location rule.
 * @param array $screen The screen args.
-* @param array $field  The field group array.
+* @param array $field_group  The field group array.
 * @return boolean
 
 ## `acf_get_location_screen()`
@@ -79,7 +79,7 @@ Returns ann array of screen args to be used against matching rules.
 * @date    8/4/20
 * @since ACF 5.9.0
 * @param   array $screen     The screen args.
-* @param array $deprecated The field group array.
+* @param array $deprecated Deprecated.
 * @return array
 
 ## `acf_register_location_rule()`

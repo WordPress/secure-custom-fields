@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 6.4.2
+Stable tag: 6.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,34 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.5.0 =
+*Release Date 23 Jun 2025*
+
+*Enhancements & Features*
+
+- Added Command Palette support.
+- Added editor preview to acf-field source.
+- Added an endpoint to retrieve the custom fields of a post type.
+- Added nav menu as field type.
+- Added compatibility with Woo HPOS for order fields and subscriptions. ( Ported from ACF )
+- Create new options when editing a fields value on Selector. ( Ported from ACF )
+- The “Escaped HTML” warning notice is now disabled by default. ( Ported from ACF )
+- Added new `acf/fields/icon_picker/{tab_name}/icons` filter ( Ported from ACF )
+
+*Bug Fixes*
+
+- Update initialization of the acfL10n object to ensure it's available globally.
+- SCF Blocks are now forced into preview mode when editing a synced pattern. ( Ported from ACF )
+- SCF no longer causes an infinite loop in bbPress when editing replies. ( Ported from ACF )
+- Changing a field type no longer enables the “Allow Access to Value in Editor UI” setting. ( Ported from ACF )
+- Blocks registered via acf_register_block_type() with a `parent` value of `null` no longer fail to register. ( Ported from ACF )
+- Fix AJAX repeater pagination. ( Ported from ACF )
+- Paginated Repeater fields no longer save duplicate values when saving to a WooCommerce Order with HPOS disabled ( Ported from ACF )
+
+*Testing*
+
+- Added an initial batch of e2e tests.
+
 = 6.4.2 =
 *Release Date 14 Apr 2025*
 

@@ -26,7 +26,7 @@ Guide for contributing to Secure Custom Fields development.
 
 1. Fork the repository
 2. Set up local environment
-   - The local environment runs with WP env, for setup, see: https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/ along with prerequisites.
+   - The local environment runs with WP env, for setup, see: <https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/> along with prerequisites.
 3. Install dependencies
    - run `composer install`
    - build the plugin files (JS/CSS) via `npm run build`
