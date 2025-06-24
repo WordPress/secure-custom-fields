@@ -37,7 +37,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
+		if ( ! (bool) get_option( 'scf_beta_feature_connect_fields_enabled', false ) ) {
 			return;
 		}
 		$post_types = get_post_types( array( 'show_in_rest' => true ) );
