@@ -112,6 +112,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		// Initialize the field state with an empty object to track multiple attributes
 		const [ boundFields, setBoundFields ] = useState( {} );
+		const [ allBoundFields, setAllBoundFields ] = useState(
+			props.name === 'core/image'
+		);
 
 		// Memoize the stringified currentBindings to avoid unnecessary effect runs
 		const currentBindingsKey = useMemo(
@@ -133,36 +136,48 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				} );
 
 				setBoundFields( initialBoundFields );
+			} else {
+				// Clear bound fields when there are no current bindings
+				setBoundFields( {} );
 			}
 		}, [ currentBindingsKey ] );
 
 		// Memoize the change handler to prevent creating new function on each render
 		const handleFieldChange = useCallback(
 			( attributes, value ) => {
-				if ( attributes.length > 1 ) {
+				// Ensure attributes is always an array
+				const attributeArray = Array.isArray( attributes )
+					? attributes
+					: [ attributes ];
+
+				if ( attributeArray.length > 1 ) {
 					setBoundFields( ( prevState ) => {
 						const newState = { ...prevState };
-						attributes.forEach( ( attr ) => {
+						const bindings = {};
+
+						attributeArray.forEach( ( attr ) => {
 							newState[ attr ] = value;
-							updateBlockBindings( {
-								[ attr ]: {
-									source: 'acf/field',
-									args: {
-										key: value,
-									},
+							bindings[ attr ] = {
+								source: 'acf/field',
+								args: {
+									key: value,
 								},
-							} );
+							};
 						} );
+
+						// Update all bindings at once
+						updateBlockBindings( bindings );
 
 						return newState;
 					} );
 				} else {
+					const singleAttribute = attributeArray[ 0 ];
 					setBoundFields( ( prevState ) => ( {
 						...prevState,
-						[ attribute ]: value,
+						[ singleAttribute ]: value,
 					} ) );
 					updateBlockBindings( {
-						[ attribute ]: {
+						[ singleAttribute ]: {
 							source: 'acf/field',
 							args: {
 								key: value,
@@ -189,11 +204,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						initialOpen={ true }
 					>
-						{ props.name === 'core/image' ? (
+						{ allBoundFields ? (
 							<>
-								<PanelRow
-									key={ `scf-field-${ bindableAttributes }` }
-								>
+								<PanelRow key={ `scf-field-image-all` }>
 									<ComboboxControl
 										__next40pxDefaultSize
 										__nextHasNoMarginBottom
@@ -209,8 +222,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										) }
 										options={ fieldsSuggestions }
 										value={
-											boundFields[ bindableAttributes ] ||
-											''
+											boundFields[
+												bindableAttributes[ 0 ]
+											] || ''
 										}
 										onChange={ ( value ) =>
 											handleFieldChange(
@@ -220,56 +234,94 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										}
 									/>
 								</PanelRow>
+								<PanelRow>
+									<Button
+										onClick={ () => {
+											setAllBoundFields( false );
+										} }
+										__next40pxDefaultSize
+										variant="secondary"
+									>
+										{ __(
+											'Select individual attributes',
+											'secure-custom-fields'
+										) }
+									</Button>
+								</PanelRow>
 							</>
 						) : (
-							bindableAttributes.map( ( attribute ) => (
-								<>
-									<PanelRow
-										key={ `scf-field-${ attribute }` }
-									>
-										<ComboboxControl
-											__next40pxDefaultSize
-											__nextHasNoMarginBottom
-											__experimentalShowHowTo={ false }
-											__experimentalExpandOnFocus={ true }
-											__experimentalAutoSelectFirstMatch={
-												true
-											}
-											label={ attribute }
-											placeholder={ __(
-												'Select a field',
-												'secure-custom-fields'
-											) }
-											options={ fieldsSuggestions }
-											value={
-												boundFields[ attribute ] || ''
-											}
-											onChange={ ( value ) =>
-												handleFieldChange(
-													attribute,
-													value
-												)
-											}
-										/>
-									</PanelRow>
-									{ boundFields[ attribute ] && (
+							<>
+								{ bindableAttributes.map( ( attribute ) => (
+									<div key={ `scf-field-${ attribute }` }>
 										<PanelRow>
+											<ComboboxControl
+												__next40pxDefaultSize
+												__nextHasNoMarginBottom
+												__experimentalShowHowTo={
+													false
+												}
+												__experimentalExpandOnFocus={
+													true
+												}
+												__experimentalAutoSelectFirstMatch={
+													true
+												}
+												label={ attribute }
+												placeholder={ __(
+													'Select a field',
+													'secure-custom-fields'
+												) }
+												options={ fieldsSuggestions }
+												value={
+													boundFields[ attribute ] ||
+													''
+												}
+												onChange={ ( value ) =>
+													handleFieldChange(
+														attribute,
+														value
+													)
+												}
+											/>
+										</PanelRow>
+										{ boundFields[ attribute ] && (
+											<PanelRow>
+												<Button
+													onClick={ () => {
+														console.log( 'edit' );
+													} }
+													__next40pxDefaultSize
+													variant="secondary"
+												>
+													{ __(
+														'Edit field',
+														'secure-custom-fields'
+													) }
+												</Button>
+											</PanelRow>
+										) }
+									</div>
+								) ) }
+								{ ! allBoundFields &&
+									'core/image' === props.name && (
+										<PanelRow
+											key={ `scf-field-image-all-button` }
+										>
 											<Button
 												onClick={ () => {
-													console.log( 'edit' );
+													setAllBoundFields( true );
 												} }
 												__next40pxDefaultSize
 												variant="secondary"
 											>
 												{ __(
-													'Edit field',
+													'Select all attributes',
 													'secure-custom-fields'
 												) }
 											</Button>
 										</PanelRow>
 									) }
-								</>
-							) )
+							</>
 						) }
 						<PanelRow>
 							<Button

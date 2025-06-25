@@ -25,6 +25,8 @@ const resolveImageAttribute = ( imageObj, attribute ) => {
 			return imageObj.alt_text || '';
 		case 'title':
 			return imageObj.title?.rendered || '';
+		case 'id':
+			return imageObj.id;
 		default:
 			return '';
 	}
