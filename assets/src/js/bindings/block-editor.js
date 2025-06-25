@@ -92,16 +92,23 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				}, [] ) || [],
 			[ fieldsGroups ]
 		);
-
 		// Memoize the fieldsSuggestions to avoid recreating on every render
-		const fieldsSuggestions = useMemo(
-			() =>
-				fields.map( ( field ) => ( {
+		const fieldsSuggestions = useMemo( () => {
+			if ( props.name === 'core/image' ) {
+				// return only the type image fields
+				return fields
+					.filter( ( field ) => field.type === 'image' )
+					.map( ( field ) => ( {
+						value: field.name,
+						label: field.label,
+					} ) );
+			} else {
+				return fields.map( ( field ) => ( {
 					value: field.name,
 					label: field.label,
-				} ) ),
-			[ fields ]
-		);
+				} ) );
+			}
+		}, [ fields ] );
 
 		// Initialize the field state with an empty object to track multiple attributes
 		const [ boundFields, setBoundFields ] = useState( {} );
@@ -131,20 +138,38 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		// Memoize the change handler to prevent creating new function on each render
 		const handleFieldChange = useCallback(
-			( attribute, value ) => {
-				setBoundFields( ( prevState ) => ( {
-					...prevState,
-					[ attribute ]: value,
-				} ) );
+			( attributes, value ) => {
+				if ( attributes.length > 1 ) {
+					setBoundFields( ( prevState ) => {
+						const newState = { ...prevState };
+						attributes.forEach( ( attr ) => {
+							newState[ attr ] = value;
+							updateBlockBindings( {
+								[ attr ]: {
+									source: 'acf/field',
+									args: {
+										key: value,
+									},
+								},
+							} );
+						} );
 
-				updateBlockBindings( {
-					[ attribute ]: {
-						source: 'acf/field',
-						args: {
-							key: value,
+						return newState;
+					} );
+				} else {
+					setBoundFields( ( prevState ) => ( {
+						...prevState,
+						[ attribute ]: value,
+					} ) );
+					updateBlockBindings( {
+						[ attribute ]: {
+							source: 'acf/field',
+							args: {
+								key: value,
+							},
 						},
-					},
-				} );
+					} );
+				}
 			},
 			[ updateBlockBindings ]
 		);
@@ -164,9 +189,11 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						initialOpen={ true }
 					>
-						{ bindableAttributes.map( ( attribute ) => (
+						{ props.name === 'core/image' ? (
 							<>
-								<PanelRow key={ `scf-field-${ attribute }` }>
+								<PanelRow
+									key={ `scf-field-${ bindableAttributes }` }
+								>
 									<ComboboxControl
 										__next40pxDefaultSize
 										__nextHasNoMarginBottom
@@ -175,40 +202,75 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										__experimentalAutoSelectFirstMatch={
 											true
 										}
-										label={ attribute }
+										label={ __( 'All attributes' ) }
 										placeholder={ __(
 											'Select a field',
 											'secure-custom-fields'
 										) }
 										options={ fieldsSuggestions }
-										value={ boundFields[ attribute ] || '' }
+										value={
+											boundFields[ bindableAttributes ] ||
+											''
+										}
 										onChange={ ( value ) =>
 											handleFieldChange(
-												attribute,
+												bindableAttributes,
 												value
 											)
 										}
-										key={ `scf-field-${ attribute }` }
 									/>
 								</PanelRow>
-								{ boundFields[ attribute ] && (
-									<PanelRow>
-										<Button
-											onClick={ () => {
-												console.log( 'edit' );
-											} }
+							</>
+						) : (
+							bindableAttributes.map( ( attribute ) => (
+								<>
+									<PanelRow
+										key={ `scf-field-${ attribute }` }
+									>
+										<ComboboxControl
 											__next40pxDefaultSize
-											variant="secondary"
-										>
-											{ __(
-												'Edit field',
+											__nextHasNoMarginBottom
+											__experimentalShowHowTo={ false }
+											__experimentalExpandOnFocus={ true }
+											__experimentalAutoSelectFirstMatch={
+												true
+											}
+											label={ attribute }
+											placeholder={ __(
+												'Select a field',
 												'secure-custom-fields'
 											) }
-										</Button>
+											options={ fieldsSuggestions }
+											value={
+												boundFields[ attribute ] || ''
+											}
+											onChange={ ( value ) =>
+												handleFieldChange(
+													attribute,
+													value
+												)
+											}
+										/>
 									</PanelRow>
-								) }
-							</>
-						) ) }
+									{ boundFields[ attribute ] && (
+										<PanelRow>
+											<Button
+												onClick={ () => {
+													console.log( 'edit' );
+												} }
+												__next40pxDefaultSize
+												variant="secondary"
+											>
+												{ __(
+													'Edit field',
+													'secure-custom-fields'
+												) }
+											</Button>
+										</PanelRow>
+									) }
+								</>
+							) )
+						) }
 						<PanelRow>
 							<Button
 								onClick={ () => {
