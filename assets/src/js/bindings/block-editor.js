@@ -11,10 +11,8 @@ import {
 import {
 	Button,
 	ComboboxControl,
-	Modal,
 	PanelBody,
 	PanelRow,
-	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
@@ -335,24 +333,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 												}
 											/>
 										</PanelRow>
-										{ boundFields[ attribute ] && (
-											<PanelRow>
-												<Button
-													onClick={ () => {
-														handleEditField(
-															attribute
-														);
-													} }
-													__next40pxDefaultSize
-													variant="secondary"
-												>
-													{ __(
-														'Edit field',
-														'secure-custom-fields'
-													) }
-												</Button>
-											</PanelRow>
-										) }
 									</div>
 								) ) }
 								{ ! allBoundFields &&
@@ -393,32 +373,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						</PanelRow>
 					</PanelBody>
 				</InspectorControls>
-				{ modalOpen && (
-					<Modal
-						title="Edit Field"
-						onRequestClose={ () => {
-							setModalOpen( false );
-							setEditingField( null );
-							setFieldContent( '' );
-						} }
-					>
-						<TextControl
-							label={ editingField }
-							value={ fieldContent }
-							onChange={ ( value ) => {
-								setFieldContent( value );
-							} }
-						/>
-						<Button
-							onClick={ handleSubmitField }
-							isPrimary
-							isDestructive
-							isBusy={ isSubmitting }
-						>
-							{ __( 'Save', 'secure-custom-fields' ) }
-						</Button>
-					</Modal>
-				) }
 			</>
 		);
 	};
