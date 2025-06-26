@@ -9,10 +9,11 @@ import {
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
 import {
-	Button,
+	BaseControl,
 	ComboboxControl,
-	PanelBody,
-	PanelRow,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
@@ -194,6 +195,15 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			[ updateBlockBindings ]
 		);
 
+		// Handle reset for ToolsPanel
+		const handleReset = useCallback( () => {
+			removeAllBlockBindings();
+			setBoundFields( {} );
+		}, [ removeAllBlockBindings ] );
+
+		// Check if any fields are bound to determine if reset should be shown
+		const hasBoundFields = Object.keys( boundFields ).length > 0;
+
 		if ( fieldsSuggestions.length === 0 || ! bindableAttributes ) {
 			return <BlockEdit { ...props } />;
 		}
@@ -202,23 +212,45 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			<>
 				<BlockEdit { ...props } />
 				<InspectorControls>
-					<PanelBody
-						title={ __(
+					<ToolsPanel
+						label={ __(
 							'Connect to a field',
 							'secure-custom-fields'
 						) }
-						initialOpen={ true }
+						resetAll={ handleReset }
 					>
 						{ 'core/image' === props.name && (
-							<BlockAttributesControlLinkedButton
-								isLinked={ allBoundFields }
-								onClick={ () => {
-									setAllBoundFields( ! allBoundFields );
-								} }
-							/>
+							<HStack>
+								<BaseControl.VisualLabel as="legend">
+									{ allBoundFields
+										? __(
+												'Unlink all attributes',
+												'secure-custom-fields'
+										  )
+										: __(
+												'Link all attributes',
+												'secure-custom-fields'
+										  ) }
+								</BaseControl.VisualLabel>
+								<BlockAttributesControlLinkedButton
+									isLinked={ allBoundFields }
+									onClick={ () => {
+										setAllBoundFields( ! allBoundFields );
+									} }
+								/>
+							</HStack>
 						) }
 						{ allBoundFields ? (
-							<PanelRow key={ `scf-field-image-all` }>
+							<ToolsPanelItem
+								hasValue={ () =>
+									!! boundFields[ bindableAttributes[ 0 ] ]
+								}
+								label={ __( 'All attributes' ) }
+								onDeselect={ () =>
+									handleFieldChange( bindableAttributes, '' )
+								}
+								isShownByDefault={ true }
+							>
 								<ComboboxControl
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
@@ -243,62 +275,50 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										)
 									}
 								/>
-							</PanelRow>
+							</ToolsPanelItem>
 						) : (
 							<>
 								{ bindableAttributes.map( ( attribute ) => (
-									<div key={ `scf-field-${ attribute }` }>
-										<PanelRow>
-											<ComboboxControl
-												__next40pxDefaultSize
-												__nextHasNoMarginBottom
-												__experimentalShowHowTo={
-													false
-												}
-												__experimentalExpandOnFocus={
-													true
-												}
-												__experimentalAutoSelectFirstMatch={
-													true
-												}
-												label={ attribute }
-												placeholder={ __(
-													'Select a field',
-													'secure-custom-fields'
-												) }
-												options={ fieldsSuggestions }
-												value={
-													boundFields[ attribute ] ||
-													''
-												}
-												onChange={ ( value ) =>
-													handleFieldChange(
-														attribute,
-														value
-													)
-												}
-											/>
-										</PanelRow>
-									</div>
+									<ToolsPanelItem
+										key={ `scf-field-${ attribute }` }
+										hasValue={ () =>
+											!! boundFields[ attribute ]
+										}
+										label={ attribute }
+										onDeselect={ () =>
+											handleFieldChange( attribute, '' )
+										}
+										isShownByDefault={ true }
+									>
+										<ComboboxControl
+											__next40pxDefaultSize
+											__nextHasNoMarginBottom
+											__experimentalShowHowTo={ false }
+											__experimentalExpandOnFocus={ true }
+											__experimentalAutoSelectFirstMatch={
+												true
+											}
+											label={ attribute }
+											placeholder={ __(
+												'Select a field',
+												'secure-custom-fields'
+											) }
+											options={ fieldsSuggestions }
+											value={
+												boundFields[ attribute ] || ''
+											}
+											onChange={ ( value ) =>
+												handleFieldChange(
+													attribute,
+													value
+												)
+											}
+										/>
+									</ToolsPanelItem>
 								) ) }
 							</>
 						) }
-						<PanelRow>
-							<Button
-								onClick={ () => {
-									removeAllBlockBindings();
-									setBoundFields( {} );
-								} }
-								__next40pxDefaultSize
-								isDestructive
-							>
-								{ __(
-									'Clear All Fields',
-									'secure-custom-fields'
-								) }
-							</Button>
-						</PanelRow>
-					</PanelBody>
+					</ToolsPanel>
 				</InspectorControls>
 			</>
 		);
