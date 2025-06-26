@@ -11,6 +11,7 @@
     "watch": "webpack --watch"
   },
   "dependencies": {
+    "@wordpress/icons": "^10.26.0",
     "md5": "^2.3.0"
   },
   "devDependencies": {

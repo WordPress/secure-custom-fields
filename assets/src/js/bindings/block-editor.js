@@ -19,6 +19,11 @@ import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 
+/**
+ * Internal dependencies
+ */
+import BlockAttributesControlLinkedButton from './components/block-attributes-control-linked-button';
+
 const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 	'core/paragraph': [ 'content' ],
 	'core/heading': [ 'content' ],
@@ -204,51 +209,41 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						initialOpen={ true }
 					>
+						{ 'core/image' === props.name && (
+							<BlockAttributesControlLinkedButton
+								isLinked={ allBoundFields }
+								onClick={ () => {
+									setAllBoundFields( ! allBoundFields );
+								} }
+							/>
+						) }
 						{ allBoundFields ? (
-							<>
-								<PanelRow key={ `scf-field-image-all` }>
-									<ComboboxControl
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-										__experimentalShowHowTo={ false }
-										__experimentalExpandOnFocus={ true }
-										__experimentalAutoSelectFirstMatch={
-											true
-										}
-										label={ __( 'All attributes' ) }
-										placeholder={ __(
-											'Select a field',
-											'secure-custom-fields'
-										) }
-										options={ fieldsSuggestions }
-										value={
-											boundFields[
-												bindableAttributes[ 0 ]
-											] || ''
-										}
-										onChange={ ( value ) =>
-											handleFieldChange(
-												bindableAttributes,
-												value
-											)
-										}
-									/>
-								</PanelRow>
-								<PanelRow>
-									<Button
-										onClick={ () => {
-											setAllBoundFields( false );
-										} }
-										__next40pxDefaultSize
-										variant="secondary"
-									>
-										{ __(
-											'Select individual attributes',
-											'secure-custom-fields'
-										) }
-									</Button>
-								</PanelRow>
-							</>
+							<PanelRow key={ `scf-field-image-all` }>
+								<ComboboxControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									__experimentalShowHowTo={ false }
+									__experimentalExpandOnFocus={ true }
+									__experimentalAutoSelectFirstMatch={ true }
+									label={ __( 'All attributes' ) }
+									placeholder={ __(
+										'Select a field',
+										'secure-custom-fields'
+									) }
+									options={ fieldsSuggestions }
+									value={
+										boundFields[
+											bindableAttributes[ 0 ]
+										] || ''
+									}
+									onChange={ ( value ) =>
+										handleFieldChange(
+											bindableAttributes,
+											value
+										)
+									}
+								/>
+							</PanelRow>
 						) : (
 							<>
 								{ bindableAttributes.map( ( attribute ) => (
@@ -286,25 +281,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										</PanelRow>
 									</div>
 								) ) }
-								{ ! allBoundFields &&
-									'core/image' === props.name && (
-										<PanelRow
-											key={ `scf-field-image-all-button` }
-										>
-											<Button
-												onClick={ () => {
-													setAllBoundFields( true );
-												} }
-												__next40pxDefaultSize
-												variant="secondary"
-											>
-												{ __(
-													'Connect all attributes',
-													'secure-custom-fields'
-												) }
-											</Button>
-										</PanelRow>
-									) }
 							</>
 						) }
 						<PanelRow>
