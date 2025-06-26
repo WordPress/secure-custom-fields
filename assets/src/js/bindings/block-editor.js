@@ -9,15 +9,19 @@ import {
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
 import {
-	PanelBody,
-	ComboboxControl,
-	PanelRow,
 	Button,
+	ComboboxControl,
+	Modal,
+	PanelBody,
+	PanelRow,
+	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
+import apiFetch from '@wordpress/api-fetch';
+import { dispatch } from '@wordpress/data';
 
 const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 	'core/paragraph': [ 'content' ],
@@ -141,6 +145,53 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				setBoundFields( {} );
 			}
 		}, [ currentBindingsKey ] );
+
+		const [ modalOpen, setModalOpen ] = useState( false );
+		const [ editingField, setEditingField ] = useState( null );
+		const [ fieldContent, setFieldContent ] = useState( '' );
+		const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+		const handleEditField = ( attribute ) => {
+			setEditingField( attribute );
+			setFieldContent( '' ); // Reset field content
+			setModalOpen( true );
+		};
+
+		const handleSubmitField = async () => {
+			if ( ! editingField || ! fieldContent.trim() ) {
+				return;
+			}
+
+			setIsSubmitting( true );
+			try {
+				// Update the WordPress data store
+				dispatch( 'core/editor' ).editPost( {
+					meta: {
+						[ editingField ]: fieldContent,
+					},
+				} );
+
+				// Update the ACF field value via REST API
+				await apiFetch( {
+					path: `/wp/v2/${ postType }/${ postId }`,
+					method: 'POST',
+					data: {
+						acf: {
+							[ editingField ]: fieldContent,
+						},
+					},
+				} );
+
+				// Close modal and reset state
+				setModalOpen( false );
+				setEditingField( null );
+				setFieldContent( '' );
+			} catch ( error ) {
+				console.error( 'Error updating field:', error );
+			} finally {
+				setIsSubmitting( false );
+			}
+		};
 
 		// Memoize the change handler to prevent creating new function on each render
 		const handleFieldChange = useCallback(
@@ -288,7 +339,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 											<PanelRow>
 												<Button
 													onClick={ () => {
-														console.log( 'edit' );
+														handleEditField(
+															attribute
+														);
 													} }
 													__next40pxDefaultSize
 													variant="secondary"
@@ -315,7 +368,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 												variant="secondary"
 											>
 												{ __(
-													'Select all attributes',
+													'Connect all attributes',
 													'secure-custom-fields'
 												) }
 											</Button>
@@ -340,6 +393,32 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						</PanelRow>
 					</PanelBody>
 				</InspectorControls>
+				{ modalOpen && (
+					<Modal
+						title="Edit Field"
+						onRequestClose={ () => {
+							setModalOpen( false );
+							setEditingField( null );
+							setFieldContent( '' );
+						} }
+					>
+						<TextControl
+							label={ editingField }
+							value={ fieldContent }
+							onChange={ ( value ) => {
+								setFieldContent( value );
+							} }
+						/>
+						<Button
+							onClick={ handleSubmitField }
+							isPrimary
+							isDestructive
+							isBusy={ isSubmitting }
+						>
+							{ __( 'Save', 'secure-custom-fields' ) }
+						</Button>
+					</Modal>
+				) }
 			</>
 		);
 	};
