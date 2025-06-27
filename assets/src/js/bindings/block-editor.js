@@ -25,6 +25,8 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import BlockAttributesControlLinkedButton from './components/block-attributes-control-linked-button';
 
+// These constant and the function above have been copied from Gutenberg. It should be public, eventually.
+
 const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 	'core/paragraph': [ 'content' ],
 	'core/heading': [ 'content' ],
@@ -49,6 +51,7 @@ function getBindableAttributes( blockName ) {
 const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const bindableAttributes = getBindableAttributes( props.name );
+		const showLinkedButton = props.name === 'core/image';
 		const { updateBlockBindings, removeAllBlockBindings } =
 			useBlockBindingsUtils();
 
@@ -81,7 +84,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		const currentBindings = props.attributes?.metadata?.bindings || {};
 
-		// Memoize the fields transformation to prevent unnecessary recalculations
 		const fields = useMemo(
 			() =>
 				fieldsGroups?.reduce( ( acc, fieldGroup ) => {
@@ -98,7 +100,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				}, [] ) || [],
 			[ fieldsGroups ]
 		);
-		// Memoize the fieldsSuggestions to avoid recreating on every render
+
 		const fieldsSuggestions = useMemo( () => {
 			if ( props.name === 'core/image' ) {
 				// return only the type image fields
@@ -151,7 +153,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 		// Memoize the change handler to prevent creating new function on each render
 		const handleFieldChange = useCallback(
 			( attributes, value ) => {
-				// Ensure attributes is always an array
+				// Ensure attributes is always an array.
 				const attributeArray = Array.isArray( attributes )
 					? attributes
 					: [ attributes ];
@@ -171,7 +173,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 							};
 						} );
 
-						// Update all bindings at once
+						// Update all bindings at once.
 						updateBlockBindings( bindings );
 
 						return newState;
@@ -195,7 +197,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			[ updateBlockBindings ]
 		);
 
-		// Handle reset for ToolsPanel
 		const handleReset = useCallback( () => {
 			removeAllBlockBindings();
 			setBoundFields( {} );
@@ -216,7 +217,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						resetAll={ handleReset }
 					>
-						{ 'core/image' === props.name && (
+						{ showLinkedButton && (
 							<HStack
 								justify="space-between"
 								align="center"
@@ -335,7 +336,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	};
 }, 'withCustomControls' );
 
-// Only register the filter if the connect_fields beta feature is enabled
 if ( window.scf?.betaFeatures?.connect_fields ) {
 	addFilter(
 		'editor.BlockEdit',
