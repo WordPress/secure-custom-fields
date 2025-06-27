@@ -201,9 +201,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			setBoundFields( {} );
 		}, [ removeAllBlockBindings ] );
 
-		// Check if any fields are bound to determine if reset should be shown
-		const hasBoundFields = Object.keys( boundFields ).length > 0;
-
 		if ( fieldsSuggestions.length === 0 || ! bindableAttributes ) {
 			return <BlockEdit { ...props } />;
 		}
@@ -220,8 +217,15 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						resetAll={ handleReset }
 					>
 						{ 'core/image' === props.name && (
-							<HStack>
-								<BaseControl.VisualLabel as="legend">
+							<HStack
+								justify="space-between"
+								align="center"
+								style={ { gridColumn: 'span 2' } }
+							>
+								<BaseControl.VisualLabel
+									as="legend"
+									style={ { margin: 0 } }
+								>
 									{ allBoundFields
 										? __(
 												'Unlink all attributes',
@@ -245,7 +249,10 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 								hasValue={ () =>
 									!! boundFields[ bindableAttributes[ 0 ] ]
 								}
-								label={ __( 'All attributes' ) }
+								label={ __(
+									'All attributes',
+									'secure-custom-fields'
+								) }
 								onDeselect={ () =>
 									handleFieldChange( bindableAttributes, '' )
 								}
@@ -257,7 +264,10 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 									__experimentalShowHowTo={ false }
 									__experimentalExpandOnFocus={ true }
 									__experimentalAutoSelectFirstMatch={ true }
-									label={ __( 'All attributes' ) }
+									label={ __(
+										'All attributes',
+										'secure-custom-fields'
+									) }
 									placeholder={ __(
 										'Select a field',
 										'secure-custom-fields'
