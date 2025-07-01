@@ -19,6 +19,7 @@ import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { page, plus, edit } from '@wordpress/icons';
 
 /**
  * Register custom post type commands
@@ -46,7 +47,7 @@ const registerPostTypeCommands = () => {
 		commandStore.registerCommand( {
 			name: `scf/cpt-${ postType.name }`,
 			label: postType.all_items,
-			icon: createElement( Icon, { icon: 'admin-page' } ),
+			icon: createElement( Icon, { icon: page } ),
 			context: 'admin',
 			description: postType.all_items,
 			keywords: [
@@ -68,7 +69,7 @@ const registerPostTypeCommands = () => {
 		commandStore.registerCommand( {
 			name: `scf/new-${ postType.name }`,
 			label: postType.add_new_item,
-			icon: createElement( Icon, { icon: 'plus' } ),
+			icon: createElement( Icon, { icon: plus } ),
 			context: 'admin',
 			description: postType.add_new_item,
 			keywords: [
@@ -91,7 +92,7 @@ const registerPostTypeCommands = () => {
 		commandStore.registerCommand( {
 			name: `scf/edit-${ postType.name }`,
 			label: sprintf(__('Edit post type: %s', 'secure-custom-fields'), postType.label),
-			icon: createElement( Icon, { icon: 'edit' } ),
+			icon: createElement( Icon, { icon: edit } ),
 			context: 'admin',
 			description: sprintf(__('Edit the %s post type settings', 'secure-custom-fields'), postType.label),
 			keywords: [
