@@ -32,7 +32,7 @@ const registerAdminCommands = () => {
 	const commands = [
 		{
 			name: 'field-groups',
-			label: __( 'Field Groups', 'secure-custom-fields' ),
+			label: __( 'Field groups', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-field-group' },
 			icon: layout,
@@ -49,7 +49,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'new-field-group',
-			label: __( 'Create New Field Group', 'secure-custom-fields' ),
+			label: __( 'Create new field group', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-field-group' },
 			icon: plus,
@@ -67,7 +67,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'post-types',
-			label: __( 'Post Types', 'secure-custom-fields' ),
+			label: __( 'Post types', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-post-type' },
 			icon: postList,
@@ -79,7 +79,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'new-post-type',
-			label: __( 'Create New Post Type', 'secure-custom-fields' ),
+			label: __( 'Create new post type', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-post-type' },
 			icon: plus,
@@ -103,7 +103,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'new-taxonomy',
-			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
+			label: __( 'Create new taxonomy', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-taxonomy' },
 			icon: plus,
@@ -122,7 +122,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'options-pages',
-			label: __( 'Options Pages', 'secure-custom-fields' ),
+			label: __( 'Options pages', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-ui-options-page' },
 			icon: settings,
@@ -134,7 +134,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'new-options-page',
-			label: __( 'Create New Options Page', 'secure-custom-fields' ),
+			label: __( 'Create new options page', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-ui-options-page' },
 			icon: plus,
@@ -146,7 +146,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'tools',
-			label: __( 'SCF Tools', 'secure-custom-fields' ),
+			label: __( 'SCF tools', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools' },
 			icon: tool,
@@ -158,7 +158,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'import',
-			label: __( 'Import SCF Data', 'secure-custom-fields' ),
+			label: __( 'Import SCF data', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools', tool: 'import' },
 			icon: upload,
@@ -170,7 +170,7 @@ const registerAdminCommands = () => {
 		},
 		{
 			name: 'export',
-			label: __( 'Export SCF Data', 'secure-custom-fields' ),
+			label: __( 'Export SCF data', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools', tool: 'export' },
 			icon: download,

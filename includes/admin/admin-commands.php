@@ -56,7 +56,7 @@ function acf_commands_init() {
 			$custom_post_types[] = array(
 				'name'         => $post_type['post_type'],
 				'all_items'    => $labels->all_items,
-				'add_new_item' => $labels->add_new_item,
+				'add_new_item' => ucfirst( strtolower( $labels->add_new_item ) ),
 				'icon'         => $post_type['menu_icon'] ?? '',
 				'label'        => $labels->name,
 				'id'           => $post_type['ID'],
