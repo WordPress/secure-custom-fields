@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 6.5.0
+Stable tag: 6.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,15 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.5.1 =
+*Release Date 2 Jul 2025*
+
+*Bug Fixes*
+
+- Command Palette: Use `@wordpress\icons` instead of Dashicons.
+
+
 = 6.5.0 =
 *Release Date 23 Jun 2025*
 
