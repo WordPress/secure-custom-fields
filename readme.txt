@@ -51,6 +51,15 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.5.1 =
+*Release Date 2 Jul 2025*
+
+*Bug Fixes*
+
+- Command Palette: Use `@wordpress\icons` instead of Dashicons.
+
+
 = 6.5.0 =
 *Release Date 23 Jun 2025*
 
