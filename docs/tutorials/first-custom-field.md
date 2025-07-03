@@ -24,11 +24,11 @@ You can learn more about WordPress basics here:
 
 ## 2. Basic Configuration
 
-#### Field Group Title
+### Field Group Title
 
 Give your field group a descriptive name, like `Movie Details` or `Product Specs`.
 
-#### Location Rules
+### Location Rules
 
 Choose where this group should appear. For example:
 
@@ -37,20 +37,75 @@ Choose where this group should appear. For example:
 
 This ensures your fields appear only where you need them.
 
-#### Active
+**Note:** This fine-grained control allows you to define SCF fields once and reuse them across different post types, templates, or components.
+
+### Active
 
 Make sure the field group is set to **Active** so it appears in the editor.
 
+**Note:** Some features require the field group to be **enabled** and **exposed via the REST API**. To future-proof your configuration, we recommend setting **Show in REST** to `true` when creating your field groups.
+
 ## 3. Adding Fields
 
-Click **"Add Field"** to create your first field. For each field, configure:
+Click **"Add Field"** to create your first field, configure:
 
--   **Label**: The visible name of the field (e.g., `Director`)
--   **Field Name**: A unique identifier used in code (e.g., `director`)
--   **Field Type**: Choose from text, textarea, number, image, checkbox, select, and more
--   **Instructions**: Optional helper text to guide users
--   **Required**: Whether this field must be filled in
--   **Default Value** and **Placeholder**: Optional presets
+### Minimum required settings
+
+To create a functional custom field, you only need to define the following in the **General** tab:
+
+- **Field Type** (e.g., Text, Image, Select): Defines the kind of input
+- **Field Label**: The name shown in the editor
+- **Field Name**: A unique, code-friendly identifier (no spaces; dashes and underscores allowed)
+
+For example, you could create fields like:
+
+- **"Movie Title"** (`movie_title`) — a text field to store the name of the movie
+- **"Director"** (`director`) — another text field to store the director's name
+- **"Release Year"** (`release_year`) — a number field to store the release year
+
+> **Note:** All other settings are optional and provide extra control or visual customization.
+
+---
+
+### 🔧 Full settings overview by tab
+
+### General
+
+Basic field definition and default behavior:
+
+- **Field Type**
+- **Field Label**
+- **Field Name**
+- **Default Value**
+
+### Validation
+
+Rules to control what values are allowed:
+
+- **Required**
+- **Minimum / Maximum Values**
+- **Allowed Characters / Pattern**
+- **Custom Validation Message**
+
+### Presentation
+
+Controls how the field appears in the editor:
+
+- **Placeholder Text**
+- **Instructions**
+- **Wrapper Attributes**
+- **Hide Label**
+
+### Conditional Logic
+
+Display logic to control field visibility:
+
+- **Enable Conditions**
+- **Condition Rules**
+
+> **Note:** Not all options appear for every field type. Each field may expose different settings depending on its nature.
+
+---
 
 Repeat this process for as many fields as needed.
 
@@ -60,12 +115,6 @@ Repeat this process for as many fields as needed.
 -   You should now see your custom fields below the content editor.
 -   Fill in test data and save the post.
 -   Confirm the fields save and appear as expected.
-
-## Next Steps
-
--   Display the custom field values on the frontend using SCF template functions
--   Use conditional logic or field groups to organize complex forms
--   Combine with taxonomies or other field groups for richer structures
 
 ## For Developers
 
