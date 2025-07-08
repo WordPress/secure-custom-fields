@@ -45,17 +45,18 @@ registerBlockBindingsSource( {
 						context.postId
 				  )
 				: undefined;
+		const mergedFields = fields?.scf_field_groups
+			? Object.fromEntries(
+					fields.scf_field_groups
+						.flatMap( ( group ) => group.fields || [] )
+						.map( ( field ) => [ field.name, field ] )
+			  )
+			: {};
+
 		const result = {};
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {
 				const fieldName = args?.key;
-				const mergedFields = fields?.scf_field_groups
-					? Object.fromEntries(
-							fields.scf_field_groups
-								.flatMap( ( group ) => group.fields || [] )
-								.map( ( field ) => [ field.name, field ] )
-					  )
-					: {};
 				const fieldValue = getFieldValue( fields, fieldName );
 				const fieldType = mergedFields[ fieldName ]?.type;
 

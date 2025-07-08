@@ -878,6 +878,7 @@ register_uninstall_hook( __FILE__, 'scf_plugin_uninstall' );
 function scf_plugin_uninstall() {
 	// List of known beta features.
 	$beta_features = array(
+		'editor_sidebar',
 		'connect_fields',
 	);
 

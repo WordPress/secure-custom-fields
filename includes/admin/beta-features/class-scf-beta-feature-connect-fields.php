@@ -16,8 +16,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Feature_Connect_Fields' ) ) :
 	/**
 	 * Class SCF_Admin_Beta_Feature_Connect_Fields
 	 *
-	 * Implements a beta feature to move field group elements to the editor sidebar
-	 * for a cleaner interface.
+	 * Implements a beta feature that connects fields to compatible block attributes.
 	 *
 	 * @package    Secure Custom Fields
 	 * @since      SCF 6.5.0

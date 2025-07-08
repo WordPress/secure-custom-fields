@@ -246,7 +246,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			// Check if the connected fields feature is enabled
 
 			$script = 'window.scf = window.scf || {};
-window.scf = window.scf || {};
 window.scf.betaFeatures = window.scf.betaFeatures || {};';
 			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
 				if ( $beta_feature->is_enabled() ) {
