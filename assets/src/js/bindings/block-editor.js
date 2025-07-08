@@ -130,7 +130,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				const allAllowedFieldTypes =
 					Object.values( blockFieldTypes ).flat();
 				const uniqueFieldTypes = [ ...new Set( allAllowedFieldTypes ) ];
-				console.log( 'fields: ', fields );
 				// Filter fields to only include those that match the allowed types for this block
 				return fields
 					.filter( ( field ) =>
