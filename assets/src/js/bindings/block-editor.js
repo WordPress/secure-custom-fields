@@ -9,7 +9,6 @@ import {
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
 import {
-	BaseControl,
 	ComboboxControl,
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
@@ -32,6 +31,27 @@ const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 	'core/heading': [ 'content' ],
 	'core/image': [ 'id', 'url', 'title', 'alt' ],
 	'core/button': [ 'url', 'text', 'linkTarget', 'rel' ],
+};
+
+const BLOCK_BINDINGS_RELATED_FIELD_TYPES = {
+	'core/paragraph': {
+		content: [ 'text', 'textarea', 'date_picker', 'number' ],
+	},
+	'core/heading': {
+		content: [ 'text', 'textarea', 'date_picker', 'number' ],
+	},
+	'core/image': {
+		id: [ 'image' ],
+		url: [ 'image' ],
+		title: [ 'image' ],
+		alt: [ 'image' ],
+	},
+	'core/button': {
+		url: [ 'url' ],
+		text: [ 'text', 'checkbox', 'select', 'date_picker' ],
+		linkTarget: [ 'text', 'checkbox', 'select' ],
+		rel: [ 'text', 'checkbox', 'select' ],
+	},
 };
 
 /**
@@ -102,26 +122,97 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 		);
 
 		const fieldsSuggestions = useMemo( () => {
-			if ( props.name === 'core/image' ) {
-				// return only the type image fields
+			const blockFieldTypes =
+				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
+
+			if ( blockFieldTypes ) {
+				// Get all unique field types for this block
+				const allAllowedFieldTypes =
+					Object.values( blockFieldTypes ).flat();
+				const uniqueFieldTypes = [ ...new Set( allAllowedFieldTypes ) ];
+				console.log( 'fields: ', fields );
+				// Filter fields to only include those that match the allowed types for this block
 				return fields
-					.filter( ( field ) => field.type === 'image' )
+					.filter( ( field ) =>
+						uniqueFieldTypes.includes( field.type )
+					)
 					.map( ( field ) => ( {
 						value: field.name,
 						label: field.label,
+						fieldType: field.type,
 					} ) );
 			} else {
+				// If no specific field types are defined for this block, return all fields
 				return fields.map( ( field ) => ( {
 					value: field.name,
 					label: field.label,
+					fieldType: field.type,
 				} ) );
 			}
-		}, [ fields ] );
+		}, [ fields, props.name ] );
+
+		// Get field suggestions for a specific attribute
+		const getFieldSuggestionsForAttribute = useCallback(
+			( attribute ) => {
+				const blockFieldTypes =
+					BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
+
+				if ( blockFieldTypes && blockFieldTypes[ attribute ] ) {
+					const allowedFieldTypes = blockFieldTypes[ attribute ];
+					return fields
+						.filter( ( field ) =>
+							allowedFieldTypes.includes( field.type )
+						)
+						.map( ( field ) => ( {
+							value: field.name,
+							label: field.label,
+						} ) );
+				}
+
+				// Fallback to all field suggestions
+				return fieldsSuggestions;
+			},
+			[ fields, fieldsSuggestions, props.name ]
+		);
 
 		// Initialize the field state with an empty object to track multiple attributes
 		const [ boundFields, setBoundFields ] = useState( {} );
+
+		// Determine if we should show "All attributes" mode:
+		// - Block must have multiple bindable attributes
+		// - All attributes should use the same field types
+		const shouldShowAllAttributesMode = useMemo( () => {
+			const blockFieldTypes =
+				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
+
+			if (
+				! bindableAttributes ||
+				bindableAttributes.length <= 1 ||
+				! blockFieldTypes
+			) {
+				return false;
+			}
+
+			// Get field types for each attribute
+			const attributeFieldTypes = bindableAttributes.map(
+				( attr ) => blockFieldTypes[ attr ] || []
+			);
+
+			// Check if all attributes have the same field types
+			const firstAttributeTypes = attributeFieldTypes[ 0 ];
+			const allSameTypes = attributeFieldTypes.every(
+				( types ) =>
+					types.length === firstAttributeTypes.length &&
+					types.every( ( type ) =>
+						firstAttributeTypes.includes( type )
+					)
+			);
+
+			return allSameTypes && firstAttributeTypes.length > 0;
+		}, [ bindableAttributes, props.name ] );
+
 		const [ allBoundFields, setAllBoundFields ] = useState(
-			props.name === 'core/image'
+			shouldShowAllAttributesMode
 		);
 
 		// Memoize the stringified currentBindings to avoid unnecessary effect runs
@@ -149,6 +240,11 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				setBoundFields( {} );
 			}
 		}, [ currentBindingsKey ] );
+
+		// Update allBoundFields when shouldShowAllAttributesMode changes
+		useEffect( () => {
+			setAllBoundFields( shouldShowAllAttributesMode );
+		}, [ shouldShowAllAttributesMode ] );
 
 		// Memoize the change handler to prevent creating new function on each render
 		const handleFieldChange = useCallback(
@@ -217,34 +313,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						resetAll={ handleReset }
 					>
-						{ showLinkedButton && (
-							<HStack
-								justify="space-between"
-								align="center"
-								style={ { gridColumn: 'span 2' } }
-							>
-								<BaseControl.VisualLabel
-									as="legend"
-									style={ { margin: 0 } }
-								>
-									{ allBoundFields
-										? __(
-												'Unlink all attributes',
-												'secure-custom-fields'
-										  )
-										: __(
-												'Link all attributes',
-												'secure-custom-fields'
-										  ) }
-								</BaseControl.VisualLabel>
-								<BlockAttributesControlLinkedButton
-									isLinked={ allBoundFields }
-									onClick={ () => {
-										setAllBoundFields( ! allBoundFields );
-									} }
-								/>
-							</HStack>
-						) }
 						{ allBoundFields ? (
 							<ToolsPanelItem
 								hasValue={ () =>
@@ -266,7 +334,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 									__experimentalExpandOnFocus={ true }
 									__experimentalAutoSelectFirstMatch={ true }
 									label={ __(
-										'All attributes',
+										'Field',
 										'secure-custom-fields'
 									) }
 									placeholder={ __(
@@ -314,7 +382,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 												'Select a field',
 												'secure-custom-fields'
 											) }
-											options={ fieldsSuggestions }
+											options={ getFieldSuggestionsForAttribute(
+												attribute
+											) }
 											value={
 												boundFields[ attribute ] || ''
 											}
