@@ -72,6 +72,10 @@ class SCF_Rest_Types_Endpoint {
 			$group_fields = array();
 
 			foreach ( $fields as $field ) {
+				if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
+					// Skip fields that are not allowed in bindings.
+					continue;
+				}
 				$group_fields[] = array(
 					'label'          => $field['label'],
 					'type'           => $field['type'],
