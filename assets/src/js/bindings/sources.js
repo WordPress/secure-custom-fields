@@ -57,61 +57,6 @@ const resolveImageAttribute = ( imageObj, attribute ) => {
 };
 
 /**
- * Handle object-type field values (like complex field objects).
- *
- * @param {Object} fieldValue The field value object.
- * @param {string} attribute The attribute being processed.
- * @returns {string} The resolved value.
- */
-const handleObjectFieldValue = ( fieldValue, attribute ) => {
-	// Check if the field value has the exact attribute property
-	if ( fieldValue.hasOwnProperty( attribute ) && fieldValue[ attribute ] ) {
-		return fieldValue[ attribute ];
-	}
-
-	// Special fallback: if we're looking for 'content' and no content property exists (or is falsy),
-	// but there's a 'url' property, use that instead
-	if ( attribute === 'content' && fieldValue.url ) {
-		return fieldValue.url;
-	}
-
-	return '';
-};
-
-/**
- * Handle numeric field values (typically image IDs).
- *
- * @param {number} fieldValue The numeric field value.
- * @param {string} attribute The attribute being processed.
- * @param {Function} getMedia Function to get media object by ID.
- * @returns {string} The resolved value.
- */
-const handleNumericFieldValue = ( fieldValue, attribute, getMedia ) => {
-	if ( attribute === 'content' ) {
-		return fieldValue.toString() || '';
-	}
-
-	// For image fields or numeric values, try to resolve as media
-	const imageObj = getMedia( fieldValue );
-	return resolveImageAttribute( imageObj, attribute );
-};
-
-/**
- * Handle date picker field values.
- *
- * @param {string} fieldValue The date field value.
- * @param {Object} fieldConfig The field configuration object.
- * @returns {string} The formatted date string.
- */
-const handleDateFieldValue = ( fieldValue, fieldConfig ) => {
-	if ( ! fieldValue ) {
-		return '';
-	}
-
-	return dateI18n( fieldConfig?.display_format, fieldValue ) || '';
-};
-
-/**
  * Process a single field binding and return its resolved value.
  *
  * @param {string} attribute The attribute being bound.
@@ -133,19 +78,29 @@ const processFieldBinding = (
 	const fieldConfig = fieldsLookupMap[ fieldName ];
 	const fieldType = fieldConfig?.type;
 
-	if ( typeof fieldValue === 'object' && fieldValue !== null ) {
-		return handleObjectFieldValue( fieldValue, attribute );
+	switch ( fieldType ) {
+		case 'number':
+		case 'range':
+			if ( attribute === 'content' ) {
+				return fieldValue.toString() || '';
+			}
+			break;
+		case 'date_picker':
+			if ( ! fieldValue ) {
+				return '';
+			}
+			return dateI18n( fieldConfig?.display_format, fieldValue ) || '';
+		case 'image':
+			// fieldValue is a (numeric) image ID.
+			const imageObj = getMedia( fieldValue );
+			return resolveImageAttribute( imageObj, attribute );
+		case 'select':
+		case 'text':
+		case 'textarea':
+		case 'url':
+		default:
+			return fieldValue || '';
 	}
-
-	if ( typeof fieldValue === 'number' ) {
-		return handleNumericFieldValue( fieldValue, attribute, getMedia );
-	}
-
-	if ( fieldType === 'date_picker' ) {
-		return handleDateFieldValue( fieldValue, fieldConfig );
-	}
-
-	return fieldValue || '';
 };
 
 registerBlockBindingsSource( {
