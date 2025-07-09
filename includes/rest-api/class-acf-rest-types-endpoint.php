@@ -51,14 +51,14 @@ class SCF_Rest_Types_Endpoint {
 		);
 	}
 
-		/**
-		 * Get SCF fields for a post type.
-		 *
-		 * @since 6.5.0
-		 *
-		 * @param array $post_type_object The post type object.
-		 * @return array Array of field data.
-		 */
+	/**
+	 * Get SCF fields for a post type.
+	 *
+	 * @since 6.5.0
+	 *
+	 * @param array $post_type_object The post type object.
+	 * @return array Array of field data.
+	 */
 	public function get_scf_fields( $post_type_object ) {
 		if ( ! isset( $post_type_object['id'] ) || ! isset( $post_type_object['type'] ) ) {
 			return array();
