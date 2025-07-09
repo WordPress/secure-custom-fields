@@ -43,7 +43,6 @@ const resolveImageAttribute = ( imageObj, attribute ) => {
 	if ( ! imageObj ) return '';
 	switch ( attribute ) {
 		case 'url':
-		case 'content':
 			return imageObj.source_url;
 		case 'alt':
 			return imageObj.alt_text || '';
