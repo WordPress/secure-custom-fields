@@ -18,11 +18,6 @@ import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 
-/**
- * Internal dependencies
- */
-import BlockAttributesControlLinkedButton from './components/block-attributes-control-linked-button';
-
 // These constant and the function above have been copied from Gutenberg. It should be public, eventually.
 
 const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
@@ -70,7 +65,6 @@ function getBindableAttributes( blockName ) {
 const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const bindableAttributes = getBindableAttributes( props.name );
-		const showLinkedButton = props.name === 'core/image';
 		const { updateBlockBindings, removeAllBlockBindings } =
 			useBlockBindingsUtils();
 
