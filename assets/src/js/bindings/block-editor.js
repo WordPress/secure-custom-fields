@@ -29,10 +29,10 @@ const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
 
 const BLOCK_BINDINGS_RELATED_FIELD_TYPES = {
 	'core/paragraph': {
-		content: [ 'text', 'textarea', 'date_picker', 'number' ],
+		content: [ 'text', 'textarea', 'date_picker', 'number', 'range' ],
 	},
 	'core/heading': {
-		content: [ 'text', 'textarea', 'date_picker', 'number' ],
+		content: [ 'text', 'textarea', 'date_picker', 'number', 'range' ],
 	},
 	'core/image': {
 		id: [ 'image' ],
