@@ -70,7 +70,7 @@ registerBlockBindingsSource( {
 					}
 
 					result[ attribute ] = value;
-				} else if ( 'number' === typeof fieldValue ) {
+				} else if ( 'number' === fieldType ) {
 					if ( attribute === 'content' ) {
 						result[ attribute ] = fieldValue.toString() || '';
 					} else {
