@@ -3,7 +3,7 @@
  */
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
-import { dateI18n } from '@wordpress/date';
+import { format } from '@wordpress/date';
 
 /**
  * Get the value of a specific field from the SCF fields.
@@ -88,7 +88,18 @@ const processFieldBinding = (
 			if ( ! fieldValue ) {
 				return '';
 			}
-			return dateI18n( fieldConfig?.display_format, fieldValue ) || '';
+			/**
+			 * On the server side, we use `date_i18n()` (PHP) to format dates, see
+			 * https://developer.wordpress.org/reference/functions/date_i18n/.
+			 * However, the client-side (JS) version, `dateI18n()`, seems to have a bug
+			 * that gets the timezone wrong. When the WordPress install's timezone is set
+			 * to UTC, and the client timezone is UTC+x, it will return the _previous_ day.
+			 * This is probably because a date without a time is treated as midnight UTC,
+			 * which is still the previous day in UTC+x timezones (i.e. east of Greenwich).
+			 * Since we aren't interested in times and timezones for date picker fields,
+			 * we can simply use the `format()` function to format the date.
+			 */
+			return format( fieldConfig?.display_format, fieldValue ) || '';
 		case 'image':
 			// fieldValue is a (numeric) image ID.
 			const imageObj = getMedia( fieldValue );
