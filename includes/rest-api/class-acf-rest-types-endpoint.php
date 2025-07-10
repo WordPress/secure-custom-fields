@@ -37,12 +37,11 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		if ( ! (bool) get_option( 'scf_beta_feature_connect_fields_enabled', false ) ) {
+		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
 			return;
 		}
-		$post_types = get_post_types( array( 'show_in_rest' => true ) );
 		register_rest_field(
-			$post_types,
+			'type',
 			'scf_field_groups',
 			array(
 				'get_callback' => array( $this, 'get_scf_fields' ),
@@ -54,16 +53,13 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get SCF fields for a post type.
 	 *
-	 * @since 6.5.0
+	 * @since SCF 6.5.0
 	 *
 	 * @param array $post_type_object The post type object.
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
-		if ( ! isset( $post_type_object['id'] ) || ! isset( $post_type_object['type'] ) ) {
-			return array();
-		}
-		$post_type         = $post_type_object['type'];
+		$post_type         = $post_type_object['slug'];
 		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
 
@@ -72,15 +68,9 @@ class SCF_Rest_Types_Endpoint {
 			$group_fields = array();
 
 			foreach ( $fields as $field ) {
-				if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
-					// Skip fields that are not allowed in bindings.
-					continue;
-				}
 				$group_fields[] = array(
-					'label'          => $field['label'],
-					'type'           => $field['type'],
-					'name'           => $field['name'],
-					'display_format' => isset( $field['display_format'] ) ? $field['display_format'] : '',
+					'label' => $field['label'],
+					'type'  => $field['type'],
 				);
 			}
 
