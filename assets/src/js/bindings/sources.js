@@ -87,7 +87,6 @@ const processFieldBinding = ( attribute, args, scfFields ) => {
 		case 'textarea':
 		case 'url':
 		case 'email':
-		case 'password':
 		case 'select':
 		default:
 			return fieldValue ? fieldValue.toString() : '';
