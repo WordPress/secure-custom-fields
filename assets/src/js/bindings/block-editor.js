@@ -110,22 +110,30 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		const currentBindings = props.attributes?.metadata?.bindings || {};
 
-		const fieldsSuggestions = useMemo( () => {
-			const blockFieldTypes =
-				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
-
+		// Helper function to convert fields object to array format
+		const getFieldsArray = useCallback( () => {
 			if ( ! fields || typeof fields !== 'object' ) {
 				return [];
 			}
 
-			// Convert fields object to array format
-			const fieldsArray = Object.entries( fields ).map(
+			return Object.entries( fields ).map(
 				( [ fieldName, fieldConfig ] ) => ( {
 					name: fieldName,
 					label: fieldConfig.label,
 					type: fieldConfig.type,
 				} )
 			);
+		}, [ fields ] );
+
+		const fieldsSuggestions = useMemo( () => {
+			const blockFieldTypes =
+				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
+
+			const fieldsArray = getFieldsArray();
+
+			if ( fieldsArray.length === 0 ) {
+				return [];
+			}
 
 			if ( blockFieldTypes ) {
 				// Get all unique field types for this block
@@ -140,17 +148,15 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					.map( ( field ) => ( {
 						value: field.name,
 						label: field.label,
-						fieldType: field.type,
 					} ) );
 			} else {
 				// If no specific field types are defined for this block, return all fields
 				return fieldsArray.map( ( field ) => ( {
 					value: field.name,
 					label: field.label,
-					fieldType: field.type,
 				} ) );
 			}
-		}, [ fields, props.name ] );
+		}, [ getFieldsArray, props.name ] );
 
 		// Get field suggestions for a specific attribute
 		const getFieldSuggestionsForAttribute = useCallback(
@@ -158,18 +164,11 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				const blockFieldTypes =
 					BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
 
-				if ( ! fields || typeof fields !== 'object' ) {
+				const fieldsArray = getFieldsArray();
+
+				if ( fieldsArray.length === 0 ) {
 					return [];
 				}
-
-				// Convert fields object to array format
-				const fieldsArray = Object.entries( fields ).map(
-					( [ fieldName, fieldConfig ] ) => ( {
-						name: fieldName,
-						label: fieldConfig.label,
-						type: fieldConfig.type,
-					} )
-				);
 
 				if ( blockFieldTypes && blockFieldTypes[ attribute ] ) {
 					const allowedFieldTypes = blockFieldTypes[ attribute ];
@@ -183,10 +182,13 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						} ) );
 				}
 
-				// Fallback to all field suggestions
-				return fieldsSuggestions;
+				// If no specific field types are defined for this attribute, return all fields
+				return fieldsArray.map( ( field ) => ( {
+					value: field.name,
+					label: field.label,
+				} ) );
 			},
-			[ fields, fieldsSuggestions, props.name ]
+			[ getFieldsArray, props.name ]
 		);
 
 		// Initialize the field state with an empty object to track multiple attributes
@@ -274,13 +276,18 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						const bindings = {};
 
 						attributeArray.forEach( ( attr ) => {
-							newState[ attr ] = value;
-							bindings[ attr ] = {
-								source: 'acf/field',
-								args: {
-									key: value,
-								},
-							};
+							if ( value === null || value === undefined ) {
+								newState[ attr ] = undefined;
+								bindings[ attr ] = undefined;
+							} else {
+								newState[ attr ] = value;
+								bindings[ attr ] = {
+									source: 'acf/field',
+									args: {
+										key: value,
+									},
+								};
+							}
 						} );
 
 						// Update all bindings at once.
@@ -292,16 +299,26 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					const singleAttribute = attributeArray[ 0 ];
 					setBoundFields( ( prevState ) => ( {
 						...prevState,
-						[ singleAttribute ]: value,
+						[ singleAttribute ]:
+							value === null || value === undefined
+								? undefined
+								: value,
 					} ) );
-					updateBlockBindings( {
-						[ singleAttribute ]: {
-							source: 'acf/field',
-							args: {
-								key: value,
+
+					if ( value === null || value === undefined ) {
+						updateBlockBindings( {
+							[ singleAttribute ]: undefined,
+						} );
+					} else {
+						updateBlockBindings( {
+							[ singleAttribute ]: {
+								source: 'acf/field',
+								args: {
+									key: value,
+								},
 							},
-						},
-					} );
+						} );
+					}
 				}
 			},
 			[ updateBlockBindings ]
@@ -337,7 +354,10 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 									'secure-custom-fields'
 								) }
 								onDeselect={ () =>
-									handleFieldChange( bindableAttributes, '' )
+									handleFieldChange(
+										bindableAttributes,
+										null
+									)
 								}
 								isShownByDefault={ true }
 							>
@@ -361,12 +381,12 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 											bindableAttributes[ 0 ]
 										] || ''
 									}
-									onChange={ ( value ) =>
+									onChange={ ( value ) => {
 										handleFieldChange(
 											bindableAttributes,
 											value
-										)
-									}
+										);
+									} }
 								/>
 							</ToolsPanelItem>
 						) : (
@@ -379,7 +399,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										}
 										label={ attribute }
 										onDeselect={ () =>
-											handleFieldChange( attribute, '' )
+											handleFieldChange( attribute, null )
 										}
 										isShownByDefault={ true }
 									>
