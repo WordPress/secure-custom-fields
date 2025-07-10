@@ -20,14 +20,7 @@ import { store as editorStore } from '@wordpress/editor';
 
 // These constant and the function above have been copied from Gutenberg. It should be public, eventually.
 
-const BLOCK_BINDINGS_ALLOWED_BLOCKS = {
-	'core/paragraph': [ 'content' ],
-	'core/heading': [ 'content' ],
-	'core/image': [ 'id', 'url', 'title', 'alt' ],
-	'core/button': [ 'url', 'text' ],
-};
-
-const BLOCK_BINDINGS_RELATED_FIELD_TYPES = {
+const BLOCK_BINDINGS_CONFIG = {
 	'core/paragraph': {
 		content: [ 'text', 'textarea', 'date_picker', 'number', 'range' ],
 	},
@@ -56,7 +49,8 @@ const BLOCK_BINDINGS_RELATED_FIELD_TYPES = {
  * @return {string[]} The bindable attributes for the block.
  */
 function getBindableAttributes( blockName ) {
-	return BLOCK_BINDINGS_ALLOWED_BLOCKS[ blockName ];
+	const config = BLOCK_BINDINGS_CONFIG[ blockName ];
+	return config ? Object.keys( config ) : [];
 }
 
 /**
@@ -68,268 +62,151 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 		const { updateBlockBindings, removeAllBlockBindings } =
 			useBlockBindingsUtils();
 
-		const { postType, postId } = useSelect( ( select ) => {
+		// Get ACF fields for current post
+		const fields = useSelect( ( select ) => {
+			const { getEditedEntityRecord } = select( coreDataStore );
 			const { getCurrentPostType, getCurrentPostId } =
 				select( editorStore );
-			return {
-				postType: getCurrentPostType(),
-				postId: getCurrentPostId(),
-			};
+
+			const postType = getCurrentPostType();
+			const postId = getCurrentPostId();
+
+			if ( ! postType || ! postId ) return {};
+
+			const record = getEditedEntityRecord(
+				'postType',
+				postType,
+				postId
+			);
+
+			// Extract fields that end with '_source' (simplified)
+			const sourcedFields = {};
+			Object.entries( record?.acf || {} ).forEach( ( [ key, value ] ) => {
+				if ( key.endsWith( '_source' ) ) {
+					const baseFieldName = key.replace( '_source', '' );
+					if ( record?.acf.hasOwnProperty( baseFieldName ) ) {
+						sourcedFields[ baseFieldName ] = value;
+					}
+				}
+			} );
+			return sourcedFields;
 		}, [] );
 
-		const fields = useSelect(
-			( select ) => {
-				const { getEditedEntityRecord } = select( coreDataStore );
+		// Get filtered field options for an attribute
+		const getFieldOptions = useCallback(
+			( attribute = null ) => {
+				if ( ! fields || Object.keys( fields ).length === 0 ) return [];
 
-				if ( ! postType || ! postId ) {
-					return undefined;
+				const blockConfig = BLOCK_BINDINGS_CONFIG[ props.name ];
+				let allowedTypes = null;
+
+				if ( blockConfig ) {
+					allowedTypes = attribute
+						? blockConfig[ attribute ]
+						: Object.values( blockConfig ).flat();
 				}
 
-				const record = getEditedEntityRecord(
-					'postType',
-					postType,
-					postId
-				);
-				const sourcedFields = {};
-				Object.entries( record?.acf || {} ).forEach(
-					( [ key, value ] ) => {
-						if ( key.endsWith( '_source' ) ) {
-							// This is a source field, get the base field name
-							const baseFieldName = key.replace( '_source', '' );
-							// If the base field exists in the record
-							if ( record?.acf.hasOwnProperty( baseFieldName ) ) {
-								sourcedFields[ baseFieldName ] = value;
-							}
-						}
-					}
-				);
-				return sourcedFields;
-			},
-			[ postType, postId ]
-		);
-
-		const currentBindings = props.attributes?.metadata?.bindings || {};
-
-		// Helper function to convert fields object to array format
-		const getFieldsArray = useCallback( () => {
-			if ( ! fields || typeof fields !== 'object' ) {
-				return [];
-			}
-
-			return Object.entries( fields ).map(
-				( [ fieldName, fieldConfig ] ) => ( {
-					name: fieldName,
-					label: fieldConfig.label,
-					type: fieldConfig.type,
-				} )
-			);
-		}, [ fields ] );
-
-		const fieldsSuggestions = useMemo( () => {
-			const blockFieldTypes =
-				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
-
-			const fieldsArray = getFieldsArray();
-
-			if ( fieldsArray.length === 0 ) {
-				return [];
-			}
-
-			if ( blockFieldTypes ) {
-				// Get all unique field types for this block
-				const allAllowedFieldTypes =
-					Object.values( blockFieldTypes ).flat();
-				const uniqueFieldTypes = [ ...new Set( allAllowedFieldTypes ) ];
-				// Filter fields to only include those that match the allowed types for this block
-				return fieldsArray
-					.filter( ( field ) =>
-						uniqueFieldTypes.includes( field.type )
+				return Object.entries( fields )
+					.filter(
+						( [ , fieldConfig ] ) =>
+							! allowedTypes ||
+							allowedTypes.includes( fieldConfig.type )
 					)
-					.map( ( field ) => ( {
-						value: field.name,
-						label: field.label,
+					.map( ( [ fieldName, fieldConfig ] ) => ( {
+						value: fieldName,
+						label: fieldConfig.label,
 					} ) );
-			} else {
-				// If no specific field types are defined for this block, return all fields
-				return fieldsArray.map( ( field ) => ( {
-					value: field.name,
-					label: field.label,
-				} ) );
-			}
-		}, [ getFieldsArray, props.name ] );
-
-		// Get field suggestions for a specific attribute
-		const getFieldSuggestionsForAttribute = useCallback(
-			( attribute ) => {
-				const blockFieldTypes =
-					BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
-
-				const fieldsArray = getFieldsArray();
-
-				if ( fieldsArray.length === 0 ) {
-					return [];
-				}
-
-				if ( blockFieldTypes && blockFieldTypes[ attribute ] ) {
-					const allowedFieldTypes = blockFieldTypes[ attribute ];
-					return fieldsArray
-						.filter( ( field ) =>
-							allowedFieldTypes.includes( field.type )
-						)
-						.map( ( field ) => ( {
-							value: field.name,
-							label: field.label,
-						} ) );
-				}
-
-				// If no specific field types are defined for this attribute, return all fields
-				return fieldsArray.map( ( field ) => ( {
-					value: field.name,
-					label: field.label,
-				} ) );
 			},
-			[ getFieldsArray, props.name ]
+			[ fields, props.name ]
 		);
 
-		// Initialize the field state with an empty object to track multiple attributes
-		const [ boundFields, setBoundFields ] = useState( {} );
-
-		// Determine if we should show "All attributes" mode:
-		// - Block must have multiple bindable attributes
-		// - All attributes should use the same field types
-		const shouldShowAllAttributesMode = useMemo( () => {
-			const blockFieldTypes =
-				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
-
-			if (
-				! bindableAttributes ||
-				bindableAttributes.length <= 1 ||
-				! blockFieldTypes
-			) {
+		// Check if all attributes use the same field types (for "all attributes" mode)
+		const canUseAllAttributesMode = useMemo( () => {
+			if ( ! bindableAttributes || bindableAttributes.length <= 1 )
 				return false;
-			}
 
-			// Get field types for each attribute
-			const attributeFieldTypes = bindableAttributes.map(
-				( attr ) => blockFieldTypes[ attr ] || []
-			);
+			const blockConfig = BLOCK_BINDINGS_CONFIG[ props.name ];
+			if ( ! blockConfig ) return false;
 
-			// Check if all attributes have the same field types
-			const firstAttributeTypes = attributeFieldTypes[ 0 ];
-			const allSameTypes = attributeFieldTypes.every(
-				( types ) =>
-					types.length === firstAttributeTypes.length &&
-					types.every( ( type ) =>
+			const firstAttributeTypes =
+				blockConfig[ bindableAttributes[ 0 ] ] || [];
+			return bindableAttributes.every( ( attr ) => {
+				const attrTypes = blockConfig[ attr ] || [];
+				return (
+					attrTypes.length === firstAttributeTypes.length &&
+					attrTypes.every( ( type ) =>
 						firstAttributeTypes.includes( type )
 					)
-			);
-
-			return allSameTypes && firstAttributeTypes.length > 0;
+				);
+			} );
 		}, [ bindableAttributes, props.name ] );
 
-		const [ allBoundFields, setAllBoundFields ] = useState(
-			shouldShowAllAttributesMode
-		);
+		// Track bound fields
+		const [ boundFields, setBoundFields ] = useState( {} );
 
-		// Memoize the stringified currentBindings to avoid unnecessary effect runs
-		const currentBindingsKey = useMemo(
-			() => JSON.stringify( currentBindings ),
-			[ currentBindings ]
-		);
-
-		// Initialize bound fields from current bindings when they change
+		// Sync with current bindings
 		useEffect( () => {
-			if ( Object.keys( currentBindings ).length > 0 ) {
-				const initialBoundFields = {};
+			const currentBindings = props.attributes?.metadata?.bindings || {};
+			const newBoundFields = {};
 
-				// Extract field values from current bindings
-				Object.keys( currentBindings ).forEach( ( attribute ) => {
-					if ( currentBindings[ attribute ]?.args?.key ) {
-						initialBoundFields[ attribute ] =
-							currentBindings[ attribute ].args.key;
-					}
-				} );
+			Object.keys( currentBindings ).forEach( ( attribute ) => {
+				if ( currentBindings[ attribute ]?.args?.key ) {
+					newBoundFields[ attribute ] =
+						currentBindings[ attribute ].args.key;
+				}
+			} );
 
-				setBoundFields( initialBoundFields );
-			} else {
-				// Clear bound fields when there are no current bindings
-				setBoundFields( {} );
-			}
-		}, [ currentBindingsKey ] );
+			setBoundFields( newBoundFields );
+		}, [ props.attributes?.metadata?.bindings ] );
 
-		// Update allBoundFields when shouldShowAllAttributesMode changes
-		useEffect( () => {
-			setAllBoundFields( shouldShowAllAttributesMode );
-		}, [ shouldShowAllAttributesMode ] );
-
-		// Memoize the change handler to prevent creating new function on each render
+		// Handle field selection
 		const handleFieldChange = useCallback(
-			( attributes, value ) => {
-				// Ensure attributes is always an array.
-				const attributeArray = Array.isArray( attributes )
-					? attributes
-					: [ attributes ];
+			( attribute, value ) => {
+				if ( Array.isArray( attribute ) ) {
+					// Handle multiple attributes at once
+					const newBoundFields = { ...boundFields };
+					const bindings = {};
 
-				if ( attributeArray.length > 1 ) {
-					setBoundFields( ( prevState ) => {
-						const newState = { ...prevState };
-						const bindings = {};
-
-						attributeArray.forEach( ( attr ) => {
-							if ( value === null || value === undefined ) {
-								newState[ attr ] = undefined;
-								bindings[ attr ] = undefined;
-							} else {
-								newState[ attr ] = value;
-								bindings[ attr ] = {
+					attribute.forEach( ( attr ) => {
+						newBoundFields[ attr ] = value;
+						bindings[ attr ] = value
+							? {
 									source: 'acf/field',
-									args: {
-										key: value,
-									},
-								};
-							}
-						} );
-
-						// Update all bindings at once.
-						updateBlockBindings( bindings );
-
-						return newState;
+									args: { key: value },
+							  }
+							: undefined;
 					} );
-				} else {
-					const singleAttribute = attributeArray[ 0 ];
-					setBoundFields( ( prevState ) => ( {
-						...prevState,
-						[ singleAttribute ]:
-							value === null || value === undefined
-								? undefined
-								: value,
-					} ) );
 
-					if ( value === null || value === undefined ) {
-						updateBlockBindings( {
-							[ singleAttribute ]: undefined,
-						} );
-					} else {
-						updateBlockBindings( {
-							[ singleAttribute ]: {
-								source: 'acf/field',
-								args: {
-									key: value,
-								},
-							},
-						} );
-					}
+					setBoundFields( newBoundFields );
+					updateBlockBindings( bindings );
+				} else {
+					// Handle single attribute
+					setBoundFields( ( prev ) => ( {
+						...prev,
+						[ attribute ]: value,
+					} ) );
+					updateBlockBindings( {
+						[ attribute ]: value
+							? {
+									source: 'acf/field',
+									args: { key: value },
+							  }
+							: undefined,
+					} );
 				}
 			},
-			[ updateBlockBindings ]
+			[ boundFields, updateBlockBindings ]
 		);
 
+		// Handle reset
 		const handleReset = useCallback( () => {
 			removeAllBlockBindings();
 			setBoundFields( {} );
 		}, [ removeAllBlockBindings ] );
 
-		if ( fieldsSuggestions.length === 0 || ! bindableAttributes ) {
+		// Don't show if no fields or attributes
+		const fieldOptions = getFieldOptions();
+		if ( fieldOptions.length === 0 || ! bindableAttributes ) {
 			return <BlockEdit { ...props } />;
 		}
 
@@ -344,7 +221,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						resetAll={ handleReset }
 					>
-						{ allBoundFields ? (
+						{ canUseAllAttributesMode ? (
 							<ToolsPanelItem
 								hasValue={ () =>
 									!! boundFields[ bindableAttributes[ 0 ] ]
@@ -362,11 +239,6 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 								isShownByDefault={ true }
 							>
 								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									__experimentalShowHowTo={ false }
-									__experimentalExpandOnFocus={ true }
-									__experimentalAutoSelectFirstMatch={ true }
 									label={ __(
 										'Field',
 										'secure-custom-fields'
@@ -375,63 +247,50 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										'Select a field',
 										'secure-custom-fields'
 									) }
-									options={ fieldsSuggestions }
+									options={ getFieldOptions() }
 									value={
 										boundFields[
 											bindableAttributes[ 0 ]
 										] || ''
 									}
-									onChange={ ( value ) => {
+									onChange={ ( value ) =>
 										handleFieldChange(
 											bindableAttributes,
 											value
-										);
-									} }
+										)
+									}
 								/>
 							</ToolsPanelItem>
 						) : (
-							<>
-								{ bindableAttributes.map( ( attribute ) => (
-									<ToolsPanelItem
-										key={ `scf-field-${ attribute }` }
-										hasValue={ () =>
-											!! boundFields[ attribute ]
-										}
+							bindableAttributes.map( ( attribute ) => (
+								<ToolsPanelItem
+									key={ `scf-field-${ attribute }` }
+									hasValue={ () =>
+										!! boundFields[ attribute ]
+									}
+									label={ attribute }
+									onDeselect={ () =>
+										handleFieldChange( attribute, null )
+									}
+									isShownByDefault={ true }
+								>
+									<ComboboxControl
 										label={ attribute }
-										onDeselect={ () =>
-											handleFieldChange( attribute, null )
+										placeholder={ __(
+											'Select a field',
+											'secure-custom-fields'
+										) }
+										options={ getFieldOptions( attribute ) }
+										value={ boundFields[ attribute ] || '' }
+										onChange={ ( value ) =>
+											handleFieldChange(
+												attribute,
+												value
+											)
 										}
-										isShownByDefault={ true }
-									>
-										<ComboboxControl
-											__next40pxDefaultSize
-											__nextHasNoMarginBottom
-											__experimentalShowHowTo={ false }
-											__experimentalExpandOnFocus={ true }
-											__experimentalAutoSelectFirstMatch={
-												true
-											}
-											label={ attribute }
-											placeholder={ __(
-												'Select a field',
-												'secure-custom-fields'
-											) }
-											options={ getFieldSuggestionsForAttribute(
-												attribute
-											) }
-											value={
-												boundFields[ attribute ] || ''
-											}
-											onChange={ ( value ) =>
-												handleFieldChange(
-													attribute,
-													value
-												)
-											}
-										/>
-									</ToolsPanelItem>
-								) ) }
-							</>
+									/>
+								</ToolsPanelItem>
+							) )
 						) }
 					</ToolsPanel>
 				</InspectorControls>
