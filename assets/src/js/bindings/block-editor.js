@@ -77,7 +77,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			};
 		}, [] );
 
-		const fieldsGroups = useSelect(
+		const fields = useSelect(
 			( select ) => {
 				const { getEditedEntityRecord } = select( coreDataStore );
 
@@ -90,33 +90,42 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					postType,
 					postId
 				);
-				return record?.scf_field_groups;
+				const sourcedFields = {};
+				Object.entries( record?.acf || {} ).forEach(
+					( [ key, value ] ) => {
+						if ( key.endsWith( '_source' ) ) {
+							// This is a source field, get the base field name
+							const baseFieldName = key.replace( '_source', '' );
+							// If the base field exists in the record
+							if ( record?.acf.hasOwnProperty( baseFieldName ) ) {
+								sourcedFields[ baseFieldName ] = value;
+							}
+						}
+					}
+				);
+				return sourcedFields;
 			},
 			[ postType, postId ]
 		);
 
 		const currentBindings = props.attributes?.metadata?.bindings || {};
 
-		const fields = useMemo(
-			() =>
-				fieldsGroups?.reduce( ( acc, fieldGroup ) => {
-					const groupFields =
-						fieldGroup.fields?.map( ( field ) => ( {
-							...field,
-							fieldGroupTitle: fieldGroup.title,
-							name: field.name,
-							label: field.label,
-							value: field.value,
-						} ) ) || [];
-
-					return [ ...acc, ...groupFields ];
-				}, [] ) || [],
-			[ fieldsGroups ]
-		);
-
 		const fieldsSuggestions = useMemo( () => {
 			const blockFieldTypes =
 				BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
+
+			if ( ! fields || typeof fields !== 'object' ) {
+				return [];
+			}
+
+			// Convert fields object to array format
+			const fieldsArray = Object.entries( fields ).map(
+				( [ fieldName, fieldConfig ] ) => ( {
+					name: fieldName,
+					label: fieldConfig.label,
+					type: fieldConfig.type,
+				} )
+			);
 
 			if ( blockFieldTypes ) {
 				// Get all unique field types for this block
@@ -124,7 +133,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					Object.values( blockFieldTypes ).flat();
 				const uniqueFieldTypes = [ ...new Set( allAllowedFieldTypes ) ];
 				// Filter fields to only include those that match the allowed types for this block
-				return fields
+				return fieldsArray
 					.filter( ( field ) =>
 						uniqueFieldTypes.includes( field.type )
 					)
@@ -135,7 +144,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					} ) );
 			} else {
 				// If no specific field types are defined for this block, return all fields
-				return fields.map( ( field ) => ( {
+				return fieldsArray.map( ( field ) => ( {
 					value: field.name,
 					label: field.label,
 					fieldType: field.type,
@@ -149,9 +158,22 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 				const blockFieldTypes =
 					BLOCK_BINDINGS_RELATED_FIELD_TYPES[ props.name ];
 
+				if ( ! fields || typeof fields !== 'object' ) {
+					return [];
+				}
+
+				// Convert fields object to array format
+				const fieldsArray = Object.entries( fields ).map(
+					( [ fieldName, fieldConfig ] ) => ( {
+						name: fieldName,
+						label: fieldConfig.label,
+						type: fieldConfig.type,
+					} )
+				);
+
 				if ( blockFieldTypes && blockFieldTypes[ attribute ] ) {
 					const allowedFieldTypes = blockFieldTypes[ attribute ];
-					return fields
+					return fieldsArray
 						.filter( ( field ) =>
 							allowedFieldTypes.includes( field.type )
 						)
