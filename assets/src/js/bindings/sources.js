@@ -1,31 +1,95 @@
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
 
 /**
- * Get the value of a specific field from the ACF fields.
+ * Get the SCF fields from the post entity.
  *
- * @param {Object} fields The ACF fields object.
- * @param {string} fieldName The name of the field to retrieve.
- * @returns {string} The value of the specified field, or undefined if not found.
+ * @param {Object} post The post entity object.
+ * @returns {Object} The SCF fields object with source data.
  */
-const getFieldValue = ( fields, fieldName ) => fields?.acf?.[ fieldName ];
+const getSCFFields = ( post ) => {
+	if ( ! post?.acf ) {
+		return {};
+	}
 
+	// Extract only the _source fields which contain the formatted data
+	const sourceFields = {};
+	Object.entries( post.acf ).forEach( ( [ key, value ] ) => {
+		if ( key.endsWith( '_source' ) ) {
+			// Remove the _source suffix to get the field name
+			const fieldName = key.replace( '_source', '' );
+			sourceFields[ fieldName ] = value;
+		}
+	} );
+
+	return sourceFields;
+};
+
+/**
+ * Resolve image attribute values from an image object.
+ *
+ * @param {Object} imageObj The image object from SCF field data.
+ * @param {string} attribute The attribute to resolve.
+ * @returns {string} The resolved attribute value.
+ */
 const resolveImageAttribute = ( imageObj, attribute ) => {
 	if ( ! imageObj ) return '';
 	switch ( attribute ) {
 		case 'url':
-		case 'content':
-			return imageObj.source_url;
+			return imageObj.url || '';
 		case 'alt':
-			return imageObj.alt_text || '';
+			return imageObj.alt || '';
 		case 'title':
-			return imageObj.title?.rendered || '';
+			return imageObj.title || '';
+		case 'id':
+			return imageObj.id || imageObj.ID || '';
 		default:
 			return '';
+	}
+};
+
+/**
+ * Process a single field binding and return its resolved value.
+ *
+ * @param {string} attribute The attribute being bound.
+ * @param {Object} args The binding arguments.
+ * @param {Object} scfFields The SCF fields object.
+ * @returns {string} The resolved field value.
+ */
+const processFieldBinding = ( attribute, args, scfFields ) => {
+	const fieldName = args?.key;
+	const fieldConfig = scfFields[ fieldName ];
+
+	if ( ! fieldConfig ) {
+		return '';
+	}
+
+	const fieldType = fieldConfig.type;
+	const fieldValue = fieldConfig.formatted_value;
+
+	switch ( fieldType ) {
+		case 'image':
+			return resolveImageAttribute( fieldValue, attribute );
+		case 'checkbox':
+			// For checkbox fields, join array values or return as string
+			if ( Array.isArray( fieldValue ) ) {
+				return fieldValue.join( ', ' );
+			}
+			return fieldValue ? fieldValue.toString() : '';
+		case 'number':
+		case 'range':
+			return fieldValue ? fieldValue.toString() : '';
+		case 'date_picker':
+		case 'text':
+		case 'textarea':
+		case 'url':
+		case 'email':
+		case 'select':
+		default:
+			return fieldValue ? fieldValue.toString() : '';
 	}
 };
 
@@ -33,8 +97,9 @@ registerBlockBindingsSource( {
 	name: 'acf/field',
 	label: 'SCF Fields',
 	getValues( { context, bindings, select } ) {
-		const { getEditedEntityRecord, getMedia } = select( coreDataStore );
-		let fields =
+		const { getEditedEntityRecord } = select( coreDataStore );
+
+		const post =
 			context?.postType && context?.postId
 				? getEditedEntityRecord(
 						'postType',
@@ -42,36 +107,15 @@ registerBlockBindingsSource( {
 						context.postId
 				  )
 				: undefined;
+
+		const scfFields = getSCFFields( post );
+
 		const result = {};
 
 		Object.entries( bindings ).forEach(
 			( [ attribute, { args } = {} ] ) => {
-				const fieldName = args?.key;
-
-				const fieldValue = getFieldValue( fields, fieldName );
-				if ( typeof fieldValue === 'object' && fieldValue !== null ) {
-					let value = '';
-
-					if ( fieldValue[ attribute ] ) {
-						value = fieldValue[ attribute ];
-					} else if ( attribute === 'content' && fieldValue.url ) {
-						value = fieldValue.url;
-					}
-
-					result[ attribute ] = value;
-				} else if ( typeof fieldValue === 'number' ) {
-					if ( attribute === 'content' ) {
-						result[ attribute ] = fieldValue.toString() || '';
-					} else {
-						const imageObj = getMedia( fieldValue );
-						result[ attribute ] = resolveImageAttribute(
-							imageObj,
-							attribute
-						);
-					}
-				} else {
-					result[ attribute ] = fieldValue || '';
-				}
+				const value = processFieldBinding( attribute, args, scfFields );
+				result[ attribute ] = value;
 			}
 		);
 
