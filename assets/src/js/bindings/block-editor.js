@@ -259,6 +259,8 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 											value
 										)
 									}
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 							</ToolsPanelItem>
 						) : (
@@ -288,6 +290,8 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 												value
 											)
 										}
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
 									/>
 								</ToolsPanelItem>
 							) )
