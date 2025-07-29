@@ -52,6 +52,14 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.5.2 =
+*Release Date 31 Jul 2025*
+
+*Features*
+
+- Connect block attributes with custom fields via UI.
+
+
 = 6.5.1 =
 *Release Date 2 Jul 2025*
 
