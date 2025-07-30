@@ -58,6 +58,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 *Features*
 
 - Connect block attributes with custom fields via UI.
+- Remove the word 'New' from default `add-new*` label values.
 
 
 = 6.5.1 =
