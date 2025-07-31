@@ -5,7 +5,7 @@
 
 # Set script directory and define paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"  # Go up one directory from bin to project root
 OUTPUT_DIR="$PROJECT_ROOT/release"
 ZIP_NAME="secure-custom-fields.zip"
 
