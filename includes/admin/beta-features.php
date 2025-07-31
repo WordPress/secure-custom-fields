@@ -47,6 +47,10 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_feature( $beta_feature ) {
+			if ( ! class_exists( $beta_feature ) ) {
+				return;
+			}
+
 			$instance                               = new $beta_feature();
 			$this->beta_features[ $instance->name ] = $instance;
 		}
