@@ -52,6 +52,19 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.5.5 =
+*Release Date 31 Jul 2025*
+
+*Features*
+
+- Connect block attributes with custom fields via UI.
+- Remove the word 'New' from default `add-new*` label values.
+
+*Bug Fixes*
+
+- Bug fix: Prevent fatal if class does not exist on Beta Features.
+
+
 = 6.5.4 =
 *Release Date 30 Jul 2025*
 
