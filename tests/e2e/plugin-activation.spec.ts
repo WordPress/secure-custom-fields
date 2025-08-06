@@ -23,8 +23,8 @@ test.describe( 'Plugin Activation', () => {
 		// Navigate to plugins page
 		await admin.visitAdminPage( 'plugins.php' );
 
-		// Check if our plugin is active
-		const pluginRow = page.locator( `tr[data-plugin="${ PLUGIN_PATH }"]` );
+		// Check if our plugin is active (exclude update notification rows)
+		const pluginRow = page.locator( `tr[data-plugin="${ PLUGIN_PATH }"]:not(.plugin-update-tr)` );
 		await expect( pluginRow ).toBeVisible();
 
 		// Check if plugin is activated
@@ -38,9 +38,9 @@ test.describe( 'Plugin Activation', () => {
 		// Navigate to plugins page
 		await admin.visitAdminPage( 'plugins.php' );
 
-		// Check plugin name
+		// Check plugin name (exclude update notification rows)
 		const pluginName = page.locator(
-			`tr[data-plugin="${ PLUGIN_PATH }"] .plugin-title strong`
+			`tr[data-plugin="${ PLUGIN_PATH }"]:not(.plugin-update-tr) .plugin-title strong`
 		);
 		await expect( pluginName ).toHaveText( 'Secure Custom Fields' );
 	} );
