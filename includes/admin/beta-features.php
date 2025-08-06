@@ -35,8 +35,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function __construct() {
-			// Temporarily disabled - will be enabled when beta feature is ready
-			// add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		}
 
 		/**
@@ -48,6 +47,10 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_feature( $beta_feature ) {
+			if ( ! class_exists( $beta_feature ) ) {
+				return;
+			}
+
 			$instance                               = new $beta_feature();
 			$this->beta_features[ $instance->name ] = $instance;
 		}
@@ -79,26 +82,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		}
 
 		/**
-		 * Localizes the beta features data.
-		 *
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function localize_beta_features() {
-			$beta_features = array();
-			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
-				$beta_features[ $name ] = $beta_feature->is_enabled();
-			}
-
-			acf_localize_data(
-				array(
-					'betaFeatures' => $beta_features,
-				)
-			);
-		}
-
-		/**
 		 * This function will add the SCF beta features menu item to the WP admin
 		 *
 		 * @type    action (admin_menu)
@@ -115,7 +98,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$page = add_submenu_page( 'edit.php?post_type=acf-field-group', __( 'Beta Features', 'secure-custom-fields' ), __( 'Beta Features', 'secure-custom-fields' ), acf_get_setting( 'capability' ), 'scf-beta-features', array( $this, 'html' ) );
 
 			add_action( 'load-' . $page, array( $this, 'load' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'localize_beta_features' ), 20 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_beta_features_script' ), 20 );
 		}
 
 		/**
@@ -155,7 +138,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		private function include_beta_features() {
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
-			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-connect-fields.php' );
 
 			add_action( 'scf/include_admin_beta_features', array( $this, 'register_beta_features' ) );
 
@@ -170,7 +153,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
-			scf_register_admin_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
+			scf_register_admin_beta_feature( 'SCF_Admin_Beta_Feature_Connect_Fields' );
 		}
 
 		/**
@@ -254,6 +237,27 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 			$beta_feature->html();
 			acf_nonce_input( $beta_feature->name );
 			echo '</form>';
+		}
+
+		/**
+		 * Adds the editor sidebar script to the page.
+		 *
+		 * @since   SCF 6.5.0
+		 *
+		 * @return  void
+		 */
+		public function add_beta_features_script() {
+			// Check if the connected fields feature is enabled
+
+			$script = 'window.scf = window.scf || {};
+window.scf.betaFeatures = window.scf.betaFeatures || {};';
+			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
+				if ( $beta_feature->is_enabled() ) {
+					$script .= sprintf( 'window.scf.betaFeatures.%s = true;', esc_js( $name ) );
+				}
+			}
+
+			wp_add_inline_script( 'wp-block-editor', $script, 'before' );
 		}
 	}
 

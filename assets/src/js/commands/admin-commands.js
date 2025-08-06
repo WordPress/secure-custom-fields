@@ -16,6 +16,7 @@ import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { layout, plus, postList, category, settings, tool, upload, download } from '@wordpress/icons';
 
 /**
  * Register admin commands for SCF
@@ -34,7 +35,7 @@ const registerAdminCommands = () => {
 			label: __( 'Field Groups', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-field-group' },
-			icon: 'layout',
+			icon: layout,
 			description: __(
 				'SCF: View and manage custom field groups',
 				'secure-custom-fields'
@@ -51,7 +52,7 @@ const registerAdminCommands = () => {
 			label: __( 'Create New Field Group', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-field-group' },
-			icon: 'plus',
+			icon: plus,
 			description: __(
 				'SCF: Create a new field group to organize custom fields',
 				'secure-custom-fields'
@@ -69,7 +70,7 @@ const registerAdminCommands = () => {
 			label: __( 'Post Types', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-post-type' },
-			icon: 'admin-post',
+			icon: postList,
 			description: __(
 				'SCF: Manage custom post types',
 				'secure-custom-fields'
@@ -81,7 +82,7 @@ const registerAdminCommands = () => {
 			label: __( 'Create New Post Type', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-post-type' },
-			icon: 'plus',
+			icon: plus,
 			description: __(
 				'SCF: Create a new custom post type',
 				'secure-custom-fields'
@@ -93,7 +94,7 @@ const registerAdminCommands = () => {
 			label: __( 'Taxonomies', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-taxonomy' },
-			icon: 'category',
+			icon: category,
 			description: __(
 				'SCF: Manage custom taxonomies for organizing content',
 				'secure-custom-fields'
@@ -105,7 +106,7 @@ const registerAdminCommands = () => {
 			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-taxonomy' },
-			icon: 'plus',
+			icon: plus,
 			description: __(
 				'SCF: Create a new custom taxonomy',
 				'secure-custom-fields'
@@ -124,7 +125,7 @@ const registerAdminCommands = () => {
 			label: __( 'Options Pages', 'secure-custom-fields' ),
 			url: 'edit.php',
 			urlArgs: { post_type: 'acf-ui-options-page' },
-			icon: 'admin-settings',
+			icon: settings,
 			description: __(
 				'SCF: Manage custom options pages for global settings',
 				'secure-custom-fields'
@@ -136,7 +137,7 @@ const registerAdminCommands = () => {
 			label: __( 'Create New Options Page', 'secure-custom-fields' ),
 			url: 'post-new.php',
 			urlArgs: { post_type: 'acf-ui-options-page' },
-			icon: 'plus',
+			icon: plus,
 			description: __(
 				'SCF: Create a new custom options page',
 				'secure-custom-fields'
@@ -148,7 +149,7 @@ const registerAdminCommands = () => {
 			label: __( 'SCF Tools', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools' },
-			icon: 'admin-tools',
+			icon: tool,
 			description: __(
 				'SCF: Access SCF utility tools',
 				'secure-custom-fields'
@@ -160,7 +161,7 @@ const registerAdminCommands = () => {
 			label: __( 'Import SCF Data', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools', tool: 'import' },
-			icon: 'upload',
+			icon: upload,
 			description: __(
 				'SCF: Import field groups, post types, taxonomies, and options pages',
 				'secure-custom-fields'
@@ -172,7 +173,7 @@ const registerAdminCommands = () => {
 			label: __( 'Export SCF Data', 'secure-custom-fields' ),
 			url: 'admin.php',
 			urlArgs: { page: 'acf-tools', tool: 'export' },
-			icon: 'download',
+			icon: download,
 			description: __(
 				'SCF: Export field groups, post types, taxonomies, and options pages',
 				'secure-custom-fields'
