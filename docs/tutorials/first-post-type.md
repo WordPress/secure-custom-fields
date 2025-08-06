@@ -8,21 +8,21 @@ In WordPress, a custom post type (CPT) is a content type like posts and pages, b
 
 ## Prerequisites
 
--   SCF installed and activated
--   Administrator access to WordPress
--   Basic understanding of WordPress concepts
+- SCF installed and activated
+- Administrator access to WordPress
+- Basic understanding of WordPress concepts
 
 You can learn more about WordPress basics here:
 
--   [Theme Basics](https://developer.wordpress.org/themes/basics/)
--   [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
+- [Theme Basics](https://developer.wordpress.org/themes/basics/)
+- [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
 
 ## 1. Access the Admin Panel
 
 To begin creating your custom post type:
 
--   Go to **Secure Custom Fields → Post Types** in your WordPress admin menu.
--   Click the **"Add New"** button to open the creation form.
+- Go to **Secure Custom Fields → Post Types** in your WordPress admin menu.
+- Click the **"Add New"** button to open the creation form.
 
 ## 2. Basic Configuration
 
@@ -64,10 +64,10 @@ These options let you customize deeper behaviors and labels.
 
 Select which features to enable when editing a post, such as:
 
--   **Title**: Adds a title field
--   **Editor**: Main content box
--   **Featured Image**: Allow image upload
--   **Comments**, **Author**, **Excerpt**, etc.
+- **Title**: Adds a title field
+- **Editor**: Main content box
+- **Featured Image**: Allow image upload
+- **Comments**, **Author**, **Excerpt**, etc.
 
 ### Description
 
@@ -81,18 +81,18 @@ Make sure this is set to **Yes** so your post type is registered and usable.
 
 These are the texts that WordPress shows throughout the dashboard. For example:
 
--   **Menu Name**: What appears in the sidebar
--   **Add New Item**: Button to create a new entry
--   **Edit Item**, **View Item**, **Search Items**, etc.
+- **Menu Name**: What appears in the sidebar
+- **Add New Item**: Button to create a new entry
+- **Edit Item**, **View Item**, **Search Items**, etc.
     You can keep the default labels or customize them to your liking.
 
 ### Visibility Options
 
 Control where your post type appears in the admin and site:
 
--   Show in dashboard menu
--   Show in admin bar
--   Show in appearance menus
+- Show in dashboard menu
+- Show in admin bar
+- Show in appearance menus
 
 ### Menu Icon and Position
 
@@ -102,9 +102,9 @@ Choose an icon for your post type from the WordPress Dashicons set. Optionally, 
 
 You can define how URLs will look for your post type:
 
--   **Slug**: A custom word for your URL (e.g., `/movie/`)
--   Enable archive and pagination
--   Optionally include RSS feeds
+- **Slug**: A custom word for your URL (e.g., `/movie/`)
+- Enable archive and pagination
+- Optionally include RSS feeds
 
 ### Permissions
 
@@ -114,22 +114,22 @@ If needed, you can assign custom capabilities like `edit_movie` or `delete_movie
 
 Enable this if you plan to use the post type with the block editor or external tools.
 
--   You can customize the API route, namespace, or controller class if needed.
+- You can customize the API route, namespace, or controller class if needed.
 
 ## 4. Testing
 
 Once everything is set up:
 
--   Click **Save** to register your post type.
--   Go to the WordPress dashboard menu where your new post type now appears.
--   Click **Add New** and create a test entry.
--   Visit your website and check that it appears correctly on the frontend.
+- Click **Save** to register your post type.
+- Go to the WordPress dashboard menu where your new post type now appears.
+- Click **Add New** and create a test entry.
+- Visit your website and check that it appears correctly on the frontend.
 
 ## Next Steps
 
--   Add custom fields to your post type via Secure Custom Fields
--   Configure how archives and single templates are displayed in your theme
--   Set up or register your own taxonomies for more organization
+- Add custom fields to your post type via Secure Custom Fields
+- Configure how archives and single templates are displayed in your theme
+- Set up or register your own taxonomies for more organization
 
 ## For Developers
 

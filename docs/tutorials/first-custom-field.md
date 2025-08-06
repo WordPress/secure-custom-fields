@@ -8,19 +8,19 @@ Custom fields let you add structured data to your content. With SCF, you can att
 
 ## Prerequisites
 
--   SCF installed and activated
--   A post type (default or custom) where you'll attach your fields
--   Administrator access to WordPress
+- SCF installed and activated
+- A post type (default or custom) where you'll attach your fields
+- Administrator access to WordPress
 
 You can learn more about WordPress basics here:
 
--   [Theme Basics](https://developer.wordpress.org/themes/basics/)
--   [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
+- [Theme Basics](https://developer.wordpress.org/themes/basics/)
+- [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
 
 ## 1. Access the Admin Panel
 
--   Go to **Secure Custom Fields → Field Groups** in your WordPress admin menu.
--   Click **"Add New"** to create a new group of fields.
+- Go to **SCF → Field Groups** in your WordPress admin menu.
+- Click **"Add New"** to create a new group of fields.
 
 ## 2. Basic Configuration
 
@@ -32,8 +32,8 @@ Give your field group a descriptive name, like `Movie Details` or `Product Specs
 
 Choose where this group should appear. For example:
 
--   Post type is equal to `Movie`
--   Page template is `Product Page`
+- Post type is equal to `Movie`
+- Page template is `Product Page`
 
 This ensures your fields appear only where you need them.
 
@@ -47,74 +47,113 @@ Make sure the field group is set to **Active** so it appears in the editor.
 
 ## 3. Adding Fields
 
-Click **"Add Field"** to create your first field, configure:
+To start building your custom field group, click the **"Add Field"** button.
 
-### Minimum required settings
-
-To create a functional custom field, you only need to define the following in the **General** tab:
-
-- **Field Type** (e.g., Text, Image, Select): Defines the kind of input
-- **Field Label**: The name shown in the editor
-- **Field Name**: A unique, code-friendly identifier (no spaces; dashes and underscores allowed)
-
-For example, you could create fields like:
-
-- **"Movie Title"** (`movie_title`) — a text field to store the name of the movie
-- **"Director"** (`director`) — another text field to store the director's name
-- **"Release Year"** (`release_year`) — a number field to store the release year
-
-> **Note:** All other settings are optional and provide extra control or visual customization.
+Each field requires at least a few basic settings to work correctly. All other options are optional and can be used to improve the user experience in the editor.
 
 ---
 
-### 🔧 Full settings overview by tab
+### Minimum Required Settings
 
-### General
+In the **General** tab, you must define the following:
 
-Basic field definition and default behavior:
+- **Field Type**  
+  Specifies what kind of data the field will store (e.g., Text, Image, Number, Select).
 
-- **Field Type**
-- **Field Label**
-- **Field Name**
-- **Default Value**
+- **Field Label**  
+  The human-readable name shown in the editor (e.g., “Movie Title”).
 
-### Validation
+- **Field Name**  
+  A unique identifier used in the code (lowercase, no spaces; underscores or dashes allowed).
 
-Rules to control what values are allowed:
+#### 📌 Example: Movie Fields
 
-- **Required**
-- **Minimum / Maximum Values**
-- **Allowed Characters / Pattern**
-- **Custom Validation Message**
+Let’s say you want to create a group of fields for movie entries. Here's how you could configure it:
 
-### Presentation
+| Field Label      | Field Name      | Field Type | Description                              |
+|------------------|------------------|------------|------------------------------------------|
+| Movie Title      | `movie_title`    | Text       | Stores the name of the movie             |
+| Director         | `director`       | Text       | Stores the name of the director          |
+| Release Year     | `release_year`   | Number     | Stores the year the movie was released   |
+| Poster Image     | `poster`         | Image      | Upload an image file for the movie poster |
 
-Controls how the field appears in the editor:
-
-- **Placeholder Text**
-- **Instructions**
-- **Wrapper Attributes**
-- **Hide Label**
-
-### Conditional Logic
-
-Display logic to control field visibility:
-
-- **Enable Conditions**
-- **Condition Rules**
-
-> **Note:** Not all options appear for every field type. Each field may expose different settings depending on its nature.
+> 💡 These fields would be added one by one using the **Add Field** button, and each configured in the field editor panel.
 
 ---
 
-Repeat this process for as many fields as needed.
+## General Settings
 
-## 4. Testing
+Defines the field behavior and how it is stored:
 
--   Go to a post of the type you've targeted with the field group.
--   You should now see your custom fields below the content editor.
--   Fill in test data and save the post.
--   Confirm the fields save and appear as expected.
+- **Field Type**  
+  What kind of input this field accepts (text, image, number, etc.).
+
+- **Field Label**  
+  The label shown to the user in the WordPress editor.
+
+- **Field Name**  
+  The code-safe name used to retrieve the value in your templates or plugins.
+
+- **Default Value**  
+  A pre-filled value shown if no value is entered.
+
+---
+
+## Validation Settings
+
+Used to restrict and control the kind of data that can be entered:
+
+- **Required**  
+  Makes the field mandatory.
+
+- **Minimum / Maximum Values**  
+  For numeric or character-based fields. Useful for fields like `release_year`.
+
+- **Allowed Characters / Pattern**  
+  Use a regular expression to restrict input format (e.g., only digits).
+
+- **Custom Validation Message**  
+  Message shown if validation fails (e.g., “Please enter a valid year”).
+
+---
+
+## Presentation Settings
+
+Controls the visual appearance of the field in the editor:
+
+- **Placeholder Text**  
+  Example text shown inside the field input.
+
+- **Instructions**  
+  Helper text shown below the field to guide users.
+
+- **Wrapper Attributes**  
+  Custom HTML attributes like class or ID for styling or JavaScript.
+
+- **Hide Label**  
+  Option to hide the field label (not recommended unless styled separately).
+
+---
+
+## Conditional Logic
+
+Used to show or hide fields based on the value of other fields:
+
+- **Enable Conditions**  
+  Activate conditional display rules for this field.
+
+- **Condition Rules**  
+  Example: only show the “Director” field if “Content Type” equals “Movie”.
+
+---
+
+> ⚠️ **Note:** Some settings may not be available for all field types. The options shown will adapt depending on the field you're configuring.
+
+---
+
+### Final Step
+
+Repeat this process to add as many fields as needed to your group. Once ready, you can assign this field group to a post type and start entering content!
 
 ## For Developers
 

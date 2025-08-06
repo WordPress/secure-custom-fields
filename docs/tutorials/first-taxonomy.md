@@ -8,21 +8,21 @@ A taxonomy in WordPress is a way to group content together. The most common exam
 
 ## Prerequisites
 
--   SCF installed and activated
--   Administrator access to WordPress
--   Basic understanding of WordPress concepts
+- SCF installed and activated
+- Administrator access to WordPress
+- Basic understanding of WordPress concepts
 
 You can learn more about WordPress basics here:
 
--   [Theme Basics](https://developer.wordpress.org/themes/basics/)
--   [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
+- [Theme Basics](https://developer.wordpress.org/themes/basics/)
+- [Plugin Basics](https://developer.wordpress.org/plugins/plugin-basics/)
 
 ## 1. Access the Admin Panel
 
 To begin creating your custom taxonomy:
 
--   Go to **Secure Custom Fields → Taxonomies** in your WordPress admin menu.
--   Click the **"Add New"** button to open the creation form.
+- Go to **Secure Custom Fields → Taxonomies** in your WordPress admin menu.
+- Click the **"Add New"** button to open the creation form.
 
 ## 2. Basic Configuration
 
@@ -76,16 +76,16 @@ Make sure this is set to **Yes** so your taxonomy is usable.
 
 Customize the texts shown in the WordPress admin:
 
--   Menu Label, Add New Item, Edit Item, View Item
--   Parent Item (for hierarchical), Popular Items (for non-hierarchical)
--   Messages for empty lists, instructions, tooltips, etc.
+- Menu Label, Add New Item, Edit Item, View Item
+- Parent Item (for hierarchical), Popular Items (for non-hierarchical)
+- Messages for empty lists, instructions, tooltips, etc.
 
 #### Visibility Options
 
 Control where the taxonomy appears in the admin and frontend:
 
--   Show In UI, Show In Admin Menu
--   Appearance Menu Support, Quick Edit, Admin Columns
+- Show In UI, Show In Admin Menu
+- Appearance Menu Support, Quick Edit, Admin Columns
 
 #### Meta Box
 
@@ -96,8 +96,8 @@ You can define custom callbacks for display and sanitization if needed.
 
 Customize how your taxonomy URLs will be structured:
 
--   Custom Slug, Include front prefix, Enable hierarchical URLs
--   Publicly queryable, custom query variable
+- Custom Slug, Include front prefix, Enable hierarchical URLs
+- Publicly queryable, custom query variable
 
 #### Permissions
 
@@ -108,16 +108,10 @@ You can set custom capabilities (e.g., `manage_categories`, `edit_posts`).
 
 Once everything is configured:
 
--   Click **Save** to register your taxonomy.
--   Go to one of the selected post types (e.g., Posts or Products).
--   Try adding terms in the new taxonomy field.
--   Make sure they appear correctly in the editor and on the frontend if public.
-
-## Next Steps
-
--   Add custom fields to your taxonomy terms using Secure Custom Fields
--   Customize archive pages for your taxonomy terms in your theme
--   Use the taxonomy in filters or menus for better navigation
+- Click **Save** to register your taxonomy.
+- Go to one of the selected post types (e.g., Posts or Products).
+- Try adding terms in the new taxonomy field.
+- Make sure they appear correctly in the editor and on the frontend if public.
 
 ## For Developers
 
