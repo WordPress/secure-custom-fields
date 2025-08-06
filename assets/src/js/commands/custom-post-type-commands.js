@@ -3,7 +3,7 @@
  *
  * Dynamic commands for user-created custom post types in Secure Custom Fields.
  * This file generates navigation commands for each registered post type that
- * the current user has access to, creating both "View All" and "Add New" commands.
+ * the current user has access to, creating "View All", "Add New", and "Edit" commands.
  *
  * Post type data is provided via acf.data.customPostTypes, which is populated
  * by the PHP side after capability checks ensure the user has appropriate access.
@@ -19,6 +19,7 @@ import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { page, plus, edit } from '@wordpress/icons';
 
 /**
  * Register custom post type commands
@@ -46,7 +47,7 @@ const registerPostTypeCommands = () => {
 		commandStore.registerCommand( {
 			name: `scf/cpt-${ postType.name }`,
 			label: postType.all_items,
-			icon: createElement( Icon, { icon: 'admin-page' } ),
+			icon: createElement( Icon, { icon: page } ),
 			context: 'admin',
 			description: postType.all_items,
 			keywords: [
@@ -68,7 +69,7 @@ const registerPostTypeCommands = () => {
 		commandStore.registerCommand( {
 			name: `scf/new-${ postType.name }`,
 			label: postType.add_new_item,
-			icon: createElement( Icon, { icon: 'plus' } ),
+			icon: createElement( Icon, { icon: plus } ),
 			context: 'admin',
 			description: postType.add_new_item,
 			keywords: [
@@ -77,11 +78,36 @@ const registerPostTypeCommands = () => {
 				'create',
 				'content',
 				postType.name,
-				...( postType.label ? [ postType.label ] : [] ),
+				postType.label,
 			],
 			callback: ( { close } ) => {
 				document.location = addQueryArgs(adminUrl + 'post-new.php', {
 					post_type: postType.name
+				});
+				close();
+			},
+		} );
+
+		// Register "Edit Post Type" command for registered CPTs
+		commandStore.registerCommand( {
+			name: `scf/edit-${ postType.name }`,
+			label: sprintf(__('Edit post type: %s', 'secure-custom-fields'), postType.label),
+			icon: createElement( Icon, { icon: edit } ),
+			context: 'admin',
+			description: sprintf(__('Edit the %s post type settings', 'secure-custom-fields'), postType.label),
+			keywords: [
+				'edit',
+				'modify',
+				'post type',
+				'cpt',
+				'settings',
+				postType.name,
+				postType.label,
+			],
+			callback: ( { close } ) => {
+				document.location = addQueryArgs(adminUrl + 'post.php', {
+					post: postType.id,
+					action: 'edit'
 				});
 				close();
 			},

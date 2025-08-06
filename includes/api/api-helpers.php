@@ -689,12 +689,29 @@ function acf_verify_nonce( $value ) {
  *
  * @param string $nonce  The nonce to check.
  * @param string $action The action of the nonce.
+ * @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
  * @return boolean
  */
-function acf_verify_ajax( $nonce = '', $action = '' ) {
+function acf_verify_ajax( $nonce = '', $action = '', $action_is_field = false ) {
+
 	// Bail early if we don't have a nonce to check.
 	if ( empty( $nonce ) && empty( $_REQUEST['nonce'] ) ) {
 		return false;
+	}
+
+	// Build the action if we're trying to validate a specific field nonce.
+	if ( $action_is_field ) {
+		if ( ! acf_is_field_key( $action ) ) {
+			return false;
+		}
+
+		$field = acf_get_field( $action );
+
+		if ( empty( $field['type'] ) ) {
+			return false;
+		}
+
+		$action = 'acf_field_' . $field['type'] . '_' . $action;
 	}
 
 	$nonce_to_check = ! empty( $nonce ) ? $nonce : $_REQUEST['nonce']; // phpcs:ignore WordPress.Security -- We're verifying a nonce here.

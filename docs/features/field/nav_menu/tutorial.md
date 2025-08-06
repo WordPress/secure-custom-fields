@@ -63,6 +63,7 @@ if ($menu_id) {
   Use the `wp_nav_menu_container_allowed_tags` hook to add additional allowed container tags for the Nav Menu field. This will enable more flexibility in the menu's wrapper tag.
   
   Example:
+
   ```php
   function my_custom_menu_container_tags($tags) {
       $tags[] = 'section'; // Adds 'section' as an allowed container tag

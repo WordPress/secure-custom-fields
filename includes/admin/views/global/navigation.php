@@ -108,16 +108,18 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 	$section_html = '';
 
 	foreach ( $menu_items as $menu_item ) {
-		$class    = ! empty( $menu_item['class'] ) ? $menu_item['class'] : $menu_item['text'];
-		$target   = ! empty( $menu_item['target'] ) ? ' target="' . esc_attr( $menu_item['target'] ) . '"' : '';
-		$li_class = ! empty( $menu_item['li_class'] ) ? esc_attr( $menu_item['li_class'] ) : '';
+		$class      = ! empty( $menu_item['class'] ) ? $menu_item['class'] : $menu_item['text'];
+		$target     = ! empty( $menu_item['target'] ) ? ' target="' . esc_attr( $menu_item['target'] ) . '"' : '';
+		$aria_label = ! empty( $menu_item['aria-label'] ) ? ' aria-label="' . esc_attr( $menu_item['aria-label'] ) . '"' : '';
+		$li_class   = ! empty( $menu_item['li_class'] ) ? esc_attr( $menu_item['li_class'] ) : '';
 
 		$html = sprintf(
-			'<a class="acf-tab%s %s" href="%s"%s><i class="acf-icon"></i>%s</a>',
+			'<a class="acf-tab%s %s" href="%s"%s%s><i class="acf-icon"></i>%s</a>',
 			! empty( $menu_item['is_active'] ) ? ' is-active' : '',
 			'acf-header-tab-' . esc_attr( acf_slugify( $class ) ),
 			esc_url( $menu_item['url'] ),
 			$target,
+			$aria_label,
 			acf_esc_html( $menu_item['text'] )
 		);
 
@@ -138,7 +140,7 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 <div class="acf-admin-toolbar">
 	<div class="acf-admin-toolbar-inner">
 		<div class="acf-nav-wrap">
-			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo">
+			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo" aria-label="<?php esc_attr_e( 'Edit SCF Field Groups', 'secure-custom-fields' ); ?>">
 				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Secure Custom Fields logo', 'secure-custom-fields' ); ?>">
 			</a>
 

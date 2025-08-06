@@ -26,6 +26,7 @@ Before installing, ensure your site meets these requirements:
 2. Extract the plugin files
 3. Upload the plugin folder to `/wp-content/plugins/`
 4. Activate through the WordPress admin interface
+
 ---
 
 ### Composer Installation
@@ -88,22 +89,33 @@ Add the following configuration to your `composer.json` file:
   }
 }
 ```
+
 Once the configuration is set, run the following command in your terminal to install the dependencies:
+
 ```shell
 composer install
 ```
+
 or
+
 ```shell
 composer i
 ```
+
 ---
+
 ### Add the Composer Autoloader
+
 To ensure Composer dependencies are loaded correctly, add the following line in your plugin or theme:
+
 ```php
 require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
 ```
-###  Load Secure Custom Fields
+
+### Load Secure Custom Fields
+
 Now you need to manually load the Secure Custom Fields plugin and define its paths. Adjust the paths according to the structure of your plugin or theme:
+
 ```php
 if (! class_exists('ACF')) {
     // Define the path and URL to the Secure Custom Fields plugin.
@@ -114,9 +126,11 @@ if (! class_exists('ACF')) {
     require_once MY_SCF_PATH . 'secure-custom-fields.php';
 }
 ```
+
 ⚠️ **Note:** Replace MY_SCF_PATH and MY_SCF_URL with constants that match your plugin/theme structure if necessary.
 
-### Done!
+### Done
+
 You have successfully installed and integrated Secure Custom Fields via Composer. You can now use it as you would with a normal installation, but with all the benefits of Composer-based dependency management.
 
 ---
@@ -132,6 +146,7 @@ add_filter( 'acf/settings/show_admin', '__return_false' );
 // Hide the SCF Updates menu.
 add_filter( 'acf/settings/show_updates', '__return_false', 100 );
 ```
+
 #### What does this do?
 
 - **Hide Admin Menu:**  
@@ -146,7 +161,6 @@ add_filter( 'acf/settings/show_updates', '__return_false', 100 );
 - If you want to **maintain full control** over SCF versions and updates to avoid compatibility issues caused by manual updates.
 
 > **Note:** Hiding updates means you are responsible for manually updating SCF when necessary to keep your project secure and compatible, but it also helps avoid potential conflicts between Composer and the built-in updater.
-
 
 ## Verify Your Installation
 

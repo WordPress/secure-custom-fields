@@ -279,6 +279,7 @@ It's action will also allow WPML to set the lang and avoid AJAX get_posts issues
 * @since   ACF 5.2.3
 * @param string $nonce  The nonce to check.
 * @param string $action The action of the nonce.
+* @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
 * @return boolean
 
 ## `acf_get_image_sizes()`

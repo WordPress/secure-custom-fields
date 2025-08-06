@@ -61,3 +61,6 @@ assets/build/**/*.php
 
 # Claude settings
 **/.claude/settings.local.json
+
+# Release folder
+release/

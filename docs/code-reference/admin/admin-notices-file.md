@@ -25,7 +25,7 @@ Creates and returns a new notice.
 * @since ACF 5.0.0
 * @param   string  $text        The admin notice text.
 * @param string  $type        The type of notice (warning, error, success, info).
-* @param boolean $dismissible Is this notification dismissible (default true) (since ACF 5.11.0).
+* @param boolean $dismissible Is this notification dismissible (default true) (since 5.11.0).
 * @param boolean $persisted   Store once a notice has been dismissed per user and prevent showing it again. (since ACF 6.1.0).
 * @return ACF_Admin_Notice
 
