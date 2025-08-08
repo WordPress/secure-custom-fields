@@ -275,26 +275,19 @@ class SCF_Rest_Types_Endpoint {
 	 *
 	 * @since SCF 6.5.0
 	 *
-	 * @param bool $include_validation Whether to include validation callbacks.
 	 * @return array Parameter definition
 	 */
-	private function get_source_param_definition( $include_validation = false ) {
-		$param = array(
-			'description' => __( 'Filter post types by their source.', 'secure-custom-fields' ),
-			'type'        => 'string',
-			'enum'        => array( 'core', 'scf', 'other' ),
-			'required'    => false,
+	private function get_source_param_definition() {
+		return array(
+			'description'       => __( 'Filter post types by their source.', 'secure-custom-fields' ),
+			'type'              => 'string',
+			'enum'              => array( 'core', 'scf', 'other' ),
+			'required'          => false,
+			'validate_callback' => 'rest_validate_request_arg',
+			'sanitize_callback' => 'sanitize_text_field',
+			'default'           => null,
+			'in'                => 'query',
 		);
-
-		// Not needed for OpenAPI documentation
-		if ( $include_validation ) {
-			$param['validate_callback'] = 'rest_validate_request_arg';
-			$param['sanitize_callback'] = 'sanitize_text_field';
-			$param['default']           = null;
-			$param['in']                = 'query';
-		}
-
-		return $param;
 	}
 
 	/**
@@ -331,7 +324,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Modified collection parameters.
 	 */
 	public function add_collection_params( $query_params ) {
-		$query_params['source'] = $this->get_source_param_definition( true );
+		$query_params['source'] = $this->get_source_param_definition();
 		return $query_params;
 	}
 
