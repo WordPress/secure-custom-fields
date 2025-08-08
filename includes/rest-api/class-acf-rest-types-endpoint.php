@@ -339,7 +339,7 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array            The filtered response data.
 	 */
 	public function clean_types_response( $response, $server, $request ) {
-		if ( strpos( $request->get_route(), '/wp/v2/types' ) !== 0 ) {
+		if ( ! preg_match( '#^/wp/v2/types(?:/|$)#', $request->get_route() ) ) {
 			return $response;
 		}
 
