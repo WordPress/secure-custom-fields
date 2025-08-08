@@ -131,9 +131,7 @@ class SCF_Rest_Types_Endpoint {
 			if ( function_exists( 'acf_get_internal_post_type_posts' ) ) {
 				$scf_managed_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
 				foreach ( $scf_managed_post_types as $scf_post_type ) {
-					if ( isset( $scf_post_type['post_type'] ) ) {
-						$scf_types[] = $scf_post_type['post_type'];
-					}
+					$scf_types[] = $scf_post_type['post_type'];
 				}
 			}
 		}
