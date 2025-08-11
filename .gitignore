@@ -59,5 +59,8 @@ assets/build/**/*.php
 /playwright/.cache/
 /artifacts/
 
+# Claude settings
+**/.claude/settings.local.json
+
 # Release folder
 release/
