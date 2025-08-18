@@ -825,7 +825,7 @@ acf_add_action_variations( 'acf/render_field', array( 'type', 'name', 'key' ), 0
 function acf_render_field_label( $field ) {
 
 	// Get label.
-	$label = acf_get_field_label( $field );
+	$label = esc_html( acf_get_field_label( $field ) );
 
 	// Output label.
 	if ( $label ) {
