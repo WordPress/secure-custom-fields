@@ -298,36 +298,23 @@
 
 				// Create postbox if doesn't exist.
 				if ( ! postbox ) {
-					var wpMinorVersion = parseFloat( acf.get( 'wp_version' ) );
-					if ( wpMinorVersion >= 5.5 ) {
-						var postboxHeader = [
-							'<div class="postbox-header">',
-							'<h2 class="hndle ui-sortable-handle">',
-							'<span>' + acf.escHtml( result.title ) + '</span>',
-							'</h2>',
-							'<div class="handle-actions hide-if-no-js">',
-							'<button type="button" class="handlediv" aria-expanded="true">',
-							'<span class="screen-reader-text">Toggle panel: ' +
-								acf.escHtml( result.title ) +
-								'</span>',
-							'<span class="toggle-indicator" aria-hidden="true"></span>',
-							'</button>',
-							'</div>',
-							'</div>',
-						].join( '' );
-					} else {
-						var postboxHeader = [
-							'<button type="button" class="handlediv" aria-expanded="true">',
-							'<span class="screen-reader-text">Toggle panel: ' +
-								acf.escHtml( result.title ) +
-								'</span>',
-							'<span class="toggle-indicator" aria-hidden="true"></span>',
-							'</button>',
-							'<h2 class="hndle ui-sortable-handle">',
-							'<span>' + acf.escHtml( result.title ) + '</span>',
-							'</h2>',
-						].join( '' );
-					}
+					var postboxHeader = [
+						'<div class="postbox-header">',
+						'<h2 class="hndle ui-sortable-handle">',
+						'<span>' + result.title + '</span>',
+						'</h2>',
+						'<div class="handle-actions hide-if-no-js">',
+						'<button type="button" class="handlediv" aria-expanded="true">',
+						'<span class="screen-reader-text">' +
+							acf.__( 'Toggle panel' ) +
+							': ' +
+							result.title +
+							'</span>',
+						'<span class="toggle-indicator" aria-hidden="true"></span>',
+						'</button>',
+						'</div>',
+						'</div>',
+					].join( '' );
 
 					// Ensure result.classes is set.
 					if ( ! result.classes ) result.classes = '';
@@ -515,13 +502,7 @@
 			acf.unload.disable();
 
 			// Refresh metaboxes since WP 5.3.
-			var wpMinorVersion = parseFloat( acf.get( 'wp_version' ) );
-			if ( wpMinorVersion >= 5.3 ) {
-				this.addAction(
-					'refresh_post_screen',
-					this.onRefreshPostScreen
-				);
-			}
+			this.addAction( 'refresh_post_screen', this.onRefreshPostScreen );
 
 			// Trigger "refresh" after WP has moved metaboxes into place.
 			wp.domReady( acf.refresh );
@@ -532,11 +513,11 @@
 			var attributes = [ 'template', 'parent', 'format' ];
 
 			// Append taxonomy attribute names to this list.
-			( wp.data.select( 'core' ).getTaxonomies() || [] ).map( function (
-				taxonomy
-			) {
-				attributes.push( taxonomy.rest_base );
-			} );
+			( wp.data.select( 'core' ).getTaxonomies() || [] ).map(
+				function ( taxonomy ) {
+					attributes.push( taxonomy.rest_base );
+				}
+			);
 
 			// Get relevant current post edits.
 			var _postEdits = wp.data.select( 'core/editor' ).getPostEdits();
@@ -614,7 +595,6 @@
 		 * @return	void
 		 */
 		onRefreshPostScreen: function ( data ) {
-
 			// Extract vars.
 			var select = wp.data.select( 'core/edit-post' );
 			var dispatch = wp.data.dispatch( 'core/edit-post' );
@@ -622,9 +602,8 @@
 			// Load current metabox locations and data.
 			var locations = {};
 			select.getActiveMetaBoxLocations().map( function ( location ) {
-				locations[ location ] = select.getMetaBoxesPerLocation(
-					location
-				);
+				locations[ location ] =
+					select.getMetaBoxesPerLocation( location );
 			} );
 
 			// Generate flat array of existing ids.
