@@ -235,7 +235,6 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 					/* translators: %1$s - Plugin name, %2$s URL to documentation */
 					__( '%1$s We have detected that this website is configured to use v3 of the Select2 jQuery library, which has been deprecated in favor of v4 and will be removed in a future version of SCF. <a href="%2$s" target="_blank">Learn more</a>.', 'secure-custom-fields' ),
 					$acf_plugin_name,
-					acf_add_url_utm_tags( 'https://www.advancedcustomfields.com/resources/select2-v3-deprecation/', 'docs', 'select2-deprecation-notice' ),
 				);
 
 				acf_add_admin_notice( $text, 'warning', false );
