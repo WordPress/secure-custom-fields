@@ -42,11 +42,16 @@
 		},
 		"platform": {
 			"php": "7.4"
-		}
+		},
+		"optimize-autoloader": true,
+		"classmap-authoritative": true
 	},
 	"scripts": {
 		"post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",
 		"post-update-cmd": "WorDBless\\Composer\\InstallDropin::copy",
+		"post-autoload-dump": [
+			"php bin/remove-installed-versions.php"
+		],
 		"docs": [
 			"@docs:parse",
 			"@docs:links",
