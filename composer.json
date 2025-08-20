@@ -50,7 +50,7 @@
 		"post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",
 		"post-update-cmd": "WorDBless\\Composer\\InstallDropin::copy",
 		"post-autoload-dump": [
-			"sed -i '' \"/InstalledVersions.php/d\" vendor/composer/autoload_static.php"
+			"php bin/remove-installed-versions.php"
 		],
 		"docs": [
 			"@docs:parse",
