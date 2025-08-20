@@ -43,7 +43,8 @@
 			field,
 			instance
 		) {
-			if ( field?.data?.( 'key' ) !== 'bidirectional_target' ) return args;
+			if ( field?.data?.( 'key' ) !== 'bidirectional_target' )
+				return args;
 
 			args.dropdownCssClass = 'field-type-select-results';
 
@@ -72,7 +73,7 @@
 						selection.element.nodeName === 'OPTGROUP' )
 				) {
 					var $selection = $( '<span class="acf-selection"></span>' );
-					$selection.html( acf.escHtml( selection.text ) );
+					$selection.html( acf.strEscape( selection.text ) );
 					return $selection;
 				}
 
@@ -86,13 +87,13 @@
 
 				var $selection = $(
 					'<i title="' +
-						acf.escHtml( selection.human_field_type ) +
+						acf.escAttr( selection.human_field_type ) +
 						'" class="field-type-icon field-type-icon-' +
-						acf.escHtml(
+						acf.strEscape(
 							selection.field_type.replaceAll( '_', '-' )
 						) +
 						'"></i><span class="acf-selection has-icon">' +
-						acf.escHtml( selection.text ) +
+						acf.strEscape( selection.text ) +
 						'</span>'
 				);
 				if ( selection.this_field ) {

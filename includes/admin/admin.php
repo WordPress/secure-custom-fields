@@ -20,6 +20,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 			add_action( 'current_screen', array( $this, 'current_screen' ) );
 			add_action( 'admin_notices', array( $this, 'maybe_show_escaped_html_notice' ) );
+			add_action( 'admin_notices', array( $this, 'maybe_show_select2_v3_deprecation_notice' ) );
 			add_action( 'admin_init', array( $this, 'dismiss_escaped_html_notice' ) );
 			add_action( 'admin_init', array( $this, 'clear_escaped_html_log' ) );
 			add_filter( 'parent_file', array( $this, 'ensure_menu_selection' ) );
@@ -78,13 +79,8 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		public function admin_body_class( $classes ) {
 			global $wp_version;
 
-			// Determine body class version.
-			$wp_minor_version = floatval( $wp_version );
-			if ( $wp_minor_version >= 5.3 ) {
-				$classes .= ' acf-admin-5-3';
-			} else {
-				$classes .= ' acf-admin-3-8';
-			}
+			// Add body class.
+			$classes .= ' acf-admin-5-3';
 
 			// Add browser for specific CSS.
 			$classes .= ' acf-browser-' . esc_attr( acf_get_browser() );
@@ -217,6 +213,32 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 
 			wp_safe_redirect( remove_query_arg( 'acf-clear-esc-html-log' ) );
 			exit;
+		}
+
+		/**
+		 * Notifies the user that Select2 v3 has been deprecated and will be removed.
+		 *
+		 * @since ACF 6.4.3
+		 *
+		 * @return void
+		 */
+		public function maybe_show_select2_v3_deprecation_notice() {
+			// Only show to editors and above.
+			if ( ! current_user_can( 'edit_others_posts' ) ) {
+				return;
+			}
+
+			if ( 3 === acf_get_setting( 'select2_version' ) ) {
+				$acf_plugin_name = '<strong>SCF &mdash;</strong>';
+
+				$text = sprintf(
+					/* translators: %1$s - Plugin name, %2$s URL to documentation */
+					__( '%1$s We have detected that this website is configured to use v3 of the Select2 jQuery library, which has been deprecated in favor of v4 and will be removed in a future version of SCF. <a href="%2$s" target="_blank">Learn more</a>.', 'secure-custom-fields' ),
+					$acf_plugin_name,
+				);
+
+				acf_add_admin_notice( $text, 'warning', false );
+			}
 		}
 
 		/**

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@wordpress/icons": "^10.26.0",
+    "dompurify": "^3.2.6",
     "md5": "^2.3.0"
   },
   "devDependencies": {

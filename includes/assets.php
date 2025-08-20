@@ -519,6 +519,8 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 						// Unload
 						'The changes you made will be lost if you navigate away from this page' => __( 'The changes you made will be lost if you navigate away from this page', 'secure-custom-fields' ),
 
+						// Metaboxes
+						'Toggle panel'                => __( 'Toggle panel', 'secure-custom-fields' ),
 						// Validation
 						'Validation successful'       => __( 'Validation successful', 'secure-custom-fields' ),
 						'Validation failed'           => __( 'Validation failed', 'secure-custom-fields' ),
