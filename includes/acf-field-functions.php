@@ -848,10 +848,10 @@ function acf_render_field_label( $field ) {
 function acf_get_field_label( $field, $context = '' ) {
 
 	// Get label.
-	$label = $field['label'];
+	$label = esc_html( $field['label'] );
 
 	// Display empty text when editing field.
-	if ( $context == 'admin' && $label === '' ) {
+	if ( 'admin' === $context && '' === $label ) {
 		$label = __( '(no label)', 'secure-custom-fields' );
 	}
 

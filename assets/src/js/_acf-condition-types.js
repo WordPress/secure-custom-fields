@@ -71,7 +71,7 @@
 		const template = function ( selection ) {
 			return (
 				`<span class="acf-${ typeAttr }-select-name acf-conditional-select-name">` +
-				acf.escHtml( selection.text ) +
+				acf.strEscape( selection.text ) +
 				'</span>'
 			);
 		};
@@ -84,7 +84,7 @@
 				'<span class="' +
 				classes +
 				'">' +
-				acf.escHtml( results.text ) +
+				acf.strEscape( results.text ) +
 				'</span>' +
 				`<span class="acf-${ typeAttr }-select-id acf-conditional-select-id">` +
 				( results.id ? results.id : '' ) +
@@ -558,16 +558,14 @@
 		type: 'hasPostObject',
 		operator: '==',
 		label: __( 'Post is equal to' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			return isEqualToNumber( rule.value, field.val() );
 		},
 		choices: function ( fieldObject ) {
 			return conditionalSelect2( fieldObject, 'post_object' );
 		},
-	});
+	} );
 
 	acf.registerConditionType( HasPostObject );
 
@@ -580,16 +578,14 @@
 		type: 'hasPostObjectNotEqual',
 		operator: '!==',
 		label: __( 'Post is not equal to' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			return ! isEqualToNumber( rule.value, field.val() );
 		},
 		choices: function ( fieldObject ) {
 			return conditionalSelect2( fieldObject, 'post_object' );
 		},
-	});
+	} );
 
 	acf.registerConditionType( HasPostObjectNotEqual );
 
@@ -602,9 +598,7 @@
 		type: 'containsPostObject',
 		operator: '==contains',
 		label: __( 'Posts contain' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			const val = field.val();
 			const ruleVal = rule.value;
@@ -620,7 +614,7 @@
 		choices: function ( fieldObject ) {
 			return conditionalSelect2( fieldObject, 'post_object' );
 		},
-	});
+	} );
 
 	acf.registerConditionType( containsPostObject );
 
@@ -633,16 +627,14 @@
 		type: 'containsNotPostObject',
 		operator: '!=contains',
 		label: __( 'Posts do not contain' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			const val = field.val();
 			const ruleVal = rule.value;
 
 			let match = true;
 			if ( val instanceof Array ) {
-				match = ! val.includes( ruleVal );	
+				match = ! val.includes( ruleVal );
 			} else {
 				match = val !== ruleVal;
 			}
@@ -651,7 +643,7 @@
 		choices: function ( fieldObject ) {
 			return conditionalSelect2( fieldObject, 'post_object' );
 		},
-	});
+	} );
 
 	acf.registerConditionType( containsNotPostObject );
 
@@ -664,20 +656,18 @@
 		type: 'hasAnyPostObject',
 		operator: '!=empty',
 		label: __( 'Has any post selected' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			let val = field.val();
 			if ( val instanceof Array ) {
 				val = val.length;
 			}
-			return !!val;
+			return !! val;
 		},
 		choices: function () {
 			return '<input type="text" disabled />';
 		},
-	});
+	} );
 
 	acf.registerConditionType( HasAnyPostObject );
 
@@ -690,20 +680,18 @@
 		type: 'hasNoPostObject',
 		operator: '==empty',
 		label: __( 'Has no post selected' ),
-		fieldTypes: [
-			'post_object',
-		],
+		fieldTypes: [ 'post_object' ],
 		match: function ( rule, field ) {
 			let val = field.val();
 			if ( val instanceof Array ) {
 				val = val.length;
 			}
-			return !val;
+			return ! val;
 		},
 		choices: function () {
 			return '<input type="text" disabled />';
 		},
-	});
+	} );
 
 	acf.registerConditionType( HasNoPostObject );
 

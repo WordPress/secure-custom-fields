@@ -208,7 +208,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 			// Add links to text.
 			$links = array();
 			foreach ( $ids as $id ) {
-				$links[] = '<a href="' . get_edit_post_link( $id ) . '">' . get_the_title( $id ) . '</a>';
+				$links[] = '<a href="' . esc_url( get_edit_post_link( $id ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a>';
 			}
 			$text .= ' ' . implode( ', ', $links );
 
@@ -277,7 +277,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 				// Add links to text.
 				$links = array();
 				foreach ( $imported as $id ) {
-					$links[] = '<a href="' . get_edit_post_link( $id ) . '">' . get_the_title( $id ) . '</a>';
+					$links[] = '<a href="' . esc_url( get_edit_post_link( $id ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a>';
 				}
 
 				$text .= ' ' . implode( ', ', $links );
