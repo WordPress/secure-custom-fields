@@ -924,7 +924,7 @@
 	}
 */
 
-	acf.addAction = function ( action, callback, priority, context ) {
+	acf.addAction = function () {
 		//action = prefixAction(action);
 		acf.hooks.addAction.apply( this, arguments );
 		return this;
@@ -942,7 +942,7 @@
 	 *  @return	this
 	 */
 
-	acf.removeAction = function ( action, callback ) {
+	acf.removeAction = function () {
 		//action = prefixAction(action);
 		acf.hooks.removeAction.apply( this, arguments );
 		return this;
@@ -1038,7 +1038,7 @@
 	 *  @return	this
 	 */
 
-	acf.addFilter = function ( action ) {
+	acf.addFilter = function () {
 		//action = prefixAction(action);
 		acf.hooks.addFilter.apply( this, arguments );
 		return this;
@@ -1056,7 +1056,7 @@
 	 *  @return	this
 	 */
 
-	acf.removeFilter = function ( action ) {
+	acf.removeFilter = function () {
 		//action = prefixAction(action);
 		acf.hooks.removeFilter.apply( this, arguments );
 		return this;
@@ -1074,7 +1074,7 @@
 	 *  @return	this
 	 */
 
-	acf.applyFilters = function ( action ) {
+	acf.applyFilters = function () {
 		//action = prefixAction(action);
 		return acf.hooks.applyFilters.apply( this, arguments );
 	};
