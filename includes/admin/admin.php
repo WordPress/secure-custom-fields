@@ -79,13 +79,8 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		public function admin_body_class( $classes ) {
 			global $wp_version;
 
-			// Determine body class version.
-			$wp_minor_version = floatval( $wp_version );
-			if ( $wp_minor_version >= 5.3 ) {
-				$classes .= ' acf-admin-5-3';
-			} else {
-				$classes .= ' acf-admin-3-8';
-			}
+			// Add body class.
+			$classes .= ' acf-admin-5-3';
 
 			// Add browser for specific CSS.
 			$classes .= ' acf-browser-' . esc_attr( acf_get_browser() );
