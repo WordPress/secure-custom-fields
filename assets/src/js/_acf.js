@@ -611,7 +611,7 @@
 	 *
 	 * @date	08/06/2020
 	 * @since	ACF 5.9.0
-	 * @since   ACF 6.4.3 - Use DOMPurify for better security.
+	 * @since	ACF 6.4.3 - Use DOMPurify for better security.
 	 *
 	 * @param	string string The input string.
 	 * @return	string
