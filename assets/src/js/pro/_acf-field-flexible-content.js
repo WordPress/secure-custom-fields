@@ -6,8 +6,10 @@
 		events: {
 			'click [data-name="add-layout"]': 'onClickAdd',
 			'click [data-name="duplicate-layout"]': 'onClickDuplicate',
-			'click [data-name="remove-layout"]': 'onClickRemove',
 			'click [data-name="collapse-layout"]': 'onClickCollapse',
+			'click [data-name="more-layout-actions"]': 'onClickMoreActions',
+			'click .acf-fc-expand-all': 'onClickExpandAll',
+			'click .acf-fc-collapse-all': 'onClickCollapseAll',
 			showField: 'onShow',
 			unloadField: 'onUnload',
 			mouseover: 'onHover',
@@ -61,6 +63,10 @@
 			return this.$( '.tmpl-popup:last' );
 		},
 
+		$moreLayoutActions: function () {
+			return this.$( '.tmpl-more-layout-actions:last' );
+		},
+
 		getPopupHTML: function () {
 			var html = this.$popup().html();
 			var $html = $( html );
@@ -111,6 +117,10 @@
 			return html;
 		},
 
+		getMoreLayoutActionsHTML: function () {
+			return this.$moreLayoutActions().html();
+		},
+
 		getValue: function () {
 			return this.$layouts().length;
 		},
@@ -139,8 +149,9 @@
 			// add sortable
 			this.$layoutsWrap().sortable( {
 				items: '> .layout',
-				handle: '> .acf-fc-layout-handle',
+				handle: '> .acf-fc-layout-actions-wrap .acf-fc-layout-handle',
 				forceHelperSize: true,
+				zIndex: 9999,
 				forcePlaceholderSize: true,
 				scroll: true,
 				stop: function ( event, ui ) {
@@ -173,6 +184,14 @@
 			this.on( 'invalidField', '.layout', function ( e ) {
 				self.onInvalidField( e, $( this ) );
 			} );
+			$( document ).on( 'click focusin', function ( e ) {
+				if (
+					! $( e.target ).closest( '.acf-flexible-content .layout' )
+						.length
+				) {
+					self.setActiveLayout( $( [] ) );
+				}
+			} );
 		},
 
 		initialize: function () {
@@ -197,6 +216,17 @@
 					.html( i + 1 );
 			} );
 
+			// Add event handlers for setting active layout
+			const self = this;
+			this.$control().on(
+				'click focus',
+				'> .values > .layout',
+				function ( event ) {
+					const layout = $( event.target ).closest( '.layout' );
+					self.setActiveLayout( layout );
+				}
+			);
+
 			// empty
 			if ( this.val() == 0 ) {
 				this.$control().addClass( '-empty' );
@@ -209,6 +239,16 @@
 				this.$button().addClass( 'disabled' );
 			} else {
 				this.$button().removeClass( 'disabled' );
+			}
+		},
+
+		setActiveLayout: function ( $layout ) {
+			// Remove active-layout class from all layouts
+			$( '.layout' ).removeClass( 'active-layout' );
+
+			// Add active-layout class to the provided layout if it exists
+			if ( $layout.length ) {
+				$layout.addClass( 'active-layout' );
 			}
 		},
 
@@ -239,7 +279,7 @@
 			const name = currentLayout.data( 'layout' ) || '';
 			const count = this.countLayouts( name );
 
-			if( count >= layoutMax ) {
+			if ( count >= layoutMax ) {
 				let text = acf.__(
 					'This field has a limit of {max} {label} {identifier}'
 				);
@@ -359,6 +399,7 @@
 
 			// trigger change for validation errors
 			this.$input().trigger( 'change' );
+			this.setActiveLayout( $el );
 
 			return $el;
 		},
@@ -425,8 +466,89 @@
 			// Draw focus to layout.
 			acf.focusAttention( $el );
 
+			this.setActiveLayout( $el );
 			// Return new layout.
 			return $el;
+		},
+
+		onClickToggleLayout: function ( event, layout ) {
+			const disabledInput = layout.find(
+				'.acf-fc-layout-disabled:first'
+			);
+
+			if ( layout.attr( 'data-enabled' ) === '1' ) {
+				// Disable the layout
+				layout.attr( 'data-enabled', '0' );
+				disabledInput.val( '1' );
+			} else {
+				// Enable the layout
+				layout.attr( 'data-enabled', '1' );
+				disabledInput.val( '0' );
+			}
+
+			// Trigger change event to save the state
+			this.$input().trigger( 'change' );
+		},
+		onClickRenameLayout: function ( event, layout ) {
+			const currentName = layout
+				.find( '.acf-fc-layout-custom-label:first' )
+				.val();
+
+			const popupOptions = {
+				context: this,
+				title: acf.__( 'Rename Layout' ),
+				textConfirm: acf.__( 'Rename' ),
+				textCancel: acf.__( 'Cancel' ),
+				currentName: currentName,
+				openedBy: layout
+					.find( 'a[data-name="more-layout-actions"]' )
+					.first(),
+				width: '500px',
+				confirm: function ( event, element, newName ) {
+					this.renameLayout( layout, newName );
+				},
+				cancel: function () {
+					layout.removeClass( '-hover' );
+				},
+			};
+
+			// Create new rename popup dialog
+			new RenameLayoutPopup( popupOptions );
+		},
+
+		renameLayout: function ( layout, newName ) {
+			// Set the escaped new name in the hidden input
+			layout
+				.find( '.acf-fc-layout-custom-label:first' )
+				.val( acf.strEscape( newName ) );
+
+			const titleElement = layout.find( '.acf-fc-layout-title:first' );
+
+			// Update the visible title
+			titleElement.text( newName );
+
+			if ( newName.length ) {
+				// Mark as renamed with custom label
+				layout.attr( 'data-renamed', '1' );
+			} else {
+				// Restore original title if name is empty
+				let originalTitle = layout
+					.find( '.acf-fc-layout-original-title:first' )
+					.text()
+					.trim();
+
+				// Remove parentheses from original title
+				originalTitle = originalTitle.substring(
+					1,
+					originalTitle.length - 1
+				);
+
+				titleElement.text( originalTitle );
+				layout.attr( 'data-renamed', '0' );
+			}
+
+			// Trigger change event to save the state
+			this.$input().trigger( 'change' );
 		},
 
 		validateRemove: function () {
@@ -456,28 +578,46 @@
 		},
 
 		onClickRemove: function ( e, $el ) {
-			var $layout = $el.closest( '.layout' );
-
 			// Bypass confirmation when holding down "shift" key.
 			if ( e.shiftKey ) {
-				return this.removeLayout( $layout );
+				return this.removeLayout( $el );
 			}
-
 			// add class
-			$layout.addClass( '-hover' );
+			$el.addClass( '-hover' );
 
 			// add tooltip
-			var tooltip = acf.newTooltip( {
+			const tooltipOptions = {
 				confirmRemove: true,
-				target: $el,
 				context: this,
+				title: acf.__( 'Delete Layout' ),
+				text: acf.__( 'Are you sure you want to delete this layout?' ),
+				textConfirm: acf.__( 'Delete' ),
+				textCancel: acf.__( 'Cancel' ),
+				openedBy: $el
+					.find( 'a[data-name="more-layout-actions"]' )
+					.first(),
+				width: '500px',
 				confirm: function () {
-					this.removeLayout( $layout );
+					this.removeLayout( $el );
 				},
 				cancel: function () {
-					$layout.removeClass( '-hover' );
+					$el.removeClass( '-hover' );
 				},
-			} );
+			};
+			// Check if layout has a custom label
+			const customLabel = layout.data( 'label' );
+			if ( customLabel.length ) {
+				// Customize the popup title and text with the layout label
+				tooltipOptions.title = acf
+					.__( 'Delete %s' )
+					.replace( '%s', acf.strEscape( customLabel ) );
+				tooltipOptions.text = acf
+					.__( 'Are you sure you want to delete %s?' )
+					.replace( '%s', customLabel );
+			}
+
+			// Create and show the confirmation popup
+			acf.newPopup( tooltipOptions );
 		},
 
 		removeLayout: function ( $layout ) {
@@ -511,6 +651,51 @@
 			}
 		},
 
+		onClickExpandAll: function ( e, $el ) {
+			e.preventDefault();
+			const self = this;
+			this.$layouts().each( function () {
+				self.openLayout( $( this ) );
+			} );
+		},
+
+		onClickCollapseAll: function ( e, $el ) {
+			e.preventDefault();
+			const self = this;
+			this.$layouts().each( function () {
+				self.closeLayout( $( this ) );
+			} );
+		},
+
+		onClickMoreActions: function ( e, $el ) {
+			const $layout = $el.closest( '.layout' );
+			new TooltipConfirm( {
+				target: $el,
+				targetConfirm: false,
+				text: this.getMoreLayoutActionsHTML(),
+				context: this,
+				confirm: function ( e, $el ) {
+					// Check if the clicked element is a toggle action
+					const action = $el.data( 'action' );
+					if ( action === 'remove-layout' ) {
+						this.onClickRemove( e, $layout );
+					}
+					if ( action === 'toggle-layout' ) {
+						this.onClickToggleLayout( e, $layout );
+					}
+					if ( action === 'rename-layout' ) {
+						this.onClickRenameLayout( e, $layout );
+					}
+				},
+				cancel: function () {
+					$layout
+						.find( 'a[data-name="more-layout-actions"]' )
+						.first()
+						.trigger( 'focus' );
+				},
+			} );
+		},
+
 		isLayoutClosed: function ( $layout ) {
 			return $layout.hasClass( '-collapsed' );
 		},
@@ -530,8 +715,10 @@
 		},
 
 		renderLayout: function ( $layout ) {
-			var $input = $layout.children( 'input' );
-			var prefix = $input.attr( 'name' ).replace( '[acf_fc_layout]', '' );
+			const $input = $layout.children( 'input' );
+			const prefix = $input
+				.attr( 'name' )
+				.replace( '[acf_fc_layout]', '' );
 
 			// ajax data
 			var ajaxData = {
@@ -550,9 +737,17 @@
 				type: 'post',
 				success: function ( html ) {
 					if ( html ) {
-						$layout
-							.children( '.acf-fc-layout-handle' )
-							.html( html );
+						if ( $layout.data( 'renamed' ) === 1 ) {
+							$layout
+								.find( '.acf-fc-layout-original-title' )
+								.first()
+								.html( `(${ html })` );
+						} else {
+							$layout
+								.find( '.acf-fc-layout-title' )
+								.first()
+								.html( html );
+						}
 					}
 				},
 			} );
@@ -617,6 +812,19 @@
 
 			// add class
 			this.$el.addClass( 'acf-fc-popup' );
+			this.position();
+		},
+		show: function () {
+			const $flexibleContent = this.get( 'target' ).closest(
+				'.acf-flexible-content'
+			);
+			$( $flexibleContent ).append( this.$el );
+		},
+		position: function () {
+			const $popup = this.$el;
+			const $target = this.get( 'target' );
+			const $container = $target.closest( '.acf-flexible-content' );
+			positionPopup( $popup, $target, $container, 8 );
 		},
 	} );
 

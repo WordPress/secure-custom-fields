@@ -61,6 +61,7 @@
 				$tbody.sortable( {
 					items: '> .acf-field-setting-fc_layout',
 					handle: '.acf-fc_draggable',
+					zIndex: 9999,
 					forceHelperSize: true,
 					forcePlaceholderSize: true,
 					scroll: true,
