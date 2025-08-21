@@ -429,6 +429,7 @@ html[dir=rtl] .acf-fields.-left > .acf-field > .acf-input {
   width: 1.62rem;
   position: relative;
   display: none;
+  vertical-align: middle;
 }
 .acf-postbox .acf-hndle-cog:hover {
   color: #191e23;
@@ -437,6 +438,19 @@ html[dir=rtl] .acf-fields.-left > .acf-field > .acf-input {
 .acf-postbox > .postbox-header:hover .acf-hndle-cog {
   display: inline-block;
 }
+
+
+.acf-postbox>.hndle:hover .handle-actions .handle-order-higher,
+.acf-postbox>.hndle:hover .handle-actions .handle-order-lower,
+.acf-postbox>.hndle:hover .handle-actions .toggle-indicator,
+.acf-postbox>.hndle:hover .handle-actions .acf-hndle-cog,
+.acf-postbox>.postbox-header:hover .handle-actions .handle-order-higher,
+.acf-postbox>.postbox-header:hover .handle-actions .handle-order-lower,
+.acf-postbox>.postbox-header:hover .handle-actions .toggle-indicator,
+.acf-postbox>.postbox-header:hover .handle-actions .acf-hndle-cog {
+    vertical-align: middle;
+}
+
 .acf-postbox > .hndle .acf-hndle-cog {
   height: 20px;
   line-height: 20px;
