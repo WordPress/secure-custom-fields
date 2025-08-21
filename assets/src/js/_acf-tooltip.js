@@ -292,6 +292,8 @@
 			// clear title to avoid default browser tooltip
 			$el.attr( 'title', '' );
 
+			$el.data( 'acf-js-tooltip-title', title );
+
 			// create
 			if ( ! this.tooltip ) {
 				this.tooltip = acf.newTooltip( {
@@ -311,12 +313,13 @@
 		hideTitle: function ( e, $el ) {
 			// hide tooltip
 			this.tooltip.hide();
+			$el.attr( 'title', $el.data( 'acf-js-tooltip-title' ) );
 
 			// restore title
-			$el.attr( 'title', this.tooltip.get( 'text' ) );
+			$el.removeData( 'acf-js-tooltip-title' );
 		},
 
-		onKeyUp: function( e, $el ) {
+		onKeyUp: function ( e, $el ) {
 			if ( 'Escape' === e.key ) {
 				this.hideTitle( e, $el );
 			}
