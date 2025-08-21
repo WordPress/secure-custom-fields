@@ -76,6 +76,7 @@
 					// Add sortable.
 					this.$list( 'values' ).sortable( {
 						items: 'li',
+						zIndex: 9999,
 						forceHelperSize: true,
 						forcePlaceholderSize: true,
 						scroll: true,
@@ -126,11 +127,11 @@
 		onKeypressFilter: function ( e, $el ) {
 			// Receive enter key when selecting relationship items.
 			if ( $el.hasClass( 'acf-rel-item-add' ) && e.which == 13 ) {
-				this.onClickAdd(e, $el);
+				this.onClickAdd( e, $el );
 			}
 			// Receive enter key when removing relationship items.
 			if ( $el.hasClass( 'acf-rel-item-remove' ) && e.which == 13 ) {
-				this.onClickRemove(e, $el);
+				this.onClickRemove( e, $el );
 			}
 			// don't submit form
 			if ( e.which == 13 ) {
@@ -213,7 +214,7 @@
 
 			let $span;
 			// Behavior if triggered from tabbed event.
-			if ( $el.hasClass( 'acf-rel-item-remove' )) {
+			if ( $el.hasClass( 'acf-rel-item-remove' ) ) {
 				$span = $el;
 			} else {
 				// Behavior if triggered through click event.
@@ -234,8 +235,10 @@
 			this.$input().trigger( 'change' );
 		},
 
-		onTouchStartValues: function( e, $el ) {
-			$( this.$listItems( 'values' ) ).removeClass( 'relationship-hover' );
+		onTouchStartValues: function ( e, $el ) {
+			$( this.$listItems( 'values' ) ).removeClass(
+				'relationship-hover'
+			);
 			$el.addClass( 'relationship-hover' );
 		},
 

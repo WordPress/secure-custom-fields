@@ -34,6 +34,43 @@
 			// add date time picker
 			acf.newDateTimePicker( $inputText, args );
 
+			// Check if default to today is enabled and field is empty
+			if (
+				$inputText.data( 'default-to-today' ) === 1 &&
+				! $input.val()
+			) {
+				// Get current date
+				const currentDate = new Date();
+
+				// Format display date and time
+				const displayDate = $.datepicker.formatDate(
+					args.dateFormat,
+					currentDate
+				);
+				const displayTime = $.datepicker.formatTime( args.timeFormat, {
+					hour: currentDate.getHours(),
+					minute: currentDate.getMinutes(),
+					second: currentDate.getSeconds(),
+				} );
+
+				// Set the display input value (what user sees)
+				$inputText.val( `${ displayDate } ${ displayTime }` );
+
+				// Format hidden field date and time (for database storage)
+				const hiddenDate = $.datepicker.formatDate(
+					'yy-mm-dd',
+					currentDate
+				);
+				const hiddenTime = $.datepicker.formatTime( 'hh:mm:ss', {
+					hour: currentDate.getHours(),
+					minute: currentDate.getMinutes(),
+					second: currentDate.getSeconds(),
+				} );
+
+				// Set the hidden input value (what gets saved)
+				$input.val( `${ hiddenDate } ${ hiddenTime }` );
+			}
+
 			// action
 			acf.doAction( 'date_time_picker_init', $inputText, args, this );
 		},
