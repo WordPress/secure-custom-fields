@@ -5,8 +5,8 @@
  * @package wordpress/secure-custom-fields
  */
 
-use ACF\Fields\FlexibleContent\Render;
-use ACF\Fields\FlexibleContent\Layout;
+use SCF\Fields\FlexibleContent\Render;
+use SCF\Fields\FlexibleContent\Layout;
 // phpcs:disable PEAR.NamingConventions.ValidClassName
 if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
