@@ -282,7 +282,7 @@
 
 		showTitle: function ( e, $el ) {
 			// vars
-			var title = $el.attr( 'title' );
+			let title = $el.attr( 'title' );
 
 			// bail early if no title
 			if ( ! title ) {
@@ -293,6 +293,7 @@
 			$el.attr( 'title', '' );
 
 			$el.data( 'acf-js-tooltip-title', title );
+			title = acf.strEscape( title );
 
 			// create
 			if ( ! this.tooltip ) {

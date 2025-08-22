@@ -5,17 +5,18 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 	class acf_field_checkbox extends acf_field {
 
 		/**
-		 * The values of the checkboxes.
+		 * A local store of all values for de-duplication.
 		 *
-		 * @var $values (string)
+		 * @var array
 		 */
-		public $values = '';
+		private array $_values; //phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore -- backwards compatibility.
+
 		/**
-		 * Whether all checkboxes are checked.
+		 * An internal boolean tracking if all checkboxes are checked.
 		 *
-		 * @var $all_checked (bool)
+		 * @var boolean
 		 */
-		public $all_checked = false;
+		private bool $_all_checked; //phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore -- backwards compatibility.
 
 		/**
 		 * This function will setup the field type data
@@ -65,8 +66,8 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 		function render_field( $field ) {
 
 			// reset vars
-			$this->values      = array();
-			$this->all_checked = true;
+			$this->_values      = array();
+			$this->_all_checked = true;
 
 			// ensure array
 			$field['value']   = acf_get_array( $field['value'] );
@@ -180,7 +181,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			}
 
 			// checked
-			if ( $this->all_checked ) {
+			if ( $this->_all_checked ) {
 				$atts['checked'] = 'checked';
 			}
 
@@ -223,7 +224,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					);
 
 					// bail early if choice already exists
-					if ( in_array( $esc_value, $this->values, true ) ) {
+					if ( in_array( $esc_value, $this->_values, true ) ) {
 						continue;
 					}
 
@@ -298,7 +299,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					if ( in_array( $esc_value, $args['value'] ) ) {
 						$atts['checked'] = 'checked';
 					} else {
-						$this->all_checked = false;
+						$this->_all_checked = false;
 					}
 
 					// disabled
@@ -307,7 +308,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 					}
 
 					// store value added
-					$this->values[] = $esc_value;
+					$this->_values[] = $esc_value;
 
 					// append
 					$html .= acf_get_checkbox_input( $atts );

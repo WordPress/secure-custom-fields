@@ -88,7 +88,6 @@ if ( ! class_exists( 'acf_admin_field_group' ) ) :
 					'Move field group to trash?'        => esc_html__( 'Move field group to trash?', 'secure-custom-fields' ),
 					'No toggle fields available'        => esc_html__( 'No toggle fields available', 'secure-custom-fields' ),
 					'Move Custom Field'                 => esc_html__( 'Move Custom Field', 'secure-custom-fields' ),
-					'Close modal'                       => esc_html__( 'Close modal', 'secure-custom-fields' ),
 					'Field moved to other group'        => esc_html__( 'Field moved to other group', 'secure-custom-fields' ),
 					'Field groups linked successfully.' => esc_html__( 'Field groups linked successfully.', 'secure-custom-fields' ),
 					'Checked'                           => esc_html__( 'Checked', 'secure-custom-fields' ),

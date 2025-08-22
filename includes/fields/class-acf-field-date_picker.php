@@ -26,9 +26,10 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/date-picker/';
 			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/date-picker/date-picker-tutorial/';
 			$this->defaults      = array(
-				'display_format' => 'd/m/Y',
-				'return_format'  => 'd/m/Y',
-				'first_day'      => 1,
+				'display_format'          => 'd/m/Y',
+				'return_format'           => 'd/m/Y',
+				'first_day'               => 1,
+				'default_to_current_date' => 0,
 			);
 		}
 
@@ -110,8 +111,9 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 				'value' => $hidden_value,
 			);
 			$text_input   = array(
-				'class' => $field['class'] . ' input',
-				'value' => $display_value,
+				'class'                 => $field['class'] . ' input',
+				'value'                 => $display_value,
+				'data-default-to-today' => $field['default_to_current_date'],
 			);
 
 			// special attributes
@@ -224,6 +226,17 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 					'type'         => 'select',
 					'name'         => 'first_day',
 					'choices'      => array_values( $wp_locale->weekday ),
+				)
+			);
+
+			acf_render_field_setting(
+				$field,
+				array(
+					'label'        => __( 'Default to the current date', 'secure-custom-fields' ),
+					'instructions' => __( 'Use the current date as the default value for this field.', 'secure-custom-fields' ),
+					'type'         => 'true_false',
+					'name'         => 'default_to_current_date',
+					'ui'           => 1,
 				)
 			);
 		}
