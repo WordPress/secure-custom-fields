@@ -332,8 +332,15 @@
 
 			// within layout
 			var $layout = null;
-			if ( $el.hasClass( 'acf-icon' ) ) {
+			// Check the context data attribute to determine how to handle the add
+			if ( $el.data( 'context' ) === 'layout' ) {
 				$layout = $el.closest( '.layout' );
+				$layout.addClass( '-hover' );
+			} else if ( $el.data( 'context' ) === 'top-actions' ) {
+				$layout = $el
+					.closest( '.acf-flexible-content' )
+					.find( '.values .layout' )
+					.first();
 				$layout.addClass( '-hover' );
 			}
 

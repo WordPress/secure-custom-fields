@@ -362,7 +362,8 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   display: flex
 }
 
-.acf-flexible-content .layout>.acf-fields {
+.acf-flexible-content .layout>.acf-fields,
+.acf-flexible-content .layout>.acf-table {
   border: 1px solid rgba(0, 0, 0, 0);
   border-top: none
 }
@@ -422,7 +423,8 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   box-shadow: 0 0 0 1px #fff
 }
 
-.acf-flexible-content .layout.active-layout>.acf-fields {
+.acf-flexible-content .layout.active-layout>.acf-fields,
+.acf-flexible-content .layout.active-layout>.acf-table {
   background: rgba(56, 88, 233, .04);
   border: 1px solid rgba(56, 88, 233, .2)
 }
@@ -449,8 +451,8 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   display: none;
 }
 .acf-flexible-content .layout > .acf-table {
-  border: 0 none;
   box-shadow: none;
+  box-sizing: border-box;
 }
 .acf-flexible-content .layout > .acf-table > tbody > tr {
   background: #fff;
@@ -565,8 +567,9 @@ body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-fc
   background: #2271b1
 }
 
-body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-fields {
-  background: rgba(34, 113, 177, .04)
+body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-fields,
+body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-table {
+    background: rgba(34, 113, 177, .04)
 }
 
 .rtl .acf-flexible-content .layout .acf-fc-layout-actions-wrap {
@@ -637,6 +640,9 @@ body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-fi
   display: block;
   text-decoration: none;
   position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .acf-fc-popup a:hover {
   color: #2271b1;
