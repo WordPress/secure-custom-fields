@@ -57,6 +57,48 @@ if ( ! class_exists( 'ACF' ) ) {
 		public $instances = array();
 
 		/**
+		 * The loop instance.
+		 *
+		 * @var acf_loop
+		 */
+		public $loop;
+
+		/**
+		 * The revisions instance.
+		 *
+		 * @var acf_revisions
+		 */
+		public $revisions;
+
+		/**
+		 * The fields instance.
+		 *
+		 * @var acf_fields
+		 */
+		public $fields;
+
+		/**
+		 * The form front instance.
+		 *
+		 * @var acf_form_front
+		 */
+		public $form_front;
+
+		/**
+		 * The validation instance.
+		 *
+		 * @var acf_validation
+		 */
+		public $validation;
+
+		/**
+		 * The admin tools instance.
+		 *
+		 * @var acf_admin_tools
+		 */
+		public $admin_tools;
+
+		/**
 		 * A dummy constructor to ensure ACF is only setup once.
 		 *
 		 * @date    23/06/12

@@ -480,34 +480,32 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		/**
 		 * Enqueues and localizes scripts.
 		 *
-		 * @date    27/4/20
 		 * @since   ACF 5.9.0
 		 *
 		 * @return  void
 		 */
 		public function enqueue_scripts() {
-
 			// Enqueue input scripts.
-			if ( in_array( 'input', $this->enqueue ) ) {
+			if ( in_array( 'input', $this->enqueue, true ) ) {
 				wp_enqueue_script( 'acf-input' );
 				wp_enqueue_style( 'acf-input' );
 			}
 
 			// Enqueue media scripts.
-			if ( in_array( 'uploader', $this->enqueue ) ) {
+			if ( in_array( 'uploader', $this->enqueue, true ) ) {
 				$this->enqueue_uploader();
 			}
 
 			// Localize text.
 			acf_localize_text(
 				array(
-
 					// Tooltip
 					'Are you sure?' => __( 'Are you sure?', 'secure-custom-fields' ),
 					'Yes'           => __( 'Yes', 'secure-custom-fields' ),
 					'No'            => __( 'No', 'secure-custom-fields' ),
 					'Remove'        => __( 'Remove', 'secure-custom-fields' ),
 					'Cancel'        => __( 'Cancel', 'secure-custom-fields' ),
+					'Close modal'   => esc_html__( 'Close modal', 'secure-custom-fields' ),
 				)
 			);
 
@@ -515,24 +513,23 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			if ( wp_script_is( 'acf-input' ) ) {
 				acf_localize_text(
 					array(
-
 						// Unload
-						'The changes you made will be lost if you navigate away from this page' => __( 'The changes you made will be lost if you navigate away from this page', 'secure-custom-fields' ),
+						'The changes you made will be lost if you navigate away from this page' => esc_html__( 'The changes you made will be lost if you navigate away from this page', 'secure-custom-fields' ),
 
 						// Metaboxes
-						'Toggle panel'                => __( 'Toggle panel', 'secure-custom-fields' ),
+						'Toggle panel'                => esc_html__( 'Toggle panel', 'secure-custom-fields' ),
 						// Validation
-						'Validation successful'       => __( 'Validation successful', 'secure-custom-fields' ),
-						'Validation failed'           => __( 'Validation failed', 'secure-custom-fields' ),
-						'1 field requires attention'  => __( '1 field requires attention', 'secure-custom-fields' ),
+						'Validation successful'       => esc_html__( 'Validation successful', 'secure-custom-fields' ),
+						'Validation failed'           => esc_html__( 'Validation failed', 'secure-custom-fields' ),
+						'1 field requires attention'  => esc_html__( '1 field requires attention', 'secure-custom-fields' ),
 						/* translators: %d: number of fields */
-						'%d fields require attention' => __( '%d fields require attention', 'secure-custom-fields' ),
+						'%d fields require attention' => esc_html__( '%d fields require attention', 'secure-custom-fields' ),
 
 						// Block Validation
-						'An ACF Block on this page requires attention before you can save.' => __( 'An ACF Block on this page requires attention before you can save.', 'secure-custom-fields' ),
+						'An ACF Block on this page requires attention before you can save.' => esc_html__( 'An ACF Block on this page requires attention before you can save.', 'secure-custom-fields' ),
 
 						// Other
-						'Edit field group'            => __( 'Edit field group', 'secure-custom-fields' ),
+						'Edit field group'            => esc_html__( 'Edit field group', 'secure-custom-fields' ),
 					)
 				);
 
@@ -565,6 +562,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					$text[ $k ] = $v;
 				}
 			}
+
 			if ( $text ) {
 				wp_localize_script( 'acf', 'acfL10n', $text );
 			}

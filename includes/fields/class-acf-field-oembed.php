@@ -1,7 +1,6 @@
 <?php
 
 if ( ! class_exists( 'acf_field_oembed' ) ) :
-	#[AllowDynamicProperties]
 	class acf_field_oembed extends acf_field {
 
 		/**

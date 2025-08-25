@@ -4,7 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'acf_admin_tools' ) ) :
-	#[AllowDynamicProperties]
 	/**
 	 * Class AdminTools
 	 *

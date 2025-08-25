@@ -59,7 +59,6 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 				'display'      => 'seamless',
 				'layout'       => 'block',
 			);
-			$this->cloning       = array();
 			$this->have_rows     = 'single';
 
 			// register filter
