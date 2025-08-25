@@ -23,14 +23,14 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 *
 		 * @var array
 		 */
-		public $preview_values;
+		public $preview_values = array();
 
 		/**
 		 * Fields to be used in the preview.
 		 *
 		 * @var array
 		 */
-		public $preview_fields;
+		public $preview_fields = array();
 
 
 		/**
@@ -38,7 +38,7 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 *
 		 * @var array
 		 */
-		public $preview_errors;
+		public $preview_errors = array();
 
 		/**
 		 * This function will setup the class functionality
@@ -51,11 +51,6 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 		 * @return  n/a
 		 */
 		public function __construct() {
-
-			// vars
-			$this->preview_values = array();
-			$this->preview_fields = array();
-			$this->preview_errors = array();
 
 			// actions
 			add_action( 'customize_controls_init', array( $this, 'customize_controls_init' ) );
@@ -381,75 +376,75 @@ if ( ! class_exists( 'acf_form_customizer' ) || ! class_exists( 'ACF_Form_Custom
 			?>
 <script type="text/javascript">
 (function($) {
-	
+
 	// customizer saves widget on any input change, so unload is not needed
 	acf.unload.active = 0;
-	
-	
+
+
 	// hack customizer function to remove bug caused by WYSIWYG field using a unique ID
 	// customizer compares returned AJAX HTML with the HTML of the widget form.
 	// the _getInputsSignature() function is used to generate a string based of input name + id.
 	// because ACF generates a unique ID on the WYSIWYG field, this string will not match causing the preview function to bail.
 	// an attempt was made to remove the WYSIWYG unique ID, but this caused multiple issues in the wp-admin and ultimately doesn't make sense with the tinymce rule that all editors must have a unique ID.
 	// source: wp-admin/js/customize-widgets.js
-	
+
 	// vars
 	var WidgetControl = wp.customize.Widgets.WidgetControl.prototype;
-	
-	
+
+
 	// backup functions
 	WidgetControl.__getInputsSignature = WidgetControl._getInputsSignature;
 	WidgetControl.__setInputState = WidgetControl._setInputState;
-	
-	
+
+
 	// modify __getInputsSignature
 	WidgetControl._getInputsSignature = function( inputs ) {
-		
+
 		// vars
 		var signature = this.__getInputsSignature( inputs );
 			safe = [];
-		
-		
+
+
 		// split
 		signature = signature.split(';');
-		
-		
+
+
 		// loop
 		for( var i in signature ) {
-			
+
 			// vars
 			var bit = signature[i];
-			
-			
+
+
 			// bail early if acf is found
 			if( bit.indexOf('acf') !== -1 ) continue;
-			
-			
+
+
 			// append
 			safe.push( bit );
-			
+
 		}
-		
-		
+
+
 		// update
 		signature = safe.join(';');
-		
-		
+
+
 		// return
 		return signature;
-		
+
 	};
-	
-	
+
+
 	// modify _setInputState
 	// this function doesn't seem to run on widget title/content, only custom fields
 	// either way, this function is not needed and will break ACF fields 
 	WidgetControl._setInputState = function( input, state ) {
-		
+
 		return true;
-			
+
 	};
-		
+
 })(jQuery);	
 </script>
 			<?php

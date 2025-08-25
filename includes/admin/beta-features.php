@@ -153,7 +153,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
-			scf_register_admin_beta_feature( 'SCF_Admin_Beta_Feature_Connect_Fields' );
 		}
 
 		/**

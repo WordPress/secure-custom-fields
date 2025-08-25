@@ -282,7 +282,7 @@
 
 		showTitle: function ( e, $el ) {
 			// vars
-			var title = $el.attr( 'title' );
+			let title = $el.attr( 'title' );
 
 			// bail early if no title
 			if ( ! title ) {
@@ -291,6 +291,9 @@
 
 			// clear title to avoid default browser tooltip
 			$el.attr( 'title', '' );
+
+			$el.data( 'acf-js-tooltip-title', title );
+			title = acf.strEscape( title );
 
 			// create
 			if ( ! this.tooltip ) {
@@ -311,12 +314,13 @@
 		hideTitle: function ( e, $el ) {
 			// hide tooltip
 			this.tooltip.hide();
+			$el.attr( 'title', $el.data( 'acf-js-tooltip-title' ) );
 
 			// restore title
-			$el.attr( 'title', this.tooltip.get( 'text' ) );
+			$el.removeData( 'acf-js-tooltip-title' );
 		},
 
-		onKeyUp: function( e, $el ) {
+		onKeyUp: function ( e, $el ) {
 			if ( 'Escape' === e.key ) {
 				this.hideTitle( e, $el );
 			}

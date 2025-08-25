@@ -5,6 +5,8 @@
  * @package wordpress/secure-custom-fields
  */
 
+use SCF\Fields\FlexibleContent\Render;
+use SCF\Fields\FlexibleContent\Layout;
 // phpcs:disable PEAR.NamingConventions.ValidClassName
 if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
@@ -13,7 +15,19 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 	 */
 	class acf_field_flexible_content extends acf_field {
 
+		/**
+		 * The post/page ID that we're rendering for.
+		 *
+		 * @var mixed
+		 */
+		public $post_id = false;
 
+		/**
+		 * An array of layout meta for the current field.
+		 *
+		 * @var array
+		 */
+		public $layout_meta = array();
 
 		/**
 		 * This function will setup the field type data
@@ -49,6 +63,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			$this->add_filter( 'acf/prepare_field_for_export', array( $this, 'prepare_any_field_for_export' ) );
 			$this->add_filter( 'acf/clone_field', array( $this, 'clone_any_field' ), 10, 2 );
 			$this->add_filter( 'acf/validate_field', array( $this, 'validate_any_field' ) );
+			$this->add_filter( 'acf/pre_render_fields', array( $this, 'pre_render_fields' ), 10, 2 );
 
 			// field filters
 			$this->add_field_filter( 'acf/get_sub_field', array( $this, 'get_sub_field' ), 10, 3 );
@@ -60,7 +75,6 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		/**
 		 * Admin scripts enqueue for field.
 		 *
-		 * @type    function
 		 * @date    16/12/2015
 		 * @since   ACF 5.3.2
 		 *
@@ -73,9 +87,24 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 				array(
 
 					// identifiers
-					'layout'  => __( 'layout', 'secure-custom-fields' ),
-					'layouts' => __( 'layouts', 'secure-custom-fields' ),
-					'Fields'  => __( 'Fields', 'secure-custom-fields' ),
+					'layout'                              => esc_html__( 'layout', 'secure-custom-fields' ),
+					'layouts'                             => esc_html__( 'layouts', 'secure-custom-fields' ),
+					'Fields'                              => esc_html__( 'Fields', 'secure-custom-fields' ),
+
+					// Deleting a layout.
+					'Delete'                              => esc_html__( 'Delete', 'secure-custom-fields' ),
+					'Delete Layout'                       => esc_html__( 'Delete Layout', 'secure-custom-fields' ),
+					/* translators: %s - Name of the Flexible content layout */
+					'Delete %s'                           => esc_html__( 'Delete %s', 'secure-custom-fields' ),
+					'Are you sure you want to delete the layout?' => esc_html__( 'Are you sure you want to delete the layout?', 'secure-custom-fields' ),
+					/* translators: %s - Name of the Flexible content layout */
+					'Are you sure you want to delete %s?' => esc_html__( 'Are you sure you want to delete %s?', 'secure-custom-fields' ),
+
+					// Renaming a layout.
+					'Rename Layout'                       => esc_html__( 'Rename Layout', 'secure-custom-fields' ),
+					'Rename'                              => esc_html__( 'Rename', 'secure-custom-fields' ),
+					'New Label'                           => esc_html__( 'New Label', 'secure-custom-fields' ),
+					'Remove Custom Label'                 => esc_html__( 'Remove Custom Label', 'secure-custom-fields' ),
 
 					// min / max
 					'This field requires at least {min} {label} {identifier}' => __( 'This field requires at least {min} {label} {identifier}', 'secure-custom-fields' ),
@@ -218,106 +247,47 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			return $sub_field;
 		}
 
+		/**
+		 * Runs on the "acf/pre_render_fields" filter. Used to signify
+		 * that we're currently rendering a Flexible Content field.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param array $fields  The main field array.
+		 * @param mixed $post_id The post ID for the field being rendered.
+		 * @return array
+		 */
+		public function pre_render_fields( $fields, $post_id = false ) {
+			if ( is_admin() ) {
+				$this->post_id = $post_id;
+			}
+
+			return $fields;
+		}
 
 		/**
 		 * Create the HTML interface for your field
 		 *
-		 * @type    action
 		 * @since   ACF 3.6
-		 * @date    23/01/13
 		 *
 		 * @param   array $field An array holding all the field's data.
 		 * @return  void
 		 */
 		public function render_field( $field ) {
 
-			// defaults
+			// Add some defaults.
 			if ( empty( $field['button_label'] ) ) {
 				$field['button_label'] = $this->defaults['button_label'];
 			}
 
-			// sort layouts into names
-			$layouts = array();
-
-			foreach ( $field['layouts'] as $k => $layout ) {
-				$layouts[ $layout['name'] ] = $layout;
-			}
-
-			// vars
-			$div = array(
-				'class'    => 'acf-flexible-content',
-				'data-min' => $field['min'],
-				'data-max' => $field['max'],
+			// Render the field.
+			$renderer = new Render(
+				$field,
+				$this->get_layout_meta( $this->post_id, $field )
 			);
 
-			// empty
-			if ( empty( $field['value'] ) ) {
-				$div['class'] .= ' -empty';
-			}
-
-			// no value message
-			// translators: %s the button label used for adding a new layout.
-			$no_value_message = __( 'Click the "%s" button below to start creating your layout', 'secure-custom-fields' );
-			$no_value_message = apply_filters( 'acf/fields/flexible_content/no_value_message', $no_value_message, $field );
-			$no_value_message = sprintf( $no_value_message, $field['button_label'] );
-
-			?>
-			<div <?php echo acf_esc_attrs( $div ); ?>>
-
-				<?php acf_hidden_input( array( 'name' => $field['name'] ) ); ?>
-
-				<div class="no-value-message">
-					<?php echo acf_esc_html( $no_value_message ); ?>
-				</div>
-
-				<div class="clones">
-					<?php foreach ( $layouts as $layout ) : ?>
-						<?php $this->render_layout( $field, $layout, 'acfcloneindex', array() ); ?>
-					<?php endforeach; ?>
-				</div>
-
-				<div class="values">
-					<?php
-					if ( ! empty( $field['value'] ) ) {
-						foreach ( $field['value'] as $i => $value ) {
-
-							// validate
-							if ( ! is_array( $value ) ) {
-								continue;
-							}
-
-							if ( empty( $layouts[ $value['acf_fc_layout'] ] ) ) {
-								continue;
-							}
-
-							// render
-							$this->render_layout( $field, $layouts[ $value['acf_fc_layout'] ], $i, $value );
-						}
-					}
-					?>
-				</div>
-
-				<div class="acf-actions">
-					<a class="acf-button button button-primary" href="#" data-name="add-layout"><?php echo acf_esc_html( $field['button_label'] ); ?></a>
-				</div>
-
-				<?php
-				echo '<script type="text-html" class="tmpl-popup"><ul>';
-				foreach ( $layouts as $layout ) {
-					$atts = array(
-						'href'        => '#',
-						'data-layout' => $layout['name'],
-						'data-min'    => $layout['min'],
-						'data-max'    => $layout['max'],
-					);
-					printf( '<li><a %s>%s</a></li>', acf_esc_attrs( $atts ), acf_esc_html( $layout['label'] ) );
-				}
-				echo '</ul></script>';
-				?>
-			</div>
-			<?php
+			$renderer->render();
 		}
-
 
 		/**
 		 * Description
@@ -326,156 +296,20 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * @date    19/11/2013
 		 * @since   ACF 5.0.0
 		 *
-		 * @param   array $field Fields.
-		 * @param array $layout Layout.
-		 * @param int   $i row number.
-		 * @param mixed $value Value.
-		 * @return  void
+		 * @param   array          $field Fields.
+		 * @param array          $layout Layout.
+		 * @param integer|string $i row number.
+		 * @param mixed          $value Value.
+		 * @return void
 		 */
 		public function render_layout( $field, $layout, $i, $value ) {
+			$disabled_layouts = $this->get_disabled_layouts( $this->post_id, $field );
+			$renamed_layouts  = $this->get_renamed_layouts( $this->post_id, $field );
+			$layout_disabled  = in_array( $i, $disabled_layouts, true );
+			$renamed          = ! empty( $renamed_layouts[ $i ] ) ? $renamed_layouts[ $i ] : '';
 
-			// vars
-			$order      = 0;
-			$el         = 'div';
-			$sub_fields = $layout['sub_fields'];
-			$id         = ( 'acfcloneindex' === $i ) ? 'acfcloneindex' : "row-$i";
-			$prefix     = $field['name'] . '[' . $id . ']';
-
-			// div
-			$div = array(
-				'class'       => 'layout',
-				'data-id'     => $id,
-				'data-layout' => $layout['name'],
-				'data-max'    => $layout['max'],
-				'data-label'  => $layout['label'],
-			);
-
-			// clone
-			if ( is_numeric( $i ) ) {
-				$order = $i + 1;
-			} else {
-				$div['class'] .= ' acf-clone';
-			}
-
-			// display
-			if ( 'table' === $layout['display'] ) {
-				$el = 'td';
-			}
-
-			// title
-			$title = $this->get_layout_title( $field, $layout, $i, $value );
-
-			// remove row
-			reset_rows();
-
-			?>
-			<div <?php echo acf_esc_attrs( $div ); ?>>
-
-				<?php
-				acf_hidden_input(
-					array(
-						'name'  => $prefix . '[acf_fc_layout]',
-						'value' => $layout['name'],
-					)
-				);
-				?>
-
-				<div class="acf-fc-layout-handle" title="<?php esc_attr_e( 'Drag to reorder', 'secure-custom-fields' ); ?>" data-name="collapse-layout"><?php echo acf_esc_html( $title ); ?></div>
-
-				<div class="acf-fc-layout-controls">
-					<a class="acf-icon -plus small light acf-js-tooltip" href="#" data-name="add-layout" title="<?php esc_attr_e( 'Add layout', 'secure-custom-fields' ); ?>"></a>
-					<a class="acf-icon -duplicate small light acf-js-tooltip" href="#" data-name="duplicate-layout" title="<?php esc_attr_e( 'Duplicate layout', 'secure-custom-fields' ); ?>"></a>
-					<a class="acf-icon -minus small light acf-js-tooltip" href="#" data-name="remove-layout" title="<?php esc_attr_e( 'Remove layout', 'secure-custom-fields' ); ?>"></a>
-					<a class="acf-icon -collapse small -clear acf-js-tooltip" href="#" data-name="collapse-layout" title="<?php esc_attr_e( 'Click to toggle', 'secure-custom-fields' ); ?>"></a>
-				</div>
-
-				<?php if ( ! empty( $sub_fields ) ) : ?>
-
-					<?php if ( 'table' === $layout['display'] ) : ?>
-						<table class="acf-table">
-
-							<thead>
-								<tr>
-									<?php
-									foreach ( $sub_fields as $sub_field ) :
-
-										// Set prefix to generate correct "for" attribute on <label>.
-										$sub_field['prefix'] = $prefix;
-
-										// Prepare field (allow sub fields to be removed).
-										$sub_field = acf_prepare_field( $sub_field );
-										if ( ! $sub_field ) {
-											continue;
-										}
-
-										// Define attrs.
-										$attrs              = array();
-										$attrs['class']     = 'acf-th';
-										$attrs['data-name'] = $sub_field['_name'];
-										$attrs['data-type'] = $sub_field['type'];
-										$attrs['data-key']  = $sub_field['key'];
-
-										if ( $sub_field['wrapper']['width'] ) {
-											$attrs['data-width'] = $sub_field['wrapper']['width'];
-											$attrs['style']      = 'width: ' . $sub_field['wrapper']['width'] . '%;';
-										}
-
-										?>
-										<th <?php echo acf_esc_attrs( $attrs ); ?>>
-											<?php acf_render_field_label( $sub_field ); ?>
-											<?php acf_render_field_instructions( $sub_field ); ?>
-										</th>
-									<?php endforeach; ?>
-								</tr>
-							</thead>
-
-							<tbody>
-								<tr class="acf-row">
-								<?php else : ?>
-									<div class="acf-fields
-									<?php
-									if ( 'row' === $layout['display'] ) :
-										?>
-		-left<?php endif; ?>">
-									<?php endif; ?>
-
-									<?php
-
-									// loop though sub fields
-									foreach ( $sub_fields as $sub_field ) {
-
-										// add value
-										if ( isset( $value[ $sub_field['key'] ] ) ) {
-
-											// this is a normal value
-											$sub_field['value'] = $value[ $sub_field['key'] ];
-										} elseif ( isset( $sub_field['default_value'] ) ) {
-
-											// no value, but this sub field has a default value
-											$sub_field['value'] = $sub_field['default_value'];
-										}
-
-										// update prefix to allow for nested values
-										$sub_field['prefix'] = $prefix;
-
-										// render input
-										acf_render_field_wrap( $sub_field, $el );
-									}
-
-									?>
-
-									<?php if ( 'table' === $layout['display'] ) : ?>
-								</tr>
-							</tbody>
-						</table>
-					<?php else : ?>
-			</div>
-		<?php endif; ?>
-
-	<?php endif; ?>
-
-	</div>
-			<?php
+			$layout = new Layout( $field, $layout, $i, $value, $layout_disabled, $renamed );
+			$layout->render();
 		}
 
 		/**
@@ -696,9 +530,8 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
 
 		/**
-		 * This filter is applied to the $value after it is loaded from the db
+		 * Filters the $value after it is loaded from the database.
 		 *
-		 * @type    filter
 		 * @since   ACF 3.6
 		 *
 		 * @param  mixed $value   The value found in the database.
@@ -712,20 +545,20 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 				return $value;
 			}
 
-			// value must be an array
-			$value = acf_get_array( $value );
-
-			// vars
-			$rows = array();
-
-			// sort layouts into names
-			$layouts = array();
+			$value            = acf_get_array( $value );
+			$disabled_layouts = $this->get_disabled_layouts( $post_id, $field );
+			$rows             = array();
+			$layouts          = array();
 			foreach ( $field['layouts'] as $k => $layout ) {
 				$layouts[ $layout['name'] ] = $layout['sub_fields'];
 			}
 
 			// loop through rows
 			foreach ( $value as $i => $l ) {
+				// If the layout is disabled, prevent it from showing up on the frontend.
+				if ( $this->should_disable_layout( $i, $disabled_layouts ) ) {
+					continue;
+				}
 
 				// append to $values
 				$rows[ $i ]                  = array();
@@ -762,6 +595,48 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			}
 
 			return $rows;
+		}
+
+		/**
+		 * Checks if a layout should be disabled based on the provided index and disabled layouts.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param integer|string $layout_index     The index of the layout to check.
+		 * @param array          $disabled_layouts The array of disabled layout indices.
+		 * @return boolean
+		 */
+		private function should_disable_layout( $layout_index, $disabled_layouts = array() ): bool {
+			// No disabled layouts provided, so no need to disable.
+			if ( ! is_array( $disabled_layouts ) || empty( $disabled_layouts ) ) {
+				return false;
+			}
+
+			// The layout is not in the disabled list, so no need to disable.
+			if ( ! in_array( $layout_index, $disabled_layouts, true ) ) {
+				return false;
+			}
+
+			if ( is_admin() ) {
+				$args = acf_request_args(
+					array(
+						'action' => '',
+						'query'  => '',
+					)
+				);
+
+				// If this is a block preview, disable the layout.
+				if ( ( 'acf/ajax/fetch-block' === $args['action'] && ! empty( $args['query']['preview'] ) ) ||
+					acf_get_data( 'acf_doing_block_preview' ) ) {
+					return true;
+				}
+
+				// Editing a layout in the admin, so don't disable it.
+				return false;
+			}
+
+			// The layout has been disabled, and we're on the frontend.
+			return true;
 		}
 
 
@@ -1003,6 +878,86 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			return false;
 		}
 
+		/**
+		 * Retrieves layout meta for the Flexible Content field saved to the provided post.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param integer|string $post_id The ID of the post being edited.
+		 * @param array          $field   The Flexible Content field array.
+		 * @return array
+		 */
+		public function get_layout_meta( $post_id, $field ) {
+			$field_name = $field['name'];
+
+			// Enables compatibility with nested Flexible Content fields during render.
+			if ( ! empty( $field['_prepare'] ) ) {
+				$field_name = acf_get_field_type( 'repeater' )->get_field_name_from_input_name( $field_name );
+			}
+
+			// Bail early if we don't have a field name to check.
+			if ( empty( $field_name ) ) {
+				return array();
+			}
+
+			// Return the cached meta if we have it.
+			if ( ! empty( $this->layout_meta[ $field_name ] ) ) {
+				return $this->layout_meta[ $field_name ];
+			}
+
+			$layout_meta = acf_get_metadata_by_field(
+				$post_id,
+				array(
+					'name' => '_' . $field_name . '_layout_meta',
+				)
+			);
+
+			if ( empty( $layout_meta ) || ! is_array( $layout_meta ) ) {
+				return array();
+			}
+
+			$this->layout_meta[ $field_name ] = $layout_meta;
+
+			return $this->layout_meta[ $field_name ];
+		}
+
+		/**
+		 * Returns an array of layouts that have been disabled for the current field.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param integer|string $post_id The ID of the post being edited.
+		 * @param array          $field   The Flexible Content field array.
+		 * @return array
+		 */
+		public function get_disabled_layouts( $post_id, $field ): array {
+			$layout_meta = $this->get_layout_meta( $post_id, $field );
+
+			if ( empty( $layout_meta['disabled'] ) || ! is_array( $layout_meta['disabled'] ) ) {
+				return array();
+			}
+
+			return $layout_meta['disabled'];
+		}
+
+		/**
+		 * Returns an array of layouts that have been renamed for the current field.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param integer|string $post_id The ID of the post being edited.
+		 * @param array          $field   The Flexible Content field array.
+		 * @return array
+		 */
+		public function get_renamed_layouts( $post_id, $field ): array {
+			$layout_meta = $this->get_layout_meta( $post_id, $field );
+
+			if ( empty( $layout_meta['renamed'] ) || ! is_array( $layout_meta['renamed'] ) ) {
+				return array();
+			}
+
+			return $layout_meta['renamed'];
+		}
 
 		/**
 		 * This function will delete a value row
@@ -1094,9 +1049,8 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		}
 
 		/**
-		 * This filter is applied to the $value before it is updated in the db
+		 * Filters the $value before it is updated in the database.
 		 *
-		 * @type    filter
 		 * @since   ACF 3.6
 		 *
 		 * @param   mixed $value   The value which will be saved in the database.
@@ -1106,15 +1060,17 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 */
 		public function update_value( $value, $post_id, $field ) {
 
-			// bail early if no layouts
-			if ( empty( $field['layouts'] ) ) {
+			// Bail early if no layouts or field name.
+			if ( empty( $field['layouts'] ) || empty( $field['name'] ) ) {
 				return $value;
 			}
 
 			// vars
-			$new_value = array();
-			$old_value = acf_get_metadata_by_field( $post_id, $field );
-			$old_value = is_array( $old_value ) ? $old_value : array();
+			$new_value        = array();
+			$disabled_layouts = array();
+			$renamed_layouts  = array();
+			$old_value        = acf_get_metadata_by_field( $post_id, $field );
+			$old_value        = is_array( $old_value ) ? $old_value : array();
 
 			// update
 			if ( ! empty( $value ) ) {
@@ -1139,6 +1095,16 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 						$this->delete_row( $i, $field, $post_id );
 					}
 
+					if ( ! empty( $row['acf_fc_layout_disabled'] ) ) {
+						$disabled_layouts[] = $i;
+					}
+					unset( $row['acf_fc_layout_disabled'] );
+
+					if ( ! empty( $row['acf_fc_layout_custom_label'] ) ) {
+						$renamed_layouts[ $i ] = $row['acf_fc_layout_custom_label'];
+					}
+					unset( $row['acf_fc_layout_custom_label'] );
+
 					// update row
 					$this->update_row( $row, $i, $field, $post_id );
 
@@ -1150,6 +1116,18 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			// vars
 			$old_count = empty( $old_value ) ? 0 : count( $old_value );
 			$new_count = empty( $new_value ) ? 0 : count( $new_value );
+
+			// Update layout meta.
+			acf_update_metadata_by_field(
+				$post_id,
+				array(
+					'name' => '_' . $field['name'] . '_layout_meta',
+				),
+				array(
+					'disabled' => $disabled_layouts,
+					'renamed'  => $renamed_layouts,
+				)
+			);
 
 			// remove old rows
 			if ( $old_count > $new_count ) {
@@ -1346,39 +1324,8 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 * @return string The layout title, optionally filtered.
 		 */
 		public function get_layout_title( $field, $layout, $i, $value ) {
-
-			// vars
-			$rows       = array();
-			$rows[ $i ] = $value;
-
-			// add loop
-			acf_add_loop(
-				array(
-					'selector' => $field['name'],
-					'name'     => $field['name'],
-					'value'    => $rows,
-					'field'    => $field,
-					'i'        => $i,
-					'post_id'  => 0,
-				)
-			);
-
-			// vars
-			$title = $layout['label'];
-
-			// filters
-			$title = apply_filters( 'acf/fields/flexible_content/layout_title', $title, $field, $layout, $i );
-			$title = apply_filters( 'acf/fields/flexible_content/layout_title/name=' . $field['_name'], $title, $field, $layout, $i );
-			$title = apply_filters( 'acf/fields/flexible_content/layout_title/key=' . $field['key'], $title, $field, $layout, $i );
-
-			// remove loop
-			acf_remove_loop();
-
-			// prepend order
-			$order = is_numeric( $i ) ? $i + 1 : 0;
-			$title = '<span class="acf-fc-layout-order">' . $order . '</span> ' . acf_esc_html( $title );
-
-			return $title;
+			$layout = new Layout( $field, $layout, $i, $value );
+			return $layout->get_title();
 		}
 
 

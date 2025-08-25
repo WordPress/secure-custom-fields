@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'acf_loop' ) ) :
-	#[AllowDynamicProperties]
 	class acf_loop {
 
 		/**
@@ -14,22 +13,6 @@ if ( ! class_exists( 'acf_loop' ) ) :
 		 * @var array $loops
 		 */
 		public $loops = array();
-		/**
-		 * This function will setup the class functionality
-		 *
-		 * @type    function
-		 * @date    5/03/2014
-		 * @since   ACF 5.0.0
-		 *
-		 * @param   n/a
-		 * @return  n/a
-		 */
-		function __construct() {
-
-			// vars
-			$this->loops = array();
-		}
-
 
 		/**
 		 * This function will return true if no loops exist
