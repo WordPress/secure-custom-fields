@@ -6,8 +6,10 @@
 		events: {
 			'click [data-name="add-layout"]': 'onClickAdd',
 			'click [data-name="duplicate-layout"]': 'onClickDuplicate',
-			'click [data-name="remove-layout"]': 'onClickRemove',
 			'click [data-name="collapse-layout"]': 'onClickCollapse',
+			'click [data-name="more-layout-actions"]': 'onClickMoreActions',
+			'click .acf-fc-expand-all': 'onClickExpandAll',
+			'click .acf-fc-collapse-all': 'onClickCollapseAll',
 			showField: 'onShow',
 			unloadField: 'onUnload',
 			mouseover: 'onHover',
@@ -61,6 +63,10 @@
 			return this.$( '.tmpl-popup:last' );
 		},
 
+		$moreLayoutActions: function () {
+			return this.$( '.tmpl-more-layout-actions:last' );
+		},
+
 		getPopupHTML: function () {
 			var html = this.$popup().html();
 			var $html = $( html );
@@ -111,6 +117,10 @@
 			return html;
 		},
 
+		getMoreLayoutActionsHTML: function () {
+			return this.$moreLayoutActions().html();
+		},
+
 		getValue: function () {
 			return this.$layouts().length;
 		},
@@ -139,8 +149,9 @@
 			// add sortable
 			this.$layoutsWrap().sortable( {
 				items: '> .layout',
-				handle: '> .acf-fc-layout-handle',
+				handle: '> .acf-fc-layout-actions-wrap .acf-fc-layout-handle',
 				forceHelperSize: true,
+				zIndex: 9999,
 				forcePlaceholderSize: true,
 				scroll: true,
 				stop: function ( event, ui ) {
@@ -173,6 +184,14 @@
 			this.on( 'invalidField', '.layout', function ( e ) {
 				self.onInvalidField( e, $( this ) );
 			} );
+			$( document ).on( 'click focusin', function ( e ) {
+				if (
+					! $( e.target ).closest( '.acf-flexible-content .layout' )
+						.length
+				) {
+					self.setActiveLayout( $( [] ) );
+				}
+			} );
 		},
 
 		initialize: function () {
@@ -197,6 +216,17 @@
 					.html( i + 1 );
 			} );
 
+			// Add event handlers for setting active layout
+			const self = this;
+			this.$control().on(
+				'click focus',
+				'> .values > .layout',
+				function ( event ) {
+					const layout = $( event.target ).closest( '.layout' );
+					self.setActiveLayout( layout );
+				}
+			);
+
 			// empty
 			if ( this.val() == 0 ) {
 				this.$control().addClass( '-empty' );
@@ -209,6 +239,16 @@
 				this.$button().addClass( 'disabled' );
 			} else {
 				this.$button().removeClass( 'disabled' );
+			}
+		},
+
+		setActiveLayout: function ( $layout ) {
+			// Remove active-layout class from all layouts
+			$( '.layout' ).removeClass( 'active-layout' );
+
+			// Add active-layout class to the provided layout if it exists
+			if ( $layout.length ) {
+				$layout.addClass( 'active-layout' );
 			}
 		},
 
@@ -239,7 +279,7 @@
 			const name = currentLayout.data( 'layout' ) || '';
 			const count = this.countLayouts( name );
 
-			if( count >= layoutMax ) {
+			if ( count >= layoutMax ) {
 				let text = acf.__(
 					'This field has a limit of {max} {label} {identifier}'
 				);
@@ -292,8 +332,15 @@
 
 			// within layout
 			var $layout = null;
-			if ( $el.hasClass( 'acf-icon' ) ) {
+			// Check the context data attribute to determine how to handle the add
+			if ( $el.data( 'context' ) === 'layout' ) {
 				$layout = $el.closest( '.layout' );
+				$layout.addClass( '-hover' );
+			} else if ( $el.data( 'context' ) === 'top-actions' ) {
+				$layout = $el
+					.closest( '.acf-flexible-content' )
+					.find( '.values .layout' )
+					.first();
 				$layout.addClass( '-hover' );
 			}
 
@@ -359,6 +406,7 @@
 
 			// trigger change for validation errors
 			this.$input().trigger( 'change' );
+			this.setActiveLayout( $el );
 
 			return $el;
 		},
@@ -425,8 +473,89 @@
 			// Draw focus to layout.
 			acf.focusAttention( $el );
 
+			this.setActiveLayout( $el );
 			// Return new layout.
 			return $el;
+		},
+
+		onClickToggleLayout: function ( event, layout ) {
+			const disabledInput = layout.find(
+				'.acf-fc-layout-disabled:first'
+			);
+
+			if ( layout.attr( 'data-enabled' ) === '1' ) {
+				// Disable the layout
+				layout.attr( 'data-enabled', '0' );
+				disabledInput.val( '1' );
+			} else {
+				// Enable the layout
+				layout.attr( 'data-enabled', '1' );
+				disabledInput.val( '0' );
+			}
+
+			// Trigger change event to save the state
+			this.$input().trigger( 'change' );
+		},
+		onClickRenameLayout: function ( event, layout ) {
+			const currentName = layout
+				.find( '.acf-fc-layout-custom-label:first' )
+				.val();
+
+			const popupOptions = {
+				context: this,
+				title: acf.__( 'Rename Layout' ),
+				textConfirm: acf.__( 'Rename' ),
+				textCancel: acf.__( 'Cancel' ),
+				currentName: currentName,
+				openedBy: layout
+					.find( 'a[data-name="more-layout-actions"]' )
+					.first(),
+				width: '500px',
+				confirm: function ( event, element, newName ) {
+					this.renameLayout( layout, newName );
+				},
+				cancel: function () {
+					layout.removeClass( '-hover' );
+				},
+			};
+
+			// Create new rename popup dialog
+			new RenameLayoutPopup( popupOptions );
+		},
+
+		renameLayout: function ( layout, newName ) {
+			// Set the escaped new name in the hidden input
+			layout
+				.find( '.acf-fc-layout-custom-label:first' )
+				.val( acf.strEscape( newName ) );
+
+			const titleElement = layout.find( '.acf-fc-layout-title:first' );
+
+			// Update the visible title
+			titleElement.text( newName );
+
+			if ( newName.length ) {
+				// Mark as renamed with custom label
+				layout.attr( 'data-renamed', '1' );
+			} else {
+				// Restore original title if name is empty
+				let originalTitle = layout
+					.find( '.acf-fc-layout-original-title:first' )
+					.text()
+					.trim();
+
+				// Remove parentheses from original title
+				originalTitle = originalTitle.substring(
+					1,
+					originalTitle.length - 1
+				);
+
+				titleElement.text( originalTitle );
+				layout.attr( 'data-renamed', '0' );
+			}
+
+			// Trigger change event to save the state
+			this.$input().trigger( 'change' );
 		},
 
 		validateRemove: function () {
@@ -456,28 +585,46 @@
 		},
 
 		onClickRemove: function ( e, $el ) {
-			var $layout = $el.closest( '.layout' );
-
 			// Bypass confirmation when holding down "shift" key.
 			if ( e.shiftKey ) {
-				return this.removeLayout( $layout );
+				return this.removeLayout( $el );
 			}
-
 			// add class
-			$layout.addClass( '-hover' );
+			$el.addClass( '-hover' );
 
 			// add tooltip
-			var tooltip = acf.newTooltip( {
+			const tooltipOptions = {
 				confirmRemove: true,
-				target: $el,
 				context: this,
+				title: acf.__( 'Delete Layout' ),
+				text: acf.__( 'Are you sure you want to delete this layout?' ),
+				textConfirm: acf.__( 'Delete' ),
+				textCancel: acf.__( 'Cancel' ),
+				openedBy: $el
+					.find( 'a[data-name="more-layout-actions"]' )
+					.first(),
+				width: '500px',
 				confirm: function () {
-					this.removeLayout( $layout );
+					this.removeLayout( $el );
 				},
 				cancel: function () {
-					$layout.removeClass( '-hover' );
+					$el.removeClass( '-hover' );
 				},
-			} );
+			};
+			// Check if layout has a custom label
+			const customLabel = $el.data( 'label' );
+			if ( customLabel && customLabel.length ) {
+				// Customize the popup title and text with the layout label
+				tooltipOptions.title = acf
+					.__( 'Delete %s' )
+					.replace( '%s', acf.strEscape( customLabel ) );
+				tooltipOptions.text = acf
+					.__( 'Are you sure you want to delete %s?' )
+					.replace( '%s', customLabel );
+			}
+
+			// Create and show the confirmation popup
+			acf.newPopup( tooltipOptions );
 		},
 
 		removeLayout: function ( $layout ) {
@@ -511,6 +658,51 @@
 			}
 		},
 
+		onClickExpandAll: function ( e, $el ) {
+			e.preventDefault();
+			const self = this;
+			this.$layouts().each( function () {
+				self.openLayout( $( this ) );
+			} );
+		},
+
+		onClickCollapseAll: function ( e, $el ) {
+			e.preventDefault();
+			const self = this;
+			this.$layouts().each( function () {
+				self.closeLayout( $( this ) );
+			} );
+		},
+
+		onClickMoreActions: function ( e, $el ) {
+			const $layout = $el.closest( '.layout' );
+			new MoreLayoutActionsPopup( {
+				target: $el,
+				targetConfirm: false,
+				text: this.getMoreLayoutActionsHTML(),
+				context: this,
+				confirm: function ( e, $el ) {
+					// Check if the clicked element is a toggle action
+					const action = $el.data( 'action' );
+					if ( action === 'remove-layout' ) {
+						this.onClickRemove( e, $layout );
+					}
+					if ( action === 'toggle-layout' ) {
+						this.onClickToggleLayout( e, $layout );
+					}
+					if ( action === 'rename-layout' ) {
+						this.onClickRenameLayout( e, $layout );
+					}
+				},
+				cancel: function () {
+					$layout
+						.find( 'a[data-name="more-layout-actions"]' )
+						.first()
+						.trigger( 'focus' );
+				},
+			} );
+		},
+
 		isLayoutClosed: function ( $layout ) {
 			return $layout.hasClass( '-collapsed' );
 		},
@@ -530,8 +722,10 @@
 		},
 
 		renderLayout: function ( $layout ) {
-			var $input = $layout.children( 'input' );
-			var prefix = $input.attr( 'name' ).replace( '[acf_fc_layout]', '' );
+			const $input = $layout.children( 'input' );
+			const prefix = $input
+				.attr( 'name' )
+				.replace( '[acf_fc_layout]', '' );
 
 			// ajax data
 			var ajaxData = {
@@ -550,9 +744,17 @@
 				type: 'post',
 				success: function ( html ) {
 					if ( html ) {
-						$layout
-							.children( '.acf-fc-layout-handle' )
-							.html( html );
+						if ( $layout.data( 'renamed' ) === 1 ) {
+							$layout
+								.find( '.acf-fc-layout-original-title' )
+								.first()
+								.html( `(${ html })` );
+						} else {
+							$layout
+								.find( '.acf-fc-layout-title' )
+								.first()
+								.html( html );
+						}
 					}
 				},
 			} );
@@ -617,8 +819,243 @@
 
 			// add class
 			this.$el.addClass( 'acf-fc-popup' );
+			this.position();
+		},
+		show: function () {
+			const $flexibleContent = this.get( 'target' ).closest(
+				'.acf-flexible-content'
+			);
+			$( $flexibleContent ).append( this.$el );
+		},
+		position: function () {
+			const $popup = this.$el;
+			const $target = this.get( 'target' );
+			const $container = $target.closest( '.acf-flexible-content' );
+			positionPopup( $popup, $target, $container, 8 );
 		},
 	} );
+
+	/**
+	 * MoreLayoutActionsPopup
+	 *
+	 * Popup for showing more layout actions (remove, toggle, rename)
+	 */
+	const MoreLayoutActionsPopup = acf.models.TooltipConfirm.extend( {
+		events: {
+			'click [data-action]': 'onConfirm',
+			'keydown [role="menu"]': 'onKeyDown',
+		},
+
+		render: function () {
+			const $layout = this.get( 'target' ).closest( '.layout' );
+			this.html( this.get( 'text' ) );
+			this.$el.addClass( 'acf-fc-popup acf-more-layout-actions' );
+
+			// Add enable-layout class if layout is disabled
+			if ( $layout.attr( 'data-enabled' ) === '0' ) {
+				this.$el.addClass( 'enable-layout' );
+			} else {
+				this.$el.removeClass( 'enable-layout' );
+			}
+
+			const self = this;
+			setTimeout( function () {
+				self.$el.find( 'a' ).first().trigger( 'focus' );
+			}, 1 );
+		},
+
+		show: function () {
+			const $layout = this.get( 'target' ).closest( '.layout' );
+			$layout.append( this.$el );
+		},
+
+		position: function () {
+			const $popup = this.$el;
+			const $target = this.get( 'target' );
+			const $container = $target.closest( '.layout' );
+			positionPopup( $popup, $target, $container, 2 );
+		},
+
+		onKeyDown: function ( event, $el ) {
+			if (
+				[ 'ArrowDown', 'ArrowUp', 'Escape', 'Tab' ].indexOf(
+					event.key
+				) === -1
+			) {
+				return;
+			}
+
+			event.preventDefault();
+
+			if ( event.key === 'Escape' ) {
+				return void this.onCancel( event, $el );
+			}
+
+			const $menuItems = this.$el
+				.find( '[role="menu"]' )
+				.find( '[role="menuitem"]:visible' );
+			const $activeElement = $( document.activeElement );
+			const menuItemsLength = $menuItems.length;
+
+			let currentIndex = $menuItems.index( $activeElement );
+			let nextIndex;
+
+			if (
+				event.key === 'ArrowDown' ||
+				( event.key === 'Tab' && ! event.shiftKey )
+			) {
+				nextIndex = ( currentIndex + 1 ) % menuItemsLength;
+			} else {
+				nextIndex =
+					( currentIndex - 1 + menuItemsLength ) % menuItemsLength;
+			}
+
+			$menuItems.eq( nextIndex ).trigger( 'focus' );
+		},
+	} );
+
+	/**
+	 * RenameLayoutPopup
+	 *
+	 * Popup dialog for renaming layout labels
+	 */
+	const RenameLayoutPopup = acf.models.PopupConfirm.extend( {
+		events: {
+			'click [data-event="close"]': 'onCancel',
+			'click .acf-close-popup': 'onClickClose',
+			keydown: 'onPressEscapeClose',
+			'click [data-event="confirm"]': 'onConfirm',
+			'click .acf-reset-label': 'onReset',
+			'submit .acf-rename-layout-form': 'onConfirm',
+		},
+
+		tmpl: function () {
+			const resetButton =
+				this.get( 'currentName' ) === ''
+					? ''
+					: `<button type="button" data-event="reset-label" class="acf-btn acf-btn-secondary acf-reset-label">${ acf.strEscape(
+							acf.__( 'Remove Custom Label' )
+					  ) }</button>`;
+
+			return `
+        <div id="acf-popup" role="dialog" aria-labelledby="acf-rename-layout-title" tabindex="-1">
+          <div class="acf-popup-box acf-box acf-confirm-popup acf-rename-layout-popup">
+            <div class="title">
+              <h3 id="acf-rename-layout-title">${ this.get( 'title' ) }</h3>
+              <a href="#" data-event="close" aria-label="${ acf.strEscape(
+					acf.__( 'Close modal' )
+				) }">
+                <i class="acf-icon -close"></i>
+              </a>
+            </div>
+            <form class="inner acf-rename-layout-form">
+              <div class="acf-field">
+                <div class="acf-label">
+                  <label for="acf-new-layout-label">${ acf.strEscape(
+						acf.__( 'New Label' )
+					) }</label>
+                </div>
+                <div class="acf-input">
+                  <input id="acf-new-layout-label" type="text" name="acf_new_layout_label" value="${ this.get(
+						'currentName'
+					) }">
+                </div>
+              </div>
+              <div class="acf-actions">
+                ${ resetButton }
+                <button type="button" data-event="close" class="acf-btn acf-btn-secondary acf-close-popup">${ acf.strEscape(
+					this.get( 'textCancel' )
+				) }</button>
+                <button type="submit" data-event="confirm" class="acf-btn acf-btn-primary acf-confirm">${ acf.strEscape(
+					this.get( 'textConfirm' )
+				) }</button>
+              </div>
+            </form>
+          </div>
+          <div class="bg" data-event="close"></div>
+        </div>`;
+		},
+
+		render: function () {
+			acf.models.PopupConfirm.prototype.render.apply( this, arguments );
+			setTimeout( () => {
+				const $input = this.$el.find( 'input#acf-new-layout-label' );
+				const textLength = $input.val().length;
+				$input.trigger( 'focus' );
+				$input[ 0 ].setSelectionRange( textLength, textLength );
+			}, 1 );
+		},
+
+		onConfirm: function ( event, $el ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			const newName = this.$el.find( 'input#acf-new-layout-label' ).val();
+			this.close();
+
+			const confirmCallback = this.get( 'confirm' );
+			const context = this.get( 'context' ) || this;
+			confirmCallback.apply( context, [ event, $el, newName ] );
+		},
+
+		onReset: function ( event, $el ) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.$el.find( 'input#acf-new-layout-label' ).val( '' );
+			this.onConfirm( event, $el );
+		},
+	} );
+
+	/**
+	 * positionPopup
+	 *
+	 * Utility function to position popup relative to target within container
+	 */
+	const positionPopup = function ( $popup, $target, $container, offset ) {
+		if ( ! $target.length || ! $container.length ) return;
+
+		const targetOffset = $target.offset();
+		const containerOffset = $container.offset();
+		const targetWidth = $target.outerWidth();
+		const targetHeight = $target.outerHeight();
+		const popupWidth = $popup.outerWidth();
+		const popupHeight = $popup.outerHeight();
+		const isRTL = $( 'body' ).hasClass( 'rtl' );
+		const windowScrollTop = $( window ).scrollTop();
+		const windowHeight = $( window ).height();
+
+		let left, positionClass;
+		let top =
+			targetOffset.top - containerOffset.top + targetHeight + offset;
+		let isAbove = false;
+
+		// Check if popup would be cut off at bottom of viewport
+		if (
+			targetOffset.top + targetHeight + popupHeight + offset >
+				windowScrollTop + windowHeight &&
+			targetOffset.top - popupHeight - offset > windowScrollTop
+		) {
+			top = targetOffset.top - containerOffset.top - popupHeight - offset;
+			isAbove = true;
+		}
+
+		if ( isRTL ) {
+			left = targetOffset.left - containerOffset.left;
+			positionClass = isAbove ? 'bottom-left' : 'top-left';
+		} else {
+			left =
+				targetOffset.left -
+				containerOffset.left +
+				targetWidth -
+				popupWidth;
+			positionClass = isAbove ? 'bottom-right' : 'top-right';
+		}
+
+		$popup
+			.removeClass( 'top-right bottom-right top-left bottom-left' )
+			.css( { position: 'absolute', top: top, left: left } )
+			.addClass( positionClass );
+	};
 
 	/**
 	 *  conditions

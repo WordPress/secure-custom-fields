@@ -91,6 +91,7 @@
 			this.$collection().sortable( {
 				items: '.acf-gallery-attachment',
 				forceHelperSize: true,
+				zIndex: 9999,
 				forcePlaceholderSize: true,
 				scroll: true,
 				start: function ( event, ui ) {

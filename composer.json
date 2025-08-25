@@ -30,7 +30,8 @@
 		"psr-4": {
 			"ACF\\Blocks\\": "includes/Blocks/",
 			"SCF\\Forms\\": "includes/forms/",
-			"SCF\\Meta\\": "includes/Meta/"
+			"SCF\\Meta\\": "includes/Meta/",
+			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/"
 		}
 	},
 	"config": {

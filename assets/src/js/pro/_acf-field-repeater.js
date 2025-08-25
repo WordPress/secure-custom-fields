@@ -123,6 +123,7 @@
 			this.$tbody().sortable( {
 				items: '> tr',
 				handle: '> td.order',
+				zIndex: 9999,
 				forceHelperSize: true,
 				forcePlaceholderSize: true,
 				scroll: true,

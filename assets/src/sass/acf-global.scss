@@ -1,4 +1,264 @@
 @charset "UTF-8";
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Global
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-page #wpcontent {
+  line-height: 140%;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Links
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-page a {
+  color: #0783BE;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Headings
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-h1,
+.acf-admin-page h1,
+.acf-headerbar h1 {
+  font-size: 21px;
+  font-weight: 400;
+}
+
+.acf-h2, .acf-no-field-groups-wrapper .acf-no-field-groups-inner h2,
+.acf-no-field-groups-wrapper .acf-no-taxonomies-inner h2,
+.acf-no-field-groups-wrapper .acf-no-post-types-inner h2,
+.acf-no-field-groups-wrapper .acf-no-options-pages-inner h2,
+.acf-no-field-groups-wrapper .acf-options-preview-inner h2,
+.acf-no-taxonomies-wrapper .acf-no-field-groups-inner h2,
+.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner h2,
+.acf-no-taxonomies-wrapper .acf-no-post-types-inner h2,
+.acf-no-taxonomies-wrapper .acf-no-options-pages-inner h2,
+.acf-no-taxonomies-wrapper .acf-options-preview-inner h2,
+.acf-no-post-types-wrapper .acf-no-field-groups-inner h2,
+.acf-no-post-types-wrapper .acf-no-taxonomies-inner h2,
+.acf-no-post-types-wrapper .acf-no-post-types-inner h2,
+.acf-no-post-types-wrapper .acf-no-options-pages-inner h2,
+.acf-no-post-types-wrapper .acf-options-preview-inner h2,
+.acf-no-options-pages-wrapper .acf-no-field-groups-inner h2,
+.acf-no-options-pages-wrapper .acf-no-taxonomies-inner h2,
+.acf-no-options-pages-wrapper .acf-no-post-types-inner h2,
+.acf-no-options-pages-wrapper .acf-no-options-pages-inner h2,
+.acf-no-options-pages-wrapper .acf-options-preview-inner h2,
+.acf-options-preview-wrapper .acf-no-field-groups-inner h2,
+.acf-options-preview-wrapper .acf-no-taxonomies-inner h2,
+.acf-options-preview-wrapper .acf-no-post-types-inner h2,
+.acf-options-preview-wrapper .acf-no-options-pages-inner h2,
+.acf-options-preview-wrapper .acf-options-preview-inner h2, .acf-page-title, .acf-admin-page h2,
+.acf-headerbar h2 {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.acf-h3, .acf-admin-page h3,
+.acf-headerbar h3, .acf-admin-page .postbox .postbox-header h2,
+.acf-admin-page .postbox .postbox-header h3,
+.acf-admin-page .postbox .title h2,
+.acf-admin-page .postbox .title h3,
+.acf-admin-page .acf-box .postbox-header h2,
+.acf-admin-page .acf-box .postbox-header h3,
+.acf-admin-page .acf-box .title h2,
+.acf-admin-page .acf-box .title h3, .acf-postbox-header h2.acf-postbox-title, .acf-admin-page #poststuff .postbox-header h2,
+.acf-admin-page #poststuff .postbox-header h3 {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Paragraphs
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-page .p1 {
+  font-size: 15px;
+}
+.acf-admin-page .p2, .acf-admin-page .acf-no-field-groups-wrapper .acf-no-field-groups-inner p, .acf-no-field-groups-wrapper .acf-no-field-groups-inner .acf-admin-page p,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-taxonomies-inner p,
+.acf-no-field-groups-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-post-types-inner p,
+.acf-no-field-groups-wrapper .acf-no-post-types-inner .acf-admin-page p,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-options-pages-inner p,
+.acf-no-field-groups-wrapper .acf-no-options-pages-inner .acf-admin-page p,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-options-preview-inner p,
+.acf-no-field-groups-wrapper .acf-options-preview-inner .acf-admin-page p,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-field-groups-inner p,
+.acf-no-taxonomies-wrapper .acf-no-field-groups-inner .acf-admin-page p,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-taxonomies-inner p,
+.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-post-types-inner p,
+.acf-no-taxonomies-wrapper .acf-no-post-types-inner .acf-admin-page p,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-options-pages-inner p,
+.acf-no-taxonomies-wrapper .acf-no-options-pages-inner .acf-admin-page p,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-options-preview-inner p,
+.acf-no-taxonomies-wrapper .acf-options-preview-inner .acf-admin-page p,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-field-groups-inner p,
+.acf-no-post-types-wrapper .acf-no-field-groups-inner .acf-admin-page p,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-taxonomies-inner p,
+.acf-no-post-types-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-post-types-inner p,
+.acf-no-post-types-wrapper .acf-no-post-types-inner .acf-admin-page p,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-options-pages-inner p,
+.acf-no-post-types-wrapper .acf-no-options-pages-inner .acf-admin-page p,
+.acf-admin-page .acf-no-post-types-wrapper .acf-options-preview-inner p,
+.acf-no-post-types-wrapper .acf-options-preview-inner .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-field-groups-inner p,
+.acf-no-options-pages-wrapper .acf-no-field-groups-inner .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-taxonomies-inner p,
+.acf-no-options-pages-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-post-types-inner p,
+.acf-no-options-pages-wrapper .acf-no-post-types-inner .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-options-pages-inner p,
+.acf-no-options-pages-wrapper .acf-no-options-pages-inner .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-options-preview-inner p,
+.acf-no-options-pages-wrapper .acf-options-preview-inner .acf-admin-page p,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-field-groups-inner p,
+.acf-options-preview-wrapper .acf-no-field-groups-inner .acf-admin-page p,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-taxonomies-inner p,
+.acf-options-preview-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-post-types-inner p,
+.acf-options-preview-wrapper .acf-no-post-types-inner .acf-admin-page p,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-options-pages-inner p,
+.acf-options-preview-wrapper .acf-no-options-pages-inner .acf-admin-page p,
+.acf-admin-page .acf-options-preview-wrapper .acf-options-preview-inner p,
+.acf-options-preview-wrapper .acf-options-preview-inner .acf-admin-page p, .acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields .acf-label, #acf-admin-tools .acf-meta-box-wrap .acf-fields .acf-admin-page .acf-label {
+  font-size: 14px;
+}
+.acf-admin-page .p3, .acf-admin-page .acf-internal-post-type .wp-list-table .post-state, .acf-internal-post-type .wp-list-table .acf-admin-page .post-state, .acf-admin-page .subtitle {
+  font-size: 13.5px;
+}
+.acf-admin-page .p4, .acf-admin-page .acf-admin-toolbar a.acf-admin-toolbar-upgrade-btn p, .acf-admin-toolbar a.acf-admin-toolbar-upgrade-btn .acf-admin-page p, .acf-admin-page #acf-update-information .form-table th, #acf-update-information .form-table .acf-admin-page th,
+.acf-admin-page #acf-update-information .form-table td,
+#acf-update-information .form-table .acf-admin-page td, .acf-admin-page #acf-admin-tools.tool-export .acf-panel h3, #acf-admin-tools.tool-export .acf-panel .acf-admin-page h3, .acf-admin-page .acf-btn.acf-btn-sm, .acf-admin-page .acf-admin-toolbar .acf-tab, .acf-admin-toolbar .acf-admin-page .acf-tab, .acf-admin-page .acf-options-preview .acf-options-pages-preview-upgrade-button p, .acf-options-preview .acf-options-pages-preview-upgrade-button .acf-admin-page p,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-options-pages-preview-upgrade-button p,
+.acf-no-options-pages-wrapper .acf-options-pages-preview-upgrade-button .acf-admin-page p, .acf-admin-page .acf-internal-post-type .subsubsub li, .acf-internal-post-type .subsubsub .acf-admin-page li, .acf-admin-page .acf-internal-post-type .wp-list-table tbody th, .acf-internal-post-type .wp-list-table tbody .acf-admin-page th,
+.acf-admin-page .acf-internal-post-type .wp-list-table tbody td,
+.acf-internal-post-type .wp-list-table tbody .acf-admin-page td, .acf-admin-page .acf-internal-post-type .wp-list-table thead th, .acf-internal-post-type .wp-list-table thead .acf-admin-page th, .acf-admin-page .acf-internal-post-type .wp-list-table thead td, .acf-internal-post-type .wp-list-table thead .acf-admin-page td,
+.acf-admin-page .acf-internal-post-type .wp-list-table tfoot th,
+.acf-internal-post-type .wp-list-table tfoot .acf-admin-page th, .acf-admin-page .acf-internal-post-type .wp-list-table tfoot td, .acf-internal-post-type .wp-list-table tfoot .acf-admin-page td, .acf-admin-page .acf-input .select2-container.-acf .select2-selection__rendered,
+.acf-admin-page .rule-groups .select2-container.-acf .select2-selection__rendered, .acf-admin-page .button, .acf-admin-page input[type=text],
+.acf-admin-page input[type=search],
+.acf-admin-page input[type=number],
+.acf-admin-page textarea,
+.acf-admin-page select {
+  font-size: 13px;
+}
+.acf-admin-page .p5, .acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type .field-type-label, .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type .acf-admin-page .field-type-label,
+.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type .field-type-label,
+.acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type .acf-admin-page .field-type-label, .acf-admin-page .acf-internal-post-type .row-actions, .acf-internal-post-type .acf-admin-page .row-actions, .acf-admin-page .acf-notice .button,
+.acf-admin-page .notice .button,
+.acf-admin-page #lost-connection-notice .button {
+  font-size: 12.5px;
+}
+.acf-admin-page .p6, .acf-admin-page #acf-update-information .acf-update-changelog p em, #acf-update-information .acf-update-changelog p .acf-admin-page em, .acf-admin-page .acf-no-field-groups-wrapper .acf-no-field-groups-inner p.acf-small, .acf-no-field-groups-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-taxonomies-inner p.acf-small,
+.acf-no-field-groups-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-post-types-inner p.acf-small,
+.acf-no-field-groups-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-no-options-pages-inner p.acf-small,
+.acf-no-field-groups-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-field-groups-wrapper .acf-options-preview-inner p.acf-small,
+.acf-no-field-groups-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-field-groups-inner p.acf-small,
+.acf-no-taxonomies-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-taxonomies-inner p.acf-small,
+.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-post-types-inner p.acf-small,
+.acf-no-taxonomies-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-options-pages-inner p.acf-small,
+.acf-no-taxonomies-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-taxonomies-wrapper .acf-options-preview-inner p.acf-small,
+.acf-no-taxonomies-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-field-groups-inner p.acf-small,
+.acf-no-post-types-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-taxonomies-inner p.acf-small,
+.acf-no-post-types-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-post-types-inner p.acf-small,
+.acf-no-post-types-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-post-types-wrapper .acf-no-options-pages-inner p.acf-small,
+.acf-no-post-types-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-post-types-wrapper .acf-options-preview-inner p.acf-small,
+.acf-no-post-types-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-field-groups-inner p.acf-small,
+.acf-no-options-pages-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-taxonomies-inner p.acf-small,
+.acf-no-options-pages-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-post-types-inner p.acf-small,
+.acf-no-options-pages-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-no-options-pages-inner p.acf-small,
+.acf-no-options-pages-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-no-options-pages-wrapper .acf-options-preview-inner p.acf-small,
+.acf-no-options-pages-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-field-groups-inner p.acf-small,
+.acf-options-preview-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-taxonomies-inner p.acf-small,
+.acf-options-preview-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-post-types-inner p.acf-small,
+.acf-options-preview-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-options-preview-wrapper .acf-no-options-pages-inner p.acf-small,
+.acf-options-preview-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
+.acf-admin-page .acf-options-preview-wrapper .acf-options-preview-inner p.acf-small,
+.acf-options-preview-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small, .acf-admin-page .acf-internal-post-type .row-actions, .acf-internal-post-type .acf-admin-page .row-actions, .acf-admin-page .acf-small {
+  font-size: 12px;
+}
+.acf-admin-page .p7, .acf-admin-page .acf-tooltip, .acf-admin-page .acf-notice p.help,
+.acf-admin-page .notice p.help,
+.acf-admin-page #lost-connection-notice p.help {
+  font-size: 11.5px;
+}
+.acf-admin-page .p8 {
+  font-size: 11px;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Page titles
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-page-title {
+  color: #344054;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Hide old / native WP titles from pages
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-page .acf-settings-wrap h1 {
+  display: none !important;
+}
+.acf-admin-page #acf-admin-tools h1 {
+  display: none !important;
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Small
+*
+*---------------------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------------
+*
+*  Link focus style
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-page a:focus {
+  box-shadow: none;
+  outline: none;
+}
+.acf-admin-page a:focus-visible {
+  box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
+  outline: 1px solid transparent;
+}
+
 /*--------------------------------------------------------------------------------------------
 *
 *	Vars
@@ -572,6 +832,27 @@ a.acf-icon.dark.-minus:hover, a.acf-icon.dark.-cancel:hover {
   opacity: 0.8;
 }
 
+.acf-icon.-plus-alt {
+    -webkit-mask-image: url("../../images/icons/icon-add-alt.svg");
+    mask-image: url("../../images/icons/icon-add-alt.svg")
+}
+
+.acf-icon.-duplicate-alt {
+    -webkit-mask-image: url("../../images/icons/icon-duplicate.svg");
+    mask-image: url("../../images/icons/icon-duplicate.svg")
+}
+
+.acf-icon.-more-actions {
+    -webkit-mask-image: url("../../images/icons/icon-more-vertical.svg");
+    mask-image: url("../../images/icons/icon-more-vertical.svg")
+}
+
+.acf-icon.-close {
+    -webkit-mask-image: url("../../images/icons/icon-close.svg");
+    mask-image: url("../../images/icons/icon-close.svg")
+}
+
+
 /*--------------------------------------------------------------------------------------------
 *
 *	acf-box
@@ -921,6 +1202,82 @@ html[dir=rtl] #acf-popup .acf-popup-box .title .acf-icon {
 }
 .acf-submit .button {
   margin-right: 5px;
+}
+
+#acf-popup .acf-confirm-popup {
+    border-radius: 8px
+}
+
+#acf-popup .acf-confirm-popup .title {
+    padding: 30px;
+    border-bottom: none;
+    display: flex;
+    align-content: center;
+    justify-content: space-between
+}
+
+#acf-popup .acf-confirm-popup .title h3 {
+    color: #101828;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 24px
+}
+
+#acf-popup .acf-confirm-popup .title a:focus {
+    border-radius: 50%
+}
+
+#acf-popup .acf-confirm-popup .title .acf-icon.-close {
+    width: 24px;
+    height: 24px;
+    mask-size: contain;
+    background: #101828;
+    position: relative;
+    top: auto;
+    right: auto
+}
+
+#acf-popup .acf-confirm-popup .inner {
+    margin: 0;
+    padding: 0 30px 30px 30px
+}
+
+#acf-popup .acf-confirm-popup .inner p {
+    margin-top: 0
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions .acf-btn-secondary {
+    border: none
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions .acf-btn-secondary:hover {
+    background: none;
+    text-decoration: underline
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions .acf-btn {
+    border-radius: 2px;
+    border: none;
+    min-height: 40px
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions .acf-btn.acf-confirm {
+    background-color: #dd1243
+}
+
+#acf-popup .acf-confirm-popup .inner .acf-actions .acf-btn.acf-confirm:hover {
+    background-color: rgb(173.8410041841, 14.1589958159, 52.7029288703)
+}
+
+body:not(.block-editor-page) #acf-popup .acf-confirm-popup .inner .acf-btn {
+    min-height: 30px;
+    border-radius: 3px
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -2254,265 +2611,6 @@ html[dir=rtl] .acf-table > tbody > tr > td.order + td {
 .acf-admin-page .acf-field .acf-notice.-warning {
   background: #fdf8eb;
   border-color: #f4dbb4;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Global
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-admin-page #wpcontent {
-  line-height: 140%;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Links
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-admin-page a {
-  color: #0783BE;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Headings
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-h1,
-.acf-admin-page h1,
-.acf-headerbar h1 {
-  font-size: 21px;
-  font-weight: 400;
-}
-
-.acf-h2, .acf-no-field-groups-wrapper .acf-no-field-groups-inner h2,
-.acf-no-field-groups-wrapper .acf-no-taxonomies-inner h2,
-.acf-no-field-groups-wrapper .acf-no-post-types-inner h2,
-.acf-no-field-groups-wrapper .acf-no-options-pages-inner h2,
-.acf-no-field-groups-wrapper .acf-options-preview-inner h2,
-.acf-no-taxonomies-wrapper .acf-no-field-groups-inner h2,
-.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner h2,
-.acf-no-taxonomies-wrapper .acf-no-post-types-inner h2,
-.acf-no-taxonomies-wrapper .acf-no-options-pages-inner h2,
-.acf-no-taxonomies-wrapper .acf-options-preview-inner h2,
-.acf-no-post-types-wrapper .acf-no-field-groups-inner h2,
-.acf-no-post-types-wrapper .acf-no-taxonomies-inner h2,
-.acf-no-post-types-wrapper .acf-no-post-types-inner h2,
-.acf-no-post-types-wrapper .acf-no-options-pages-inner h2,
-.acf-no-post-types-wrapper .acf-options-preview-inner h2,
-.acf-no-options-pages-wrapper .acf-no-field-groups-inner h2,
-.acf-no-options-pages-wrapper .acf-no-taxonomies-inner h2,
-.acf-no-options-pages-wrapper .acf-no-post-types-inner h2,
-.acf-no-options-pages-wrapper .acf-no-options-pages-inner h2,
-.acf-no-options-pages-wrapper .acf-options-preview-inner h2,
-.acf-options-preview-wrapper .acf-no-field-groups-inner h2,
-.acf-options-preview-wrapper .acf-no-taxonomies-inner h2,
-.acf-options-preview-wrapper .acf-no-post-types-inner h2,
-.acf-options-preview-wrapper .acf-no-options-pages-inner h2,
-.acf-options-preview-wrapper .acf-options-preview-inner h2, .acf-page-title, .acf-admin-page h2,
-.acf-headerbar h2 {
-  font-size: 18px;
-  font-weight: 400;
-}
-
-.acf-h3, .acf-admin-page h3,
-.acf-headerbar h3, .acf-admin-page .postbox .postbox-header h2,
-.acf-admin-page .postbox .postbox-header h3,
-.acf-admin-page .postbox .title h2,
-.acf-admin-page .postbox .title h3,
-.acf-admin-page .acf-box .postbox-header h2,
-.acf-admin-page .acf-box .postbox-header h3,
-.acf-admin-page .acf-box .title h2,
-.acf-admin-page .acf-box .title h3, .acf-postbox-header h2.acf-postbox-title, .acf-admin-page #poststuff .postbox-header h2,
-.acf-admin-page #poststuff .postbox-header h3 {
-  font-size: 16px;
-  font-weight: 400;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Paragraphs
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-admin-page .p1 {
-  font-size: 15px;
-}
-.acf-admin-page .p2, .acf-admin-page .acf-no-field-groups-wrapper .acf-no-field-groups-inner p, .acf-no-field-groups-wrapper .acf-no-field-groups-inner .acf-admin-page p,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-taxonomies-inner p,
-.acf-no-field-groups-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-post-types-inner p,
-.acf-no-field-groups-wrapper .acf-no-post-types-inner .acf-admin-page p,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-options-pages-inner p,
-.acf-no-field-groups-wrapper .acf-no-options-pages-inner .acf-admin-page p,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-options-preview-inner p,
-.acf-no-field-groups-wrapper .acf-options-preview-inner .acf-admin-page p,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-field-groups-inner p,
-.acf-no-taxonomies-wrapper .acf-no-field-groups-inner .acf-admin-page p,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-taxonomies-inner p,
-.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-post-types-inner p,
-.acf-no-taxonomies-wrapper .acf-no-post-types-inner .acf-admin-page p,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-options-pages-inner p,
-.acf-no-taxonomies-wrapper .acf-no-options-pages-inner .acf-admin-page p,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-options-preview-inner p,
-.acf-no-taxonomies-wrapper .acf-options-preview-inner .acf-admin-page p,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-field-groups-inner p,
-.acf-no-post-types-wrapper .acf-no-field-groups-inner .acf-admin-page p,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-taxonomies-inner p,
-.acf-no-post-types-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-post-types-inner p,
-.acf-no-post-types-wrapper .acf-no-post-types-inner .acf-admin-page p,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-options-pages-inner p,
-.acf-no-post-types-wrapper .acf-no-options-pages-inner .acf-admin-page p,
-.acf-admin-page .acf-no-post-types-wrapper .acf-options-preview-inner p,
-.acf-no-post-types-wrapper .acf-options-preview-inner .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-field-groups-inner p,
-.acf-no-options-pages-wrapper .acf-no-field-groups-inner .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-taxonomies-inner p,
-.acf-no-options-pages-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-post-types-inner p,
-.acf-no-options-pages-wrapper .acf-no-post-types-inner .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-options-pages-inner p,
-.acf-no-options-pages-wrapper .acf-no-options-pages-inner .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-options-preview-inner p,
-.acf-no-options-pages-wrapper .acf-options-preview-inner .acf-admin-page p,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-field-groups-inner p,
-.acf-options-preview-wrapper .acf-no-field-groups-inner .acf-admin-page p,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-taxonomies-inner p,
-.acf-options-preview-wrapper .acf-no-taxonomies-inner .acf-admin-page p,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-post-types-inner p,
-.acf-options-preview-wrapper .acf-no-post-types-inner .acf-admin-page p,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-options-pages-inner p,
-.acf-options-preview-wrapper .acf-no-options-pages-inner .acf-admin-page p,
-.acf-admin-page .acf-options-preview-wrapper .acf-options-preview-inner p,
-.acf-options-preview-wrapper .acf-options-preview-inner .acf-admin-page p, .acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields .acf-label, #acf-admin-tools .acf-meta-box-wrap .acf-fields .acf-admin-page .acf-label {
-  font-size: 14px;
-}
-.acf-admin-page .p3, .acf-admin-page .acf-internal-post-type .wp-list-table .post-state, .acf-internal-post-type .wp-list-table .acf-admin-page .post-state, .acf-admin-page .subtitle {
-  font-size: 13.5px;
-}
-.acf-admin-page .p4, .acf-admin-page .acf-admin-toolbar a.acf-admin-toolbar-upgrade-btn p, .acf-admin-toolbar a.acf-admin-toolbar-upgrade-btn .acf-admin-page p, .acf-admin-page #acf-update-information .form-table th, #acf-update-information .form-table .acf-admin-page th,
-.acf-admin-page #acf-update-information .form-table td,
-#acf-update-information .form-table .acf-admin-page td, .acf-admin-page #acf-admin-tools.tool-export .acf-panel h3, #acf-admin-tools.tool-export .acf-panel .acf-admin-page h3, .acf-admin-page .acf-btn.acf-btn-sm, .acf-admin-page .acf-admin-toolbar .acf-tab, .acf-admin-toolbar .acf-admin-page .acf-tab, .acf-admin-page .acf-options-preview .acf-options-pages-preview-upgrade-button p, .acf-options-preview .acf-options-pages-preview-upgrade-button .acf-admin-page p,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-options-pages-preview-upgrade-button p,
-.acf-no-options-pages-wrapper .acf-options-pages-preview-upgrade-button .acf-admin-page p, .acf-admin-page .acf-internal-post-type .subsubsub li, .acf-internal-post-type .subsubsub .acf-admin-page li, .acf-admin-page .acf-internal-post-type .wp-list-table tbody th, .acf-internal-post-type .wp-list-table tbody .acf-admin-page th,
-.acf-admin-page .acf-internal-post-type .wp-list-table tbody td,
-.acf-internal-post-type .wp-list-table tbody .acf-admin-page td, .acf-admin-page .acf-internal-post-type .wp-list-table thead th, .acf-internal-post-type .wp-list-table thead .acf-admin-page th, .acf-admin-page .acf-internal-post-type .wp-list-table thead td, .acf-internal-post-type .wp-list-table thead .acf-admin-page td,
-.acf-admin-page .acf-internal-post-type .wp-list-table tfoot th,
-.acf-internal-post-type .wp-list-table tfoot .acf-admin-page th, .acf-admin-page .acf-internal-post-type .wp-list-table tfoot td, .acf-internal-post-type .wp-list-table tfoot .acf-admin-page td, .acf-admin-page .acf-input .select2-container.-acf .select2-selection__rendered,
-.acf-admin-page .rule-groups .select2-container.-acf .select2-selection__rendered, .acf-admin-page .button, .acf-admin-page input[type=text],
-.acf-admin-page input[type=search],
-.acf-admin-page input[type=number],
-.acf-admin-page textarea,
-.acf-admin-page select {
-  font-size: 13px;
-}
-.acf-admin-page .p5, .acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type .field-type-label, .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type .acf-admin-page .field-type-label,
-.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type .field-type-label,
-.acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type .acf-admin-page .field-type-label, .acf-admin-page .acf-internal-post-type .row-actions, .acf-internal-post-type .acf-admin-page .row-actions, .acf-admin-page .acf-notice .button,
-.acf-admin-page .notice .button,
-.acf-admin-page #lost-connection-notice .button {
-  font-size: 12.5px;
-}
-.acf-admin-page .p6, .acf-admin-page #acf-update-information .acf-update-changelog p em, #acf-update-information .acf-update-changelog p .acf-admin-page em, .acf-admin-page .acf-no-field-groups-wrapper .acf-no-field-groups-inner p.acf-small, .acf-no-field-groups-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-taxonomies-inner p.acf-small,
-.acf-no-field-groups-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-post-types-inner p.acf-small,
-.acf-no-field-groups-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-no-options-pages-inner p.acf-small,
-.acf-no-field-groups-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-field-groups-wrapper .acf-options-preview-inner p.acf-small,
-.acf-no-field-groups-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-field-groups-inner p.acf-small,
-.acf-no-taxonomies-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-taxonomies-inner p.acf-small,
-.acf-no-taxonomies-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-post-types-inner p.acf-small,
-.acf-no-taxonomies-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-no-options-pages-inner p.acf-small,
-.acf-no-taxonomies-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-taxonomies-wrapper .acf-options-preview-inner p.acf-small,
-.acf-no-taxonomies-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-field-groups-inner p.acf-small,
-.acf-no-post-types-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-taxonomies-inner p.acf-small,
-.acf-no-post-types-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-post-types-inner p.acf-small,
-.acf-no-post-types-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-post-types-wrapper .acf-no-options-pages-inner p.acf-small,
-.acf-no-post-types-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-post-types-wrapper .acf-options-preview-inner p.acf-small,
-.acf-no-post-types-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-field-groups-inner p.acf-small,
-.acf-no-options-pages-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-taxonomies-inner p.acf-small,
-.acf-no-options-pages-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-post-types-inner p.acf-small,
-.acf-no-options-pages-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-no-options-pages-inner p.acf-small,
-.acf-no-options-pages-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-no-options-pages-wrapper .acf-options-preview-inner p.acf-small,
-.acf-no-options-pages-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-field-groups-inner p.acf-small,
-.acf-options-preview-wrapper .acf-no-field-groups-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-taxonomies-inner p.acf-small,
-.acf-options-preview-wrapper .acf-no-taxonomies-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-post-types-inner p.acf-small,
-.acf-options-preview-wrapper .acf-no-post-types-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-options-preview-wrapper .acf-no-options-pages-inner p.acf-small,
-.acf-options-preview-wrapper .acf-no-options-pages-inner .acf-admin-page p.acf-small,
-.acf-admin-page .acf-options-preview-wrapper .acf-options-preview-inner p.acf-small,
-.acf-options-preview-wrapper .acf-options-preview-inner .acf-admin-page p.acf-small, .acf-admin-page .acf-internal-post-type .row-actions, .acf-internal-post-type .acf-admin-page .row-actions, .acf-admin-page .acf-small {
-  font-size: 12px;
-}
-.acf-admin-page .p7, .acf-admin-page .acf-tooltip, .acf-admin-page .acf-notice p.help,
-.acf-admin-page .notice p.help,
-.acf-admin-page #lost-connection-notice p.help {
-  font-size: 11.5px;
-}
-.acf-admin-page .p8 {
-  font-size: 11px;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Page titles
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-page-title {
-  color: #344054;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Hide old / native WP titles from pages
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-admin-page .acf-settings-wrap h1 {
-  display: none !important;
-}
-.acf-admin-page #acf-admin-tools h1 {
-  display: none !important;
-}
-
-/*---------------------------------------------------------------------------------------------
-*
-*  Small
-*
-*---------------------------------------------------------------------------------------------*/
-/*---------------------------------------------------------------------------------------------
-*
-*  Link focus style
-*
-*---------------------------------------------------------------------------------------------*/
-.acf-admin-page a:focus {
-  box-shadow: none;
-  outline: none;
-}
-.acf-admin-page a:focus-visible {
-  box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
-  outline: 1px solid transparent;
 }
 
 .acf-admin-page {

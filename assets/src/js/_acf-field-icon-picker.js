@@ -58,7 +58,7 @@
 			// Initialize the state of the icon picker.
 			let typeAndValue = {
 				type: this.$typeInput().val(),
-				value: this.$valueInput().val()
+				value: this.$valueInput().val(),
 			};
 
 			// Store the type and value object.
@@ -135,7 +135,7 @@
 		initializeIconLists( typeAndValue ) {
 			const self = this;
 
-			this.$( '.acf-icon-list' ).each( function( i ) {
+			this.$( '.acf-icon-list' ).each( function ( i ) {
 				const tabName = $( this ).data( 'parent-tab' );
 				const icons = self.getIconsList( tabName ) || [];
 				self.set( tabName, icons );
@@ -143,7 +143,11 @@
 
 				if ( typeAndValue.type === tabName ) {
 					// Select the correct icon.
-					self.selectIcon( $( this ), typeAndValue.value, false ).then( () => {
+					self.selectIcon(
+						$( this ),
+						typeAndValue.value,
+						false
+					).then( () => {
 						// Scroll to the selected icon.
 						self.scrollToSelectedIcon();
 					} );
@@ -152,13 +156,9 @@
 		},
 
 		alignIconListTabsToCurrentValue( typeAndValue ) {
-			const icons = this.$( '.acf-icon-list' ).filter(
-				function () {
-					return (
-						$( this ).data( 'parent-tab' ) !== typeAndValue.type
-					);
-				}
-			);
+			const icons = this.$( '.acf-icon-list' ).filter( function () {
+				return $( this ).data( 'parent-tab' ) !== typeAndValue.type;
+			} );
 			const self = this;
 			icons.each( function () {
 				self.unselectIcon( $( this ) );
@@ -179,12 +179,8 @@
 				icon.key
 			) } acf-icon-picker-list-icon" role="radio" data-icon="${ acf.strEscape(
 				icon.key
-			) }" style="${ style }" title="${ acf.strEscape(
-				icon.label
-			) }">
-				<label for="${ acf.strEscape( id ) }">${ acf.strEscape(
-					icon.label
-				) }</label>
+			) }" style="${ style }" title="${ acf.strEscape( icon.label ) }">
+				<label for="${ acf.strEscape( id ) }">${ acf.strEscape( icon.label ) }</label>
 				<input id="${ acf.strEscape(
 					id
 				) }" type="radio" class="acf-icon-picker-list-icon-radio" name="acf-icon-picker-list-icon-radio" value="${ acf.strEscape(
@@ -207,25 +203,29 @@
 		},
 
 		getIconsList( tabName ) {
+			let icons;
+
 			if ( 'dashicons' === tabName ) {
 				const iconPickeri10n = acf.get( 'iconPickeri10n' ) || [];
-
-				return Object.entries( iconPickeri10n ).map(
-					( [ key, value ] ) => {
-						return {
-							key,
-							label: value,
-						};
-					}
+				icons = Object.entries( iconPickeri10n ).map(
+					( [ key, label ] ) => ( { key, label } )
 				);
+			} else {
+				const iconList = this.$(
+					`.acf-icon-list[data-parent-tab="${ tabName }"]`
+				);
+				if ( iconList.length !== 0 ) {
+					const iconsData = iconList.data( 'icons' );
+					icons = Array.isArray( iconsData ) ? iconsData : [];
+				}
 			}
 
-			return acf.get( `iconPickerIcons_${ tabName }` );
+			return icons;
 		},
 
 		getIconsBySearch( searchTerm, tabName ) {
 			const lowercaseSearchTerm = searchTerm.toLowerCase();
-			const icons = this.getIconsList( tabName);
+			const icons = this.getIconsList( tabName );
 
 			const filteredIcons = icons.filter( function ( icon ) {
 				const lowercaseIconLabel = icon.label.toLowerCase();
@@ -258,17 +258,13 @@
 
 		unselectIcon( $el ) {
 			// Remove the currently active dashicon, if any.
-			$el
-				.find( '.acf-icon-picker-list-icon' )
-				.removeClass( 'active' );
+			$el.find( '.acf-icon-picker-list-icon' ).removeClass( 'active' );
 			this.set( 'selectedIcon', false );
 		},
 
 		onIconRadioFocus( e ) {
 			const icon = e.target.value;
-			const $tabs = this.$( e.target ).closest(
-				'.acf-icon-picker-tabs'
-			);
+			const $tabs = this.$( e.target ).closest( '.acf-icon-picker-tabs' );
 			const $iconsList = $tabs.find( '.acf-icon-list' );
 
 			const $newIcon = $iconsList.find(
@@ -292,9 +288,7 @@
 
 		onIconClick( e ) {
 			e.preventDefault();
-			const $iconList = this.$( e.target ).closest(
-				'.acf-icon-list'
-			);
+			const $iconList = this.$( e.target ).closest( '.acf-icon-list' );
 			const $iconElement = this.$( e.target );
 			const icon = $iconElement.find( 'input' ).val();
 
@@ -303,13 +297,14 @@
 			);
 
 			// By forcing focus on the input, we fire onIconRadioFocus.
-			$newIconElement.find( 'input' ).prop( 'checked', true ).trigger( 'focus' );
+			$newIconElement
+				.find( 'input' )
+				.prop( 'checked', true )
+				.trigger( 'focus' );
 		},
 
 		onIconSearch( e ) {
-			const $tabs = this.$( e.target ).closest(
-				'.acf-icon-picker-tabs'
-			);
+			const $tabs = this.$( e.target ).closest( '.acf-icon-picker-tabs' );
 			const $iconList = $tabs.find( '.acf-icon-list' );
 			const tabName = $tabs.data( 'tab' );
 			const searchTerm = e.target.value;
@@ -335,7 +330,8 @@
 						: searchTerm;
 
 				$tabs.find( '.acf-icon-list ' ).hide();
-				$tabs.find( '.acf-icon-list-empty' )
+				$tabs
+					.find( '.acf-icon-list-empty' )
 					.find( '.acf-invalid-icon-list-search-term' )
 					.text( visualSearchTerm );
 				$tabs.find( '.acf-icon-list-empty' ).css( 'display', 'flex' );

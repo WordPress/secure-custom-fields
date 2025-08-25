@@ -36,11 +36,13 @@
 			this.type( this.get( 'type' ) );
 
 			// text
-			this.html( '<p>' + this.get( 'text' ) + '</p>' );
+			this.html( '<p>' + acf.strEscape( this.get( 'text' ) ) + '</p>' );
 
 			// close
 			if ( this.get( 'dismiss' ) ) {
-				this.$el.append( '<a href="#" class="acf-notice-dismiss acf-icon -cancel small"></a>' );
+				this.$el.append(
+					'<a href="#" class="acf-notice-dismiss acf-icon -cancel small"></a>'
+				);
 				this.$el.addClass( '-dismiss' );
 			}
 
@@ -144,14 +146,29 @@
 						$( this ).remove();
 					} else {
 						$( this ).show();
-						$( this ).on( 'click', '.notice-dismiss', function ( e ) {
-							dismissed = acf.getPreference( 'dismissed-notices' );
-							if ( ! dismissed || typeof dismissed != 'object' ) {
-								dismissed = [];
+						$( this ).on(
+							'click',
+							'.notice-dismiss',
+							function ( e ) {
+								dismissed =
+									acf.getPreference( 'dismissed-notices' );
+								if (
+									! dismissed ||
+									typeof dismissed != 'object'
+								) {
+									dismissed = [];
+								}
+								dismissed.push(
+									$( this )
+										.closest( '.acf-admin-notice' )
+										.data( 'persist-id' )
+								);
+								acf.setPreference(
+									'dismissed-notices',
+									dismissed
+								);
 							}
-							dismissed.push( $( this ).closest( '.acf-admin-notice' ).data( 'persist-id' ) );
-							acf.setPreference( 'dismissed-notices', dismissed );
-						} );
+						);
 					}
 				}
 			} );

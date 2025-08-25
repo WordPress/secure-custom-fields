@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'acf_validation' ) ) :
-	#[AllowDynamicProperties]
 	/**
 	 * Validation Class
 	 */
@@ -27,9 +26,6 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @return  void
 		 */
 		public function __construct() {
-
-			// vars
-			$this->errors = array();
 
 			// ajax
 			add_action( 'wp_ajax_acf/validate_save_post', array( $this, 'ajax_validate_save_post' ) );
