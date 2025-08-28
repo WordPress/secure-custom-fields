@@ -52,8 +52,8 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
-= 6.5.6 =
-*Release Date 26 Aug 2025*
+= 6.5.7 =
+*Release Date 28 Aug 2025*
 
 *Features*
 
@@ -77,6 +77,10 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 – The acf.escHtml function now uses the third party DOMPurify library to ensure all unsafe HTML is removed. A new esc_html_dompurify_config JS filter can be used to modify the default behaviour.
 – Post titles are now correctly escaped whenever they are output by ACF code. Thanks to Shogo Kumamaru of LAC Co., Ltd. for the responsible disclosure.
 – An admin notice is now displayed when version 3 of the Select2 library is used, as it has now been deprecated in favor of version 4.
+
+= 6.5.6 =
+
+Release discarded due to SVN errors.
 
 = 6.5.5 =
 *Release Date 31 Jul 2025*
