@@ -153,7 +153,7 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 						<?php
 						if ( $acf_more_items ) {
 							if ( $more_items ) {
-								echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">ACF</span></li>';
+								echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">SCF</span></li>';
 							}
 							acf_print_menu_section( $acf_more_items, 'acf' );
 						}
