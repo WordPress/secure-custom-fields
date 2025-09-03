@@ -6,6 +6,7 @@ This section helps you get up and running with Secure Custom Fields (SCF). Wheth
 
 - [Installation](installation) - How to install and activate SCF
 - [Quick Start](quick-start) - Create your first custom field group in minutes
+- [How Content Works](how-content-works) - Understanding the Relationship Between Post Types, Taxonomies, and Custom Fields
 
 ## Documentation Sections
 
