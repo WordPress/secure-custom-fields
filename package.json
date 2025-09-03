@@ -6,11 +6,13 @@
     "lint:md": "markdownlint 'docs/**/*.md' --config .markdownlint.json",
     "prepare": "husky",
     "sort-package-json": "sort-package-json",
-    "watch": "webpack --watch",
     "test:e2e": "wp-scripts test-playwright",
-    "test:e2e:debug": "wp-scripts test-playwright --debug"
+    "test:e2e:debug": "wp-scripts test-playwright --debug",
+    "watch": "webpack --watch"
   },
   "dependencies": {
+    "@wordpress/icons": "^10.26.0",
+    "dompurify": "^3.2.6",
     "md5": "^2.3.0"
   },
   "devDependencies": {
@@ -19,6 +21,9 @@
     "@babel/preset-react": "^7.25.7",
     "@wordpress/dependency-extraction-webpack-plugin": "^6.20.0",
     "@wordpress/e2e-test-utils-playwright": "^1.20.0",
+    "@wordpress/icons": "^10.26.0",
+    "@wordpress/prettier-config": "^4.22.0",
+    "@wordpress/priority-queue": "^3.22.0",
     "@wordpress/scripts": "^30.14.0",
     "babel-loader": "^9.2.1",
     "css-loader": "^7.1.2",

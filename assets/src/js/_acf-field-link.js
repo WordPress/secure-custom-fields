@@ -55,7 +55,7 @@
 
 			// update text
 			this.$( '.link-title' ).html( val.title );
-			this.$( '.link-url' ).attr( 'href', val.url ).html( val.url );
+			this.$( '.link-url' ).attr( 'href', val.url ).text( val.url );
 
 			// update node
 			$node.html( val.title );

@@ -6,7 +6,7 @@
  * Plugin Name:       Secure Custom Fields
  * Plugin URI:        https://developer.wordpress.org/secure-custom-fields/
  * Description:       Secure Custom Fields (SCF) offers an intuitive way for developers to enhance WordPress content management by adding extra fields and options without coding requirements.
- * Version:           6.4.1
+ * Version:           6.5.5
  * Author:            WordPress.org
  * Author URI:        https://wordpress.org/
  * Text Domain:       secure-custom-fields
@@ -33,7 +33,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '6.4.1';
+		public $version = '6.5.5';
 
 		/**
 		 * The plugin settings array.
@@ -55,6 +55,48 @@ if ( ! class_exists( 'ACF' ) ) {
 		 * @var array
 		 */
 		public $instances = array();
+
+		/**
+		 * The loop instance.
+		 *
+		 * @var acf_loop
+		 */
+		public $loop;
+
+		/**
+		 * The revisions instance.
+		 *
+		 * @var acf_revisions
+		 */
+		public $revisions;
+
+		/**
+		 * The fields instance.
+		 *
+		 * @var acf_fields
+		 */
+		public $fields;
+
+		/**
+		 * The form front instance.
+		 *
+		 * @var acf_form_front
+		 */
+		public $form_front;
+
+		/**
+		 * The validation instance.
+		 *
+		 * @var acf_validation
+		 */
+		public $validation;
+
+		/**
+		 * The admin tools instance.
+		 *
+		 * @var acf_admin_tools
+		 */
+		public $admin_tools;
 
 		/**
 		 * A dummy constructor to ensure ACF is only setup once.
@@ -131,6 +173,9 @@ if ( ! class_exists( 'ACF' ) ) {
 				'pro'                     => true,
 			);
 
+			// Include autoloader.
+			include_once __DIR__ . '/vendor/autoload.php';
+
 			// Include utility functions.
 			include_once ACF_PATH . 'includes/acf-utility-functions.php';
 
@@ -150,6 +195,13 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Include functions.
 			acf_include( 'includes/acf-helper-functions.php' );
+
+			acf_new_instance( 'SCF\Meta\Comment' );
+			acf_new_instance( 'SCF\Meta\Post' );
+			acf_new_instance( 'SCF\Meta\Term' );
+			acf_new_instance( 'SCF\Meta\User' );
+			acf_new_instance( 'SCF\Meta\Option' );
+
 			acf_include( 'includes/acf-hook-functions.php' );
 			acf_include( 'includes/acf-field-functions.php' );
 			acf_include( 'includes/acf-bidirectional-functions.php' );
@@ -213,6 +265,8 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-notices.php' );
 				acf_include( 'includes/admin/admin-tools.php' );
 				acf_include( 'includes/admin/admin-upgrade.php' );
+				acf_include( 'includes/admin/admin-commands.php' );
+				acf_include( 'includes/admin/beta-features.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
 			}
 
@@ -226,10 +280,12 @@ if ( ! class_exists( 'ACF' ) ) {
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );
 			add_action( 'init', array( $this, 'init' ), 5 );
 			add_action( 'init', array( $this, 'register_post_types' ), 5 );
+			add_action( 'woocommerce_init', array( $this, 'init_hpos_integration' ), 99 );
 
 			// Add filters.
 			add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		}
+
 
 		/**
 		 * Completes the setup process on "init" of earlier.
@@ -407,7 +463,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			 */
 			do_action( 'acf/include_options_pages', ACF_MAJOR_VERSION );
 
-			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in SCF 6.3.
+			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in ACF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
@@ -740,6 +796,18 @@ if ( ! class_exists( 'ACF' ) ) {
 				}
 			}
 		}
+
+		/**
+		 * Initializes the ACF WooCommerce HPOS integration.
+		 *
+		 * @since 6.5
+		 *
+		 * @return void
+		 */
+		public function init_hpos_integration() {
+			acf_new_instance( 'SCF\Meta\WooOrder' );
+			acf_new_instance( 'SCF\Forms\WC_Order' );
+		}
 	}
 
 	/**
@@ -840,4 +908,22 @@ if ( ! function_exists( 'scf_plugin_deactivated_notice' ) ) {
 	}
 
 	add_action( 'pre_current_active_plugins', 'scf_plugin_deactivated_notice' );
+}
+/**
+ * Clean up plugin data on uninstall
+ */
+register_uninstall_hook( __FILE__, 'scf_plugin_uninstall' );
+
+/**
+ * Cleanup function that runs when the plugin is uninstalled
+ */
+function scf_plugin_uninstall() {
+	// List of known beta features.
+	$beta_features = array(
+		'editor_sidebar',
+	);
+
+	foreach ( $beta_features as $beta_feature ) {
+		delete_option( 'scf_beta_feature_' . $beta_feature . '_enabled' );
+	}
 }

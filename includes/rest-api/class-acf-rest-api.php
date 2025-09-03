@@ -234,7 +234,13 @@ class ACF_Rest_Api {
 				$format = $request->get_param( 'acf_format' ) ?: acf_get_setting( 'rest_api_format' );
 				$value  = acf_format_value_for_rest( $value, $post_id, $field, $format );
 
-				$fields[ $field['name'] ] = $value;
+				// We keep this one for backward compatibility with existing code that expects the field value to be.
+				$fields[ $field['name'] ]             = $value;
+				$fields[ $field['name'] . '_source' ] = array(
+					'label'           => $field['label'],
+					'type'            => $field['type'],
+					'formatted_value' => acf_format_value( $value, $post_id, $field ),
+				);
 			}
 		}
 

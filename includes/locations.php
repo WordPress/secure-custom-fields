@@ -180,7 +180,7 @@ function acf_validate_location_rule( $rule = array() ) {
 function acf_get_location_rule_operators( $rule ) {
 	$operators = ACF_Location::get_operators( $rule );
 
-	// Get operators from location type since 5.9.
+	// Get operators from location type since ACF 5.9.
 	$location_type = acf_get_location_type( $rule['param'] );
 	if ( $location_type ) {
 		$operators = $location_type->get_operators( $rule );
@@ -213,7 +213,7 @@ function acf_get_location_rule_operators( $rule ) {
 function acf_get_location_rule_values( $rule ) {
 	$values = array();
 
-	// Get values from location type since 5.9.
+	// Get values from location type since ACF 5.9.
 	$location_type = acf_get_location_type( $rule['param'] );
 	if ( $location_type ) {
 		$values = $location_type->get_values( $rule );
@@ -248,7 +248,7 @@ function acf_get_location_rule_values( $rule ) {
 function acf_match_location_rule( $rule, $screen, $field_group ) {
 	$result = false;
 
-	// Get result from location type since 5.9.
+	// Get result from location type since ACF 5.9.
 	$location_type = acf_get_location_type( $rule['param'] );
 	if ( $location_type ) {
 		$result = $location_type->match( $rule, $screen, $field_group );

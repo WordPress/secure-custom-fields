@@ -5,7 +5,7 @@
  * This class handles the clone field type, which allows users to select and display existing fields.
  *
  * @package wordpress/secure-custom-fields
- * @since 5.0.0
+ * @since ACF 5.0.0
  */
 
 // phpcs:disable PEAR.NamingConventions.ValidClassName
@@ -15,9 +15,22 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 	 *
 	 * Handles the functionality for the clone field type.
 	 *
-	 * @since 5.0.0
+	 * @since ACF 5.0.0
 	 */
 	class acf_field_clone extends acf_field {
+
+		/**
+		 * Array to keep track of fields being cloned.
+		 *
+		 * @var array $cloning
+		 */
+		public $cloning = array();
+		/**
+		 * The type of rows the field supports.
+		 *
+		 * @var array $have_rows
+		 */
+		public $have_rows = 'single';
 		/**
 		 * Initialize the field type.
 		 *
@@ -46,7 +59,6 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 				'display'      => 'seamless',
 				'layout'       => 'block',
 			);
-			$this->cloning       = array();
 			$this->have_rows     = 'single';
 
 			// register filter

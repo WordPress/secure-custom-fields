@@ -7,12 +7,13 @@
 			height: 0,
 			loading: false,
 			openedBy: null,
+			confirmRemove: false,
 		},
 
 		events: {
 			'click [data-event="close"]': 'onClickClose',
 			'click .acf-close-popup': 'onClickClose',
-			'keydown': 'onPressEscapeClose',
+			keydown: 'onPressEscapeClose',
 		},
 
 		setup: function ( props ) {
@@ -31,7 +32,9 @@
 			return [
 				'<div id="acf-popup" role="dialog" tabindex="-1">',
 				'<div class="acf-popup-box acf-box">',
-				'<div class="title"><h3></h3><a href="#" class="acf-icon -cancel grey" data-event="close" aria-label="' + acf.__('Close modal') + '"></a></div>',
+				'<div class="title"><h3></h3><a href="#" class="acf-icon -cancel grey" data-event="close" aria-label="' +
+					acf.__( 'Close modal' ) +
+					'"></a></div>',
 				'<div class="inner"></div>',
 				'<div class="loading"><i class="acf-loading"></i></div>',
 				'</div>',
@@ -66,7 +69,7 @@
 		/**
 		 * Places focus within the popup.
 		 */
-		focus: function() {
+		focus: function () {
 			this.$el.find( '.acf-icon' ).first().trigger( 'focus' );
 		},
 
@@ -75,7 +78,7 @@
 		 *
 		 * @param {boolean} locked True to lock focus, false to unlock.
 		 */
-		lockFocusToPopup: function( locked ) {
+		lockFocusToPopup: function ( locked ) {
 			let inertElement = $( '#wpwrap' );
 
 			if ( ! inertElement.length ) {
@@ -124,7 +127,7 @@
 		 *
 		 * @param {KeyboardEvent} e
 		 */
-		onPressEscapeClose: function( e ) {
+		onPressEscapeClose: function ( e ) {
 			if ( e.key === 'Escape' ) {
 				this.close();
 			}
@@ -134,15 +137,110 @@
 		 * Returns focus to the element that opened the popup
 		 * if it still exists in the DOM.
 		 */
-		returnFocusToOrigin: function() {
+		returnFocusToOrigin: function () {
 			if (
-				this.data.openedBy instanceof $
-				&& this.data.openedBy.closest( 'body' ).length > 0
+				this.data.openedBy instanceof $ &&
+				this.data.openedBy.closest( 'body' ).length > 0
 			) {
 				this.data.openedBy.trigger( 'focus' );
 			}
-		}
+		},
+	} );
 
+	/**
+	 *  PopupConfirm
+	 *
+	 *  Extends the Popup model to provide confirmation functionality
+	 *
+	 *  @date	17/12/17
+	 *  @since	ACF 5.6.5
+	 */
+
+	acf.models.PopupConfirm = acf.models.Popup.extend( {
+		data: {
+			text: '',
+			textConfirm: '',
+			textCancel: '',
+			context: false,
+			confirm: function () {},
+			cancel: function () {},
+		},
+
+		events: {
+			'click [data-event="close"]': 'onCancel',
+			'click .acf-close-popup': 'onClickClose',
+			keydown: 'onPressEscapeClose',
+			'click [data-event="confirm"]': 'onConfirm',
+		},
+
+		tmpl: function () {
+			return `
+            <div id="acf-popup" role="dialog" tabindex="-1">
+                <div class="acf-popup-box acf-box acf-confirm-popup">
+                    <div class="title">
+                        <h3>${ this.get( 'title' ) }</h3>
+                        <a href="#" data-event="close" aria-label="${ acf.__(
+							'Close modal'
+						) }">
+                            <i class="acf-icon -close"></i>
+                        </a>
+                    </div>
+                    <div class="inner">
+                        <p>${ acf.strEscape( this.get( 'text' ) ) }</p>
+                        <div class="acf-actions">
+                            <button tabindex="0" type="button" data-event="close" class="acf-btn acf-btn-secondary acf-close-popup">${ acf.strEscape(
+								this.get( 'textCancel' )
+							) }</button>
+                            <button tabindex="0" type="submit" data-event="confirm" class="acf-btn acf-btn-primary acf-confirm">${ acf.strEscape(
+								this.get( 'textConfirm' )
+							) }</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg" data-event="close"></div>
+            </div>`;
+		},
+
+		render: function () {
+			const loading = this.get( 'loading' );
+			const width = this.get( 'width' );
+			const height = this.get( 'height' );
+			const self = this;
+
+			if ( width ) {
+				this.$( '.acf-popup-box' ).css( 'width', width );
+			}
+			if ( height ) {
+				this.$( '.acf-popup-box' ).css( 'min-height', height );
+			}
+
+			this.loading( loading );
+			acf.doAction( 'append', this.$el );
+
+			setTimeout( function () {
+				self.$el.find( '.acf-close-popup' ).trigger( 'focus' );
+			}, 1 );
+		},
+
+		onConfirm: function ( e, $el ) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.close();
+
+			const confirm = this.get( 'confirm' );
+			const context = this.get( 'context' ) || this;
+			confirm.apply( context, arguments );
+		},
+
+		onCancel: function ( e, $el ) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.close();
+
+			const cancel = this.get( 'cancel' );
+			const context = this.get( 'context' ) || this;
+			cancel.apply( context, arguments );
+		},
 	} );
 
 	/**
@@ -158,6 +256,8 @@
 	 */
 
 	acf.newPopup = function ( props ) {
-		return new acf.models.Popup( props );
+		return props.confirmRemove
+			? new acf.models.PopupConfirm( props )
+			: new acf.models.Popup( props );
 	};
 } )( jQuery );

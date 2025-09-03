@@ -75,8 +75,11 @@ This file tracks code elements that need documentation.
 
 - `acf/load_meta`
 - `acf/pre_delete_metadata`
+- `acf/pre_delete_metadata`
 - `acf/pre_load_meta`
 - `acf/pre_load_metadata`
+- `acf/pre_load_metadata`
+- `acf/pre_update_metadata`
 - `acf/pre_update_metadata`
 
 ## acf-user-functions.php
@@ -94,6 +97,7 @@ This file tracks code elements that need documentation.
 - `acf/load_reference`
 - `acf/load_value`
 - `acf/pre_format_value`
+- `acf/pre_load_metadata`
 - `acf/pre_load_reference`
 - `acf/pre_load_value`
 - `acf/pre_update_value`
@@ -134,6 +138,12 @@ This file tracks code elements that need documentation.
 
 - `acf/admin/prevent_escaped_html_notice`
 - `acf/in_admin_header`
+
+## admin/beta-features.php
+
+### Hooks
+
+- `scf/include_admin_beta_features`
 
 ## admin/class-acf-admin-options-page.php
 
@@ -324,6 +334,7 @@ This file tracks code elements that need documentation.
 - `acf/shortcode/allow_in_block_themes_outside_content`
 - `acf/shortcode/allow_unsafe_html`
 - `acf/shortcode/disabled_message`
+- `acf/shortcode/display_admin_errors`
 - `acf/shortcode/field_not_allowed_message`
 - `acf/shortcode/field_not_supported_message`
 - `acf/shortcode/post_not_public_message`
@@ -414,6 +425,12 @@ This file tracks code elements that need documentation.
 - `acf/fields/icon_picker/dashicons`
 - `acf/fields/icon_picker/tabs`
 
+## fields/class-acf-field-nav-menu.php
+
+### Hooks
+
+- `wp_nav_menu_container_allowed_tags`
+
 ## fields/class-acf-field-page_link.php
 
 ### Hooks
@@ -471,6 +488,12 @@ This file tracks code elements that need documentation.
 - `mce_buttons_4`
 - `media_buttons`
 - `teeny_mce_buttons`
+
+## forms/WC_Order.php
+
+### Hooks
+
+- `acf/input/meta_box_priority`
 
 ## forms/form-front.php
 

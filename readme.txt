@@ -2,9 +2,9 @@
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 6.4.1
+Stable tag: 6.5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Beyond custom fields, SCF allows you to register new post types and taxonomies d
 **Accessible and user-friendly design.**
 The field interface aligns with WordPress’s native design, creating an experience that’s both accessible and easy for content creators to use.
 
-Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors.
+Installing this plugin will deactivate plugins with matching function names/functionality, specifically Advanced Custom Fields, Advanced Custom Fields Pro, and the legacy Secure Custom Fields plugins, to avoid code errors (this is the same behavior as ACF Pro).
 
 Read more about Secure Custom Fields at [developer.wordpress.org/secure-custom-fields](https://developer.wordpress.org/secure-custom-fields/).
 
@@ -51,6 +51,77 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.5.5 =
+*Release Date 31 Jul 2025*
+
+*Features*
+
+- Connect block attributes with custom fields via UI.
+- Remove the word 'New' from default `add-new*` label values.
+
+*Bug Fixes*
+
+- Bug fix: Prevent fatal if class does not exist on Beta Features.
+
+
+= 6.5.4 =
+*Release Date 30 Jul 2025*
+
+Revert from 6.5.2.
+
+
+= 6.5.2 =
+*Release Date 30 Jul 2025*
+
+*Features*
+
+- Connect block attributes with custom fields via UI.
+- Remove the word 'New' from default `add-new*` label values.
+
+
+= 6.5.1 =
+*Release Date 2 Jul 2025*
+
+*Bug Fixes*
+
+- Command Palette: Use `@wordpress\icons` instead of Dashicons.
+
+
+= 6.5.0 =
+*Release Date 23 Jun 2025*
+
+*Enhancements & Features*
+
+- Added Command Palette support.
+- Added editor preview to acf-field source.
+- Added an endpoint to retrieve the custom fields of a post type.
+- Added nav menu as field type.
+- Added compatibility with Woo HPOS for order fields and subscriptions. ( Ported from ACF )
+- Create new options when editing a fields value on Selector. ( Ported from ACF )
+- The “Escaped HTML” warning notice is now disabled by default. ( Ported from ACF )
+- Added new `acf/fields/icon_picker/{tab_name}/icons` filter ( Ported from ACF )
+
+*Bug Fixes*
+
+- Update initialization of the acfL10n object to ensure it's available globally.
+- SCF Blocks are now forced into preview mode when editing a synced pattern. ( Ported from ACF )
+- SCF no longer causes an infinite loop in bbPress when editing replies. ( Ported from ACF )
+- Changing a field type no longer enables the “Allow Access to Value in Editor UI” setting. ( Ported from ACF )
+- Blocks registered via acf_register_block_type() with a `parent` value of `null` no longer fail to register. ( Ported from ACF )
+- Fix AJAX repeater pagination. ( Ported from ACF )
+- Paginated Repeater fields no longer save duplicate values when saving to a WooCommerce Order with HPOS disabled ( Ported from ACF )
+
+*Testing*
+
+- Added an initial batch of e2e tests.
+
+= 6.4.2 =
+*Release Date 14 Apr 2025*
+
+* Resolved issue with shortcode translation not parsing correctly.
+* Improve validation for an URL on field admin.
+
 = 6.4.1 =
 *Release Date 7 Mar 2025*
 
@@ -83,5 +154,5 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Upgrade Notice ==
 
-= 6.4.1 =
-Resolves notice of loading translations too early.
+= 6.4.2 =
+Security: improves validation of an URL in an admin field.

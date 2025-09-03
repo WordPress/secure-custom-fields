@@ -8,6 +8,9 @@
 
 namespace ACF\Blocks;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
  * The core SCF Blocks binding class.
  */
@@ -34,6 +37,7 @@ class Bindings {
 				array(
 					'label'              => _x( 'SCF Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
 					'get_value_callback' => array( $this, 'get_value' ),
+					'uses_context'       => array( 'postId', 'postType' ),
 				)
 			);
 		}
@@ -75,15 +79,33 @@ class Bindings {
 				}
 			}
 
-			$value = $field['value'];
+			switch ( $attribute_name ) {
+				case 'id':
+				case 'alt':
+				case 'title':
+					// The value is in the field of the same name.
+					$value = $field['value'][ $attribute_name ] ?? '';
+					break;
+				case 'url':
+					// The URL is the field value.
+					$value = $field['value']['url'] ?? $field['value'] ?? '';
+					break;
+				case 'rel':
+					// Handle checkbox field for rel attribute by joining array values.
+					if ( is_array( $field['value'] ) ) {
+						$value = implode( ' ', $field['value'] );
+					} else {
+						$value = $field['value'] ?? '';
+					}
+					break;
+				default:
+					$value = $field['value'];
 
-			if ( is_array( $value ) ) {
-				$value = implode( ', ', $value );
-			}
-
-			// If we're not a scalar we'd throw an error, so return early for safety.
-			if ( ! is_scalar( $value ) ) {
-				$value = null;
+					if ( is_array( $value ) ) {
+						$value = wp_json_encode( $value );
+					} elseif ( ! is_scalar( $value ) && null !== $value ) {
+						$value = '';
+					}
 			}
 		}
 

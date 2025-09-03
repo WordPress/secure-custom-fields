@@ -74,7 +74,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			add_filter( "acf/validate_{$this->hook_name}", array( $this, 'translate_post' ) );
 
 			add_filter( 'wp_unique_post_slug', array( $this, 'apply_unique_post_slug' ), 999, 6 );
-			add_action( 'wp_untrash_post_status', array( $this, 'untrash_post_status' ), 10, 3 );
+			add_filter( 'wp_untrash_post_status', array( $this, 'untrash_post_status' ), 10, 3 );
 		}
 
 		/**
@@ -241,6 +241,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 *
 			 * @param bool $bool The result.
 			 * @param string $id The identifier.
+			 * @param string $post_type The post type.
 			 */
 			return apply_filters( "acf/is_{$this->hook_name}_key", false, $id, $this->post_type );
 		}
@@ -369,6 +370,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			 * @since   ACF 5.0.0
 			 *
 			 * @param array $posts The array of ACF posts.
+			 * @param string $post_type The post type.
 			 */
 			$posts = apply_filters( "acf/load_{$this->hook_name_plural}", $posts, $this->post_type );
 

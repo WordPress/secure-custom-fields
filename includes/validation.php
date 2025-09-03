@@ -5,11 +5,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'acf_validation' ) ) :
-	#[AllowDynamicProperties]
 	/**
 	 * Validation Class
 	 */
 	class acf_validation {
+
+		/**
+		 * Array of errors.
+		 *
+		 * @var array $errors
+		 */
+		public $errors = array();
 		/**
 		 * This function will setup the class functionality
 		 *
@@ -20,9 +26,6 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 * @return  void
 		 */
 		public function __construct() {
-
-			// vars
-			$this->errors = array();
 
 			// ajax
 			add_action( 'wp_ajax_acf/validate_save_post', array( $this, 'ajax_validate_save_post' ) );
@@ -124,13 +127,19 @@ if ( ! class_exists( 'acf_validation' ) ) :
 		 */
 		public function ajax_validate_save_post() {
 			if ( ! acf_verify_ajax() ) {
+				if ( empty( $_REQUEST['nonce'] ) ) {
+					$nonce_error = __( 'SCF was unable to perform validation because no nonce was received by the server.', 'secure-custom-fields' );
+				} else {
+					$nonce_error = __( 'SCF was unable to perform validation because the provided nonce failed verification.', 'secure-custom-fields' );
+				}
+
 				wp_send_json_success(
 					array(
 						'valid'  => 0,
 						'errors' => array(
 							array(
 								'input'   => false,
-								'message' => __( 'ACF was unable to perform validation due to an invalid security nonce being provided.', 'secure-custom-fields' ),
+								'message' => __( 'SCF was unable to perform validation due to an invalid security nonce being provided.', 'secure-custom-fields' ),
 							),
 						),
 					)
@@ -223,7 +232,7 @@ function acf_get_validation_errors() {
  * @type    function
  * @date    6/10/13
  * @since   ACF 5.0.0
- * @since   6.4.1 Added the $input parameter, which is required in the get_error method.
+ * @since   SCF 6.4.1 Added the $input parameter, which is required in the get_error method.
  *
  * @param   string $input name attribute of DOM element.
  *

@@ -55,13 +55,11 @@ Deletes metadata from the database.
 
 ## `acf_copy_metadata()`
 
-acf_copy_postmeta
+Copies meta from one post to another. Useful for saving and restoring revisions.
 
-* Copies meta from one post to another. Useful for saving and restoring revisions.
-* @date    25/06/2016
 * @since ACF 5.3.8
-* @param   (int|string) $from_post_id The post id to copy from.
-* @param (int|string) $to_post_id   The post id to paste to.
+* @param integer|string $from_post_id The post id to copy from.
+* @param integer|string $to_post_id   The post id to paste to.
 * @return void
 
 ## `acf_copy_postmeta()`
@@ -111,5 +109,44 @@ acf_update_metaref
 * @param string type The reference type (fields|groups).
 * @param array                                          $references An array of references.
 * @return (int|bool) Meta ID if the key didn't exist, true on successful update, false on failure.
+
+## `acf_get_meta_instance()`
+
+Retrieves an ACF meta instance for the provided meta type.
+
+* @since 6.5
+* @param string $type The meta type as decoded from the post ID.
+* @return object|null
+
+## `acf_get_metadata_by_field()`
+
+Gets metadata from the database.
+
+* @since 6.5
+* @param integer|string $post_id The post id.
+* @param array          $field   The field array.
+* @param boolean        $hidden  True if we should return the reference key.
+* @return mixed
+
+## `acf_update_metadata_by_field()`
+
+Updates metadata in the database.
+
+* @since 6.5
+* @param integer|string $post_id The post id.
+* @param array          $field   The field array.
+* @param mixed          $value   The meta value.
+* @param boolean        $hidden  True if we should update the reference key.
+* @return integer|boolean Meta ID if the key didn't exist, true on successful update, false on failure.
+
+## `acf_delete_metadata_by_field()`
+
+Deletes metadata from the database.
+
+* @since 6.5
+* @param integer|string $post_id The post id.
+* @param array          $field   The field array.
+* @param boolean        $hidden  True if we should update the reference key.
+* @return boolean
 
 ---

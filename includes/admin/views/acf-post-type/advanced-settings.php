@@ -205,12 +205,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['add_new_item'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Add New %s', 'secure-custom-fields' ),
+						'label'   => __( 'Add %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
 					'label'        => __( 'Add New Item', 'secure-custom-fields' ),
 					'instructions' => __( 'At the top of the editor screen when adding a new item.', 'secure-custom-fields' ),
-					'placeholder'  => __( 'Add New Post', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Add Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'
@@ -225,12 +225,12 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'value'        => $acf_post_type['labels']['add_new'],
 					'data'         => array(
 						/* translators: %s Singular form of post type name */
-						'label'   => __( 'Add New %s', 'secure-custom-fields' ),
+						'label'   => __( 'Add %s', 'secure-custom-fields' ),
 						'replace' => 'singular',
 					),
 					'label'        => __( 'Add New', 'secure-custom-fields' ),
 					'instructions' => __( 'In the post type submenu in the admin dashboard.', 'secure-custom-fields' ),
-					'placeholder'  => __( 'Add New Post', 'secure-custom-fields' ),
+					'placeholder'  => __( 'Add Post', 'secure-custom-fields' ),
 				),
 				'div',
 				'field'

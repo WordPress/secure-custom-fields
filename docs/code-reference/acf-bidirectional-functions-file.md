@@ -9,6 +9,7 @@ Process updating bidirectional fields.
 * @param integer|string $post_id         The ACF encoded origin post, user or term ID.
 * @param array          $field           The field being updated on the origin post, user or term ID.
 * @param string|false   $target_prefix   The ACF prefix for a post, user or term ID required for the update_field call for this field type.
+* @return void
 
 ## `acf_get_valid_bidirectional_target_types()`
 
@@ -41,6 +42,7 @@ Renders the field settings required for bidirectional fields
 
 * @since ACF 6.2
 * @param array $field The field object passed into field setting functions.
+* @return void
 
 ## `acf_get_bidirectional_field_settings_instruction_text()`
 

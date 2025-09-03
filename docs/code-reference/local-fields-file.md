@@ -196,7 +196,7 @@ acf_add_local_fields
 * @date    22/1/19
 * @since ACF 5.7.10
 * @param   array $fields An array of un prepared fields.
-* @return array
+* @return void|array
 
 ## `acf_get_local_fields()`
 

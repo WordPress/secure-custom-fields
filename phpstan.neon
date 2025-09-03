@@ -11,5 +11,7 @@ parameters:
 		- docs
 		- lang
 		- wordpress (?)
+		- includes/forms/WC_Order.php
 	bootstrapFiles:
+		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 		- bin/phpstan-bootstrap.php

@@ -46,7 +46,7 @@ acf_hidden_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_hidden_input()`
 
@@ -66,7 +66,7 @@ acf_text_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_text_input()`
 
@@ -86,7 +86,7 @@ acf_file_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_file_input()`
 
@@ -106,7 +106,7 @@ acf_textarea_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_textarea_input()`
 
@@ -126,7 +126,7 @@ acf_checkbox_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_checkbox_input()`
 
@@ -146,7 +146,7 @@ acf_radio_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void echos out value.
 
 ## `acf_get_radio_input()`
 
@@ -166,7 +166,7 @@ acf_select_input
 * @date    3/02/2014
 * @since ACF 5.0.0
 * @param   array $attrs The array of attrs.
-* @return string
+* @return void
 
 ## `acf_get_select_input()`
 

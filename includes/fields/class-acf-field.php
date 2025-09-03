@@ -1,7 +1,6 @@
 <?php
 
 if ( ! class_exists( 'acf_field' ) ) :
-	#[AllowDynamicProperties]
 	class acf_field {
 
 
@@ -22,6 +21,34 @@ if ( ! class_exists( 'acf_field' ) ) :
 			'escaping_html' => false, // Set true when a field handles its own HTML escaping in format_value
 			'required'      => true,
 		);
+
+		/**
+		 * Default values for the field.
+		 *
+		 * @var array
+		 */
+		public $default_values = array();
+
+		/**
+		 * Whether the field has rows.
+		 *
+		 * @var string
+		 */
+		public $have_rows = '';
+
+		/**
+		 * The width of the field.
+		 *
+		 * @var string
+		 */
+		public $width = '';
+
+		/**
+		 * The height of the field.
+		 *
+		 * @var string
+		 */
+		public $height = '';
 
 		/**
 		 * Initializes the `acf_field` class. To initialize a field type that is
@@ -347,7 +374,7 @@ if ( ! class_exists( 'acf_field' ) ) :
 
 			// This field setting has a unique behaviour. If the value isn't defined on the field object, it defaults to true, but for new fields, it defaults to off.
 			if ( ! isset( $field['allow_in_bindings'] ) ) {
-				if ( empty( $field['ID'] ) ) {
+				if ( empty( $field['ID'] ) || doing_action( 'wp_ajax_acf/field_group/render_field_settings' ) ) {
 					$field['allow_in_bindings'] = false;
 				} else {
 					$field['allow_in_bindings'] = true;

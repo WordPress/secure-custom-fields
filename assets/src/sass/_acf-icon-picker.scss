@@ -24,7 +24,7 @@
 		}
 	}
 
-	.acf-dashicons-search-wrap {
+	.acf-icon-list-search-wrap {
 		position: relative;
 
 		&::after {
@@ -52,13 +52,13 @@
 			overflow: hidden;
 		}
 
-		.acf-dashicons-search-input {
+		.acf-icon-list-search-input {
 			padding-left: 32px;
 			border-radius: 0;
 		}
 	}
 
-	.acf-dashicons-list {
+	.acf-icon-list {
 		margin-bottom: 0;
 		display: flex;
 		flex-wrap: wrap;
@@ -74,7 +74,7 @@
 		gap: 8px;
 		padding: 8px;
 
-		.acf-icon-picker-dashicon {
+		.acf-icon-picker-list-icon {
 			background-color: transparent;
 			display: flex;
 			justify-content: center;
@@ -97,7 +97,7 @@
 			}
 		}
 
-		.acf-icon-picker-dashicon:hover {
+		.acf-icon-picker-list-icon:hover {
 			border: solid 2px $blue-500;
 			border-radius: 6px;
 			cursor: pointer;
@@ -117,12 +117,12 @@
 		}
 	}
 
-	.acf-dashicons-list::after {
+	.acf-icon-list::after {
 		content: "";
 		flex: auto;
 	}
 
-	.acf-dashicons-list-empty {
+	.acf-icon-list-empty {
 		position: relative;
 		display: none;
 		flex-direction: column;
@@ -291,7 +291,7 @@
 		overflow: visible;
 	}
 
-	.acf-dashicons-search-wrap {
+	.acf-icon-list-search-wrap {
 		position: relative;
 
 		&::after {
@@ -319,13 +319,13 @@
 			overflow: hidden;
 		}
 
-		.acf-dashicons-search-input {
+		.acf-icon-list-search-input {
 			padding-left: 32px;
 			border-radius: 6px 6px 0 0;
 		}
 	}
 
-	.acf-dashicons-list {
+	.acf-icon-list {
 		margin-bottom: -32px;
 		display: flex;
 		flex-wrap: wrap;
@@ -341,7 +341,7 @@
 		gap: 8px;
 		padding: 8px;
 
-		.acf-icon-picker-dashicon {
+		.acf-icon-picker-list-icon {
 			background-color: transparent;
 			display: flex;
 			justify-content: center;
@@ -364,7 +364,7 @@
 			}
 		}
 
-		.acf-icon-picker-dashicon:hover {
+		.acf-icon-picker-list-icon:hover {
 			border: solid 2px $blue-500;
 			border-radius: 6px;
 			cursor: pointer;
@@ -384,12 +384,12 @@
 		}
 	}
 
-	.acf-dashicons-list::after {
+	.acf-icon-list::after {
 		content: "";
 		flex: auto;
 	}
 
-	.acf-dashicons-list-empty {
+	.acf-icon-list-empty {
 		position: relative;
 		display: none;
 		flex-direction: column;

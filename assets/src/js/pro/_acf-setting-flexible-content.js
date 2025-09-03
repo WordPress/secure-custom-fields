@@ -35,7 +35,11 @@
 		},
 
 		getInputId: function () {
-			return this.fieldObject.getInputId() + '-layouts-' + this.field.get( 'id' );
+			return (
+				this.fieldObject.getInputId() +
+				'-layouts-' +
+				this.field.get( 'id' )
+			);
 		},
 
 		// get all sub fields
@@ -57,6 +61,7 @@
 				$tbody.sortable( {
 					items: '> .acf-field-setting-fc_layout',
 					handle: '.acf-fc_draggable',
+					zIndex: 9999,
 					forceHelperSize: true,
 					forcePlaceholderSize: true,
 					scroll: true,
@@ -83,13 +88,17 @@
 			const label = this.get( 'layoutLabel' );
 			const name = this.get( 'layoutName' );
 
-			const $layoutHeaderLabelText = this.$el.find( '> .acf-label .acf-fc-layout-label' );
+			const $layoutHeaderLabelText = this.$el.find(
+				'> .acf-label .acf-fc-layout-label'
+			);
 
 			if ( label ) {
 				$layoutHeaderLabelText.text( acf.decode( label ) );
 			}
 
-			const $layoutHeaderNameText = this.$el.find( '> .acf-label .acf-fc-layout-name span' );
+			const $layoutHeaderNameText = this.$el.find(
+				'> .acf-label .acf-fc-layout-name span'
+			);
 
 			if ( name ) {
 				$layoutHeaderNameText.text( name );
@@ -171,7 +180,7 @@
 
 		onChangeLabel: function ( e, $el ) {
 			let label = $el.val();
-			const safeLabel = acf.encode( label );
+			const safeLabel = acf.strEscape( label );
 
 			this.set( 'layoutLabel', safeLabel );
 			this.$el.attr( 'data-layout-label', safeLabel );
@@ -217,7 +226,9 @@
 					$el2.attr( 'data-layout-label', '' );
 					$el2.attr( 'data-layout-name', '' );
 					$el2.find( '.acf-fc-meta input' ).val( '' );
-					$el2.find( 'label.acf-fc-layout-label' ).html( acf.__( 'Layout' ) );
+					$el2.find( 'label.acf-fc-layout-label' ).html(
+						acf.__( 'Layout' )
+					);
 				},
 			} );
 
@@ -226,7 +237,9 @@
 
 			// update hidden input
 			layout.$input( 'key' ).val( newKey );
-			! this.isOpen() ? this.open( layout.$el, true ) : layout.$el.find( '.layout-label' ).trigger( 'focus' );
+			! this.isOpen()
+				? this.open( layout.$el, true )
+				: layout.$el.find( '.layout-label' ).trigger( 'focus' );
 
 			// save
 			this.fieldObject.save();
@@ -264,7 +277,12 @@
 				} );
 
 				// action
-				acf.doAction( 'duplicate_field_objects', children, this.fieldObject, this.fieldObject );
+				acf.doAction(
+					'duplicate_field_objects',
+					children,
+					this.fieldObject,
+					this.fieldObject
+				);
 			}
 
 			// get layout
@@ -307,7 +325,9 @@
 
 			// update hidden input
 			layout.$input( 'key' ).val( newKey );
-			! this.isOpen() ? this.open( layout.$el, true ) : layout.$el.find( '.layout-label' ).trigger( 'focus' );
+			! this.isOpen()
+				? this.open( layout.$el, true )
+				: layout.$el.find( '.layout-label' ).trigger( 'focus' );
 			// save
 			this.fieldObject.save();
 		},
@@ -341,7 +361,9 @@
 
 			// validate
 			if ( ! $siblings.length ) {
-				alert( acf.__( 'Flexible Content requires at least 1 layout' ) );
+				alert(
+					acf.__( 'Flexible Content requires at least 1 layout' )
+				);
 				return false;
 			}
 
@@ -390,7 +412,9 @@
 			}
 
 			// get layout
-			var $layout = fieldObject.$el.closest( '.acf-field-setting-fc_layout' );
+			var $layout = fieldObject.$el.closest(
+				'.acf-field-setting-fc_layout'
+			);
 			var layout = acf.getFieldSetting( $layout );
 
 			// check if previous prop exists

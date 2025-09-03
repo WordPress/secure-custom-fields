@@ -114,7 +114,7 @@ acf_set_filters
 * @date    14/7/16
 * @since ACF 5.4.0
 * @param   array $filters An Array of modifiers.
-* @return array
+* @return void
 
 ## `acf_disable_filters()`
 

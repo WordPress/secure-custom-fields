@@ -323,6 +323,7 @@
 						.end();
 				},
 				handle: '.acf-sortable-handle',
+				zIndex: 9999,
 				connectWith: '.acf-field-list',
 				start: function ( e, ui ) {
 					var field = acf.getFieldObject( ui.item );

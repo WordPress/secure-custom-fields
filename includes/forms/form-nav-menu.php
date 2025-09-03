@@ -24,7 +24,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'wp_update_nav_menu', array( $this, 'update_nav_menu' ) );
 			add_action( 'acf/validate_save_post', array( $this, 'acf_validate_save_post' ), 5 );
-			add_action( 'wp_nav_menu_item_custom_fields', array( $this, 'wp_nav_menu_item_custom_fields' ), 10, 5 );
+			add_filter( 'wp_nav_menu_item_custom_fields', array( $this, 'wp_nav_menu_item_custom_fields' ), 10, 5 );
 
 			// filters
 			add_filter( 'wp_get_nav_menu_items', array( $this, 'wp_get_nav_menu_items' ), 10, 3 );
@@ -67,7 +67,7 @@ if ( ! class_exists( 'acf_form_nav_menu' ) ) :
 		 * @since   ACF 5.6.9
 		 *
 		 * @param   type $var Description. Default.
-		 * @return  type Description.
+		 * @return  void.
 		 */
 		function wp_nav_menu_item_custom_fields( $item_id, $item, $depth, $args, $id = '' ) {
 

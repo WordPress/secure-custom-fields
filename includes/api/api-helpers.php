@@ -689,12 +689,29 @@ function acf_verify_nonce( $value ) {
  *
  * @param string $nonce  The nonce to check.
  * @param string $action The action of the nonce.
+ * @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
  * @return boolean
  */
-function acf_verify_ajax( $nonce = '', $action = '' ) {
+function acf_verify_ajax( $nonce = '', $action = '', $action_is_field = false ) {
+
 	// Bail early if we don't have a nonce to check.
 	if ( empty( $nonce ) && empty( $_REQUEST['nonce'] ) ) {
 		return false;
+	}
+
+	// Build the action if we're trying to validate a specific field nonce.
+	if ( $action_is_field ) {
+		if ( ! acf_is_field_key( $action ) ) {
+			return false;
+		}
+
+		$field = acf_get_field( $action );
+
+		if ( empty( $field['type'] ) ) {
+			return false;
+		}
+
+		$action = 'acf_field_' . $field['type'] . '_' . $action;
 	}
 
 	$nonce_to_check = ! empty( $nonce ) ? $nonce : $_REQUEST['nonce']; // phpcs:ignore WordPress.Security -- We're verifying a nonce here.
@@ -1289,7 +1306,7 @@ function acf_get_grouped_posts( $args ) {
 
 	// remove this filter (only once)
 	if ( ! $is_single_post_type ) {
-		remove_filter( 'posts_orderby', '_acf_orderby_post_type', 10, 2 );
+		remove_filter( 'posts_orderby', '_acf_orderby_post_type', 10 );
 	}
 
 	// loop
@@ -2605,7 +2622,7 @@ function acf_get_attachment( $attachment ) {
 		 *
 		 * @since ACF 6.2.2
 		 *
-		 * @param int|null The default filesize.
+		 * @param int|null $shortcut_filesize The default filesize.
 		 * @param WP_Post $attachment The attachment post object we're looking for the filesize for.
 		 */
 		$shortcut_filesize = apply_filters( 'acf/filesize', null, $attachment );

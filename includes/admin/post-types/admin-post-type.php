@@ -15,7 +15,7 @@ if ( ! class_exists( 'ACF_Admin_Post_Type' ) ) :
 	 *
 	 * All the logic for editing a post type.
 	 */
-	class ACF_Admin_Post_type extends ACF_Admin_Internal_Post_Type {
+	class ACF_Admin_Post_Type extends ACF_Admin_Internal_Post_Type {
 
 		/**
 		 * The slug for the internal post type.
