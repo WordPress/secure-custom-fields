@@ -5,12 +5,12 @@
 ```bash
 # Setup
 npm install && composer install
-npx wp-env start # Start WordPress environment
-npx wp-env status # Check if wp-env running
+npm run wp-env status   # Always check status first
+npm run wp-env start    # Only start if not already running
 
 # Development
-npm run watch # Development with watch
-npm run build # Production build
+npm run watch           # Development with watch
+npm run build          # Production build
 ```
 
 ### Key Directories
@@ -19,6 +19,7 @@ npm run build # Production build
 -   `/assets/src/` - Frontend source files
 -   `/assets/build/` - Compiled assets
 -   `/tests/` - E2E and PHPUnit tests
+-   `/docs/` - Documentation
 
 ## Testing instructions
 
@@ -26,28 +27,28 @@ npm run build # Production build
 
 ```bash
 # PHP (requires wp-env)
-composer test # All PHP tests (PHPUnit + PHPStan)
-composer test:php # PHPUnit tests only
-composer test:php -- --filter=Test_REST_Types_Endpoint # Specific test
-vendor/bin/phpunit tests/php/includes/forms/ # Test directory
-vendor/bin/phpunit # PHPUnit directly
-composer test:phpstan # Static analysis only
+composer test             # All PHP tests (PHPUnit + PHPStan)
+composer test:php         # PHPUnit tests only
+composer test:php -- --filter=<TestName>  # Specific test
+vendor/bin/phpunit <path_to_test_file.php>  # Specific file
+vendor/bin/phpunit <path_to_test_directory>/              # Directory
+composer test:phpstan     # Static analysis only
 
 # E2E (requires wp-env)
 npm run test:e2e
-npm run test:e2e:debug # Debug mode
-npm run test:e2e -- --headed # Run with browser visible
-npm run test:e2e -- tests/e2e/specs/field-groups.spec.js # Specific test
+npm run test:e2e:debug    # Debug mode
+npm run test:e2e -- --headed                   # Run with browser visible
+npm run test:e2e -- <path_to_test_file.spec.js>  # Specific test file
 
 # Code Quality
-npm run lint:js # Check JavaScript linting
-npm run fix:js # Fix JavaScript formatting
-composer lint:php # Check PHP standards
-vendor/bin/phpcs # Check PHP standards
-vendor/bin/phpcbf # Fix PHP standards
+npx wp-scripts lint-js   # Check JavaScript linting
+npx wp-scripts format    # Fix JavaScript formatting
+composer lint:php        # Check PHP standards
+vendor/bin/phpcs         # Check PHP standards
+vendor/bin/phpcbf        # Fix PHP standards
 
 # Specific files
-vendor/bin/phpcbf includes/class-acf.php
+vendor/bin/phpcbf <path_to_php_file.php>
 ```
 
 ## Code patterns
@@ -60,5 +61,4 @@ vendor/bin/phpcbf includes/class-acf.php
 ## PR instructions
 
 -   Ensure build passes
--   Fix all formatting/linting issues, these are enforced through CI in PRs
--   Run relevant tests
+-   Fix all formatting/linting issues; these are enforced through CI in PRs
