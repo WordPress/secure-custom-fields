@@ -29,6 +29,7 @@
 	"autoload": {
 		"psr-4": {
 			"ACF\\Blocks\\": "includes/Blocks/",
+			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/",
 			"SCF\\Forms\\": "includes/forms/",
 			"SCF\\Meta\\": "includes/Meta/",
 			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/"
@@ -41,6 +42,8 @@
 			"phpstan/extension-installer": true,
 			"roots/wordpress-core-installer": true
 		},
+		"classmap-authoritative": true,
+		"optimize-autoloader": true,
 		"platform": {
 			"php": "7.4"
 		},

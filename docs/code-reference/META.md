@@ -398,13 +398,23 @@ This file tracks code elements that need documentation.
 - `acf/get_field_types`
 - `acf/localized_field_categories`
 
+## fields/FlexibleContent/Layout.php
+
+### Hooks
+
+- `acf/fields/flexible_content/layout_title`
+
+## fields/FlexibleContent/Render.php
+
+### Hooks
+
+- `acf/fields/flexible_content/no_value_message`
+
 ## fields/class-acf-field-flexible-content.php
 
 ### Hooks
 
 - `acf/fields/flexible_content/layout_default_expanded`
-- `acf/fields/flexible_content/layout_title`
-- `acf/fields/flexible_content/no_value_message`
 
 ## fields/class-acf-field-gallery.php
 
