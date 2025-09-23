@@ -1,0 +1,64 @@
+# AGENTS.md
+
+## Dev environment tips
+
+```bash
+# Setup
+npm install && composer install
+npm run wp-env status   # Always check status first
+npm run wp-env start    # Only start if not already running
+
+# Development
+npm run watch           # Development with watch
+npm run build          # Production build
+```
+
+### Key Directories
+
+-   `/includes/` - Core PHP functionality
+-   `/assets/src/` - Frontend source files
+-   `/assets/build/` - Compiled assets
+-   `/tests/` - E2E and PHPUnit tests
+-   `/docs/` - Documentation
+
+## Testing instructions
+
+> **Note**: PHP/E2E tests require wp-env running.
+
+```bash
+# PHP (requires wp-env)
+composer test             # All PHP tests (PHPUnit + PHPStan)
+composer test:php         # PHPUnit tests only
+composer test:php -- --filter=<TestName>  # Specific test
+vendor/bin/phpunit <path_to_test_file.php>  # Specific file
+vendor/bin/phpunit <path_to_test_directory>/              # Directory
+composer test:phpstan     # Static analysis only
+
+# E2E (requires wp-env)
+npm run test:e2e
+npm run test:e2e:debug    # Debug mode
+npm run test:e2e -- --headed                   # Run with browser visible
+npm run test:e2e -- <path_to_test_file.spec.js>  # Specific test file
+
+# Code Quality
+npx wp-scripts lint-js   # Check JavaScript linting
+npx wp-scripts format    # Fix JavaScript formatting
+composer lint:php        # Check PHP standards
+vendor/bin/phpcs         # Check PHP standards
+vendor/bin/phpcbf        # Fix PHP standards
+
+# Specific files
+vendor/bin/phpcbf <path_to_php_file.php>
+```
+
+## Code patterns
+
+- **Naming**: New functions use `scf_` prefix and hooks use `scf/hook_name`, existing use `acf_` and `acf/hook_name` (backward compat)  
+- **Internationalization**: Use `__()`, `_e()` with text domain `'secure-custom-fields'`
+- **Output escaping**: Always escape with `esc_html()`, `esc_attr()`, `esc_url()`
+- **Input sanitization**: Use `sanitize_text_field()`, `sanitize_file_name()`
+
+## PR instructions
+
+-   Ensure build passes
+-   Fix all formatting/linting issues; these are enforced through CI in PRs
