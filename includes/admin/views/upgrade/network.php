@@ -74,7 +74,7 @@
 				<td>
 				<?php if ( acf_has_upgrade() ) : ?>
 					<?php // translators: %1 current db version, %2 available db version ?>
-					<span class="response"><?php echo esc_html( printf( __( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ), acf_get_db_version(), ACF_VERSION ) ); ?></span>
+					<span class="response"><?php echo esc_html( sprintf( __( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ), acf_get_db_version(), ACF_VERSION ) ); ?></span>
 				<?php else : ?>
 					<?php esc_html_e( 'Site is up to date', 'secure-custom-fields' ); ?>
 				<?php endif; ?>
