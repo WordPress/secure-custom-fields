@@ -56,6 +56,8 @@ Set to **Yes** if you want your items to be nested (like pages). Set to **No** f
 
 Enable this to unlock more advanced options, useful when you need more control over how your post type works.
 
+### Remember, WP Users, there are no instrutions on how to include the custom fiels in your post which makes this pretty useless. Maybe Automatti want so fix it so it's documented? If they feel like bothering ,that is.
+
 ## 3. Advanced Settings
 
 These options let you customize deeper behaviors and labels.
