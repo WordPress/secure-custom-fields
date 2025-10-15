@@ -244,10 +244,30 @@
         "parent": "features",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/scf-api.md"
     },
+    "tutorials/first-custom-field": {
+        "slug": "first-custom-field",
+        "parent": "tutorials",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/tutorials/first-custom-field.md"
+    },
+    "tutorials/first-options-page": {
+        "slug": "first-options-page",
+        "parent": "tutorials",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/tutorials/first-options-page.md"
+    },
     "tutorials/first-post-type": {
         "slug": "first-post-type",
         "parent": "tutorials",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/tutorials/first-post-type.md"
+    },
+    "tutorials/first-taxonomy": {
+        "slug": "first-taxonomy",
+        "parent": "tutorials",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/tutorials/first-taxonomy.md"
+    },
+    "welcome/how-content-works": {
+        "slug": "how-content-works",
+        "parent": "welcome",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/how-content-works.md"
     },
     "welcome/installation": {
         "slug": "installation",
