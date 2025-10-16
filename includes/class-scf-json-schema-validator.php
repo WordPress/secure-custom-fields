@@ -40,7 +40,7 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 		 * Constructor.
 		 */
 		public function __construct() {
-			$this->schema_path = acf_get_path( 'includes/schemas/' );
+			$this->schema_path = acf_get_path( 'schemas/' );
 		}
 
 
