@@ -11,9 +11,7 @@
 		{
 			"description": "Array of post type objects (export format)",
 			"type": "array",
-			"items": {
-				"$ref": "#/definitions/postType"
-			},
+			"items": { "$ref": "#/definitions/postType" },
 			"minItems": 1
 		}
 	],
@@ -23,447 +21,441 @@
 			"required": ["key", "title", "post_type"],
 			"additionalProperties": false,
 			"properties": {
-		"ID": {
-			"type": "integer",
-			"minimum": 0,
-			"description": "The WordPress post ID (0 for new post types)"
-		},
-		"key": {
-			"type": "string",
-			"pattern": "^post_type_.+$",
-			"minLength": 1,
-			"description": "Unique identifier for the post type with post_type_ prefix (e.g. 'post_type_book')"
-		},
-		"title": {
-			"type": "string",
-			"minLength": 1,
-			"maxLength": 255,
-			"description": "The title/name of the post type"
-		},
-		"menu_order": {
-			"type": "integer",
-			"minimum": 0,
-			"default": 0,
-			"description": "The order of this post type in the admin menu"
-		},
-		"active": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether this post type is active"
-		},
-		"post_type": {
-			"type": "string",
-			"pattern": "^[a-z0-9_-]*$",
-			"minLength": 1,
-			"maxLength": 20,
-			"not": {
-				"enum": [
-					"post",
-					"page",
-					"attachment",
-					"revision",
-					"nav_menu_item",
-					"custom_css",
-					"customize_changeset",
-					"oembed_cache",
-					"user_request",
-					"wp_block",
-					"wp_template",
-					"wp_template_part",
-					"wp_global_styles",
-					"wp_navigation",
-					"action",
-					"author",
-					"order",
-					"theme"
-				]
-			},
-			"description": "The post type key passed to register_post_type() (e.g. 'book', 'product'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
-		},
-		"advanced_configuration": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether advanced configuration options are enabled"
-		},
-		"import_source": {
-			"type": "string",
-			"description": "Source of import if this post type was imported"
-		},
-		"import_date": {
-			"type": "string",
-			"description": "Date when this post type was imported"
-		},
-		"modified": {
-			"type": "integer",
-			"minimum": 0,
-			"description": "Unix timestamp of last modification"
-		},
-		"labels": {
-			"type": "object",
-			"description": "Labels for the post type in various contexts",
-			"additionalProperties": false,
-			"properties": {
-				"name": {
+				"key": {
 					"type": "string",
-					"description": "General name for the post type, usually plural"
+					"pattern": "^post_type_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the post type with post_type_ prefix (e.g. 'post_type_book')"
 				},
-				"singular_name": {
+				"title": {
 					"type": "string",
-					"description": "Name for one object of this post type"
+					"minLength": 1,
+					"maxLength": 255,
+					"description": "The title/name of the post type"
 				},
-				"menu_name": {
+				"post_type": {
 					"type": "string",
-					"description": "The menu name text"
-				},
-				"all_items": {
-					"type": "string",
-					"description": "The 'All Items' text used in the admin menu"
-				},
-				"add_new": {
-					"type": "string",
-					"description": "The 'Add New' text"
-				},
-				"add_new_item": {
-					"type": "string",
-					"description": "The 'Add New Item' text"
-				},
-				"edit_item": {
-					"type": "string",
-					"description": "The 'Edit Item' text"
-				},
-				"new_item": {
-					"type": "string",
-					"description": "The 'New Item' text"
-				},
-				"view_item": {
-					"type": "string",
-					"description": "The 'View Item' text"
-				},
-				"view_items": {
-					"type": "string",
-					"description": "The 'View Items' text"
-				},
-				"search_items": {
-					"type": "string",
-					"description": "The 'Search Items' text"
-				},
-				"not_found": {
-					"type": "string",
-					"description": "The 'Not Found' text"
-				},
-				"not_found_in_trash": {
-					"type": "string",
-					"description": "The 'Not Found in Trash' text"
-				},
-				"parent_item_colon": {
-					"type": "string",
-					"description": "The 'Parent Item:' text"
-				},
-				"archives": {
-					"type": "string",
-					"description": "The 'Archives' text"
-				},
-				"attributes": {
-					"type": "string",
-					"description": "The 'Attributes' text"
-				},
-				"featured_image": {
-					"type": "string",
-					"description": "The 'Featured Image' text"
-				},
-				"set_featured_image": {
-					"type": "string",
-					"description": "The 'Set Featured Image' text"
-				},
-				"remove_featured_image": {
-					"type": "string",
-					"description": "The 'Remove Featured Image' text"
-				},
-				"use_featured_image": {
-					"type": "string",
-					"description": "The 'Use as Featured Image' text"
-				},
-				"insert_into_item": {
-					"type": "string",
-					"description": "The 'Insert into Item' text"
-				},
-				"uploaded_to_this_item": {
-					"type": "string",
-					"description": "The 'Uploaded to this Item' text"
-				},
-				"filter_items_list": {
-					"type": "string",
-					"description": "The 'Filter Items List' text"
-				},
-				"filter_by_date": {
-					"type": "string",
-					"description": "The 'Filter by Date' text"
-				},
-				"items_list_navigation": {
-					"type": "string",
-					"description": "The 'Items List Navigation' text"
-				},
-				"items_list": {
-					"type": "string",
-					"description": "The 'Items List' text"
-				},
-				"item_published": {
-					"type": "string",
-					"description": "The 'Item Published' text"
-				},
-				"item_published_privately": {
-					"type": "string",
-					"description": "The 'Item Published Privately' text"
-				},
-				"item_reverted_to_draft": {
-					"type": "string",
-					"description": "The 'Item Reverted to Draft' text"
-				},
-				"item_scheduled": {
-					"type": "string",
-					"description": "The 'Item Scheduled' text"
-				},
-				"item_updated": {
-					"type": "string",
-					"description": "The 'Item Updated' text"
-				},
-				"item_link": {
-					"type": "string",
-					"description": "The 'Item Link' text"
-				},
-				"item_link_description": {
-					"type": "string",
-					"description": "The 'Item Link Description' text"
-				}
-			}
-		},
-		"description": {
-			"type": "string",
-			"description": "A short description of what your post type is"
-		},
-		"public": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether a post type is intended for use publicly either via the admin interface or by front-end users"
-		},
-		"hierarchical": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether the post type is hierarchical (e.g. page)"
-		},
-		"exclude_from_search": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to exclude posts with this post type from front-end search results"
-		},
-		"publicly_queryable": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether queries can be performed on the front-end for the post type as part of parse_request()"
-		},
-		"show_ui": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether to generate and allow a UI for managing this post type in the admin"
-		},
-		"show_in_menu": {
-			"type": "boolean",
-			"description": "Where to show the post type in the admin menu"
-		},
-		"menu_position": {
-			"type": ["integer", "string"],
-			"description": "The position in the menu order. SCF exports as empty string when not set, integer when set. Import accepts both and casts to integer."
-		},
-		"menu_icon": {
-			"oneOf": [
-				{
-					"type": "string",
-					"description": "Icon as string: Dashicon name (e.g. 'dashicons-admin-post') or full URL to image file"
-				},
-				{
-					"type": "object",
-					"properties": {
-						"type": {
-							"type": "string",
-							"enum": ["dashicons", "url"],
-							"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image"
-						},
-						"value": {
-							"type": "string",
-							"description": "The icon value: dashicon class name (e.g. 'dashicons-admin-post') or image URL"
-						}
+					"pattern": "^[a-z0-9_-]*$",
+					"minLength": 1,
+					"maxLength": 20,
+					"not": {
+						"enum": [
+							"post",
+							"page",
+							"attachment",
+							"revision",
+							"nav_menu_item",
+							"custom_css",
+							"customize_changeset",
+							"oembed_cache",
+							"user_request",
+							"wp_block",
+							"wp_template",
+							"wp_template_part",
+							"wp_global_styles",
+							"wp_navigation",
+							"action",
+							"author",
+							"order",
+							"theme"
+						]
 					},
-					"required": ["type", "value"],
-					"additionalProperties": false,
-					"description": "SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-post\"}"
-				}
-			],
-			"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties."
-		},
-		"admin_menu_parent": {
-			"type": "string",
-			"description": "The parent menu slug for this post type menu"
-		},
-		"show_in_admin_bar": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether to make this post type available in the WordPress admin bar"
-		},
-		"show_in_nav_menus": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether post_type is available for selection in navigation menus"
-		},
-		"can_export": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether to allow this post type to be exported"
-		},
-		"delete_with_user": {
-			"type": ["boolean", "null"],
-			"description": "Whether to delete posts of this type when deleting a user"
-		},
-		"supports": {
-			"type": "array",
-			"items": { "type": "string" },
-			"uniqueItems": true,
-			"description": "Core feature(s) the post type supports. Common values: 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields', 'comments', 'revisions', 'page-attributes', 'post-formats'. Custom supports are also allowed."
-		},
-		"taxonomies": {
-			"oneOf": [
-				{
-					"type": "array",
-					"items": { "type": "string" },
-					"uniqueItems": true
+					"description": "The post type key passed to register_post_type() (e.g. 'book', 'product'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
-				{ "type": "string" }
-			],
-			"description": "An array of taxonomy identifiers that will be registered for the post type. SCF exports as empty string when none selected, but accepts both array and string on import."
-		},
-		"has_archive": {
-			"type": ["boolean", "string"],
-			"default": false,
-			"description": "Whether there should be post type archives, or if a string, the archive slug to use"
-		},
-		"has_archive_slug": {
-			"type": "string",
-			"description": "The slug to use for the archive if has_archive is enabled"
-		},
-		"rewrite": {
-			"type": ["object", "boolean"],
-			"description": "Triggers the handling of rewrites for this post type",
-			"oneOf": [
-				{ "type": "boolean" },
-				{
+				"ID": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "The WordPress post ID (0 for new post types)"
+				},
+
+				"active": {
+					"type": "boolean",
+					"default": true,
+					"description": "[SCF] Whether this post type is active"
+				},
+				"advanced_configuration": {
+					"type": "boolean",
+					"default": false,
+					"description": "[SCF] Whether advanced configuration options are enabled"
+				},
+				"import_source": {
+					"type": "string",
+					"description": "[SCF] Source of import if this post type was imported"
+				},
+				"import_date": {
+					"type": "string",
+					"description": "[SCF] Date when this post type was imported"
+				},
+				"modified": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "[SCF] Unix timestamp of last modification"
+				},
+
+				"labels": {
 					"type": "object",
+					"description": "Labels for the post type in various contexts",
 					"additionalProperties": false,
 					"properties": {
-						"permalink_rewrite": {
+						"name": {
 							"type": "string",
-							"description": "ACF-specific permalink rewrite option"
+							"description": "General name for the post type, usually plural"
 						},
-						"slug": {
+						"singular_name": {
 							"type": "string",
-							"description": "Customize the permalink structure slug"
+							"description": "Name for one object of this post type"
 						},
-						"with_front": {
-							"type": ["boolean", "string"],
-							"default": true,
-							"description": "Whether the permalink structure should be prepended with WP_Rewrite::$front (accepts boolean or string '0'/'1' for backward compatibility)"
+						"menu_name": {
+							"type": "string",
+							"description": "The menu name text"
 						},
-						"feeds": {
-							"type": ["boolean", "string"],
-							"default": false,
-							"description": "Whether the feed permalink structure should be built for this post type (accepts boolean or string '0'/'1' for backward compatibility)"
+						"all_items": {
+							"type": "string",
+							"description": "The 'All Items' text used in the admin menu"
 						},
-						"pages": {
-							"type": ["boolean", "string"],
-							"default": true,
-							"description": "Whether the permalink structure should provide for pagination (accepts boolean or string '0'/'1' for backward compatibility)"
+						"add_new": {
+							"type": "string",
+							"description": "The 'Add New' text"
+						},
+						"add_new_item": {
+							"type": "string",
+							"description": "The 'Add New Item' text"
+						},
+						"edit_item": {
+							"type": "string",
+							"description": "The 'Edit Item' text"
+						},
+						"new_item": {
+							"type": "string",
+							"description": "The 'New Item' text"
+						},
+						"view_item": {
+							"type": "string",
+							"description": "The 'View Item' text"
+						},
+						"view_items": {
+							"type": "string",
+							"description": "The 'View Items' text"
+						},
+						"search_items": {
+							"type": "string",
+							"description": "The 'Search Items' text"
+						},
+						"not_found": {
+							"type": "string",
+							"description": "The 'Not Found' text"
+						},
+						"not_found_in_trash": {
+							"type": "string",
+							"description": "The 'Not Found in Trash' text"
+						},
+						"parent_item_colon": {
+							"type": "string",
+							"description": "The 'Parent Item:' text"
+						},
+						"archives": {
+							"type": "string",
+							"description": "The 'Archives' text"
+						},
+						"attributes": {
+							"type": "string",
+							"description": "The 'Attributes' text"
+						},
+						"featured_image": {
+							"type": "string",
+							"description": "The 'Featured Image' text"
+						},
+						"set_featured_image": {
+							"type": "string",
+							"description": "The 'Set Featured Image' text"
+						},
+						"remove_featured_image": {
+							"type": "string",
+							"description": "The 'Remove Featured Image' text"
+						},
+						"use_featured_image": {
+							"type": "string",
+							"description": "The 'Use as Featured Image' text"
+						},
+						"insert_into_item": {
+							"type": "string",
+							"description": "The 'Insert into Item' text"
+						},
+						"uploaded_to_this_item": {
+							"type": "string",
+							"description": "The 'Uploaded to this Item' text"
+						},
+						"filter_items_list": {
+							"type": "string",
+							"description": "The 'Filter Items List' text"
+						},
+						"filter_by_date": {
+							"type": "string",
+							"description": "The 'Filter by Date' text"
+						},
+						"items_list_navigation": {
+							"type": "string",
+							"description": "The 'Items List Navigation' text"
+						},
+						"items_list": {
+							"type": "string",
+							"description": "The 'Items List' text"
+						},
+						"item_published": {
+							"type": "string",
+							"description": "The 'Item Published' text"
+						},
+						"item_published_privately": {
+							"type": "string",
+							"description": "The 'Item Published Privately' text"
+						},
+						"item_reverted_to_draft": {
+							"type": "string",
+							"description": "The 'Item Reverted to Draft' text"
+						},
+						"item_scheduled": {
+							"type": "string",
+							"description": "The 'Item Scheduled' text"
+						},
+						"item_updated": {
+							"type": "string",
+							"description": "The 'Item Updated' text"
+						},
+						"item_link": {
+							"type": "string",
+							"description": "The 'Item Link' text"
+						},
+						"item_link_description": {
+							"type": "string",
+							"description": "The 'Item Link Description' text"
 						}
 					}
+				},
+				"description": {
+					"type": "string",
+					"description": "A short description of what your post type is"
+				},
+
+				"public": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether a post type is intended for use publicly either via the admin interface or by front-end users"
+				},
+				"hierarchical": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether the post type is hierarchical (e.g. page)"
+				},
+				"exclude_from_search": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to exclude posts with this post type from front-end search results"
+				},
+				"publicly_queryable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether queries can be performed on the front-end for the post type as part of parse_request()"
+				},
+
+				"show_ui": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to generate and allow a UI for managing this post type in the admin"
+				},
+				"show_in_menu": {
+					"type": "boolean",
+					"description": "Where to show the post type in the admin menu"
+				},
+				"menu_order": {
+					"type": "integer",
+					"minimum": 0,
+					"default": 0,
+					"description": "[SCF] The order of this post type in the admin menu"
+				},
+				"menu_position": {
+					"type": ["integer", "string"],
+					"description": "The position in the menu order. SCF exports as empty string when not set, integer when set. Import accepts both and casts to integer."
+				},
+				"menu_icon": {
+					"oneOf": [
+						{
+							"type": "string",
+							"description": "Icon as string: Dashicon name (e.g. 'dashicons-admin-post') or full URL to image file"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"enum": ["dashicons", "url"],
+									"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image"
+								},
+								"value": {
+									"type": "string",
+									"description": "The icon value: dashicon class name (e.g. 'dashicons-admin-post') or image URL"
+								}
+							},
+							"required": ["type", "value"],
+							"additionalProperties": false,
+							"description": "[SCF] SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-post\"}"
+						}
+					],
+					"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties."
+				},
+				"admin_menu_parent": {
+					"type": "string",
+					"description": "The parent menu slug for this post type menu"
+				},
+				"show_in_admin_bar": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to make this post type available in the WordPress admin bar"
+				},
+				"show_in_nav_menus": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether post_type is available for selection in navigation menus"
+				},
+
+				"supports": {
+					"type": "array",
+					"items": { "type": "string" },
+					"uniqueItems": true,
+					"description": "Core feature(s) the post type supports. Common values: 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields', 'comments', 'revisions', 'page-attributes', 'post-formats'. Custom supports are also allowed."
+				},
+				"taxonomies": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": { "type": "string" },
+							"uniqueItems": true
+						},
+						{ "type": "string" }
+					],
+					"description": "An array of taxonomy identifiers that will be registered for the post type. SCF exports as empty string when none selected, but accepts both array and string on import."
+				},
+				"can_export": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to allow this post type to be exported"
+				},
+				"delete_with_user": {
+					"type": ["boolean", "null"],
+					"description": "Whether to delete posts of this type when deleting a user"
+				},
+
+				"has_archive": {
+					"type": ["boolean", "string"],
+					"default": false,
+					"description": "Whether there should be post type archives, or if a string, the archive slug to use"
+				},
+				"has_archive_slug": {
+					"type": "string",
+					"description": "The slug to use for the archive if has_archive is enabled"
+				},
+				"rewrite": {
+					"type": ["object", "boolean"],
+					"description": "Triggers the handling of rewrites for this post type",
+					"oneOf": [
+						{ "type": "boolean" },
+						{
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"permalink_rewrite": {
+									"type": "string",
+									"description": "[SCF] SCF-specific permalink rewrite option"
+								},
+								"slug": {
+									"type": "string",
+									"description": "Customize the permalink structure slug"
+								},
+								"with_front": {
+									"type": ["boolean", "string"],
+									"default": true,
+									"description": "Whether the permalink structure should be prepended with WP_Rewrite::$front (accepts boolean or string '0'/'1' for backward compatibility)"
+								},
+								"feeds": {
+									"type": ["boolean", "string"],
+									"default": false,
+									"description": "Whether the feed permalink structure should be built for this post type (accepts boolean or string '0'/'1' for backward compatibility)"
+								},
+								"pages": {
+									"type": ["boolean", "string"],
+									"default": true,
+									"description": "Whether the permalink structure should provide for pagination (accepts boolean or string '0'/'1' for backward compatibility)"
+								}
+							}
+						}
+					]
+				},
+				"query_var": {
+					"type": ["boolean", "string"],
+					"description": "Sets the query_var key for this post type"
+				},
+				"query_var_name": {
+					"type": "string",
+					"description": "[SCF] SCF-specific query variable name"
+				},
+
+				"capability_type": {
+					"type": ["string", "array"],
+					"description": "The string to use to build the read, edit, and delete capabilities"
+				},
+				"rename_capabilities": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to rename capabilities for this post type"
+				},
+				"singular_capability_name": {
+					"type": "string",
+					"default": "post",
+					"description": "The singular capability name (e.g. 'post' creates 'edit_post', 'delete_post' capabilities)"
+				},
+				"plural_capability_name": {
+					"type": "string",
+					"default": "posts",
+					"description": "The plural capability name (e.g. 'posts' creates 'edit_posts', 'delete_posts' capabilities)"
+				},
+				"capabilities": {
+					"type": "object",
+					"additionalProperties": { "type": "string" },
+					"description": "Custom capabilities for this post type. Overrides default capabilities built from singular/plural capability names. Common capabilities include: edit_post, read_post, delete_post, edit_posts, edit_others_posts, publish_posts, read_private_posts, delete_posts, delete_private_posts, delete_published_posts, delete_others_posts, edit_private_posts, edit_published_posts, create_posts."
+				},
+				"map_meta_cap": {
+					"type": "boolean",
+					"description": "Whether to use the internal default meta capability handling"
+				},
+
+				"show_in_rest": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to include the post type in the REST API"
+				},
+				"rest_base": {
+					"type": "string",
+					"description": "To change the base URL of REST API route"
+				},
+				"rest_namespace": {
+					"type": "string",
+					"default": "wp/v2",
+					"description": "To change the namespace URL of REST API route"
+				},
+				"rest_controller_class": {
+					"type": "string",
+					"default": "WP_REST_Posts_Controller",
+					"description": "REST API Controller to use for this post type"
+				},
+
+				"register_meta_box_cb": {
+					"type": "string",
+					"description": "Callback function for custom meta box registration"
+				},
+				"enter_title_here": {
+					"type": "string",
+					"description": "Custom placeholder text for the title field"
 				}
-			]
-		},
-		"query_var": {
-			"type": ["boolean", "string"],
-			"description": "Sets the query_var key for this post type"
-		},
-		"query_var_name": {
-			"type": "string",
-			"description": "ACF-specific query variable name"
-		},
-		"capability_type": {
-			"type": ["string", "array"],
-			"description": "The string to use to build the read, edit, and delete capabilities"
-		},
-		"rename_capabilities": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to rename capabilities for this post type"
-		},
-		"singular_capability_name": {
-			"type": "string",
-			"default": "post",
-			"description": "The singular capability name (e.g. 'post' creates 'edit_post', 'delete_post' capabilities)"
-		},
-		"plural_capability_name": {
-			"type": "string",
-			"default": "posts",
-			"description": "The plural capability name (e.g. 'posts' creates 'edit_posts', 'delete_posts' capabilities)"
-		},
-		"capabilities": {
-			"type": "object",
-			"description": "Custom capabilities for this post type. Overrides default capabilities built from singular/plural capability names.",
-			"additionalProperties": false,
-			"properties": {
-				"edit_post": { "type": "string" },
-				"read_post": { "type": "string" },
-				"delete_post": { "type": "string" },
-				"edit_posts": { "type": "string" },
-				"edit_others_posts": { "type": "string" },
-				"publish_posts": { "type": "string" },
-				"read_private_posts": { "type": "string" },
-				"read": { "type": "string" },
-				"delete_posts": { "type": "string" },
-				"delete_private_posts": { "type": "string" },
-				"delete_published_posts": { "type": "string" },
-				"delete_others_posts": { "type": "string" },
-				"edit_private_posts": { "type": "string" },
-				"edit_published_posts": { "type": "string" },
-				"create_posts": { "type": "string" }
 			}
-		},
-		"map_meta_cap": {
-			"type": "boolean",
-			"description": "Whether to use the internal default meta capability handling"
-		},
-		"show_in_rest": {
-			"type": "boolean",
-			"default": true,
-			"description": "Whether to include the post type in the REST API"
-		},
-		"rest_base": {
-			"type": "string",
-			"description": "To change the base URL of REST API route"
-		},
-		"rest_namespace": {
-			"type": "string",
-			"default": "wp/v2",
-			"description": "To change the namespace URL of REST API route"
-		},
-		"rest_controller_class": {
-			"type": "string",
-			"default": "WP_REST_Posts_Controller",
-			"description": "REST API Controller to use for this post type"
-		},
-		"register_meta_box_cb": {
-			"type": "string",
-			"description": "Callback function for custom meta box registration"
-		},
-		"enter_title_here": {
-			"type": "string",
-			"description": "Custom placeholder text for the title field"
 		}
 	},
 	"examples": [
@@ -551,6 +543,4 @@
 			"enter_title_here": ""
 		}
 	]
-		}
-	}
 }
