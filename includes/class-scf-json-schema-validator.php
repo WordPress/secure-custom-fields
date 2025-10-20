@@ -88,7 +88,19 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 				$data = json_decode( wp_json_encode( $data ) );
 			}
 
-			$validator = new JsonSchema\Validator();
+			// Create schema storage and register schemas for $ref support
+			$schema_storage = new JsonSchema\SchemaStorage();
+
+			// Register common schema
+			$common_schema_path    = $this->schema_path . 'common.schema.json';
+			$common_schema_content = wp_json_file_decode( $common_schema_path );
+			$schema_storage->addSchema( 'file://common.schema.json', $common_schema_content );
+
+			// Register main schema
+			$main_schema_uri = 'file://' . $schema_name . '.schema.json';
+			$schema_storage->addSchema( $main_schema_uri, $schema );
+
+			$validator = new JsonSchema\Validator( new JsonSchema\Constraints\Factory( $schema_storage ) );
 			$validator->validate( $data, $schema );
 
 			foreach ( $validator->getErrors() as $error ) {

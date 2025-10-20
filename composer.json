@@ -9,7 +9,8 @@
 		}
 	],
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"justinrainbow/json-schema": "^5.2"
 	},
 	"require-dev": {
 		"automattic/wordbless": "^0.5.0",

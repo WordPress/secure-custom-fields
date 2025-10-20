@@ -35,30 +35,11 @@
 				},
 				"post_type": {
 					"type": "string",
-					"pattern": "^[a-z0-9_-]*$",
+					"pattern": "^[a-z0-9_-]+$",
 					"minLength": 1,
 					"maxLength": 20,
 					"not": {
-						"enum": [
-							"post",
-							"page",
-							"attachment",
-							"revision",
-							"nav_menu_item",
-							"custom_css",
-							"customize_changeset",
-							"oembed_cache",
-							"user_request",
-							"wp_block",
-							"wp_template",
-							"wp_template_part",
-							"wp_global_styles",
-							"wp_navigation",
-							"action",
-							"author",
-							"order",
-							"theme"
-						]
+						"$ref": "file://common.schema.json#/definitions/wordpressReservedTerms"
 					},
 					"description": "The post type key passed to register_post_type() (e.g. 'book', 'product'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
