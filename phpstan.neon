@@ -2,6 +2,9 @@ includes:
 	- bin/baseline.neon
 parameters:
 	level: 1
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		- '#^Path in (include_once|require_once|require)\(\) ".*wp-admin/includes/.*" is not a file#'
 	paths:
 		- .
 	excludePaths:
