@@ -2,6 +2,9 @@ includes:
 	- bin/baseline.neon
 parameters:
 	level: 1
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		- '#^Path in (include_once|require_once|require)\(\) ".*wp-admin/includes/.*" is not a file#'
 	paths:
 		- .
 	excludePaths:
@@ -13,5 +16,6 @@ parameters:
 		- wordpress (?)
 		- includes/forms/WC_Order.php
 	bootstrapFiles:
+		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 		- bin/phpstan-bootstrap.php

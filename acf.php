@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( is_admin() ) {
-	/** @phpstan-ignore-next-line */ // phpcs:ignore
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 	// Network activations first since is_plugin_active will return true for network activated plugins, whereas this won't for single.

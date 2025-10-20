@@ -2879,9 +2879,9 @@ function acf_get_valid_terms( $terms = false, $taxonomy = 'category' ) {
  *
  * @since   ACF 5.2.3
  *
- * @param   $attachment (array) attachment data. Changes based on context
- * @param   $field (array) field settings containing restrictions
- * @param   context (string)                                     $file is different when uploading / preparing
+ * @param   array  $attachment attachment data. Changes based on context.
+ * @param   array  $field field settings containing restrictions.
+ * @param   string $context context is different when uploading / preparing.
  * @return  $errors (array)
  */
 function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
@@ -3277,7 +3277,7 @@ function acf_is_ajax( $action = '' ) {
 	$is_ajax = false;
 
 	// check if is doing ajax
-	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+	if ( wp_doing_ajax() ) {
 		$is_ajax = true;
 	}
 
