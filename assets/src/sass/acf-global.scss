@@ -842,6 +842,11 @@ a.acf-icon.dark.-minus:hover, a.acf-icon.dark.-cancel:hover {
     mask-image: url("../../images/icons/icon-duplicate.svg")
 }
 
+.acf-icon.-trash-alt {
+    -webkit-mask-image: url("../../images/icons/icon-trash-alt.svg");
+    mask-image: url("../../images/icons/icon-trash-alt.svg")
+}
+
 .acf-icon.-more-actions {
     -webkit-mask-image: url("../../images/icons/icon-more-vertical.svg");
     mask-image: url("../../images/icons/icon-more-vertical.svg")
