@@ -250,8 +250,9 @@ class Layout {
 				<span class="acf-layout-disabled"><?php esc_html_e( 'Disabled', 'secure-custom-fields' ); ?></span>
 			</div>
 			<div class="acf-fc-layout-controls">
-				<a class="acf-js-tooltip" href="#" data-name="add-layout" data-context="layout" title="<?php esc_attr_e( 'Add layout', 'secure-custom-fields' ); ?>"><span class="acf-icon -plus-alt "></span></a>
-				<a class="acf-js-tooltip" href="#" data-name="duplicate-layout" title="<?php esc_attr_e( 'Duplicate layout', 'secure-custom-fields' ); ?>"><span class="acf-icon -duplicate-alt"></span></a>
+				<a class="acf-js-tooltip" href="#" data-name="add-layout" data-context="layout" title="<?php esc_attr( $this->field['button_label'] ); ?>"><span class="acf-icon -plus-alt "></span></a>
+				<a class="acf-js-tooltip" href="#" data-name="duplicate-layout" title="<?php esc_attr_e( 'Duplicate', 'secure-custom-fields' ); ?>"><span class="acf-icon -duplicate-alt"></span></a>
+				<a class="acf-js-tooltip" href="#" data-name="remove-layout" title="<?php esc_attr_e( 'Delete', 'secure-custom-fields' ); ?>"><span class="acf-icon -trash-alt"></span></a>
 				<a class="acf-js-tooltip" aria-haspopup="menu" href="#" data-name="more-layout-actions" title="<?php esc_attr_e( 'More layout actions...', 'secure-custom-fields' ); ?>"><span class="acf-icon -more-actions"></span></a>
 				<div class="acf-layout-collapse">
 					<a class="acf-icon -collapse -clear" href="#" data-name="collapse-layout" aria-label="<?php esc_attr_e( 'Toggle layout', 'secure-custom-fields' ); ?>"></a>
