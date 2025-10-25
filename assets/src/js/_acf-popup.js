@@ -186,7 +186,7 @@
                         </a>
                     </div>
                     <div class="inner">
-                        <p>${ acf.strEscape( this.get( 'text' ) ) }</p>
+                        <p>${ acf.escHtml( this.get( 'text' ) ) }</p>
                         <div class="acf-actions">
                             <button tabindex="0" type="button" data-event="close" class="acf-btn acf-btn-secondary acf-close-popup">${ acf.strEscape(
 								this.get( 'textCancel' )

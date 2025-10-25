@@ -45,7 +45,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 			?>
 			<div class="acf-postbox-header">
 				<h2 class="acf-postbox-title"><?php esc_html_e( 'Import', 'secure-custom-fields' ); ?></h2>
-				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the Secure Custom Fields JSON file you would like to import. When you click the import button below, SCF will import the items in that file.', 'secure-custom-fields' ); ?>">?</i></div>
+				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Choose an SCF JSON file to import. Use only files from trusted sources, then click Import.', 'secure-custom-fields' ); ?>">?</i></div>
 			</div>
 			<div class="acf-postbox-inner">
 				<div class="acf-fields">
@@ -53,11 +53,13 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 
 					acf_render_field_wrap(
 						array(
-							'label'    => __( 'Select File', 'secure-custom-fields' ),
-							'type'     => 'file',
-							'name'     => 'acf_import_file',
-							'value'    => false,
-							'uploader' => 'basic',
+							'label'        => __( 'Select JSON File', 'secure-custom-fields' ),
+							'type'         => 'file',
+							'name'         => 'acf_import_file',
+							'value'        => false,
+							'uploader'     => 'basic',
+							'mime_types'   => 'application/json,application/x-json,application/x-javascript,text/javascript,text/x-javascript,text/json',
+							'instructions' => __( 'Import JSON containing field groups, post types, or taxonomies (trusted sources only)', 'secure-custom-fields' ),
 						)
 					);
 

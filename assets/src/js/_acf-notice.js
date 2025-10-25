@@ -36,7 +36,7 @@
 			this.type( this.get( 'type' ) );
 
 			// text
-			this.html( '<p>' + acf.strEscape( this.get( 'text' ) ) + '</p>' );
+			this.html( '<p>' + acf.escHtml( this.get( 'text' ) ) + '</p>' );
 
 			// close
 			if ( this.get( 'dismiss' ) ) {
