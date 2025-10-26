@@ -576,7 +576,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			);
 
 			// checkbox saves an array.
-			if ( $field['field_type'] == 'checkbox' ) {
+			if ( 'checkbox' === $field['field_type'] ) {
 				$field['name'] .= '[]';
 			}
 
@@ -601,9 +601,18 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 			$args = apply_filters( 'acf/fields/taxonomy/wp_list_categories/name=' . $field['_name'], $args, $field );
 			$args = apply_filters( 'acf/fields/taxonomy/wp_list_categories/key=' . $field['key'], $args, $field );
 
+			// Build UL attributes for accessibility and consistency.
+			$ul = array(
+				'class' => 'acf-checkbox-list acf-bl',
+				'role'  => 'radio' === $field['field_type'] ? 'radiogroup' : 'group',
+			);
+
+			if ( ! empty( $field['id'] ) ) {
+				$ul['aria-labelledby'] = $field['id'] . '-label';
+			}
 			?>
 			<div class="categorychecklist-holder">
-				<ul class="acf-checkbox-list acf-bl">
+				<ul <?php echo acf_esc_attrs( $ul ); ?>>
 					<?php wp_list_categories( $args ); ?>
 				</ul>
 			</div>

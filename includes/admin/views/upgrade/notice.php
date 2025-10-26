@@ -19,7 +19,7 @@ if ( ! acf_get_setting( 'pro' ) ) {
 }
 
 ?>
-<div id="acf-upgrade-notice" class="notice">
+<div id="acf-upgrade-notice" class="notice notice-warning">
 	<div class="notice-container">
 		<div class="col-content">
 			<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" />
@@ -33,7 +33,7 @@ if ( ! acf_get_setting( 'pro' ) ) {
 			<?php endif; ?>
 		</div>
 		<div class="col-actions">
-			<a id="acf-upgrade-button" href="<?php echo esc_url( $button_url ); ?>" class="acf-btn"><?php echo esc_html( $button_text ); ?></a>
+			<a id="acf-upgrade-button" href="<?php echo esc_url( $button_url ); ?>" class="button-primary"><?php echo esc_html( $button_text ); ?></a>
 		</div>
 		
 	</div>

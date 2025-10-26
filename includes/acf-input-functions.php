@@ -333,7 +333,27 @@ function acf_get_checkbox_input( $attrs = array() ) {
 
 	// Render.
 	$checked = isset( $attrs['checked'] );
-	return '<label' . ( $checked ? ' class="selected"' : '' ) . '><input ' . acf_esc_attrs( $attrs ) . '/> ' . acf_esc_html( $label ) . '</label>';
+
+	// Build label attributes array for accessibility and consistency.
+	$label_attrs = array();
+	if ( $checked ) {
+		$label_attrs['class'] = 'selected';
+	}
+
+	if ( ! empty( $attrs['button_group'] ) ) {
+		unset( $attrs['button_group'] );
+		// If tabindex is provided, use it for the label; otherwise, use checked-based default.
+		if ( isset( $attrs['tabindex'] ) ) {
+			$label_attrs['tabindex'] = (string) $attrs['tabindex'];
+			unset( $attrs['tabindex'] );
+		} else {
+			$label_attrs['tabindex'] = $checked ? '0' : '-1';
+		}
+		$label_attrs['role']         = 'radio';
+		$label_attrs['aria-checked'] = $checked ? 'true' : 'false';
+	}
+
+	return '<label' . ( acf_esc_attrs( $label_attrs ) ? ' ' . acf_esc_attrs( $label_attrs ) : '' ) . '><input ' . acf_esc_attrs( $attrs ) . '/> ' . acf_esc_html( $label ) . '</label>';
 }
 
 /**

@@ -72,6 +72,8 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 		case 'location_rules':
 			echo '<div class="field-group-locations field-group-settings-tab">';
 				acf_get_view( 'acf-field-group/locations' );
+
+				do_action( 'acf/field_group/render_additional_location_settings', $field_group );
 			echo '</div>';
 			break;
 		case 'presentation':
@@ -164,6 +166,8 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 				'field'
 			);
 
+			do_action( 'acf/field_group/render_additional_presentation_settings', $field_group );
+
 			echo '</div>';
 			echo '<div class="field-group-setting-split">';
 
@@ -221,8 +225,6 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 					'prefix'       => 'acf_field_group',
 					'value'        => $field_group['active'],
 					'ui'           => 1,
-				// 'ui_on_text'  => __('Active', 'secure-custom-fields'),
-				// 'ui_off_text' => __('Inactive', 'secure-custom-fields'),
 				)
 			);
 
@@ -237,8 +239,6 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 						'prefix'       => 'acf_field_group',
 						'value'        => $field_group['show_in_rest'],
 						'ui'           => 1,
-					// 'ui_on_text'  => __('Active', 'secure-custom-fields'),
-					// 'ui_off_text' => __('Inactive', 'secure-custom-fields'),
 					)
 				);
 			}
@@ -256,6 +256,21 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 				'div',
 				'field'
 			);
+
+			acf_render_field_wrap(
+				array(
+					'label'        => __( 'Display Title', 'secure-custom-fields' ),
+					'instructions' => __( 'Title shown on the edit screen for the field group meta box to use instead of the field group title', 'secure-custom-fields' ),
+					'type'         => 'text',
+					'name'         => 'display_title',
+					'prefix'       => 'acf_field_group',
+					'value'        => $field_group['display_title'],
+				),
+				'div',
+				'field'
+			);
+
+			do_action( 'acf/field_group/render_additional_group_settings', $field_group );
 
 			/* translators: 1: Post creation date 2: Post creation time */
 			$acf_created_on = sprintf( __( 'Created on %1$s at %2$s', 'secure-custom-fields' ), get_the_date(), get_the_time() );

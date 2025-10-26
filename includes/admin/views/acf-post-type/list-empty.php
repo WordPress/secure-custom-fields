@@ -5,7 +5,8 @@
  * @package wordpress/secure-custom-fields
  */
 
-?><script>document.body.classList.add('acf-no-post-types');</script>
+?>
+<script>document.body.classList.add('acf-no-post-types');</script>
 <div class="acf-no-post-types-wrapper">
 	<div class="acf-no-post-types-inner">
 		<img src="<?php echo esc_url( acf_get_url( 'assets/images/empty-post-types.svg' ) ); ?>" />

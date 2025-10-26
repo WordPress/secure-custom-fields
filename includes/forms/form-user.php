@@ -233,8 +233,8 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 				$fields = acf_get_fields( $field_group );
 
 				// title
-				if ( $field_group['style'] === 'default' ) {
-					echo '<h2>' . esc_html( $field_group['title'] ) . '</h2>';
+				if ( 'default' === $field_group['style'] ) {
+					echo '<h2>' . acf_esc_html( acf_get_field_group_title( $field_group ) ) . '</h2>';
 				}
 
 				// render

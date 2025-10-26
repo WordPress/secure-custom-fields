@@ -334,9 +334,14 @@ if ( ! class_exists( 'acf_field_icon_picker' ) ) :
 		 * @return boolean true If the value is valid, false if not.
 		 */
 		public function validate_value( $valid, $value, $field, $input ) {
-			// If the value is empty, return true. You're allowed to save nothing.
+			// If the value is empty and it's not required, return true. You're allowed to save nothing.
 			if ( empty( $value ) && empty( $field['required'] ) ) {
 				return true;
+			}
+
+			// Validate required.
+			if ( $field['required'] && ( empty( $value ) || empty( $value['value'] ) ) ) {
+				return false;
 			}
 
 			// If the value is not an array, return $valid status.

@@ -93,6 +93,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 				'active'                => true,
 				'description'           => '',
 				'show_in_rest'          => false,
+				'display_title'         => '',
 			);
 		}
 

@@ -1016,24 +1016,55 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$name_parts = array();
 
 			foreach ( $field_keys as $field_key ) {
-				if ( ! acf_is_field_key( $field_key ) ) {
-					if ( 'acfcloneindex' === $field_key ) {
-						$name_parts[] = 'acfcloneindex';
-						continue;
-					}
+				// Preserve acfcloneindex
+				if ( 'acfcloneindex' === $field_key ) {
+					$name_parts[] = 'acfcloneindex';
+					continue;
+				}
 
-					$row_num = str_replace( 'row-', '', $field_key );
+				// Handle row numbers (row-0, row-1, etc.)
+				if ( strpos( $field_key, 'row-' ) === 0 ) {
+					$row_num = substr( $field_key, 4 );
 					if ( is_numeric( $row_num ) ) {
 						$name_parts[] = (int) $row_num;
 						continue;
 					}
 				}
 
-				$field = acf_get_field( $field_key );
+				// Handle compound keys (field_..._field_...)
+				$compound_keys = preg_split( '/_field_/', $field_key );
+				if ( count( $compound_keys ) > 1 ) {
+					foreach ( $compound_keys as $i => $sub_key ) {
+						if ( $i > 0 ) {
+							$sub_key = 'field_' . $sub_key;
+						}
 
-				if ( $field ) {
-					$name_parts[] = $field['name'];
+						// Seamless clone fields use compound keys which can be skipped.
+						$field = acf_get_field( $sub_key );
+						if ( $field && 'clone' === $field['type'] && 'seamless' === $field['display'] ) {
+							continue;
+						}
+
+						$name_parts[] = $field && ! empty( $field['name'] ) ? $field['name'] : $sub_key;
+					}
+					continue;
 				}
+
+				// Handle standard field keys
+				if ( strpos( $field_key, 'field_' ) === 0 ) {
+
+					// Skip clone fields with prefix_name disabled.
+					$field = acf_get_field( $field_key );
+					if ( $field && 'clone' === $field['type'] && empty( $field['prefix_name'] ) ) {
+						continue;
+					}
+
+					$name_parts[] = $field && ! empty( $field['name'] ) ? $field['name'] : $field_key;
+					continue;
+				}
+
+				// Fallback: just add as is
+				$name_parts[] = $field_key;
 			}
 
 			return implode( '_', $name_parts );
@@ -1093,16 +1124,18 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			 * We have to swap out the field name with the one sent via JS,
 			 * as the repeater could be inside a subfield.
 			 */
-			$field['name'] = $args['field_name'];
+			$field['name']   = $args['field_name'];
+			$field['prefix'] = $args['field_prefix'];
+			$field['value']  = acf_get_value( $post_id, $field );
 
-			$field['value']   = acf_get_value( $post_id, $field );
+			if ( $args['refresh'] ) {
+				$response['total_rows'] = (int) acf_get_metadata_by_field( $post_id, $field );
+			}
+
+			// Render the rows to be sent back via AJAX.
 			$field            = acf_prepare_field( $field );
 			$repeater_table   = new ACF_Repeater_Table( $field );
 			$response['rows'] = $repeater_table->rows( true );
-
-			if ( $args['refresh'] ) {
-				$response['total_rows'] = (int) acf_get_metadata( $post_id, $args['field_name'] );
-			}
 
 			wp_send_json_success( $response );
 		}

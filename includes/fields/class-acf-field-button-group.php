@@ -67,10 +67,11 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 
 				// append
 				$buttons[] = array(
-					'name'    => $field['name'],
-					'value'   => $_value,
-					'label'   => $_label,
-					'checked' => $checked,
+					'name'         => $field['name'],
+					'value'        => $_value,
+					'label'        => $_label,
+					'checked'      => $checked,
+					'button_group' => true,
 				);
 			}
 
@@ -79,16 +80,29 @@ if ( ! class_exists( 'acf_field_button_group' ) ) :
 				$buttons[0]['checked'] = true;
 			}
 
-			// div
-			$div = array( 'class' => 'acf-button-group' );
+			// Ensure roving tabindex when allow_null is enabled and no selection yet.
+			if ( $field['allow_null'] && null === $selected && ! empty( $buttons ) ) {
+				$buttons[0]['tabindex'] = '0';
+			}
 
-			if ( 'vertical' === acf_maybe_get( $field, 'layout' ) ) {
+			// div
+			$div = array(
+				'class' => 'acf-button-group',
+				'role'  => 'radiogroup',
+			);
+
+			// Add aria-labelledby if field has an ID for proper screen reader announcement
+			if ( ! empty( $field['id'] ) ) {
+				$div['aria-labelledby'] = $field['id'] . '-label';
+			}
+
+			if ( 'vertical' === $field['layout'] ) {
 				$div['class'] .= ' -vertical';
 			}
-			if ( acf_maybe_get( $field, 'class' ) ) {
-				$div['class'] .= ' ' . acf_maybe_get( $field, 'class' );
+			if ( $field['class'] ) {
+				$div['class'] .= ' ' . $field['class'];
 			}
-			if ( acf_maybe_get( $field, 'allow_null' ) ) {
+			if ( $field['allow_null'] ) {
 				$div['data-allow_null'] = 1;
 			}
 
