@@ -1,5 +1,5 @@
-( function ( $, undefined ) {
-	var Field = acf.Field.extend( {
+( function ( $ ) {
+	const Field = acf.Field.extend( {
 		type: 'image',
 
 		$control: function () {
@@ -15,6 +15,7 @@
 			'click a[data-name="edit"]': 'onClickEdit',
 			'click a[data-name="remove"]': 'onClickRemove',
 			'change input[type="file"]': 'onChange',
+			'keydown .image-wrap': 'onImageWrapKeydown',
 		},
 
 		initialize: function () {
@@ -45,7 +46,7 @@
 			} );
 
 			// Override with "preview size".
-			var size = acf.isget(
+			const size = acf.isget(
 				attachment,
 				'sizes',
 				this.get( 'preview_size' )
@@ -71,6 +72,10 @@
 			if ( attachment.id ) {
 				this.val( attachment.id );
 				this.$control().addClass( 'has-value' );
+				const imageWrap = this.$( '.image-wrap' );
+				if ( imageWrap.length ) {
+					imageWrap.trigger( 'focus' );
+				}
 			} else {
 				this.val( '' );
 				this.$control().removeClass( 'has-value' );
@@ -80,15 +85,15 @@
 		// create a new repeater row and render value
 		append: function ( attachment, parent ) {
 			// create function to find next available field within parent
-			var getNext = function ( field, parent ) {
+			const getNext = function ( field, parent ) {
 				// find existing file fields within parent
-				var fields = acf.getFields( {
+				const fields = acf.getFields( {
 					key: field.get( 'key' ),
 					parent: parent.$el,
 				} );
 
 				// find the first field with no value
-				for ( var i = 0; i < fields.length; i++ ) {
+				for ( let i = 0; i < fields.length; i++ ) {
 					if ( ! fields[ i ].val() ) {
 						return fields[ i ];
 					}
@@ -99,7 +104,7 @@
 			};
 
 			// find existing file fields within parent
-			var field = getNext( this, parent );
+			let field = getNext( this, parent );
 
 			// add new row if no available field
 			if ( ! field ) {
@@ -115,11 +120,11 @@
 
 		selectAttachment: function () {
 			// vars
-			var parent = this.parent();
-			var multiple = parent && parent.get( 'type' ) === 'repeater';
+			const parent = this.parent();
+			const multiple = parent && parent.get( 'type' ) === 'repeater';
 
 			// new frame
-			var frame = acf.newMediaPopup( {
+			const frame = acf.newMediaPopup( {
 				mode: 'select',
 				type: 'image',
 				title: acf.__( 'Select Image' ),
@@ -137,24 +142,36 @@
 			} );
 		},
 
-		editAttachment: function () {
+		editAttachment: function ( attachment ) {
 			// vars
-			var val = this.val();
+			const val = this.val();
 
-			// bail early if no val
-			if ( ! val ) return;
-
-			// popup
-			var frame = acf.newMediaPopup( {
-				mode: 'edit',
-				title: acf.__( 'Edit Image' ),
-				button: acf.__( 'Update Image' ),
-				attachment: val,
-				field: this.get( 'key' ),
-				select: $.proxy( function ( attachment, i ) {
-					this.render( attachment );
-				}, this ),
-			} );
+			if ( val ) {
+				// popup
+				var frame = acf.newMediaPopup( {
+					mode: 'edit',
+					title: acf.__( 'Edit Image' ),
+					button: acf.__( 'Update Image' ),
+					attachment: val,
+					field: this.get( 'key' ),
+					select: $.proxy( function ( attachment ) {
+						this.render( attachment );
+					}, this ),
+					close: $.proxy( function () {
+						if ( 'edit-button' === attachment ) {
+							const edit = this.$el.find( 'a[data-name="edit"]' );
+							if ( edit.length ) {
+								edit.trigger( 'focus' );
+							}
+						} else {
+							const imageWrap = this.$( '.image-wrap' );
+							if ( imageWrap.length ) {
+								imageWrap.trigger( 'focus' );
+							}
+						}
+					}, this ),
+				} );
+			}
 		},
 
 		removeAttachment: function () {
@@ -166,7 +183,7 @@
 		},
 
 		onClickEdit: function ( e, $el ) {
-			this.editAttachment();
+			this.editAttachment( 'edit-button' );
 		},
 
 		onClickRemove: function ( e, $el ) {
@@ -174,7 +191,7 @@
 		},
 
 		onChange: function ( e, $el ) {
-			var $hiddenInput = this.$input();
+			const $hiddenInput = this.$input();
 
 			if ( ! $el.val() ) {
 				$hiddenInput.val( '' );
@@ -183,6 +200,25 @@
 			acf.getFileInputData( $el, function ( data ) {
 				$hiddenInput.val( $.param( data ) );
 			} );
+		},
+		onImageWrapKeydown: function ( event, imageWrapElement ) {
+			// Check if Enter key was pressed (keycode 13)
+			if ( event.which === 13 ) {
+				// Check if the event target is the imageWrapElement itself
+				if ( event.target === imageWrapElement[ 0 ] ) {
+					// Prevent the default Enter key behavior
+					event.preventDefault();
+
+					// Check if the field has a value
+					if ( this.val() ) {
+						// Check if the uploader is NOT the basic uploader
+						if ( this.get( 'uploader' ) !== 'basic' ) {
+							// Open the edit attachment dialog
+							this.editAttachment();
+						}
+					}
+				}
+			}
 		},
 	} );
 

@@ -7,6 +7,7 @@
 			'click .acf-add-checkbox': 'onClickAdd',
 			'click .acf-checkbox-toggle': 'onClickToggle',
 			'click .acf-checkbox-custom': 'onClickCustom',
+			'keydown input[type="checkbox"]': 'onKeyDownInput',
 		},
 
 		$control: function () {
@@ -71,24 +72,21 @@
 				.parent()
 				.find( 'input[type="text"]' )
 				.last()
-				.focus();
+				.trigger( 'focus' );
 		},
 
 		onClickToggle: function ( e, $el ) {
 			// Vars.
-			var checked = $el.prop( 'checked' );
-			var $inputs = this.$( 'input[type="checkbox"]' );
-			var $labels = this.$( 'label' );
-
-			// Update "checked" state.
-			$inputs.prop( 'checked', checked );
-
-			// Add or remove "selected" class.
-			if ( checked ) {
-				$labels.addClass( 'selected' );
-			} else {
-				$labels.removeClass( 'selected' );
-			}
+			const inputs = this.$inputs();
+			const hasUnchecked = $inputs.not( ':checked' ).length > 0;
+			inputs.each( function () {
+				$inputs.each( function () {
+					jQuery( this )
+						.prop( 'checked', hasUnchecked )
+						.trigger( 'change' );
+				} );
+			} );
+			$el.prop( 'checked', hasUnchecked );
 		},
 
 		onClickCustom: function ( e, $el ) {
@@ -106,6 +104,23 @@
 				// remove
 				if ( $text.val() == '' ) {
 					$el.parent( 'li' ).remove();
+				}
+			}
+		},
+		onKeyDownInput: function ( e, $el ) {
+			// Check if Enter key (keyCode 13) was pressed
+			if ( e.which === 13 ) {
+				// Prevent default form submission
+				e.preventDefault();
+
+				// Toggle the checkbox state and trigger change event
+				$el.prop( 'checked', ! $el.prop( 'checked' ) ).trigger(
+					'change'
+				);
+
+				// If this is the "Select All" toggle checkbox, run the toggle logic
+				if ( $el.is( '.acf-checkbox-toggle' ) ) {
+					this.onClickToggle( e, $el );
 				}
 			}
 		},
