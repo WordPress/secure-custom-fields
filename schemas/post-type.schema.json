@@ -43,11 +43,6 @@
 					},
 					"description": "The post type key passed to register_post_type() (e.g. 'book', 'product'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
-				"ID": {
-					"type": "integer",
-					"minimum": 0,
-					"description": "The WordPress post ID (0 for new post types)"
-				},
 
 				"active": {
 					"type": "boolean",
