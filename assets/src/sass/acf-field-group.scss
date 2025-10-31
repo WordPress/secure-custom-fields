@@ -2260,7 +2260,7 @@ html[dir=rtl] .acf-field-object.open > .handle {
   border-left-style: solid;
   border-left-color: #EAECF0;
 }
-#acf-field-group-options .acf-field[data-name=description] {
+#acf-field-group-options .acf-field[data-name=description], #acf-field-group-options .acf-field[data-name=display_title] {
   max-width: 600px;
 }
 #acf-field-group-options .acf-button-group {

@@ -233,3 +233,42 @@
 .components-panel__body .acf-block-panel {
 	margin: 16px -16px -16px;
 }
+
+
+@media(min-width: 600px)and (min-width: 782px) {
+    .acf-block-form-modal {
+        height: 100% !important;
+        width: 50% !important;
+        border-radius: 0;
+        position: absolute;
+        right: 0;
+    }
+
+    @keyframes components-modal__appear-animation {
+        0% {
+            right: -20px;
+            opacity: 0;
+            transform: scale(1);
+        }
+
+        to {
+            right: 0;
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes components-modal__disappear-animation {
+        0% {
+            right: 0;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        to {
+            right: -20px;
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+}
