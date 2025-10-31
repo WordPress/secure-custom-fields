@@ -1,0 +1,15 @@
+{
+	"key": "post-type_event",
+	"title": "Event",
+	"name": "event",
+	"description": "A post type for events.",
+	"singular_label": "Event",
+	"plural_label": "Events",
+	"public": true,
+	"has_archive": true,
+	"show_in_rest": true,
+	"menu_icon": "calendar",
+	"supports": ["title", "editor", "thumbnail"],
+	"taxonomies": ["category", "post_tag"],
+	"active": true
+}

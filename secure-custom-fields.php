@@ -189,6 +189,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/class-acf-internal-post-type.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
 			acf_include( 'includes/class-acf-site-health.php' );
+			acf_include( 'includes/class-scf-json-schema-validator.php' );
 			acf_include( 'includes/fields/class-acf-field.php' );
 			acf_include( 'includes/locations/abstract-acf-legacy-location.php' );
 			acf_include( 'includes/locations/abstract-acf-location.php' );

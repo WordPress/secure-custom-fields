@@ -109,3 +109,9 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../includes/locations/abstract-acf-legacy-location.php
+
+		-
+			message: '#^Path in require_once\(\) "\./wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 2
+			path: ../includes/class-scf-json-schema-validator.php
