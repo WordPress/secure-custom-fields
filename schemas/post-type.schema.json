@@ -2,7 +2,7 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/post-type.schema.json",
 	"title": "SCF Post Type(s)",
-	"description": "Schema for Secure Custom Fields post type definitions - accepts single object or array",
+	"description": "Schema for Secure Custom Fields post type definitions - accepts single object or array. Properties marked '[SCF Export Only]' are preserved during export but not used functionally during import.",
 	"oneOf": [
 		{
 			"description": "Single post type object",
@@ -52,20 +52,20 @@
 				"advanced_configuration": {
 					"type": "boolean",
 					"default": false,
-					"description": "[SCF] Whether advanced configuration options are enabled"
+					"description": "[SCF Export Only] Whether advanced configuration options are enabled"
 				},
 				"import_source": {
 					"type": "string",
-					"description": "[SCF] Source of import if this post type was imported"
+					"description": "[SCF Export Only] Source of import if this post type was imported"
 				},
 				"import_date": {
 					"type": "string",
-					"description": "[SCF] Date when this post type was imported"
+					"description": "[SCF Export Only] Date when this post type was imported"
 				},
 				"modified": {
 					"type": "integer",
 					"minimum": 0,
-					"description": "[SCF] Unix timestamp of last modification"
+					"description": "[SCF Export Only] Unix timestamp of last modification"
 				},
 
 				"labels": {
@@ -246,7 +246,7 @@
 					"type": "integer",
 					"minimum": 0,
 					"default": 0,
-					"description": "[SCF] The order of this post type in the admin menu"
+					"description": "[SCF Export Only] The order of this post type in the admin menu"
 				},
 				"menu_position": {
 					"type": ["integer", "string"],
@@ -396,7 +396,7 @@
 				"capabilities": {
 					"type": "object",
 					"additionalProperties": { "type": "string" },
-					"description": "Custom capabilities for this post type. Overrides default capabilities built from singular/plural capability names. Common capabilities include: edit_post, read_post, delete_post, edit_posts, edit_others_posts, publish_posts, read_private_posts, delete_posts, delete_private_posts, delete_published_posts, delete_others_posts, edit_private_posts, edit_published_posts, create_posts."
+					"description": "[SCF Not Yet Supported] Custom capabilities for this post type. This property is preserved in exports but not currently implemented during import. Currently, use the rename_capabilities system instead for custom capability names."
 				},
 				"map_meta_cap": {
 					"type": "boolean",
