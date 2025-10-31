@@ -1,4 +1,4 @@
-( function ( $, undefined ) {
+(function ($, undefined) {
 	/**
 	 *  Validator
 	 *
@@ -10,7 +10,7 @@
 	 *  @param	void
 	 *  @return	void
 	 */
-	var Validator = acf.Model.extend( {
+	var Validator = acf.Model.extend({
 		/** @var string The model identifier. */
 		id: 'Validator',
 
@@ -42,8 +42,8 @@
 		 *  @param	array errors An array of errors.
 		 *  @return	void
 		 */
-		addErrors: function ( errors ) {
-			errors.map( this.addError, this );
+		addErrors: function (errors) {
+			errors.map(this.addError, this);
 		},
 
 		/**
@@ -57,8 +57,8 @@
 		 *  @param	object error An error object containing input and message.
 		 *  @return	void
 		 */
-		addError: function ( error ) {
-			this.data.errors.push( error );
+		addError: function (error) {
+			this.data.errors.push(error);
 		},
 
 		/**
@@ -88,7 +88,7 @@
 		 *  @return	void
 		 */
 		clearErrors: function () {
-			return ( this.data.errors = [] );
+			return (this.data.errors = []);
 		},
 
 		/**
@@ -123,21 +123,21 @@
 			var inputs = [];
 
 			// loop
-			this.getErrors().map( function ( error ) {
+			this.getErrors().map(function (error) {
 				// bail early if global
-				if ( ! error.input ) return;
+				if (!error.input) return;
 
 				// update if exists
-				var i = inputs.indexOf( error.input );
-				if ( i > -1 ) {
-					errors[ i ] = error;
+				var i = inputs.indexOf(error.input);
+				if (i > -1) {
+					errors[i] = error;
 
 					// update
 				} else {
-					errors.push( error );
-					inputs.push( error.input );
+					errors.push(error);
+					inputs.push(error.input);
 				}
-			} );
+			});
 
 			// return
 			return errors;
@@ -156,9 +156,9 @@
 		 */
 		getGlobalErrors: function () {
 			// return array of errors that contain no input
-			return this.getErrors().filter( function ( error ) {
-				return ! error.input;
-			} );
+			return this.getErrors().filter(function (error) {
+				return !error.input;
+			});
 		},
 
 		/**
@@ -171,9 +171,9 @@
 		 *  @param	{string} [location=before] - The location to add the error, before or after the input. Default before. Since ACF 6.3.
 		 *  @return	void
 		 */
-		showErrors: function ( location = 'before' ) {
+		showErrors: function (location = 'before') {
 			// bail early if no errors
-			if ( ! this.hasErrors() ) {
+			if (!this.hasErrors()) {
 				return;
 			}
 
@@ -186,17 +186,17 @@
 			var $scrollTo = false;
 
 			// loop
-			fieldErrors.map( function ( error ) {
+			fieldErrors.map(function (error) {
 				// get input
-				var $input = this.$( '[name="' + error.input + '"]' ).first();
+				var $input = this.$('[name="' + error.input + '"]').first();
 
 				// if $_POST value was an array, this $input may not exist
-				if ( ! $input.length ) {
-					$input = this.$( '[name^="' + error.input + '"]' ).first();
+				if (!$input.length) {
+					$input = this.$('[name^="' + error.input + '"]').first();
 				}
 
 				// bail early if input doesn't exist
-				if ( ! $input.length ) {
+				if (!$input.length) {
 					return;
 				}
 
@@ -204,65 +204,70 @@
 				errorCount++;
 
 				// get field
-				var field = acf.getClosestField( $input );
+				var field = acf.getClosestField($input);
 
 				// make sure the postbox containing this field is not hidden by screen options
-				ensureFieldPostBoxIsVisible( field.$el );
+				ensureFieldPostBoxIsVisible(field.$el);
 
 				// show error
-				field.showError( error.message, location );
+				field.showError(error.message, location);
 
 				// set $scrollTo
-				if ( ! $scrollTo ) {
+				if (!$scrollTo) {
 					$scrollTo = field.$el;
 				}
-			}, this );
+			}, this);
 
 			// errorMessage
-			var errorMessage = acf.__( 'Validation failed' );
-			globalErrors.map( function ( error ) {
+			var errorMessage = acf.__('Validation failed');
+			globalErrors.map(function (error) {
 				errorMessage += '. ' + error.message;
-			} );
-			if ( errorCount == 1 ) {
-				errorMessage += '. ' + acf.__( '1 field requires attention' );
-			} else if ( errorCount > 1 ) {
-				errorMessage += '. ' + acf.__( '%d fields require attention' ).replace( '%d', errorCount );
+			});
+			if (errorCount == 1) {
+				errorMessage += '. ' + acf.__('1 field requires attention');
+			} else if (errorCount > 1) {
+				errorMessage +=
+					'. ' +
+					acf
+						.__('%d fields require attention')
+						.replace('%d', errorCount);
 			}
 
 			// notice
-			if ( this.has( 'notice' ) ) {
-				this.get( 'notice' ).update( {
+			if (this.has('notice')) {
+				this.get('notice').update({
 					type: 'error',
 					text: errorMessage,
-				} );
+				});
 			} else {
-				var notice = acf.newNotice( {
+				var notice = acf.newNotice({
 					type: 'error',
 					text: errorMessage,
 					target: this.$el,
-				} );
-				this.set( 'notice', notice );
+				});
+				this.set('notice', notice);
 			}
 
 			// If in a modal, don't try to scroll.
-			if ( this.$el.parents( '.acf-popup-box' ).length ) {
+			if (this.$el.parents('.acf-popup-box').length) {
 				return;
 			}
 
 			// if no $scrollTo, set to message
-			if ( ! $scrollTo ) {
-				$scrollTo = this.get( 'notice' ).$el;
+			if (!$scrollTo) {
+				$scrollTo = this.get('notice').$el;
 			}
 
 			// timeout
-			setTimeout( function () {
-				$( 'html, body' ).animate(
+			setTimeout(function () {
+				$('html, body').animate(
 					{
-						scrollTop: $scrollTo.offset().top - $( window ).height() / 2,
+						scrollTop:
+							$scrollTo.offset().top - $(window).height() / 2,
 					},
 					500
 				);
-			}, 10 );
+			}, 10);
 		},
 
 		/**
@@ -279,8 +284,8 @@
 		 *  @param	string prevValue The old status.
 		 *  @return	void
 		 */
-		onChangeStatus: function ( e, $el, value, prevValue ) {
-			this.$el.removeClass( 'is-' + prevValue ).addClass( 'is-' + value );
+		onChangeStatus: function (e, $el, value, prevValue) {
+			this.$el.removeClass('is-' + prevValue).addClass('is-' + value);
 		},
 
 		/**
@@ -294,9 +299,9 @@
 		 *  @param	object args A list of settings to customize the validation process.
 		 *  @return	bool True if the form is valid.
 		 */
-		validate: function ( args ) {
+		validate: function (args) {
 			// default args
-			args = acf.parseArgs( args, {
+			args = acf.parseArgs(args, {
 				// trigger event
 				event: false,
 
@@ -313,132 +318,137 @@
 				failure: function () {},
 
 				// success callback
-				success: function ( $form ) {
+				success: function ($form) {
 					$form.submit();
 				},
-			} );
+			});
 
 			// return true if is valid - allows form submit
-			if ( this.get( 'status' ) == 'valid' ) {
+			if (this.get('status') == 'valid') {
 				return true;
 			}
 
 			// return false if is currently validating - prevents form submit
-			if ( this.get( 'status' ) == 'validating' ) {
+			if (this.get('status') == 'validating') {
 				return false;
 			}
 
 			// return true if no ACF fields exist (no need to validate)
-			if ( ! this.$( '.acf-field' ).length ) {
+			if (!this.$('.acf-field').length) {
 				return true;
 			}
 
 			// if event is provided, create a new success callback.
-			if ( args.event ) {
-				var event = $.Event( null, args.event );
+			if (args.event) {
+				var event = $.Event(null, args.event);
 				args.success = function () {
-					acf.enableSubmit( $( event.target ) ).trigger( event );
+					acf.enableSubmit($(event.target)).trigger(event);
 				};
 			}
 
 			// action for 3rd party
-			acf.doAction( 'validation_begin', this.$el );
+			acf.doAction('validation_begin', this.$el);
 
 			// lock form
-			acf.lockForm( this.$el );
+			acf.lockForm(this.$el);
 
 			// loading callback
-			args.loading( this.$el, this );
+			args.loading(this.$el, this);
 
 			// update status
-			this.set( 'status', 'validating' );
+			this.set('status', 'validating');
 
 			// success callback
-			var onSuccess = function ( json ) {
+			var onSuccess = function (json) {
 				// validate
-				if ( ! acf.isAjaxSuccess( json ) ) {
+				if (!acf.isAjaxSuccess(json)) {
 					return;
 				}
 
 				// filter
-				var data = acf.applyFilters( 'validation_complete', json.data, this.$el, this );
+				var data = acf.applyFilters(
+					'validation_complete',
+					json.data,
+					this.$el,
+					this
+				);
 
 				// add errors
-				if ( ! data.valid ) {
-					this.addErrors( data.errors );
+				if (!data.valid) {
+					this.addErrors(data.errors);
 				}
 			};
 
 			// complete
 			var onComplete = function () {
 				// unlock form
-				acf.unlockForm( this.$el );
+				acf.unlockForm(this.$el);
 
 				// failure
-				if ( this.hasErrors() ) {
+				if (this.hasErrors()) {
 					// update status
-					this.set( 'status', 'invalid' );
+					this.set('status', 'invalid');
 
 					// action
-					acf.doAction( 'validation_failure', this.$el, this );
+					acf.doAction('validation_failure', this.$el, this);
 
 					// display errors
 					this.showErrors();
 
 					// failure callback
-					args.failure( this.$el, this );
+					args.failure(this.$el, this);
 
 					// success
 				} else {
 					// update status
-					this.set( 'status', 'valid' );
+					this.set('status', 'valid');
 
 					// remove previous error message
-					if ( this.has( 'notice' ) ) {
-						this.get( 'notice' ).update( {
+					if (this.has('notice')) {
+						this.get('notice').update({
 							type: 'success',
-							text: acf.__( 'Validation successful' ),
+							text: acf.__('Validation successful'),
 							timeout: 1000,
-						} );
+						});
 					}
 
 					// action
-					acf.doAction( 'validation_success', this.$el, this );
-					acf.doAction( 'submit', this.$el );
+					acf.doAction('validation_success', this.$el, this);
+					acf.doAction('submit', this.$el);
 
 					// success callback (submit form)
-					args.success( this.$el, this );
+					args.success(this.$el, this);
 
 					// lock form
-					acf.lockForm( this.$el );
+					acf.lockForm(this.$el);
 
 					// reset
-					if ( args.reset ) {
+					if (args.reset) {
 						this.reset();
 					}
 				}
 
 				// complete callback
-				args.complete( this.$el, this );
+				args.complete(this.$el, this);
 
 				// clear errors
 				this.clearErrors();
 			};
 
 			// serialize form data
-			var data = acf.serialize( this.$el );
+			var data = acf.serialize(this.$el);
 			data.action = 'acf/validate_save_post';
 
 			// ajax
-			$.ajax( {
-				url: acf.get( 'ajaxurl' ),
-				data: acf.prepareForAjax( data, true ),
+			$.ajax({
+				url: acf.get('ajaxurl'),
+				data: acf.prepareForAjax(data, true),
 				type: 'post',
 				dataType: 'json',
 				context: this,
 				success: onSuccess,
 				complete: onComplete,
-			} );
+			});
 
 			// return false to fail validation and allow AJAX
 			return false;
@@ -455,7 +465,7 @@
 		 *  @param	jQuery $form The form element.
 		 *  @return	void
 		 */
-		setup: function ( $form ) {
+		setup: function ($form) {
 			// set $el
 			this.$el = $form;
 		},
@@ -473,14 +483,14 @@
 		 */
 		reset: function () {
 			// reset data
-			this.set( 'errors', [] );
-			this.set( 'notice', null );
-			this.set( 'status', '' );
+			this.set('errors', []);
+			this.set('notice', null);
+			this.set('status', '');
 
 			// unlock form
-			acf.unlockForm( this.$el );
+			acf.unlockForm(this.$el);
 		},
-	} );
+	});
 
 	/**
 	 *  getValidator
@@ -493,11 +503,11 @@
 	 *  @param	jQuery $el The form element.
 	 *  @return	object
 	 */
-	var getValidator = function ( $el ) {
+	var getValidator = function ($el) {
 		// instantiate
-		var validator = $el.data( 'acf' );
-		if ( ! validator ) {
-			validator = new Validator( $el );
+		var validator = $el.data('acf');
+		if (!validator) {
+			validator = new Validator($el);
 		}
 
 		// return
@@ -512,8 +522,8 @@
 	 *  @param $el The jQuery block form wrapper element.
 	 *  @return bool
 	 */
-	acf.getBlockFormValidator = function ( $el ) {
-		return getValidator( $el );
+	acf.getBlockFormValidator = function ($el) {
+		return getValidator($el);
 	};
 
 	/**
@@ -525,8 +535,8 @@
 	 *  @param	object args A list of settings to customize the validation process.
 	 *  @return	bool
 	 */
-	acf.validateForm = function ( args ) {
-		return getValidator( args.form ).validate( args );
+	acf.validateForm = function (args) {
+		return getValidator(args.form).validate(args);
 	};
 
 	/**
@@ -540,8 +550,8 @@
 	 *  @param	jQuery $submit The submit button.
 	 *  @return	jQuery
 	 */
-	acf.enableSubmit = function ( $submit ) {
-		return $submit.removeClass( 'disabled' ).removeAttr( 'disabled' );
+	acf.enableSubmit = function ($submit) {
+		return $submit.removeClass('disabled').removeAttr('disabled');
 	};
 
 	/**
@@ -555,8 +565,8 @@
 	 *  @param	jQuery $submit The submit button.
 	 *  @return	jQuery
 	 */
-	acf.disableSubmit = function ( $submit ) {
-		return $submit.addClass( 'disabled' ).attr( 'disabled', true );
+	acf.disableSubmit = function ($submit) {
+		return $submit.addClass('disabled').attr('disabled', true);
 	};
 
 	/**
@@ -570,9 +580,9 @@
 	 *  @param	jQuery $spinner The spinner element.
 	 *  @return	jQuery
 	 */
-	acf.showSpinner = function ( $spinner ) {
-		$spinner.addClass( 'is-active' ); // add class (WP > 4.2)
-		$spinner.css( 'display', 'inline-block' ); // css (WP < 4.2)
+	acf.showSpinner = function ($spinner) {
+		$spinner.addClass('is-active'); // add class (WP > 4.2)
+		$spinner.css('display', 'inline-block'); // css (WP < 4.2)
 		return $spinner;
 	};
 
@@ -587,9 +597,9 @@
 	 *  @param	jQuery $spinner The spinner element.
 	 *  @return	jQuery
 	 */
-	acf.hideSpinner = function ( $spinner ) {
-		$spinner.removeClass( 'is-active' ); // add class (WP > 4.2)
-		$spinner.css( 'display', 'none' ); // css (WP < 4.2)
+	acf.hideSpinner = function ($spinner) {
+		$spinner.removeClass('is-active'); // add class (WP > 4.2)
+		$spinner.css('display', 'none'); // css (WP < 4.2)
 		return $spinner;
 	};
 
@@ -604,18 +614,20 @@
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
 	 */
-	acf.lockForm = function ( $form ) {
+	acf.lockForm = function ($form) {
 		// vars
-		var $wrap = findSubmitWrap( $form );
-		var $submit = $wrap.find( '.button, [type="submit"]' ).not( '.acf-nav, .acf-repeater-add-row' );
-		var $spinner = $wrap.find( '.spinner, .acf-spinner' );
+		var $wrap = findSubmitWrap($form);
+		var $submit = $wrap
+			.find('.button, [type="submit"]')
+			.not('.acf-nav, .acf-repeater-add-row');
+		var $spinner = $wrap.find('.spinner, .acf-spinner');
 
 		// hide all spinners (hides the preview spinner)
-		acf.hideSpinner( $spinner );
+		acf.hideSpinner($spinner);
 
 		// lock
-		acf.disableSubmit( $submit );
-		acf.showSpinner( $spinner.last() );
+		acf.disableSubmit($submit);
+		acf.showSpinner($spinner.last());
 		return $form;
 	};
 
@@ -630,15 +642,17 @@
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
 	 */
-	acf.unlockForm = function ( $form ) {
+	acf.unlockForm = function ($form) {
 		// vars
-		var $wrap = findSubmitWrap( $form );
-		var $submit = $wrap.find( '.button, [type="submit"]' ).not( '.acf-nav, .acf-repeater-add-row' );
-		var $spinner = $wrap.find( '.spinner, .acf-spinner' );
+		var $wrap = findSubmitWrap($form);
+		var $submit = $wrap
+			.find('.button, [type="submit"]')
+			.not('.acf-nav, .acf-repeater-add-row');
+		var $spinner = $wrap.find('.spinner, .acf-spinner');
 
 		// unlock
-		acf.enableSubmit( $submit );
-		acf.hideSpinner( $spinner );
+		acf.enableSubmit($submit);
+		acf.hideSpinner($spinner);
 		return $form;
 	};
 
@@ -653,40 +667,40 @@
 	 *  @param	jQuery $form The form element.
 	 *  @return	jQuery
 	 */
-	var findSubmitWrap = function ( $form ) {
+	var findSubmitWrap = function ($form) {
 		// default post submit div
-		var $wrap = $form.find( '#submitdiv' );
-		if ( $wrap.length ) {
+		var $wrap = $form.find('#submitdiv');
+		if ($wrap.length) {
 			return $wrap;
 		}
 
 		// 3rd party publish box
-		var $wrap = $form.find( '#submitpost' );
-		if ( $wrap.length ) {
+		var $wrap = $form.find('#submitpost');
+		if ($wrap.length) {
 			return $wrap;
 		}
 
 		// term, user
-		var $wrap = $form.find( 'p.submit' ).last();
-		if ( $wrap.length ) {
+		var $wrap = $form.find('p.submit').last();
+		if ($wrap.length) {
 			return $wrap;
 		}
 
 		// front end form
-		var $wrap = $form.find( '.acf-form-submit' );
-		if ( $wrap.length ) {
+		var $wrap = $form.find('.acf-form-submit');
+		if ($wrap.length) {
 			return $wrap;
 		}
 
 		// ACF 6.2 options page modal
-		var $wrap = $( '#acf-create-options-page-form .acf-actions' );
-		if ( $wrap.length ) {
+		var $wrap = $('#acf-create-options-page-form .acf-actions');
+		if ($wrap.length) {
 			return $wrap;
 		}
 
 		// ACF 6.0+ headerbar submit
-		var $wrap = $( '.acf-headerbar-actions' );
-		if ( $wrap.length ) {
+		var $wrap = $('.acf-headerbar-actions');
+		if ($wrap.length) {
 			return $wrap;
 		}
 
@@ -703,9 +717,9 @@
 	 * @param	type Var Description.
 	 * @return	type Description.
 	 */
-	var submitFormDebounced = acf.debounce( function ( $form ) {
+	var submitFormDebounced = acf.debounce(function ($form) {
 		$form.submit();
-	} );
+	});
 
 	/**
 	 * Ensure field is visible for validation errors
@@ -713,16 +727,16 @@
 	 * @date	20/10/2021
 	 * @since	ACF 5.11.0
 	 */
-	var ensureFieldPostBoxIsVisible = function ( $el ) {
+	var ensureFieldPostBoxIsVisible = function ($el) {
 		// Find the postbox element containing this field.
-		var $postbox = $el.parents( '.acf-postbox' );
-		if ( $postbox.length ) {
-			var acf_postbox = acf.getPostbox( $postbox );
-			if ( acf_postbox && acf_postbox.isHiddenByScreenOptions() ) {
+		var $postbox = $el.parents('.acf-postbox');
+		if ($postbox.length) {
+			var acf_postbox = acf.getPostbox($postbox);
+			if (acf_postbox && acf_postbox.isHiddenByScreenOptions()) {
 				// Rather than using .show() here, we don't want the field to appear next reload.
 				// So just temporarily show the field group so validation can complete.
-				acf_postbox.$el.removeClass( 'hide-if-js' );
-				acf_postbox.$el.css( 'display', '' );
+				acf_postbox.$el.removeClass('hide-if-js');
+				acf_postbox.$el.css('display', '');
 			}
 		}
 	};
@@ -735,13 +749,13 @@
 	 */
 	var ensureInvalidFieldVisibility = function () {
 		// Load each ACF input field and check it's browser validation state.
-		var $inputs = $( '.acf-field input' );
-		$inputs.each( function () {
-			if ( ! this.checkValidity() ) {
+		var $inputs = $('.acf-field input');
+		$inputs.each(function () {
+			if (!this.checkValidity()) {
 				// Field is invalid, so we need to make sure it's metabox is visible.
-				ensureFieldPostBoxIsVisible( $( this ) );
+				ensureFieldPostBoxIsVisible($(this));
 			}
-		} );
+		});
 	};
 
 	/**
@@ -756,7 +770,7 @@
 	 *  @return	void
 	 */
 
-	acf.validation = new acf.Model( {
+	acf.validation = new acf.Model({
 		/** @var string The model identifier. */
 		id: 'validation',
 
@@ -794,7 +808,7 @@
 		 */
 		initialize: function () {
 			// check 'validation' setting
-			if ( ! acf.get( 'validation' ) ) {
+			if (!acf.get('validation')) {
 				this.active = false;
 				this.actions = {};
 				this.events = {};
@@ -842,8 +856,8 @@
 		 *  @param	jQuery $form The form element.
 		 *  @return	void
 		 */
-		reset: function ( $form ) {
-			getValidator( $form ).reset();
+		reset: function ($form) {
+			getValidator($form).reset();
 		},
 
 		/**
@@ -857,16 +871,16 @@
 		 *  @param	jQuery $el The element being added / readied.
 		 *  @return	void
 		 */
-		addInputEvents: function ( $el ) {
+		addInputEvents: function ($el) {
 			// Bug exists in Safari where custom "invalid" handling prevents draft from saving.
-			if ( acf.get( 'browser' ) === 'safari' ) return;
+			if (acf.get('browser') === 'safari') return;
 
 			// vars
-			var $inputs = $( '.acf-field [name]', $el );
+			var $inputs = $('.acf-field [name]', $el);
 
 			// check
-			if ( $inputs.length ) {
-				this.on( $inputs, 'invalid', 'onInvalid' );
+			if ($inputs.length) {
+				this.on($inputs, 'invalid', 'onInvalid');
 			}
 		},
 
@@ -882,26 +896,26 @@
 		 *  @param	jQuery $el The input element.
 		 *  @return	void
 		 */
-		onInvalid: function ( e, $el ) {
+		onInvalid: function (e, $el) {
 			// prevent default
 			// - prevents browser error message
 			// - also fixes chrome bug where 'hidden-by-tab' field throws focus error
 			e.preventDefault();
 
 			// vars
-			var $form = $el.closest( 'form' );
+			var $form = $el.closest('form');
 
 			// check form exists
-			if ( $form.length ) {
+			if ($form.length) {
 				// add error to validator
-				getValidator( $form ).addError( {
-					input: $el.attr( 'name' ),
-					message: acf.strEscape( e.target.validationMessage ),
-				} );
+				getValidator($form).addError({
+					input: $el.attr('name'),
+					message: acf.strEscape(e.target.validationMessage),
+				});
 
 				// trigger submit on $form
 				// - allows for "save", "preview" and "publish" to work
-				submitFormDebounced( $form );
+				submitFormDebounced($form);
 			}
 		},
 
@@ -917,13 +931,13 @@
 		 *  @param	jQuery $el The input element.
 		 *  @return	void
 		 */
-		onClickSubmit: function ( e, $el ) {
+		onClickSubmit: function (e, $el) {
 			// Some browsers (safari) force their browser validation before our AJAX validation,
 			// so we need to make sure fields are visible earlier than showErrors()
 			ensureInvalidFieldVisibility();
 
 			// store the "click event" for later use in this.onSubmit()
-			this.set( 'originalEvent', e );
+			this.set('originalEvent', e);
 		},
 
 		/**
@@ -938,8 +952,8 @@
 		 *  @param	jQuery $el The input element.
 		 *  @return	void
 		 */
-		onClickSave: function ( e, $el ) {
-			this.set( 'ignore', true );
+		onClickSave: function (e, $el) {
+			this.set('ignore', true);
 		},
 
 		/**
@@ -954,14 +968,14 @@
 		 * @param	jQuery $el The input element.
 		 * @return	void
 		 */
-		onSubmitPost: function ( e, $el ) {
+		onSubmitPost: function (e, $el) {
 			// Check if is preview.
-			if ( $( 'input#wp-preview' ).val() === 'dopreview' ) {
+			if ($('input#wp-preview').val() === 'dopreview') {
 				// Ignore validation.
-				this.set( 'ignore', true );
+				this.set('ignore', true);
 
 				// Unlock form to fix conflict with core "submit.edit-post" event causing all submit buttons to be disabled.
-				acf.unlockForm( $el );
+				acf.unlockForm($el);
 			}
 		},
 
@@ -977,13 +991,13 @@
 		 *  @param	jQuery $el The input element.
 		 *  @return	void
 		 */
-		onSubmit: function ( e, $el ) {
+		onSubmit: function (e, $el) {
 			// Allow form to submit if...
 			if (
 				// Validation has been disabled.
-				! this.active ||
+				!this.active ||
 				// Or this event is to be ignored.
-				this.get( 'ignore' ) ||
+				this.get('ignore') ||
 				// Or this event has already been prevented.
 				e.isDefaultPrevented()
 			) {
@@ -992,13 +1006,13 @@
 			}
 
 			// Validate form.
-			var valid = acf.validateForm( {
+			var valid = acf.validateForm({
 				form: $el,
-				event: this.get( 'originalEvent' ),
-			} );
+				event: this.get('originalEvent'),
+			});
 
 			// If not valid, stop event to prevent form submit.
-			if ( ! valid ) {
+			if (!valid) {
 				e.preventDefault();
 			}
 		},
@@ -1016,21 +1030,21 @@
 		 */
 		allowSubmit: function () {
 			// Reset "ignore" state.
-			this.set( 'ignore', false );
+			this.set('ignore', false);
 
 			// Reset "originalEvent" object.
-			this.set( 'originalEvent', false );
+			this.set('originalEvent', false);
 
 			// Return true
 			return true;
 		},
-	} );
+	});
 
-	var gutenbergValidation = new acf.Model( {
+	var gutenbergValidation = new acf.Model({
 		wait: 'prepare',
 		initialize: function () {
 			// Bail early if not Gutenberg.
-			if ( ! acf.isGutenberg() ) {
+			if (!acf.isGutenberg()) {
 				return;
 			}
 
@@ -1039,9 +1053,9 @@
 		},
 		customizeEditor: function () {
 			// Extract vars.
-			var editor = wp.data.dispatch( 'core/editor' );
-			var editorSelect = wp.data.select( 'core/editor' );
-			var notices = wp.data.dispatch( 'core/notices' );
+			var editor = wp.data.dispatch('core/editor');
+			var editorSelect = wp.data.select('core/editor');
+			var notices = wp.data.dispatch('core/notices');
 
 			// Backup original method.
 			var savePost = editor.savePost;
@@ -1051,14 +1065,16 @@
 			// b) Remember last non "publish" status used for restoring after validation fail.
 			var useValidation = false;
 			var lastPostStatus = '';
-			wp.data.subscribe( function () {
-				var postStatus = editorSelect.getEditedPostAttribute( 'status' );
-				useValidation = postStatus === 'publish' || postStatus === 'future';
-				lastPostStatus = postStatus !== 'publish' ? postStatus : lastPostStatus;
-			} );
+			wp.data.subscribe(function () {
+				var postStatus = editorSelect.getEditedPostAttribute('status');
+				useValidation =
+					postStatus === 'publish' || postStatus === 'future';
+				lastPostStatus =
+					postStatus !== 'publish' ? postStatus : lastPostStatus;
+			});
 
 			// Create validation version.
-			editor.savePost = function ( options ) {
+			editor.savePost = function (options) {
 				options = options || {};
 
 				// Backup vars.
@@ -1066,97 +1082,216 @@
 				var _args = arguments;
 
 				// Perform validation within a Promise.
-				return new Promise( function ( resolve, reject ) {
+				return new Promise(function (resolve, reject) {
 					// Bail early if is autosave or preview.
-					if ( options.isAutosave || options.isPreview ) {
-						return resolve( 'Validation ignored (autosave).' );
+					if (options.isAutosave || options.isPreview) {
+						return resolve('Validation ignored (autosave).');
 					}
 
 					// Bail early if validation is not needed.
-					if ( ! useValidation ) {
-						return resolve( 'Validation ignored (draft).' );
+					if (!useValidation) {
+						return resolve('Validation ignored (draft).');
 					}
 
 					// Check if we've currently got an ACF block selected which is failing validation, but might not be presented yet.
-					if ( 'undefined' !== typeof acf.blockInstances ) {
-						const selectedBlockId = wp.data.select( 'core/block-editor' ).getSelectedBlockClientId();
+					if ('undefined' !== typeof acf.blockInstances) {
+						const selectedBlockId = wp.data
+							.select('core/block-editor')
+							.getSelectedBlockClientId();
 
-						if ( selectedBlockId && selectedBlockId in acf.blockInstances ) {
-							const acfBlockState = acf.blockInstances[ selectedBlockId ];
+						if (
+							selectedBlockId &&
+							selectedBlockId in acf.blockInstances
+						) {
+							const acfBlockState =
+								acf.blockInstances[selectedBlockId];
 
-							if ( acfBlockState.validation_errors ) {
+							if (acfBlockState.validation_errors) {
 								// Deselect the block to show the error and lock the save.
 								acf.debug(
 									'Rejecting save because the block editor has a invalid ACF block selected.'
 								);
 								notices.createErrorNotice(
-									acf.__( 'An ACF Block on this page requires attention before you can save.' ),
+									acf.__(
+										'An ACF Block on this page requires attention before you can save.'
+									),
 									{
 										id: 'acf-validation',
 										isDismissible: true,
 									}
 								);
 
-								wp.data.dispatch( 'core/editor' ).lockPostSaving( 'acf/block/' + selectedBlockId );
-								wp.data.dispatch( 'core/block-editor' ).selectBlock( false );
+								wp.data
+									.dispatch('core/editor')
+									.lockPostSaving(
+										'acf/block/' + selectedBlockId
+									);
+								wp.data
+									.dispatch('core/block-editor')
+									.selectBlock(false);
 
-								return reject( 'ACF Validation failed for selected block.' );
+								return reject(
+									'ACF Validation failed for selected block.'
+								);
 							}
 						}
 					}
 
-					// Validate the editor form.
-					var valid = acf.validateForm( {
-						form: $( '#editor' ),
-						reset: true,
-						complete: function ( $form, validator ) {
-							// Always unlock the form after AJAX.
-							editor.unlockPostSaving( 'acf' );
-						},
-						failure: function ( $form, validator ) {
-							// Get validation error and append to Gutenberg notices.
-							var notice = validator.get( 'notice' );
-							notices.createErrorNotice( notice.get( 'text' ), {
-								id: 'acf-validation',
-								isDismissible: true,
-							} );
-							notice.remove();
+					// Recursive function to check all blocks (including nested innerBlocks) for ACF validation errors
+					function checkBlocksForErrors(blocks) {
+						return new Promise(function (resolve) {
+							// Iterate through each block
+							blocks.forEach((block) => {
+								// If this block has nested blocks, recursively check them
+								if (block.innerBlocks.length > 0) {
+									checkBlocksForErrors(
+										block.innerBlocks
+									).then((hasError) => {
+										if (hasError) {
+											return resolve(true);
+										}
+									});
+								}
 
+								// Check if this block has an ACF error attribute
+								if (block.attributes.hasAcfError) {
+									// Check if the publish panel is open and close it if so
+									const publishPanel =
+										document.getElementsByClassName(
+											'editor-post-publish-panel'
+										)[0];
+									if (publishPanel) {
+										wp.data
+											.dispatch('core/editor')
+											.togglePublishSidebar();
+									}
+
+									// Get the block's client ID
+									const blockClientId = block.clientId;
+
+									// Select the block with the error in the editor
+									wp.data
+										.dispatch('core/block-editor')
+										.selectBlock(blockClientId);
+
+									// Dispatch a custom event to notify about the block with validation error
+									document.dispatchEvent(
+										new CustomEvent('acf/block/has-error', {
+											acfBlocksWithValidationErrors: [
+												block,
+											],
+										})
+									);
+
+									// Log debug message
+									acf.debug(
+										'Rejecting save because the block editor has a invalid ACF block selected.'
+									);
+
+									// Resolve with true (error found)
+									return resolve(true);
+								}
+							});
+
+							// No errors found, resolve with false
+							return resolve(false);
+						});
+					}
+
+					// Call the function with all blocks from the editor
+					checkBlocksForErrors(
+						wp.data.select('core/block-editor').getBlocks()
+					).then((hasError) => {
+						// If errors were found
+						if (hasError) {
+							// Display an error notice
+							noticesDispatch.createErrorNotice(
+								acf.__(
+									'An ACF Block on this page requires attention before you can save.'
+								),
+								{
+									id: 'acf-blocks-validation',
+									isDismissible: true,
+								}
+							);
+
+							// Reject the save operation
+							return reject('ACF Block Validation failed');
+						}
+					});
+
+					// Validate the editor form.
+					var valid = acf.validateForm({
+						form: $('#wpbody-content > .block-editor'),
+						reset: true,
+						complete: function ($form, validator) {
+							// Always unlock the form after AJAX.
+							editor.unlockPostSaving('acf');
+						},
+						failure: function ($form, validator) {
+							// Get validation error and append to Gutenberg notices.
+							var notice = validator.get('notice');
+							var action = validator.get('action');
+							if (
+								action &&
+								'object' === typeof action &&
+								action.label &&
+								action.url
+							) {
+								notices.createErrorNotice(
+									notice.get('text', {
+										id: 'acf-validation',
+										isDismissible: true,
+										actions: [
+											{
+												label: action.label,
+												url: action.url,
+											},
+										],
+									})
+								);
+							} else {
+								notices.createErrorNotice(notice.get('text'), {
+									id: 'acf-validation',
+									isDismissible: true,
+								});
+							}
+							notice.remove();
 							// Restore last non "publish" status.
-							if ( lastPostStatus ) {
-								editor.editPost( {
+							if (lastPostStatus) {
+								editor.editPost({
 									status: lastPostStatus,
-								} );
+								});
 							}
 
 							// Reject promise and prevent savePost().
-							reject( 'Validation failed.' );
+							reject('Validation failed.');
 						},
 						success: function () {
-							notices.removeNotice( 'acf-validation' );
+							notices.removeNotice('acf-validation');
 
 							// Resolve promise and allow savePost().
-							resolve( 'Validation success.' );
+							resolve('Validation success.');
 						},
-					} );
+					});
 
 					// Resolve promise and allow savePost() if no validation is needed.
-					if ( valid ) {
-						resolve( 'Validation bypassed.' );
+					if (valid) {
+						resolve('Validation bypassed.');
 
 						// Otherwise, lock the form and wait for AJAX response.
 					} else {
-						editor.lockPostSaving( 'acf' );
+						editor.lockPostSaving('acf');
 					}
-				} ).then(
+				}).then(
 					function () {
-						return savePost.apply( _this, _args );
+						return savePost.apply(_this, _args);
 					},
-					( err ) => {
+					(err) => {
 						// Nothing to do here, user is alerted of validation issues.
 					}
 				);
 			};
 		},
-	} );
-} )( jQuery );
+	});
+})(jQuery);
