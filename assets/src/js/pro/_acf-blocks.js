@@ -1656,7 +1656,12 @@ const md5 = require( 'md5' );
 		// Register block types.
 		const blockTypes = acf.get( 'blockTypes' );
 		if ( blockTypes ) {
-			blockTypes.map( registerBlockType );
+			// Only register blocks with version < 3 (v3 blocks are registered separately).
+			blockTypes
+				.filter(
+					( blockType ) => parseInt( blockType.acf_block_version ) < 3
+				)
+				.map( registerBlockType );
 		}
 	}
 

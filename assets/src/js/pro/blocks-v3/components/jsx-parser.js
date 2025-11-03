@@ -5,7 +5,7 @@
 
 import jQuery from 'jquery';
 
-const { jsx, createElement, createRef, Component } = wp.element;
+const { createElement, createRef, Component } = wp.element;
 const useInnerBlocksProps =
 	wp.blockEditor.__experimentalUseInnerBlocksProps ||
 	wp.blockEditor.useInnerBlocksProps;
@@ -27,7 +27,7 @@ function getJSXNameReplacement(attrName) {
  */
 class ScriptComponent extends Component {
 	render() {
-		return jsx('div', { ref: (element) => (this.el = element) });
+		return createElement('div', { ref: (element) => (this.el = element) });
 	}
 
 	setHTML(scriptContent) {
@@ -74,7 +74,7 @@ function ACFInnerBlocksComponent(props) {
 	const { className = 'acf-innerblocks-container' } = props;
 	const innerBlocksProps = useInnerBlocksProps({ className }, props);
 
-	return jsx('div', {
+	return createElement('div', {
 		...innerBlocksProps,
 		children: innerBlocksProps.children,
 	});
@@ -176,7 +176,7 @@ function parseNodeToJSX(node, depth = 0) {
 
 	// Handle special ACFInnerBlocks component
 	if (componentType === 'ACFInnerBlocks') {
-		return jsx(ACFInnerBlocksComponent, { ...props });
+		return createElement(ACFInnerBlocksComponent, { ...props });
 	}
 
 	// Build element array: [type, props, ...children]
