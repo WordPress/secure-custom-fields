@@ -22,8 +22,10 @@ const BlockAlignmentMatrixToolbar =
  * @param {string} alignment - Alignment value
  * @returns {string} - Normalized alignment (top, center, or bottom)
  */
-const normalizeVerticalAlignment = (alignment) => {
-	return ['top', 'center', 'bottom'].includes(alignment) ? alignment : 'top';
+const normalizeVerticalAlignment = ( alignment ) => {
+	return [ 'top', 'center', 'bottom' ].includes( alignment )
+		? alignment
+		: 'top';
 };
 
 /**
@@ -32,9 +34,9 @@ const normalizeVerticalAlignment = (alignment) => {
  * @param {string} alignment - Current alignment value
  * @returns {string} - Normalized alignment value (left, center, or right)
  */
-const getDefaultHorizontalAlignment = (alignment) => {
-	const defaultAlign = acf.get('rtl') ? 'right' : 'left';
-	return ['left', 'center', 'right'].includes(alignment)
+const getDefaultHorizontalAlignment = ( alignment ) => {
+	const defaultAlign = acf.get( 'rtl' ) ? 'right' : 'left';
+	return [ 'left', 'center', 'right' ].includes( alignment )
 		? alignment
 		: defaultAlign;
 };
@@ -46,10 +48,12 @@ const getDefaultHorizontalAlignment = (alignment) => {
  * @param {string} alignment - Alignment value
  * @returns {string} - Normalized matrix alignment
  */
-const normalizeMatrixAlignment = (alignment) => {
-	if (alignment) {
-		const [vertical, horizontal] = alignment.split(' ');
-		return `${normalizeVerticalAlignment(vertical)} ${getDefaultHorizontalAlignment(horizontal)}`;
+const normalizeMatrixAlignment = ( alignment ) => {
+	if ( alignment ) {
+		const [ vertical, horizontal ] = alignment.split( ' ' );
+		return `${ normalizeVerticalAlignment(
+			vertical
+		) } ${ getDefaultHorizontalAlignment( horizontal ) }`;
 	}
 	return 'center center';
 };
@@ -62,7 +66,7 @@ const normalizeMatrixAlignment = (alignment) => {
  * @param {Object} blockConfig - ACF block configuration
  * @returns {React.Component} - Enhanced component with content alignment controls
  */
-export const withAlignContent = (BlockComponent, blockConfig) => {
+export const withAlignContent = ( BlockComponent, blockConfig ) => {
 	let AlignmentControl;
 	let normalizeAlignment;
 
@@ -82,12 +86,12 @@ export const withAlignContent = (BlockComponent, blockConfig) => {
 	}
 
 	// If alignment control is not available, return original component
-	if (AlignmentControl === undefined) {
+	if ( AlignmentControl === undefined ) {
 		return BlockComponent;
 	}
 
 	// Set default alignment on block config
-	blockConfig.alignContent = normalizeAlignment(blockConfig.alignContent);
+	blockConfig.alignContent = normalizeAlignment( blockConfig.alignContent );
 
 	return class extends Component {
 		render() {
@@ -98,17 +102,17 @@ export const withAlignContent = (BlockComponent, blockConfig) => {
 				<Fragment>
 					<BlockControls group="block">
 						<AlignmentControl
-							label={acf.__('Change content alignment')}
-							value={normalizeAlignment(alignContent)}
-							onChange={function (newAlignment) {
-								setAttributes({
+							label={ acf.__( 'Change content alignment' ) }
+							value={ normalizeAlignment( alignContent ) }
+							onChange={ function ( newAlignment ) {
+								setAttributes( {
 									alignContent:
-										normalizeAlignment(newAlignment),
-								});
-							}}
+										normalizeAlignment( newAlignment ),
+								} );
+							} }
 						/>
 					</BlockControls>
-					<BlockComponent {...this.props} />
+					<BlockComponent { ...this.props } />
 				</Fragment>
 			);
 		}

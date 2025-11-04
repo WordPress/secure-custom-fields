@@ -23,7 +23,7 @@ import { lockPostSaving, unlockPostSaving } from '../utils/post-locking';
  * @param {Object} props.attributes - Block attributes
  * @returns {JSX.Element} - Rendered form component
  */
-export const BlockForm = ({
+export const BlockForm = ( {
 	$,
 	clientId,
 	blockFormHtml,
@@ -34,110 +34,118 @@ export const BlockForm = ({
 	acfFormRef,
 	userHasInteractedWithForm,
 	attributes,
-}) => {
-	const [formHtml, setFormHtml] = useState(blockFormHtml);
-	const [pendingChange, setPendingChange] = useState(false);
-	const debounceTimer = useRef(null);
-	const [userInteracted, setUserInteracted] = useState(false);
+} ) => {
+	const [ formHtml, setFormHtml ] = useState( blockFormHtml );
+	const [ pendingChange, setPendingChange ] = useState( false );
+	const debounceTimer = useRef( null );
+	const [ userInteracted, setUserInteracted ] = useState( false );
 
 	// Call onMount when component first mounts
-	useEffect(() => {
+	useEffect( () => {
 		onMount();
-	}, []);
+	}, [] );
 
 	// Trigger onChange when there's a pending change and user has interacted
-	useEffect(() => {
-		if (pendingChange && (userHasInteractedWithForm || userInteracted)) {
-			onChange(pendingChange);
-			setPendingChange(false);
+	useEffect( () => {
+		if (
+			pendingChange &&
+			( userHasInteractedWithForm || userInteracted )
+		) {
+			onChange( pendingChange );
+			setPendingChange( false );
 		}
-	}, [pendingChange, userHasInteractedWithForm, setPendingChange, onChange]);
+	}, [
+		pendingChange,
+		userHasInteractedWithForm,
+		setPendingChange,
+		onChange,
+	] );
 
 	// Update form HTML when blockFormHtml prop changes
-	useEffect(() => {
-		if (!formHtml && blockFormHtml) {
-			setFormHtml(blockFormHtml);
+	useEffect( () => {
+		if ( ! formHtml && blockFormHtml ) {
+			setFormHtml( blockFormHtml );
 		}
-	}, [blockFormHtml]);
+	}, [ blockFormHtml ] );
 
 	// Handle validation errors
-	useEffect(() => {
-		if (!acfFormRef?.current) return;
+	useEffect( () => {
+		if ( ! acfFormRef?.current ) return;
 
 		const validator = acf.getBlockFormValidator(
-			$(acfFormRef.current).find('.acf-block-fields')
+			$( acfFormRef.current ).find( '.acf-block-fields' )
 		);
 
 		validator.clearErrors();
-		validator.set('notice', null);
+		validator.set( 'notice', null );
 
-		acf.doAction('blocks/validation/pre_apply', validationErrors);
+		acf.doAction( 'blocks/validation/pre_apply', validationErrors );
 
-		if (validationErrors) {
-			if (showValidationErrors) {
-				lockPostSaving(clientId);
-				validator.$el.find('.acf-notice').remove();
-				validator.addErrors(validationErrors);
-				validator.showErrors('after');
+		if ( validationErrors ) {
+			if ( showValidationErrors ) {
+				lockPostSaving( clientId );
+				validator.$el.find( '.acf-notice' ).remove();
+				validator.addErrors( validationErrors );
+				validator.showErrors( 'after' );
 			}
 		} else {
 			// Handle successful validation
 			if (
-				validator.$el.find('.acf-notice').length > 0 &&
+				validator.$el.find( '.acf-notice' ).length > 0 &&
 				showValidationErrors
 			) {
-				validator.$el.find('.acf-notice').remove();
-				validator.addErrors([
-					{ message: acf.__('Validation successful') },
-				]);
-				validator.showErrors('after');
-				validator.get('notice').update({
+				validator.$el.find( '.acf-notice' ).remove();
+				validator.addErrors( [
+					{ message: acf.__( 'Validation successful' ) },
+				] );
+				validator.showErrors( 'after' );
+				validator.get( 'notice' ).update( {
 					type: 'success',
-					text: acf.__('Validation successful'),
+					text: acf.__( 'Validation successful' ),
 					timeout: 1000,
-				});
-				validator.set('notice', null);
+				} );
+				validator.set( 'notice', null );
 
-				setTimeout(() => {
-					validator.$el.find('.acf-notice').remove();
-				}, 1001);
+				setTimeout( () => {
+					validator.$el.find( '.acf-notice' ).remove();
+				}, 1001 );
 
-				const noticeDispatch = wp.data.dispatch('core/notices');
+				const noticeDispatch = wp.data.dispatch( 'core/notices' );
 
 				/**
 				 * Recursively checks for ACF errors in blocks
 				 * @param {Array} blocks - Array of block objects
 				 * @returns {Promise<boolean>} - True if error found
 				 */
-				function checkForErrors(blocks) {
-					return new Promise(function (resolve) {
-						blocks.forEach((block) => {
-							if (block.innerBlocks.length > 0) {
-								checkForErrors(block.innerBlocks).then(
-									(hasError) => {
-										if (hasError) return resolve(true);
+				function checkForErrors( blocks ) {
+					return new Promise( function ( resolve ) {
+						blocks.forEach( ( block ) => {
+							if ( block.innerBlocks.length > 0 ) {
+								checkForErrors( block.innerBlocks ).then(
+									( hasError ) => {
+										if ( hasError ) return resolve( true );
 									}
 								);
 							}
 
-							if (block.attributes.hasAcfError) {
+							if ( block.attributes.hasAcfError ) {
 								const errorBlockClientId = block.clientId;
-								if (errorBlockClientId !== clientId) {
+								if ( errorBlockClientId !== clientId ) {
 									wp.data
-										.dispatch('core/block-editor')
-										.selectBlock(errorBlockClientId);
-									return resolve(true);
+										.dispatch( 'core/block-editor' )
+										.selectBlock( errorBlockClientId );
+									return resolve( true );
 								}
 							}
-						});
-						return resolve(false);
-					});
+						} );
+						return resolve( false );
+					} );
 				}
 
 				checkForErrors(
-					wp.data.select('core/block-editor').getBlocks()
-				).then((hasError) => {
-					if (hasError) {
+					wp.data.select( 'core/block-editor' ).getBlocks()
+				).then( ( hasError ) => {
+					if ( hasError ) {
 						noticeDispatch.createErrorNotice(
 							acf.__(
 								'An ACF Block on this page requires attention before you can save.'
@@ -145,67 +153,67 @@ export const BlockForm = ({
 							{ id: 'acf-blocks-validation', isDismissible: true }
 						);
 					} else {
-						noticeDispatch.removeNotice('acf-blocks-validation');
+						noticeDispatch.removeNotice( 'acf-blocks-validation' );
 					}
-				});
+				} );
 			}
 
-			unlockPostSaving(clientId);
+			unlockPostSaving( clientId );
 		}
 
-		acf.doAction('blocks/validation/post_apply', validationErrors);
-	}, [validationErrors, clientId, showValidationErrors]);
+		acf.doAction( 'blocks/validation/post_apply', validationErrors );
+	}, [ validationErrors, clientId, showValidationErrors ] );
 
 	// Handle form remounting and change detection
-	useEffect(() => {
-		if (!acfFormRef?.current || !formHtml) return;
+	useEffect( () => {
+		if ( ! acfFormRef?.current || ! formHtml ) return;
 
-		acf.debug('Remounting ACF Form');
+		acf.debug( 'Remounting ACF Form' );
 
 		const formElement = acfFormRef.current;
-		const $form = $(formElement);
+		const $form = $( formElement );
 		let isActive = true;
 
-		acf.doAction('remount', $form);
+		acf.doAction( 'remount', $form );
 
 		const handleChange = () => {
-			onChange($form);
+			onChange( $form );
 		};
 
 		const scheduleChange = () => {
-			if (!isActive) return;
+			if ( ! isActive ) return;
 
-			const inputs = formElement.querySelectorAll('input, textarea');
-			const selects = formElement.querySelectorAll('select');
+			const inputs = formElement.querySelectorAll( 'input, textarea' );
+			const selects = formElement.querySelectorAll( 'select' );
 
-			inputs.forEach((input) => {
-				input.removeEventListener('input', handleChange);
-				input.addEventListener('input', handleChange);
-			});
+			inputs.forEach( ( input ) => {
+				input.removeEventListener( 'input', handleChange );
+				input.addEventListener( 'input', handleChange );
+			} );
 
-			selects.forEach((select) => {
-				select.removeEventListener('change', handleChange);
-				select.addEventListener('change', handleChange);
-			});
+			selects.forEach( ( select ) => {
+				select.removeEventListener( 'change', handleChange );
+				select.addEventListener( 'change', handleChange );
+			} );
 
-			clearTimeout(debounceTimer.current);
-			debounceTimer.current = setTimeout(() => {
-				if (isActive) {
-					setPendingChange($form);
+			clearTimeout( debounceTimer.current );
+			debounceTimer.current = setTimeout( () => {
+				if ( isActive ) {
+					setPendingChange( $form );
 				}
-			}, 200);
+			}, 200 );
 		};
 
 		// Observe DOM changes to detect field additions/removals
-		const domObserver = new MutationObserver(scheduleChange);
+		const domObserver = new MutationObserver( scheduleChange );
 
 		// Observe iframe content changes (for WYSIWYG editors)
-		const iframeObserver = new MutationObserver(() => {
-			if (isActive) {
-				setUserInteracted(true);
+		const iframeObserver = new MutationObserver( () => {
+			if ( isActive ) {
+				setUserInteracted( true );
 				scheduleChange();
 			}
-		});
+		} );
 
 		const observerConfig = {
 			attributes: true,
@@ -214,55 +222,63 @@ export const BlockForm = ({
 			characterData: true,
 		};
 
-		domObserver.observe(formElement, observerConfig);
+		domObserver.observe( formElement, observerConfig );
 
 		// Watch for changes in iframes (WYSIWYG fields)
-		[...formElement.querySelectorAll('iframe')].forEach((iframe) => {
-			if (iframe && iframe.contentDocument) {
+		[ ...formElement.querySelectorAll( 'iframe' ) ].forEach( ( iframe ) => {
+			if ( iframe && iframe.contentDocument ) {
 				const iframeBody = iframe.contentDocument.body;
-				if (iframeBody) {
-					iframeObserver.observe(iframeBody, observerConfig);
+				if ( iframeBody ) {
+					iframeObserver.observe( iframeBody, observerConfig );
 				}
 			}
-		});
+		} );
 
 		// Attach event listeners to form inputs
-		formElement.querySelectorAll('input, textarea').forEach((input) => {
-			input.addEventListener('input', handleChange);
-		});
+		formElement
+			.querySelectorAll( 'input, textarea' )
+			.forEach( ( input ) => {
+				input.addEventListener( 'input', handleChange );
+			} );
 
-		formElement.querySelectorAll('select').forEach((select) => {
-			select.addEventListener('change', handleChange);
-		});
+		formElement.querySelectorAll( 'select' ).forEach( ( select ) => {
+			select.addEventListener( 'change', handleChange );
+		} );
 
 		// Cleanup function
 		return () => {
 			isActive = false;
 			domObserver.disconnect();
 			iframeObserver.disconnect();
-			clearTimeout(debounceTimer.current);
+			clearTimeout( debounceTimer.current );
 
-			if (formElement) {
+			if ( formElement ) {
 				formElement
-					.querySelectorAll('input, textarea')
-					.forEach((input) => {
-						input.removeEventListener('input', handleChange);
-					});
+					.querySelectorAll( 'input, textarea' )
+					.forEach( ( input ) => {
+						input.removeEventListener( 'input', handleChange );
+					} );
 
-				formElement.querySelectorAll('select').forEach((select) => {
-					select.removeEventListener('change', handleChange);
-				});
+				formElement
+					.querySelectorAll( 'select' )
+					.forEach( ( select ) => {
+						select.removeEventListener( 'change', handleChange );
+					} );
 			}
 		};
-	}, [acfFormRef, attributes, formHtml]);
+	}, [ acfFormRef, attributes, formHtml ] );
 
 	return (
 		<div
-			ref={acfFormRef}
+			ref={ acfFormRef }
 			className="acf-block-component acf-block-panel"
-			dangerouslySetInnerHTML={{
-				__html: acf.applyFilters('blocks/form/render', formHtml, true),
-			}}
+			dangerouslySetInnerHTML={ {
+				__html: acf.applyFilters(
+					'blocks/form/render',
+					formHtml,
+					true
+				),
+			} }
 		/>
 	);
 };

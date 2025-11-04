@@ -2,7 +2,7 @@
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 6.8.3
 Requires PHP: 7.4
 Stable tag: 6.5.7
 License: GPLv2 or later

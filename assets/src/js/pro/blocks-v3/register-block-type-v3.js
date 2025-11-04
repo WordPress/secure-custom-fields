@@ -25,8 +25,8 @@ const registeredBlocks = {};
  * @param {string} attributeType - Type of the attribute (string, boolean, etc.)
  * @returns {Object} - Updated attributes object
  */
-const addAttribute = (attributes, attributeName, attributeType) => {
-	attributes[attributeName] = { type: attributeType };
+const addAttribute = ( attributes, attributeName, attributeType ) => {
+	attributes[ attributeName ] = { type: attributeType };
 	return attributes;
 };
 
@@ -36,15 +36,15 @@ const addAttribute = (attributes, attributeName, attributeType) => {
  * @param {Object} blockConfig - Block configuration
  * @returns {boolean} - True if block should be registered
  */
-function shouldRegisterBlock(blockConfig) {
+function shouldRegisterBlock( blockConfig ) {
 	const allowedPostTypes = blockConfig.post_types || [];
 
-	if (allowedPostTypes.length) {
+	if ( allowedPostTypes.length ) {
 		// Always allow in reusable blocks
-		allowedPostTypes.push('wp_block');
+		allowedPostTypes.push( 'wp_block' );
 
-		const currentPostType = acf.get('postType');
-		if (!allowedPostTypes.includes(currentPostType)) {
+		const currentPostType = acf.get( 'postType' );
+		if ( ! allowedPostTypes.includes( currentPostType ) ) {
 			return false;
 		}
 	}
@@ -57,20 +57,20 @@ function shouldRegisterBlock(blockConfig) {
  *
  * @param {Object} blockConfig - Block configuration
  */
-function processBlockIcon(blockConfig) {
+function processBlockIcon( blockConfig ) {
 	// Convert SVG string to JSX element
 	if (
 		typeof blockConfig.icon === 'string' &&
-		blockConfig.icon.substr(0, 4) === '<svg'
+		blockConfig.icon.substr( 0, 4 ) === '<svg'
 	) {
 		const iconSvg = blockConfig.icon;
 		blockConfig.icon = (
-			<div dangerouslySetInnerHTML={{ __html: iconSvg }} />
+			<div dangerouslySetInnerHTML={ { __html: iconSvg } } />
 		);
 	}
 
 	// Remove icon if empty/invalid
-	if (!blockConfig.icon) {
+	if ( ! blockConfig.icon ) {
 		delete blockConfig.icon;
 	}
 }
@@ -81,13 +81,13 @@ function processBlockIcon(blockConfig) {
  *
  * @param {Object} blockConfig - Block configuration
  */
-function validateBlockCategory(blockConfig) {
+function validateBlockCategory( blockConfig ) {
 	const categoryExists = wp.blocks
 		.getCategories()
-		.filter(({ slug }) => slug === blockConfig.category)
+		.filter( ( { slug } ) => slug === blockConfig.category )
 		.pop();
 
-	if (!categoryExists) {
+	if ( ! categoryExists ) {
 		blockConfig.category = 'common';
 	}
 }
@@ -98,8 +98,8 @@ function validateBlockCategory(blockConfig) {
  * @param {Object} blockConfig - Block configuration
  * @returns {Object} - Block configuration with defaults applied
  */
-function applyBlockDefaults(blockConfig) {
-	return acf.parseArgs(blockConfig, {
+function applyBlockDefaults( blockConfig ) {
+	return acf.parseArgs( blockConfig, {
 		title: '',
 		name: '',
 		category: '',
@@ -107,7 +107,7 @@ function applyBlockDefaults(blockConfig) {
 		acf_block_version: 3,
 		attributes: {},
 		supports: {},
-	});
+	} );
 }
 
 /**
@@ -116,13 +116,13 @@ function applyBlockDefaults(blockConfig) {
  *
  * @param {Object} blockConfig - Block configuration
  */
-function cleanBlockAttributes(blockConfig) {
-	for (const attributeName in blockConfig.attributes) {
+function cleanBlockAttributes( blockConfig ) {
+	for ( const attributeName in blockConfig.attributes ) {
 		if (
-			'default' in blockConfig.attributes[attributeName] &&
-			blockConfig.attributes[attributeName].default.length === 0
+			'default' in blockConfig.attributes[ attributeName ] &&
+			blockConfig.attributes[ attributeName ].default.length === 0
 		) {
-			delete blockConfig.attributes[attributeName].default;
+			delete blockConfig.attributes[ attributeName ].default;
 		}
 	}
 }
@@ -132,8 +132,8 @@ function cleanBlockAttributes(blockConfig) {
  *
  * @param {Object} blockConfig - Block configuration
  */
-function configureAnchorSupport(blockConfig) {
-	if (blockConfig.supports && blockConfig.supports.anchor) {
+function configureAnchorSupport( blockConfig ) {
+	if ( blockConfig.supports && blockConfig.supports.anchor ) {
 		blockConfig.attributes.anchor = { type: 'string' };
 	}
 }
@@ -145,17 +145,17 @@ function configureAnchorSupport(blockConfig) {
  * @param {Object} blockConfig - Block configuration
  * @returns {React.Component} - Enhanced edit component
  */
-function applyHigherOrderComponents(EditComponent, blockConfig) {
+function applyHigherOrderComponents( EditComponent, blockConfig ) {
 	let enhancedComponent = EditComponent;
 
 	// Add text alignment support
-	if (blockConfig.supports.alignText || blockConfig.supports.align_text) {
+	if ( blockConfig.supports.alignText || blockConfig.supports.align_text ) {
 		blockConfig.attributes = addAttribute(
 			blockConfig.attributes,
 			'align_text',
 			'string'
 		);
-		enhancedComponent = withAlignText(enhancedComponent, blockConfig);
+		enhancedComponent = withAlignText( enhancedComponent, blockConfig );
 	}
 
 	// Add content alignment support
@@ -168,17 +168,17 @@ function applyHigherOrderComponents(EditComponent, blockConfig) {
 			'align_content',
 			'string'
 		);
-		enhancedComponent = withAlignContent(enhancedComponent, blockConfig);
+		enhancedComponent = withAlignContent( enhancedComponent, blockConfig );
 	}
 
 	// Add full height support
-	if (blockConfig.supports.fullHeight || blockConfig.supports.full_height) {
+	if ( blockConfig.supports.fullHeight || blockConfig.supports.full_height ) {
 		blockConfig.attributes = addAttribute(
 			blockConfig.attributes,
 			'full_height',
 			'boolean'
 		);
-		enhancedComponent = withFullHeight(enhancedComponent);
+		enhancedComponent = withFullHeight( enhancedComponent );
 	}
 
 	return enhancedComponent;
@@ -190,43 +190,49 @@ function applyHigherOrderComponents(EditComponent, blockConfig) {
  * @param {Object} blockConfig - ACF block configuration object
  * @returns {Object|boolean} - Registered block type or false if not registered
  */
-function registerACFBlockType(blockConfig) {
+function registerACFBlockType( blockConfig ) {
 	// Check if block should be registered for current post type
-	if (!shouldRegisterBlock(blockConfig)) {
+	if ( ! shouldRegisterBlock( blockConfig ) ) {
 		return false;
 	}
 
 	// Process icon
-	processBlockIcon(blockConfig);
+	processBlockIcon( blockConfig );
 
 	// Validate category
-	validateBlockCategory(blockConfig);
+	validateBlockCategory( blockConfig );
 
 	// Apply default values
-	blockConfig = applyBlockDefaults(blockConfig);
+	blockConfig = applyBlockDefaults( blockConfig );
 
 	// Clean up attributes
-	cleanBlockAttributes(blockConfig);
+	cleanBlockAttributes( blockConfig );
 
 	// Configure anchor support
-	configureAnchorSupport(blockConfig);
+	configureAnchorSupport( blockConfig );
 
 	// Start with base BlockEdit component
 	let EditComponent = BlockEdit;
 
 	// Apply higher-order components based on supports
-	EditComponent = applyHigherOrderComponents(EditComponent, blockConfig);
+	EditComponent = applyHigherOrderComponents( EditComponent, blockConfig );
 
 	// Create edit function that passes blockConfig and jQuery
-	blockConfig.edit = function (props) {
-		return <EditComponent {...props} blockType={blockConfig} $={jQuery} />;
+	blockConfig.edit = function ( props ) {
+		return (
+			<EditComponent
+				{ ...props }
+				blockType={ blockConfig }
+				$={ jQuery }
+			/>
+		);
 	};
 
 	// Create save function (ACF blocks save to post content as HTML comments)
 	blockConfig.save = () => <InnerBlocks.Content />;
 
 	// Store in registry
-	registeredBlocks[blockConfig.name] = blockConfig;
+	registeredBlocks[ blockConfig.name ] = blockConfig;
 
 	// Register with WordPress
 	const registeredBlockType = wp.blocks.registerBlockType(
@@ -252,8 +258,8 @@ function registerACFBlockType(blockConfig) {
  * @param {string} blockName - Name of the block
  * @returns {Object|boolean} - Block configuration or false
  */
-function getRegisteredBlock(blockName) {
-	return registeredBlocks[blockName] || false;
+function getRegisteredBlock( blockName ) {
+	return registeredBlocks[ blockName ] || false;
 }
 
 /**
@@ -261,22 +267,22 @@ function getRegisteredBlock(blockName) {
  * Handles backward compatibility for align_text -> alignText, etc.
  */
 const withDefaultAttributes = createHigherOrderComponent(
-	(BlockListBlock) =>
+	( BlockListBlock ) =>
 		class extends Component {
-			constructor(props) {
-				super(props);
+			constructor( props ) {
+				super( props );
 
 				const { name, attributes } = this.props;
-				const blockConfig = getRegisteredBlock(name);
+				const blockConfig = getRegisteredBlock( name );
 
-				if (!blockConfig) return;
+				if ( ! blockConfig ) return;
 
 				// Remove empty string attributes
-				Object.keys(attributes).forEach((key) => {
-					if (attributes[key] === '') {
-						delete attributes[key];
+				Object.keys( attributes ).forEach( ( key ) => {
+					if ( attributes[ key ] === '' ) {
+						delete attributes[ key ];
 					}
-				});
+				} );
 
 				// Map old attribute names to new camelCase names
 				const attributeMap = {
@@ -285,38 +291,38 @@ const withDefaultAttributes = createHigherOrderComponent(
 					align_text: 'alignText',
 				};
 
-				Object.keys(attributeMap).forEach((oldKey) => {
-					const newKey = attributeMap[oldKey];
+				Object.keys( attributeMap ).forEach( ( oldKey ) => {
+					const newKey = attributeMap[ oldKey ];
 
-					if (attributes[oldKey] !== undefined) {
+					if ( attributes[ oldKey ] !== undefined ) {
 						// Migrate old key to new key
-						attributes[newKey] = attributes[oldKey];
+						attributes[ newKey ] = attributes[ oldKey ];
 					} else if (
-						attributes[newKey] === undefined &&
-						blockConfig[oldKey] !== undefined
+						attributes[ newKey ] === undefined &&
+						blockConfig[ oldKey ] !== undefined
 					) {
 						// Set default from block config if not present
-						attributes[newKey] = blockConfig[oldKey];
+						attributes[ newKey ] = blockConfig[ oldKey ];
 					}
 
 					// Clean up old attribute names
-					delete blockConfig[oldKey];
-					delete attributes[oldKey];
-				});
+					delete blockConfig[ oldKey ];
+					delete attributes[ oldKey ];
+				} );
 
 				// Apply default values from block config for missing attributes
-				for (let key in blockConfig.attributes) {
+				for ( let key in blockConfig.attributes ) {
 					if (
-						attributes[key] === undefined &&
-						blockConfig[key] !== undefined
+						attributes[ key ] === undefined &&
+						blockConfig[ key ] !== undefined
 					) {
-						attributes[key] = blockConfig[key];
+						attributes[ key ] = blockConfig[ key ];
 					}
 				}
 			}
 
 			render() {
-				return <BlockListBlock {...this.props} />;
+				return <BlockListBlock { ...this.props } />;
 			}
 		},
 	'withDefaultAttributes'
@@ -326,23 +332,23 @@ const withDefaultAttributes = createHigherOrderComponent(
  * Initialize ACF blocks on the 'prepare' action
  * Registers all ACF blocks with version 3 or higher
  */
-acf.addAction('prepare', function () {
+acf.addAction( 'prepare', function () {
 	// Ensure wp.blockEditor exists (backward compatibility)
-	if (!wp.blockEditor) {
+	if ( ! wp.blockEditor ) {
 		wp.blockEditor = wp.editor;
 	}
 
-	const blockTypes = acf.get('blockTypes');
+	const blockTypes = acf.get( 'blockTypes' );
 
-	if (blockTypes) {
-		blockTypes.forEach((blockType) => {
+	if ( blockTypes ) {
+		blockTypes.forEach( ( blockType ) => {
 			// Only register blocks with version 3 or higher
-			if (parseInt(blockType.acf_block_version) >= 3) {
-				registerACFBlockType(blockType);
+			if ( parseInt( blockType.acf_block_version ) >= 3 ) {
+				registerACFBlockType( blockType );
 			}
-		});
+		} );
 	}
-});
+} );
 
 /**
  * Register WordPress filter for attribute migration

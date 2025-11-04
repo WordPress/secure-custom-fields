@@ -12,9 +12,9 @@ const { BlockControls, AlignmentToolbar } = wp.blockEditor;
  * @param {string} alignment - Current alignment value
  * @returns {string} - Normalized alignment value (left, center, or right)
  */
-const getDefaultAlignment = (alignment) => {
-	const defaultAlign = acf.get('rtl') ? 'right' : 'left';
-	return ['left', 'center', 'right'].includes(alignment)
+const getDefaultAlignment = ( alignment ) => {
+	const defaultAlign = acf.get( 'rtl' ) ? 'right' : 'left';
+	return [ 'left', 'center', 'right' ].includes( alignment )
 		? alignment
 		: defaultAlign;
 };
@@ -27,11 +27,11 @@ const getDefaultAlignment = (alignment) => {
  * @param {Object} blockConfig - ACF block configuration
  * @returns {React.Component} - Enhanced component with text alignment controls
  */
-export const withAlignText = (BlockComponent, blockConfig) => {
+export const withAlignText = ( BlockComponent, blockConfig ) => {
 	const normalizeAlignment = getDefaultAlignment;
 
 	// Set default alignment on block config
-	blockConfig.alignText = normalizeAlignment(blockConfig.alignText);
+	blockConfig.alignText = normalizeAlignment( blockConfig.alignText );
 
 	return class extends Component {
 		render() {
@@ -42,15 +42,16 @@ export const withAlignText = (BlockComponent, blockConfig) => {
 				<Fragment>
 					<BlockControls group="block">
 						<AlignmentToolbar
-							value={normalizeAlignment(alignText)}
-							onChange={function (newAlignment) {
-								setAttributes({
-									alignText: normalizeAlignment(newAlignment),
-								});
-							}}
+							value={ normalizeAlignment( alignText ) }
+							onChange={ function ( newAlignment ) {
+								setAttributes( {
+									alignText:
+										normalizeAlignment( newAlignment ),
+								} );
+							} }
 						/>
 					</BlockControls>
-					<BlockComponent {...this.props} />
+					<BlockComponent { ...this.props } />
 				</Fragment>
 			);
 		}

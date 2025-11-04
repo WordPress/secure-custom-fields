@@ -19,9 +19,9 @@ const BlockFullHeightAlignmentControl =
  * @param {React.Component} BlockComponent - The component to wrap
  * @returns {React.Component} - Enhanced component with full height controls
  */
-export const withFullHeight = (BlockComponent) => {
+export const withFullHeight = ( BlockComponent ) => {
 	// If control is not available, return original component
-	if (!BlockFullHeightAlignmentControl) {
+	if ( ! BlockFullHeightAlignmentControl ) {
 		return BlockComponent;
 	}
 
@@ -34,13 +34,13 @@ export const withFullHeight = (BlockComponent) => {
 				<Fragment>
 					<BlockControls group="block">
 						<BlockFullHeightAlignmentControl
-							isActive={fullHeight}
-							onToggle={function (newValue) {
-								setAttributes({ fullHeight: newValue });
-							}}
+							isActive={ fullHeight }
+							onToggle={ function ( newValue ) {
+								setAttributes( { fullHeight: newValue } );
+							} }
 						/>
 					</BlockControls>
-					<BlockComponent {...this.props} />
+					<BlockComponent { ...this.props } />
 				</Fragment>
 			);
 		}

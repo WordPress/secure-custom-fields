@@ -9,9 +9,11 @@
  *
  * @param {string} clientId - The block's client ID
  */
-export const lockPostSaving = (clientId) => {
-	if (wp.data.dispatch('core/editor')) {
-		wp.data.dispatch('core/editor').lockPostSaving('acf/block/' + clientId);
+export const lockPostSaving = ( clientId ) => {
+	if ( wp.data.dispatch( 'core/editor' ) ) {
+		wp.data
+			.dispatch( 'core/editor' )
+			.lockPostSaving( 'acf/block/' + clientId );
 	}
 };
 
@@ -21,11 +23,11 @@ export const lockPostSaving = (clientId) => {
  *
  * @param {string} clientId - The block's client ID
  */
-export const unlockPostSaving = (clientId) => {
-	if (wp.data.dispatch('core/editor')) {
+export const unlockPostSaving = ( clientId ) => {
+	if ( wp.data.dispatch( 'core/editor' ) ) {
 		wp.data
-			.dispatch('core/editor')
-			.unlockPostSaving('acf/block/' + clientId);
+			.dispatch( 'core/editor' )
+			.unlockPostSaving( 'acf/block/' + clientId );
 	}
 };
 
@@ -36,10 +38,10 @@ export const unlockPostSaving = (clientId) => {
  * @param {Object} obj - Object to sort
  * @returns {Object} - New object with sorted keys
  */
-export const sortObjectKeys = (obj) =>
-	Object.keys(obj)
+export const sortObjectKeys = ( obj ) =>
+	Object.keys( obj )
 		.sort()
-		.reduce((result, key) => {
-			result[key] = obj[key];
+		.reduce( ( result, key ) => {
+			result[ key ] = obj[ key ];
 			return result;
-		}, {});
+		}, {} );

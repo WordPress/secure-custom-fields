@@ -13,8 +13,8 @@
  * @param {Object} props.blockProps - Block props from useBlockProps hook
  * @returns {JSX.Element} - Rendered preview wrapper
  */
-export const BlockPreview = ({ children, blockPreviewHtml, blockProps }) => (
-	<div {...blockProps} key={blockPreviewHtml}>
-		{children}
+export const BlockPreview = ( { children, blockPreviewHtml, blockProps } ) => (
+	<div { ...blockProps } key={ blockPreviewHtml }>
+		{ children }
 	</div>
 );

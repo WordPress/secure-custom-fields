@@ -42,26 +42,26 @@ import {
  * @param {Object} props.blockType - ACF block type configuration
  * @returns {JSX.Element} - Rendered block editor
  */
-export const BlockEdit = (props) => {
+export const BlockEdit = ( props ) => {
 	const { attributes, setAttributes, context, isSelected, $, blockType } =
 		props;
 
 	const shouldValidate = blockType.validate;
 	const { clientId } = useBlockEditContext();
 
-	const [validationErrors, setValidationErrors] = useState(null);
-	const [showValidationErrors, setShowValidationErrors] = useState(null);
-	const [theSerializedAcfData, setTheSerializedAcfData] = useState(null);
-	const [blockFormHtml, setBlockFormHtml] = useState('');
-	const [blockPreviewHtml, setBlockPreviewHtml] = useState(
+	const [ validationErrors, setValidationErrors ] = useState( null );
+	const [ showValidationErrors, setShowValidationErrors ] = useState( null );
+	const [ theSerializedAcfData, setTheSerializedAcfData ] = useState( null );
+	const [ blockFormHtml, setBlockFormHtml ] = useState( '' );
+	const [ blockPreviewHtml, setBlockPreviewHtml ] = useState(
 		'acf-block-preview-loading'
 	);
-	const [userHasInteractedWithForm, setUserHasInteractedWithForm] =
-		useState(false);
+	const [ userHasInteractedWithForm, setUserHasInteractedWithForm ] =
+		useState( false );
 
-	const acfFormRef = useRef(null);
-	const previewRef = useRef(null);
-	const debounceRef = useRef(null);
+	const acfFormRef = useRef( null );
+	const previewRef = useRef( null );
+	const debounceRef = useRef( null );
 
 	/**
 	 * Fetches block data from server (form HTML, preview HTML, validation)
@@ -72,16 +72,16 @@ export const BlockEdit = (props) => {
 	 * @param {Object} params.theContext - Block context
 	 * @param {boolean} params.isSelected - Whether block is selected
 	 */
-	function fetchBlockData({
+	function fetchBlockData( {
 		theAttributes,
 		theClientId,
 		theContext,
 		isSelected,
-	}) {
-		if (!theAttributes) return;
+	} ) {
+		if ( ! theAttributes ) return;
 
 		// Generate hash of attributes for preload cache lookup
-		const attributesHash = generateAttributesHash(theAttributes, context);
+		const attributesHash = generateAttributesHash( theAttributes, context );
 
 		// Check for preloaded block data
 		const preloadedData = checkPreloadedData(
@@ -90,46 +90,48 @@ export const BlockEdit = (props) => {
 			isSelected
 		);
 
-		if (preloadedData) {
-			handlePreloadedData(preloadedData);
+		if ( preloadedData ) {
+			handlePreloadedData( preloadedData );
 			return;
 		}
 
 		// Prepare query options
 		const queryOptions = { preview: true, form: true, validate: true };
-		if (!blockFormHtml) {
+		if ( ! blockFormHtml ) {
 			queryOptions.validate = false;
 		}
-		if (!shouldValidate) {
+		if ( ! shouldValidate ) {
 			queryOptions.validate = false;
 		}
 
 		const blockData = { ...theAttributes };
 
-		wp.data.dispatch('core/editor').lockPostSaving('acf-fetching-block');
+		wp.data
+			.dispatch( 'core/editor' )
+			.lockPostSaving( 'acf-fetching-block' );
 
 		// Fetch block data via AJAX
-		$.ajax({
-			url: acf.get('ajaxurl'),
+		$.ajax( {
+			url: acf.get( 'ajaxurl' ),
 			dataType: 'json',
 			type: 'post',
 			cache: false,
-			data: acf.prepareForAjax({
+			data: acf.prepareForAjax( {
 				action: 'acf/ajax/fetch-block',
-				block: JSON.stringify(blockData),
+				block: JSON.stringify( blockData ),
 				clientId: theClientId,
-				context: JSON.stringify(theContext),
+				context: JSON.stringify( theContext ),
 				query: queryOptions,
-			}),
-		})
-			.done((response) => {
+			} ),
+		} )
+			.done( ( response ) => {
 				wp.data
-					.dispatch('core/editor')
-					.unlockPostSaving('acf-fetching-block');
+					.dispatch( 'core/editor' )
+					.unlockPostSaving( 'acf-fetching-block' );
 
-				setBlockFormHtml(response.data.form);
+				setBlockFormHtml( response.data.form );
 
-				if (response.data.preview) {
+				if ( response.data.preview ) {
 					setBlockPreviewHtml(
 						acf.applyFilters(
 							'blocks/preview/render',
@@ -149,19 +151,19 @@ export const BlockEdit = (props) => {
 
 				if (
 					response.data?.validation &&
-					!response.data.validation.valid &&
+					! response.data.validation.valid &&
 					response.data.validation.errors
 				) {
-					setValidationErrors(response.data.validation.errors);
+					setValidationErrors( response.data.validation.errors );
 				} else {
-					setValidationErrors(null);
+					setValidationErrors( null );
 				}
-			})
-			.fail(function () {
+			} )
+			.fail( function () {
 				wp.data
-					.dispatch('core/editor')
-					.unlockPostSaving('acf-fetching-block');
-			});
+					.dispatch( 'core/editor' )
+					.unlockPostSaving( 'acf-fetching-block' );
+			} );
 	}
 
 	/**
@@ -171,10 +173,10 @@ export const BlockEdit = (props) => {
 	 * @param {Object} ctx - Block context
 	 * @returns {string} - MD5 hash of serialized attributes
 	 */
-	function generateAttributesHash(attrs, ctx) {
+	function generateAttributesHash( attrs, ctx ) {
 		delete attrs.hasAcfError;
-		attrs._acf_context = sortObjectKeys(ctx);
-		return md5(JSON.stringify(sortObjectKeys(attrs)));
+		attrs._acf_context = sortObjectKeys( ctx );
+		return md5( JSON.stringify( sortObjectKeys( attrs ) ) );
 	}
 
 	/**
@@ -185,35 +187,35 @@ export const BlockEdit = (props) => {
 	 * @param {boolean} selected - Whether block is selected
 	 * @returns {Object|boolean} - Preloaded data or false
 	 */
-	function checkPreloadedData(hash, clientId, selected) {
-		if (selected) return false;
+	function checkPreloadedData( hash, clientId, selected ) {
+		if ( selected ) return false;
 
-		acf.debug('Preload check', hash, clientId);
+		acf.debug( 'Preload check', hash, clientId );
 
 		// Don't preload blocks inside Query Loop blocks
-		if (isInQueryLoop(clientId)) {
+		if ( isInQueryLoop( clientId ) ) {
 			return false;
 		}
 
-		const preloadedBlocks = acf.get('preloadedBlocks');
-		if (!preloadedBlocks || !preloadedBlocks[hash]) {
-			acf.debug('Preload failed: not preloaded.');
+		const preloadedBlocks = acf.get( 'preloadedBlocks' );
+		if ( ! preloadedBlocks || ! preloadedBlocks[ hash ] ) {
+			acf.debug( 'Preload failed: not preloaded.' );
 			return false;
 		}
 
-		const data = preloadedBlocks[hash];
+		const data = preloadedBlocks[ hash ];
 
 		// Replace placeholder client ID with actual client ID
-		data.html = data.html.replaceAll(hash, clientId);
+		data.html = data.html.replaceAll( hash, clientId );
 
-		if (data?.validation && data?.validation.errors) {
-			data.validation.errors = data.validation.errors.map((error) => {
-				error.input = error.input.replaceAll(hash, clientId);
+		if ( data?.validation && data?.validation.errors ) {
+			data.validation.errors = data.validation.errors.map( ( error ) => {
+				error.input = error.input.replaceAll( hash, clientId );
 				return error;
-			});
+			} );
 		}
 
-		acf.debug('Preload successful', data);
+		acf.debug( 'Preload successful', data );
 		return data;
 	}
 
@@ -223,16 +225,16 @@ export const BlockEdit = (props) => {
 	 * @param {string} clientId - Block client ID
 	 * @returns {boolean} - True if inside Query Loop
 	 */
-	function isInQueryLoop(clientId) {
+	function isInQueryLoop( clientId ) {
 		const parentIds = wp.data
-			.select('core/block-editor')
-			.getBlockParents(clientId);
+			.select( 'core/block-editor' )
+			.getBlockParents( clientId );
 
 		return (
 			wp.data
-				.select('core/block-editor')
-				.getBlocksByClientId(parentIds)
-				.filter((block) => block.name === 'core/query').length > 0
+				.select( 'core/block-editor' )
+				.getBlocksByClientId( parentIds )
+				.filter( ( block ) => block.name === 'core/query' ).length > 0
 		);
 	}
 
@@ -241,12 +243,12 @@ export const BlockEdit = (props) => {
 	 *
 	 * @param {Object} data - Preloaded data
 	 */
-	function handlePreloadedData(data) {
-		if (data.form) {
-			setBlockFormHtml(data.html);
-		} else if (data.html) {
+	function handlePreloadedData( data ) {
+		if ( data.form ) {
+			setBlockFormHtml( data.html );
+		} else if ( data.html ) {
 			setBlockPreviewHtml(
-				acf.applyFilters('blocks/preview/render', data.html, true)
+				acf.applyFilters( 'blocks/preview/render', data.html, true )
 			);
 		} else {
 			setBlockPreviewHtml(
@@ -260,54 +262,54 @@ export const BlockEdit = (props) => {
 
 		if (
 			data?.validation &&
-			!data.validation.valid &&
+			! data.validation.valid &&
 			data.validation.errors
 		) {
-			setValidationErrors(data.validation.errors);
+			setValidationErrors( data.validation.errors );
 		} else {
-			setValidationErrors(null);
+			setValidationErrors( null );
 		}
 	}
 
 	// Initial fetch on mount and when selection changes
-	useEffect(() => {
+	useEffect( () => {
 		function trackUserInteraction() {
-			setUserHasInteractedWithForm(true);
-			window.removeEventListener('click', trackUserInteraction);
-			window.removeEventListener('keydown', trackUserInteraction);
+			setUserHasInteractedWithForm( true );
+			window.removeEventListener( 'click', trackUserInteraction );
+			window.removeEventListener( 'keydown', trackUserInteraction );
 		}
 
-		fetchBlockData({
+		fetchBlockData( {
 			theAttributes: attributes,
 			theClientId: clientId,
 			theContext: context,
 			isSelected: isSelected,
-		});
+		} );
 
-		window.addEventListener('click', trackUserInteraction);
-		window.addEventListener('keydown', trackUserInteraction);
+		window.addEventListener( 'click', trackUserInteraction );
+		window.addEventListener( 'keydown', trackUserInteraction );
 
 		return () => {
-			window.removeEventListener('click', trackUserInteraction);
-			window.removeEventListener('keydown', trackUserInteraction);
+			window.removeEventListener( 'click', trackUserInteraction );
+			window.removeEventListener( 'keydown', trackUserInteraction );
 		};
-	}, []);
+	}, [] );
 
 	// Update hasAcfError attribute based on validation errors
-	useEffect(() => {
+	useEffect( () => {
 		setAttributes(
 			validationErrors ? { hasAcfError: true } : { hasAcfError: false }
 		);
-	}, [validationErrors, setAttributes]);
+	}, [ validationErrors, setAttributes ] );
 
 	// Listen for validation error events from other blocks
-	useEffect(() => {
+	useEffect( () => {
 		const handleErrorEvent = () => {
-			lockPostSaving(clientId);
-			setShowValidationErrors(true);
+			lockPostSaving( clientId );
+			setShowValidationErrors( true );
 		};
 
-		document.addEventListener('acf/block/has-error', handleErrorEvent);
+		document.addEventListener( 'acf/block/has-error', handleErrorEvent );
 
 		return () => {
 			document.removeEventListener(
@@ -315,73 +317,74 @@ export const BlockEdit = (props) => {
 				handleErrorEvent
 			);
 		};
-	}, []);
+	}, [] );
 
 	// Cleanup: unlock post saving on unmount
 	useEffect(
 		() => () => {
-			unlockPostSaving(props.clientId);
+			unlockPostSaving( props.clientId );
 		},
 		[]
 	);
 
 	// Handle form data changes with debouncing
-	useEffect(() => {
-		clearTimeout(debounceRef.current);
+	useEffect( () => {
+		clearTimeout( debounceRef.current );
 
-		debounceRef.current = setTimeout(() => {
+		debounceRef.current = setTimeout( () => {
 			handleFormDataUpdate();
-		}, 200);
-	}, [theSerializedAcfData]);
+		}, 200 );
+	}, [ theSerializedAcfData ] );
 
 	/**
 	 * Updates block attributes when form data changes
 	 */
 	function handleFormDataUpdate() {
-		const parsedData = JSON.parse(theSerializedAcfData);
-		if (!parsedData) return;
-		if (theSerializedAcfData === JSON.stringify(attributes.data)) return;
+		const parsedData = JSON.parse( theSerializedAcfData );
+		if ( ! parsedData ) return;
+		if ( theSerializedAcfData === JSON.stringify( attributes.data ) )
+			return;
 
 		const updatedAttributes = { ...attributes, data: { ...parsedData } };
-		setAttributes(updatedAttributes);
+		setAttributes( updatedAttributes );
 
-		fetchBlockData({
+		fetchBlockData( {
 			theAttributes: updatedAttributes,
 			theClientId: clientId,
 			theContext: context,
 			isSelected: isSelected,
-		});
+		} );
 	}
 
 	// Trigger ACF actions when preview is rendered
-	useEffect(() => {
-		if (previewRef.current && blockPreviewHtml) {
-			const blockName = attributes.name.replace('acf/', '');
-			const $preview = $(previewRef.current);
+	useEffect( () => {
+		if ( previewRef.current && blockPreviewHtml ) {
+			const blockName = attributes.name.replace( 'acf/', '' );
+			const $preview = $( previewRef.current );
 
-			acf.doAction('render_block_preview', $preview, attributes);
+			acf.doAction( 'render_block_preview', $preview, attributes );
 			acf.doAction(
-				`render_block_preview/type=${blockName}`,
+				`render_block_preview/type=${ blockName }`,
 				$preview,
 				attributes
 			);
 		}
-	}, [blockPreviewHtml]);
+	}, [ blockPreviewHtml ] );
 
 	return (
 		<BlockEditInner
-			{...props}
-			validationErrors={validationErrors}
-			showValidationErrors={showValidationErrors}
-			theSerializedAcfData={theSerializedAcfData}
-			setTheSerializedAcfData={setTheSerializedAcfData}
-			acfFormRef={acfFormRef}
-			blockFormHtml={blockFormHtml}
-			blockPreviewHtml={blockPreviewHtml}
-			blockFetcher={fetchBlockData}
-			userHasInteractedWithForm={userHasInteractedWithForm}
-			setUserHasInteractedWithForm={setUserHasInteractedWithForm}
-			previewRef={previewRef}
+			{ ...props }
+			validationErrors={ validationErrors }
+			showValidationErrors={ showValidationErrors }
+			theSerializedAcfData={ theSerializedAcfData }
+			setTheSerializedAcfData={ setTheSerializedAcfData }
+			acfFormRef={ acfFormRef }
+			blockFormHtml={ blockFormHtml }
+			blockPreviewHtml={ blockPreviewHtml }
+			blockFetcher={ fetchBlockData }
+			userHasInteractedWithForm={ userHasInteractedWithForm }
+			setUserHasInteractedWithForm={ setUserHasInteractedWithForm }
+			previewRef={ previewRef }
 		/>
 	);
 };
@@ -390,7 +393,7 @@ export const BlockEdit = (props) => {
  * Inner component that handles rendering and portals
  * Separated to manage refs and portal targets properly
  */
-function BlockEditInner(props) {
+function BlockEditInner( props ) {
 	const {
 		blockType,
 		$,
@@ -412,169 +415,169 @@ function BlockEditInner(props) {
 	const { clientId } = useBlockEditContext();
 	const invisibleFormContainerRef = useRef();
 	const inspectorControlsRef = useRef();
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const modalFormContainerRef = useRef();
-	const [currentFormContainer, setCurrentFormContainer] = useState();
+	const [ currentFormContainer, setCurrentFormContainer ] = useState();
 
 	// Set current form container when modal opens
-	useEffect(() => {
-		if (isModalOpen && modalFormContainerRef?.current) {
-			setCurrentFormContainer(modalFormContainerRef.current);
+	useEffect( () => {
+		if ( isModalOpen && modalFormContainerRef?.current ) {
+			setCurrentFormContainer( modalFormContainerRef.current );
 		}
-	}, [isModalOpen, modalFormContainerRef]);
+	}, [ isModalOpen, modalFormContainerRef ] );
 
 	// Update form container when inspector panel is available
-	useEffect(() => {
-		if (isSelected && inspectorControlsRef?.current) {
-			setCurrentFormContainer(inspectorControlsRef.current);
-		} else if (isSelected && !inspectorControlsRef?.current) {
+	useEffect( () => {
+		if ( isSelected && inspectorControlsRef?.current ) {
+			setCurrentFormContainer( inspectorControlsRef.current );
+		} else if ( isSelected && ! inspectorControlsRef?.current ) {
 			// Wait for inspector to be available
-			setTimeout(() => {
-				setCurrentFormContainer(inspectorControlsRef.current);
-			}, 1);
-		} else if (!isSelected) {
-			setCurrentFormContainer(null);
+			setTimeout( () => {
+				setCurrentFormContainer( inspectorControlsRef.current );
+			}, 1 );
+		} else if ( ! isSelected ) {
+			setCurrentFormContainer( null );
 		}
-	}, [isSelected, inspectorControlsRef, inspectorControlsRef.current]);
+	}, [ isSelected, inspectorControlsRef, inspectorControlsRef.current ] );
 
 	// Build block CSS classes
 	let blockClasses = 'acf-block-component acf-block-body';
 	blockClasses += ' acf-block-preview';
 
-	if (validationErrors && showValidationErrors) {
+	if ( validationErrors && showValidationErrors ) {
 		blockClasses += ' acf-block-has-validation-error';
 	}
 
 	const blockProps = {
-		...useBlockProps({ className: blockClasses, ref: previewRef }),
+		...useBlockProps( { className: blockClasses, ref: previewRef } ),
 	};
 
 	// Determine portal target
 	let portalTarget = null;
-	if (currentFormContainer) {
+	if ( currentFormContainer ) {
 		portalTarget = currentFormContainer;
-	} else if (inspectorControlsRef?.current) {
+	} else if ( inspectorControlsRef?.current ) {
 		portalTarget = inspectorControlsRef.current;
 	}
 
 	return (
 		<>
-			{/* Block toolbar controls */}
+			{ /* Block toolbar controls */ }
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarButton
 						className="components-icon-button components-toolbar__control"
-						label={acf.__('Edit Block')}
+						label={ acf.__( 'Edit Block' ) }
 						icon="edit"
-						onClick={() => {
-							setIsModalOpen(true);
-						}}
+						onClick={ () => {
+							setIsModalOpen( true );
+						} }
 					/>
 				</ToolbarGroup>
 			</BlockControls>
 
-			{/* Inspector panel container */}
+			{ /* Inspector panel container */ }
 			<InspectorControls>
-				<div ref={inspectorControlsRef} />
+				<div ref={ inspectorControlsRef } />
 			</InspectorControls>
 
-			{/* Render form via portal when container is available */}
-			{portalTarget &&
+			{ /* Render form via portal when container is available */ }
+			{ portalTarget &&
 				currentFormContainer &&
 				createPortal(
 					<>
 						<BlockForm
-							$={$}
-							clientId={clientId}
-							blockFormHtml={blockFormHtml}
-							onMount={() => {
-								blockFetcher({
+							$={ $ }
+							clientId={ clientId }
+							blockFormHtml={ blockFormHtml }
+							onMount={ () => {
+								blockFetcher( {
 									theAttributes: attributes,
 									theClientId: clientId,
 									theContext: context,
 									isSelected: isSelected,
-								});
-							}}
-							onChange={function ($form) {
+								} );
+							} }
+							onChange={ function ( $form ) {
 								const serializedData = acf.serialize(
 									$form,
-									`acf-block_${clientId}`
+									`acf-block_${ clientId }`
 								);
-								if (serializedData) {
+								if ( serializedData ) {
 									setTheSerializedAcfData(
-										JSON.stringify(serializedData)
+										JSON.stringify( serializedData )
 									);
 								}
-							}}
-							validationErrors={validationErrors}
-							showValidationErrors={showValidationErrors}
-							acfFormRef={acfFormRef}
-							theSerializedAcfData={theSerializedAcfData}
+							} }
+							validationErrors={ validationErrors }
+							showValidationErrors={ showValidationErrors }
+							acfFormRef={ acfFormRef }
+							theSerializedAcfData={ theSerializedAcfData }
 							userHasInteractedWithForm={
 								userHasInteractedWithForm
 							}
 							setCurrentBlockFormContainer={
 								setCurrentFormContainer
 							}
-							attributes={attributes}
+							attributes={ attributes }
 						/>
 					</>,
 					currentFormContainer || inspectorControlsRef.current
-				)}
+				) }
 
-			{/* Hidden container for form when not in inspector/modal */}
+			{ /* Hidden container for form when not in inspector/modal */ }
 			<>
 				<div
-					style={{ display: 'none' }}
+					style={ { display: 'none' } }
 					className="acf-invisible-block-form-container"
-					ref={invisibleFormContainerRef}
+					ref={ invisibleFormContainerRef }
 				/>
 
-				{/* Modal for editing block fields */}
-				{isModalOpen && (
+				{ /* Modal for editing block fields */ }
+				{ isModalOpen && (
 					<Modal
 						className="acf-block-form-modal"
-						isFullScreen={true}
-						title={blockType.title}
-						onRequestClose={() => {
-							setCurrentFormContainer(null);
-							setIsModalOpen(false);
-						}}
+						isFullScreen={ true }
+						title={ blockType.title }
+						onRequestClose={ () => {
+							setCurrentFormContainer( null );
+							setIsModalOpen( false );
+						} }
 					>
 						<div
 							className="acf-modal-block-form-container"
-							ref={modalFormContainerRef}
+							ref={ modalFormContainerRef }
 						/>
 					</Modal>
-				)}
+				) }
 			</>
 
-			{/* Block preview */}
+			{ /* Block preview */ }
 			<>
 				<BlockPreview
-					blockPreviewHtml={blockPreviewHtml}
-					blockProps={blockProps}
+					blockPreviewHtml={ blockPreviewHtml }
+					blockProps={ blockProps }
 				>
-					{/* Show placeholder when no HTML */}
-					{blockPreviewHtml === 'acf-block-preview-no-html' ? (
+					{ /* Show placeholder when no HTML */ }
+					{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
 						<BlockPlaceholder
-							setBlockFormModalOpen={setIsModalOpen}
-							blockLabel={blockType.title}
+							setBlockFormModalOpen={ setIsModalOpen }
+							blockLabel={ blockType.title }
 						/>
-					) : null}
+					) : null }
 
-					{/* Show spinner while loading */}
-					{blockPreviewHtml === 'acf-block-preview-loading' && (
+					{ /* Show spinner while loading */ }
+					{ blockPreviewHtml === 'acf-block-preview-loading' && (
 						<Placeholder>
 							<Spinner />
 						</Placeholder>
-					)}
+					) }
 
-					{/* Render actual preview HTML */}
-					{blockPreviewHtml !== 'acf-block-preview-loading' &&
+					{ /* Render actual preview HTML */ }
+					{ blockPreviewHtml !== 'acf-block-preview-loading' &&
 						blockPreviewHtml !== 'acf-block-preview-no-html' &&
 						blockPreviewHtml &&
-						acf.parseJSX(blockPreviewHtml)}
+						acf.parseJSX( blockPreviewHtml ) }
 				</BlockPreview>
 			</>
 		</>

@@ -32,15 +32,15 @@ const blockIcon = (
  * @param {string} props.blockLabel - The block's title/label
  * @returns {JSX.Element} - Rendered placeholder
  */
-export const BlockPlaceholder = ({ setBlockFormModalOpen, blockLabel }) => (
-	<Placeholder icon={<Icon icon={blockIcon} />} label={blockLabel}>
+export const BlockPlaceholder = ( { setBlockFormModalOpen, blockLabel } ) => (
+	<Placeholder icon={ <Icon icon={ blockIcon } /> } label={ blockLabel }>
 		<Button
 			variant="primary"
-			onClick={() => {
-				setBlockFormModalOpen(true);
-			}}
+			onClick={ () => {
+				setBlockFormModalOpen( true );
+			} }
 		>
-			{acf.__('Edit Block')}
+			{ acf.__( 'Edit Block' ) }
 		</Button>
 	</Placeholder>
 );
