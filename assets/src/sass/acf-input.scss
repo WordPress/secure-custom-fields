@@ -655,23 +655,51 @@ html[dir=rtl] input.acf-is-prepended.acf-is-appended {
   position: relative;
   z-index: 1;
 }
+.acf-color-picker.acf-color-picker-large-custom-palette .iris-picker {
+  display: flex;
+  flex-direction: column;
+  height: inherit !important;
+}
+
+.acf-color-picker.acf-color-picker-large-custom-palette .iris-picker .iris-picker-inner {
+  position: initial;
+  margin: 10px;
+}
+
+.acf-color-picker.acf-color-picker-large-custom-palette .iris-picker .iris-palette-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px;
+  position: relative;
+  padding-top: 10px;
+}
+
+.acf-color-picker.acf-color-picker-large-custom-palette .iris-picker .iris-palette-container .iris-palette {
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+}
+
+.acf-color-picker.acf-hide-color-picker-color-wheel:not(.acf-color-picker-large-custom-palette) .iris-picker {
+  width: inherit !important;
+  margin-right: 25px !important;
+}
+
 .acf-color-picker.acf-hide-color-picker-color-wheel .iris-picker {
-    width: inherit !important;
-    height: inherit !important;
-    padding: 10px !important;
-    margin-right: 99px;
+  height: inherit !important;
+  padding: 10px 0 !important;
 }
 
-.acf-color-picker.acf-hide-color-picker-color-wheel .iris-palette-container {
-    display: flex;
-    position: relative;
-    left: inherit;
-    bottom: inherit;
+.acf-color-picker.acf-hide-color-picker-color-wheel .iris-picker .iris-picker-inner {
+  display: none;
 }
 
-.acf-color-picker.acf-hide-color-picker-color-wheel .iris-square,
-.acf-color-picker.acf-hide-color-picker-color-wheel .iris-slider {
-    display: none;
+.acf-color-picker.acf-hide-color-picker-color-wheel .iris-picker .iris-palette-container {
+  display: flex;
+  position: relative;
+  bottom: inherit;
+  padding-top: 0 !important;
 }
 
 /*-----------------------------------------------------------------------------

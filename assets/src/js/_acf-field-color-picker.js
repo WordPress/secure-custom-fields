@@ -63,7 +63,12 @@
 
 			// filter
 			var args = acf.applyFilters( 'color_picker_args', args, this );
-
+			if ( Array.isArray( args.palettes ) && args.palettes.length > 10 ) {
+				// Add class for large custom palette styling
+				this.$control().addClass(
+					'acf-color-picker-large-custom-palette'
+				);
+			}
 			// initialize
 			$inputText.wpColorPicker( args );
 		},
