@@ -1,5 +1,5 @@
-(function ($, undefined) {
-	var Field = acf.Field.extend({
+( function ( $, undefined ) {
+	var Field = acf.Field.extend( {
 		type: 'radio',
 
 		events: {
@@ -8,63 +8,63 @@
 		},
 
 		$control: function () {
-			return this.$('.acf-radio-list');
+			return this.$( '.acf-radio-list' );
 		},
 
 		$input: function () {
-			return this.$('input:checked');
+			return this.$( 'input:checked' );
 		},
 
 		$inputText: function () {
-			return this.$('input[type="text"]');
+			return this.$( 'input[type="text"]' );
 		},
 
 		getValue: function () {
 			var val = this.$input().val();
-			if (val === 'other' && this.get('other_choice')) {
+			if ( val === 'other' && this.get( 'other_choice' ) ) {
 				val = this.$inputText().val();
 			}
 			return val;
 		},
 
-		onClick: function (e, $el) {
+		onClick: function ( e, $el ) {
 			// vars
-			var $label = $el.parent('label');
-			var selected = $label.hasClass('selected');
+			var $label = $el.parent( 'label' );
+			var selected = $label.hasClass( 'selected' );
 			var val = $el.val();
 
 			// remove previous selected
-			this.$('.selected').removeClass('selected');
+			this.$( '.selected' ).removeClass( 'selected' );
 
 			// add active class
-			$label.addClass('selected');
+			$label.addClass( 'selected' );
 
 			// allow null
-			if (this.get('allow_null') && selected) {
-				$label.removeClass('selected');
-				$el.prop('checked', false).trigger('change');
+			if ( this.get( 'allow_null' ) && selected ) {
+				$label.removeClass( 'selected' );
+				$el.prop( 'checked', false ).trigger( 'change' );
 				val = false;
 			}
 
 			// other
-			if (this.get('other_choice')) {
+			if ( this.get( 'other_choice' ) ) {
 				// enable
-				if (val === 'other') {
-					this.$inputText().prop('disabled', false);
+				if ( val === 'other' ) {
+					this.$inputText().prop( 'disabled', false );
 
 					// disable
 				} else {
-					this.$inputText().prop('disabled', true);
+					this.$inputText().prop( 'disabled', true );
 				}
 			}
 		},
-		onKeyDownInput: function (event, input) {
-			if (event.which === 13) {
+		onKeyDownInput: function ( event, input ) {
+			if ( event.which === 13 ) {
 				event.preventDefault();
-				input.prop('checked', true).trigger('change');
+				input.prop( 'checked', true ).trigger( 'change' );
 			}
 		},
-	});
+	} );
 
-	acf.registerFieldType(Field);
-})(jQuery);
+	acf.registerFieldType( Field );
+} )( jQuery );
