@@ -4,44 +4,70 @@
  */
 
 /**
- * Locks post saving in the WordPress editor
- * Used when block operations are in progress (like fetching data)
+ * Locks post saving in the WordPress editor for a specific block
+ * Used when block operations are in progress for a specific block instance
  *
  * @param {string} clientId - The block's client ID
  */
 export const lockPostSaving = ( clientId ) => {
-	if ( wp.data.dispatch( 'core/editor' ) ) {
-		wp.data
-			.dispatch( 'core/editor' )
-			.lockPostSaving( 'acf/block/' + clientId );
+	const dispatch = wp.data.dispatch( 'core/editor' );
+	if ( dispatch ) {
+		dispatch.lockPostSaving( 'acf/block/' + clientId );
 	}
 };
 
 /**
- * Unlocks post saving in the WordPress editor
- * Called when block operations are complete
+ * Unlocks post saving in the WordPress editor for a specific block
+ * Called when block operations are complete for a specific block instance
  *
  * @param {string} clientId - The block's client ID
  */
 export const unlockPostSaving = ( clientId ) => {
-	if ( wp.data.dispatch( 'core/editor' ) ) {
-		wp.data
-			.dispatch( 'core/editor' )
-			.unlockPostSaving( 'acf/block/' + clientId );
+	const dispatch = wp.data.dispatch( 'core/editor' );
+	if ( dispatch ) {
+		dispatch.unlockPostSaving( 'acf/block/' + clientId );
 	}
 };
 
 /**
- * Sorts an object's keys alphabetically
+ * Locks post saving with a custom lock name
+ * Used for global operations that aren't tied to a specific block
+ *
+ * @param {string} lockName - The name of the lock
+ */
+export const lockPostSavingByName = ( lockName ) => {
+	const dispatch = wp.data.dispatch( 'core/editor' );
+	if ( dispatch ) {
+		dispatch.lockPostSaving( 'acf/block/' + lockName );
+	}
+};
+
+/**
+ * Unlocks post saving with a custom lock name
+ * Used for global operations that aren't tied to a specific block
+ *
+ * @param {string} lockName - The name of the lock
+ */
+export const unlockPostSavingByName = ( lockName ) => {
+	const dispatch = wp.data.dispatch( 'core/editor' );
+	if ( dispatch ) {
+		dispatch.unlockPostSaving( 'acf/block/' + lockName );
+	}
+};
+
+/**
+ * Sorts an object's keys alphabetically and returns a new object
  * Used for consistent object serialization and comparison
+ * Ensures that objects with same properties in different order produce same hash
  *
  * @param {Object} obj - Object to sort
- * @returns {Object} - New object with sorted keys
+ * @returns {Object} - New object with sorted keys in alphabetical order
  */
-export const sortObjectKeys = ( obj ) =>
-	Object.keys( obj )
+export const sortObjectKeys = ( obj ) => {
+	return Object.keys( obj )
 		.sort()
-		.reduce( ( result, key ) => {
-			result[ key ] = obj[ key ];
-			return result;
+		.reduce( ( sortedObj, key ) => {
+			sortedObj[ key ] = obj[ key ];
+			return sortedObj;
 		}, {} );
+};

@@ -5,7 +5,13 @@
  */
 import md5 from 'md5';
 
-import { useState, useEffect, useRef, createPortal } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	useRef,
+	createPortal,
+	useMemo,
+} from '@wordpress/element';
 
 import {
 	BlockControls,
@@ -27,7 +33,28 @@ import {
 	lockPostSaving,
 	unlockPostSaving,
 	sortObjectKeys,
+	lockPostSavingByName,
 } from '../utils/post-locking';
+
+/**
+ * InspectorBlockFormContainer
+ * Small helper component that manages the inspector panel container ref
+ * Sets the current form container when the inspector panel is available
+ *
+ * @param {Object} props
+ * @param {React.RefObject} props.inspectorBlockFormRef - Ref to inspector container
+ * @param {Function} props.setCurrentBlockFormContainer - Setter for current container
+ */
+const InspectorBlockFormContainer = ( {
+	inspectorBlockFormRef,
+	setCurrentBlockFormContainer,
+} ) => {
+	useEffect( () => {
+		setCurrentBlockFormContainer( inspectorBlockFormRef.current );
+	}, [] );
+
+	return <div ref={ inspectorBlockFormRef } />;
+};
 
 /**
  * Main BlockEdit component wrapper
@@ -58,10 +85,17 @@ export const BlockEdit = ( props ) => {
 	);
 	const [ userHasInteractedWithForm, setUserHasInteractedWithForm ] =
 		useState( false );
+	const [ hasFetchedOnce, setHasFetchedOnce ] = useState( false );
+	const [ ajaxRequest, setAjaxRequest ] = useState();
 
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
 	const debounceRef = useRef( null );
+
+	const attributesWithoutError = useMemo( () => {
+		const { hasAcfError, ...rest } = attributes;
+		return rest;
+	}, [ attributes ] );
 
 	/**
 	 * Fetches block data from server (form HTML, preview HTML, validation)
@@ -79,6 +113,11 @@ export const BlockEdit = ( props ) => {
 		isSelected,
 	} ) {
 		if ( ! theAttributes ) return;
+
+		// NEW: Abort any pending request
+		if ( ajaxRequest ) {
+			ajaxRequest.abort();
+		}
 
 		// Generate hash of attributes for preload cache lookup
 		const attributesHash = generateAttributesHash( theAttributes, context );
@@ -106,12 +145,10 @@ export const BlockEdit = ( props ) => {
 
 		const blockData = { ...theAttributes };
 
-		wp.data
-			.dispatch( 'core/editor' )
-			.lockPostSaving( 'acf-fetching-block' );
+		lockPostSavingByName( 'acf-fetching-block' );
 
 		// Fetch block data via AJAX
-		$.ajax( {
+		const request = $.ajax( {
 			url: acf.get( 'ajaxurl' ),
 			dataType: 'json',
 			type: 'post',
@@ -125,9 +162,7 @@ export const BlockEdit = ( props ) => {
 			} ),
 		} )
 			.done( ( response ) => {
-				wp.data
-					.dispatch( 'core/editor' )
-					.unlockPostSaving( 'acf-fetching-block' );
+				unlockPostSavingByName( 'acf-fetching-block' );
 
 				setBlockFormHtml( response.data.form );
 
@@ -158,12 +193,14 @@ export const BlockEdit = ( props ) => {
 				} else {
 					setValidationErrors( null );
 				}
+
+				setHasFetchedOnce( true );
 			} )
 			.fail( function () {
-				wp.data
-					.dispatch( 'core/editor' )
-					.unlockPostSaving( 'acf-fetching-block' );
+				setHasFetchedOnce( true );
+				unlockPostSavingByName( 'acf-fetching-block' );
 			} );
+		setAjaxRequest( request );
 	}
 
 	/**
@@ -332,29 +369,37 @@ export const BlockEdit = ( props ) => {
 		clearTimeout( debounceRef.current );
 
 		debounceRef.current = setTimeout( () => {
-			handleFormDataUpdate();
+			const parsedData = JSON.parse( theSerializedAcfData );
+
+			if ( ! parsedData ) {
+				return void fetchBlockData( {
+					theAttributes: attributesWithoutError,
+					theClientId: clientId,
+					theContext: context,
+					isSelected: isSelected,
+				} );
+			}
+
+			if (
+				theSerializedAcfData ===
+				JSON.stringify( attributesWithoutError.data )
+			) {
+				return void fetchBlockData( {
+					theAttributes: attributesWithoutError,
+					theClientId: clientId,
+					theContext: context,
+					isSelected: isSelected,
+				} );
+			}
+
+			// Use original attributes (with hasAcfError) when updating
+			const updatedAttributes = {
+				...attributes, // ← Keep this as 'attributes', not 'attributesWithoutError'
+				data: { ...parsedData },
+			};
+			setAttributes( updatedAttributes );
 		}, 200 );
-	}, [ theSerializedAcfData ] );
-
-	/**
-	 * Updates block attributes when form data changes
-	 */
-	function handleFormDataUpdate() {
-		const parsedData = JSON.parse( theSerializedAcfData );
-		if ( ! parsedData ) return;
-		if ( theSerializedAcfData === JSON.stringify( attributes.data ) )
-			return;
-
-		const updatedAttributes = { ...attributes, data: { ...parsedData } };
-		setAttributes( updatedAttributes );
-
-		fetchBlockData( {
-			theAttributes: updatedAttributes,
-			theClientId: clientId,
-			theContext: context,
-			isSelected: isSelected,
-		} );
-	}
+	}, [ theSerializedAcfData, attributesWithoutError ] );
 
 	// Trigger ACF actions when preview is rendered
 	useEffect( () => {
@@ -385,6 +430,7 @@ export const BlockEdit = ( props ) => {
 			userHasInteractedWithForm={ userHasInteractedWithForm }
 			setUserHasInteractedWithForm={ setUserHasInteractedWithForm }
 			previewRef={ previewRef }
+			hasFetchedOnce={ hasFetchedOnce }
 		/>
 	);
 };
@@ -410,10 +456,10 @@ function BlockEditInner( props ) {
 		blockFetcher,
 		userHasInteractedWithForm,
 		previewRef,
+		hasFetchedOnce,
 	} = props;
 
 	const { clientId } = useBlockEditContext();
-	const invisibleFormContainerRef = useRef();
 	const inspectorControlsRef = useRef();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const modalFormContainerRef = useRef();
@@ -478,7 +524,10 @@ function BlockEditInner( props ) {
 
 			{ /* Inspector panel container */ }
 			<InspectorControls>
-				<div ref={ inspectorControlsRef } />
+				<InspectorBlockFormContainer
+					inspectorBlockFormRef={ inspectorControlsRef }
+					setCurrentBlockFormContainer={ setCurrentFormContainer }
+				/>
 			</InspectorControls>
 
 			{ /* Render form via portal when container is available */ }
@@ -491,12 +540,14 @@ function BlockEditInner( props ) {
 							clientId={ clientId }
 							blockFormHtml={ blockFormHtml }
 							onMount={ () => {
-								blockFetcher( {
-									theAttributes: attributes,
-									theClientId: clientId,
-									theContext: context,
-									isSelected: isSelected,
-								} );
+								if ( ! hasFetchedOnce ) {
+									blockFetcher( {
+										theAttributes: attributes,
+										theClientId: clientId,
+										theContext: context,
+										isSelected: isSelected,
+									} );
+								}
 							} }
 							onChange={ function ( $form ) {
 								const serializedData = acf.serialize(
@@ -524,15 +575,7 @@ function BlockEditInner( props ) {
 					</>,
 					currentFormContainer || inspectorControlsRef.current
 				) }
-
-			{ /* Hidden container for form when not in inspector/modal */ }
 			<>
-				<div
-					style={ { display: 'none' } }
-					className="acf-invisible-block-form-container"
-					ref={ invisibleFormContainerRef }
-				/>
-
 				{ /* Modal for editing block fields */ }
 				{ isModalOpen && (
 					<Modal
