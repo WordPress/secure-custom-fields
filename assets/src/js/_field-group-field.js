@@ -698,6 +698,12 @@
 				forceSanitize = true;
 			}
 
+			forceSanitize = acf.applyFilters(
+				'convert_field_name_to_lowercase',
+				forceSanitize,
+				this
+			);
+
 			// Sanitize the input value (force if needed)
 			const sanitized = acf.strSanitize( $el.val(), forceSanitize );
 

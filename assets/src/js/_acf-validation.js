@@ -1081,7 +1081,6 @@
 				// Backup vars.
 				var _this = this;
 				var _args = arguments;
-
 				// Perform validation within a Promise.
 				return new Promise( function ( resolve, reject ) {
 					// Bail early if is autosave or preview.
@@ -1140,6 +1139,7 @@
 
 					// Recursive function to check all blocks (including nested innerBlocks) for ACF validation errors
 					function checkBlocksForErrors( blocks ) {
+						const errors = [];
 						return new Promise( function ( resolve ) {
 							// Iterate through each block
 							blocks.forEach( ( block ) => {
@@ -1167,13 +1167,8 @@
 											.togglePublishSidebar();
 									}
 
-									// Get the block's client ID
-									const blockClientId = block.clientId;
-
-									// Select the block with the error in the editor
-									wp.data
-										.dispatch( 'core/block-editor' )
-										.selectBlock( blockClientId );
+									// Add block to errors array
+									errors.push( block );
 
 									// Dispatch a custom event to notify about the block with validation error
 									document.dispatchEvent(
@@ -1196,6 +1191,14 @@
 									return resolve( true );
 								}
 							} );
+
+							// If errors were found, select the first one
+							if ( errors.length > 0 ) {
+								const blockClientId = errors[ 0 ].clientId;
+								wp.data
+									.dispatch( 'core/block-editor' )
+									.selectBlock( blockClientId );
+							}
 
 							// No errors found, resolve with false
 							return resolve( false );

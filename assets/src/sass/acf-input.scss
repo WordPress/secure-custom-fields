@@ -3372,3 +3372,7 @@ body.is-dragging-metaboxes #acf_after_title-sortables {
   min-height: 60px;
   margin-bottom: 3px !important;
 }
+
+.editor-sidebar__panel .is-side #poststuff .acf-postbox .postbox-header {
+    margin-top: -1px
+}

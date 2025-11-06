@@ -115,14 +115,15 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 
 	// Map custom SCF properties from the SCF key, with localization.
 	$property_mappings = array(
-		'renderCallback' => 'render_callback',
-		'renderTemplate' => 'render_template',
-		'mode'           => 'mode',
-		'blockVersion'   => 'acf_block_version',
-		'postTypes'      => 'post_types',
-		'validate'       => 'validate',
-		'validateOnLoad' => 'validate_on_load',
-		'usePostMeta'    => 'use_post_meta',
+		'renderCallback'      => 'render_callback',
+		'renderTemplate'      => 'render_template',
+		'mode'                => 'mode',
+		'blockVersion'        => 'acf_block_version',
+		'postTypes'           => 'post_types',
+		'validate'            => 'validate',
+		'validateOnLoad'      => 'validate_on_load',
+		'usePostMeta'         => 'use_post_meta',
+		'hideFieldsInSidebar' => 'hide_fields_in_sidebar',
 	);
 	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
@@ -858,14 +859,17 @@ function acf_enqueue_block_assets() {
 	// Localize text.
 	acf_localize_text(
 		array(
-			'Switch to Edit'           => __( 'Switch to Edit', 'secure-custom-fields' ),
-			'Switch to Preview'        => __( 'Switch to Preview', 'secure-custom-fields' ),
-			'Change content alignment' => __( 'Change content alignment', 'secure-custom-fields' ),
-			'Error previewing block'   => __( 'An error occurred when loading the preview for this block.', 'secure-custom-fields' ),
-			'Error loading block form' => __( 'An error occurred when loading the block in edit mode.', 'secure-custom-fields' ),
-			'Edit Block'               => __( 'Edit Block', 'secure-custom-fields' ),
+			'Switch to Edit'            => __( 'Switch to Edit', 'secure-custom-fields' ),
+			'Switch to Preview'         => __( 'Switch to Preview', 'secure-custom-fields' ),
+			'Change content alignment'  => __( 'Change content alignment', 'secure-custom-fields' ),
+			'Error previewing block'    => __( 'An error occurred when loading the preview for this block.', 'secure-custom-fields' ),
+			'Error loading block form'  => __( 'An error occurred when loading the block in edit mode.', 'secure-custom-fields' ),
+			'Edit Block'                => __( 'Edit Block', 'secure-custom-fields' ),
+			'Open Expanded Editor'      => __( 'Open Expanded Editor', 'secure-custom-fields' ),
+			'Error previewing block v3' => __( 'The preview for this block couldn’t be loaded. Review its content or settings for issues.', 'secure-custom-fields' ),
+			'ACF Block'                 => __( 'ACF Block', 'secure-custom-fields' ),
 			/* translators: %s: Block type title */
-			'%s settings'              => __( '%s settings', 'secure-custom-fields' ),
+			'%s settings'               => __( '%s settings', 'secure-custom-fields' ),
 		)
 	);
 

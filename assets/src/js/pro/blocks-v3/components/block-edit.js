@@ -11,6 +11,8 @@ import {
 	useRef,
 	createPortal,
 	useMemo,
+	Component,
+	createContext,
 } from '@wordpress/element';
 
 import {
@@ -20,6 +22,7 @@ import {
 	useBlockEditContext,
 } from '@wordpress/block-editor';
 import {
+	Button,
 	ToolbarGroup,
 	ToolbarButton,
 	Placeholder,
@@ -35,6 +38,92 @@ import {
 	sortObjectKeys,
 	lockPostSavingByName,
 } from '../utils/post-locking';
+
+// Error Boundary Context
+const ErrorBoundaryContext = createContext( null );
+
+// Error Boundary Component
+class ErrorBoundary extends Component {
+	constructor( props ) {
+		super( props );
+		this.resetErrorBoundary = this.resetErrorBoundary.bind( this );
+		this.state = { didCatch: false, error: null };
+	}
+
+	static getDerivedStateFromError( error ) {
+		return { didCatch: true, error: error };
+	}
+
+	resetErrorBoundary() {
+		const { error } = this.state;
+		if ( error !== null ) {
+			this.setState( { didCatch: false, error: null } );
+		}
+	}
+
+	componentDidCatch( error, errorInfo ) {
+		acf.debug( 'Block preview error caught:', error, errorInfo );
+	}
+
+	render() {
+		const { children, fallbackRender, FallbackComponent, fallback } =
+			this.props;
+		const { didCatch, error } = this.state;
+
+		let content = children;
+
+		if ( didCatch ) {
+			const errorProps = {
+				error: error,
+				resetErrorBoundary: this.resetErrorBoundary,
+			};
+
+			if ( typeof fallbackRender === 'function' ) {
+				content = fallbackRender( errorProps );
+			} else if ( FallbackComponent ) {
+				content = <FallbackComponent { ...errorProps } />;
+			} else if ( fallback !== undefined ) {
+				content = fallback;
+			} else {
+				throw error;
+			}
+		}
+
+		return (
+			<ErrorBoundaryContext.Provider
+				value={ {
+					didCatch,
+					error,
+					resetErrorBoundary: this.resetErrorBoundary,
+				} }
+			>
+				{ content }
+			</ErrorBoundaryContext.Provider>
+		);
+	}
+}
+
+// Fallback component to show when preview errors
+const BlockPreviewErrorFallback = ( {
+	setBlockFormModalOpen,
+	blockLabel,
+	error,
+} ) => {
+	let errorMessage = null;
+
+	if ( error ) {
+		acf.debug( 'Block preview error:', error );
+		errorMessage = acf.__( 'Error previewing block v3' );
+	}
+
+	return (
+		<BlockPlaceholder
+			setBlockFormModalOpen={ setBlockFormModalOpen }
+			blockLabel={ blockLabel }
+			instructions={ errorMessage }
+		/>
+	);
+};
 
 /**
  * InspectorBlockFormContainer
@@ -76,13 +165,31 @@ export const BlockEdit = ( props ) => {
 	const shouldValidate = blockType.validate;
 	const { clientId } = useBlockEditContext();
 
-	const [ validationErrors, setValidationErrors ] = useState( null );
+	const preloadedData = useMemo( () => {
+		return checkPreloadedData(
+			generateAttributesHash( attributes, context ),
+			clientId,
+			isSelected
+		);
+	}, [] );
+
+	const [ validationErrors, setValidationErrors ] = useState( () => {
+		return preloadedData?.validation?.errors ?? null;
+	} );
+
 	const [ showValidationErrors, setShowValidationErrors ] = useState( null );
 	const [ theSerializedAcfData, setTheSerializedAcfData ] = useState( null );
 	const [ blockFormHtml, setBlockFormHtml ] = useState( '' );
-	const [ blockPreviewHtml, setBlockPreviewHtml ] = useState(
-		'acf-block-preview-loading'
-	);
+	const [ blockPreviewHtml, setBlockPreviewHtml ] = useState( () => {
+		if ( preloadedData?.html ) {
+			return acf.applyFilters(
+				'blocks/preview/render',
+				preloadedData.html,
+				true
+			);
+		}
+		return 'acf-block-preview-loading';
+	} );
 	const [ userHasInteractedWithForm, setUserHasInteractedWithForm ] =
 		useState( false );
 	const [ hasFetchedOnce, setHasFetchedOnce ] = useState( false );
@@ -353,6 +460,7 @@ export const BlockEdit = ( props ) => {
 				'acf/block/has-error',
 				handleErrorEvent
 			);
+			unlockPostSaving( clientId );
 		};
 	}, [] );
 
@@ -486,6 +594,17 @@ function BlockEditInner( props ) {
 		}
 	}, [ isSelected, inspectorControlsRef, inspectorControlsRef.current ] );
 
+	useEffect( () => {
+		if (
+			isSelected &&
+			validationErrors &&
+			showValidationErrors &&
+			blockType?.hide_fields_in_sidebar
+		) {
+			setIsModalOpen( true );
+		}
+	}, [ isSelected, showValidationErrors, validationErrors, blockType ] );
+
 	// Build block CSS classes
 	let blockClasses = 'acf-block-component acf-block-body';
 	blockClasses += ' acf-block-preview';
@@ -524,6 +643,17 @@ function BlockEditInner( props ) {
 
 			{ /* Inspector panel container */ }
 			<InspectorControls>
+				<div style={ { padding: '16px' } }>
+					<Button
+						className="acf-blocks-open-expanded-editor-btn"
+						variant="secondary"
+						onClick={ () => {
+							setIsModalOpen( true );
+						} }
+					>
+						{ acf.__( 'Open Expanded Editor' ) }
+					</Button>
+				</div>
 				<InspectorBlockFormContainer
 					inspectorBlockFormRef={ inspectorControlsRef }
 					setCurrentBlockFormContainer={ setCurrentFormContainer }
@@ -571,6 +701,12 @@ function BlockEditInner( props ) {
 								setCurrentFormContainer
 							}
 							attributes={ attributes }
+							hideFieldsInSidebar={
+								blockType?.hide_fields_in_sidebar &&
+								( ! isSelected ||
+									inspectorControlsRef.current ===
+										currentFormContainer )
+							}
 						/>
 					</>,
 					currentFormContainer || inspectorControlsRef.current
@@ -601,26 +737,38 @@ function BlockEditInner( props ) {
 					blockPreviewHtml={ blockPreviewHtml }
 					blockProps={ blockProps }
 				>
-					{ /* Show placeholder when no HTML */ }
-					{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
-						<BlockPlaceholder
-							setBlockFormModalOpen={ setIsModalOpen }
-							blockLabel={ blockType.title }
-						/>
-					) : null }
+					<ErrorBoundary
+						fallbackRender={ ( { error } ) => (
+							<BlockPreviewErrorFallback
+								blockLabel={
+									blockType?.title || acf.__( 'ACF Block' )
+								}
+								setBlockFormModalOpen={ setIsModalOpen }
+								error={ error }
+							/>
+						) }
+					>
+						{ /* Show placeholder when no HTML */ }
+						{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
+							<BlockPlaceholder
+								setBlockFormModalOpen={ setIsModalOpen }
+								blockLabel={ blockType.title }
+							/>
+						) : null }
 
-					{ /* Show spinner while loading */ }
-					{ blockPreviewHtml === 'acf-block-preview-loading' && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
-					) }
+						{ /* Show spinner while loading */ }
+						{ blockPreviewHtml === 'acf-block-preview-loading' && (
+							<Placeholder>
+								<Spinner />
+							</Placeholder>
+						) }
 
-					{ /* Render actual preview HTML */ }
-					{ blockPreviewHtml !== 'acf-block-preview-loading' &&
-						blockPreviewHtml !== 'acf-block-preview-no-html' &&
-						blockPreviewHtml &&
-						acf.parseJSX( blockPreviewHtml ) }
+						{ /* Render actual preview HTML */ }
+						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
+							blockPreviewHtml !== 'acf-block-preview-no-html' &&
+							blockPreviewHtml &&
+							acf.parseJSX( blockPreviewHtml ) }
+					</ErrorBoundary>
 				</BlockPreview>
 			</>
 		</>

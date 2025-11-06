@@ -34,6 +34,7 @@ export const BlockForm = ( {
 	acfFormRef,
 	userHasInteractedWithForm,
 	attributes,
+	hideFieldsInSidebar,
 } ) => {
 	const [ formHtml, setFormHtml ] = useState( blockFormHtml );
 	const [ pendingChange, setPendingChange ] = useState( false );
@@ -272,6 +273,7 @@ export const BlockForm = ( {
 		<div
 			ref={ acfFormRef }
 			className="acf-block-component acf-block-panel"
+			style={ { display: hideFieldsInSidebar ? 'none' : null } }
 			dangerouslySetInnerHTML={ {
 				__html: acf.applyFilters(
 					'blocks/form/render',
