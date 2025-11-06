@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "scf-identifier.schema.json",
+	"title": "SCF Identifier",
+	"description": "Schema for SCF entity identifiers (post types, field groups, fields, taxonomies, etc.)",
+	"type": ["string", "integer"],
+	"examples": [
+		123,
+		"post_type_products",
+		"post_type_testimonials"
+	]
+}
