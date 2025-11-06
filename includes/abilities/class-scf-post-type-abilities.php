@@ -44,6 +44,16 @@ class SCF_Post_Type_Abilities {
 	private $scf_identifier_schema = null;
 
 	/**
+	 * Constructor.
+	 *
+	 * @since 6.6.0
+	 */
+	public function __construct() {
+		add_action( 'wp_abilities_api_categories_init', array( $this, 'register_categories' ) );
+		add_action( 'wp_abilities_api_init', array( $this, 'register_abilities' ) );
+	}
+
+	/**
 	 * Get the SCF post type schema, loading it once and caching for reuse.
 	 *
 	 * @since 6.6.0
@@ -104,11 +114,26 @@ class SCF_Post_Type_Abilities {
 	}
 
 	/**
+	 * Register SCF ability categories.
+	 *
+	 * @since 6.6.0
+	 */
+	public function register_categories() {
+		wp_register_ability_category(
+			'scf-post-types',
+			array(
+				'label'       => __( 'SCF Post Types', 'secure-custom-fields' ),
+				'description' => __( 'Abilities for managing Secure Custom Fields post types.', 'secure-custom-fields' ),
+			)
+		);
+	}
+
+	/**
 	 * Register all post type abilities.
 	 *
 	 * @since 6.6.0
 	 */
-	public function register() {
+	public function register_abilities() {
 		$this->register_list_post_types_ability();
 		$this->register_get_post_type_ability();
 		$this->register_create_post_type_ability();
@@ -581,3 +606,5 @@ class SCF_Post_Type_Abilities {
 		return $imported_post_type;
 	}
 }
+
+acf_new_instance( 'SCF_Post_Type_Abilities' );
