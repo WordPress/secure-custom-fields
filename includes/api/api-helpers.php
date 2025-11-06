@@ -2733,6 +2733,16 @@ function acf_current_user_can_admin() {
 }
 
 /**
+ * Checks if the current user has the SCF capability for programmatic access, without considering show_admin setting.
+ *
+ * @since 6.6.0
+ * @return bool True if the user has the ACF capability.
+ */
+function scf_current_user_has_capability() {
+	return current_user_can( acf_get_setting( 'capability' ) );
+}
+
+/**
  * Wrapper function for current_user_can( 'edit_post', $post_id ).
  *
  * @since ACF 6.3.4
