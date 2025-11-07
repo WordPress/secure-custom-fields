@@ -40,24 +40,35 @@ export const BlockForm = ( {
 	const [ pendingChange, setPendingChange ] = useState( false );
 	const debounceTimer = useRef( null );
 	const [ userInteracted, setUserInteracted ] = useState( false );
+	const [ initialValuesCaptured, setInitialValuesCaptured ] =
+		useState( false );
 
 	// Call onMount when component first mounts
 	useEffect( () => {
 		onMount();
 	}, [] );
 
-	// Trigger onChange when there's a pending change and user has interacted
+	// Trigger onChange when there's a pending change
 	useEffect( () => {
-		if (
-			pendingChange &&
-			( userHasInteractedWithForm || userInteracted )
-		) {
-			onChange( pendingChange );
-			setPendingChange( false );
+		if ( pendingChange ) {
+			// For the first change, capture default values even without interaction
+			if (
+				! initialValuesCaptured ||
+				userHasInteractedWithForm ||
+				userInteracted
+			) {
+				onChange( pendingChange );
+				setPendingChange( false );
+				if ( ! initialValuesCaptured ) {
+					setInitialValuesCaptured( true );
+				}
+			}
 		}
 	}, [
 		pendingChange,
 		userHasInteractedWithForm,
+		userInteracted,
+		initialValuesCaptured,
 		setPendingChange,
 		onChange,
 	] );
