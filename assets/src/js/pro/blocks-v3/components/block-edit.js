@@ -37,6 +37,7 @@ import {
 	unlockPostSaving,
 	sortObjectKeys,
 	lockPostSavingByName,
+	unlockPostSavingByName,
 } from '../utils/post-locking';
 
 // Error Boundary Context
@@ -650,9 +651,9 @@ function BlockEditInner( props ) {
 						onClick={ () => {
 							setIsModalOpen( true );
 						} }
-					>
-						{ acf.__( 'Open Expanded Editor' ) }
-					</Button>
+						text={ acf.__( 'Open Expanded Editor' ) }
+						icon="edit"
+					/>
 				</div>
 				<InspectorBlockFormContainer
 					inspectorBlockFormRef={ inspectorControlsRef }
@@ -703,7 +704,7 @@ function BlockEditInner( props ) {
 							attributes={ attributes }
 							hideFieldsInSidebar={
 								blockType?.hide_fields_in_sidebar &&
-								( ! isSelected ||
+								( ! currentFormContainer ||
 									inspectorControlsRef.current ===
 										currentFormContainer )
 							}
