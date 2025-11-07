@@ -11,8 +11,6 @@ import {
 	useRef,
 	createPortal,
 	useMemo,
-	Component,
-	createContext,
 } from '@wordpress/element';
 
 import {
@@ -32,6 +30,7 @@ import {
 import { BlockPlaceholder } from './block-placeholder';
 import { BlockForm } from './block-form';
 import { BlockPreview } from './block-preview';
+import { ErrorBoundary, BlockPreviewErrorFallback } from './error-boundary';
 import {
 	lockPostSaving,
 	unlockPostSaving,
@@ -39,92 +38,6 @@ import {
 	lockPostSavingByName,
 	unlockPostSavingByName,
 } from '../utils/post-locking';
-
-// Error Boundary Context
-const ErrorBoundaryContext = createContext( null );
-
-// Error Boundary Component
-class ErrorBoundary extends Component {
-	constructor( props ) {
-		super( props );
-		this.resetErrorBoundary = this.resetErrorBoundary.bind( this );
-		this.state = { didCatch: false, error: null };
-	}
-
-	static getDerivedStateFromError( error ) {
-		return { didCatch: true, error: error };
-	}
-
-	resetErrorBoundary() {
-		const { error } = this.state;
-		if ( error !== null ) {
-			this.setState( { didCatch: false, error: null } );
-		}
-	}
-
-	componentDidCatch( error, errorInfo ) {
-		acf.debug( 'Block preview error caught:', error, errorInfo );
-	}
-
-	render() {
-		const { children, fallbackRender, FallbackComponent, fallback } =
-			this.props;
-		const { didCatch, error } = this.state;
-
-		let content = children;
-
-		if ( didCatch ) {
-			const errorProps = {
-				error: error,
-				resetErrorBoundary: this.resetErrorBoundary,
-			};
-
-			if ( typeof fallbackRender === 'function' ) {
-				content = fallbackRender( errorProps );
-			} else if ( FallbackComponent ) {
-				content = <FallbackComponent { ...errorProps } />;
-			} else if ( fallback !== undefined ) {
-				content = fallback;
-			} else {
-				throw error;
-			}
-		}
-
-		return (
-			<ErrorBoundaryContext.Provider
-				value={ {
-					didCatch,
-					error,
-					resetErrorBoundary: this.resetErrorBoundary,
-				} }
-			>
-				{ content }
-			</ErrorBoundaryContext.Provider>
-		);
-	}
-}
-
-// Fallback component to show when preview errors
-const BlockPreviewErrorFallback = ( {
-	setBlockFormModalOpen,
-	blockLabel,
-	error,
-} ) => {
-	let errorMessage = null;
-
-	if ( error ) {
-		acf.debug( 'Block preview error:', error );
-		errorMessage = acf.__( 'Error previewing block v3' );
-	}
-
-	return (
-		<BlockPlaceholder
-			setBlockFormModalOpen={ setBlockFormModalOpen }
-			blockLabel={ blockLabel }
-			instructions={ errorMessage }
-		/>
-	);
-};
 
 /**
  * InspectorBlockFormContainer

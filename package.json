@@ -8,6 +8,8 @@
 		"sort-package-json": "sort-package-json",
 		"test:e2e": "wp-scripts test-playwright",
 		"test:e2e:debug": "wp-scripts test-playwright --debug",
+		"test:unit": "wp-scripts test-unit-js",
+		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch"
 	},
 	"dependencies": {
@@ -19,6 +21,8 @@
 		"@babel/core": "^7.25.8",
 		"@babel/preset-env": "^7.25.8",
 		"@babel/preset-react": "^7.25.7",
+		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/react": "^14.1.2",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.20.0",
 		"@wordpress/e2e-test-utils-playwright": "^1.20.0",
 		"@wordpress/icons": "^10.26.0",
@@ -29,6 +33,7 @@
 		"css-loader": "^7.1.2",
 		"css-minimizer-webpack-plugin": "^7.0.0",
 		"husky": "^9.1.7",
+		"identity-obj-proxy": "^3.0.0",
 		"markdownlint-cli": "^0.39.0",
 		"mini-css-extract-plugin": "^2.9.1",
 		"prettier": "npm:wp-prettier@3.0.3",
