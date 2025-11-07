@@ -64,7 +64,7 @@ class SCF_Post_Type_Abilities {
 			$validator = new SCF_JSON_Schema_Validator();
 			$schema    = $validator->load_schema( 'post-type' );
 
-			$this->post_type_schema = $schema->definitions->postType;
+			$this->post_type_schema = json_decode( wp_json_encode( $schema->definitions->postType ), true );
 		}
 
 		return $this->post_type_schema;
@@ -81,7 +81,7 @@ class SCF_Post_Type_Abilities {
 		if ( null === $this->scf_identifier_schema ) {
 			$validator = new SCF_JSON_Schema_Validator();
 
-			$this->scf_identifier_schema = $validator->load_schema( 'scf-identifier' );
+			$this->scf_identifier_schema = json_decode( wp_json_encode( $validator->load_schema( 'scf-identifier' ) ), true );
 		}
 
 		return $this->scf_identifier_schema;
@@ -92,20 +92,18 @@ class SCF_Post_Type_Abilities {
 	 *
 	 * @since 6.6.0
 	 *
-	 * @return object The extended post type schema with internal fields.
+	 * @return array The extended post type schema with internal fields.
 	 */
 	private function get_post_type_with_internal_fields_schema() {
-		$schema             = clone $this->get_post_type_schema();
-		$properties         = clone $schema->properties;
-		$schema->properties = $properties;
+		$schema = $this->get_post_type_schema();
 
 		// Add internal WordPress/SCF fields that appear in GET/LIST but not EXPORT.
-		$schema->properties->ID = (object) array(
+		$schema['properties']['ID'] = array(
 			'type'        => 'integer',
 			'description' => __( 'WordPress post ID (internal field, present in GET/LIST operations only).', 'secure-custom-fields' ),
 		);
 
-		$schema->properties->_valid = (object) array(
+		$schema['properties']['_valid'] = array(
 			'type'        => 'boolean',
 			'description' => __( 'SCF validation cache flag (internal field, present in GET/LIST operations only).', 'secure-custom-fields' ),
 		);
