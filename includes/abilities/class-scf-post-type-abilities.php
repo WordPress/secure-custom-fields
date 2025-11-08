@@ -156,7 +156,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'list_post_types_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -208,7 +208,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'get_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -247,7 +247,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'create_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -278,7 +278,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'update_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -309,7 +309,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'delete_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -349,7 +349,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'duplicate_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -390,7 +390,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'export_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
@@ -429,7 +429,7 @@ class SCF_Post_Type_Abilities {
 				'category'            => 'scf-post-types',
 				'execute_callback'    => array( $this, 'import_post_type_callback' ),
 				'meta'                => array(
-					'show_in_rest' => false,
+					'show_in_rest' => true,
 					'mcp'          => array(
 						'public' => true,
 					),
