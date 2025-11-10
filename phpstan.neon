@@ -5,6 +5,7 @@ parameters:
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		- '#^Path in (include_once|require_once|require)\(\) ".*wp-admin/includes/.*" is not a file#'
+		- '#Function wp_(register_ability|register_ability_category|execute_ability) not found#'
 	paths:
 		- .
 	excludePaths:
