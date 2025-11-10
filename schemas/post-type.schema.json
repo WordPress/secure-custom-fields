@@ -249,8 +249,8 @@
 					"description": "[SCF Export Only] The order of this post type in the admin menu"
 				},
 				"menu_position": {
-					"type": ["integer", "string"],
-					"description": "The position in the menu order. SCF exports as empty string when not set, integer when set. Import accepts both and casts to integer."
+					"type": ["integer", "string", "null"],
+					"description": "The position in the menu order. SCF exports as empty string or null when not set, integer when set. Import accepts all types and casts to integer."
 				},
 				"menu_icon": {
 					"oneOf": [
@@ -300,7 +300,7 @@
 					"description": "Core feature(s) the post type supports. Common values: 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields', 'comments', 'revisions', 'page-attributes', 'post-formats'. Custom supports are also allowed."
 				},
 				"taxonomies": {
-					"oneOf": [
+					"anyOf": [
 						{
 							"type": "array",
 							"items": { "type": "string" },
