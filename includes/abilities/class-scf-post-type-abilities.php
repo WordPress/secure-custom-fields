@@ -88,25 +88,29 @@ class SCF_Post_Type_Abilities {
 	}
 
 	/**
-	 * Get the post type schema extended with internal fields for GET/LIST operations.
+	 * Get the internal fields schema (ID, _valid, local).
+	 *
+	 * @since 6.6.0
+	 * @return array The internal fields schema.
+	 */
+	private function get_internal_fields_schema() {
+		$validator = new SCF_JSON_Schema_Validator();
+		$schema    = $validator->load_schema( 'internal-fields' );
+
+		return json_decode( wp_json_encode( $schema->definitions->internalFields ), true );
+	}
+
+	/**
+	 * Get the post type schema extended with internal fields for GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE operations.
 	 *
 	 * @since 6.6.0
 	 *
 	 * @return array The extended post type schema with internal fields.
 	 */
 	private function get_post_type_with_internal_fields_schema() {
-		$schema = $this->get_post_type_schema();
-
-		// Add internal WordPress/SCF fields that appear in GET/LIST but not EXPORT.
-		$schema['properties']['ID'] = array(
-			'type'        => 'integer',
-			'description' => __( 'WordPress post ID (internal field, present in GET/LIST operations only).', 'secure-custom-fields' ),
-		);
-
-		$schema['properties']['_valid'] = array(
-			'type'        => 'boolean',
-			'description' => __( 'SCF validation cache flag (internal field, present in GET/LIST operations only).', 'secure-custom-fields' ),
-		);
+		$schema               = $this->get_post_type_schema();
+		$internal_fields      = $this->get_internal_fields_schema();
+		$schema['properties'] = array_merge( $schema['properties'], $internal_fields['properties'] );
 
 		return $schema;
 	}
@@ -259,7 +263,7 @@ class SCF_Post_Type_Abilities {
 				),
 				'permission_callback' => 'scf_current_user_has_capability',
 				'input_schema'        => $input_schema,
-				'output_schema'       => $this->get_post_type_schema(),
+				'output_schema'       => $this->get_post_type_with_internal_fields_schema(),
 			)
 		);
 	}
@@ -290,7 +294,7 @@ class SCF_Post_Type_Abilities {
 				),
 				'permission_callback' => 'scf_current_user_has_capability',
 				'input_schema'        => $this->get_post_type_schema(),
-				'output_schema'       => $this->get_post_type_schema(),
+				'output_schema'       => $this->get_post_type_with_internal_fields_schema(),
 			)
 		);
 	}
@@ -371,7 +375,7 @@ class SCF_Post_Type_Abilities {
 					),
 					'required'   => array( 'identifier' ),
 				),
-				'output_schema'       => $this->get_post_type_schema(),
+				'output_schema'       => $this->get_post_type_with_internal_fields_schema(),
 			)
 		);
 	}
@@ -419,8 +423,6 @@ class SCF_Post_Type_Abilities {
 	 * @since 6.6.0
 	 */
 	private function register_import_post_type_ability() {
-		$post_type_schema = $this->get_post_type_schema();
-
 		wp_register_ability(
 			'scf/import-post-type',
 			array(
@@ -440,8 +442,8 @@ class SCF_Post_Type_Abilities {
 					),
 				),
 				'permission_callback' => 'scf_current_user_has_capability',
-				'input_schema'        => $this->get_post_type_schema(),
-				'output_schema'       => $this->get_post_type_schema(),
+				'input_schema'        => $this->get_post_type_with_internal_fields_schema(),
+				'output_schema'       => $this->get_post_type_with_internal_fields_schema(),
 			)
 		);
 	}

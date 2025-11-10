@@ -1,0 +1,29 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/internal-fields.schema.json",
+	"title": "SCF Internal Fields",
+	"description": "Internal fields present in SCF entities (post types, taxonomies, field groups, options pages). These fields are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
+	"definitions": {
+		"internalFields": {
+			"type": "object",
+			"description": "Internal system-managed fields that appear in entity responses",
+			"properties": {
+				"ID": {
+					"type": "integer",
+					"minimum": 1,
+					"description": "WordPress post ID. Present in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs. Optional in IMPORT input - if provided, updates existing entity; if omitted, creates new entity."
+				},
+				"_valid": {
+					"type": "boolean",
+					"description": "Validation cache flag . Indicates whether the entity passed validation."
+				},
+				"local": {
+					"type": "string",
+					"enum": ["json"],
+					"description": "Source indicator. Present only if entity is locally-defined (e.g., from local JSON files). Stripped during export."
+				}
+			},
+			"additionalProperties": false
+		}
+	}
+}
