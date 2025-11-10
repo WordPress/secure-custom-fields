@@ -67,7 +67,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 	 */
 	public function validPostTypesProvider() {
 		return array(
-			'basic valid'          => array(
+			'basic valid'                  => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -75,7 +75,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Basic post type should validate successfully',
 			),
-			'array with two items' => array(
+			'array with two items'         => array(
 				array(
 					array(
 						'key'       => 'post_type_book',
@@ -90,7 +90,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Array of two post types should validate successfully',
 			),
-			'with dashes'          => array(
+			'with dashes'                  => array(
 				array(
 					'key'       => 'post_type_my_product',
 					'title'     => 'My Product',
@@ -98,7 +98,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with dashes should be valid',
 			),
-			'with underscores'     => array(
+			'with underscores'             => array(
 				array(
 					'key'       => 'post_type_my_product',
 					'title'     => 'My Product',
@@ -106,7 +106,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with underscores should be valid',
 			),
-			'with numbers'         => array(
+			'with numbers'                 => array(
 				array(
 					'key'       => 'post_type_product123',
 					'title'     => 'Product',
@@ -114,7 +114,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with numbers should be valid',
 			),
-			'custom supports'      => array(
+			'custom supports'              => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -123,7 +123,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with custom supports should be valid',
 			),
-			'rewrite false'        => array(
+			'rewrite false'                => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -132,7 +132,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with rewrite as false should validate',
 			),
-			'rewrite object'       => array(
+			'rewrite object'               => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -146,7 +146,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with rewrite object should validate',
 			),
-			'with capabilities'    => array(
+			'with capabilities'            => array(
 				array(
 					'key'          => 'post_type_book',
 					'title'        => 'Book',
@@ -158,6 +158,60 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 					),
 				),
 				'Post type with valid capabilities should validate',
+			),
+			'taxonomies empty array'       => array(
+				array(
+					'key'        => 'post_type_test',
+					'title'      => 'Test',
+					'post_type'  => 'test',
+					'taxonomies' => array(),
+				),
+				'Post type with empty taxonomies array should validate',
+			),
+			'taxonomies empty string'      => array(
+				array(
+					'key'        => 'post_type_test',
+					'title'      => 'Test',
+					'post_type'  => 'test',
+					'taxonomies' => '',
+				),
+				'Post type with empty taxonomies string should validate',
+			),
+			'taxonomies array with values' => array(
+				array(
+					'key'        => 'post_type_test',
+					'title'      => 'Test',
+					'post_type'  => 'test',
+					'taxonomies' => array( 'category', 'post_tag' ),
+				),
+				'Post type with taxonomies array should validate',
+			),
+			'menu_position null'           => array(
+				array(
+					'key'           => 'post_type_test',
+					'title'         => 'Test',
+					'post_type'     => 'test',
+					'menu_position' => null,
+				),
+				'Post type with null menu_position should validate',
+			),
+			'menu_position empty string'   => array(
+				array(
+					'key'           => 'post_type_test',
+					'title'         => 'Test',
+					'post_type'     => 'test',
+					'menu_position' => '',
+				),
+				'Post type with empty string menu_position should validate',
+			),
+			'menu_position integer'        => array(
+				array(
+					'key'           => 'post_type_test',
+					'title'         => 'Test',
+					'post_type'     => 'test',
+					'menu_position' => 20,
+				),
+				'Post type with integer menu_position should validate',
 			),
 		);
 	}
