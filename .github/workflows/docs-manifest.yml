@@ -1,0 +1,39 @@
+name: Keep docs manifest up to date
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - trunk
+    paths:
+      - docs/**/*.md
+
+jobs:
+  check-docs-manifest:
+    name: Check docs manifest for staleness
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        tools: composer:v2
+
+    - name: Install dependencies
+      run: composer install
+
+    - name: Regenerate manifest
+      run: composer run docs:manifest
+
+    - name: Check whether manifest has been updated
+      env:
+        MANIFEST_PATH: docs/bin/manifest.json
+      run: |
+        if ! git diff --quiet -- "$MANIFEST_PATH"; then
+          echo "There are documentation changes in this branch that require that the docs manifest be regenerated."
+          echo
+          echo "Please run 'composer run docs:manifest' and commit $MANIFEST_PATH"
+          exit 1
+        fi
