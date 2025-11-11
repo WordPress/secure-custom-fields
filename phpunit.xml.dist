@@ -5,6 +5,7 @@
       <directory suffix=".php">.</directory>
     </include>
     <exclude>
+      <directory>./bin</directory>
       <directory>./tests</directory>
       <directory>./vendor</directory>
       <directory>./node_modules</directory>
