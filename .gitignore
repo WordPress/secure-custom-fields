@@ -62,5 +62,8 @@ assets/build/**/*.php
 # Claude settings
 **/.claude/settings.local.json
 
+# Serena MCP
+/.serena/
+
 # Release folder
 release/
