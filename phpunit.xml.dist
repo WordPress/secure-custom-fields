@@ -6,6 +6,7 @@
     </include>
     <exclude>
       <directory>./bin</directory>
+      <directory>./docs</directory>
       <directory>./tests</directory>
       <directory>./vendor</directory>
       <directory>./node_modules</directory>
