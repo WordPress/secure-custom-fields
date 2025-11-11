@@ -48,4 +48,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: WordPress/secure-custom-fields
           files: ./coverage.xml
-          verbose: true
