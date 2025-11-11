@@ -416,7 +416,7 @@ export const BlockEdit = ( props ) => {
 
 			// Use original attributes (with hasAcfError) when updating
 			const updatedAttributes = {
-				...attributes, // ← Keep this as 'attributes', not 'attributesWithoutError'
+				...attributes,
 				data: { ...parsedData },
 			};
 			setAttributes( updatedAttributes );
@@ -661,6 +661,25 @@ function BlockEditInner( props ) {
 								error={ error }
 							/>
 						) }
+						onError={ ( error, errorInfo ) => {
+							acf.debug(
+								'Block preview error caught:',
+								error,
+								errorInfo
+							);
+						} }
+						resetKeys={ [ blockPreviewHtml ] }
+						onReset={ ( { reason, next, prev } ) => {
+							acf.debug( 'Error boundary reset:', reason );
+							if ( reason === 'keys' ) {
+								acf.debug(
+									'Preview HTML changed from',
+									prev,
+									'to',
+									next
+								);
+							}
+						} }
 					>
 						{ /* Show placeholder when no HTML */ }
 						{ blockPreviewHtml === 'acf-block-preview-no-html' ? (

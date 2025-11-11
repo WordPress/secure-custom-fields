@@ -1138,7 +1138,6 @@ const md5 = require( 'md5' );
 			const client = acf.blockInstances[ this.props.clientId ] || {};
 			this.state = client[ this.constructor.name ] || {};
 		}
-
 		setState( state ) {
 			acf.blockInstances[ this.props.clientId ][ this.constructor.name ] =
 				{
@@ -1148,7 +1147,7 @@ const md5 = require( 'md5' );
 
 			// Update component state if subscribed.
 			// - Allows AJAX callback to update store without modifying state of an unmounted component.
-			if ( this.subscribed ) {
+			if ( this.subscribed || acf.get( 'StrictMode' ) ) {
 				super.setState( state );
 			}
 
@@ -1313,9 +1312,12 @@ const md5 = require( 'md5' );
 		}
 
 		componentWillUnmount() {
-			acf.doAction( 'unmount', this.state.$el );
+			// Only skip unmount action if in StrictMode AND component is not subscribed
+			if ( ! acf.get( 'StrictMode' ) || this.subscribed ) {
+				acf.doAction( 'unmount', this.state.$el );
+			}
 
-			// Unsubscribe this component from state.
+			// Unsubscribe this component from state
 			this.subscribed = false;
 		}
 

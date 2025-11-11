@@ -140,14 +140,11 @@ export const BlockForm = ( {
 								);
 							}
 
-							if ( block.attributes.hasAcfError ) {
-								const errorBlockClientId = block.clientId;
-								if ( errorBlockClientId !== clientId ) {
-									wp.data
-										.dispatch( 'core/block-editor' )
-										.selectBlock( errorBlockClientId );
-									return resolve( true );
-								}
+							if (
+								block.attributes.hasAcfError &&
+								block.clientId !== clientId
+							) {
+								return resolve( true );
 							}
 						} );
 						return resolve( false );
@@ -187,6 +184,10 @@ export const BlockForm = ( {
 		let isActive = true;
 
 		acf.doAction( 'remount', $form );
+		if ( ! initialValuesCaptured ) {
+			onChange( $form );
+			setInitialValuesCaptured( true );
+		}
 
 		const handleChange = () => {
 			onChange( $form );
@@ -213,7 +214,7 @@ export const BlockForm = ( {
 				if ( isActive ) {
 					setPendingChange( $form );
 				}
-			}, 200 );
+			}, 300 );
 		};
 
 		// Observe DOM changes to detect field additions/removals
