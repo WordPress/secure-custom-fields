@@ -15,12 +15,16 @@
 				},
 				"_valid": {
 					"type": "boolean",
-					"description": "Validation cache flag . Indicates whether the entity passed validation."
+					"description": "Validation cache flag. Indicates whether the entity passed validation."
 				},
 				"local": {
 					"type": "string",
 					"enum": ["json"],
 					"description": "Source indicator. Present only if entity is locally-defined (e.g., from local JSON files). Stripped during export."
+				},
+				"not_registered": {
+					"type": "boolean",
+					"description": "Flag indicating that this post entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
 				}
 			},
 			"additionalProperties": false
