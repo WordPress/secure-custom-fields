@@ -1,11 +1,10 @@
 name: Keep docs manifest up to date
 on:
   pull_request:
-    types: [opened, synchronize]
     branches:
       - trunk
     paths:
-      - docs/**/*.md
+      - docs/**
 
 jobs:
   check-docs-manifest:
