@@ -1,6 +1,6 @@
 # Understanding the Relationship Between Post Types, Taxonomies, and Custom Fields
 
-[SOME CHANGE TO TRIGGER THE DOCS WORKFLOW]
+[A TINY CHANGE HERE TO TRIGGER THE DOCS WORKFLOW]
 
 In WordPress, the true power of content modeling comes from combining **Post Types**, **Taxonomies**, and **Custom Fields**. Together, these tools allow you to build virtually any kind of data structure your website needs — from a real estate listing manager to a recipe library or an online product catalog.
 
