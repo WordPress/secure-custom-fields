@@ -576,7 +576,6 @@ function BlockEditInner( props ) {
 
 			{ /* Render form via portal when container is available */ }
 			{ portalTarget &&
-				currentFormContainer &&
 				createPortal(
 					<>
 						<BlockForm
