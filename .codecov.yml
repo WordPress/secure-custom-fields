@@ -1,0 +1,36 @@
+# Codecov Configuration
+# Reference: https://docs.codecov.com/docs/codecovyml-reference
+
+coverage:
+    status:
+        project:
+            default:
+                target: auto
+                threshold: 5%
+                if_ci_failed: ignore
+
+        patch:
+            default:
+                target: auto
+                threshold: 5%
+                if_ci_failed: ignore
+
+        changes:
+            default:
+                target: auto
+                threshold: 5%
+                if_ci_failed: ignore
+
+ignore:
+    - '*.min.css'
+    - '*.min.js'
+    - '.wp-env'
+    - 'build'
+    - 'dist'
+    - 'docs'
+    - 'node_modules'
+    - 'tests'
+    - 'vendor'
+
+comment:
+    layout: 'condensed_header, condensed_files, condensed_footer'
