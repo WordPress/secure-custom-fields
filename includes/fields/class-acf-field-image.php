@@ -127,17 +127,17 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 				)
 			);
 			?>
-	<div class="show-if-value image-wrap" style="max-width: <?php echo esc_attr( $size_w ); ?>">
+	<div class="show-if-value image-wrap" style="max-width: <?php echo esc_attr( $size_w ); ?>" tabindex="0" role="button" aria-label="<?php esc_attr_e( 'Selected image. Press tab to access image options.', 'secure-custom-fields' ); ?>">
 		<img <?php echo acf_esc_attrs( $img_attrs ); ?> />
 		<div class="acf-actions -hover">
-			<?php if ( $uploader !== 'basic' ) : ?>
-			<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>"></a>
+			<?php if ( 'basic' !== $uploader ) : ?>
+			<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Edit image', 'secure-custom-fields' ); ?>"></a>
 			<?php endif; ?>
-			<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
+			<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Remove image', 'secure-custom-fields' ); ?>"></a>
 		</div>
 	</div>
 	<div class="hide-if-value">
-			<?php if ( $uploader === 'basic' ) : ?>
+			<?php if ( 'basic' === $uploader ) : ?>
 				<?php if ( $field['value'] && ! is_numeric( $field['value'] ) ) : ?>
 				<div class="acf-error-message"><p><?php echo acf_esc_html( $field['value'] ); ?></p></div>
 			<?php endif; ?>

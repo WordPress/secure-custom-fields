@@ -133,7 +133,9 @@
 		priority: 1,
 		initialize: function () {
 			const $notices = $( '.acf-admin-notice' );
-
+			if ( ! $notices.length ) {
+				return;
+			}
 			$notices.each( function () {
 				if ( $( this ).data( 'persisted' ) ) {
 					let dismissed = acf.getPreference( 'dismissed-notices' );

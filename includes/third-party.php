@@ -98,10 +98,10 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 
 					// vars
 					$id    = "acf-{$field_group['key']}";
-					$title = 'ACF: ' . $field_group['title'];
+					$title = 'ACF: ' . acf_esc_html( acf_get_field_group_title( $field_group ) );
 
 					// add meta box
-					add_meta_box( $id, esc_html( $title ), '__return_true', $post_type );
+					add_meta_box( $id, $title, '__return_true', $post_type );
 				}
 			}
 		}

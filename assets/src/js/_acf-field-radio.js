@@ -4,6 +4,7 @@
 
 		events: {
 			'click input[type="radio"]': 'onClick',
+			'keydown input[type="radio"]': 'onKeyDownInput',
 		},
 
 		$control: function () {
@@ -55,6 +56,12 @@
 				} else {
 					this.$inputText().prop( 'disabled', true );
 				}
+			}
+		},
+		onKeyDownInput: function ( event, input ) {
+			if ( event.which === 13 ) {
+				event.preventDefault();
+				input.prop( 'checked', true ).trigger( 'change' );
 			}
 		},
 	} );

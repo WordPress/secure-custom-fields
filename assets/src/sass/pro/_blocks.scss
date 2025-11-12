@@ -233,3 +233,93 @@
 .components-panel__body .acf-block-panel {
 	margin: 16px -16px -16px;
 }
+
+
+@media(min-width: 600px)and (min-width: 782px) {
+    .acf-block-form-modal {
+        height: 100% !important;
+        width: 50% !important;
+        border-radius: 0;
+        position: absolute;
+        right: 0;
+    }
+	
+	html[dir=rtl] .acf-block-form-modal {
+        right: auto;
+        left: 0
+    }
+
+    html[dir=rtl] .acf-block-form-modal .components-modal__header .components-button {
+        left: 0;
+        right: auto
+    }
+
+    @keyframes components-modal__appear-animation {
+        0% {
+            right: -20px;
+            opacity: 0;
+            transform: scale(1);
+        }
+
+        to {
+            right: 0;
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes components-modal__disappear-animation {
+        0% {
+            right: 0;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        to {
+            right: -20px;
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+
+	    @keyframes components-modal__appear-animation-rtl {
+        0% {
+            left: -20px;
+            opacity: 0;
+            transform: scale(1)
+        }
+
+        to {
+            left: 0;
+            opacity: 1;
+            transform: scale(1)
+        }
+    }
+
+    @keyframes components-modal__disappear-animation-rtl {
+        0% {
+            left: 0;
+            opacity: 1;
+            transform: scale(1)
+        }
+
+        to {
+            left: -20px;
+            opacity: 0;
+            transform: scale(1)
+        }
+    }
+
+    html[dir=rtl] .acf-block-form-modal.components-modal__frame {
+        animation-name: components-modal__appear-animation-rtl !important
+    }
+
+    html[dir=rtl] .acf-block-form-modal.is-closing {
+        animation-name: components-modal__disappear-animation-rtl !important
+    }
+}
+
+.acf-blocks-open-expanded-editor-btn.has-text.has-icon {
+    width: 100%;
+    justify-content: center
+}

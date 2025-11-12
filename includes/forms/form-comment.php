@@ -148,7 +148,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 
 					?>
 					<div id="acf-<?php echo esc_attr( $field_group['ID'] ); ?>" class="stuffbox">
-						<h3 class="hndle"><?php echo esc_html( $field_group['title'] ); ?></h3>
+						<h3 class="hndle"><?php echo acf_esc_html( acf_get_field_group_title( $field_group ) ); ?></h3>
 						<div class="inside">
 							<?php acf_render_fields( $fields, $post_id, 'div', $field_group['instruction_placement'] ); ?>
 							<script type="text/javascript">

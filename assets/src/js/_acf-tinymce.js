@@ -352,7 +352,9 @@
 
 			// Ensure textarea element is visible
 			// - Fixes bug in block editor when switching between "Block" and "Document" tabs.
-			$( '#' + id ).show();
+			if ( ! tinymce.get( id ) ) {
+				$( '#' + id ).show();
+			}
 
 			// toggle
 			switchEditors.go( id, 'tmce' );

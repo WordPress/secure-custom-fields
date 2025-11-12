@@ -19,15 +19,19 @@ const md5 = require( 'md5' );
 
 	// Potentially experimental dependencies.
 	const BlockAlignmentMatrixToolbar =
-		wp.blockEditor.__experimentalBlockAlignmentMatrixToolbar || wp.blockEditor.BlockAlignmentMatrixToolbar;
+		wp.blockEditor.__experimentalBlockAlignmentMatrixToolbar ||
+		wp.blockEditor.BlockAlignmentMatrixToolbar;
 	// Gutenberg v10.x begins transition from Toolbar components to Control components.
 	const BlockAlignmentMatrixControl =
-		wp.blockEditor.__experimentalBlockAlignmentMatrixControl || wp.blockEditor.BlockAlignmentMatrixControl;
+		wp.blockEditor.__experimentalBlockAlignmentMatrixControl ||
+		wp.blockEditor.BlockAlignmentMatrixControl;
 	const BlockFullHeightAlignmentControl =
 		wp.blockEditor.__experimentalBlockFullHeightAligmentControl ||
 		wp.blockEditor.__experimentalBlockFullHeightAlignmentControl ||
 		wp.blockEditor.BlockFullHeightAlignmentControl;
-	const useInnerBlocksProps = wp.blockEditor.__experimentalUseInnerBlocksProps || wp.blockEditor.useInnerBlocksProps;
+	const useInnerBlocksProps =
+		wp.blockEditor.__experimentalUseInnerBlocksProps ||
+		wp.blockEditor.useInnerBlocksProps;
 
 	/**
 	 * Storage for registered block types.
@@ -96,9 +100,14 @@ const md5 = require( 'md5' );
 	 * @return boolean
 	 */
 	function isBlockInQueryLoop( clientId ) {
-		const parents = wp.data.select( 'core/block-editor' ).getBlockParents( clientId );
-		const parentsData = wp.data.select( 'core/block-editor' ).getBlocksByClientId( parents );
-		return parentsData.filter( ( block ) => block.name === 'core/query' ).length;
+		const parents = wp.data
+			.select( 'core/block-editor' )
+			.getBlockParents( clientId );
+		const parentsData = wp.data
+			.select( 'core/block-editor' )
+			.getBlocksByClientId( parents );
+		return parentsData.filter( ( block ) => block.name === 'core/query' )
+			.length;
 	}
 
 	/**
@@ -110,7 +119,10 @@ const md5 = require( 'md5' );
 	 * @return boolean
 	 */
 	function isSiteEditor() {
-		return document.querySelectorAll( 'iframe[name="editor-canvas"]' ).length > 0;
+		return (
+			document.querySelectorAll( 'iframe[name="editor-canvas"]' ).length >
+			0
+		);
 	}
 
 	/**
@@ -132,7 +144,9 @@ const md5 = require( 'md5' );
 
 		// Check if function exists (experimental or not) and return true if it's Desktop, or doesn't exist.
 		if ( editPostStore.__experimentalGetPreviewDeviceType ) {
-			return 'Desktop' === editPostStore.__experimentalGetPreviewDeviceType();
+			return (
+				'Desktop' === editPostStore.__experimentalGetPreviewDeviceType()
+			);
 		} else if ( editPostStore.getPreviewDeviceType ) {
 			return 'Desktop' === editPostStore.getPreviewDeviceType();
 		} else {
@@ -169,7 +183,10 @@ const md5 = require( 'md5' );
 	 * @return boolean
 	 */
 	function isiFramedMobileDevicePreview() {
-		return $( 'iframe[name=editor-canvas]' ).length && ! isDesktopPreviewDeviceType();
+		return (
+			$( 'iframe[name=editor-canvas]' ).length &&
+			! isDesktopPreviewDeviceType()
+		);
 	}
 
 	/**
@@ -196,7 +213,10 @@ const md5 = require( 'md5' );
 		}
 
 		// Handle svg HTML.
-		if ( typeof blockType.icon === 'string' && blockType.icon.substr( 0, 4 ) === '<svg' ) {
+		if (
+			typeof blockType.icon === 'string' &&
+			blockType.icon.substr( 0, 4 ) === '<svg'
+		) {
 			const iconHTML = blockType.icon;
 			blockType.icon = <Div>{ iconHTML }</Div>;
 		}
@@ -229,7 +249,10 @@ const md5 = require( 'md5' );
 		// Remove all empty attribute defaults from PHP values to allow serialisation.
 		// https://github.com/WordPress/gutenberg/issues/7342
 		for ( const key in blockType.attributes ) {
-			if ( 'default' in blockType.attributes[ key ] && blockType.attributes[ key ].default.length === 0 ) {
+			if (
+				'default' in blockType.attributes[ key ] &&
+				blockType.attributes[ key ].default.length === 0
+			) {
 				delete blockType.attributes[ key ].default;
 			}
 		}
@@ -247,20 +270,41 @@ const md5 = require( 'md5' );
 
 		// Apply alignText functionality.
 		if ( blockType.supports.alignText || blockType.supports.align_text ) {
-			blockType.attributes = addBackCompatAttribute( blockType.attributes, 'align_text', 'string' );
+			blockType.attributes = addBackCompatAttribute(
+				blockType.attributes,
+				'align_text',
+				'string'
+			);
 			ThisBlockEdit = withAlignTextComponent( ThisBlockEdit, blockType );
 		}
 
 		// Apply alignContent functionality.
-		if ( blockType.supports.alignContent || blockType.supports.align_content ) {
-			blockType.attributes = addBackCompatAttribute( blockType.attributes, 'align_content', 'string' );
-			ThisBlockEdit = withAlignContentComponent( ThisBlockEdit, blockType );
+		if (
+			blockType.supports.alignContent ||
+			blockType.supports.align_content
+		) {
+			blockType.attributes = addBackCompatAttribute(
+				blockType.attributes,
+				'align_content',
+				'string'
+			);
+			ThisBlockEdit = withAlignContentComponent(
+				ThisBlockEdit,
+				blockType
+			);
 		}
 
 		// Apply fullHeight functionality.
 		if ( blockType.supports.fullHeight || blockType.supports.full_height ) {
-			blockType.attributes = addBackCompatAttribute( blockType.attributes, 'full_height', 'boolean' );
-			ThisBlockEdit = withFullHeightComponent( ThisBlockEdit, blockType.blockType );
+			blockType.attributes = addBackCompatAttribute(
+				blockType.attributes,
+				'full_height',
+				'boolean'
+			);
+			ThisBlockEdit = withFullHeightComponent(
+				ThisBlockEdit,
+				blockType.blockType
+			);
 		}
 
 		// Set edit and save functions.
@@ -269,7 +313,9 @@ const md5 = require( 'md5' );
 			wp.element.useEffect( () => {
 				return () => {
 					if ( ! wp.data.dispatch( 'core/editor' ) ) return;
-					wp.data.dispatch( 'core/editor' ).unlockPostSaving( 'acf/block/' + props.clientId );
+					wp.data
+						.dispatch( 'core/editor' )
+						.unlockPostSaving( 'acf/block/' + props.clientId );
 				};
 			}, [] );
 
@@ -307,7 +353,10 @@ const md5 = require( 'md5' );
 	 */
 	function select( selector ) {
 		if ( selector === 'core/block-editor' ) {
-			return wp.data.select( 'core/block-editor' ) || wp.data.select( 'core/editor' );
+			return (
+				wp.data.select( 'core/block-editor' ) ||
+				wp.data.select( 'core/editor' )
+			);
 		}
 		return wp.data.select( selector );
 	}
@@ -340,7 +389,9 @@ const md5 = require( 'md5' );
 		// Local function to recurse through all child blocks and add to the blocks array.
 		const recurseBlocks = ( block ) => {
 			blocks.push( block );
-			select( 'core/block-editor' ).getBlocks( block.clientId ).forEach( recurseBlocks );
+			select( 'core/block-editor' )
+				.getBlocks( block.clientId )
+				.forEach( recurseBlocks );
 		};
 
 		// Trigger initial recursion for parent level blocks.
@@ -348,7 +399,9 @@ const md5 = require( 'md5' );
 
 		// Loop over args and filter.
 		for ( const k in args ) {
-			blocks = blocks.filter( ( { attributes } ) => attributes[ k ] === args[ k ] );
+			blocks = blocks.filter(
+				( { attributes } ) => attributes[ k ] === args[ k ]
+			);
 		}
 
 		// Return results.
@@ -381,10 +434,18 @@ const md5 = require( 'md5' );
 	 * @return	object The AJAX promise.
 	 */
 	function fetchBlock( args ) {
-		const { attributes = {}, context = {}, query = {}, clientId = null, delay = 0 } = args;
+		const {
+			attributes = {},
+			context = {},
+			query = {},
+			clientId = null,
+			delay = 0,
+		} = args;
 
 		// Build a unique queue ID from block data, including the clientId for edit forms.
-		const queueId = md5( JSON.stringify( { ...attributes, ...context, ...query } ) );
+		const queueId = md5(
+			JSON.stringify( { ...attributes, ...context, ...query } )
+		);
 
 		const data = ajaxQueue[ queueId ] || {
 			query: {},
@@ -404,7 +465,10 @@ const md5 = require( 'md5' );
 			data.started = true;
 			if ( fetchCache[ queueId ] ) {
 				ajaxQueue[ queueId ] = null;
-				data.promise.resolve.apply( fetchCache[ queueId ][ 0 ], fetchCache[ queueId ][ 1 ] );
+				data.promise.resolve.apply(
+					fetchCache[ queueId ][ 0 ],
+					fetchCache[ queueId ][ 1 ]
+				);
 			} else {
 				$.ajax( {
 					url: acf.get( 'ajaxurl' ),
@@ -468,7 +532,10 @@ const md5 = require( 'md5' );
 		// Apply a temporary wrapper for the jQuery parse to prevent text nodes triggering errors.
 		html = '<div>' + html + '</div>';
 		// Correctly balance InnerBlocks tags for jQuery's initial parse.
-		html = html.replace( /<InnerBlocks([^>]+)?\/>/, '<InnerBlocks$1></InnerBlocks>' );
+		html = html.replace(
+			/<InnerBlocks([^>]+)?\/>/,
+			'<InnerBlocks$1></InnerBlocks>'
+		);
 		return parseNode( $( html )[ 0 ], acfBlockVersion, 0 ).props.children;
 	};
 
@@ -485,7 +552,10 @@ const md5 = require( 'md5' );
 	 */
 	function parseNode( node, acfBlockVersion, level = 0 ) {
 		// Get node name.
-		const nodeName = parseNodeName( node.nodeName.toLowerCase(), acfBlockVersion );
+		const nodeName = parseNodeName(
+			node.nodeName.toLowerCase(),
+			acfBlockVersion
+		);
 		if ( ! nodeName ) {
 			return null;
 		}
@@ -578,7 +648,10 @@ const md5 = require( 'md5' );
 	 */
 	function ACFInnerBlocks( props ) {
 		const { className = 'acf-innerblocks-container' } = props;
-		const innerBlockProps = useInnerBlocksProps( { className: className }, props );
+		const innerBlockProps = useInnerBlocksProps(
+			{ className: className },
+			props
+		);
 
 		return <div { ...innerBlockProps }>{ innerBlockProps.children }</div>;
 	}
@@ -597,7 +670,11 @@ const md5 = require( 'md5' );
 		let value = nodeAttr.value;
 
 		// Allow overrides for third party libraries who might use specific attributes.
-		let shortcut = acf.applyFilters( 'acf_blocks_parse_node_attr', false, nodeAttr );
+		let shortcut = acf.applyFilters(
+			'acf_blocks_parse_node_attr',
+			false,
+			nodeAttr
+		);
 
 		if ( shortcut ) return shortcut;
 
@@ -698,10 +775,13 @@ const md5 = require( 'md5' );
 					Object.keys( upgrades ).forEach( ( key ) => {
 						if ( attributes[ key ] !== undefined ) {
 							attributes[ upgrades[ key ] ] = attributes[ key ];
-						} else if ( attributes[ upgrades[ key ] ] === undefined ) {
+						} else if (
+							attributes[ upgrades[ key ] ] === undefined
+						) {
 							//Check for a default
 							if ( blockType[ key ] !== undefined ) {
-								attributes[ upgrades[ key ] ] = blockType[ key ];
+								attributes[ upgrades[ key ] ] =
+									blockType[ key ];
 							}
 						}
 						delete blockType[ key ];
@@ -710,7 +790,10 @@ const md5 = require( 'md5' );
 
 					// Set default attributes for those undefined.
 					for ( let attribute in blockType.attributes ) {
-						if ( attributes[ attribute ] === undefined && blockType[ attribute ] !== undefined ) {
+						if (
+							attributes[ attribute ] === undefined &&
+							blockType[ attribute ] !== undefined
+						) {
 							attributes[ attribute ] = blockType[ attribute ];
 						}
 					}
@@ -721,7 +804,11 @@ const md5 = require( 'md5' );
 			},
 		'withDefaultAttributes'
 	);
-	wp.hooks.addFilter( 'editor.BlockListBlock', 'acf/with-default-attributes', withDefaultAttributes );
+	wp.hooks.addFilter(
+		'editor.BlockListBlock',
+		'acf/with-default-attributes',
+		withDefaultAttributes
+	);
 
 	/**
 	 * The BlockSave functional component.
@@ -756,10 +843,7 @@ const md5 = require( 'md5' );
 				}
 			}
 
-			if (
-				isBlockInQueryLoop( clientId ) ||
-				isSiteEditor()
-			) {
+			if ( isBlockInQueryLoop( clientId ) || isSiteEditor() ) {
 				restrictMode( [ 'preview' ] );
 			} else {
 				switch ( blockType.mode ) {
@@ -780,8 +864,7 @@ const md5 = require( 'md5' );
 			const { name, attributes, setAttributes, clientId } = this.props;
 			const blockType = getBlockType( name );
 			const forcePreview =
-				isBlockInQueryLoop( clientId ) ||
-				isSiteEditor();
+				isBlockInQueryLoop( clientId ) || isSiteEditor();
 			let { mode } = attributes;
 
 			if ( forcePreview ) {
@@ -795,8 +878,12 @@ const md5 = require( 'md5' );
 			}
 
 			// Configure toggle variables.
-			const toggleText = mode === 'preview' ? acf.__( 'Switch to Edit' ) : acf.__( 'Switch to Preview' );
-			const toggleIcon = mode === 'preview' ? 'edit' : 'welcome-view-site';
+			const toggleText =
+				mode === 'preview'
+					? acf.__( 'Switch to Edit' )
+					: acf.__( 'Switch to Preview' );
+			const toggleIcon =
+				mode === 'preview' ? 'edit' : 'welcome-view-site';
 			function toggleMode() {
 				setAttributes( {
 					mode: mode === 'preview' ? 'edit' : 'preview',
@@ -843,8 +930,12 @@ const md5 = require( 'md5' );
 		const { mode } = attributes;
 
 		const index = useSelect( ( select ) => {
-			const rootClientId = select( 'core/block-editor' ).getBlockRootClientId( clientId );
-			return select( 'core/block-editor' ).getBlockIndex( clientId, rootClientId );
+			const rootClientId =
+				select( 'core/block-editor' ).getBlockRootClientId( clientId );
+			return select( 'core/block-editor' ).getBlockIndex(
+				clientId,
+				rootClientId
+			);
 		} );
 
 		let showForm = true;
@@ -865,7 +956,10 @@ const md5 = require( 'md5' );
 		acf.blockInstances[ clientId ].mode = mode;
 
 		if ( ! isSelected ) {
-			if ( blockSupportsValidation( name ) && acf.blockInstances[ clientId ].validation_errors ) {
+			if (
+				blockSupportsValidation( name ) &&
+				acf.blockInstances[ clientId ].validation_errors
+			) {
 				additionalClasses += ' acf-block-has-validation-error';
 			}
 			acf.blockInstances[ clientId ].has_been_deselected = true;
@@ -907,7 +1001,11 @@ const md5 = require( 'md5' );
 	 */
 	class Div extends Component {
 		render() {
-			return <div dangerouslySetInnerHTML={ { __html: this.props.children } } />;
+			return (
+				<div
+					dangerouslySetInnerHTML={ { __html: this.props.children } }
+				/>
+			);
 		}
 	}
 
@@ -1003,20 +1101,32 @@ const md5 = require( 'md5' );
 					}
 
 					// Set HTML to the preloaded version.
-					preloadedBlocks[ blockId ].html = preloadedBlocks[ blockId ].html.replaceAll( blockId, clientId );
+					preloadedBlocks[ blockId ].html = preloadedBlocks[
+						blockId
+					].html.replaceAll( blockId, clientId );
 
 					// Replace blockId in errors.
-					if ( preloadedBlocks[ blockId ].validation && preloadedBlocks[ blockId ].validation.errors ) {
-						preloadedBlocks[ blockId ].validation.errors = preloadedBlocks[ blockId ].validation.errors.map(
-							( error ) => {
-								error.input = error.input.replaceAll( blockId, clientId );
-								return error;
-							}
-						);
+					if (
+						preloadedBlocks[ blockId ].validation &&
+						preloadedBlocks[ blockId ].validation.errors
+					) {
+						preloadedBlocks[ blockId ].validation.errors =
+							preloadedBlocks[ blockId ].validation.errors.map(
+								( error ) => {
+									error.input = error.input.replaceAll(
+										blockId,
+										clientId
+									);
+									return error;
+								}
+							);
 					}
 
 					// Return preloaded object.
-					acf.debug( 'Preload successful', preloadedBlocks[ blockId ] );
+					acf.debug(
+						'Preload successful',
+						preloadedBlocks[ blockId ]
+					);
 					return preloadedBlocks[ blockId ];
 				}
 			}
@@ -1028,16 +1138,16 @@ const md5 = require( 'md5' );
 			const client = acf.blockInstances[ this.props.clientId ] || {};
 			this.state = client[ this.constructor.name ] || {};
 		}
-
 		setState( state ) {
-			acf.blockInstances[ this.props.clientId ][ this.constructor.name ] = {
-				...this.state,
-				...state,
-			};
+			acf.blockInstances[ this.props.clientId ][ this.constructor.name ] =
+				{
+					...this.state,
+					...state,
+				};
 
 			// Update component state if subscribed.
 			// - Allows AJAX callback to update store without modifying state of an unmounted component.
-			if ( this.subscribed ) {
+			if ( this.subscribed || acf.get( 'StrictMode' ) ) {
 				super.setState( state );
 			}
 
@@ -1046,7 +1156,12 @@ const md5 = require( 'md5' );
 				Object.assign( {}, this ),
 				this.props.clientId,
 				this.constructor.name,
-				Object.assign( {}, acf.blockInstances[ this.props.clientId ][ this.constructor.name ] )
+				Object.assign(
+					{},
+					acf.blockInstances[ this.props.clientId ][
+						this.constructor.name
+					]
+				)
 			);
 		}
 
@@ -1064,7 +1179,10 @@ const md5 = require( 'md5' );
 			};
 
 			if ( this.renderMethod === 'jsx' ) {
-				state.jsx = acf.parseJSX( html, getBlockVersion( this.props.name ) );
+				state.jsx = acf.parseJSX(
+					html,
+					getBlockVersion( this.props.name )
+				);
 
 				// Handle templates which don't contain any valid JSX parsable elements.
 				if ( ! state.jsx ) {
@@ -1072,12 +1190,17 @@ const md5 = require( 'md5' );
 						'Your ACF block template contains no valid HTML elements. Appending a empty div to prevent React JS errors.'
 					);
 					state.html += '<div></div>';
-					state.jsx = acf.parseJSX( state.html, getBlockVersion( this.props.name ) );
+					state.jsx = acf.parseJSX(
+						state.html,
+						getBlockVersion( this.props.name )
+					);
 				}
 
 				// If we've got an object (as an array) find the first valid React ref.
 				if ( Array.isArray( state.jsx ) ) {
-					let refElement = state.jsx.find( ( element ) => React.isValidElement( element ) );
+					let refElement = state.jsx.find( ( element ) =>
+						React.isValidElement( element )
+					);
 					state.ref = refElement.ref;
 				} else {
 					state.ref = state.jsx.ref;
@@ -1138,7 +1261,10 @@ const md5 = require( 'md5' );
 				// This causes all instances to share the same state (cool), which unfortunately
 				// pulls $el back and forth between the last rendered reusable block.
 				// This simple fix leaves a "clone" behind :)
-				if ( $prevParent.length && $prevParent[ 0 ] !== $thisParent[ 0 ] ) {
+				if (
+					$prevParent.length &&
+					$prevParent[ 0 ] !== $thisParent[ 0 ]
+				) {
 					$prevParent.html( $el.clone() );
 				}
 			}
@@ -1186,9 +1312,12 @@ const md5 = require( 'md5' );
 		}
 
 		componentWillUnmount() {
-			acf.doAction( 'unmount', this.state.$el );
+			// Only skip unmount action if in StrictMode AND component is not subscribed
+			if ( ! acf.get( 'StrictMode' ) || this.subscribed ) {
+				acf.doAction( 'unmount', this.state.$el );
+			}
 
-			// Unsubscribe this component from state.
+			// Unsubscribe this component from state
 			this.subscribed = false;
 		}
 
@@ -1213,11 +1342,17 @@ const md5 = require( 'md5' );
 		}
 
 		isNotNewlyAdded() {
-			return acf.blockInstances[ this.props.clientId ].has_been_deselected || false;
+			return (
+				acf.blockInstances[ this.props.clientId ].has_been_deselected ||
+				false
+			);
 		}
 
 		hasShownValidation() {
-			return acf.blockInstances[ this.props.clientId ].shown_validation || false;
+			return (
+				acf.blockInstances[ this.props.clientId ].shown_validation ||
+				false
+			);
 		}
 
 		setShownValidation() {
@@ -1225,7 +1360,8 @@ const md5 = require( 'md5' );
 		}
 
 		setValidationErrors( errors ) {
-			acf.blockInstances[ this.props.clientId ].validation_errors = errors;
+			acf.blockInstances[ this.props.clientId ].validation_errors =
+				errors;
 		}
 
 		getValidationErrors() {
@@ -1238,12 +1374,16 @@ const md5 = require( 'md5' );
 
 		lockBlockForSaving() {
 			if ( ! wp.data.dispatch( 'core/editor' ) ) return;
-			wp.data.dispatch( 'core/editor' ).lockPostSaving( 'acf/block/' + this.props.clientId );
+			wp.data
+				.dispatch( 'core/editor' )
+				.lockPostSaving( 'acf/block/' + this.props.clientId );
 		}
 
 		unlockBlockForSaving() {
 			if ( ! wp.data.dispatch( 'core/editor' ) ) return;
-			wp.data.dispatch( 'core/editor' ).unlockPostSaving( 'acf/block/' + this.props.clientId );
+			wp.data
+				.dispatch( 'core/editor' )
+				.unlockPostSaving( 'acf/block/' + this.props.clientId );
 		}
 
 		displayValidation( $formEl ) {
@@ -1257,7 +1397,12 @@ const md5 = require( 'md5' );
 			}
 
 			const errors = this.getValidationErrors();
-			acf.debug( 'Starting handle validation', Object.assign( {}, this ), Object.assign( {}, $formEl ), errors );
+			acf.debug(
+				'Starting handle validation',
+				Object.assign( {}, this ),
+				Object.assign( {}, $formEl ),
+				errors
+			);
 
 			this.setShownValidation();
 
@@ -1323,8 +1468,15 @@ const md5 = require( 'md5' );
 			const preloaded = this.maybePreload( hash, clientId, true );
 
 			if ( preloaded ) {
-				this.setHtml( acf.applyFilters( 'blocks/form/render', preloaded.html, true ) );
-				if ( preloaded.validation ) this.setValidationErrors( preloaded.validation.errors );
+				this.setHtml(
+					acf.applyFilters(
+						'blocks/form/render',
+						preloaded.html,
+						true
+					)
+				);
+				if ( preloaded.validation )
+					this.setValidationErrors( preloaded.validation.errors );
 				return;
 			}
 
@@ -1342,20 +1494,31 @@ const md5 = require( 'md5' );
 				acf.debug( 'fetch block form promise' );
 
 				if ( ! data ) {
-					this.setHtml( `<div class="acf-block-fields acf-fields acf-empty-block-fields">${acf.__( 'Error loading block form' )}</div>` );
+					this.setHtml(
+						`<div class="acf-block-fields acf-fields acf-empty-block-fields">${ acf.__(
+							'Error loading block form'
+						) }</div>`
+					);
 					return;
 				}
 
 				if ( data.form ) {
 					this.setHtml(
-						acf.applyFilters( 'blocks/form/render', data.form.replaceAll( data.clientId, clientId ), false )
+						acf.applyFilters(
+							'blocks/form/render',
+							data.form.replaceAll( data.clientId, clientId ),
+							false
+						)
 					);
 				}
 
-				if ( data.validation ) this.setValidationErrors( data.validation.errors );
+				if ( data.validation )
+					this.setValidationErrors( data.validation.errors );
 
 				if ( this.isNotNewlyAdded() ) {
-					acf.debug( "Block has already shown it's invalid. The form needs to show validation errors" );
+					acf.debug(
+						"Block has already shown it's invalid. The form needs to show validation errors"
+					);
 					this.validate();
 				}
 			} );
@@ -1366,7 +1529,10 @@ const md5 = require( 'md5' );
 				this.loadState();
 			}
 
-			acf.debug( 'BlockForm calling validate with state', Object.assign( {}, this ) );
+			acf.debug(
+				'BlockForm calling validate with state',
+				Object.assign( {}, this )
+			);
 			super.displayValidation( this.state.$el );
 		}
 
@@ -1398,8 +1564,13 @@ const md5 = require( 'md5' );
 
 			const { $el } = this.state;
 
-			if ( blockSupportsValidation( this.props.name ) && this.isNotNewlyAdded() ) {
-				acf.debug( "Block has already shown it's invalid. The form needs to show validation errors" );
+			if (
+				blockSupportsValidation( this.props.name ) &&
+				this.isNotNewlyAdded()
+			) {
+				acf.debug(
+					"Block has already shown it's invalid. The form needs to show validation errors"
+				);
 				this.validate();
 			}
 
@@ -1431,8 +1602,14 @@ const md5 = require( 'md5' );
 					} );
 				}
 
-				if ( blockSupportsValidation( name ) && ! silent && thisBlockForm.getMode() === 'edit' ) {
-					acf.debug( 'No block preview currently available. Need to trigger a validation only fetch.' );
+				if (
+					blockSupportsValidation( name ) &&
+					! silent &&
+					thisBlockForm.getMode() === 'edit'
+				) {
+					acf.debug(
+						'No block preview currently available. Need to trigger a validation only fetch.'
+					);
 					thisBlockForm.fetch( true, data );
 				}
 			}
@@ -1508,10 +1685,20 @@ const md5 = require( 'md5' );
 
 			if ( preloaded ) {
 				if ( getBlockVersion( name ) == 1 ) {
-					preloaded.html = '<div class="acf-block-preview">' + preloaded.html + '</div>';
+					preloaded.html =
+						'<div class="acf-block-preview">' +
+						preloaded.html +
+						'</div>';
 				}
-				this.setHtml( acf.applyFilters( 'blocks/preview/render', preloaded.html, true ) );
-				if ( preloaded.validation ) this.setValidationErrors( preloaded.validation.errors );
+				this.setHtml(
+					acf.applyFilters(
+						'blocks/preview/render',
+						preloaded.html,
+						true
+					)
+				);
+				if ( preloaded.validation )
+					this.setValidationErrors( preloaded.validation.errors );
 				return;
 			}
 
@@ -1530,16 +1717,32 @@ const md5 = require( 'md5' );
 				delay,
 			} ).done( ( { data } ) => {
 				if ( ! data ) {
-					this.setHtml( `<div class="acf-block-fields acf-fields acf-empty-block-fields">${acf.__( 'Error previewing block' )}</div>` );
+					this.setHtml(
+						`<div class="acf-block-fields acf-fields acf-empty-block-fields">${ acf.__(
+							'Error previewing block'
+						) }</div>`
+					);
 					return;
 				}
 
-				let replaceHtml = data.preview.replaceAll( data.clientId, clientId );
+				let replaceHtml = data.preview.replaceAll(
+					data.clientId,
+					clientId
+				);
 				if ( getBlockVersion( name ) == 1 ) {
-					replaceHtml = '<div class="acf-block-preview">' + replaceHtml + '</div>';
+					replaceHtml =
+						'<div class="acf-block-preview">' +
+						replaceHtml +
+						'</div>';
 				}
 				acf.debug( 'fetch block render promise' );
-				this.setHtml( acf.applyFilters( 'blocks/preview/render', replaceHtml, false ) );
+				this.setHtml(
+					acf.applyFilters(
+						'blocks/preview/render',
+						replaceHtml,
+						false
+					)
+				);
 				if ( data.validation ) {
 					this.setValidationErrors( data.validation.errors );
 				}
@@ -1582,7 +1785,9 @@ const md5 = require( 'md5' );
 					delay = 300;
 				}
 
-				acf.debug( 'Triggering fetch from block preview shouldComponentUpdate' );
+				acf.debug(
+					'Triggering fetch from block preview shouldComponentUpdate'
+				);
 
 				this.fetch( {
 					attributes: nextAttributes,
@@ -1613,7 +1818,11 @@ const md5 = require( 'md5' );
 
 			// Do action.
 			acf.doAction( 'render_block_preview', blockElement, attributes );
-			acf.doAction( `render_block_preview/type=${ type }`, blockElement, attributes );
+			acf.doAction(
+				`render_block_preview/type=${ type }`,
+				blockElement,
+				attributes
+			);
 		}
 
 		componentDidRemount() {
@@ -1629,10 +1838,15 @@ const md5 = require( 'md5' );
 
 			// Update preview if data has changed since last render (changing from "edit" to "preview").
 			if (
-				! compareObjects( this.state.prevAttributes, this.props.attributes ) ||
+				! compareObjects(
+					this.state.prevAttributes,
+					this.props.attributes
+				) ||
 				! compareObjects( this.state.prevContext, this.props.context )
 			) {
-				acf.debug( 'Triggering block preview fetch from componentDidRemount' );
+				acf.debug(
+					'Triggering block preview fetch from componentDidRemount'
+				);
 				this.fetch();
 			}
 
@@ -1656,7 +1870,12 @@ const md5 = require( 'md5' );
 		// Register block types.
 		const blockTypes = acf.get( 'blockTypes' );
 		if ( blockTypes ) {
-			blockTypes.map( registerBlockType );
+			// Only register blocks with version < 3 (v3 blocks are registered separately).
+			blockTypes
+				.filter(
+					( blockType ) => parseInt( blockType.acf_block_version ) < 3
+				)
+				.map( registerBlockType );
 		}
 	}
 
@@ -1709,7 +1928,9 @@ const md5 = require( 'md5' );
 		const DEFAULT = 'center center';
 		if ( align ) {
 			const [ y, x ] = align.split( ' ' );
-			return `${ validateVerticalAlignment( y ) } ${ validateHorizontalAlignment( x ) }`;
+			return `${ validateVerticalAlignment(
+				y
+			) } ${ validateHorizontalAlignment( x ) }`;
 		}
 		return DEFAULT;
 	}
@@ -1726,12 +1947,14 @@ const md5 = require( 'md5' );
 	 */
 	function withAlignContentComponent( OriginalBlockEdit, blockType ) {
 		// Determine alignment vars
-		let type = blockType.supports.align_content || blockType.supports.alignContent;
+		let type =
+			blockType.supports.align_content || blockType.supports.alignContent;
 		let AlignmentComponent;
 		let validateAlignment;
 		switch ( type ) {
 			case 'matrix':
-				AlignmentComponent = BlockAlignmentMatrixControl || BlockAlignmentMatrixToolbar;
+				AlignmentComponent =
+					BlockAlignmentMatrixControl || BlockAlignmentMatrixToolbar;
 				validateAlignment = validateMatrixAlignment;
 				break;
 			default:
@@ -1742,7 +1965,9 @@ const md5 = require( 'md5' );
 
 		// Ensure alignment component exists.
 		if ( AlignmentComponent === undefined ) {
-			console.warn( `The "${ type }" alignment component was not found.` );
+			console.warn(
+				`The "${ type }" alignment component was not found.`
+			);
 			return OriginalBlockEdit;
 		}
 
@@ -1806,7 +2031,10 @@ const md5 = require( 'md5' );
 				return (
 					<Fragment>
 						<BlockControls group="block">
-							<AlignmentToolbar value={ validateAlignment( alignText ) } onChange={ onChangeAlignText } />
+							<AlignmentToolbar
+								value={ validateAlignment( alignText ) }
+								onChange={ onChangeAlignText }
+							/>
 						</BlockControls>
 						<OriginalBlockEdit { ...this.props } />
 					</Fragment>
@@ -1843,7 +2071,10 @@ const md5 = require( 'md5' );
 				return (
 					<Fragment>
 						<BlockControls group="block">
-							<BlockFullHeightAlignmentControl isActive={ fullHeight } onToggle={ onToggleFullHeight } />
+							<BlockFullHeightAlignmentControl
+								isActive={ fullHeight }
+								onToggle={ onToggleFullHeight }
+							/>
 						</BlockControls>
 						<OriginalBlockEdit { ...this.props } />
 					</Fragment>

@@ -166,7 +166,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The post ID, key, or name.
-		 * @return WP_Post|bool The post object, or false on failure.
+		 * @return WP_Post|boolean The post object, or false on failure.
 		 */
 		public function get_post_object( $id = 0 ) {
 			if ( is_numeric( $id ) ) {

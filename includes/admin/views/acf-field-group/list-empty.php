@@ -5,7 +5,8 @@
  * @package wordpress/secure-custom-fields
  */
 
-?><script>document.body.classList.add('acf-no-field-groups');</script>
+?>
+<script>document.body.classList.add('acf-no-field-groups');</script>
 <div class="acf-no-field-groups-wrapper">
 	<div class="acf-no-field-groups-inner">
 		<img src="<?php echo esc_url( acf_get_url( 'assets/images/empty-group.svg' ) ); ?>" />

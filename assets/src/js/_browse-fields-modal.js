@@ -44,7 +44,7 @@
 		initialize: function () {
 			this.open();
 			this.lockFocusToModal( true );
-			this.$el.find( '.acf-modal-title' ).focus();
+			this.$el.find( '.acf-modal-title' ).trigger( 'focus' );
 			acf.doAction( 'show', this.$el );
 		},
 

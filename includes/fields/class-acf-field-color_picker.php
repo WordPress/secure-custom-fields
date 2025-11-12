@@ -26,9 +26,12 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			$this->doc_url       = 'https://developer.wordpress.org/secure-custom-fields/features/fields/color-picker/';
 			$this->tutorial_url  = 'https://developer.wordpress.org/secure-custom-fields/features/fields/color-picker/color-picker-tutorial/';
 			$this->defaults      = array(
-				'default_value'  => '',
-				'enable_opacity' => false,
-				'return_format'  => 'string', // 'string'|'array'
+				'default_value'         => '',
+				'enable_opacity'        => false,
+				'custom_palette_source' => '',
+				'palette_colors'        => '',
+				'show_color_wheel'      => true,
+				'return_format'         => 'string', // Possible values: 'string' or 'array'.
 			);
 		}
 
@@ -106,7 +109,7 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 * @since   ACF 3.6
 		 * @date    23/01/13
 		 */
-		function render_field( $field ) {
+		public function render_field( $field ) {
 			$text_input                             = acf_get_sub_array( $field, array( 'id', 'class', 'name', 'value' ) );
 			$hidden_input                           = acf_get_sub_array( $field, array( 'name', 'value' ) );
 			$text_input['data-alpha-skip-debounce'] = true;
@@ -116,9 +119,55 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 				$text_input['data-alpha-enabled'] = true;
 			}
 
+			// Handle color palette when the theme supports theme.json.
+			if ( wp_theme_has_theme_json() ) {
+				// If the field was set to use themejson.
+				if ( 'themejson' === $field['custom_palette_source'] ) {
+					$text_input['data-acf-palette-type'] = 'custom';
+
+					// Get the palette (theme + custom).
+					$global_settings = wp_get_global_settings();
+					$palette         = $global_settings['color']['palette']['theme'] ?? array();
+
+					// Extract only the color values.
+					$color_values = array_map(
+						fn( $c ) => $c['color'] ?? null,
+						$palette
+					);
+
+					// Remove nulls (in case any entries are missing 'color')
+					$color_values = array_filter( $color_values );
+
+					$hex_string = implode( ',', $color_values );
+
+					$text_input['data-acf-palette-colors'] = $hex_string;
+				} elseif ( 'custom' === $field['custom_palette_source'] && ! empty( $field['palette_colors'] ) ) {
+					// If the field was set to use a custom palette.
+					$text_input['data-acf-palette-type']   = 'custom';
+					$text_input['data-acf-palette-colors'] = $field['palette_colors'];
+				} elseif ( '' === $field['custom_palette_source'] && ! empty( $field['palette_colors'] ) ) {
+					// This state can happen if they switched from a classic theme to a themejson theme without resaving the field.
+					$text_input['data-acf-palette-type']   = 'custom';
+					$text_input['data-acf-palette-colors'] = $field['palette_colors'];
+				} else {
+					// Fallback to use the default color palette for the iris color picker.
+					$text_input['data-acf-palette-type'] = 'default';
+				}
+			// phpcs:disable Universal.ControlStructures.DisallowLonelyIf.Found
+			} else {
+				// Handle color palette for themes that do not support themejson.
+				if ( ! empty( $field['palette_colors'] ) ) {
+					$text_input['data-acf-palette-type']   = 'custom';
+					$text_input['data-acf-palette-colors'] = $field['palette_colors'];
+				} else {
+					// Fallback to use the default color palette for the iris color picker.
+					$text_input['data-acf-palette-type'] = 'default';
+				}
+			}
+
 			// html
 			?>
-		<div class="acf-color-picker">
+		<div class="acf-color-picker<?php echo esc_attr( ! $field['show_color_wheel'] ? ' acf-hide-color-picker-color-wheel' : '' ); ?>">
 			<?php acf_hidden_input( $hidden_input ); ?>
 			<?php acf_text_input( $text_input ); ?>
 		</div>
@@ -178,6 +227,86 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 				)
 			);
 		}
+
+
+		/**
+		 * Renders the field settings used in the "Presentation" tab.
+		 *
+		 * @since 6.0
+		 *
+		 * @param array $field The field settings array.
+		 * @return void
+		 */
+		public function render_field_presentation_settings( $field ) {
+			acf_render_field_setting(
+				$field,
+				array(
+					'label'        => __( 'Show Custom Palette', 'secure-custom-fields' ),
+					'instructions' => '',
+					'type'         => 'true_false',
+					'name'         => 'show_custom_palette',
+					'ui'           => 1,
+				)
+			);
+
+			$custom_palette_conditions = array(
+				'field'    => 'show_custom_palette',
+				'operator' => '==',
+				'value'    => 1,
+			);
+
+			if ( wp_theme_has_theme_json() ) {
+				acf_render_field_setting(
+					$field,
+					array(
+						'label'        => __( 'Custom Palette Source', 'secure-custom-fields' ),
+						'instructions' => '',
+						'type'         => 'radio',
+						'name'         => 'custom_palette_source',
+						'layout'       => 'vertical',
+						'choices'      => array(
+							'custom'    => __( 'Specify custom colors', 'secure-custom-fields' ),
+							'themejson' => __( 'Use colors from theme.json', 'secure-custom-fields' ),
+						),
+						'conditions'   => array(
+							'field'    => 'show_custom_palette',
+							'operator' => '==',
+							'value'    => 1,
+						),
+					)
+				);
+
+				$custom_palette_conditions = array(
+					'field'    => 'custom_palette_source',
+					'operator' => '==',
+					'value'    => 'custom',
+				);
+			}
+
+			acf_render_field_setting(
+				$field,
+				array(
+					'label'        => __( 'Custom Palette', 'secure-custom-fields' ),
+					'instructions' => __( 'Use a custom color palette by entering comma separated hex or rgba values', 'secure-custom-fields' ),
+					'type'         => 'text',
+					'name'         => 'palette_colors',
+					'conditions'   => $custom_palette_conditions,
+				)
+			);
+
+			acf_render_field_setting(
+				$field,
+				array(
+					'label'         => __( 'Show Color Wheel', 'secure-custom-fields' ),
+					'instructions'  => '',
+					'type'          => 'true_false',
+					'name'          => 'show_color_wheel',
+					'default_value' => 1,
+					'ui'            => 1,
+				)
+			);
+		}
+
 
 		/**
 		 * Format the value for use in templates. At this stage, the value has been loaded from the
