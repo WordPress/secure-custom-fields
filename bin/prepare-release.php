@@ -328,6 +328,22 @@ class Release_Preparation {
 	 * @param string $changelog Changelog content for the PR body.
 	 */
 	private function create_pr( $version, $changelog ) {
+		// Get current branch name.
+		exec( 'git branch --show-current', $branch_output );
+		$branch = $branch_output[0] ?? '';
+
+		if ( empty( $branch ) ) {
+			echo "Error: Could not determine current branch\n";
+			return;
+		}
+
+		echo "Pushing branch {$branch} to remote...\n";
+		passthru( "git push origin {$branch}", $return );
+		if ( 0 !== $return ) {
+			echo "Error: Failed to push branch to remote\n";
+			return;
+		}
+
 		$title = "Prepare {$version} Release";
 		$body  = $changelog ? $changelog : "Changelog entry pending for {$version}";
 
