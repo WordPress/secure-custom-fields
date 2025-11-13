@@ -200,6 +200,6 @@ You can manage this using Secure Custom Fields with relationship-type fields.
 
 ## Next Steps
 
-- [Learn how to create your first custom post type](../tutorials/first-post-type.md)
-- [Explore how to build a custom taxonomy](../tutorials/first-taxonomy.md)
-- [Add and manage custom fields with SCF](../tutorials/first-custom-field.md)
+- [Learn how to create your first custom post type](../tutorials/first-post-type)
+- [Explore how to build a custom taxonomy](../tutorials/first-taxonomy)
+- [Add and manage custom fields with SCF](../tutorials/first-custom-field)

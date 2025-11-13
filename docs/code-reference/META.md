@@ -46,6 +46,7 @@ This file tracks code elements that need documentation.
 
 - `acf/field_group/additional_group_settings_tabs`
 - `acf/get_field_group_style`
+- `acf/get_field_group_title`
 
 ## acf-form-functions.php
 
@@ -224,6 +225,9 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/field_group/render_additional_group_settings`
+- `acf/field_group/render_additional_location_settings`
+- `acf/field_group/render_additional_presentation_settings`
 - `acf/render_field_group_settings`
 
 ## admin/views/acf-post-type/advanced-settings.php
@@ -366,7 +370,11 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/blocks/default_block_version`
+- `acf/blocks/default_block_version`
 - `acf/blocks/no_fields_assigned_message`
+- `acf/blocks/post_block_template_render`
+- `acf/blocks/pre_block_template_render`
 - `acf/blocks/prevent_edit_forms_on_rest_endpoints`
 - `acf/blocks/render_capability`
 - `acf/blocks/template_not_found_message`
