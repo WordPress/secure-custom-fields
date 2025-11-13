@@ -52,6 +52,21 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.6.0 =
+*TBD*
+
+*Features*
+
+- Backported features up to 6.6.0.
+- Abilities API integration. Post Type abilities.
+- JSON schemas validation infrastructure.
+
+*Fixes*
+
+- Fixed Function in network.php
+- SCF label in "More" menu.
+- Get the formatted_value from the original field value.
+
 = 6.5.7 =
 *Release Date 28 Aug 2025*
 
