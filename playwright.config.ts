@@ -24,6 +24,10 @@ if ( ! process.env.WP_BASE_URL ) {
 const config = defineConfig( {
 	...baseConfig,
 	testDir: './tests/e2e',
+	use: {
+		...baseConfig.use,
+		baseURL: process.env.WP_BASE_URL,
+	},
 	webServer: undefined, // wp-env is already running, no need to start it again
 } );
 export default config;
