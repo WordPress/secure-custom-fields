@@ -1,0 +1,13 @@
+{
+	"tempDir": ".nyc_output",
+	"reportDir": "./coverage",
+	"reporter": [ "html", "lcov", "text" ],
+	"include": [ "assets/src/**/*.js", "assets/src/**/*.jsx" ],
+	"exclude": [
+		"assets/src/**/*.test.js",
+		"assets/src/**/*.spec.js",
+		"assets/build/**",
+		"node_modules/**",
+		"tests/**"
+	]
+}
