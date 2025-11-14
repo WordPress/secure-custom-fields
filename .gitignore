@@ -59,6 +59,10 @@ assets/build/**/*.php
 /playwright/.cache/
 /artifacts/
 
+# Code Coverage
+/coverage/
+/.nyc_output/
+
 # Claude settings
 **/.claude/settings.local.json
 
