@@ -22,7 +22,9 @@ jobs:
                   npm ci
                   composer install --prefer-dist --no-progress
 
-            - name: Npm build
+            - name: Npm build with coverage instrumentation
+              env:
+                  COVERAGE_ENABLED: true
               run: npm run build
 
             - name: Install wp-env
@@ -36,8 +38,6 @@ jobs:
 
             - name: Run e2e tests with coverage
               run: npm run test:e2e:coverage
-              env:
-                  COVERAGE_ENABLED: true
 
             - name: Generate LCOV report from Istanbul coverage
               if: always()
