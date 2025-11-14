@@ -856,6 +856,149 @@
 	};
 
 	/**
+	 * Check if an object has only numeric string keys.
+	 * Used to detect objects that should be converted to arrays (e.g., checkbox values).
+	 *
+	 * @since   SCF 6.6.0
+	 *
+	 * @param   object obj The object to check
+	 * @return  boolean True if all keys are numeric strings
+	 */
+	acf.hasOnlyNumericKeys = function ( obj ) {
+		var keys = Object.keys( obj );
+		if ( keys.length === 0 ) {
+			return false;
+		}
+
+		for ( var i = 0; i < keys.length; i++ ) {
+			if ( ! /^\d+$/.test( keys[ i ] ) ) {
+				return false;
+			}
+		}
+		return true;
+	};
+
+	/**
+	 * Convert an object with numeric string keys to a sorted array.
+	 * Example: {"0": "one", "2": "three", "1": "two"} becomes ["one", "two", "three"]
+	 *
+	 * @date    14/01/25
+	 * @since   SCF 6.6.0
+	 *
+	 * @param   object obj The object to convert
+	 * @return  array The sorted array
+	 */
+	acf.numericObjectToArray = function ( obj ) {
+		var arr = [];
+		var keys = Object.keys( obj )
+			.map( function ( k ) {
+				return parseInt( k, 10 );
+			} )
+			.sort( function ( a, b ) {
+				return a - b;
+			} );
+
+		for ( var i = 0; i < keys.length; i++ ) {
+			arr.push( obj[ keys[ i ].toString() ] );
+		}
+		return arr;
+	};
+
+	/**
+	 * Check if a value looks like flexible content data.
+	 * Flexible content has objects with keys that contain 'acf_fc_layout' property.
+	 *
+	 * @since   SCF 6.6.0
+	 *
+	 * @param   object value The value to check
+	 * @return  boolean True if this looks like flexible content data
+	 */
+	acf.isFlexibleContentData = function ( value ) {
+		if ( ! acf.isObject( value ) ) {
+			return false;
+		}
+
+		var keys = Object.keys( value );
+		for ( var i = 0; i < keys.length; i++ ) {
+			var key = keys[ i ];
+			if ( key === 'acfcloneindex' ) {
+				continue;
+			}
+
+			var subvalue = value[ key ];
+			if ( acf.isObject( subvalue ) && subvalue.acf_fc_layout ) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	/**
+	 * Normalize flexible content data by converting objects to arrays.
+	 * Flexible content uses unique IDs (e.g., '69171156640b5') or row-X format as keys,
+	 * but validation expects array format with numeric indices.
+	 *
+	 * @since   SCF 6.6.0
+	 *
+	 * @param   object obj The object to normalize
+	 * @return  object The normalized object
+	 */
+	acf.normalizeFlexibleContentData = function ( obj ) {
+		if ( ! acf.isObject( obj ) ) {
+			return obj;
+		}
+
+		var result = {};
+
+		for ( var key in obj ) {
+			if ( ! obj.hasOwnProperty( key ) ) {
+				continue;
+			}
+
+			var value = obj[ key ];
+
+			// Primitives pass through unchanged
+			if ( ! acf.isObject( value ) ) {
+				result[ key ] = value;
+				continue;
+			}
+
+			// Convert numeric-keyed objects to arrays (e.g., checkbox values)
+			if ( acf.hasOnlyNumericKeys( value ) ) {
+				result[ key ] = acf.numericObjectToArray( value );
+				continue;
+			}
+
+			// Convert flexible content to arrays
+			if ( acf.isFlexibleContentData( value ) ) {
+				var arr = [];
+				var keys = Object.keys( value );
+
+				for ( var i = 0; i < keys.length; i++ ) {
+					var subkey = keys[ i ];
+					if ( subkey === 'acfcloneindex' ) {
+						continue;
+					}
+
+					var subvalue = value[ subkey ];
+					if ( acf.isObject( subvalue ) && subvalue.acf_fc_layout ) {
+						arr.push(
+							acf.normalizeFlexibleContentData( subvalue )
+						);
+					}
+				}
+
+				result[ key ] = arr;
+			} else {
+				// Recursively process nested objects
+				result[ key ] = acf.normalizeFlexibleContentData( value );
+			}
+		}
+
+		return result;
+	};
+
+	/**
 	 *  acf.serializeArray
 	 *
 	 *  Similar to $.serializeArray() but works with a parent wrapping element.
