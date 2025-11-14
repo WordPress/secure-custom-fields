@@ -882,7 +882,6 @@
 	 * Convert an object with numeric string keys to a sorted array.
 	 * Example: {"0": "one", "2": "three", "1": "two"} becomes ["one", "two", "three"]
 	 *
-	 * @date    14/01/25
 	 * @since   SCF 6.6.0
 	 *
 	 * @param   object obj The object to convert
