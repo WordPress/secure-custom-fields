@@ -210,6 +210,10 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 			return <BlockEdit { ...props } />;
 		}
 
+		if ( bindableAttributes.length === 0 ) {
+			return <BlockEdit { ...props } />;
+		}
+
 		return (
 			<>
 				<InspectorControls { ...props }>
@@ -303,8 +307,8 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	};
 }, 'withCustomControls' );
 
-// addFilter(
-// 	'editor.BlockEdit',
-// 	'secure-custom-fields/with-custom-controls',
-// 	withCustomControls
-// );
+addFilter(
+	'editor.BlockEdit',
+	'secure-custom-fields/with-custom-controls',
+	withCustomControls
+);
