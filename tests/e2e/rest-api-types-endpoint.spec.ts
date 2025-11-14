@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const { test, expect } = require( './fixtures' );
 
 test.describe( 'REST API Types Endpoint', () => {
 	const PLUGIN_SLUG = 'secure-custom-fields';

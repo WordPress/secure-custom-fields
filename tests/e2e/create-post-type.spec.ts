@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const { test, expect } = require( './fixtures' );
 
 // Constants
 const PLUGIN_SLUG = 'secure-custom-fields';
@@ -37,6 +37,26 @@ test.describe( 'Post Type Creation', () => {
 
 		// SECTION: Clean up - delete the post type
 		await deletePostType( page, admin );
+
+		// SECTION: Trash all post types created
+		await trashAllPostTypes( page, admin );
+	} );
+
+	test( 'should update an existing post type without creating duplicates', async ( {
+		page,
+		admin,
+	} ) => {
+		// SECTION: Create new post type
+		await createCustomPostType( page, admin );
+
+		// SECTION: Update the post type
+		await updatePostType( page, admin, 'Games', 'Game' );
+
+		// SECTION: Verify post type was updated, not duplicated
+		await verifyPostTypeUpdated( page, admin, 'Games' );
+
+		// SECTION: Clean up - delete the post type
+		await deletePostType( page, admin, 'Games' );
 
 		// SECTION: Trash all post types created
 		await trashAllPostTypes( page, admin );
@@ -112,14 +132,73 @@ async function verifyPostTypeInAdminMenu( page ) {
 }
 
 /**
+ * Helper function to update an existing post type
+ */
+async function updatePostType( page, admin, newName, newSingular ) {
+	await admin.visitAdminPage( 'edit.php', 'post_type=acf-post-type' );
+
+	// Click on the post type to edit it
+	const postTypeLink = page.locator(
+		`#the-list a.row-title:has-text("${ POST_TYPE_NAME }")`
+	);
+	await expect( postTypeLink ).toBeVisible( { timeout: 5000 } );
+	await postTypeLink.click();
+
+	// Verify we're on the edit page
+	await expect( page ).toHaveURL( /.*post\.php\?post=\d+&action=edit/ );
+
+	// Update the fields
+	await page.fill( '#acf_post_type-labels-name', newName );
+	await page.fill( '#acf_post_type-labels-singular_name', newSingular );
+
+	// Submit the update
+	await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
+
+	// Verify success notification
+	const successNotice = page.locator( '.updated.notice' );
+	await expect( successNotice ).toBeVisible( { timeout: 5000 } );
+	await expect( successNotice ).toContainText(
+		`${ newName } post type updated`
+	);
+}
+
+/**
+ * Helper function to verify post type was updated, not duplicated
+ */
+async function verifyPostTypeUpdated( page, admin, updatedName ) {
+	await admin.visitAdminPage( 'edit.php', 'post_type=acf-post-type' );
+
+	// Verify the updated post type exists
+	const updatedPostTypeLink = page.locator(
+		`#the-list a:has-text("${ updatedName }")`
+	);
+	await expect( updatedPostTypeLink ).toBeVisible( { timeout: 5000 } );
+
+	// Verify the original post type no longer exists
+	const originalPostTypeLink = page.locator(
+		`#the-list a:has-text("${ POST_TYPE_NAME }")`
+	);
+	await expect( originalPostTypeLink ).not.toBeVisible();
+
+	// Count how many post types with the updated name exist (should be exactly 1)
+	const postTypeCount = await page
+		.locator( `#the-list a:has-text("${ updatedName }")` )
+		.count();
+	expect( postTypeCount ).toBe(
+		1,
+		`Should have exactly 1 post type named "${ updatedName }", but found ${ postTypeCount }`
+	);
+}
+
+/**
  * Helper function to delete the post type
  */
-async function deletePostType( page, admin ) {
+async function deletePostType( page, admin, postTypeName = POST_TYPE_NAME ) {
 	await admin.visitAdminPage( 'edit.php', 'post_type=acf-post-type' );
 
 	// Find and select the post type row
 	const postTypeRow = page.locator(
-		`tr.type-acf-post-type:has(a.row-title:text("${ POST_TYPE_NAME }"))`
+		`tr.type-acf-post-type:has(a.row-title:text("${ postTypeName }"))`
 	);
 	await expect( postTypeRow ).toBeVisible( { timeout: 5000 } );
 	await postTypeRow
@@ -151,5 +230,5 @@ async function trashAllPostTypes( page, admin ) {
 	await emptyTrashButton.click();
 	const successNotice = page.locator( '.notice.updated p' );
 	await expect( successNotice ).toBeVisible();
-	await expect( successNotice ).toHaveText( /post permanently deleted/ );
+	await expect( successNotice ).toHaveText( /posts? permanently deleted/ );
 }
