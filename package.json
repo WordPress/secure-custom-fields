@@ -7,7 +7,7 @@
 		"prepare": "husky",
 		"sort-package-json": "sort-package-json",
 		"test:e2e": "wp-scripts test-playwright",
-		"test:e2e:coverage": "COVERAGE_ENABLED=true wp-scripts test-playwright",
+		"test:e2e:coverage": "rm -rf .nyc_output && COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:coverage:report": "nyc report --reporter=html --reporter=lcov",
 		"test:e2e:debug": "wp-scripts test-playwright --debug",
 		"test:unit": "wp-scripts test-unit-js",
