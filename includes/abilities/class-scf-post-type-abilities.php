@@ -274,6 +274,11 @@ class SCF_Post_Type_Abilities {
 	 * @since 6.6.0
 	 */
 	private function register_update_post_type_ability() {
+
+		// For updates, only ID is required, everything else is optional
+		$input_schema             = $this->get_post_type_with_internal_fields_schema();
+		$input_schema['required'] = array( 'ID' );
+
 		wp_register_ability(
 			'scf/update-post-type',
 			array(
@@ -293,7 +298,7 @@ class SCF_Post_Type_Abilities {
 					),
 				),
 				'permission_callback' => 'scf_current_user_has_capability',
-				'input_schema'        => $this->get_post_type_schema(),
+				'input_schema'        => $input_schema,
 				'output_schema'       => $this->get_post_type_with_internal_fields_schema(),
 			)
 		);
@@ -513,10 +518,13 @@ class SCF_Post_Type_Abilities {
 	 * @return array|WP_Error The post type data on success, WP_Error on failure.
 	 */
 	public function update_post_type_callback( $input ) {
-		// Check if post type exists.
-		if ( ! acf_get_post_type( $input['key'] ) ) {
+		$existing_post_type = acf_get_post_type( $input['ID'] );
+		if ( ! $existing_post_type ) {
 			return new WP_Error( 'post_type_not_found', __( 'Post type not found.', 'secure-custom-fields' ) );
 		}
+
+		// Merge input with existing post type data to preserve unmodified fields.
+		$input = array_merge( $existing_post_type, $input );
 
 		$post_type = acf_update_post_type( $input );
 
