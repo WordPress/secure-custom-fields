@@ -724,7 +724,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 
 			// Update attributes.
 			$post['ID']  = $new_post_id;
-			$post['key'] = uniqid( 'group_' );
+			$post['key'] = uniqid( $this->post_key_prefix ); // See https://github.com/WordPress/secure-custom-fields/pull/240
 
 			// Add (copy) to title when appropriate.
 			if ( ! $new_post_id ) {
