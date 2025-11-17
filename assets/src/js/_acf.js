@@ -860,17 +860,18 @@
 	 * Used to detect objects that should be converted to arrays (e.g., checkbox values).
 	 *
 	 * @since   SCF 6.6.0
+	 * @private
 	 *
 	 * @param   object obj The object to check
 	 * @return  boolean True if all keys are numeric strings
 	 */
-	acf.hasOnlyNumericKeys = function ( obj ) {
-		var keys = Object.keys( obj );
+	const hasOnlyNumericKeys = function ( obj ) {
+		const keys = Object.keys( obj );
 		if ( keys.length === 0 ) {
 			return false;
 		}
 
-		for ( var i = 0; i < keys.length; i++ ) {
+		for ( let i = 0; i < keys.length; i++ ) {
 			if ( ! /^\d+$/.test( keys[ i ] ) ) {
 				return false;
 			}
@@ -883,13 +884,14 @@
 	 * Example: {"0": "one", "2": "three", "1": "two"} becomes ["one", "two", "three"]
 	 *
 	 * @since   SCF 6.6.0
+	 * @private
 	 *
 	 * @param   object obj The object to convert
 	 * @return  array The sorted array
 	 */
-	acf.numericObjectToArray = function ( obj ) {
-		var arr = [];
-		var keys = Object.keys( obj )
+	const numericObjectToArray = function ( obj ) {
+		const arr = [];
+		const keys = Object.keys( obj )
 			.map( function ( k ) {
 				return parseInt( k, 10 );
 			} )
@@ -897,7 +899,7 @@
 				return a - b;
 			} );
 
-		for ( var i = 0; i < keys.length; i++ ) {
+		for ( let i = 0; i < keys.length; i++ ) {
 			arr.push( obj[ keys[ i ].toString() ] );
 		}
 		return arr;
@@ -933,23 +935,22 @@
 	};
 
 	/**
-	 * Normalize flexible content data by converting objects to arrays.
-	 * Flexible content uses unique IDs (e.g., '69171156640b5') or row-X format as keys,
-	 * but validation expects array format with numeric indices.
+	 * Normalizes flexible content data structure by converting objects to arrays.
+	 * Private helper function.
 	 *
-	 * @since   SCF 6.6.0
+	 * @since 6.6.0
 	 *
-	 * @param   object obj The object to normalize
-	 * @return  object The normalized object
+	 * @param {Object} obj The object to normalize.
+	 * @return {Object|Array} The normalized data.
 	 */
-	acf.normalizeFlexibleContentData = function ( obj ) {
+	const normalizeFlexibleContentData = function ( obj ) {
 		if ( ! acf.isObject( obj ) ) {
 			return obj;
 		}
 
-		var result = {};
+		let result = {};
 
-		for ( var key in obj ) {
+		for ( let key in obj ) {
 			if ( ! obj.hasOwnProperty( key ) ) {
 				continue;
 			}
@@ -963,12 +964,10 @@
 			}
 
 			// Convert numeric-keyed objects to arrays (e.g., checkbox values)
-			if ( acf.hasOnlyNumericKeys( value ) ) {
-				result[ key ] = acf.numericObjectToArray( value );
+			if ( hasOnlyNumericKeys( value ) ) {
+				result[ key ] = numericObjectToArray( value );
 				continue;
-			}
-
-			// Convert flexible content to arrays
+			} // Convert flexible content to arrays
 			if ( acf.isFlexibleContentData( value ) ) {
 				var arr = [];
 				var keys = Object.keys( value );
@@ -981,20 +980,31 @@
 
 					var subvalue = value[ subkey ];
 					if ( acf.isObject( subvalue ) && subvalue.acf_fc_layout ) {
-						arr.push(
-							acf.normalizeFlexibleContentData( subvalue )
-						);
+						arr.push( normalizeFlexibleContentData( subvalue ) );
 					}
 				}
 
 				result[ key ] = arr;
 			} else {
 				// Recursively process nested objects
-				result[ key ] = acf.normalizeFlexibleContentData( value );
+				result[ key ] = normalizeFlexibleContentData( value );
 			}
 		}
 
 		return result;
+	};
+
+	/**
+	 * Public API wrapper for normalizeFlexibleContentData.
+	 * Normalizes flexible content data structure by converting objects to arrays.
+	 *
+	 * @since 6.6.0
+	 *
+	 * @param {Object} obj The object to normalize.
+	 * @return {Object|Array} The normalized data.
+	 */
+	acf.normalizeFlexibleContentData = function ( obj ) {
+		return normalizeFlexibleContentData( obj );
 	};
 
 	/**
