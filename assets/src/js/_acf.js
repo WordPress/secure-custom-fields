@@ -859,6 +859,11 @@
 	 * Check if an object has only numeric string keys.
 	 * Used to detect objects that should be converted to arrays (e.g., checkbox values).
 	 *
+	 * Semantics:
+	 * - Accepts base-10, non-negative integer strings composed of digits only (e.g. "0", "12").
+	 * - Leading zeros are allowed (e.g. "0012") and treated as numeric by downstream logic.
+	 * - Negative ("-1"), decimal ("1.0"), and non-numeric keys are rejected.
+	 *
 	 * @since   SCF 6.6.0
 	 * @private
 	 *
@@ -880,34 +885,43 @@
 	};
 
 	/**
-	 * Convert an object with numeric string keys to a sorted array.
-	 * Example: {"0": "one", "2": "three", "1": "two"} becomes ["one", "two", "three"]
+	 * Convert an object with numeric string keys to a numerically sorted array.
+	 * Example: {"0": "one", "2": "three", "1": "two"} becomes ["one", "two", "three"].
+	 *
+	 * Notes on edge-cases:
+	 * - Leading zeros (e.g. "00123") are supported; order is based on the numeric value
+	 *   but the original string key is used to read the value to avoid lookup mismatches.
+	 * - Assumes {@link hasOnlyNumericKeys} has already gated out negatives/decimals.
 	 *
 	 * @since   SCF 6.6.0
 	 * @private
 	 *
 	 * @param   object obj The object to convert
-	 * @return  array The sorted array
+	 * @return  array The numerically sorted array of values
 	 */
 	const numericObjectToArray = function ( obj ) {
 		const arr = [];
-		const keys = Object.keys( obj )
+		// Pair each original key with its numeric value for stable lookup and sorting.
+		const entries = Object.keys( obj )
 			.map( function ( k ) {
-				return parseInt( k, 10 );
+				return { k: k, n: parseInt( k, 10 ) };
 			} )
 			.sort( function ( a, b ) {
-				return a - b;
+				return a.n - b.n;
 			} );
 
-		for ( let i = 0; i < keys.length; i++ ) {
-			arr.push( obj[ keys[ i ].toString() ] );
+		for ( let i = 0; i < entries.length; i++ ) {
+			arr.push( obj[ entries[ i ].k ] );
 		}
 		return arr;
 	};
 
 	/**
 	 * Check if a value looks like flexible content data.
-	 * Flexible content has objects with keys that contain 'acf_fc_layout' property.
+	 * Flexible content objects contain rows where each row object has an 'acf_fc_layout' property.
+	 * Keys for flexible rows are not guaranteed to be numeric: they are typically unique IDs
+	 * (e.g. '69171156640b5') or strings like 'row-0'. Therefore, flexible content detection does
+	 * not rely on numeric keys and is handled separately from numeric-keyed object normalization.
 	 *
 	 * @since   SCF 6.6.0
 	 *
