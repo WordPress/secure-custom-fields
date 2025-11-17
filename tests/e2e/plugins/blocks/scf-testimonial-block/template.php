@@ -33,7 +33,7 @@ if ( $author ) {
 }
 
 // Add a unique block ID for editor identification.
-$block_id = 'testimonial-' . $block['id'];
+$block_id = 'testimonial-' . ( isset( $block['id'] ) ? (string) $block['id'] : uniqid() );
 ?>
 
 <div class="testimonial" id="<?php echo esc_attr( $block_id ); ?>">
