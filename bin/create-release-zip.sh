@@ -48,6 +48,7 @@ REQUIRED_DIRS=(
     "assets"
     "lang"
     "pro"
+    "schemas"
 )
 
 for dir in "${REQUIRED_DIRS[@]}"; do
