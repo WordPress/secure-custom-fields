@@ -53,7 +53,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 == Changelog ==
 
 = 6.6.0 =
-*Release Date 18 Nov 2025*
+*Release Date 19 Nov 2025*
 
 *Features*
 
