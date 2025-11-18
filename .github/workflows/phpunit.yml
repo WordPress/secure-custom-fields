@@ -48,3 +48,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: WordPress/secure-custom-fields
           files: ./coverage.xml
+          flags: phpunit
+          name: phpunit-php-${{ matrix.php }}

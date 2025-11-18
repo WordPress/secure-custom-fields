@@ -6,6 +6,10 @@ flags:
         carryforward: true # Preserve coverage data across uploads to avoid losing history
         paths:
             - 'assets/src/'
+    phpunit:
+        carryforward: true # Preserve coverage data across uploads to avoid losing history
+        paths:
+            - 'includes/'
 
 coverage:
     status:
