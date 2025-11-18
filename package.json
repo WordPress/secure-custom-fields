@@ -9,7 +9,7 @@
 		"test:e2e": "wp-scripts test-playwright",
 		"test:e2e:coverage": "rm -rf .nyc_output && COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:coverage:report": "nyc report --reporter=html --reporter=lcov",
-		"test:e2e:debug": "wp-scripts test-playwright --debug",
+		"test:e2e:debug": "wp-scripts test-playwright --debug --ui",
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch"

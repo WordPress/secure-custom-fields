@@ -84,6 +84,36 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		}
 
 		/**
+		 * Checks if a field group is assigned to blocks.
+		 *
+		 * Block field groups should not be rendered as metaboxes because:
+		 * 1. They are managed by the block editor (blocks v3)
+		 * 2. They have their own validation system via AJAX
+		 * 3. Rendering them as metaboxes causes duplicate validation on post save
+		 *
+		 * @since   SCF 6.6.0
+		 *
+		 * @param   array $field_group The field group array.
+		 * @return  bool True if field group is for blocks, false otherwise.
+		 */
+		public function is_block_field_group( $field_group ) {
+			if ( empty( $field_group['location'] ) ) {
+				return false;
+			}
+
+			// Check each location group
+			foreach ( $field_group['location'] as $location_group ) {
+				foreach ( $location_group as $rule ) {
+					if ( isset( $rule['param'] ) && 'block' === $rule['param'] ) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
 		 *
 		 * Adds ACF metaboxes for the given $post_type and $post.
 		 *
@@ -110,6 +140,11 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			// Loop over field groups.
 			if ( $field_groups ) {
 				foreach ( $field_groups as $field_group ) {
+					// Skip block field groups - they are managed by the block editor
+					if ( $this->is_block_field_group( $field_group ) ) {
+						continue;
+					}
+
 					$id       = esc_attr( "acf-{$field_group['key']}" );
 					$context  = esc_attr( $field_group['position'] );
 					$priority = 'high';

@@ -1,0 +1,16 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "scf/testimonial",
+	"title": "SCF Testimonial",
+	"description": "A custom testimonial block with SCF fields for quote, author, and role.",
+	"category": "text",
+	"icon": "format-quote",
+	"keywords": [ "testimonial", "quote", "review" ],
+	"acf": {
+		"blockVersion": 3,
+		"mode": "preview",
+		"renderTemplate": "template.php"
+	},
+	"textdomain": "secure-custom-fields"
+}

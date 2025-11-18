@@ -598,8 +598,13 @@ function BlockEditInner( props ) {
 									`acf-block_${ clientId }`
 								);
 								if ( serializedData ) {
+									// Normalize flexible content data for validation
+									const normalizedData =
+										acf.normalizeFlexibleContentData(
+											serializedData
+										);
 									setTheSerializedAcfData(
-										JSON.stringify( serializedData )
+										JSON.stringify( normalizedData )
 									);
 								}
 							} }

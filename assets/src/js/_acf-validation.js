@@ -1212,7 +1212,7 @@
 						// If errors were found
 						if ( hasError ) {
 							// Display an error notice
-							noticesDispatch.createErrorNotice(
+							notices.createErrorNotice(
 								acf.__(
 									'An ACF Block on this page requires attention before you can save.'
 								),
