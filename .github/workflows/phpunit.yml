@@ -50,3 +50,4 @@ jobs:
           files: ./coverage.xml
           flags: phpunit
           name: phpunit-php-${{ matrix.php }}
+          verbose: true
