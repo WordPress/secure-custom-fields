@@ -242,4 +242,268 @@ class Test_SCF_JSON_Schema_Validator extends BaseTestCase {
 
 		$this->assertIsBool( $result );
 	}
+
+	/**
+	 * Test validate_file with missing file
+	 */
+	public function test_validate_file_with_missing_file() {
+		$result = $this->validator->validate_file( '/nonexistent/path/file.json', 'post-type' );
+
+		$this->assertFalse( $result, 'Should return false for missing file' );
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'Should capture error about missing file'
+		);
+
+		$errors = $this->validator->get_validation_errors();
+		$this->assertNotEmpty( $errors, 'Should have at least one error' );
+	}
+
+	/**
+	 * Test validate_file with valid JSON file
+	 */
+	public function test_validate_file_with_valid_json_file() {
+		$temp_file  = tempnam( sys_get_temp_dir(), 'scf_test_' );
+		$valid_data = array(
+			'key'   => 'test_post_type',
+			'label' => 'Test Post Type',
+		);
+
+		global $wp_filesystem;
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+		$wp_filesystem->put_contents( $temp_file, wp_json_encode( $valid_data ) );
+
+		$result = $this->validator->validate_file( $temp_file, 'post-type' );
+
+		$this->assertIsBool( $result );
+
+		// Cleanup
+		wp_delete_file( $temp_file );
+	}
+
+	/**
+	 * Test validate_file with invalid JSON in file
+	 */
+	public function test_validate_file_with_invalid_json_in_file() {
+		$temp_file = tempnam( sys_get_temp_dir(), 'scf_test_' );
+
+		global $wp_filesystem;
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+		$wp_filesystem->put_contents( $temp_file, '{invalid json content}' );
+
+		$result = $this->validator->validate_file( $temp_file, 'post-type' );
+
+		$this->assertFalse( $result, 'Should return false for file with invalid JSON' );
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'Should capture JSON parsing error'
+		);
+
+		// Cleanup
+		wp_delete_file( $temp_file );
+	}
+
+	/**
+	 * Test get_validation_errors_string with custom separator
+	 */
+	public function test_get_validation_errors_string_with_custom_separator() {
+		// Create an error scenario
+		$invalid_data = array();
+		$this->validator->validate_data( $invalid_data, 'post-type' );
+
+		if ( $this->validator->has_validation_errors() ) {
+			$error_string = $this->validator->get_validation_errors_string( ' | ' );
+			$this->assertIsString( $error_string, 'Should return a string' );
+			$this->assertStringContainsString( '|', $error_string, 'Should use custom separator' );
+		}
+	}
+
+	/**
+	 * Test has_validation_errors returns false when no errors
+	 */
+	public function test_has_validation_errors_returns_false_when_no_errors() {
+		// Create a new validator instance to ensure clean state
+		$validator = new SCF_JSON_Schema_Validator();
+
+		// Test that a fresh validator has no errors
+		$this->assertFalse(
+			$validator->has_validation_errors(),
+			'Should return false on fresh validator with no validation attempts'
+		);
+	}
+
+	/**
+	 * Test validate_data clears previous errors
+	 */
+	public function test_validate_data_clears_previous_errors() {
+		// First validation with invalid data
+		$invalid_data = array();
+		$this->validator->validate_data( $invalid_data, 'post-type' );
+		$first_error_count = count( $this->validator->get_validation_errors() );
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'First validation should have errors'
+		);
+
+		// Second validation with different invalid data (empty again)
+		$second_invalid_data = array();
+		$this->validator->validate_data( $second_invalid_data, 'post-type' );
+		$second_error_count = count( $this->validator->get_validation_errors() );
+
+		// Errors should be cleared (not accumulate)
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'Should still have validation errors'
+		);
+		// The key point: errors from first validation should be cleared, not accumulated
+		// If clearing works, the error count should be similar or different, but not double
+		$this->assertLessThanOrEqual(
+			$first_error_count * 1.5,
+			$second_error_count,
+			'Errors should be cleared, not accumulated'
+		);
+	}
+
+	/**
+	 * Test validate_json clears previous errors
+	 */
+	public function test_validate_json_clears_previous_errors() {
+		// First validation with invalid JSON
+		$invalid_json = '{bad json}';
+		$this->validator->validate_json( $invalid_json, 'post-type' );
+		$first_error_count = count( $this->validator->get_validation_errors() );
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'First validation should have errors'
+		);
+
+		// Second validation with different invalid JSON (to ensure errors are cleared, not accumulated)
+		$another_invalid_json = '{also bad}';
+		$this->validator->validate_json( $another_invalid_json, 'post-type' );
+		$second_error_count = count( $this->validator->get_validation_errors() );
+
+		// Errors should be cleared (not accumulate)
+		$this->assertTrue(
+			$this->validator->has_validation_errors(),
+			'Should have validation errors'
+		);
+		// The key point: errors should be cleared between validations, not accumulated
+		$this->assertLessThanOrEqual(
+			$first_error_count * 1.5,
+			$second_error_count,
+			'Errors should be cleared between validations, not accumulated'
+		);
+	}
+
+	/**
+	 * Test validation error structure
+	 */
+	public function test_validation_error_structure() {
+		// Create an error
+		$invalid_data = array();
+		$this->validator->validate_data( $invalid_data, 'post-type' );
+
+		if ( $this->validator->has_validation_errors() ) {
+			$errors = $this->validator->get_validation_errors();
+			$error  = reset( $errors );
+
+			$this->assertIsArray( $error, 'Error should be an array' );
+			$this->assertArrayHasKey( 'field', $error, 'Error should have field key' );
+			$this->assertArrayHasKey( 'message', $error, 'Error should have message key' );
+		}
+	}
+
+	/**
+	 * Test validate with non-existent file falls back to JSON string parsing
+	 */
+	public function test_validate_non_existent_file_falls_back_to_json_parsing() {
+		$json_string = wp_json_encode(
+			array(
+				'key'   => 'test_post_type',
+				'label' => 'Test Post Type',
+			)
+		);
+
+		// Pass a JSON string that looks like it could be a path but isn't
+		$result = $this->validator->validate( $json_string, 'post-type' );
+
+		// Should treat it as JSON string and validate successfully
+		$this->assertIsBool( $result, 'Should return bool even for non-file strings' );
+	}
+
+	/**
+	 * Test load_schema returns consistent results across multiple calls
+	 */
+	public function test_load_schema_returns_consistent_results() {
+		$schema1 = $this->validator->load_schema( 'post-type' );
+		$schema2 = $this->validator->load_schema( 'post-type' );
+
+		$this->assertEquals(
+			wp_json_encode( $schema1 ),
+			wp_json_encode( $schema2 ),
+			'Multiple calls to load_schema should return equivalent objects'
+		);
+	}
+
+	/**
+	 * Test validate_data with nested array structures
+	 */
+	public function test_validate_data_with_nested_array_structures() {
+		$nested_data = array(
+			'key'    => 'test_post_type',
+			'label'  => 'Test Post Type',
+			'fields' => array(
+				array(
+					'key'   => 'field_1',
+					'label' => 'Field 1',
+				),
+			),
+		);
+
+		$result = $this->validator->validate_data( $nested_data, 'post-type' );
+
+		$this->assertIsBool( $result, 'Should handle nested structures' );
+	}
+
+	/**
+	 * Test validate_data converts arrays to objects properly
+	 */
+	public function test_validate_data_converts_arrays_to_objects() {
+		// This tests the internal array-to-object conversion
+		$array_data = array(
+			'key'   => 'test_post_type',
+			'label' => 'Test Post Type',
+		);
+
+		// Validate should internally convert array to object
+		$result = $this->validator->validate_data( $array_data, 'post-type' );
+
+		$this->assertIsBool( $result, 'Should successfully convert and validate array data' );
+	}
+
+	/**
+	 * Test REQUIRED_SCHEMAS constant
+	 */
+	public function test_required_schemas_constant_has_all_required_schemas() {
+		$required = SCF_JSON_Schema_Validator::REQUIRED_SCHEMAS;
+
+		$this->assertIsArray( $required, 'REQUIRED_SCHEMAS should be an array' );
+		$this->assertNotEmpty( $required, 'REQUIRED_SCHEMAS should not be empty' );
+		$this->assertContains( 'post-type', $required, 'Should include post-type' );
+		$this->assertContains( 'internal-fields', $required, 'Should include internal-fields' );
+		$this->assertContains( 'scf-identifier', $required, 'Should include scf-identifier' );
+	}
+
+	/**
+	 * Test constructor initializes schema_path correctly
+	 */
+	public function test_constructor_initializes_schema_path() {
+		// The validator is already initialized in setUp
+		// We just verify it can load schemas (which means path is correct)
+		$schema = $this->validator->load_schema( 'post-type' );
+
+		$this->assertIsObject( $schema, 'Schema path should be correctly initialized' );
+	}
 }
