@@ -53,7 +53,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 == Changelog ==
 
 = 6.6.0 =
-*TBD*
+*Release Date 18 Nov 2025*
 
 *Features*
 
@@ -66,6 +66,9 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 - Fixed Function in network.php
 - SCF label in "More" menu.
 - Get the formatted_value from the original field value.
+- Blocks V3: Fix flexible content not working in sidebar - modal.
+- Use specific entity prefixes for key generation when duplicating entities.
+
 
 = 6.5.7 =
 *Release Date 28 Aug 2025*
