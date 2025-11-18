@@ -21,6 +21,12 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 	 */
 	class SCF_JSON_Schema_Validator {
 
+		/**
+		 * Required schema files for post type abilities
+		 *
+		 * @var array
+		 */
+		public const REQUIRED_SCHEMAS = array( 'post-type', 'internal-fields', 'scf-identifier' );
 
 		/**
 		 * The last validation errors.
@@ -38,9 +44,17 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 
 		/**
 		 * Constructor.
+		 *
+		 * Validates that all required schemas are available on initialization.
+		 * If schemas are missing, registers an admin notice and prevents usage.
 		 */
 		public function __construct() {
 			$this->schema_path = acf_get_path( 'schemas/' );
+
+			// Validate schemas exist on initialization (skip during static analysis)
+			if ( defined( 'ABSPATH' ) && ! $this->validate_required_schemas() ) {
+				add_action( 'admin_notices', array( $this, 'show_schema_error' ) );
+			}
 		}
 
 
@@ -128,6 +142,11 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 			}
 			WP_Filesystem();
 			global $wp_filesystem;
+
+			if ( null === $wp_filesystem ) {
+				return null;
+			}
+
 			$schema_content = $wp_filesystem->get_contents( $schema_file );
 			if ( false === $schema_content ) {
 				return null;
@@ -140,6 +159,37 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 			}
 		}
 
+
+		/**
+		 * Validates that all required schemas are available.
+		 *
+		 * @since 6.6.0
+		 * @return bool True if all required schemas load successfully, false otherwise.
+		 */
+		public function validate_required_schemas() {
+			foreach ( self::REQUIRED_SCHEMAS as $schema_name ) {
+				if ( ! $this->load_schema( $schema_name ) ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		/**
+		 * Display admin notice when required schemas are not available.
+		 *
+		 * @since 6.6.0
+		 */
+		public function show_schema_error() {
+			?>
+		<div class="notice notice-error is-dismissible">
+			<p>
+				<strong><?php esc_html_e( 'Secure Custom Fields Error:', 'secure-custom-fields' ); ?></strong>
+				<?php esc_html_e( 'Required schema files are missing. Schema validation will not be available. Please ensure all schema files are present in the plugin directory.', 'secure-custom-fields' ); ?>
+			</p>
+		</div>
+			<?php
+		}
 		/**
 		 * Gets the validation errors from the last validation attempt.
 		 *
@@ -245,5 +295,8 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 			return $this->validate_json( $json_content, $schema_name );
 		}
 	}
+
+	// Initialize validator instance.
+	acf_new_instance( 'SCF_JSON_Schema_Validator' );
 
 endif; // class_exists check
