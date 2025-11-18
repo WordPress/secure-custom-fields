@@ -1,7 +1,7 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const { test, expect } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const PLUGIN_PATH = `${ PLUGIN_SLUG }/${ PLUGIN_SLUG }.php`;

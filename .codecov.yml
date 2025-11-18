@@ -1,6 +1,16 @@
 # Codecov Configuration
 # Reference: https://docs.codecov.com/docs/codecovyml-reference
 
+flags:
+    e2e:
+        carryforward: true # Preserve coverage data across uploads to avoid losing history
+        paths:
+            - 'assets/src/'
+    phpunit:
+        carryforward: true # Preserve coverage data across uploads to avoid losing history
+        paths:
+            - 'includes/'
+
 coverage:
     status:
         project:

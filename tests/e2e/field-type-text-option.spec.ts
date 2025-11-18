@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const { test, expect } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-option-title';
