@@ -52,7 +52,6 @@ jobs:
                   flags: e2e
                   slug: WordPress/secure-custom-fields
                   name: e2e-coverage
-                  skip_validation: true
 
             - name: Stop wp-env
               if: always()
