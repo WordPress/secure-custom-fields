@@ -106,7 +106,7 @@ done
 
 # Install production dependencies
 echo "Installing production dependencies..."
-composer install --no-dev --optimize-autoloader --no-interaction
+composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Copy vendor directory
 cp -r vendor "$PLUGIN_DIR/"
