@@ -26,53 +26,53 @@ To begin creating your custom taxonomy:
 
 ## 2. Basic Configuration
 
-#### Plural Label \*
+### Plural Label \*
 
 Name shown in admin menus and listings, e.g., `Genres`.
 
-#### Singular Label \*
+### Singular Label \*
 
 Used for individual terms. Example: `Genre`.
 
-#### Taxonomy Key \*
+### Taxonomy Key \*
 
 A unique identifier. Use lowercase letters, underscores, or dashes only. Max 32 characters. Example: `genre`.
 
-#### Post Types
+### Post Types
 
 Select the post types that will use this taxonomy. For example, Posts, Pages, or custom types like `product`, `vehicle`, etc.
 
-#### Public
+### Public
 
 Choose **Yes** to make the taxonomy visible on your website and in the admin dashboard.
 
-#### Hierarchical
+### Hierarchical
 
 Enable to allow parent-child terms (like categories). Disable for flat lists (like tags).
 
-#### Advanced Configuration
+### Advanced Configuration
 
 Enable this to unlock advanced settings for developers or experienced users.
 
 ## 3. Advanced Settings
 
-#### Sort Terms
+### Sort Terms
 
 Controls whether the terms are stored in the order you assign them.
 
-#### Default Term
+### Default Term
 
 Creates a default term that can’t be deleted, useful for fallback categorization.
 
-#### Description
+### Description
 
 Brief summary of what the taxonomy represents.
 
-#### Active
+### Active
 
 Make sure this is set to **Yes** so your taxonomy is usable.
 
-#### Labels
+### Labels
 
 Customize the texts shown in the WordPress admin:
 
@@ -80,26 +80,26 @@ Customize the texts shown in the WordPress admin:
 - Parent Item (for hierarchical), Popular Items (for non-hierarchical)
 - Messages for empty lists, instructions, tooltips, etc.
 
-#### Visibility Options
+### Visibility Options
 
 Control where the taxonomy appears in the admin and frontend:
 
 - Show In UI, Show In Admin Menu
 - Appearance Menu Support, Quick Edit, Admin Columns
 
-#### Meta Box
+### Meta Box
 
 Enable and configure how the taxonomy is displayed in the post editor.
 You can define custom callbacks for display and sanitization if needed.
 
-#### Permalinks and URLs
+### Permalinks and URLs
 
 Customize how your taxonomy URLs will be structured:
 
 - Custom Slug, Include front prefix, Enable hierarchical URLs
 - Publicly queryable, custom query variable
 
-#### Permissions
+### Permissions
 
 Control who can manage, edit, assign, or delete terms.
 You can set custom capabilities (e.g., `manage_categories`, `edit_posts`).

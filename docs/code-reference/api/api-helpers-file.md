@@ -681,6 +681,13 @@ acf_current_user_can_admin
 * @param   $post_id (int)
 * @return $post_id (int)
 
+## `scf_current_user_has_capability()`
+
+Checks if the current user has the SCF capability for programmatic access, without considering show_admin setting.
+
+* @since 6.6.0
+* @return bool True if the user has the ACF capability.
+
 ## `acf_current_user_can_edit_post()`
 
 Wrapper function for current_user_can( 'edit_post', $post_id ).
@@ -723,9 +730,9 @@ acf_validate_attachment
 
 * This function will validate an attachment based on a field's restrictions and return an array of errors
 * @since   ACF 5.2.3
-* @param   $attachment (array) attachment data. Changes based on context
-* @param $field (array) field settings containing restrictions
-* @param context (string)                                     $file is different when uploading / preparing
+* @param   array  $attachment attachment data. Changes based on context.
+* @param array  $field field settings containing restrictions.
+* @param string $context context is different when uploading / preparing.
 * @return $errors (array)
 
 ## `acf_translate()`

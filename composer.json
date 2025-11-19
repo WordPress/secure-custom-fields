@@ -32,8 +32,7 @@
 			"ACF\\Blocks\\": "includes/Blocks/",
 			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/",
 			"SCF\\Forms\\": "includes/forms/",
-			"SCF\\Meta\\": "includes/Meta/",
-			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/"
+			"SCF\\Meta\\": "includes/Meta/"
 		}
 	},
 	"config": {
@@ -47,9 +46,7 @@
 		"optimize-autoloader": true,
 		"platform": {
 			"php": "7.4"
-		},
-		"optimize-autoloader": true,
-		"classmap-authoritative": true
+		}
 	},
 	"scripts": {
 		"post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",
