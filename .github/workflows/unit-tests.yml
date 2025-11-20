@@ -1,0 +1,64 @@
+name: JavaScript Unit Tests
+
+on:
+  pull_request:
+    branches: [trunk]
+  push:
+    branches: [trunk]
+  # Allow manually triggering the workflow
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+# Disable permissions for all available scopes by default
+permissions: {}
+
+jobs:
+  unit-js:
+    name: JavaScript Unit Tests (Node.js ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        event: ['${{ github.event_name }}']
+        node: ['22']
+        include:
+          # On push to trunk: also test minimum supported version
+          - event: 'push'
+            node: '20'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+          persist-credentials: false
+
+      - name: Setup Node.js and install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit -- --ci --coverage
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/unit/lcov.info
+          flags: javascript
+          slug: WordPress/secure-custom-fields
+          name: javascript-coverage
+          fail_ci_if_error: false
