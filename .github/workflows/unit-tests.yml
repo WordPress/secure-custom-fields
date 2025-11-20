@@ -18,7 +18,7 @@ permissions: {}
 
 jobs:
     unit-js:
-        name: JavaScript Unit Tests (Node.js ${{ matrix.node }})
+        name: Node.js ${{ matrix.node }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
