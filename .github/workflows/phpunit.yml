@@ -40,13 +40,13 @@ jobs:
           composer install --no-progress --prefer-dist --no-interaction
 
       - name: Run PHPUnit with coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: mkdir -p coverage/phpunit && vendor/bin/phpunit --coverage-clover=coverage/phpunit/coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: WordPress/secure-custom-fields
-          files: ./coverage.xml
+          files: ./coverage/phpunit/coverage.xml
           flags: phpunit
           name: phpunit-php-${{ matrix.php }}
