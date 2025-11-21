@@ -1,102 +1,68 @@
 /**
- * WordPress dependencies.
+ * WordPress dependencies
  */
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
+import { store as editorStore } from '@wordpress/editor';
+import { __ } from '@wordpress/i18n';
 
 /**
- * Get the SCF fields from the post entity.
- *
- * @param {Object} post The post entity object.
- * @returns {Object} The SCF fields object with source data.
+ * Internal dependencies
  */
-const getSCFFields = ( post ) => {
-	if ( ! post?.acf ) {
-		return {};
-	}
-
-	// Extract only the _source fields which contain the formatted data
-	const sourceFields = {};
-	Object.entries( post.acf ).forEach( ( [ key, value ] ) => {
-		if ( key.endsWith( '_source' ) ) {
-			// Remove the _source suffix to get the field name
-			const fieldName = key.replace( '_source', '' );
-			sourceFields[ fieldName ] = value;
-		}
-	} );
-
-	return sourceFields;
-};
+import {
+	getSCFFields,
+	processFieldBinding,
+	formatFieldLabel,
+} from './field-processing';
+import { STORE_NAME } from './store';
 
 /**
- * Resolve image attribute values from an image object.
- *
- * @param {Object} imageObj The image object from SCF field data.
- * @param {string} attribute The attribute to resolve.
- * @returns {string} The resolved attribute value.
+ * Register the SCF field binding source.
  */
-const resolveImageAttribute = ( imageObj, attribute ) => {
-	if ( ! imageObj ) return '';
-	switch ( attribute ) {
-		case 'url':
-			return imageObj.url || '';
-		case 'alt':
-			return imageObj.alt || '';
-		case 'title':
-			return imageObj.title || '';
-		case 'id':
-			return imageObj.id || imageObj.ID || '';
-		default:
-			return '';
-	}
-};
-
-/**
- * Process a single field binding and return its resolved value.
- *
- * @param {string} attribute The attribute being bound.
- * @param {Object} args The binding arguments.
- * @param {Object} scfFields The SCF fields object.
- * @returns {string} The resolved field value.
- */
-const processFieldBinding = ( attribute, args, scfFields ) => {
-	const fieldName = args?.key;
-	const fieldConfig = scfFields[ fieldName ];
-
-	if ( ! fieldConfig ) {
-		return '';
-	}
-
-	const fieldType = fieldConfig.type;
-	const fieldValue = fieldConfig.formatted_value;
-
-	switch ( fieldType ) {
-		case 'image':
-			return resolveImageAttribute( fieldValue, attribute );
-		case 'checkbox':
-			// For checkbox fields, join array values or return as string
-			if ( Array.isArray( fieldValue ) ) {
-				return fieldValue.join( ', ' );
-			}
-			return fieldValue ? fieldValue.toString() : '';
-		case 'number':
-		case 'range':
-			return fieldValue ? fieldValue.toString() : '';
-		case 'date_picker':
-		case 'text':
-		case 'textarea':
-		case 'url':
-		case 'email':
-		case 'select':
-		default:
-			return fieldValue ? fieldValue.toString() : '';
-	}
-};
-
 registerBlockBindingsSource( {
 	name: 'acf/field',
-	label: 'SCF Fields',
+	label: __( 'SCF Fields', 'secure-custom-fields' ),
+	getLabel( { args, select } ) {
+		const fieldKey = args?.key;
+
+		if ( ! fieldKey ) {
+			return __( 'SCF Fields', 'secure-custom-fields' );
+		}
+
+		const fieldMetadata = select( STORE_NAME ).getFieldMetadata( fieldKey );
+
+		if ( fieldMetadata?.label ) {
+			return fieldMetadata.label;
+		}
+
+		return formatFieldLabel( fieldKey );
+	},
 	getValues( { context, bindings, select } ) {
+		const { getCurrentPostType } = select( editorStore );
+		const currentPostType = getCurrentPostType();
+		const isSiteEditor = currentPostType === 'wp_template';
+
+		// In site editor, return field labels as placeholder values
+		if ( isSiteEditor ) {
+			const result = {};
+			Object.entries( bindings ).forEach(
+				( [ attribute, { args } = {} ] ) => {
+					const fieldKey = args?.key;
+					if ( ! fieldKey ) {
+						result[ attribute ] = '';
+						return;
+					}
+
+					const fieldMetadata =
+						select( STORE_NAME ).getFieldMetadata( fieldKey );
+					result[ attribute ] =
+						fieldMetadata?.label || formatFieldLabel( fieldKey );
+				}
+			);
+			return result;
+		}
+
+		// Regular post editor - get actual field values
 		const { getEditedEntityRecord } = select( coreDataStore );
 
 		const post =
@@ -109,7 +75,6 @@ registerBlockBindingsSource( {
 				: undefined;
 
 		const scfFields = getSCFFields( post );
-
 		const result = {};
 
 		Object.entries( bindings ).forEach(
@@ -120,6 +85,48 @@ registerBlockBindingsSource( {
 		);
 
 		return result;
+	},
+	getPlaceholder( { context, bindings, select } ) {
+		// Get the first binding to determine the field label
+		const firstBinding = Object.values( bindings )[ 0 ];
+		if ( ! firstBinding?.args?.key ) {
+			return __( 'SCF Fields', 'secure-custom-fields' );
+		}
+
+		const fieldKey = firstBinding.args.key;
+
+		// Check if we're in the site editor (editing a template)
+		const { getCurrentPostType } = select( editorStore );
+		const currentPostType = getCurrentPostType();
+		const isSiteEditor = currentPostType === 'wp_template';
+
+		if ( isSiteEditor ) {
+			const fieldMetadata =
+				select( STORE_NAME ).getFieldMetadata( fieldKey );
+			return fieldMetadata?.label || formatFieldLabel( fieldKey );
+		}
+
+		// Regular post editor - get from post data
+		const { getEditedEntityRecord } = select( coreDataStore );
+
+		const post =
+			context?.postType && context?.postId
+				? getEditedEntityRecord(
+						'postType',
+						context.postType,
+						context.postId
+				  )
+				: undefined;
+
+		const scfFields = getSCFFields( post );
+		const fieldConfig = scfFields[ fieldKey ];
+
+		if ( fieldConfig?.label ) {
+			return fieldConfig.label;
+		}
+
+		const fieldMetadata = select( STORE_NAME ).getFieldMetadata( fieldKey );
+		return fieldMetadata?.label || formatFieldLabel( fieldKey );
 	},
 	canUserEditValue() {
 		return false;
