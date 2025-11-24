@@ -148,7 +148,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		return (
 			<>
-				<InspectorControls>
+				<InspectorControls { ...props }>
 					<ToolsPanel
 						label={ __(
 							'Connect to a field',
