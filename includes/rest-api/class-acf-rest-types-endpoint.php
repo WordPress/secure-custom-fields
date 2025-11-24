@@ -162,6 +162,8 @@ class SCF_Rest_Types_Endpoint {
 					array_keys( get_post_types( array(), 'objects' ) ),
 					array_merge( $core_types, $scf_types )
 				);
+			default:
+				return array();
 		}
 	}
 
