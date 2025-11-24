@@ -86,48 +86,6 @@ registerBlockBindingsSource( {
 
 		return result;
 	},
-	getPlaceholder( { context, bindings, select } ) {
-		// Get the first binding to determine the field label
-		const firstBinding = Object.values( bindings )[ 0 ];
-		if ( ! firstBinding?.args?.key ) {
-			return __( 'SCF Fields', 'secure-custom-fields' );
-		}
-
-		const fieldKey = firstBinding.args.key;
-
-		// Check if we're in the site editor (editing a template)
-		const { getCurrentPostType } = select( editorStore );
-		const currentPostType = getCurrentPostType();
-		const isSiteEditor = currentPostType === 'wp_template';
-
-		if ( isSiteEditor ) {
-			const fieldMetadata =
-				select( STORE_NAME ).getFieldMetadata( fieldKey );
-			return fieldMetadata?.label || formatFieldLabel( fieldKey );
-		}
-
-		// Regular post editor - get from post data
-		const { getEditedEntityRecord } = select( coreDataStore );
-
-		const post =
-			context?.postType && context?.postId
-				? getEditedEntityRecord(
-						'postType',
-						context.postType,
-						context.postId
-				  )
-				: undefined;
-
-		const scfFields = getSCFFields( post );
-		const fieldConfig = scfFields[ fieldKey ];
-
-		if ( fieldConfig?.label ) {
-			return fieldConfig.label;
-		}
-
-		const fieldMetadata = select( STORE_NAME ).getFieldMetadata( fieldKey );
-		return fieldMetadata?.label || formatFieldLabel( fieldKey );
-	},
 	canUserEditValue() {
 		return false;
 	},

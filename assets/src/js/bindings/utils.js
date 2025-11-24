@@ -7,6 +7,7 @@ import { BLOCK_BINDINGS_CONFIG } from './constants';
 /**
  * Gets the bindable attributes for a given block.
  *
+ * @since 6.7.0
  * @param {string} blockName The name of the block.
  * @return {string[]} The bindable attributes for the block.
  */
@@ -18,6 +19,7 @@ export function getBindableAttributes( blockName ) {
 /**
  * Gets the allowed field types for a specific block attribute.
  *
+ * @since 6.7.0
  * @param {string}      blockName The name of the block.
  * @param {string|null} attribute The attribute name, or null for all types.
  * @return {string[]|null} The allowed field types, or null if no restrictions.
@@ -40,6 +42,7 @@ export function getAllowedFieldTypes( blockName, attribute = null ) {
 /**
  * Filters field options based on allowed field types.
  *
+ * @since 6.7.0
  * @param {Array}       fieldOptions  Array of field option objects with value, label, and type.
  * @param {string}      blockName     The name of the block.
  * @param {string|null} attribute     The attribute name, or null for all types.
@@ -68,6 +71,7 @@ export function getFilteredFieldOptions(
 /**
  * Checks if all bindable attributes for a block support the same field types.
  *
+ * @since 6.7.0
  * @param {string}   blockName          The name of the block.
  * @param {string[]} bindableAttributes Array of bindable attribute names.
  * @return {boolean} True if all attributes support the same field types.
@@ -96,6 +100,7 @@ export function canUseUnifiedBinding( blockName, bindableAttributes ) {
 /**
  * Extracts the post type from a template slug.
  *
+ * @since 6.7.0
  * @param {string} templateSlug The template slug (e.g., 'single-product', 'archive-post').
  * @return {string|null} The extracted post type, or null if not detected.
  */
@@ -125,6 +130,7 @@ export function extractPostTypeFromTemplate( templateSlug ) {
 /**
  * Formats field data from API response into a usable structure.
  *
+ * @since 6.7.0
  * @param {Array} fieldGroups Array of field group objects from the API.
  * @return {Object} Formatted fields map with field name as key.
  */
@@ -152,6 +158,7 @@ export function formatFieldGroupsData( fieldGroups ) {
 /**
  * Converts fields map to options array for ComboboxControl.
  *
+ * @since 6.7.0
  * @param {Object} fieldsMap Object with field data.
  * @return {Array} Array of option objects with value, label, and type.
  */

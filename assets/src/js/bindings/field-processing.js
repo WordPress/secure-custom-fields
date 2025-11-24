@@ -61,7 +61,7 @@ export function resolveImageAttribute( imageObj, attribute ) {
 /**
  * Processes a single field binding and returns its resolved value.
  *
- * @since 6.5.0
+ * @since 6.7.0
  *
  * @param {string} attribute The attribute being bound.
  * @param {Object} args      The binding arguments.
@@ -108,7 +108,7 @@ export function processFieldBinding( attribute, args, scfFields ) {
 /**
  * Formats a field key into a human-readable label.
  *
- * @since 6.5.0
+ * @since 6.7.0
  *
  * @param {string} fieldKey The field key (e.g., 'my_field_name').
  * @return {string} Formatted label (e.g., 'My Field Name').
@@ -127,6 +127,7 @@ export function formatFieldLabel( fieldKey ) {
 /**
  * Gets the field label from metadata or formats the field key.
  *
+ * @since 6.7.0
  * @param {string} fieldKey        The field key.
  * @param {Object} fieldMetadata   Optional field metadata object.
  * @param {string} defaultLabel    Optional default label to use.

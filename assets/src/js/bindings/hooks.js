@@ -15,6 +15,7 @@ import { STORE_NAME } from './store';
 /**
  * Custom hook to detect if we're in the site editor and get the template info.
  *
+ * @since 6.7.0
  * @return {Object} Object containing isSiteEditor flag and templatePostType.
  */
 export function useSiteEditorContext() {
@@ -54,6 +55,7 @@ export function useSiteEditorContext() {
 /**
  * Custom hook to get SCF fields for the current post editor context.
  *
+ * @since 6.7.0
  * @return {Object} Object containing the fields map.
  */
 export function usePostEditorFields() {
@@ -90,6 +92,7 @@ export function usePostEditorFields() {
 /**
  * Custom hook to fetch and manage SCF field groups from the REST API.
  *
+ * @since 6.7.0
  * @param {string|null} postType The post type to fetch fields for.
  * @return {Object} Object containing fields, isLoading, and error.
  */
@@ -154,6 +157,7 @@ export function useSiteEditorFields( postType ) {
 /**
  * Custom hook to manage block bindings state.
  *
+ * @since 6.7.0
  * @param {Object} blockAttributes The block attributes object.
  * @return {Object} Object containing boundFields and sync function.
  */

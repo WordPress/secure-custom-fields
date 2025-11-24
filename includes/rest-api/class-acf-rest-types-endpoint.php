@@ -302,19 +302,6 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Add source parameter to the collection parameters for the types endpoint.
-	 *
-	 * @since SCF 6.5.0
-	 *
-	 * @param array $query_params JSON Schema-formatted collection parameters.
-	 * @return array Modified collection parameters.
-	 */
-	public function add_collection_params( $query_params ) {
-		$query_params['source'] = $this->get_source_param_definition();
-		return $query_params;
-	}
-
-	/**
 	 * Add source parameter directly to the endpoints for proper documentation
 	 *
 	 * @since SCF 6.5.0
@@ -337,6 +324,19 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		return $endpoints;
+	}
+
+	/**
+	 * Add source parameter to the collection parameters for the types endpoint.
+	 *
+	 * @since SCF 6.5.0
+	 *
+	 * @param array $query_params JSON Schema-formatted collection parameters.
+	 * @return array Modified collection parameters.
+	 */
+	public function add_collection_params( $query_params ) {
+		$query_params['source'] = $this->get_source_param_definition();
+		return $query_params;
 	}
 
 	/**

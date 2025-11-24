@@ -1,6 +1,7 @@
 /**
  * SCF Field Metadata Store
  *
+ * @since 6.7.0
  * Manages field metadata for block bindings using WordPress data store.
  */
 
