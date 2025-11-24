@@ -78,7 +78,7 @@ export function usePostEditorFields() {
 			Object.entries( record.acf ).forEach( ( [ key, value ] ) => {
 				if ( key.endsWith( '_source' ) ) {
 					const baseFieldName = key.replace( '_source', '' );
-					if ( record.acf.hasOwnProperty( baseFieldName ) ) {
+					if ( Object.hasOwn( record.acf, baseFieldName ) ) {
 						sourcedFields[ baseFieldName ] = value;
 					}
 				}
