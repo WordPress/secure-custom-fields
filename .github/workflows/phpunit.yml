@@ -16,13 +16,20 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      matrix:
-        include:
-          # Minimum supported PHP
-          - php: '7.4'
-          # Latest stable PHP
-          - php: '8.4'
       fail-fast: false
+      matrix:
+        event: ['${{ github.event_name }}']
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        exclude:
+          # On PRs: only test minimum and latest PHP versions
+          - event: 'pull_request'
+            php: '8.0'
+          - event: 'pull_request'
+            php: '8.1'
+          - event: 'pull_request'
+            php: '8.2'
+          - event: 'pull_request'
+            php: '8.3'
 
     steps:
       - name: Checkout code
