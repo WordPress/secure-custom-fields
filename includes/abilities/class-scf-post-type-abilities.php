@@ -358,7 +358,7 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 				'scf/duplicate-post-type',
 				array(
 					'label'               => __( 'Duplicate Post Type', 'secure-custom-fields' ),
-					'description'         => __( 'Creates a copy of an existing SCF post type with optional modifications.', 'secure-custom-fields' ),
+					'description'         => __( 'Creates a copy of an existing SCF post type. The duplicate receives a new unique key but retains the same post_type slug, so it will not register until the slug is changed.', 'secure-custom-fields' ),
 					'category'            => 'scf-post-types',
 					'execute_callback'    => array( $this, 'duplicate_post_type_callback' ),
 					'meta'                => array(
@@ -484,7 +484,7 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 			$post_type = acf_get_post_type( $input['identifier'] );
 
 			if ( ! $post_type ) {
-				return new WP_Error( 'post_type_not_found', __( 'Post type not found.', 'secure-custom-fields' ) );
+				return $this->post_type_not_found_error();
 			}
 
 			return $post_type;
@@ -524,7 +524,7 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 		public function update_post_type_callback( $input ) {
 			$existing_post_type = acf_get_post_type( $input['ID'] );
 			if ( ! $existing_post_type ) {
-				return new WP_Error( 'post_type_not_found', __( 'Post type not found.', 'secure-custom-fields' ) );
+				return $this->post_type_not_found_error();
 			}
 
 			// Merge input with existing post type data to preserve unmodified fields.
@@ -548,6 +548,11 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 		 * @return bool|WP_Error True on success, WP_Error on failure.
 		 */
 		public function delete_post_type_callback( $input ) {
+			$post_type = acf_get_post_type( $input['identifier'] );
+			if ( ! $post_type ) {
+				return $this->post_type_not_found_error();
+			}
+
 			$result = acf_delete_post_type( $input['identifier'] );
 
 			if ( ! $result ) {
@@ -566,6 +571,11 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 		 * @return array|WP_Error The duplicated post type data on success, WP_Error on failure.
 		 */
 		public function duplicate_post_type_callback( $input ) {
+			$post_type = acf_get_post_type( $input['identifier'] );
+			if ( ! $post_type ) {
+				return $this->post_type_not_found_error();
+			}
+
 			$new_post_id          = isset( $input['new_post_id'] ) ? $input['new_post_id'] : 0;
 			$duplicated_post_type = acf_duplicate_post_type( $input['identifier'], $new_post_id );
 
@@ -587,7 +597,7 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 		public function export_post_type_callback( $input ) {
 			$post_type = acf_get_post_type( $input['identifier'] );
 			if ( ! $post_type ) {
-				return new WP_Error( 'post_type_not_found', __( 'Post type not found.', 'secure-custom-fields' ) );
+				return $this->post_type_not_found_error();
 			}
 
 			$export_data = acf_prepare_internal_post_type_for_export( $post_type, 'acf-post-type' );
@@ -616,6 +626,19 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 			}
 
 			return $imported_post_type;
+		}
+
+		/**
+		 * Returns a WP_Error for post type not found.
+		 *
+		 * @return WP_Error The error object with 404 status.
+		 */
+		private function post_type_not_found_error() {
+			return new WP_Error(
+				'post_type_not_found',
+				__( 'Post type not found.', 'secure-custom-fields' ),
+				array( 'status' => 404 )
+			);
 		}
 	}
 
