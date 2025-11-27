@@ -80,6 +80,17 @@ test.describe( 'Field Type > Text', () => {
 		// Navigate to edit post page
 		await admin.editPost( post.id );
 
+		// Wait for meta boxes to load and expand the panel if collapsed.
+		// @see https://github.com/WordPress/gutenberg/issues/72185
+		await page.waitForSelector( '.acf-postbox', { state: 'attached' } );
+		await page.evaluate( () => {
+			document.querySelectorAll( 'button' ).forEach( ( btn ) => {
+				if ( btn.textContent?.includes( 'Meta Boxes' ) && btn.getAttribute( 'aria-expanded' ) === 'false' ) {
+					btn.dispatchEvent( new MouseEvent( 'click', { bubbles: true } ) );
+				}
+			} );
+		} );
+
 		// Fill in the movie title field using data-name attribute
 		const movieTitleField = page.locator(
 			'.acf-field[data-name="movie_title"] input[type="text"]'

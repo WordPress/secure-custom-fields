@@ -109,6 +109,17 @@ test.describe( 'Field Type > Repeater', () => {
         // Navigate to edit post page
         await admin.editPost( post.id );
 
+        // Wait for meta boxes to load and expand the panel if collapsed.
+        // @see https://github.com/WordPress/gutenberg/issues/72185
+        await page.waitForSelector( '.acf-postbox', { state: 'attached' } );
+        await page.evaluate( () => {
+            document.querySelectorAll( 'button' ).forEach( ( btn ) => {
+                if ( btn.textContent?.includes( 'Meta Boxes' ) && btn.getAttribute( 'aria-expanded' ) === 'false' ) {
+                    btn.dispatchEvent( new MouseEvent( 'click', { bubbles: true } ) );
+                }
+            } );
+        } );
+
         // Add a repeater row - using the correct selector matching the actual DOM element
         const addRowButton = page.locator(
             'a.acf-button.acf-repeater-add-row[data-event="add-row"]'
