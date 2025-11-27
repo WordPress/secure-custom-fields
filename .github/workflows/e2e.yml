@@ -18,7 +18,7 @@ permissions: {}
 
 jobs:
     test:
-        name: Node.js ${{ matrix.node }}
+        name: Node ${{ matrix.node }} / WP ${{ matrix.wp }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -28,10 +28,17 @@ jobs:
             matrix:
                 event: ['${{ github.event_name }}']
                 node: ['22', '24']
+                wp: ['latest', 'trunk']
                 exclude:
-                    # On PRs: only test Node 22
+                    # On PRs: only test Node 22 + WP trunk
+                    # TODO: Revert to WP latest on PRs once WP 6.9 is released with the Abilities API
                     - event: 'pull_request'
                       node: '24'
+                    - event: 'pull_request'
+                      wp: 'latest'
+
+        env:
+            WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || null }}
 
         steps:
             - uses: actions/checkout@v4
