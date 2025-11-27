@@ -21,9 +21,7 @@ test.describe( 'Post Type Abilities', () => {
 		post_type: 'e2e_test',
 	};
 
-	// -------------------------------------------------------------------------
-	// Helper Functions
-	// -------------------------------------------------------------------------
+	// Helper functions
 
 	/**
 	 * Check if Abilities API exists (for older WordPress versions).
@@ -66,9 +64,7 @@ test.describe( 'Post Type Abilities', () => {
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// Post Type API Helpers
-	// -------------------------------------------------------------------------
+	// Post type API helpers
 
 	async function listPostTypes( requestUtils, filter = {} ) {
 		return await requestUtils.rest( {
@@ -145,9 +141,7 @@ test.describe( 'Post Type Abilities', () => {
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// Test Setup
-	// -------------------------------------------------------------------------
+	// Test setup
 
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
@@ -160,9 +154,7 @@ test.describe( 'Post Type Abilities', () => {
 		);
 	} );
 
-	// -------------------------------------------------------------------------
-	// LIST POST TYPES - POST with body
-	// -------------------------------------------------------------------------
+	// List post types - POST with body
 
 	test.describe( 'scf/list-post-types', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
@@ -188,9 +180,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// GET POST TYPE - POST with body
-	// -------------------------------------------------------------------------
+	// Get post type - POST with body
 
 	test.describe( 'scf/get-post-type', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
@@ -214,9 +204,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// EXPORT POST TYPE - GET with query params (readonly)
-	// -------------------------------------------------------------------------
+	// Export post type - GET with query params (readonly)
 
 	test.describe( 'scf/export-post-type', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
@@ -241,9 +229,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// CREATE POST TYPE - POST with body
-	// -------------------------------------------------------------------------
+	// Create post type - POST with body
 
 	test.describe( 'scf/create-post-type', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
@@ -267,9 +253,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// UPDATE POST TYPE - POST with body
-	// -------------------------------------------------------------------------
+	// Update post type - POST with body
 
 	test.describe( 'scf/update-post-type', () => {
 		let testPostTypeId;
@@ -302,9 +286,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// DELETE POST TYPE - DELETE with query params (destructive)
-	// -------------------------------------------------------------------------
+	// Delete post type - DELETE with query params (destructive)
 
 	test.describe( 'scf/delete-post-type', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
@@ -341,12 +323,10 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// DUPLICATE POST TYPE - POST with body
+	// Duplicate post type - POST with body
 	//
 	// Note: The duplicate receives a new unique key but retains the same
 	// post_type slug. The duplicate won't register until slug is changed.
-	// -------------------------------------------------------------------------
 
 	test.describe( 'scf/duplicate-post-type', () => {
 		let duplicatedKey;
@@ -380,9 +360,7 @@ test.describe( 'Post Type Abilities', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// IMPORT POST TYPE - POST with body
-	// -------------------------------------------------------------------------
+	// Import post type - POST with body
 
 	test.describe( 'scf/import-post-type', () => {
 		test.beforeEach( async ( { requestUtils } ) => {
