@@ -1,0 +1,51 @@
+{
+	"key": "acf-taxonomy-genre",
+	"title": "Genres",
+	"name": "genre",
+	"label": "Genres",
+	"singular_label": "Genre",
+	"description": "",
+	"hierarchical": true,
+	"public": true,
+	"show_ui": true,
+	"show_in_menu": true,
+	"show_in_nav_menus": true,
+	"show_tagcloud": true,
+	"show_in_quick_edit": true,
+	"show_admin_column": true,
+	"show_in_rest": true,
+	"rest_base": "",
+	"rest_namespace": "wp/v2",
+	"sort": false,
+	"query_var": "genre",
+	"rewrite": {
+		"slug": "genre",
+		"with_front": true,
+		"hierarchical": true
+	},
+	"labels": {
+		"name": "Genres",
+		"singular_name": "Genre",
+		"menu_name": "Genres",
+		"all_items": "All Genres",
+		"edit_item": "Edit Genre",
+		"view_item": "View Genre",
+		"update_item": "Update Genre",
+		"add_new_item": "Add New Genre",
+		"new_item_name": "New Genre Name",
+		"parent_item": "Parent Genre",
+		"parent_item_colon": "Parent Genre:",
+		"search_items": "Search Genres",
+		"popular_items": "Popular Genres",
+		"separate_items_with_commas": "Separate genres with commas",
+		"add_or_remove_items": "Add or remove genres",
+		"choose_from_most_used": "Choose from the most used genres",
+		"not_found": "No genres found"
+	},
+	"capabilities": {
+		"manage_terms": "manage_categories",
+		"edit_terms": "manage_categories",
+		"delete_terms": "manage_categories",
+		"assign_terms": "edit_posts"
+	}
+}
