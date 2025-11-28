@@ -255,7 +255,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 						'show_in_rest' => true,
 						'mcp'          => array( 'public' => true ),
 						'annotations'  => array(
-							'readonly'    => false,
+							'readonly'    => true,
 							'destructive' => false,
 							'idempotent'  => true,
 						),
@@ -313,7 +313,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 						'show_in_rest' => true,
 						'mcp'          => array( 'public' => true ),
 						'annotations'  => array(
-							'readonly'    => false,
+							'readonly'    => true,
 							'destructive' => false,
 							'idempotent'  => true,
 						),
