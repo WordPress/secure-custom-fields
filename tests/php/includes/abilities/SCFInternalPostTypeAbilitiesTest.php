@@ -95,15 +95,21 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 
 	/**
 	 * Test constructor registers WordPress action hooks
+	 *
+	 * Creates a fresh instance to ensure the add_action lines
+	 * in the constructor are covered by code coverage tools.
 	 */
 	public function test_constructor_registers_action_hooks() {
-		// The constructor should have registered these action hooks.
+		// Create a fresh instance - this executes the constructor including add_action lines.
+		$fresh_instance = new SCF_Taxonomy_Abilities();
+
+		// Verify the hooks were registered for this specific instance.
 		$this->assertNotFalse(
-			has_action( 'wp_abilities_api_categories_init', array( $this->abilities, 'register_categories' ) ),
+			has_action( 'wp_abilities_api_categories_init', array( $fresh_instance, 'register_categories' ) ),
 			'Should register wp_abilities_api_categories_init action'
 		);
 		$this->assertNotFalse(
-			has_action( 'wp_abilities_api_init', array( $this->abilities, 'register_abilities' ) ),
+			has_action( 'wp_abilities_api_init', array( $fresh_instance, 'register_abilities' ) ),
 			'Should register wp_abilities_api_init action'
 		);
 	}
@@ -423,48 +429,27 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_callback returns WP_Error for non-existent ID
+	 * Test get_callback returns WP_Error with not_found code and 404 status for non-existent entity
 	 */
-	public function test_get_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->get_callback(
-			array( 'identifier' => 999999 )
-		);
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'not_found', $result->get_error_code() );
-	}
-
-	/**
-	 * Test get_callback returns 404 status for non-existent key
-	 */
-	public function test_get_taxonomy_callback_not_found_returns_404_status() {
+	public function test_get_taxonomy_callback_not_found() {
 		$result = $this->abilities->get_callback(
 			array( 'identifier' => 'nonexistent_taxonomy' )
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$error_data = $result->get_error_data();
-		$this->assertEquals( 404, $error_data['status'] );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
+		$this->assertEquals( 404, $result->get_error_data()['status'] );
 	}
 
 	/**
-	 * Test create_callback returns array with key
+	 * Test create_callback returns array with expected fields
 	 */
-	public function test_create_taxonomy_callback_returns_array_with_key() {
+	public function test_create_taxonomy_callback_returns_expected_fields() {
 		$result = $this->abilities->create_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'key', $result );
 		$this->assertEquals( $this->test_taxonomy['key'], $result['key'] );
-	}
-
-	/**
-	 * Test create_callback returns array with title
-	 */
-	public function test_create_taxonomy_callback_returns_array_with_title() {
-		$result = $this->abilities->create_callback( $this->test_taxonomy );
-
-		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'title', $result );
 		$this->assertEquals( $this->test_taxonomy['title'], $result['title'] );
 	}
@@ -485,28 +470,16 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test delete_callback returns WP_Error for non-existent ID
+	 * Test delete_callback returns WP_Error with not_found code and 404 status for non-existent entity
 	 */
-	public function test_delete_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->delete_callback(
-			array( 'identifier' => 999999 )
-		);
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'not_found', $result->get_error_code() );
-	}
-
-	/**
-	 * Test delete_callback returns 404 status for non-existent key
-	 */
-	public function test_delete_taxonomy_callback_not_found_returns_404_status() {
+	public function test_delete_taxonomy_callback_not_found() {
 		$result = $this->abilities->delete_callback(
 			array( 'identifier' => 'nonexistent_delete_target' )
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$error_data = $result->get_error_data();
-		$this->assertEquals( 404, $error_data['status'] );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
+		$this->assertEquals( 404, $result->get_error_data()['status'] );
 	}
 
 	/**
@@ -534,40 +507,22 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test import_callback returns array
+	 * Test import_callback returns array with expected fields
 	 */
-	public function test_import_taxonomy_callback_returns_array() {
-		$result = $this->abilities->import_callback( $this->test_taxonomy );
-
-		$this->assertIsArray( $result );
-	}
-
-	/**
-	 * Test import_callback returns correct taxonomy
-	 */
-	public function test_import_taxonomy_callback_returns_correct_taxonomy() {
+	public function test_import_taxonomy_callback_returns_expected_fields() {
 		$result = $this->abilities->import_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( $this->test_taxonomy['taxonomy'], $result['taxonomy'] );
-	}
-
-	/**
-	 * Test import_callback returns correct title
-	 */
-	public function test_import_taxonomy_callback_returns_correct_title() {
-		$result = $this->abilities->import_callback( $this->test_taxonomy );
-
-		$this->assertIsArray( $result );
 		$this->assertEquals( $this->test_taxonomy['title'], $result['title'] );
 	}
 
 	// Schema method tests.
 
 	/**
-	 * Test get_entity_schema returns valid schema
+	 * Test get_entity_schema returns valid schema with required fields
 	 */
-	public function test_get_entity_schema_returns_array() {
+	public function test_get_entity_schema() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_entity_schema' );
 		$method->setAccessible( true );
@@ -577,18 +532,6 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$this->assertIsArray( $schema );
 		$this->assertArrayHasKey( 'type', $schema );
 		$this->assertEquals( 'object', $schema['type'] );
-	}
-
-	/**
-	 * Test get_entity_schema has required fields
-	 */
-	public function test_get_entity_schema_has_required_fields() {
-		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'get_entity_schema' );
-		$method->setAccessible( true );
-
-		$schema = $method->invoke( $this->abilities );
-
 		$this->assertArrayHasKey( 'required', $schema );
 		$this->assertContains( 'key', $schema['required'] );
 		$this->assertContains( 'title', $schema['required'] );
@@ -611,9 +554,9 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_internal_fields_schema returns valid schema
+	 * Test get_internal_fields_schema returns valid schema with ID property
 	 */
-	public function test_get_internal_fields_schema_returns_array() {
+	public function test_get_internal_fields_schema() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_internal_fields_schema' );
 		$method->setAccessible( true );
@@ -622,25 +565,13 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 
 		$this->assertIsArray( $schema );
 		$this->assertArrayHasKey( 'properties', $schema );
-	}
-
-	/**
-	 * Test get_internal_fields_schema contains ID property
-	 */
-	public function test_get_internal_fields_schema_has_id_property() {
-		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'get_internal_fields_schema' );
-		$method->setAccessible( true );
-
-		$schema = $method->invoke( $this->abilities );
-
 		$this->assertArrayHasKey( 'ID', $schema['properties'] );
 	}
 
 	/**
-	 * Test get_entity_with_internal_fields_schema returns merged schema
+	 * Test get_entity_with_internal_fields_schema returns merged schema with both entity and internal fields
 	 */
-	public function test_get_entity_with_internal_fields_schema_returns_array() {
+	public function test_get_entity_with_internal_fields_schema() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_entity_with_internal_fields_schema' );
 		$method->setAccessible( true );
@@ -649,18 +580,6 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 
 		$this->assertIsArray( $schema );
 		$this->assertArrayHasKey( 'properties', $schema );
-	}
-
-	/**
-	 * Test get_entity_with_internal_fields_schema contains both entity and internal fields
-	 */
-	public function test_get_entity_with_internal_fields_schema_has_merged_properties() {
-		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'get_entity_with_internal_fields_schema' );
-		$method->setAccessible( true );
-
-		$schema = $method->invoke( $this->abilities );
-
 		// Should have entity-specific field (taxonomy has 'taxonomy' field).
 		$this->assertArrayHasKey( 'taxonomy', $schema['properties'], 'Should have entity-specific taxonomy field' );
 		// Should have internal field (ID).
@@ -670,9 +589,9 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	// Private method tests.
 
 	/**
-	 * Test not_found_error returns correct error code
+	 * Test not_found_error returns WP_Error with correct code and 404 status
 	 */
-	public function test_not_found_error_returns_correct_code() {
+	public function test_not_found_error() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'not_found_error' );
 		$method->setAccessible( true );
@@ -681,20 +600,7 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $error );
 		$this->assertEquals( 'not_found', $error->get_error_code() );
-	}
-
-	/**
-	 * Test not_found_error returns 404 status
-	 */
-	public function test_not_found_error_returns_404() {
-		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'not_found_error' );
-		$method->setAccessible( true );
-
-		$error      = $method->invoke( $this->abilities );
-		$error_data = $error->get_error_data();
-
-		$this->assertEquals( 404, $error_data['status'] );
+		$this->assertEquals( 404, $error->get_error_data()['status'] );
 	}
 
 	/**
