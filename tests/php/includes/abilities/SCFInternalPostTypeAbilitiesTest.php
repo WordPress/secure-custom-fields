@@ -1,10 +1,9 @@
 <?php
 /**
- * Tests for SCF_Taxonomy_Abilities class
+ * Tests for SCF_Internal_Post_Type_Abilities base class
  *
- * Note: Full integration tests including create/get/update/delete flows are covered
- * by e2e tests in tests/e2e/abilities-taxonomies.spec.ts. These PHPUnit tests focus
- * on callback structure and error handling that can be tested in WorDBless.
+ * Tests the abstract base class behavior using SCF_Taxonomy_Abilities as the
+ * concrete implementation. Full integration tests are covered by E2E tests.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -22,9 +21,12 @@ require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-internal-pos
 require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-taxonomy-abilities.php';
 
 /**
- * Test SCF Taxonomy Abilities callbacks
+ * Tests for SCF_Internal_Post_Type_Abilities base class
+ *
+ * Uses SCF_Taxonomy_Abilities as concrete implementation to test
+ * the shared base class behavior.
  */
-class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
+class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 
 	/**
 	 * Instance of SCF_Taxonomy_Abilities for testing
