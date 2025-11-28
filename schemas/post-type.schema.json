@@ -18,7 +18,7 @@
 	"definitions": {
 		"postType": {
 			"type": "object",
-			"required": ["key", "title", "post_type"],
+			"required": [ "key", "title", "post_type" ],
 			"additionalProperties": false,
 			"properties": {
 				"key": {
@@ -50,9 +50,9 @@
 					"description": "[SCF] Whether this post type is active"
 				},
 				"advanced_configuration": {
-					"type": "boolean",
+					"type": [ "boolean", "integer" ],
 					"default": false,
-					"description": "[SCF Export Only] Whether advanced configuration options are enabled"
+					"description": "[SCF Export Only] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
 				},
 				"import_source": {
 					"type": "string",
@@ -249,7 +249,7 @@
 					"description": "[SCF Export Only] The order of this post type in the admin menu"
 				},
 				"menu_position": {
-					"type": ["integer", "string", "null"],
+					"type": [ "integer", "string", "null" ],
 					"description": "The position in the menu order. SCF exports as empty string or null when not set, integer when set. Import accepts all types and casts to integer."
 				},
 				"menu_icon": {
@@ -263,7 +263,7 @@
 							"properties": {
 								"type": {
 									"type": "string",
-									"enum": ["dashicons", "url"],
+									"enum": [ "dashicons", "url" ],
 									"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image"
 								},
 								"value": {
@@ -271,7 +271,7 @@
 									"description": "The icon value: dashicon class name (e.g. 'dashicons-admin-post') or image URL"
 								}
 							},
-							"required": ["type", "value"],
+							"required": [ "type", "value" ],
 							"additionalProperties": false,
 							"description": "[SCF] SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-post\"}"
 						}
@@ -316,12 +316,12 @@
 					"description": "Whether to allow this post type to be exported"
 				},
 				"delete_with_user": {
-					"type": ["boolean", "null"],
+					"type": [ "boolean", "null" ],
 					"description": "Whether to delete posts of this type when deleting a user"
 				},
 
 				"has_archive": {
-					"type": ["boolean", "string"],
+					"type": [ "boolean", "string" ],
 					"default": false,
 					"description": "Whether there should be post type archives, or if a string, the archive slug to use"
 				},
@@ -330,7 +330,7 @@
 					"description": "The slug to use for the archive if has_archive is enabled"
 				},
 				"rewrite": {
-					"type": ["object", "boolean"],
+					"type": [ "object", "boolean" ],
 					"description": "Triggers the handling of rewrites for this post type",
 					"oneOf": [
 						{ "type": "boolean" },
@@ -347,17 +347,17 @@
 									"description": "Customize the permalink structure slug"
 								},
 								"with_front": {
-									"type": ["boolean", "string"],
+									"type": [ "boolean", "string" ],
 									"default": true,
 									"description": "Whether the permalink structure should be prepended with WP_Rewrite::$front (accepts boolean or string '0'/'1' for backward compatibility)"
 								},
 								"feeds": {
-									"type": ["boolean", "string"],
+									"type": [ "boolean", "string" ],
 									"default": false,
 									"description": "Whether the feed permalink structure should be built for this post type (accepts boolean or string '0'/'1' for backward compatibility)"
 								},
 								"pages": {
-									"type": ["boolean", "string"],
+									"type": [ "boolean", "string" ],
 									"default": true,
 									"description": "Whether the permalink structure should provide for pagination (accepts boolean or string '0'/'1' for backward compatibility)"
 								}
@@ -366,7 +366,7 @@
 					]
 				},
 				"query_var": {
-					"type": ["boolean", "string"],
+					"type": [ "boolean", "string" ],
 					"description": "Sets the query_var key for this post type"
 				},
 				"query_var_name": {
@@ -375,7 +375,7 @@
 				},
 
 				"capability_type": {
-					"type": ["string", "array"],
+					"type": [ "string", "array" ],
 					"description": "The string to use to build the read, edit, and delete capabilities"
 				},
 				"rename_capabilities": {
@@ -501,7 +501,7 @@
 			"rename_capabilities": false,
 			"singular_capability_name": "post",
 			"plural_capability_name": "posts",
-			"supports": ["title", "editor", "thumbnail", "custom-fields"],
+			"supports": [ "title", "editor", "thumbnail", "custom-fields" ],
 			"taxonomies": "",
 			"has_archive": false,
 			"has_archive_slug": "",

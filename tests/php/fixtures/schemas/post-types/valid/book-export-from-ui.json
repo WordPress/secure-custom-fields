@@ -55,7 +55,7 @@
 		"show_in_nav_menus": true,
 		"show_in_rest": true,
 		"rest_base": "",
-		"rest_namespace": "wp\/v2",
+		"rest_namespace": "wp/v2",
 		"rest_controller_class": "WP_REST_Posts_Controller",
 		"menu_position": "",
 		"menu_icon": {
@@ -65,7 +65,7 @@
 		"rename_capabilities": false,
 		"singular_capability_name": "post",
 		"plural_capability_name": "posts",
-		"supports": ["title", "editor", "thumbnail", "custom-fields"],
+		"supports": [ "title", "editor", "thumbnail", "custom-fields" ],
 		"taxonomies": "",
 		"has_archive": false,
 		"has_archive_slug": "",
