@@ -2,73 +2,72 @@
 /**
  * Tests for the SCF Taxonomy JSON Schema validation.
  *
- * @package SCF
+ * @package wordpress/secure-custom-fields
  */
 
-/**
- * Tests for the SCF Taxonomy JSON Schema validation.
- *
- * @package SCF
- */
+use PHPUnit\Framework\TestCase;
 
-require_once dirname( dirname( __DIR__ ) ) . '/includes/class-scf-json-schema-validator.php';
+require_once 'BaseSchemaTestCase.php';
 
 /**
  * Class TaxonomySchemaTest
  *
  * Tests JSON Schema validation for SCF taxonomies.
  */
-class TaxonomySchemaTest extends \PHPUnit\Framework\TestCase {
+class TaxonomySchemaTest extends BaseSchemaTestCase {
 
 	/**
-	 * The schema validator instance.
+	 * Get the schema type to test.
 	 *
-	 * @var SCF_JSON_Schema_Validator
+	 * @return string
 	 */
-	private $validator;
-
-	/**
-	 * Path to test fixtures.
-	 *
-	 * @var string
-	 */
-	private $fixtures_path;
-
-	/**
-	 * Set up test environment.
-	 */
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->validator     = new SCF_JSON_Schema_Validator();
-		$this->fixtures_path = __DIR__ . '/fixtures/schemas/taxonomies/';
+	protected function get_schema_type(): string {
+		return 'taxonomy';
 	}
 
 	/**
-	 * Test that the taxonomy schema loads correctly.
+	 * Get the path to the fixtures directory.
+	 *
+	 * @return string
 	 */
-	public function test_taxonomy_schema_loads() {
-		$schema = $this->validator->load_schema( 'taxonomy' );
+	protected function get_fixtures_path(): string {
+		return dirname( __DIR__ ) . '/fixtures/schemas/taxonomies/';
+	}
 
-		$this->assertNotNull( $schema, 'Taxonomy schema should load successfully' );
-		$this->assertObjectHasProperty( 'oneOf', $schema, 'Schema should use oneOf for flexibility' );
-		$this->assertObjectHasProperty( 'definitions', $schema, 'Schema should have definitions' );
-		$this->assertObjectHasProperty( 'taxonomy', $schema->definitions, 'Schema should define taxonomy' );
+	/**
+	 * Get the definition name in the schema.
+	 *
+	 * @return string
+	 */
+	protected function get_definition_name(): string {
+		return 'taxonomy';
+	}
 
-		// Check that the taxonomy definition has the correct required fields.
+	/**
+	 * Get the required fields for this schema.
+	 *
+	 * @return array
+	 */
+	protected function get_required_fields(): array {
+		return array( 'key', 'title', 'taxonomy' );
+	}
+
+	/**
+	 * Test that object_type is NOT required (taxonomy-specific).
+	 */
+	public function test_object_type_is_optional() {
+		$schema       = $this->validator->load_schema( 'taxonomy' );
 		$taxonomy_def = $schema->definitions->taxonomy;
-		$this->assertContains( 'key', $taxonomy_def->required, 'Key should be required' );
-		$this->assertContains( 'title', $taxonomy_def->required, 'Title should be required' );
-		$this->assertContains( 'taxonomy', $taxonomy_def->required, 'Taxonomy should be required' );
 
-		// Verify that object_type is NOT required (it's optional with allow_null=1).
 		$this->assertNotContains( 'object_type', $taxonomy_def->required, 'Object type should NOT be required' );
 	}
 
 	/**
 	 * Data provider for valid taxonomies.
+	 *
+	 * @return array
 	 */
-	public function validTaxonomiesProvider() {
+	public function validEntitiesProvider(): array {
 		return array(
 			'basic valid'                    => array(
 				array(
@@ -296,8 +295,10 @@ class TaxonomySchemaTest extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * Data provider for invalid taxonomies.
+	 *
+	 * @return array
 	 */
-	public function invalidTaxonomiesProvider() {
+	public function invalidEntitiesProvider(): array {
 		return array(
 			'missing key'               => array(
 				array(
@@ -406,65 +407,5 @@ class TaxonomySchemaTest extends \PHPUnit\Framework\TestCase {
 				'Taxonomy with non-string capability value should fail validation',
 			),
 		);
-	}
-
-	/**
-	 * Test validation of valid taxonomies using data provider.
-	 *
-	 * @dataProvider validTaxonomiesProvider
-	 * @param mixed  $data        The taxonomy data to validate.
-	 * @param string $description Test description.
-	 */
-	public function test_valid_taxonomies_from_data_provider( $data, $description ) {
-		$result = $this->validator->validate( $data, 'taxonomy' );
-		$this->assertTrue( $result, $description );
-		$this->assertFalse( $this->validator->has_validation_errors(), 'Should have no validation errors' );
-	}
-
-	/**
-	 * Test validation of invalid taxonomies using data provider.
-	 *
-	 * @dataProvider invalidTaxonomiesProvider
-	 * @param mixed  $data        The taxonomy data to validate.
-	 * @param string $description Test description.
-	 */
-	public function test_invalid_taxonomies_from_data_provider( $data, $description ) {
-		$result = $this->validator->validate( $data, 'taxonomy' );
-		$this->assertFalse( $result, $description );
-		$this->assertTrue( $this->validator->has_validation_errors(), 'Should have validation errors' );
-	}
-
-	/**
-	 * Test validation with valid fixture files (JSON file import scenarios).
-	 */
-	public function test_valid_taxonomies_from_fixture_files() {
-		$valid_files = glob( $this->fixtures_path . 'valid/*.json' );
-		$this->assertNotEmpty( $valid_files, 'Should have valid fixture files' );
-
-		foreach ( $valid_files as $file_path ) {
-			$filename = basename( $file_path );
-			$result   = $this->validator->validate( $file_path, 'taxonomy' );
-
-			if ( ! $result ) {
-				$errors = $this->validator->get_validation_errors_string();
-				$this->fail( "Valid fixture {$filename} should pass validation. Errors: {$errors}" );
-			}
-
-			$this->assertTrue( $result, "Valid fixture {$filename} should pass validation" );
-		}
-	}
-
-	/**
-	 * Test validation with invalid fixture files (JSON file import scenarios).
-	 */
-	public function test_invalid_taxonomies_from_fixture_files() {
-		$invalid_files = glob( $this->fixtures_path . 'invalid/*.json' );
-		$this->assertNotEmpty( $invalid_files, 'Should have invalid fixture files' );
-
-		foreach ( $invalid_files as $file_path ) {
-			$filename = basename( $file_path );
-			$result   = $this->validator->validate( $file_path, 'taxonomy' );
-			$this->assertFalse( $result, "Invalid fixture {$filename} should fail validation" );
-		}
 	}
 }

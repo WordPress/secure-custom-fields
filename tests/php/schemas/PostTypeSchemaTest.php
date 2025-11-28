@@ -2,72 +2,64 @@
 /**
  * Tests for the SCF Post Type JSON Schema validation.
  *
- * @package SCF
+ * @package wordpress/secure-custom-fields
  */
 
-/**
- * Tests for the SCF Post Type JSON Schema validation.
- *
- * @package SCF
- */
+use PHPUnit\Framework\TestCase;
 
-require_once dirname( dirname( __DIR__ ) ) . '/includes/class-scf-json-schema-validator.php';
+require_once 'BaseSchemaTestCase.php';
 
 /**
  * Class PostTypeSchemaTest
  *
  * Tests JSON Schema validation for SCF post types.
  */
-class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
+class PostTypeSchemaTest extends BaseSchemaTestCase {
 
 	/**
-	 * The schema validator instance.
+	 * Get the schema type to test.
 	 *
-	 * @var SCF_JSON_Schema_Validator
+	 * @return string
 	 */
-	private $validator;
-
-	/**
-	 * Path to test fixtures.
-	 *
-	 * @var string
-	 */
-	private $fixtures_path;
-
-	/**
-	 * Set up test environment.
-	 */
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->validator     = new SCF_JSON_Schema_Validator();
-		$this->fixtures_path = __DIR__ . '/fixtures/schemas/post-types/';
+	protected function get_schema_type(): string {
+		return 'post-type';
 	}
 
 	/**
-	 * Test that the post-type schema loads correctly.
+	 * Get the path to the fixtures directory.
+	 *
+	 * @return string
 	 */
-	public function test_post_type_schema_loads() {
-		$schema = $this->validator->load_schema( 'post-type' );
+	protected function get_fixtures_path(): string {
+		return dirname( __DIR__ ) . '/fixtures/schemas/post-types/';
+	}
 
-		$this->assertNotNull( $schema, 'Post type schema should load successfully' );
-		$this->assertObjectHasProperty( 'oneOf', $schema, 'Schema should use oneOf for flexibility' );
-		$this->assertObjectHasProperty( 'definitions', $schema, 'Schema should have definitions' );
-		$this->assertObjectHasProperty( 'postType', $schema->definitions, 'Schema should define postType' );
+	/**
+	 * Get the definition name in the schema.
+	 *
+	 * @return string
+	 */
+	protected function get_definition_name(): string {
+		return 'postType';
+	}
 
-		// Check that the postType definition has the correct required fields
-		$post_type_def = $schema->definitions->postType;
-		$this->assertContains( 'key', $post_type_def->required, 'Key should be required' );
-		$this->assertContains( 'title', $post_type_def->required, 'Title should be required' );
-		$this->assertContains( 'post_type', $post_type_def->required, 'Post type should be required' );
+	/**
+	 * Get the required fields for this schema.
+	 *
+	 * @return array
+	 */
+	protected function get_required_fields(): array {
+		return array( 'key', 'title', 'post_type' );
 	}
 
 	/**
 	 * Data provider for valid post types.
+	 *
+	 * @return array
 	 */
-	public function validPostTypesProvider() {
+	public function validEntitiesProvider(): array {
 		return array(
-			'basic valid'                  => array(
+			'basic valid'                    => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -75,7 +67,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Basic post type should validate successfully',
 			),
-			'array with two items'         => array(
+			'array with two items'           => array(
 				array(
 					array(
 						'key'       => 'post_type_book',
@@ -90,7 +82,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Array of two post types should validate successfully',
 			),
-			'with dashes'                  => array(
+			'with dashes'                    => array(
 				array(
 					'key'       => 'post_type_my_product',
 					'title'     => 'My Product',
@@ -98,7 +90,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with dashes should be valid',
 			),
-			'with underscores'             => array(
+			'with underscores'               => array(
 				array(
 					'key'       => 'post_type_my_product',
 					'title'     => 'My Product',
@@ -106,7 +98,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with underscores should be valid',
 			),
-			'with numbers'                 => array(
+			'with numbers'                   => array(
 				array(
 					'key'       => 'post_type_product123',
 					'title'     => 'Product',
@@ -114,7 +106,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with numbers should be valid',
 			),
-			'custom supports'              => array(
+			'custom supports'                => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -123,7 +115,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with custom supports should be valid',
 			),
-			'rewrite false'                => array(
+			'rewrite false'                  => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -132,7 +124,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with rewrite as false should validate',
 			),
-			'rewrite object'               => array(
+			'rewrite object'                 => array(
 				array(
 					'key'       => 'post_type_book',
 					'title'     => 'Book',
@@ -146,7 +138,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with rewrite object should validate',
 			),
-			'with capabilities'            => array(
+			'with capabilities'              => array(
 				array(
 					'key'          => 'post_type_book',
 					'title'        => 'Book',
@@ -159,7 +151,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with valid capabilities should validate',
 			),
-			'taxonomies empty array'       => array(
+			'taxonomies empty array'         => array(
 				array(
 					'key'        => 'post_type_test',
 					'title'      => 'Test',
@@ -168,7 +160,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with empty taxonomies array should validate',
 			),
-			'taxonomies empty string'      => array(
+			'taxonomies empty string'        => array(
 				array(
 					'key'        => 'post_type_test',
 					'title'      => 'Test',
@@ -177,7 +169,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with empty taxonomies string should validate',
 			),
-			'taxonomies array with values' => array(
+			'taxonomies array with values'   => array(
 				array(
 					'key'        => 'post_type_test',
 					'title'      => 'Test',
@@ -186,7 +178,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with taxonomies array should validate',
 			),
-			'menu_position null'           => array(
+			'menu_position null'             => array(
 				array(
 					'key'           => 'post_type_test',
 					'title'         => 'Test',
@@ -195,7 +187,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with null menu_position should validate',
 			),
-			'menu_position empty string'   => array(
+			'menu_position empty string'     => array(
 				array(
 					'key'           => 'post_type_test',
 					'title'         => 'Test',
@@ -204,7 +196,7 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with empty string menu_position should validate',
 			),
-			'menu_position integer'        => array(
+			'menu_position integer'          => array(
 				array(
 					'key'           => 'post_type_test',
 					'title'         => 'Test',
@@ -213,13 +205,33 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				),
 				'Post type with integer menu_position should validate',
 			),
+			'advanced_configuration integer' => array(
+				array(
+					'key'                    => 'post_type_book',
+					'title'                  => 'Book',
+					'post_type'              => 'book',
+					'advanced_configuration' => 1,
+				),
+				'Post type with advanced_configuration as integer should be valid',
+			),
+			'advanced_configuration boolean' => array(
+				array(
+					'key'                    => 'post_type_book',
+					'title'                  => 'Book',
+					'post_type'              => 'book',
+					'advanced_configuration' => true,
+				),
+				'Post type with advanced_configuration as boolean should be valid',
+			),
 		);
 	}
 
 	/**
 	 * Data provider for invalid post types.
+	 *
+	 * @return array
 	 */
-	public function invalidPostTypesProvider() {
+	public function invalidEntitiesProvider(): array {
 		return array(
 			'missing key'           => array(
 				array(
@@ -293,65 +305,5 @@ class PostTypeSchemaTest extends \PHPUnit\Framework\TestCase {
 				'Post type with additional properties should fail validation',
 			),
 		);
-	}
-
-	/**
-	 * Test validation of valid post types using data provider.
-	 *
-	 * @dataProvider validPostTypesProvider
-	 * @param mixed  $data        The post type data to validate.
-	 * @param string $description Test description.
-	 */
-	public function test_valid_post_types_from_data_provider( $data, $description ) {
-		$result = $this->validator->validate( $data, 'post-type' );
-		$this->assertTrue( $result, $description );
-		$this->assertFalse( $this->validator->has_validation_errors(), 'Should have no validation errors' );
-	}
-
-	/**
-	 * Test validation of invalid post types using data provider.
-	 *
-	 * @dataProvider invalidPostTypesProvider
-	 * @param mixed  $data        The post type data to validate.
-	 * @param string $description Test description.
-	 */
-	public function test_invalid_post_types_from_data_provider( $data, $description ) {
-		$result = $this->validator->validate( $data, 'post-type' );
-		$this->assertFalse( $result, $description );
-		$this->assertTrue( $this->validator->has_validation_errors(), 'Should have validation errors' );
-	}
-
-	/**
-	 * Test validation with valid fixture files (JSON file import scenarios).
-	 */
-	public function test_valid_post_types_from_fixture_files() {
-		$valid_files = glob( $this->fixtures_path . 'valid/*.json' );
-		$this->assertNotEmpty( $valid_files, 'Should have valid fixture files' );
-
-		foreach ( $valid_files as $file_path ) {
-			$filename = basename( $file_path );
-			$result   = $this->validator->validate( $file_path, 'post-type' );
-
-			if ( ! $result ) {
-				$errors = $this->validator->get_validation_errors_string();
-				$this->fail( "Valid fixture {$filename} should pass validation. Errors: {$errors}" );
-			}
-
-			$this->assertTrue( $result, "Valid fixture {$filename} should pass validation" );
-		}
-	}
-
-	/**
-	 * Test validation with invalid fixture files (JSON file import scenarios).
-	 */
-	public function test_invalid_post_types_from_fixture_files() {
-		$invalid_files = glob( $this->fixtures_path . 'invalid/*.json' );
-		$this->assertNotEmpty( $invalid_files, 'Should have invalid fixture files' );
-
-		foreach ( $invalid_files as $file_path ) {
-			$filename = basename( $file_path );
-			$result   = $this->validator->validate( $file_path, 'post-type' );
-			$this->assertFalse( $result, "Invalid fixture {$filename} should fail validation" );
-		}
 	}
 }
