@@ -16,6 +16,7 @@ if ( ! class_exists( 'SCF_Abilities_Integration' ) ) {
 	 * Handles integration with WordPress Abilities API.
 	 *
 	 * @since 6.6.0
+	 * @codeCoverageIgnore Glue code tested implicitly via E2E tests.
 	 */
 	class SCF_Abilities_Integration {
 
@@ -39,6 +40,7 @@ if ( ! class_exists( 'SCF_Abilities_Integration' ) ) {
 			}
 
 			acf_include( 'includes/abilities/class-scf-post-type-abilities.php' );
+			acf_include( 'includes/abilities/class-scf-taxonomy-abilities.php' );
 		}
 
 		/**
