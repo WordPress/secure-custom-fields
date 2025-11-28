@@ -246,7 +246,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type plural */
-						__( 'Retrieves a list of all SCF %s with optional filtering.', 'secure-custom-fields' ),
+						__( 'Retrieves a list of SCF %s with optional filtering.', 'secure-custom-fields' ),
 						$this->entity_name_plural()
 					),
 					'category'            => $this->ability_category(),
@@ -266,11 +266,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 						'properties' => array(
 							'filter' => array(
 								'type'        => 'object',
-								'description' => sprintf(
-									/* translators: %s: Entity type */
-									__( 'Optional filters to apply to the %s list.', 'secure-custom-fields' ),
-									$this->entity_name()
-								),
+								'description' => __( 'Optional filters to apply to results.', 'secure-custom-fields' ),
 								'properties'  => array(
 									'active' => array(
 										'type'        => 'boolean',
@@ -304,7 +300,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Retrieves a specific SCF %s configuration by ID or key.', 'secure-custom-fields' ),
+						__( 'Retrieves SCF %s configuration by ID or key.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -347,7 +343,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Creates a new custom %s in SCF with the provided configuration.', 'secure-custom-fields' ),
+						__( 'Creates a new instance of SCF %s with provided configuration.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -387,7 +383,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Updates an existing SCF %s with new configuration.', 'secure-custom-fields' ),
+						__( 'Updates an existing instance of SCF %s with new configuration.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -424,7 +420,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Permanently deletes an SCF %s. This action cannot be undone.', 'secure-custom-fields' ),
+						__( 'Permanently deletes an instance of SCF %s. This action cannot be undone.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -450,7 +446,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 						'type'        => 'boolean',
 						'description' => sprintf(
 							/* translators: %s: Entity type */
-							__( 'True if %s was successfully deleted.', 'secure-custom-fields' ),
+							__( 'True if %s was deleted successfully.', 'secure-custom-fields' ),
 							$this->entity_name()
 						),
 					),
@@ -474,7 +470,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Creates a copy of an existing SCF %s. The duplicate receives a new unique key.', 'secure-custom-fields' ),
+						__( 'Creates a copy of SCF %s. Duplicate receives a new unique key.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -495,11 +491,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 							'identifier'  => $this->get_scf_identifier_schema(),
 							'new_post_id' => array(
 								'type'        => 'integer',
-								'description' => sprintf(
-									/* translators: %s: Entity type */
-									__( 'Optional new post ID for the duplicated %s.', 'secure-custom-fields' ),
-									$this->entity_name()
-								),
+								'description' => __( 'Optional post ID for duplicate.', 'secure-custom-fields' ),
 							),
 						),
 						'required'   => array( 'identifier' ),
@@ -525,7 +517,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Exports an SCF %s configuration as JSON for backup or transfer.', 'secure-custom-fields' ),
+						__( 'Exports an instance of SCF %s as JSON for backup or transfer.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -568,7 +560,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'description'         => sprintf(
 						/* translators: %s: Entity type */
-						__( 'Imports an SCF %s from JSON configuration data.', 'secure-custom-fields' ),
+						__( 'Imports an instance of SCF %s from JSON data.', 'secure-custom-fields' ),
 						$this->entity_name()
 					),
 					'category'            => $this->ability_category(),
@@ -628,8 +620,8 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					'already_exists',
 					sprintf(
 						/* translators: %s: Entity type */
-						__( 'A %s with this key already exists.', 'secure-custom-fields' ),
-						$this->entity_name()
+						__( '%s with this key already exists.', 'secure-custom-fields' ),
+						ucfirst( $this->entity_name() )
 					)
 				);
 			}
@@ -743,7 +735,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					'export_failed',
 					sprintf(
 						/* translators: %s: Entity type */
-						__( 'Failed to prepare %s for export.', 'secure-custom-fields' ),
+						__( 'Failed to export %s.', 'secure-custom-fields' ),
 						$this->entity_name()
 					)
 				);
