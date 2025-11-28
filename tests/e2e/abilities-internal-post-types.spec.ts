@@ -104,16 +104,23 @@ function createApiHelpers( entityType ) {
 	return {
 		list: ( requestUtils, filter = {} ) =>
 			requestUtils.rest( {
-				method: 'POST',
+				method: 'GET',
 				path: `${ ABILITIES_BASE }/scf/list-${ slugPlural }/run`,
-				data: { input: { filter } },
+				params: Object.keys( filter ).length
+					? Object.fromEntries(
+							Object.entries( filter ).map( ( [ key, value ] ) => [
+								`input[filter][${ key }]`,
+								value,
+							] )
+					  )
+					: {},
 			} ),
 
 		get: ( requestUtils, identifier ) =>
 			requestUtils.rest( {
-				method: 'POST',
+				method: 'GET',
 				path: `${ ABILITIES_BASE }/scf/get-${ slug }/run`,
-				data: { input: { identifier } },
+				params: { 'input[identifier]': identifier },
 			} ),
 
 		create: ( requestUtils, data = testEntity ) =>
@@ -189,7 +196,7 @@ for ( const entityType of ENTITY_TYPES ) {
 			);
 		} );
 
-		// List entities - POST with body
+		// List entities - GET with query params (readonly)
 
 		test.describe( `scf/list-${ slugPlural }`, () => {
 			test.beforeEach( async ( { requestUtils } ) => {
@@ -221,7 +228,7 @@ for ( const entityType of ENTITY_TYPES ) {
 			} );
 		} );
 
-		// Get entity - POST with body
+		// Get entity - GET with query params (readonly)
 
 		test.describe( `scf/get-${ slug }`, () => {
 			test.beforeEach( async ( { requestUtils } ) => {
