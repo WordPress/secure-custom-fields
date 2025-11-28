@@ -7,21 +7,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-// Mock BlockPlaceholder before importing the components that use it
-jest.mock(
-	'../../../assets/src/js/pro/blocks-v3/components/block-placeholder',
-	() => ( {
-		BlockPlaceholder: ( { blockLabel, instructions } ) => (
-			<div data-testid="block-placeholder">
-				<div data-testid="block-label">{ blockLabel }</div>
-				{ instructions && (
-					<div data-testid="error-message">{ instructions }</div>
-				) }
-			</div>
-		),
-	} )
-);
-
 import {
 	ErrorBoundary,
 	BlockPreviewErrorFallback,
@@ -90,13 +75,13 @@ describe( 'ErrorBoundary Component', () => {
 		);
 
 		// Should render the error placeholder
-		expect( screen.getByTestId( 'block-placeholder' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'block-label' ) ).toHaveTextContent(
+		expect( screen.getByTestId( 'placeholder' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'placeholder-label' ) ).toHaveTextContent(
 			'Test Block'
 		);
-		expect( screen.getByTestId( 'error-message' ) ).toHaveTextContent(
-			"The preview for this block couldn't be loaded"
-		);
+		expect(
+			screen.getByTestId( 'placeholder-instructions' )
+		).toHaveTextContent( "The preview for this block couldn't be loaded" );
 	} );
 
 	test( 'calls acf.debug when error is caught', () => {
@@ -118,9 +103,8 @@ describe( 'ErrorBoundary Component', () => {
 
 		// Verify debug was called in componentDidCatch
 		expect( global.acf.debug ).toHaveBeenCalledWith(
-			'Block preview error caught:',
-			expect.any( Error ),
-			expect.any( Object )
+			'Block preview error:',
+			expect.any( Error )
 		);
 
 		// Verify debug was called in BlockPreviewErrorFallback
@@ -153,7 +137,9 @@ describe( 'ErrorBoundary Component', () => {
 		);
 
 		// Verify the translated message appears
-		expect( screen.getByTestId( 'error-message' ) ).toHaveTextContent(
+		expect(
+			screen.getByTestId( 'placeholder-instructions' )
+		).toHaveTextContent(
 			"The preview for this block couldn't be loaded. Review its content or settings for issues."
 		);
 	} );
@@ -175,7 +161,7 @@ describe( 'ErrorBoundary Component', () => {
 			</ErrorBoundary>
 		);
 
-		expect( screen.getByTestId( 'block-label' ) ).toHaveTextContent(
+		expect( screen.getByTestId( 'placeholder-label' ) ).toHaveTextContent(
 			'ACF Block'
 		);
 	} );
@@ -194,8 +180,10 @@ describe( 'BlockPreviewErrorFallback Component', () => {
 			/>
 		);
 
-		expect( screen.getByTestId( 'block-placeholder' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'error-message' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'placeholder' ) ).toBeInTheDocument();
+		expect(
+			screen.getByTestId( 'placeholder-instructions' )
+		).toBeInTheDocument();
 	} );
 
 	test( 'does not render error message when error is null', () => {
@@ -209,9 +197,9 @@ describe( 'BlockPreviewErrorFallback Component', () => {
 			/>
 		);
 
-		expect( screen.getByTestId( 'block-placeholder' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'placeholder' ) ).toBeInTheDocument();
 		expect(
-			screen.queryByTestId( 'error-message' )
+			screen.queryByTestId( 'placeholder-instructions' )
 		).not.toBeInTheDocument();
 	} );
 } );
@@ -247,10 +235,10 @@ describe( 'Invalid HTML Scenarios', () => {
 			</ErrorBoundary>
 		);
 
-		expect( screen.getByTestId( 'block-placeholder' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'error-message' ) ).toHaveTextContent(
-			"The preview for this block couldn't be loaded"
-		);
+		expect( screen.getByTestId( 'placeholder' ) ).toBeInTheDocument();
+		expect(
+			screen.getByTestId( 'placeholder-instructions' )
+		).toHaveTextContent( "The preview for this block couldn't be loaded" );
 	} );
 
 	test( 'handles error from parseJSX with script injection attempt', () => {
@@ -282,7 +270,7 @@ describe( 'Invalid HTML Scenarios', () => {
 			</ErrorBoundary>
 		);
 
-		expect( screen.getByTestId( 'block-placeholder' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'placeholder' ) ).toBeInTheDocument();
 		expect( global.acf.debug ).toHaveBeenCalled();
 	} );
 
@@ -311,8 +299,6 @@ describe( 'Invalid HTML Scenarios', () => {
 		);
 
 		// Should not show error placeholder
-		expect(
-			screen.queryByTestId( 'block-placeholder' )
-		).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'placeholder' ) ).not.toBeInTheDocument();
 	} );
 } );

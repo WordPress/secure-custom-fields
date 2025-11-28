@@ -14,7 +14,7 @@ import {
 	processFieldBinding,
 	formatFieldLabel,
 } from './field-processing';
-import { STORE_NAME } from './store';
+import { getFieldMetadata } from './fieldMetadataCache';
 
 /**
  * Register the SCF field binding source.
@@ -29,7 +29,7 @@ registerBlockBindingsSource( {
 			return __( 'SCF Fields', 'secure-custom-fields' );
 		}
 
-		const fieldMetadata = select( STORE_NAME ).getFieldMetadata( fieldKey );
+		const fieldMetadata = getFieldMetadata( fieldKey );
 
 		if ( fieldMetadata?.label ) {
 			return fieldMetadata.label;
@@ -53,8 +53,7 @@ registerBlockBindingsSource( {
 						return;
 					}
 
-					const fieldMetadata =
-						select( STORE_NAME ).getFieldMetadata( fieldKey );
+					const fieldMetadata = getFieldMetadata( fieldKey );
 					result[ attribute ] =
 						fieldMetadata?.label || formatFieldLabel( fieldKey );
 				}

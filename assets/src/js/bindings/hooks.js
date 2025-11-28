@@ -3,14 +3,14 @@
  */
 
 import { useState, useEffect } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 
 import { extractPostTypeFromTemplate, formatFieldGroupsData } from './utils';
-import { STORE_NAME } from './store';
+import { addFieldMetadata } from './fieldMetadataCache';
 
 /**
  * Custom hook to detect if we're in the site editor and get the template info.
@@ -100,7 +100,6 @@ export function useSiteEditorFields( postType ) {
 	const [ fields, setFields ] = useState( {} );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
-	const { addFieldMetadata } = useDispatch( STORE_NAME );
 
 	useEffect( () => {
 		if ( ! postType ) {
@@ -149,7 +148,7 @@ export function useSiteEditorFields( postType ) {
 		return () => {
 			isCancelled = true;
 		};
-	}, [ postType, addFieldMetadata ] );
+	}, [ postType ] );
 
 	return { fields, isLoading, error };
 }
