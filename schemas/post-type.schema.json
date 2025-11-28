@@ -50,9 +50,9 @@
 					"description": "[SCF] Whether this post type is active"
 				},
 				"advanced_configuration": {
-					"type": "boolean",
+					"type": ["boolean", "integer"],
 					"default": false,
-					"description": "[SCF Export Only] Whether advanced configuration options are enabled"
+					"description": "[SCF Export Only] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
 				},
 				"import_source": {
 					"type": "string",
