@@ -14,8 +14,12 @@ use WorDBless\BaseTestCase;
 // Load mock Abilities API functions before loading the class.
 require_once __DIR__ . '/abilities-api-mocks.php';
 
-// Load the abilities class after mocks are defined.
-require_once dirname( __DIR__, 3 ) . '/../includes/abilities/class-scf-taxonomy-abilities.php';
+// Load ACF internal post type class to register the taxonomy instance.
+require_once dirname( __DIR__, 4 ) . '/includes/post-types/class-acf-taxonomy.php';
+
+// Load the abilities classes after ACF classes are loaded.
+require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-internal-post-type-abilities.php';
+require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-taxonomy-abilities.php';
 
 /**
  * Test SCF Taxonomy Abilities callbacks
@@ -224,22 +228,22 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	// Callback tests.
 
 	/**
-	 * Test list_taxonomies_callback returns array
+	 * Test list_callback returns array
 	 *
 	 * Note: Full CRUD flow tests require WordPress post persistence
 	 * which WorDBless doesn't fully support. These are tested in E2E.
 	 */
 	public function test_list_taxonomies_callback_returns_array() {
-		$result = $this->abilities->list_taxonomies_callback( array() );
+		$result = $this->abilities->list_callback( array() );
 
 		$this->assertIsArray( $result );
 	}
 
 	/**
-	 * Test list_taxonomies_callback with filter parameter
+	 * Test list_callback with filter parameter
 	 */
 	public function test_list_taxonomies_callback_with_filter() {
-		$result = $this->abilities->list_taxonomies_callback(
+		$result = $this->abilities->list_callback(
 			array( 'filter' => array( 'active' => true ) )
 		);
 
@@ -247,10 +251,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_taxonomy_callback returns WP_Error for non-existent ID
+	 * Test get_callback returns WP_Error for non-existent ID
 	 */
 	public function test_get_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->get_taxonomy_callback(
+		$result = $this->abilities->get_callback(
 			array( 'identifier' => 999999 )
 		);
 
@@ -259,10 +263,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_taxonomy_callback returns 404 status for non-existent key
+	 * Test get_callback returns 404 status for non-existent key
 	 */
 	public function test_get_taxonomy_callback_not_found_returns_404_status() {
-		$result = $this->abilities->get_taxonomy_callback(
+		$result = $this->abilities->get_callback(
 			array( 'identifier' => 'nonexistent_taxonomy' )
 		);
 
@@ -272,10 +276,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test create_taxonomy_callback returns array with key
+	 * Test create_callback returns array with key
 	 */
 	public function test_create_taxonomy_callback_returns_array_with_key() {
-		$result = $this->abilities->create_taxonomy_callback( $this->test_taxonomy );
+		$result = $this->abilities->create_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'key', $result );
@@ -283,10 +287,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test create_taxonomy_callback returns array with title
+	 * Test create_callback returns array with title
 	 */
 	public function test_create_taxonomy_callback_returns_array_with_title() {
-		$result = $this->abilities->create_taxonomy_callback( $this->test_taxonomy );
+		$result = $this->abilities->create_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'title', $result );
@@ -294,10 +298,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test update_taxonomy_callback returns WP_Error for non-existent ID
+	 * Test update_callback returns WP_Error for non-existent ID
 	 */
 	public function test_update_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->update_taxonomy_callback(
+		$result = $this->abilities->update_callback(
 			array(
 				'ID'    => 999999,
 				'title' => 'Should Fail',
@@ -309,10 +313,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test delete_taxonomy_callback returns WP_Error for non-existent ID
+	 * Test delete_callback returns WP_Error for non-existent ID
 	 */
 	public function test_delete_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->delete_taxonomy_callback(
+		$result = $this->abilities->delete_callback(
 			array( 'identifier' => 999999 )
 		);
 
@@ -321,10 +325,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test delete_taxonomy_callback returns 404 status for non-existent key
+	 * Test delete_callback returns 404 status for non-existent key
 	 */
 	public function test_delete_taxonomy_callback_not_found_returns_404_status() {
-		$result = $this->abilities->delete_taxonomy_callback(
+		$result = $this->abilities->delete_callback(
 			array( 'identifier' => 'nonexistent_delete_target' )
 		);
 
@@ -334,10 +338,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test duplicate_taxonomy_callback returns WP_Error for non-existent ID
+	 * Test duplicate_callback returns WP_Error for non-existent ID
 	 */
 	public function test_duplicate_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->duplicate_taxonomy_callback(
+		$result = $this->abilities->duplicate_callback(
 			array( 'identifier' => 999999 )
 		);
 
@@ -346,10 +350,10 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test export_taxonomy_callback returns WP_Error for non-existent ID
+	 * Test export_callback returns WP_Error for non-existent ID
 	 */
 	public function test_export_taxonomy_callback_not_found_returns_error() {
-		$result = $this->abilities->export_taxonomy_callback(
+		$result = $this->abilities->export_callback(
 			array( 'identifier' => 999999 )
 		);
 
@@ -358,29 +362,29 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test import_taxonomy_callback returns array
+	 * Test import_callback returns array
 	 */
 	public function test_import_taxonomy_callback_returns_array() {
-		$result = $this->abilities->import_taxonomy_callback( $this->test_taxonomy );
+		$result = $this->abilities->import_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 	}
 
 	/**
-	 * Test import_taxonomy_callback returns correct taxonomy
+	 * Test import_callback returns correct taxonomy
 	 */
 	public function test_import_taxonomy_callback_returns_correct_taxonomy() {
-		$result = $this->abilities->import_taxonomy_callback( $this->test_taxonomy );
+		$result = $this->abilities->import_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( $this->test_taxonomy['taxonomy'], $result['taxonomy'] );
 	}
 
 	/**
-	 * Test import_taxonomy_callback returns correct title
+	 * Test import_callback returns correct title
 	 */
 	public function test_import_taxonomy_callback_returns_correct_title() {
-		$result = $this->abilities->import_taxonomy_callback( $this->test_taxonomy );
+		$result = $this->abilities->import_callback( $this->test_taxonomy );
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( $this->test_taxonomy['title'], $result['title'] );
@@ -389,11 +393,11 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	// Schema tests.
 
 	/**
-	 * Test get_taxonomy_schema returns valid schema
+	 * Test get_entity_schema returns valid schema
 	 */
-	public function test_get_taxonomy_schema_returns_array() {
+	public function test_get_entity_schema_returns_array() {
 		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'get_taxonomy_schema' );
+		$method     = $reflection->getMethod( 'get_entity_schema' );
 		$method->setAccessible( true );
 
 		$schema = $method->invoke( $this->abilities );
@@ -404,11 +408,11 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_taxonomy_schema has required fields
+	 * Test get_entity_schema has required fields
 	 */
-	public function test_get_taxonomy_schema_has_required_fields() {
+	public function test_get_entity_schema_has_required_fields() {
 		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'get_taxonomy_schema' );
+		$method     = $reflection->getMethod( 'get_entity_schema' );
 		$method->setAccessible( true );
 
 		$schema = $method->invoke( $this->abilities );
@@ -437,11 +441,11 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	// Helper method tests.
 
 	/**
-	 * Test taxonomy_not_found_error returns correct error code
+	 * Test not_found_error returns correct error code
 	 */
-	public function test_taxonomy_not_found_error_returns_correct_code() {
+	public function test_not_found_error_returns_correct_code() {
 		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'taxonomy_not_found_error' );
+		$method     = $reflection->getMethod( 'not_found_error' );
 		$method->setAccessible( true );
 
 		$error = $method->invoke( $this->abilities );
@@ -451,11 +455,11 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	}
 
 	/**
-	 * Test taxonomy_not_found_error returns 404 status
+	 * Test not_found_error returns 404 status
 	 */
-	public function test_taxonomy_not_found_error_returns_404() {
+	public function test_not_found_error_returns_404() {
 		$reflection = new ReflectionClass( $this->abilities );
-		$method     = $reflection->getMethod( 'taxonomy_not_found_error' );
+		$method     = $reflection->getMethod( 'not_found_error' );
 		$method->setAccessible( true );
 
 		$error      = $method->invoke( $this->abilities );

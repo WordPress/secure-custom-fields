@@ -39,6 +39,7 @@ if ( ! class_exists( 'SCF_Abilities_Integration' ) ) {
 				return;
 			}
 
+			acf_include( 'includes/abilities/class-scf-internal-post-type-abilities.php' );
 			acf_include( 'includes/abilities/class-scf-post-type-abilities.php' );
 			acf_include( 'includes/abilities/class-scf-taxonomy-abilities.php' );
 		}
