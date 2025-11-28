@@ -340,6 +340,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	public function test_get_taxonomy_schema_returns_array() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_taxonomy_schema' );
+		$method->setAccessible( true );
 
 		$schema = $method->invoke( $this->abilities );
 
@@ -354,6 +355,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	public function test_get_taxonomy_schema_has_required_fields() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_taxonomy_schema' );
+		$method->setAccessible( true );
 
 		$schema = $method->invoke( $this->abilities );
 
@@ -369,6 +371,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	public function test_get_scf_identifier_schema_returns_array() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'get_scf_identifier_schema' );
+		$method->setAccessible( true );
 
 		$schema = $method->invoke( $this->abilities );
 
@@ -385,6 +388,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	public function test_taxonomy_not_found_error_returns_correct_code() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'taxonomy_not_found_error' );
+		$method->setAccessible( true );
 
 		$error = $method->invoke( $this->abilities );
 
@@ -398,6 +402,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 	public function test_taxonomy_not_found_error_returns_404() {
 		$reflection = new ReflectionClass( $this->abilities );
 		$method     = $reflection->getMethod( 'taxonomy_not_found_error' );
+		$method->setAccessible( true );
 
 		$error      = $method->invoke( $this->abilities );
 		$error_data = $error->get_error_data();
