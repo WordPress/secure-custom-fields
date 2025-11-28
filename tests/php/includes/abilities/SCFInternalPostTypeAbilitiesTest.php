@@ -54,6 +54,28 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$this->abilities = acf_get_instance( 'SCF_Taxonomy_Abilities' );
 	}
 
+	/**
+	 * Helper to inject a mock instance into the abilities object.
+	 *
+	 * @param array $method_returns Map of method names to return values.
+	 * @return \PHPUnit\Framework\MockObject\MockObject The mock instance.
+	 */
+	private function inject_mock_instance( array $method_returns ) {
+		$mock_instance            = $this->createMock( ACF_Taxonomy::class );
+		$mock_instance->hook_name = 'acf_taxonomy';
+
+		foreach ( $method_returns as $method => $return_value ) {
+			$mock_instance->method( $method )->willReturn( $return_value );
+		}
+
+		$reflection = new ReflectionClass( SCF_Internal_Post_Type_Abilities::class );
+		$property   = $reflection->getProperty( 'instance' );
+		$property->setAccessible( true );
+		$property->setValue( $this->abilities, $mock_instance );
+
+		return $mock_instance;
+	}
+
 	// Constructor tests.
 
 	/**
@@ -227,6 +249,83 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$this->assertTrue( $annotations['readonly'] ?? false, 'Export ability should be marked readonly' );
 	}
 
+	/**
+	 * Test list ability is marked as readonly
+	 */
+	public function test_list_ability_is_readonly() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/list-taxonomies', $mock_registered_abilities );
+		$ability     = $mock_registered_abilities['scf/list-taxonomies'];
+		$meta        = $ability['meta'] ?? array();
+		$annotations = $meta['annotations'] ?? array();
+		$this->assertTrue( $annotations['readonly'] ?? false, 'List ability should be marked readonly' );
+	}
+
+	/**
+	 * Test get ability is marked as readonly
+	 */
+	public function test_get_ability_is_readonly() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/get-taxonomy', $mock_registered_abilities );
+		$ability     = $mock_registered_abilities['scf/get-taxonomy'];
+		$meta        = $ability['meta'] ?? array();
+		$annotations = $meta['annotations'] ?? array();
+		$this->assertTrue( $annotations['readonly'] ?? false, 'Get ability should be marked readonly' );
+	}
+
+	/**
+	 * Test abilities that return data have output_schema
+	 */
+	public function test_data_returning_abilities_have_output_schema() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$abilities_with_output = array(
+			'scf/list-taxonomies',
+			'scf/get-taxonomy',
+			'scf/create-taxonomy',
+			'scf/update-taxonomy',
+			'scf/duplicate-taxonomy',
+			'scf/export-taxonomy',
+			'scf/import-taxonomy',
+		);
+
+		foreach ( $abilities_with_output as $ability_name ) {
+			$this->assertArrayHasKey( $ability_name, $mock_registered_abilities );
+			$this->assertArrayHasKey(
+				'output_schema',
+				$mock_registered_abilities[ $ability_name ],
+				"Ability $ability_name should have output_schema"
+			);
+		}
+	}
+
+	/**
+	 * Test delete ability returns boolean success schema
+	 */
+	public function test_delete_ability_has_boolean_output_schema() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/delete-taxonomy', $mock_registered_abilities );
+		$ability = $mock_registered_abilities['scf/delete-taxonomy'];
+		$this->assertArrayHasKey( 'output_schema', $ability );
+		// Delete returns boolean true on success.
+		$this->assertEquals( 'boolean', $ability['output_schema']['type'] );
+	}
+
 	// Callback tests.
 
 	/**
@@ -392,7 +491,7 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$this->assertEquals( $this->test_taxonomy['title'], $result['title'] );
 	}
 
-	// Schema tests.
+	// Schema method tests.
 
 	/**
 	 * Test get_entity_schema returns valid schema
@@ -440,7 +539,64 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$this->assertArrayHasKey( 'description', $schema );
 	}
 
-	// Helper method tests.
+	/**
+	 * Test get_internal_fields_schema returns valid schema
+	 */
+	public function test_get_internal_fields_schema_returns_array() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_internal_fields_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		$this->assertIsArray( $schema );
+		$this->assertArrayHasKey( 'properties', $schema );
+	}
+
+	/**
+	 * Test get_internal_fields_schema contains ID property
+	 */
+	public function test_get_internal_fields_schema_has_id_property() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_internal_fields_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		$this->assertArrayHasKey( 'ID', $schema['properties'] );
+	}
+
+	/**
+	 * Test get_entity_with_internal_fields_schema returns merged schema
+	 */
+	public function test_get_entity_with_internal_fields_schema_returns_array() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_entity_with_internal_fields_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		$this->assertIsArray( $schema );
+		$this->assertArrayHasKey( 'properties', $schema );
+	}
+
+	/**
+	 * Test get_entity_with_internal_fields_schema contains both entity and internal fields
+	 */
+	public function test_get_entity_with_internal_fields_schema_has_merged_properties() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_entity_with_internal_fields_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		// Should have entity-specific field (taxonomy has 'taxonomy' field).
+		$this->assertArrayHasKey( 'taxonomy', $schema['properties'], 'Should have entity-specific taxonomy field' );
+		// Should have internal field (ID).
+		$this->assertArrayHasKey( 'ID', $schema['properties'], 'Should have internal ID field' );
+	}
+
+	// Private method tests.
 
 	/**
 	 * Test not_found_error returns correct error code
@@ -468,5 +624,205 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		$error_data = $error->get_error_data();
 
 		$this->assertEquals( 404, $error_data['status'] );
+	}
+
+	/**
+	 * Test entity_name returns correct value for taxonomy
+	 */
+	public function test_entity_name_returns_taxonomy() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'entity_name' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'taxonomy', $method->invoke( $this->abilities ) );
+	}
+
+	/**
+	 * Test entity_name_plural returns correct value for taxonomy
+	 */
+	public function test_entity_name_plural_returns_taxonomies() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'entity_name_plural' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'taxonomies', $method->invoke( $this->abilities ) );
+	}
+
+	/**
+	 * Test schema_name returns correct schema file name
+	 */
+	public function test_schema_name_returns_taxonomy() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'schema_name' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'taxonomy', $method->invoke( $this->abilities ) );
+	}
+
+	/**
+	 * Test ability_category returns correct category
+	 */
+	public function test_ability_category_returns_scf_taxonomies() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'ability_category' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'scf-taxonomies', $method->invoke( $this->abilities ) );
+	}
+
+	/**
+	 * Test ability_name uses plural for list action
+	 */
+	public function test_ability_name_uses_plural_for_list() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'ability_name' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'scf/list-taxonomies', $method->invoke( $this->abilities, 'list' ) );
+	}
+
+	/**
+	 * Test ability_name uses singular for non-list actions
+	 */
+	public function test_ability_name_uses_singular_for_get() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'ability_name' );
+		$method->setAccessible( true );
+
+		$this->assertEquals( 'scf/get-taxonomy', $method->invoke( $this->abilities, 'get' ) );
+	}
+
+	/**
+	 * Test instance() method caches result
+	 */
+	public function test_instance_caches_result() {
+		$reflection = new ReflectionClass( SCF_Internal_Post_Type_Abilities::class );
+
+		// Access the private $instance property from base class.
+		$property = $reflection->getProperty( 'instance' );
+		$property->setAccessible( true );
+
+		// Reset instance to null for this test.
+		$property->setValue( $this->abilities, null );
+
+		// Initially should be null after reset.
+		$this->assertNull( $property->getValue( $this->abilities ), 'Instance should be null after reset' );
+
+		// Call instance() method.
+		$method = $reflection->getMethod( 'instance' );
+		$method->setAccessible( true );
+		$first_call = $method->invoke( $this->abilities );
+
+		// Should now be cached.
+		$cached = $property->getValue( $this->abilities );
+		$this->assertNotNull( $cached, 'Instance should be cached after first call' );
+		$this->assertSame( $first_call, $cached, 'Cached value should match first call result' );
+
+		// Second call should return same cached instance.
+		$second_call = $method->invoke( $this->abilities );
+		$this->assertSame( $first_call, $second_call, 'Second call should return cached instance' );
+	}
+
+	// Mocked callback tests.
+
+	/**
+	 * Test create_callback returns error for duplicate key
+	 */
+	public function test_create_callback_returns_error_for_duplicate_key() {
+		$this->inject_mock_instance(
+			array(
+				'get_post' => array(
+					'ID'  => 123,
+					'key' => 'existing_key',
+				),
+			)
+		);
+
+		$result = $this->abilities->create_callback( array( 'key' => 'existing_key' ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'already_exists', $result->get_error_code() );
+	}
+
+	/**
+	 * Test create_callback succeeds when no duplicate
+	 */
+	public function test_create_callback_success() {
+		$created_entity = array(
+			'ID'    => 456,
+			'key'   => 'new_key',
+			'title' => 'New Taxonomy',
+		);
+
+		$this->inject_mock_instance(
+			array(
+				'get_post'    => null,
+				'update_post' => $created_entity,
+			)
+		);
+
+		$result = $this->abilities->create_callback(
+			array(
+				'key'   => 'new_key',
+				'title' => 'New Taxonomy',
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( 456, $result['ID'] );
+		$this->assertEquals( 'new_key', $result['key'] );
+	}
+
+	/**
+	 * Test update_callback succeeds with valid entity
+	 */
+	public function test_update_callback_success() {
+		$existing_entity = array(
+			'ID'    => 123,
+			'key'   => 'test_key',
+			'title' => 'Old Title',
+		);
+		$updated_entity  = array(
+			'ID'    => 123,
+			'key'   => 'test_key',
+			'title' => 'New Title',
+		);
+
+		$this->inject_mock_instance(
+			array(
+				'get_post'    => $existing_entity,
+				'update_post' => $updated_entity,
+			)
+		);
+
+		$result = $this->abilities->update_callback(
+			array(
+				'ID'    => 123,
+				'title' => 'New Title',
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( 123, $result['ID'] );
+		$this->assertEquals( 'New Title', $result['title'] );
+	}
+
+	/**
+	 * Test delete_callback succeeds when entity exists
+	 */
+	public function test_delete_callback_success() {
+		$this->inject_mock_instance(
+			array(
+				'get_post'    => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+				'delete_post' => true,
+			)
+		);
+
+		$result = $this->abilities->delete_callback( array( 'identifier' => 123 ) );
+
+		$this->assertTrue( $result );
 	}
 }
