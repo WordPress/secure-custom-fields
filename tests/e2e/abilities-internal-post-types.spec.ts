@@ -4,10 +4,13 @@
  * Tests the WordPress Abilities API endpoints for SCF post type and taxonomy management.
  * Both entity types share the same base class, so tests are parameterized.
  *
- * HTTP Method Reference (per PR #152 in WordPress/abilities-api):
- * - Read-only abilities (readonly: true) → GET with query params
- * - Regular abilities (readonly: false, destructive: false) → POST with body
- * - Destructive abilities (destructive: true) → DELETE with query params
+ * HTTP Method Reference:
+ * - Read-only abilities (readonly: true) → GET with bracket notation: { 'input[key]': value }
+ * - Regular abilities (readonly: false, destructive: false) → POST with JSON body: { input: { key: value } }
+ * - Destructive abilities (destructive: true) → DELETE with bracket notation: { 'input[key]': value }
+ *
+ * Note: GET/DELETE use bracket notation because PHP parses `?input[key]=val` into arrays.
+ * JSON.stringify does NOT work for query params - PHP receives a string, not an object.
  */
 const { test, expect } = require( './fixtures' );
 
@@ -102,19 +105,17 @@ function createApiHelpers( entityType ) {
 	const { slug, slugPlural, testEntity } = entityType;
 
 	return {
-		list: ( requestUtils, filter = {} ) =>
-			requestUtils.rest( {
+		list: ( requestUtils, filter = {} ) => {
+			const params = { 'input[filter]': '' };
+			Object.entries( filter ).forEach( ( [ key, value ] ) => {
+				params[ `input[filter][${ key }]` ] = value;
+			} );
+			return requestUtils.rest( {
 				method: 'GET',
 				path: `${ ABILITIES_BASE }/scf/list-${ slugPlural }/run`,
-				params: Object.keys( filter ).length
-					? Object.fromEntries(
-							Object.entries( filter ).map( ( [ key, value ] ) => [
-								`input[filter][${ key }]`,
-								value,
-							] )
-					  )
-					: {},
-			} ),
+				params,
+			} );
+		},
 
 		get: ( requestUtils, identifier ) =>
 			requestUtils.rest( {
