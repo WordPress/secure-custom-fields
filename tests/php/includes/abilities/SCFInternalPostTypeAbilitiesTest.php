@@ -109,6 +109,40 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test categories are registered when wp_abilities_api_categories_init fires
+	 */
+	public function test_categories_registered_on_action() {
+		global $mock_registered_ability_categories;
+		$mock_registered_ability_categories = array();
+
+		// Trigger the action that constructor hooked into.
+		do_action( 'wp_abilities_api_categories_init' );
+
+		$this->assertArrayHasKey(
+			'scf-taxonomies',
+			$mock_registered_ability_categories,
+			'Category should be registered when action fires'
+		);
+	}
+
+	/**
+	 * Test abilities are registered when wp_abilities_api_init fires
+	 */
+	public function test_abilities_registered_on_action() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		// Trigger the action that constructor hooked into.
+		do_action( 'wp_abilities_api_init' );
+
+		$this->assertArrayHasKey(
+			'scf/list-taxonomies',
+			$mock_registered_abilities,
+			'Abilities should be registered when action fires'
+		);
+	}
+
+	/**
 	 * Test constructor does not register hooks when schema validation fails
 	 */
 	public function test_constructor_skips_hooks_when_schemas_invalid() {
@@ -143,6 +177,28 @@ class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
 		if ( $original_validator ) {
 			$acf_instances['SCF_JSON_Schema_Validator'] = $original_validator;
 		}
+	}
+
+	/**
+	 * Test constructor triggers _doing_it_wrong when internal_post_type is empty
+	 *
+	 * @expectedIncorrectUsage SCF_Internal_Post_Type_Abilities::__construct
+	 */
+	public function test_constructor_doing_it_wrong_when_internal_post_type_empty() {
+		// Create anonymous class that doesn't set internal_post_type.
+		$test_instance = new class() extends SCF_Internal_Post_Type_Abilities {
+			// Intentionally not setting $internal_post_type to trigger _doing_it_wrong.
+		};
+
+		// Verify NO hooks were registered since constructor returned early.
+		$this->assertFalse(
+			has_action( 'wp_abilities_api_categories_init', array( $test_instance, 'register_categories' ) ),
+			'Should NOT register hooks when internal_post_type is empty'
+		);
+		$this->assertFalse(
+			has_action( 'wp_abilities_api_init', array( $test_instance, 'register_abilities' ) ),
+			'Should NOT register abilities hook when internal_post_type is empty'
+		);
 	}
 
 	// Registration tests.
