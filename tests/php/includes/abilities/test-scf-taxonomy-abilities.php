@@ -48,6 +48,60 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		$this->abilities = acf_get_instance( 'SCF_Taxonomy_Abilities' );
 	}
 
+	// Constructor tests.
+
+	/**
+	 * Test constructor registers WordPress action hooks
+	 */
+	public function test_constructor_registers_action_hooks() {
+		// The constructor should have registered these action hooks.
+		$this->assertNotFalse(
+			has_action( 'wp_abilities_api_categories_init', array( $this->abilities, 'register_categories' ) ),
+			'Should register wp_abilities_api_categories_init action'
+		);
+		$this->assertNotFalse(
+			has_action( 'wp_abilities_api_init', array( $this->abilities, 'register_abilities' ) ),
+			'Should register wp_abilities_api_init action'
+		);
+	}
+
+	/**
+	 * Test constructor does not register hooks when schema validation fails
+	 */
+	public function test_constructor_skips_hooks_when_schemas_invalid() {
+		global $acf_instances;
+
+		// Store original validator.
+		$original_validator = $acf_instances['SCF_JSON_Schema_Validator'] ?? null;
+
+		// Create mock validator that returns false.
+		$mock_validator                             = new class() {
+			/**
+			 * Mock validation that always fails.
+			 *
+			 * @return bool Always returns false.
+			 */
+			public function validate_required_schemas() {
+				return false;
+			}
+		};
+		$acf_instances['SCF_JSON_Schema_Validator'] = $mock_validator;
+
+		// Create a fresh instance (bypassing acf_get_instance cache for this class).
+		$test_instance = new SCF_Taxonomy_Abilities();
+
+		// Verify NO hooks were registered for this instance.
+		$this->assertFalse(
+			has_action( 'wp_abilities_api_categories_init', array( $test_instance, 'register_categories' ) ),
+			'Should NOT register hooks when schema validation fails'
+		);
+
+		// Restore original validator.
+		if ( $original_validator ) {
+			$acf_instances['SCF_JSON_Schema_Validator'] = $original_validator;
+		}
+	}
+
 	// Registration tests.
 
 	/**
