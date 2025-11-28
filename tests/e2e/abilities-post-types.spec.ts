@@ -46,7 +46,7 @@ test.describe( 'Post Type Abilities', () => {
 			await requestPromise;
 			throw new Error( 'Expected not found error but request succeeded' );
 		} catch ( error ) {
-			expect( error.code ).toBe( 'post_type_not_found' );
+			expect( error.code ).toBe( 'not_found' );
 			expect( error.data?.status ).toBe( 404 );
 		}
 	}

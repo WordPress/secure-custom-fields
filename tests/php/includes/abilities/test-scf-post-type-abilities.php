@@ -100,7 +100,7 @@ class Test_SCF_Post_Type_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'post_type_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -128,7 +128,7 @@ class Test_SCF_Post_Type_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'post_type_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class Test_SCF_Post_Type_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'post_type_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Test_SCF_Post_Type_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'post_type_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -177,7 +177,7 @@ class Test_SCF_Post_Type_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'post_type_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**

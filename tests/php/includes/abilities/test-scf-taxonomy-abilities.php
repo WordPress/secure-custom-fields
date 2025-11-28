@@ -259,7 +259,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'taxonomy_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -309,7 +309,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'taxonomy_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -321,7 +321,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'taxonomy_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -346,7 +346,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'taxonomy_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -358,7 +358,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'taxonomy_not_found', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -451,7 +451,7 @@ class Test_SCF_Taxonomy_Abilities extends BaseTestCase {
 		$error = $method->invoke( $this->abilities );
 
 		$this->assertInstanceOf( WP_Error::class, $error );
-		$this->assertEquals( 'taxonomy_not_found', $error->get_error_code() );
+		$this->assertEquals( 'not_found', $error->get_error_code() );
 	}
 
 	/**

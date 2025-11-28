@@ -625,7 +625,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		public function create_callback( $input ) {
 			if ( $this->instance()->get_post( $input['key'] ) ) {
 				return new WP_Error(
-					$this->instance()->hook_name . '_exists',
+					'already_exists',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'A %s with this key already exists.', 'secure-custom-fields' ),
@@ -637,7 +637,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			$entity = $this->instance()->update_post( $input );
 			if ( ! $entity ) {
 				return new WP_Error(
-					'create_' . $this->instance()->hook_name . '_failed',
+					'create_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to create %s.', 'secure-custom-fields' ),
@@ -663,7 +663,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			$entity = $this->instance()->update_post( array_merge( $existing, $input ) );
 			if ( ! $entity ) {
 				return new WP_Error(
-					'update_' . $this->instance()->hook_name . '_failed',
+					'update_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to update %s.', 'secure-custom-fields' ),
@@ -687,7 +687,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 
 			if ( ! $this->instance()->delete_post( $input['identifier'] ) ) {
 				return new WP_Error(
-					'delete_' . $this->instance()->hook_name . '_failed',
+					'delete_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to delete %s.', 'secure-custom-fields' ),
@@ -714,7 +714,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 
 			if ( ! $duplicated ) {
 				return new WP_Error(
-					'duplicate_' . $this->instance()->hook_name . '_failed',
+					'duplicate_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to duplicate %s.', 'secure-custom-fields' ),
@@ -740,7 +740,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			$export = $this->instance()->prepare_post_for_export( $entity );
 			if ( ! $export ) {
 				return new WP_Error(
-					'export_' . $this->instance()->hook_name . '_failed',
+					'export_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to prepare %s for export.', 'secure-custom-fields' ),
@@ -761,7 +761,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			$imported = $this->instance()->import_post( $input );
 			if ( ! $imported ) {
 				return new WP_Error(
-					'import_' . $this->instance()->hook_name . '_failed',
+					'import_failed',
 					sprintf(
 						/* translators: %s: Entity type */
 						__( 'Failed to import %s.', 'secure-custom-fields' ),
@@ -779,7 +779,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 */
 		private function not_found_error() {
 			return new WP_Error(
-				$this->instance()->hook_name . '_not_found',
+				'not_found',
 				sprintf(
 					/* translators: %s: Entity type */
 					__( '%s not found.', 'secure-custom-fields' ),

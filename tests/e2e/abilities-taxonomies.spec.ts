@@ -50,7 +50,7 @@ test.describe( 'Taxonomy Abilities', () => {
 			await requestPromise;
 			throw new Error( 'Expected not found error but request succeeded' );
 		} catch ( error ) {
-			expect( error.code ).toBe( 'taxonomy_not_found' );
+			expect( error.code ).toBe( 'not_found' );
 			expect( error.data?.status ).toBe( 404 );
 		}
 	}
