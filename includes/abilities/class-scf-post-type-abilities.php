@@ -37,4 +37,4 @@ if ( ! class_exists( 'SCF_Post_Type_Abilities' ) ) :
 	// Initialize abilities instance.
 	acf_new_instance( 'SCF_Post_Type_Abilities' );
 
-endif; // class_exists check
+endif; // class_exists check.

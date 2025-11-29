@@ -26,7 +26,7 @@ require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-taxonomy-abi
  * Uses SCF_Taxonomy_Abilities as concrete implementation to test
  * the shared base class behavior.
  */
-class SCFInternalPostTypeAbilitiesTest extends BaseTestCase {
+class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 
 	/**
 	 * Instance of SCF_Taxonomy_Abilities for testing
