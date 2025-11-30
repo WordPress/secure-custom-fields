@@ -22,11 +22,11 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 	class SCF_JSON_Schema_Validator {
 
 		/**
-		 * Required schema files for post type abilities
+		 * Required schema files for SCF abilities.
 		 *
 		 * @var array
 		 */
-		public const REQUIRED_SCHEMAS = array( 'post-type', 'internal-fields', 'scf-identifier' );
+		public const REQUIRED_SCHEMAS = array( 'post-type', 'taxonomy', 'internal-fields', 'scf-identifier' );
 
 		/**
 		 * The last validation errors.

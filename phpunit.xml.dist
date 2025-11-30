@@ -15,6 +15,7 @@
   <testsuites>
     <testsuite name="secure-custom-fields">
       <directory prefix="test" suffix=".php">./tests/php/</directory>
+      <directory suffix="Test.php">./tests/php/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
