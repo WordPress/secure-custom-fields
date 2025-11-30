@@ -5,6 +5,7 @@
 const { test, expect } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
+const TEST_PLUGIN_SLUG = 'scf-test-setup-post-types';
 const FIELD_GROUP_LABEL = 'Product Details';
 const TEXT_FIELD_LABEL = 'Product Name';
 const IMAGE_FIELD_LABEL = 'Product Image';
@@ -12,9 +13,11 @@ const IMAGE_FIELD_LABEL = 'Product Image';
 test.describe( 'Block Bindings in Site Editor', () => {
 	test.beforeAll( async ( { requestUtils }: any ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
+		await requestUtils.activatePlugin( TEST_PLUGIN_SLUG );
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
+		await requestUtils.deactivatePlugin( TEST_PLUGIN_SLUG );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
 		await requestUtils.deleteAllPosts();
 	} );
