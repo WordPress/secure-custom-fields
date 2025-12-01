@@ -74,6 +74,10 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await page.waitForSelector('iframe[name="editor-canvas"]', { timeout: 10000 });
 		await page.waitForTimeout(2000); // Give the editor a moment to fully load
 
+		// Close the welcome guide modal if it appears by pressing Escape
+		await page.keyboard.press( 'Escape' );
+		await page.waitForTimeout( 500 );
+
 		// Get the iframe and work within it
 		const frameLocator = page.frameLocator('iframe[name="editor-canvas"]');
 		
