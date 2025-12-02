@@ -35,7 +35,7 @@ jobs:
                     - event: 'pull_request'
                       node: '24'
                     - event: 'pull_request'
-                      wp: 'latest'
+                      wp: 'trunk'
 
         env:
             WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || null }}
