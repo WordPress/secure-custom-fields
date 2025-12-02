@@ -113,7 +113,10 @@ test.describe( 'Field Type > Repeater', () => {
         // @see https://github.com/WordPress/gutenberg/issues/72185
         await page.waitForSelector( '.acf-postbox', { state: 'attached' } );
         const metaBoxPanel = page.getByRole( 'button', { name: 'Meta Boxes' } );
-        if ( ( await metaBoxPanel.getAttribute( 'aria-expanded' ) ) === 'false' ) {
+        if (
+            ( await metaBoxPanel.count() ) > 0 &&
+            ( await metaBoxPanel.getAttribute( 'aria-expanded' ) ) === 'false'
+        ) {
             await metaBoxPanel.focus();
             await metaBoxPanel.press( 'Enter' );
         }
