@@ -52,6 +52,16 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.7.0 =
+*Release Date 2 Dec 2025*
+
+*Features*
+
+- Tested compatibility up to WordPress 6.9.
+- Abilities support. Taxonomy abilities.
+- JSON schemas. Taxonomy schema.
+
+
 = 6.6.0 =
 *Release Date 19 Nov 2025*
 
