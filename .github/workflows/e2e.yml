@@ -28,17 +28,19 @@ jobs:
             matrix:
                 event: ['${{ github.event_name }}']
                 node: ['22', '24']
-                wp: ['latest', 'trunk']
+                wp: ['6.2', 'latest', 'trunk']
                 exclude:
-                    # On PRs: only test Node 22 + WP trunk
-                    # TODO: Revert to WP latest on PRs once WP 6.9 is released with the Abilities API
+                    # On PRs: only test Node 22 + WP trunk for fast feedback
+                    # On trunk: full matrix with minimum and latest WP versions
                     - event: 'pull_request'
                       node: '24'
                     - event: 'pull_request'
-                      wp: 'latest'
+                      wp: '6.2'
+                    - event: 'pull_request'
+                      wp: 'trunk'
 
         env:
-            WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || null }}
+            WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
 
         steps:
             - uses: actions/checkout@v4
