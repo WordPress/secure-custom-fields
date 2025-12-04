@@ -1162,9 +1162,11 @@
 											'editor-post-publish-panel'
 										)[ 0 ];
 									if ( publishPanel ) {
+										// See https://github.com/WordPress/secure-custom-fields/pull/272
+										// `togglePublishSidebar` was only introduced in WP 6.6, it should be optional
 										wp.data
 											.dispatch( 'core/editor' )
-											.togglePublishSidebar();
+											.togglePublishSidebar?.();
 									}
 
 									// Add block to errors array
