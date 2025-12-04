@@ -29,11 +29,6 @@
         "parent": null,
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/index.md"
     },
-    "code-reference/abilities": {
-        "slug": "abilities",
-        "parent": "code-reference",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/abilities/index.md"
-    },
     "code-reference/acf-bidirectional-functions-file": {
         "slug": "acf-bidirectional-functions-file",
         "parent": "code-reference",
@@ -283,11 +278,6 @@
         "slug": "quick-start",
         "parent": "welcome",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/welcome/quick-start.md"
-    },
-    "code-reference/abilities/class-scf-post-type-abilities-file": {
-        "slug": "class-scf-post-type-abilities-file",
-        "parent": "abilities",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/abilities/class-scf-post-type-abilities-file.md"
     },
     "code-reference/admin/admin-commands-file": {
         "slug": "admin-commands-file",
