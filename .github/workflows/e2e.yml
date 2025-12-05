@@ -30,11 +30,12 @@ jobs:
                 node: ['22', '24']
                 wp: ['6.2', 'latest', 'trunk']
                 exclude:
-                    # TEMPORARY, DO NOT MERGE: testing WP 6.2 compatibility fix
+                    # On PRs: only test Node 22 + WP trunk for fast feedback
+                    # On trunk: full matrix with minimum and latest WP versions
                     - event: 'pull_request'
                       node: '24'
                     - event: 'pull_request'
-                      wp: 'latest'
+                      wp: '6.2'
                     - event: 'pull_request'
                       wp: 'trunk'
 
