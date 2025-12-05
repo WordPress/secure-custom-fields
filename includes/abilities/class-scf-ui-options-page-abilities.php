@@ -6,6 +6,7 @@
  *
  * @package wordpress/secure-custom-fields
  * @since 6.8.0
+ * @codeCoverageIgnore Base class is tested.
  */
 
 // Exit if accessed directly.

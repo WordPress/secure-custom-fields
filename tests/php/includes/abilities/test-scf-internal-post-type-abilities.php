@@ -13,10 +13,10 @@ use WorDBless\BaseTestCase;
 // Load mock Abilities API functions before loading the class.
 require_once __DIR__ . '/abilities-api-mocks.php';
 
-// Load ACF internal post type class to register the taxonomy instance.
+// Load ACF_Taxonomy class required by SCF_Taxonomy_Abilities.
 require_once dirname( __DIR__, 4 ) . '/includes/post-types/class-acf-taxonomy.php';
 
-// Load the abilities classes after ACF classes are loaded.
+// Load abilities classes for testing.
 require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-internal-post-type-abilities.php';
 require_once dirname( __DIR__, 4 ) . '/includes/abilities/class-scf-taxonomy-abilities.php';
 

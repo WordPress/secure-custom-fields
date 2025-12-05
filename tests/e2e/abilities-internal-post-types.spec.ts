@@ -1,8 +1,8 @@
 /**
- * E2E tests for SCF Internal Post Type Abilities (Post Types and Taxonomies)
+ * E2E tests for SCF Internal Post Type Abilities (Post Types, Taxonomies, and UI Options Pages)
  *
- * Tests the WordPress Abilities API endpoints for SCF post type and taxonomy management.
- * Both entity types share the same base class, so tests are parameterized.
+ * Tests the WordPress Abilities API endpoints for SCF internal post type management.
+ * All entity types share the same base class, so tests are parameterized.
  *
  * HTTP Method Reference:
  * - Read-only abilities (readonly: true) → GET with bracket notation: { 'input[key]': value }
@@ -41,6 +41,17 @@ const ENTITY_TYPES = [
 			key: 'taxonomy_e2e_test',
 			title: 'E2E Test Taxonomy',
 			taxonomy: 'e2e_test_tax',
+		},
+	},
+	{
+		name: 'UI Options Page',
+		slug: 'ui-options-page',
+		slugPlural: 'ui-options-pages',
+		identifierKey: 'menu_slug',
+		testEntity: {
+			key: 'ui_options_page_e2e_test',
+			title: 'E2E Test Options Page',
+			menu_slug: 'e2e-test-options',
 		},
 	},
 ];
