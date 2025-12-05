@@ -1,0 +1,187 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/ui-options-page.schema.json",
+	"title": "SCF UI Options Page(s)",
+	"description": "Schema for Secure Custom Fields UI Options Page definitions - accepts single object or array. Properties marked '[SCF Export Only]' are preserved during export but not used functionally during import.",
+	"oneOf": [
+		{
+			"description": "Single UI Options Page object",
+			"$ref": "#/definitions/uiOptionsPage"
+		},
+		{
+			"description": "Array of UI Options Page objects (export format)",
+			"type": "array",
+			"items": { "$ref": "#/definitions/uiOptionsPage" },
+			"minItems": 1
+		}
+	],
+	"definitions": {
+		"uiOptionsPage": {
+			"type": "object",
+			"required": [ "key", "title", "menu_slug" ],
+			"additionalProperties": false,
+			"properties": {
+				"key": {
+					"type": "string",
+					"pattern": "^ui_options_page_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the options page with ui_options_page_ prefix (e.g. 'ui_options_page_site_settings')"
+				},
+				"title": {
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 255,
+					"description": "The title/name of the options page"
+				},
+				"menu_slug": {
+					"type": "string",
+					"pattern": "^[a-z0-9_-]+$",
+					"minLength": 1,
+					"description": "The menu slug used in the admin URL (e.g. 'site-settings'). Lowercase letters, numbers, underscores, and dashes only."
+				},
+
+				"page_title": {
+					"type": "string",
+					"description": "The page title displayed in the browser tab and page heading"
+				},
+				"parent_slug": {
+					"type": "string",
+					"description": "The parent menu slug. Use 'none' for top-level menu, or a WordPress admin menu slug (e.g. 'options-general.php') for submenu."
+				},
+				"menu_title": {
+					"type": "string",
+					"description": "The title displayed in the admin menu"
+				},
+
+				"active": {
+					"type": "boolean",
+					"default": true,
+					"description": "[SCF] Whether this options page is active"
+				},
+				"advanced_configuration": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "[SCF Export Only] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
+				},
+				"import_source": {
+					"type": "string",
+					"description": "[SCF Export Only] Source of import if this options page was imported"
+				},
+				"import_date": {
+					"type": "string",
+					"description": "[SCF Export Only] Date when this options page was imported"
+				},
+				"modified": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "[SCF Export Only] Unix timestamp of last modification"
+				},
+				"menu_order": {
+					"type": "integer",
+					"minimum": 0,
+					"default": 0,
+					"description": "[SCF Export Only] The order of this options page in the admin menu"
+				},
+
+				"icon_url": {
+					"type": "string",
+					"description": "[Legacy] Icon URL or dashicon class. Prefer menu_icon object format for new configurations."
+				},
+				"menu_icon": {
+					"oneOf": [
+						{
+							"type": "string",
+							"description": "Icon as string: Dashicon name (e.g. 'dashicons-admin-generic') or full URL to image file"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"enum": [ "dashicons", "url", "media_library" ],
+									"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image URL, 'media_library' for media library attachment"
+								},
+								"value": {
+									"type": [ "string", "integer" ],
+									"description": "The icon value: dashicon class name, image URL, or media library attachment ID"
+								}
+							},
+							"required": [ "type", "value" ],
+							"additionalProperties": false,
+							"description": "[SCF] SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-generic\"}"
+						}
+					],
+					"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties."
+				},
+				"position": {
+					"type": [ "integer", "string", "null" ],
+					"description": "The position in the menu where this page should appear. SCF exports as empty string or null when not set, integer when set."
+				},
+				"redirect": {
+					"type": "boolean",
+					"default": true,
+					"description": "When child pages exist for this parent page, whether to redirect to the first child page"
+				},
+				"description": {
+					"type": "string",
+					"description": "A descriptive summary of the options page"
+				},
+
+				"update_button": {
+					"type": "string",
+					"description": "The label used for the submit button which updates the fields on the options page"
+				},
+				"updated_message": {
+					"type": "string",
+					"description": "The message displayed after successfully updating the options page"
+				},
+
+				"capability": {
+					"type": "string",
+					"default": "edit_posts",
+					"description": "The capability required for this menu to be displayed to the user"
+				},
+				"data_storage": {
+					"type": "string",
+					"enum": [ "options", "post_id" ],
+					"default": "options",
+					"description": "Where to store field data. 'options' uses the options table, 'post_id' uses custom storage."
+				},
+				"post_id": {
+					"type": [ "string", "integer" ],
+					"description": "Custom storage location when data_storage is 'post_id'. Can be a numeric post ID (123) or a string ('user_2')."
+				},
+				"autoload": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to autoload the options when WordPress loads. Improves performance for frequently accessed options."
+				}
+			}
+		}
+	},
+	"examples": [
+		{
+			"key": "ui_options_page_site_settings",
+			"title": "Site Settings",
+			"menu_slug": "site-settings",
+			"page_title": "Site Settings",
+			"parent_slug": "none",
+			"menu_title": "Site Settings",
+			"active": true,
+			"menu_order": 0,
+			"advanced_configuration": false,
+			"menu_icon": {
+				"type": "dashicons",
+				"value": "dashicons-admin-generic"
+			},
+			"position": 80,
+			"redirect": true,
+			"description": "Global site configuration options",
+			"update_button": "Save Settings",
+			"updated_message": "Settings saved successfully",
+			"capability": "manage_options",
+			"data_storage": "options",
+			"autoload": true
+		}
+	]
+}
