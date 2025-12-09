@@ -323,3 +323,47 @@
     width: 100%;
     justify-content: center
 }
+
+.acf-blocks-toolbar-icon {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    padding-right: .6rem;
+}
+
+.acf-blocks-toolbar-icon i {
+    display: flex;
+}
+
+.acf-inline-fields-popover {
+    z-index: 59899;
+    min-width: 300px;
+}
+
+.acf-inline-fields-popover-inner>.acf-block-panel>.acf-block-fields>.acf-field {
+    display: none;
+    border-top-style: none !important;
+}
+
+.acf-inline-fields-popover-inner .acf-block-fields>.acf-error-message {
+    display: none;
+}
+
+.acf-inline-editing-toolbar .acf-inline-fields-popover-inner .acf-tab-group {
+    display: flex;
+    white-space: nowrap;
+}
+
+.block-editor-block-toolbar .field-type-icon {
+    top: 0;
+    background-color: initial;
+    border: 0;
+}
+
+.block-editor-block-toolbar .field-type-icon:before {
+    background-color: #000;
+}
+
+.block-editor-block-toolbar .is-pressed .field-type-icon:before {
+    background-color: #fff;
+}
