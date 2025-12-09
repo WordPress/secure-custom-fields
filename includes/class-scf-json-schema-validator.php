@@ -133,21 +133,12 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 		public function load_schema( $schema_name ) {
 			$schema_file = $this->schema_path . $schema_name . '.schema.json';
 
-			if ( ! file_exists( $schema_file ) ) {
+			if ( ! file_exists( $schema_file ) || ! is_readable( $schema_file ) ) {
 				return null;
 			}
 
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
-			WP_Filesystem();
-			global $wp_filesystem;
-
-			if ( null === $wp_filesystem ) {
-				return null;
-			}
-
-			$schema_content = $wp_filesystem->get_contents( $schema_file );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file, safe to read directly.
+			$schema_content = file_get_contents( $schema_file );
 			if ( false === $schema_content ) {
 				return null;
 			}
@@ -275,17 +266,13 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 		public function validate_file( $file_path, $schema_name ) {
 			$this->clear_validation_errors();
 
-			if ( ! file_exists( $file_path ) ) {
+			if ( ! file_exists( $file_path ) || ! is_readable( $file_path ) ) {
 				$this->add_validation_error( 'file', 'File does not exist: ' . $file_path );
 				return false;
 			}
 
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
-			WP_Filesystem();
-			global $wp_filesystem;
-			$json_content = $wp_filesystem->get_contents( $file_path );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file, safe to read directly.
+			$json_content = file_get_contents( $file_path );
 
 			if ( false === $json_content ) {
 				$this->add_validation_error( 'file', 'Could not read file: ' . $file_path );
