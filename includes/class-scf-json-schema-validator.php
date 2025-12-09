@@ -137,7 +137,6 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 				return null;
 			}
 
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file, safe to read directly.
 			$schema_content = file_get_contents( $schema_file );
 			if ( false === $schema_content ) {
 				return null;
@@ -271,7 +270,6 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 				return false;
 			}
 
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file, safe to read directly.
 			$json_content = file_get_contents( $file_path );
 
 			if ( false === $json_content ) {
