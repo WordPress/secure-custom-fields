@@ -513,13 +513,16 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
-		 * @param mixed          $value
-		 * @param string|integer $post_id
-		 * @param array          $field
-		 * @return mixed
+		 * @since ACF 5.0.0
+		 * @since SCF 6.8.0 Now respects the return_format field setting.
+		 *
+		 * @param mixed          $value   The field value.
+		 * @param string|integer $post_id The post ID.
+		 * @param array          $field   The field array.
+		 * @return mixed The formatted value based on return_format setting.
 		 */
 		public function format_value_for_rest( $value, $post_id, array $field ) {
-			return acf_format_numerics( $value );
+			return $this->format_value( $value, $post_id, $field );
 		}
 	}
 
