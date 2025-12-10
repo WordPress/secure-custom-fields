@@ -1,6 +1,5 @@
 import { Component, createContext } from '@wordpress/element';
-import { Placeholder, Button, Icon } from '@wordpress/components';
-import { blockDefault as blockIcon } from '@wordpress/icons';
+import { BlockPlaceholder } from './block-placeholder';
 
 // Create context outside the class
 export const ErrorBoundaryContext = createContext( null );
