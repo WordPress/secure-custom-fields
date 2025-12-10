@@ -39,6 +39,9 @@ const BLOCK_BINDINGS_CONFIG = {
 		linkTarget: [ 'text', 'checkbox', 'select' ],
 		rel: [ 'text', 'checkbox', 'select' ],
 	},
+	'core/post-date': {
+		datetime: [ 'date_picker' ],
+	},
 };
 
 /**
