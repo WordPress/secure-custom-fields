@@ -104,12 +104,11 @@ test.describe( 'Field Type > Text', () => {
         
         // Visit the category archive page
         await page.goto( '/?cat=1' );
-        
+
         // Verify the custom field value appears on the frontend
-        await page.waitForSelector( '#scf-test-term-title' );
         await expect(
-            page.locator( '#scf-test-term-title' )
-        ).toContainText( 'Term title: Custom Term Value' );
+            page.getByText( 'Term title: Custom Term Value' )
+        ).toBeVisible();
     } );
 } );
 

@@ -3,18 +3,52 @@ name: E2E Tests
 on:
     pull_request:
         branches: [trunk]
+    push:
+        branches: [trunk]
+    # Allow manually triggering the workflow
+    workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+    cancel-in-progress: true
+
+# Disable permissions for all available scopes by default
+permissions: {}
 
 jobs:
     test:
-        name: Playwright e2e Tests
+        name: Node ${{ matrix.node }} / WP ${{ matrix.wp }}
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        strategy:
+            fail-fast: false
+            matrix:
+                event: ['${{ github.event_name }}']
+                node: ['22', '24']
+                wp: ['6.2', 'latest', 'trunk']
+                exclude:
+                    # On PRs: only test Node 22 + WP trunk for fast feedback
+                    # On trunk: full matrix with minimum and latest WP versions
+                    - event: 'pull_request'
+                      node: '24'
+                    - event: 'pull_request'
+                      wp: '6.2'
+                    - event: 'pull_request'
+                      wp: 'trunk'
+
+        env:
+            WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
+
         steps:
             - uses: actions/checkout@v4
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version-file: '.nvmrc'
+                  node-version: ${{ matrix.node }}
                   cache: 'npm'
 
             - name: Install dependencies

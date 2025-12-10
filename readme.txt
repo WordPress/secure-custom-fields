@@ -2,9 +2,9 @@
 Contributors: wordpressdotorg
 Tags: fields, custom fields, meta, scf
 Requires at least: 6.0
-Tested up to: 6.8.3
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 6.6.0
+Stable tag: 6.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,28 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.7.1 =
+*Release Date 10 Dec 2025*
+
+*Features*
+
+- JSON Schemas: Added Options Pages schema.
+
+*Fixes*
+
+- Fixed too-early validation of schemas causing a fatal error.
+- Fix block validation on WordPress 6.2.
+
+= 6.7.0 =
+*Release Date 3 Dec 2025*
+
+*Features*
+
+- Tested compatibility up to WordPress 6.9.
+- Abilities support. Taxonomy abilities.
+- JSON schemas. Taxonomy schema.
+
 
 = 6.6.0 =
 *Release Date 19 Nov 2025*

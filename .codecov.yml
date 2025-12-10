@@ -24,6 +24,7 @@ coverage:
                 target: 70%
                 threshold: 5%
                 if_ci_failed: ignore
+                only_pulls: true
 
 ignore:
     - '*.min.css'
