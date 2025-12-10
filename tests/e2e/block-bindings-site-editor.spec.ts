@@ -11,9 +11,30 @@ const TEXT_FIELD_LABEL = 'Product Name';
 const IMAGE_FIELD_LABEL = 'Product Image';
 
 test.describe( 'Block Bindings in Site Editor', () => {
-	test.beforeAll( async ( { requestUtils }: any ) => {
+	test.beforeAll( async ( { page, requestUtils }: any ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
 		await requestUtils.activatePlugin( TEST_PLUGIN_SLUG );
+
+		// Block Bindings API was introduced in WordPress 6.5
+		// Skip this test suite for older WordPress versions
+		await page.goto( '/wp-admin/' );
+		const isBlockBindingsSupported = await page.evaluate( () => {
+			const body = document.body;
+			// Check for WP versions < 6.5 using branch classes
+			const unsupportedVersions = [
+				'branch-6-2',
+				'branch-6-3',
+				'branch-6-4',
+			];
+			return ! unsupportedVersions.some( ( v ) =>
+				body.classList.contains( v )
+			);
+		} );
+
+		test.skip(
+			! isBlockBindingsSupported,
+			'Block Bindings API not available in WordPress versions < 6.5'
+		);
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
