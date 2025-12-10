@@ -90,28 +90,29 @@
 				"menu_icon": {
 					"oneOf": [
 						{
-							"type": "string",
-							"description": "Icon as string: Dashicon name (e.g. 'dashicons-admin-generic') or full URL to image file"
-						},
-						{
 							"type": "object",
 							"properties": {
 								"type": {
 									"type": "string",
 									"enum": [ "dashicons", "url", "media_library" ],
-									"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image URL, 'media_library' for media library attachment"
+									"description": "Icon source type: 'dashicons' for WordPress dashicons, 'url' for custom image URL, 'media_library' for media library attachment ID"
 								},
 								"value": {
 									"type": [ "string", "integer" ],
-									"description": "The icon value: dashicon class name, image URL, or media library attachment ID"
+									"description": "The icon value: dashicon class name (e.g. 'dashicons-admin-generic'), image URL, or media library attachment ID"
 								}
 							},
 							"required": [ "type", "value" ],
 							"additionalProperties": false,
-							"description": "[SCF] SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-generic\"}"
+							"description": "[SCF] Object with type and value properties specifying the icon source and identifier."
+						},
+						{
+							"type": "array",
+							"maxItems": 0,
+							"description": "Empty array representing unset/default state (no icon configured)."
 						}
 					],
-					"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties."
+					"description": "The menu icon displayed in the admin menu. Accepts object format with type/value properties, or empty array when no icon is configured."
 				},
 				"position": {
 					"type": [ "integer", "string", "null" ],

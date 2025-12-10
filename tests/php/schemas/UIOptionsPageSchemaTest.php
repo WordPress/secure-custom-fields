@@ -120,15 +120,6 @@ class UIOptionsPageSchemaTest extends BaseSchemaTestCase {
 				),
 				'Parent page with menu_icon object should be valid',
 			),
-			'menu_icon as string'               => array(
-				array(
-					'key'       => 'ui_options_page_settings',
-					'title'     => 'Settings',
-					'menu_slug' => 'settings',
-					'menu_icon' => 'dashicons-admin-generic',
-				),
-				'Options page with menu_icon as string should be valid',
-			),
 			'menu_icon with url type'           => array(
 				array(
 					'key'       => 'ui_options_page_settings',
@@ -152,6 +143,15 @@ class UIOptionsPageSchemaTest extends BaseSchemaTestCase {
 					),
 				),
 				'Options page with menu_icon media_library type should be valid',
+			),
+			'menu_icon as empty array'          => array(
+				array(
+					'key'       => 'ui_options_page_settings',
+					'title'     => 'Settings',
+					'menu_slug' => 'settings',
+					'menu_icon' => array(),
+				),
+				'Options page with empty menu_icon array (default state when no icon configured) should be valid',
 			),
 			'child page with parent_slug'       => array(
 				array(
