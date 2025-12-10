@@ -99,4 +99,42 @@ const test = wpTest.extend( {
 	},
 } );
 
-module.exports = { test, expect };
+/**
+ * Check if WordPress version is at least the specified version.
+ * Must be called after navigating to an admin page.
+ *
+ * @param {import('@playwright/test').Page} page    Playwright page object.
+ * @param {number}                           major  Major version number.
+ * @param {number}                           minor  Minor version number.
+ * @return {Promise<boolean>} True if WP version >= specified version.
+ */
+async function wpVersionAtLeast( page, major, minor ) {
+	return page.evaluate(
+		( [ maj, min ] ) => {
+			const branchClass = [ ...document.body.classList ].find( ( c ) =>
+				c.startsWith( 'branch-' )
+			);
+			if ( ! branchClass ) return true;
+			const match = branchClass.match( /branch-(\d+)-(\d+)/ );
+			if ( ! match ) return true;
+			const [ , wpMajor, wpMinor ] = match.map( Number );
+			return wpMajor > maj || ( wpMajor === maj && wpMinor >= min );
+		},
+		[ major, minor ]
+	);
+}
+
+/**
+ * Check if WordPress version is below the specified version.
+ * Must be called after navigating to an admin page.
+ *
+ * @param {import('@playwright/test').Page} page    Playwright page object.
+ * @param {number}                           major  Major version number.
+ * @param {number}                           minor  Minor version number.
+ * @return {Promise<boolean>} True if WP version < specified version.
+ */
+async function wpVersionBelow( page, major, minor ) {
+	return ! ( await wpVersionAtLeast( page, major, minor ) );
+}
+
+module.exports = { test, expect, wpVersionAtLeast, wpVersionBelow };
