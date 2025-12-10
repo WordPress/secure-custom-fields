@@ -2,7 +2,7 @@
  * E2E tests for block bindings in the site editor
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const { test, expect } = require( './fixtures' );
+const { test, expect, wpVersionAtLeast } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-setup-post-types';
@@ -10,30 +10,9 @@ const FIELD_GROUP_LABEL = 'Product Details';
 const TEXT_FIELD_LABEL = 'Product Name';
 
 test.describe( 'Block Bindings in Site Editor', () => {
-	test.beforeAll( async ( { page, requestUtils }: any ) => {
+	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
 		await requestUtils.activatePlugin( TEST_PLUGIN_SLUG );
-
-		// Block Bindings API was introduced in WordPress 6.5
-		// Skip this test suite for older WordPress versions
-		await page.goto( '/wp-admin/' );
-		const isBlockBindingsSupported = await page.evaluate( () => {
-			const body = document.body;
-			// Check for WP versions < 6.5 using branch classes
-			const unsupportedVersions = [
-				'branch-6-2',
-				'branch-6-3',
-				'branch-6-4',
-			];
-			return ! unsupportedVersions.some( ( v ) =>
-				body.classList.contains( v )
-			);
-		} );
-
-		test.skip(
-			! isBlockBindingsSupported,
-			'Block Bindings API not available in WordPress versions < 6.5'
-		);
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
@@ -46,6 +25,13 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		page,
 		admin,
 	} ) => {
+		// Block Bindings API was introduced in WordPress 6.5
+		await page.goto( '/wp-admin/' );
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 5 ) ),
+			'Block Bindings API requires WordPress 6.5+'
+		);
+
 		// Navigate to Field Groups and create new.
 		await admin.visitAdminPage( 'edit.php', 'post_type=acf-field-group' );
 		const addNewButton = page.locator( 'a.acf-btn:has-text("Add New")' );
