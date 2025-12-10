@@ -8,7 +8,6 @@ const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-setup-post-types';
 const FIELD_GROUP_LABEL = 'Product Details';
 const TEXT_FIELD_LABEL = 'Product Name';
-const IMAGE_FIELD_LABEL = 'Product Image';
 
 test.describe( 'Block Bindings in Site Editor', () => {
 	test.beforeAll( async ( { page, requestUtils }: any ) => {
@@ -70,11 +69,15 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await fieldType.selectOption( 'text' );
 
 		// Select Group Settings > Enable REST API
-		const groupSettingsTab = page.getByRole( 'link', { name: 'Group Settings' } );
+		const groupSettingsTab = page.getByRole( 'link', {
+			name: 'Group Settings',
+		} );
 		await groupSettingsTab.click();
 
 		// Enable Show in REST API
-		const showInRestCheckbox = page.locator( '#acf_field_group-show_in_rest' );
+		const showInRestCheckbox = page.locator(
+			'#acf_field_group-show_in_rest'
+		);
 		await showInRestCheckbox.check( { force: true } );
 
 		// Submit form.
@@ -89,49 +92,72 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await expect( successNotice ).toContainText( 'Field group published' );
 
 		// Navigate to site editor
-		await admin.visitAdminPage( 'site-editor.php?p=%2Fwp_template%2Ftwentytwentyfive%2F%2Fsingle&canvas=edit' );
+		await admin.visitAdminPage(
+			'site-editor.php?p=%2Fwp_template%2Ftwentytwentyfive%2F%2Fsingle&canvas=edit'
+		);
 
 		// Wait for the site editor to load - wait for the iframe or editor container
-		await page.waitForSelector('iframe[name="editor-canvas"]', { timeout: 10000 });
-		await page.waitForTimeout(2000); // Give the editor a moment to fully load
+		await page.waitForSelector( 'iframe[name="editor-canvas"]', {
+			timeout: 10000,
+		} );
+		await page.waitForTimeout( 2000 ); // Give the editor a moment to fully load
 
 		// Close the welcome guide modal if it appears by pressing Escape
 		await page.keyboard.press( 'Escape' );
 		await page.waitForTimeout( 500 );
 
 		// Get the iframe and work within it
-		const frameLocator = page.frameLocator('iframe[name="editor-canvas"]');
-		
+		const frameLocator = page.frameLocator(
+			'iframe[name="editor-canvas"]'
+		);
+
 		// Click on the content block within the iframe
-		const contentBlock = frameLocator.locator('[data-type="core/post-content"]').first();
+		const contentBlock = frameLocator
+			.locator( '[data-type="core/post-content"]' )
+			.first();
 		await contentBlock.click();
 
 		// Press Enter to add a new paragraph block
-		await page.keyboard.press('Enter');
+		await page.keyboard.press( 'Enter' );
 
 		// Wait for the newly created empty paragraph block
-		await frameLocator.locator('[data-type="core/paragraph"][data-empty="true"]').waitFor({ timeout: 5000 });
+		await frameLocator
+			.locator( '[data-type="core/paragraph"][data-empty="true"]' )
+			.waitFor( { timeout: 5000 } );
 
 		// Click on the empty paragraph block to select it
-		const emptyParagraph = frameLocator.locator('[data-type="core/paragraph"][data-empty="true"]');
+		const emptyParagraph = frameLocator.locator(
+			'[data-type="core/paragraph"][data-empty="true"]'
+		);
 		await emptyParagraph.click();
 
 		// Wait for the "Connect to a field" panel to appear in the block inspector
-		await page.waitForSelector('input[id^="components-form-token-input-combobox-control-"]', { timeout: 5000 });
+		await page.waitForSelector(
+			'input[id^="components-form-token-input-combobox-control-"]',
+			{ timeout: 5000 }
+		);
 
 		// Click on the combobox input to open suggestions
-		const comboboxInput = page.locator('input[id^="components-form-token-input-combobox-control-"]').first();
+		const comboboxInput = page
+			.locator(
+				'input[id^="components-form-token-input-combobox-control-"]'
+			)
+			.first();
 		await comboboxInput.click();
 
 		// Wait for suggestions to appear
-		await page.waitForSelector('ul[id^="components-form-token-suggestions-combobox-control-"]', { timeout: 5000 });
+		await page.waitForSelector(
+			'ul[id^="components-form-token-suggestions-combobox-control-"]',
+			{ timeout: 5000 }
+		);
 
 		// Select "Product Name" from the dropdown
-		await page.getByRole('option', { name: 'Product Name' }).click();
+		await page.getByRole( 'option', { name: 'Product Name' } ).click();
 
 		// Verify the paragraph block now contains "Product Name"
-		const boundParagraph = frameLocator.locator('[data-type="core/paragraph"]:has-text("Product Name")');
+		const boundParagraph = frameLocator.locator(
+			'[data-type="core/paragraph"]:has-text("Product Name")'
+		);
 		await expect( boundParagraph ).toBeVisible();
-
 	} );
 } );
