@@ -1,4 +1,5 @@
 import { Component, createContext } from '@wordpress/element';
+import { BlockPlaceholder } from './block-placeholder';
 
 // Create context outside the class
 export const ErrorBoundaryContext = createContext( null );
@@ -37,6 +38,8 @@ export class ErrorBoundary extends Component {
 	}
 
 	componentDidCatch( error, errorInfo ) {
+		acf.debug( 'Block preview error caught:', error, errorInfo );
+
 		// Call optional onError callback
 		if ( this.props.onError ) {
 			this.props.onError( error, errorInfo );
@@ -123,19 +126,10 @@ export const BlockPreviewErrorFallback = ( {
 	}
 
 	return (
-		<Placeholder
-			icon={ <Icon icon={ blockIcon } /> }
-			label={ blockLabel }
+		<BlockPlaceholder
+			setBlockFormModalOpen={ setBlockFormModalOpen }
+			blockLabel={ blockLabel }
 			instructions={ errorMessage }
-		>
-			<Button
-				variant="primary"
-				onClick={ () => {
-					setBlockFormModalOpen( true );
-				} }
-			>
-				{ acf.__( 'Edit Block' ) }
-			</Button>
-		</Placeholder>
+		/>
 	);
 };

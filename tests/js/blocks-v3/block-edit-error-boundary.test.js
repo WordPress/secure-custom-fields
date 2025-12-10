@@ -116,13 +116,14 @@ describe( 'ErrorBoundary Component', () => {
 			</ErrorBoundary>
 		);
 
-		// Verify debug was called
+		// Verify debug was called in componentDidCatch
 		expect( global.acf.debug ).toHaveBeenCalledWith(
 			'Block preview error caught:',
 			expect.any( Error ),
 			expect.any( Object )
 		);
 
+		// Verify debug was called in BlockPreviewErrorFallback
 		expect( global.acf.debug ).toHaveBeenCalledWith(
 			'Block preview error:',
 			expect.any( Error )
