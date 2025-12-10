@@ -52,6 +52,18 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.7.1 =
+*Release Date 10 Dec 2025*
+
+*Features*
+
+- JSON Schemas: Added Options Pages schema.
+
+*Fixes*
+
+- Fixed too-early validation of schemas causing a fatal error.
+- Fix block validation on WordPress 6.2.
+
 = 6.7.0 =
 *Release Date 3 Dec 2025*
 
