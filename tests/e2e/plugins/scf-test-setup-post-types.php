@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register post types for testing
  * - One regular WordPress post type that will show up in the "other" source
+ * - Product post type for block bindings testing
  */
 function scf_test_register_post_types() {
 	// Register a standard WordPress post type that will show up in the "other" source
@@ -40,6 +41,21 @@ function scf_test_register_post_types() {
 			'show_in_rest' => true,
 			'has_archive'  => true,
 			'supports'     => array( 'title', 'editor' ),
+		)
+	);
+
+	// Register product post type for block bindings testing
+	register_post_type(
+		'product',
+		array(
+			'labels'       => array(
+				'name'          => 'Products',
+				'singular_name' => 'Product',
+			),
+			'public'       => true,
+			'show_in_rest' => true,
+			'has_archive'  => true,
+			'supports'     => array( 'title', 'editor', 'custom-fields' ),
 		)
 	);
 }

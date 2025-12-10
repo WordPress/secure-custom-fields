@@ -187,25 +187,250 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 		$param_method = $this->reflection->getMethod( 'get_source_param_definition' );
 		$param_method->setAccessible( true );
 
-		// Test without validation callbacks.
-		$param_def = $param_method->invoke( $this->endpoint, false );
+		$param_def = $param_method->invoke( $this->endpoint );
 		$this->assertEquals( 'string', $param_def['type'] );
 		$this->assertFalse( $param_def['required'] );
 		$this->assertContains( 'core', $param_def['enum'] );
 		$this->assertContains( 'scf', $param_def['enum'] );
 		$this->assertContains( 'other', $param_def['enum'] );
 		$this->assertCount( 3, $param_def['enum'] );
+		$this->assertArrayHasKey( 'validate_callback', $param_def );
+		$this->assertArrayHasKey( 'sanitize_callback', $param_def );
+		$this->assertEquals( 'rest_validate_request_arg', $param_def['validate_callback'] );
+		$this->assertEquals( 'sanitize_text_field', $param_def['sanitize_callback'] );
+	}
 
-		// Test with validation callbacks.
-		$param_def_with_validation = $param_method->invoke( $this->endpoint, true );
-		$this->assertEquals( 'string', $param_def_with_validation['type'] );
-		$this->assertFalse( $param_def_with_validation['required'] );
-		$this->assertContains( 'core', $param_def_with_validation['enum'] );
-		$this->assertContains( 'scf', $param_def_with_validation['enum'] );
-		$this->assertContains( 'other', $param_def_with_validation['enum'] );
-		$this->assertArrayHasKey( 'validate_callback', $param_def_with_validation );
-		$this->assertArrayHasKey( 'sanitize_callback', $param_def_with_validation );
-		$this->assertEquals( 'rest_validate_request_arg', $param_def_with_validation['validate_callback'] );
-		$this->assertEquals( 'sanitize_text_field', $param_def_with_validation['sanitize_callback'] );
+	/**
+	 * Test the is_valid_source method.
+	 */
+	public function test_is_valid_source() {
+		$is_valid_method = $this->reflection->getMethod( 'is_valid_source' );
+		$is_valid_method->setAccessible( true );
+
+		// Valid sources
+		$this->assertTrue( $is_valid_method->invoke( $this->endpoint, 'core' ) );
+		$this->assertTrue( $is_valid_method->invoke( $this->endpoint, 'scf' ) );
+		$this->assertTrue( $is_valid_method->invoke( $this->endpoint, 'other' ) );
+
+		// Invalid sources
+		$this->assertFalse( $is_valid_method->invoke( $this->endpoint, 'invalid' ) );
+		$this->assertFalse( $is_valid_method->invoke( $this->endpoint, '' ) );
+		$this->assertFalse( $is_valid_method->invoke( $this->endpoint, null ) );
+		$this->assertFalse( $is_valid_method->invoke( $this->endpoint, 'CORE' ) );
+	}
+
+	/**
+	 * Test filter_types_request with invalid source.
+	 */
+	public function test_filter_types_request_invalid_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types/post' );
+		$request->set_param( 'source', 'invalid' );
+
+		$response = $this->endpoint->filter_types_request( null, array(), $request );
+
+		// Should not modify response for invalid source
+		$this->assertNull( $response );
+	}
+
+	/**
+	 * Test filter_types_request without source parameter.
+	 */
+	public function test_filter_types_request_no_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types/post' );
+
+		$response = $this->endpoint->filter_types_request( null, array(), $request );
+
+		// Should not modify response when no source parameter
+		$this->assertNull( $response );
+	}
+
+	/**
+	 * Test filter_types_request for collection endpoint.
+	 */
+	public function test_filter_types_request_collection() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$request->set_param( 'source', 'core' );
+
+		$response = $this->endpoint->filter_types_request( null, array(), $request );
+
+		// Should not modify collection requests
+		$this->assertNull( $response );
+	}
+
+	/**
+	 * Test filter_types_request with matching source.
+	 */
+	public function test_filter_types_request_matching_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types/post' );
+		$request->set_param( 'source', 'core' );
+
+		$response = $this->endpoint->filter_types_request( null, array(), $request );
+
+		// Should not modify response for matching source
+		$this->assertNull( $response );
+	}
+
+	/**
+	 * Test filter_types_request with non-matching source.
+	 */
+	public function test_filter_types_request_non_matching_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types/post' );
+		$request->set_param( 'source', 'scf' );
+
+		$response = $this->endpoint->filter_types_request( null, array(), $request );
+
+		// Should return error for non-matching source
+		$this->assertInstanceOf( 'WP_Error', $response );
+		$this->assertEquals( 'rest_post_type_invalid', $response->get_error_code() );
+		$this->assertEquals( 404, $response->get_error_data()['status'] );
+	}
+
+	/**
+	 * Test filter_post_type without source parameter.
+	 */
+	public function test_filter_post_type_no_source() {
+		$request   = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$response  = new WP_REST_Response( array( 'slug' => 'post' ) );
+		$post_type = get_post_type_object( 'post' );
+
+		$filtered = $this->endpoint->filter_post_type( $response, $post_type, $request );
+
+		// Should not filter when no source parameter
+		$this->assertEquals( $response, $filtered );
+	}
+
+	/**
+	 * Test filter_post_type with invalid source.
+	 */
+	public function test_filter_post_type_invalid_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$request->set_param( 'source', 'invalid' );
+		$response  = new WP_REST_Response( array( 'slug' => 'post' ) );
+		$post_type = get_post_type_object( 'post' );
+
+		$filtered = $this->endpoint->filter_post_type( $response, $post_type, $request );
+
+		// Should not filter with invalid source
+		$this->assertEquals( $response, $filtered );
+	}
+
+	/**
+	 * Test filter_post_type with matching source.
+	 */
+	public function test_filter_post_type_matching_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$request->set_param( 'source', 'core' );
+		$response  = new WP_REST_Response( array( 'slug' => 'post' ) );
+		$post_type = get_post_type_object( 'post' );
+
+		$filtered = $this->endpoint->filter_post_type( $response, $post_type, $request );
+
+		// Should return response for matching source
+		$this->assertEquals( $response, $filtered );
+	}
+
+	/**
+	 * Test filter_post_type with non-matching source.
+	 */
+	public function test_filter_post_type_non_matching_source() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$request->set_param( 'source', 'scf' );
+		$response  = new WP_REST_Response( array( 'slug' => 'post' ) );
+		$post_type = get_post_type_object( 'post' );
+
+		$filtered = $this->endpoint->filter_post_type( $response, $post_type, $request );
+
+		// Should return null for non-matching source
+		$this->assertNull( $filtered );
+	}
+
+	/**
+	 * Test clean_types_response with collection.
+	 */
+	public function test_clean_types_response_collection() {
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		$server   = rest_get_server();
+		$response = array(
+			'post' => array( 'slug' => 'post' ),
+			'page' => array( 'slug' => 'page' ),
+			null,
+		);
+
+		$cleaned = $this->endpoint->clean_types_response( $response, $server, $request );
+
+		// Should remove null entries
+		$this->assertCount( 2, $cleaned );
+		$this->assertArrayHasKey( 'post', $cleaned );
+		$this->assertArrayHasKey( 'page', $cleaned );
+		$this->assertArrayNotHasKey( 2, $cleaned );
+	}
+
+	/**
+	 * Test clean_types_response with single post type.
+	 */
+	public function test_clean_types_response_single() {
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/types/post' );
+		$server   = rest_get_server();
+		$response = array(
+			'slug' => 'post',
+			'name' => 'Posts',
+		);
+
+		$cleaned = $this->endpoint->clean_types_response( $response, $server, $request );
+
+		// Should not modify single post type response
+		$this->assertEquals( $response, $cleaned );
+	}
+
+	/**
+	 * Test clean_types_response for non-types endpoint.
+	 */
+	public function test_clean_types_response_other_endpoint() {
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$server   = rest_get_server();
+		$response = array( 'data' => 'value' );
+
+		$cleaned = $this->endpoint->clean_types_response( $response, $server, $request );
+
+		// Should not modify other endpoints
+		$this->assertEquals( $response, $cleaned );
+	}
+
+	/**
+	 * Test get_scf_fields with mock data.
+	 */
+	public function test_get_scf_fields() {
+		$post_type_object = array( 'slug' => 'post' );
+
+		$fields = $this->endpoint->get_scf_fields( $post_type_object );
+
+		$this->assertIsArray( $fields );
+	}
+
+	/**
+	 * Test add_parameter_to_endpoints.
+	 */
+	public function test_add_parameter_to_endpoints() {
+		$endpoints = array(
+			'/wp/v2/types'                  => array(
+				array(
+					'methods'  => 'GET',
+					'callback' => 'test_callback',
+					'args'     => array(),
+				),
+			),
+			'/wp/v2/types/(?P<type>[\w-]+)' => array(
+				array(
+					'methods'  => 'GET',
+					'callback' => 'test_callback',
+					'args'     => array(),
+				),
+			),
+		);
+
+		$modified = $this->endpoint->add_parameter_to_endpoints( $endpoints );
+
+		$this->assertArrayHasKey( 'source', $modified['/wp/v2/types'][0]['args'] );
+		$this->assertArrayHasKey( 'source', $modified['/wp/v2/types/(?P<type>[\w-]+)'][0]['args'] );
 	}
 }

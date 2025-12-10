@@ -3,8 +3,7 @@
  * Displays a placeholder UI when block has no preview HTML
  */
 
-const { Placeholder, Button, Icon } = wp.components;
-
+import { Placeholder, Button, Icon } from '@wordpress/components';
 /**
  * SVG icon for the block placeholder
  * Represents a generic block/form icon

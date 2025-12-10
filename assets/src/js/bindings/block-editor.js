@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import {
@@ -14,47 +14,28 @@ import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import { store as coreDataStore } from '@wordpress/core-data';
-import { store as editorStore } from '@wordpress/editor';
-
-// These constant and the function above have been copied from Gutenberg. It should be public, eventually.
-
-const BLOCK_BINDINGS_CONFIG = {
-	'core/paragraph': {
-		content: [ 'text', 'textarea', 'date_picker', 'number', 'range' ],
-	},
-	'core/heading': {
-		content: [ 'text', 'textarea', 'date_picker', 'number', 'range' ],
-	},
-	'core/image': {
-		id: [ 'image' ],
-		url: [ 'image' ],
-		title: [ 'image' ],
-		alt: [ 'image' ],
-	},
-	'core/button': {
-		url: [ 'url' ],
-		text: [ 'text', 'checkbox', 'select', 'date_picker' ],
-		linkTarget: [ 'text', 'checkbox', 'select' ],
-		rel: [ 'text', 'checkbox', 'select' ],
-	},
-};
 
 /**
- * Gets the bindable attributes for a given block.
- *
- * @param {string} blockName The name of the block.
- *
- * @return {string[]} The bindable attributes for the block.
+ * Internal dependencies
  */
-function getBindableAttributes( blockName ) {
-	const config = BLOCK_BINDINGS_CONFIG[ blockName ];
-	return config ? Object.keys( config ) : [];
-}
+import { BINDING_SOURCE } from './constants';
+import {
+	getBindableAttributes,
+	getFilteredFieldOptions,
+	canUseUnifiedBinding,
+	fieldsToOptions,
+} from './utils';
+import {
+	useSiteEditorContext,
+	usePostEditorFields,
+	useSiteEditorFields,
+	useBoundFields,
+} from './hooks';
 
 /**
- * Add custom controls to all blocks
+ * Add custom block binding controls to supported blocks.
+ *
+ * @since 6.5.0
  */
 const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
@@ -62,104 +43,47 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 		const { updateBlockBindings, removeAllBlockBindings } =
 			useBlockBindingsUtils();
 
-		// Get ACF fields for current post
-		const fields = useSelect( ( select ) => {
-			const { getEditedEntityRecord } = select( coreDataStore );
-			const { getCurrentPostType, getCurrentPostId } =
-				select( editorStore );
+		// Get editor context
+		const { isSiteEditor, templatePostType } = useSiteEditorContext();
 
-			const postType = getCurrentPostType();
-			const postId = getCurrentPostId();
+		// Get fields based on editor context
+		const postEditorFields = usePostEditorFields();
+		const { fields: siteEditorFields } =
+			useSiteEditorFields( templatePostType );
 
-			if ( ! postType || ! postId ) return {};
+		// Use appropriate fields based on context
+		const activeFields = isSiteEditor ? siteEditorFields : postEditorFields;
 
-			const record = getEditedEntityRecord(
-				'postType',
-				postType,
-				postId
-			);
-
-			// Extract fields that end with '_source' (simplified)
-			const sourcedFields = {};
-			Object.entries( record?.acf || {} ).forEach( ( [ key, value ] ) => {
-				if ( key.endsWith( '_source' ) ) {
-					const baseFieldName = key.replace( '_source', '' );
-					if ( record?.acf.hasOwnProperty( baseFieldName ) ) {
-						sourcedFields[ baseFieldName ] = value;
-					}
-				}
-			} );
-			return sourcedFields;
-		}, [] );
-
-		// Get filtered field options for an attribute
-		const getFieldOptions = useCallback(
-			( attribute = null ) => {
-				if ( ! fields || Object.keys( fields ).length === 0 ) return [];
-
-				const blockConfig = BLOCK_BINDINGS_CONFIG[ props.name ];
-				let allowedTypes = null;
-
-				if ( blockConfig ) {
-					allowedTypes = attribute
-						? blockConfig[ attribute ]
-						: Object.values( blockConfig ).flat();
-				}
-
-				return Object.entries( fields )
-					.filter(
-						( [ , fieldConfig ] ) =>
-							! allowedTypes ||
-							allowedTypes.includes( fieldConfig.type )
-					)
-					.map( ( [ fieldName, fieldConfig ] ) => ( {
-						value: fieldName,
-						label: fieldConfig.label,
-					} ) );
-			},
-			[ fields, props.name ]
+		// Convert fields to options format
+		const allFieldOptions = useMemo(
+			() => fieldsToOptions( activeFields ),
+			[ activeFields ]
 		);
 
-		// Check if all attributes use the same field types (for "all attributes" mode)
-		const canUseAllAttributesMode = useMemo( () => {
-			if ( ! bindableAttributes || bindableAttributes.length <= 1 )
-				return false;
-
-			const blockConfig = BLOCK_BINDINGS_CONFIG[ props.name ];
-			if ( ! blockConfig ) return false;
-
-			const firstAttributeTypes =
-				blockConfig[ bindableAttributes[ 0 ] ] || [];
-			return bindableAttributes.every( ( attr ) => {
-				const attrTypes = blockConfig[ attr ] || [];
-				return (
-					attrTypes.length === firstAttributeTypes.length &&
-					attrTypes.every( ( type ) =>
-						firstAttributeTypes.includes( type )
-					)
-				);
-			} );
-		}, [ bindableAttributes, props.name ] );
-
 		// Track bound fields
-		const [ boundFields, setBoundFields ] = useState( {} );
+		const { boundFields, setBoundFields } = useBoundFields(
+			props.attributes
+		);
 
-		// Sync with current bindings
-		useEffect( () => {
-			const currentBindings = props.attributes?.metadata?.bindings || {};
-			const newBoundFields = {};
+		// Get filtered field options for a specific attribute
+		const getAttributeFieldOptions = useCallback(
+			( attribute = null ) => {
+				return getFilteredFieldOptions(
+					allFieldOptions,
+					props.name,
+					attribute
+				);
+			},
+			[ allFieldOptions, props.name ]
+		);
 
-			Object.keys( currentBindings ).forEach( ( attribute ) => {
-				if ( currentBindings[ attribute ]?.args?.key ) {
-					newBoundFields[ attribute ] =
-						currentBindings[ attribute ].args.key;
-				}
-			} );
+		// Check if all attributes can use unified binding mode
+		const canUseAllAttributesMode = useMemo(
+			() => canUseUnifiedBinding( props.name, bindableAttributes ),
+			[ props.name, bindableAttributes ]
+		);
 
-			setBoundFields( newBoundFields );
-		}, [ props.attributes?.metadata?.bindings ] );
-
-		// Handle field selection
+		// Handle field selection changes
 		const handleFieldChange = useCallback(
 			( attribute, value ) => {
 				if ( Array.isArray( attribute ) ) {
@@ -171,7 +95,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						newBoundFields[ attr ] = value;
 						bindings[ attr ] = value
 							? {
-									source: 'acf/field',
+									source: BINDING_SOURCE,
 									args: { key: value },
 							  }
 							: undefined;
@@ -188,29 +112,37 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 					updateBlockBindings( {
 						[ attribute ]: value
 							? {
-									source: 'acf/field',
+									source: BINDING_SOURCE,
 									args: { key: value },
 							  }
 							: undefined,
 					} );
 				}
 			},
-			[ boundFields, updateBlockBindings ]
+			[ boundFields, setBoundFields, updateBlockBindings ]
 		);
 
-		// Handle reset
+		// Handle reset all bindings
 		const handleReset = useCallback( () => {
 			removeAllBlockBindings();
 			setBoundFields( {} );
-		}, [ removeAllBlockBindings ] );
+		}, [ removeAllBlockBindings, setBoundFields ] );
 
-		// Don't show if no fields or attributes
-		const fieldOptions = getFieldOptions();
-		if ( fieldOptions.length === 0 || ! bindableAttributes ) {
-			return <BlockEdit { ...props } />;
-		}
+		// Determine if we should show the panel
+		const shouldShowPanel = useMemo( () => {
+			// In site editor, show panel if block has bindable attributes
+			if ( isSiteEditor ) {
+				return bindableAttributes && bindableAttributes.length > 0;
+			}
+			// In post editor, only show if we have fields available
+			return (
+				allFieldOptions.length > 0 &&
+				bindableAttributes &&
+				bindableAttributes.length > 0
+			);
+		}, [ isSiteEditor, allFieldOptions, bindableAttributes ] );
 
-		if ( bindableAttributes.length === 0 ) {
+		if ( ! shouldShowPanel ) {
 			return <BlockEdit { ...props } />;
 		}
 
@@ -239,7 +171,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										null
 									)
 								}
-								isShownByDefault={ true }
+								isShownByDefault
 							>
 								<ComboboxControl
 									label={ __(
@@ -250,7 +182,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 										'Select a field',
 										'secure-custom-fields'
 									) }
-									options={ getFieldOptions() }
+									options={ getAttributeFieldOptions() }
 									value={
 										boundFields[
 											bindableAttributes[ 0 ]
@@ -269,7 +201,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) : (
 							bindableAttributes.map( ( attribute ) => (
 								<ToolsPanelItem
-									key={ `scf-field-${ attribute }` }
+									key={ `scf-binding-${ attribute }` }
 									hasValue={ () =>
 										!! boundFields[ attribute ]
 									}
@@ -277,7 +209,7 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 									onDeselect={ () =>
 										handleFieldChange( attribute, null )
 									}
-									isShownByDefault={ true }
+									isShownByDefault
 								>
 									<ComboboxControl
 										label={ attribute }
@@ -285,7 +217,9 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 											'Select a field',
 											'secure-custom-fields'
 										) }
-										options={ getFieldOptions( attribute ) }
+										options={ getAttributeFieldOptions(
+											attribute
+										) }
 										value={ boundFields[ attribute ] || '' }
 										onChange={ ( value ) =>
 											handleFieldChange(
