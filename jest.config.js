@@ -15,5 +15,7 @@ module.exports = {
 		'!**/node_modules/**',
 		'!**/vendor/**',
 	],
+	coverageDirectory: 'coverage/unit',
+	coverageReporters: [ 'lcov', 'text', 'html' ],
 	transformIgnorePatterns: [ 'node_modules/(?!(react-jsx-parser)/)' ],
 };

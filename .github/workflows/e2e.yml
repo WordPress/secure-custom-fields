@@ -82,7 +82,7 @@ jobs:
               uses: codecov/codecov-action@v5
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
-                  files: ./coverage/lcov.info
+                  files: ./coverage/e2e/lcov.info
                   flags: e2e
                   slug: WordPress/secure-custom-fields
                   name: e2e-coverage

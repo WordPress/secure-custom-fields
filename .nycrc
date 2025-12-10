@@ -1,6 +1,6 @@
 {
 	"tempDir": ".nyc_output",
-	"reportDir": "./coverage",
+	"reportDir": "./coverage/e2e",
 	"reporter": [ "html", "lcov", "text" ],
 	"include": [ "assets/src/**/*.js", "assets/src/**/*.jsx" ],
 	"exclude": [
