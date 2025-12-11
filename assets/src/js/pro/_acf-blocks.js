@@ -611,6 +611,33 @@ const md5 = require( 'md5' );
 	}
 
 	/**
+	 * A react Component for inline scripts.
+	 *
+	 * This Component uses a combination of React references and jQuery to append the
+	 * inline <script> HTML each time the component is rendered.
+	 *
+	 * @date	29/05/2020
+	 * @since	ACF 5.9.0
+	 *
+	 * @param	type Var Description.
+	 * @return	type Description.
+	 */
+	class Script extends Component {
+		render() {
+			return <div ref={ ( el ) => ( this.el = el ) } />;
+		}
+		setHTML( html ) {
+			$( this.el ).html( `<script>${ html }</script>` );
+		}
+		componentDidUpdate() {
+			this.setHTML( this.props.children );
+		}
+		componentDidMount() {
+			this.setHTML( this.props.children );
+		}
+	}
+
+	/**
 	 * Converts the given name into a React friendly name or component.
 	 *
 	 * @date	19/05/2020
@@ -1006,33 +1033,6 @@ const md5 = require( 'md5' );
 					dangerouslySetInnerHTML={ { __html: this.props.children } }
 				/>
 			);
-		}
-	}
-
-	/**
-	 * A react Component for inline scripts.
-	 *
-	 * This Component uses a combination of React references and jQuery to append the
-	 * inline <script> HTML each time the component is rendered.
-	 *
-	 * @date	29/05/2020
-	 * @since	ACF 5.9.0
-	 *
-	 * @param	type Var Description.
-	 * @return	type Description.
-	 */
-	class Script extends Component {
-		render() {
-			return <div ref={ ( el ) => ( this.el = el ) } />;
-		}
-		setHTML( html ) {
-			$( this.el ).html( `<script>${ html }</script>` );
-		}
-		componentDidUpdate() {
-			this.setHTML( this.props.children );
-		}
-		componentDidMount() {
-			this.setHTML( this.props.children );
 		}
 	}
 

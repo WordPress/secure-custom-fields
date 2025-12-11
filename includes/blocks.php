@@ -8,7 +8,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-require_once 'blocks-auto-inline-editing.php';
+require_once dirname( __DIR__ ) . '/pro/blocks-auto-inline-editing.php';
 use function SCF\Blocks\AutoInlineEditing\apply_inline_editing_attributes_to_render_template;
 
 // Register store.
@@ -731,7 +731,6 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 		$block_cache['fields'] = $fields;
 	}
 
-
 	// Store in cache for preloading if we're in the backend.
 	acf_get_store( 'block-cache' )->set(
 		$attributes['id'],
@@ -894,6 +893,7 @@ function acf_enqueue_block_assets() {
 			'Open Expanded Editor'      => __( 'Open Expanded Editor', 'secure-custom-fields' ),
 			'Error previewing block v3' => __( 'The preview for this block couldn’t be loaded. Review its content or settings for issues.', 'secure-custom-fields' ),
 			'ACF Block'                 => __( 'ACF Block', 'secure-custom-fields' ),
+			'Done'                      => __( 'Done', 'secure-custom-fields' ),
 			/* translators: %s: Block type title */
 			'%s settings'               => __( '%s settings', 'secure-custom-fields' ),
 		)
@@ -931,6 +931,7 @@ function acf_enqueue_block_assets() {
 	// Retrieve any cached block HTML and include this in the localized data.
 	if ( acf_get_setting( 'preload_blocks' ) ) {
 		$preloaded_blocks = acf_get_store( 'block-cache' )->get_data();
+
 		acf_localize_data(
 			array(
 				'preloadedBlocks' => $preloaded_blocks,
@@ -1136,10 +1137,9 @@ function acf_ajax_fetch_block() {
 
 		// Render and store HTML.
 		$response['preview'] = acf_rendered_block( $block, $content, $is_preview, $post_id, null, $context, true );
+
+		$response['blockToolbarFields'] = acf_process_block_toolbar_fields( apply_filters( 'acf/blocks/top_toolbar_fields', array(), $block, $content, $is_preview, $post_id, null, $context ) );
 	}
-
-	$response['blockToolbarFields'] = acf_process_block_toolbar_fields( apply_filters( 'acf/blocks/top_toolbar_fields', array(), $block, $content, $is_preview, $post_id, null, $context ) );
-
 	// Send response.
 	wp_send_json_success( $response );
 }
@@ -1646,9 +1646,11 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
  *
  * - A string (e.g. `'my_field_name'`)
  * - An associative array with specific keys:
- * @type string $field_name  The name of the field to display in the toolbar.
- * @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
- * @type string $field_label A string to use as the label for the button in the toolbar.
+ * @type string  $field_name  The name of the field to display in the toolbar.
+ * @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string  $field_label A string to use as the label for the button in the toolbar.
+ * @type boolean $use_expanded_editor Default is false, which opens the field in the popover. Set to true to open in the expanded editor.
+ * @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
  * }
  *
  * @param array $args   Array {
@@ -1657,7 +1659,6 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
  * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
  * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
  * @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
- * @type string $render        Optional. True if it should return the output, false if it should return an empty string.
  * }
  *
  * @return string A string containing the attributes.
@@ -1672,14 +1673,11 @@ function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
 		'toolbar_icon'  => null,
 		'toolbar_title' => null,
 		'uid'           => null,
-		'render'        => null,
 	);
 
 	$args = wp_parse_args( $args, $default_args );
 
-	if ( $args['render'] === null ) {
-		$render = acf_get_data( 'acf_doing_block_preview' );
-	}
+	$render = acf_get_data( 'acf_doing_block_preview' );
 
 	if ( ! $render ) {
 		return '';
@@ -1698,18 +1696,74 @@ function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
 
 	$fields_processed = array();
 
+	/**
+	 * Filters the field types that should open in the expanded editor by default.
+	 *
+	 * @since ACF 6.7.0
+	 *
+	 * @param array $field_types An array of field type names.
+	 * @return array
+	 */
+	$fields_to_open_in_expanded_editor = apply_filters(
+		'acf/blocks/fields_to_open_in_expanded_editor',
+		array(
+			'repeater',
+			'flexible_content',
+		)
+	);
+
+	/**
+	 * Filters the field types that require a wider popover for inline editing.
+	 *
+	 * @since ACF 6.7.0
+	 *
+	 * @param array $field_types An array of field type names.
+	 * @return array
+	 */
+	$fields_needing_wide_popover = apply_filters(
+		'acf/blocks/fields_needing_wide_popover',
+		array(
+			'gallery',
+			'relationship',
+			'wysiwyg',
+			'google_map',
+		)
+	);
+
+	$popover_min_width_normal = '300px';
+	$popover_min_width_wide   = '600px';
+
 	foreach ( $fields as $field ) {
 		if ( is_array( $field ) ) {
-			$generated_uid     .= $field['field_name'];
-			$fields_processed[] = array(
-				'fieldName'  => $field['field_name'],
-				// Base64 allows us to embed html in an attribute without causing issues with quotes, etc.
-				'fieldIcon'  => base64_encode( $field['field_icon'] ), // phpcs:ignore
-				'fieldLabel' => $field['field_label'],
-			);
+			$full_field_data = acf_get_field( $field['field_name'] );
+			if ( $full_field_data ) {
+				$use_expanded_editor_default = in_array( $full_field_data['type'], $fields_to_open_in_expanded_editor, true ) ? true : false;
+				$popover_min_width_default   = in_array( $full_field_data['type'], $fields_needing_wide_popover, true ) ? $popover_min_width_wide : $popover_min_width_normal;
+
+				$generated_uid     .= $field['field_name'];
+				$fields_processed[] = array(
+					'fieldName'         => $field['field_name'],
+					// Base64 allows us to embed html in an attribute without causing issues with quotes, etc.
+					'fieldIcon'         => ! empty( $field['field_icon'] ) ? base64_encode( $field['field_icon'] ) : null, // phpcs:ignore
+					'fieldLabel'        => ! empty( $field['field_label'] ) ? $field['field_label'] : $full_field_data['label'],
+					'useExpandedEditor' => ! empty( $field['use_expanded_editor'] ) ? $field['use_expanded_editor'] : $use_expanded_editor_default,
+					'popoverMinWidth'   => ! empty( $field['popover_min_width'] ) ? $field['popover_min_width'] : $popover_min_width_default,
+				);
+			}
 		} else {
-			$fields_processed[] = $field;
-			$generated_uid     .= $field;
+			$full_field_data = acf_get_field( $field );
+
+			if ( $full_field_data ) {
+				$fields_processed[] = array(
+					'fieldName'         => $field,
+					'fieldIcon'         => null,
+					'fieldLabel'        => $full_field_data['label'],
+					'useExpandedEditor' => in_array( $full_field_data['type'], $fields_to_open_in_expanded_editor, true ) ? true : false,
+					'popoverMinWidth'   => in_array( $full_field_data['type'], $fields_needing_wide_popover, true ) ? $popover_min_width_wide : $popover_min_width_normal,
+				);
+			}
+
+			$generated_uid .= $field;
 		}
 	}
 
@@ -1739,7 +1793,6 @@ function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
  * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
  * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
  * @type string $placeholder   Optional. Optional. A string which will be used as the placeholder in the typable text area.
- * @type string $render        Optional. True if it should return the output, false if it should return an empty string.
  * }
  *
  * @return string A string containing the attributes.
@@ -1757,13 +1810,10 @@ function acf_inline_text_editing_attrs( $field_name, $args = array() ): string {
 		'render'        => null,
 	);
 
-	$args = wp_parse_args( $args, $default_args );
+	$args           = wp_parse_args( $args, $default_args );
+	$args['render'] = acf_get_data( 'acf_doing_block_preview' );
 
-	if ( $args['render'] === null ) {
-		$args['render'] = acf_get_data( 'acf_doing_block_preview' );
-	}
-
-	if ( ! $args['render'] ) {
+	if ( ! $render ) {
 		return '';
 	}
 
@@ -1835,4 +1885,3 @@ function acf_inline_editing_field_is_empty( $field_name ) {
 
 	return false;
 }
-
