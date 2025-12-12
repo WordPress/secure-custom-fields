@@ -79,11 +79,7 @@
 			// Vars.
 			var $inputs = this.$inputs();
 			var hasUnchecked = $inputs.not( ':checked' ).length > 0;
-			$inputs.each( function () {
-				$( this )
-					.prop( 'checked', hasUnchecked )
-					.trigger( 'change' );
-			} );
+			$inputs.prop( 'checked', hasUnchecked ).trigger( 'change' );
 			$el.prop( 'checked', hasUnchecked );
 		},
 
