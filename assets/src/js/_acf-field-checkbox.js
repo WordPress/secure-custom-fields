@@ -77,14 +77,12 @@
 
 		onClickToggle: function ( e, $el ) {
 			// Vars.
-			const inputs = this.$inputs();
-			const hasUnchecked = $inputs.not( ':checked' ).length > 0;
-			inputs.each( function () {
-				$inputs.each( function () {
-					jQuery( this )
-						.prop( 'checked', hasUnchecked )
-						.trigger( 'change' );
-				} );
+			var $inputs = this.$inputs();
+			var hasUnchecked = $inputs.not( ':checked' ).length > 0;
+			$inputs.each( function () {
+				$( this )
+					.prop( 'checked', hasUnchecked )
+					.trigger( 'change' );
 			} );
 			$el.prop( 'checked', hasUnchecked );
 		},
