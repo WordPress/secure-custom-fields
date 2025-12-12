@@ -76,11 +76,9 @@
 		},
 
 		onClickToggle: function ( e, $el ) {
-			// Vars.
 			var $inputs = this.$inputs();
-			var hasUnchecked = $inputs.not( ':checked' ).length > 0;
-			$inputs.prop( 'checked', hasUnchecked ).trigger( 'change' );
-			$el.prop( 'checked', hasUnchecked );
+			var checked = $el.prop( 'checked' );
+			$inputs.prop( 'checked', checked ).trigger( 'change' );
 		},
 
 		onClickCustom: function ( e, $el ) {
