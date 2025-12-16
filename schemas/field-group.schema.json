@@ -18,7 +18,7 @@
 	"definitions": {
 		"fieldGroup": {
 			"type": "object",
-			"required": ["key", "title", "fields"],
+			"required": [ "key", "title", "fields" ],
 			"additionalProperties": false,
 			"properties": {
 				"key": {
@@ -50,25 +50,25 @@
 				},
 				"position": {
 					"type": "string",
-					"enum": ["normal", "side", "acf_after_title"],
+					"enum": [ "normal", "side", "acf_after_title" ],
 					"default": "normal",
 					"description": "Position of the field group on the edit screen"
 				},
 				"style": {
 					"type": "string",
-					"enum": ["default", "seamless"],
+					"enum": [ "default", "seamless" ],
 					"default": "default",
 					"description": "Visual style of the field group metabox"
 				},
 				"label_placement": {
 					"type": "string",
-					"enum": ["top", "left"],
+					"enum": [ "top", "left" ],
 					"default": "top",
 					"description": "Placement of field labels relative to fields"
 				},
 				"instruction_placement": {
 					"type": "string",
-					"enum": ["label", "field"],
+					"enum": [ "label", "field" ],
 					"default": "label",
 					"description": "Placement of field instructions"
 				},
@@ -123,7 +123,7 @@
 		},
 		"field": {
 			"type": "object",
-			"required": ["key", "label", "name", "type"],
+			"required": [ "key", "label", "name", "type" ],
 			"additionalProperties": true,
 			"properties": {
 				"key": {
@@ -202,11 +202,13 @@
 				},
 				"conditional_logic": {
 					"oneOf": [
-						{ "type": "boolean", "enum": [false] },
-						{ "type": "integer", "enum": [0] },
+						{ "type": "boolean", "enum": [ false ] },
+						{ "type": "integer", "enum": [ 0 ] },
 						{
 							"type": "array",
-							"items": { "$ref": "#/definitions/conditionalLogicGroup" }
+							"items": {
+								"$ref": "#/definitions/conditionalLogicGroup"
+							}
 						}
 					],
 					"description": "Conditional logic rules for field visibility"
@@ -235,10 +237,7 @@
 					"description": "Order of the field within its parent"
 				},
 				"parent": {
-					"oneOf": [
-						{ "type": "string" },
-						{ "type": "integer" }
-					],
+					"oneOf": [ { "type": "string" }, { "type": "integer" } ],
 					"description": "Parent field or field group key/ID"
 				},
 				"parent_layout": {
@@ -255,7 +254,7 @@
 		},
 		"locationRule": {
 			"type": "object",
-			"required": ["param", "operator", "value"],
+			"required": [ "param", "operator", "value" ],
 			"additionalProperties": true,
 			"properties": {
 				"param": {
@@ -265,7 +264,7 @@
 				},
 				"operator": {
 					"type": "string",
-					"enum": ["==", "!="],
+					"enum": [ "==", "!=" ],
 					"description": "Comparison operator"
 				},
 				"value": {
@@ -282,7 +281,7 @@
 		},
 		"conditionalLogicRule": {
 			"type": "object",
-			"required": ["field", "operator"],
+			"required": [ "field", "operator" ],
 			"additionalProperties": false,
 			"properties": {
 				"field": {
@@ -292,7 +291,18 @@
 				},
 				"operator": {
 					"type": "string",
-					"enum": ["==", "!=", "!==", "==empty", "!=empty", "==pattern", "==contains", "!=contains", "<", ">"],
+					"enum": [
+						"==",
+						"!=",
+						"!==",
+						"==empty",
+						"!=empty",
+						"==pattern",
+						"==contains",
+						"!=contains",
+						"<",
+						">"
+					],
 					"description": "Comparison operator"
 				},
 				"value": {

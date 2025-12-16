@@ -525,10 +525,7 @@
 	"style": "default",
 	"label_placement": "top",
 	"instruction_placement": "label",
-	"hide_on_screen": [
-		"the_content",
-		"excerpt"
-	],
+	"hide_on_screen": [ "the_content", "excerpt" ],
 	"active": true,
 	"description": "A comprehensive field group for testing all field types",
 	"show_in_rest": false,
