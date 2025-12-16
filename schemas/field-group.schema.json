@@ -1,0 +1,315 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field-group.schema.json",
+	"title": "SCF Field Group(s)",
+	"description": "Schema for Secure Custom Fields field group definitions - accepts single object or array. Validates field group structure and base field properties. Type-specific field properties are allowed but not strictly validated.",
+	"oneOf": [
+		{
+			"description": "Single field group object",
+			"$ref": "#/definitions/fieldGroup"
+		},
+		{
+			"description": "Array of field group objects (export format)",
+			"type": "array",
+			"items": { "$ref": "#/definitions/fieldGroup" },
+			"minItems": 1
+		}
+	],
+	"definitions": {
+		"fieldGroup": {
+			"type": "object",
+			"required": [ "key", "title", "fields" ],
+			"additionalProperties": false,
+			"properties": {
+				"key": {
+					"type": "string",
+					"pattern": "^group_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the field group with group_ prefix (e.g. 'group_abc123')"
+				},
+				"title": {
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 255,
+					"description": "The title/name of the field group"
+				},
+				"fields": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/field" },
+					"description": "Array of field definitions"
+				},
+				"location": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/locationGroup" },
+					"description": "Location rules determining where this field group appears. Array of rule groups (OR logic between groups, AND logic within groups)."
+				},
+				"menu_order": {
+					"type": "integer",
+					"default": 0,
+					"description": "Order in which the field group appears"
+				},
+				"position": {
+					"type": "string",
+					"enum": [ "normal", "side", "acf_after_title" ],
+					"default": "normal",
+					"description": "Position of the field group on the edit screen"
+				},
+				"style": {
+					"type": "string",
+					"enum": [ "default", "seamless" ],
+					"default": "default",
+					"description": "Visual style of the field group metabox"
+				},
+				"label_placement": {
+					"type": "string",
+					"enum": [ "top", "left" ],
+					"default": "top",
+					"description": "Placement of field labels relative to fields"
+				},
+				"instruction_placement": {
+					"type": "string",
+					"enum": [ "label", "field" ],
+					"default": "label",
+					"description": "Placement of field instructions"
+				},
+				"hide_on_screen": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": [
+							"permalink",
+							"the_content",
+							"excerpt",
+							"custom_fields",
+							"discussion",
+							"comments",
+							"revisions",
+							"slug",
+							"author",
+							"format",
+							"page_attributes",
+							"featured_image",
+							"categories",
+							"tags",
+							"send-trackbacks"
+						]
+					},
+					"uniqueItems": true,
+					"description": "Screen elements to hide when this field group is displayed"
+				},
+				"active": {
+					"type": [ "boolean", "integer" ],
+					"default": true,
+					"description": "Whether the field group is active"
+				},
+				"description": {
+					"type": "string",
+					"description": "Description of the field group"
+				},
+				"show_in_rest": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "Whether to expose this field group's fields in the REST API"
+				},
+				"display_title": {
+					"type": "string",
+					"description": "Alternative display title for the field group"
+				},
+				"modified": {
+					"type": "integer",
+					"description": "[SCF Export Only] Unix timestamp of last modification"
+				}
+			}
+		},
+		"field": {
+			"type": "object",
+			"required": [ "key", "label", "name", "type" ],
+			"additionalProperties": true,
+			"properties": {
+				"key": {
+					"type": "string",
+					"pattern": "^field_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+				},
+				"label": {
+					"type": "string",
+					"minLength": 1,
+					"description": "The label displayed for this field"
+				},
+				"name": {
+					"type": "string",
+					"pattern": "^[a-zA-Z0-9_-]*$",
+					"description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+				},
+				"aria-label": {
+					"type": "string",
+					"description": "Accessible label for screen readers"
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"text",
+						"textarea",
+						"number",
+						"range",
+						"email",
+						"url",
+						"password",
+						"image",
+						"file",
+						"wysiwyg",
+						"oembed",
+						"gallery",
+						"select",
+						"checkbox",
+						"radio",
+						"button_group",
+						"true_false",
+						"link",
+						"post_object",
+						"page_link",
+						"relationship",
+						"taxonomy",
+						"user",
+						"google_map",
+						"date_picker",
+						"date_time_picker",
+						"time_picker",
+						"color_picker",
+						"icon_picker",
+						"message",
+						"accordion",
+						"tab",
+						"group",
+						"repeater",
+						"flexible_content",
+						"clone",
+						"nav_menu",
+						"separator",
+						"output"
+					],
+					"description": "The type of field"
+				},
+				"instructions": {
+					"type": "string",
+					"description": "Instructions for content editors"
+				},
+				"required": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "Whether the field is required"
+				},
+				"conditional_logic": {
+					"oneOf": [
+						{ "type": "boolean", "enum": [ false ] },
+						{ "type": "integer", "enum": [ 0 ] },
+						{
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/conditionalLogicGroup"
+							}
+						}
+					],
+					"description": "Conditional logic rules for field visibility"
+				},
+				"wrapper": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"width": {
+							"type": "string",
+							"description": "Width of the field wrapper (e.g. '50' for 50%)"
+						},
+						"class": {
+							"type": "string",
+							"description": "CSS class(es) for the field wrapper"
+						},
+						"id": {
+							"type": "string",
+							"description": "HTML ID for the field wrapper"
+						}
+					},
+					"description": "Wrapper element settings"
+				},
+				"menu_order": {
+					"type": "integer",
+					"description": "Order of the field within its parent"
+				},
+				"parent": {
+					"oneOf": [ { "type": "string" }, { "type": "integer" } ],
+					"description": "Parent field or field group key/ID"
+				},
+				"parent_layout": {
+					"type": "string",
+					"description": "Parent layout key for flexible content sub-fields"
+				}
+			}
+		},
+		"locationGroup": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/locationRule" },
+			"minItems": 1,
+			"description": "Group of location rules (AND logic within group)"
+		},
+		"locationRule": {
+			"type": "object",
+			"required": [ "param", "operator", "value" ],
+			"additionalProperties": true,
+			"properties": {
+				"param": {
+					"type": "string",
+					"minLength": 1,
+					"description": "The parameter to compare (e.g. 'post_type', 'page_template', 'user_role')"
+				},
+				"operator": {
+					"type": "string",
+					"enum": [ "==", "!=" ],
+					"description": "Comparison operator"
+				},
+				"value": {
+					"type": "string",
+					"description": "Value to compare against"
+				}
+			}
+		},
+		"conditionalLogicGroup": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/conditionalLogicRule" },
+			"minItems": 1,
+			"description": "Group of conditional logic rules (AND logic within group)"
+		},
+		"conditionalLogicRule": {
+			"type": "object",
+			"required": [ "field", "operator" ],
+			"additionalProperties": false,
+			"properties": {
+				"field": {
+					"type": "string",
+					"pattern": "^field_.+$",
+					"description": "Field key to check"
+				},
+				"operator": {
+					"type": "string",
+					"enum": [
+						"==",
+						"!=",
+						"!==",
+						"==empty",
+						"!=empty",
+						"==pattern",
+						"==contains",
+						"!=contains",
+						"<",
+						">"
+					],
+					"description": "Comparison operator"
+				},
+				"value": {
+					"type": "string",
+					"description": "Value to compare against (not required for ==empty and !=empty operators)"
+				}
+			}
+		}
+	}
+}

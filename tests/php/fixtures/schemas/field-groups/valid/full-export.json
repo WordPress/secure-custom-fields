@@ -1,0 +1,533 @@
+{
+	"key": "group_comprehensive_export",
+	"title": "Comprehensive Export Test",
+	"fields": [
+		{
+			"key": "field_text_001",
+			"label": "Text Field",
+			"name": "text_field",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Enter some text",
+			"required": 0,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"default_value": "",
+			"placeholder": "Type here...",
+			"maxlength": 100,
+			"prepend": "",
+			"append": ""
+		},
+		{
+			"key": "field_textarea_001",
+			"label": "Textarea Field",
+			"name": "textarea_field",
+			"aria-label": "",
+			"type": "textarea",
+			"instructions": "Enter multi-line text",
+			"required": 1,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"rows": 4,
+			"new_lines": "br",
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": ""
+		},
+		{
+			"key": "field_number_001",
+			"label": "Number Field",
+			"name": "number_field",
+			"aria-label": "",
+			"type": "number",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"default_value": "",
+			"placeholder": "",
+			"prepend": "",
+			"append": ""
+		},
+		{
+			"key": "field_email_001",
+			"label": "Email Field",
+			"name": "email_field",
+			"aria-label": "",
+			"type": "email",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"default_value": "",
+			"placeholder": "",
+			"prepend": "",
+			"append": ""
+		},
+		{
+			"key": "field_url_001",
+			"label": "URL Field",
+			"name": "url_field",
+			"aria-label": "",
+			"type": "url",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"default_value": "",
+			"placeholder": ""
+		},
+		{
+			"key": "field_password_001",
+			"label": "Password Field",
+			"name": "password_field",
+			"aria-label": "",
+			"type": "password",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"placeholder": "",
+			"prepend": "",
+			"append": ""
+		},
+		{
+			"key": "field_wysiwyg_001",
+			"label": "WYSIWYG Editor",
+			"name": "wysiwyg_field",
+			"aria-label": "",
+			"type": "wysiwyg",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"tabs": "all",
+			"toolbar": "full",
+			"media_upload": 1,
+			"default_value": "",
+			"delay": 0
+		},
+		{
+			"key": "field_select_001",
+			"label": "Select Field",
+			"name": "select_field",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"choices": {
+				"option1": "Option 1",
+				"option2": "Option 2",
+				"option3": "Option 3"
+			},
+			"default_value": "option1",
+			"allow_null": 0,
+			"multiple": 0,
+			"ui": 1,
+			"return_format": "value",
+			"ajax": 0,
+			"placeholder": "",
+			"create_options": 0,
+			"save_options": 0
+		},
+		{
+			"key": "field_checkbox_001",
+			"label": "Checkbox Field",
+			"name": "checkbox_field",
+			"aria-label": "",
+			"type": "checkbox",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"choices": {
+				"check1": "Check 1",
+				"check2": "Check 2"
+			},
+			"layout": "vertical",
+			"return_format": "value",
+			"default_value": [],
+			"allow_custom": 0,
+			"save_custom": 0,
+			"toggle": 0,
+			"custom_choice_button_text": "Add new choice"
+		},
+		{
+			"key": "field_radio_001",
+			"label": "Radio Field",
+			"name": "radio_field",
+			"aria-label": "",
+			"type": "radio",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"choices": {
+				"radio1": "Radio 1",
+				"radio2": "Radio 2"
+			},
+			"layout": "horizontal",
+			"return_format": "value",
+			"default_value": "",
+			"other_choice": 0,
+			"save_other_choice": 0,
+			"allow_null": 0
+		},
+		{
+			"key": "field_true_false_001",
+			"label": "True False Field",
+			"name": "true_false_field",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"ui": 1,
+			"ui_on_text": "Yes",
+			"ui_off_text": "No",
+			"default_value": 0,
+			"message": ""
+		},
+		{
+			"key": "field_image_001",
+			"label": "Image Field",
+			"name": "image_field",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"return_format": "array",
+			"preview_size": "medium",
+			"library": "all",
+			"min_width": 0,
+			"min_height": 0,
+			"min_size": 0,
+			"max_width": 0,
+			"max_height": 0,
+			"max_size": 0,
+			"mime_types": ""
+		},
+		{
+			"key": "field_file_001",
+			"label": "File Field",
+			"name": "file_field",
+			"aria-label": "",
+			"type": "file",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"return_format": "array",
+			"library": "all",
+			"min_size": 0,
+			"max_size": 0,
+			"mime_types": ""
+		},
+		{
+			"key": "field_tab_001",
+			"label": "Settings Tab",
+			"name": "",
+			"aria-label": "",
+			"type": "tab",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"placement": "top",
+			"endpoint": 0,
+			"selected": 0
+		},
+		{
+			"key": "field_date_picker_001",
+			"label": "Date Picker",
+			"name": "date_picker_field",
+			"aria-label": "",
+			"type": "date_picker",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"display_format": "F j, Y",
+			"return_format": "Y-m-d",
+			"first_day": 1,
+			"default_to_current_date": 0
+		},
+		{
+			"key": "field_color_picker_001",
+			"label": "Color Picker",
+			"name": "color_picker_field",
+			"aria-label": "",
+			"type": "color_picker",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"enable_opacity": 1,
+			"return_format": "string",
+			"default_value": "",
+			"custom_palette_source": "",
+			"palette_colors": "",
+			"show_color_wheel": true
+		},
+		{
+			"key": "field_message_001",
+			"label": "Message",
+			"name": "",
+			"aria-label": "",
+			"type": "message",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"message": "This is an informational message.",
+			"new_lines": "wpautop",
+			"esc_html": 0
+		},
+		{
+			"key": "field_range_001",
+			"label": "Range Field",
+			"name": "range_field",
+			"aria-label": "",
+			"type": "range",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"min": 0,
+			"max": 100,
+			"step": 5,
+			"default_value": "",
+			"prepend": "",
+			"append": ""
+		},
+		{
+			"key": "field_group_001",
+			"label": "Group Field",
+			"name": "group_field",
+			"aria-label": "",
+			"type": "group",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"layout": "block",
+			"sub_fields": [
+				{
+					"key": "field_group_sub_text",
+					"label": "Sub Text",
+					"name": "sub_text",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "",
+					"required": false,
+					"conditional_logic": false,
+					"wrapper": {
+						"width": "",
+						"class": "",
+						"id": ""
+					},
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "",
+					"prepend": "",
+					"append": ""
+				},
+				{
+					"key": "field_group_sub_number",
+					"label": "Sub Number",
+					"name": "sub_number",
+					"aria-label": "",
+					"type": "number",
+					"instructions": "",
+					"required": false,
+					"conditional_logic": false,
+					"wrapper": {
+						"width": "",
+						"class": "",
+						"id": ""
+					},
+					"default_value": "",
+					"min": "",
+					"max": "",
+					"step": "",
+					"placeholder": "",
+					"prepend": "",
+					"append": ""
+				}
+			]
+		},
+		{
+			"key": "field_repeater_001",
+			"label": "Repeater Field",
+			"name": "repeater_field",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "",
+			"required": false,
+			"conditional_logic": false,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"min": 0,
+			"max": 10,
+			"layout": "row",
+			"button_label": "Add Row",
+			"rows_per_page": 20,
+			"collapsed": "",
+			"sub_fields": [
+				{
+					"key": "field_repeater_sub_text",
+					"label": "Item Text",
+					"name": "item_text",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "",
+					"required": false,
+					"conditional_logic": false,
+					"wrapper": {
+						"width": "",
+						"class": "",
+						"id": ""
+					},
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "",
+					"prepend": "",
+					"append": "",
+					"parent_repeater": "field_repeater_001"
+				},
+				{
+					"key": "field_repeater_sub_image",
+					"label": "Item Image",
+					"name": "item_image",
+					"aria-label": "",
+					"type": "image",
+					"instructions": "",
+					"required": false,
+					"conditional_logic": false,
+					"wrapper": {
+						"width": "",
+						"class": "",
+						"id": ""
+					},
+					"return_format": "id",
+					"preview_size": "medium",
+					"library": "all",
+					"min_width": 0,
+					"min_height": 0,
+					"min_size": 0,
+					"max_width": 0,
+					"max_height": 0,
+					"max_size": 0,
+					"mime_types": "",
+					"parent_repeater": "field_repeater_001"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "post"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": [ "the_content", "excerpt" ],
+	"active": true,
+	"description": "A comprehensive field group for testing all field types",
+	"show_in_rest": false,
+	"display_title": ""
+}
