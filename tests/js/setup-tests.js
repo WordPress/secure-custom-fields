@@ -17,6 +17,14 @@ global.jQuery = jest.fn( ( html ) => {
 } );
 global.$ = global.jQuery;
 
+// Mock ACF global for field type tests
+global.acf = {
+	Field: {
+		extend: jest.fn( ( def ) => def ),
+	},
+	registerFieldType: jest.fn(),
+};
+
 // Mock WordPress packages that are externalized
 jest.mock(
 	'@wordpress/data',
