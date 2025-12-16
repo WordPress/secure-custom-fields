@@ -36,3 +36,5 @@ ignore:
     - 'node_modules'
     - 'tests'
     - 'vendor'
+    # Individual file exclusions
+    - 'includes/abilities/class-scf-ui-options-page-abilities.php' # Thin wrapper - logic tested via base class
