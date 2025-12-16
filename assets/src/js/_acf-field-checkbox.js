@@ -76,17 +76,9 @@
 		},
 
 		onClickToggle: function ( e, $el ) {
-			// Vars.
-			const inputs = this.$inputs();
-			const hasUnchecked = $inputs.not( ':checked' ).length > 0;
-			inputs.each( function () {
-				$inputs.each( function () {
-					jQuery( this )
-						.prop( 'checked', hasUnchecked )
-						.trigger( 'change' );
-				} );
-			} );
-			$el.prop( 'checked', hasUnchecked );
+			var $inputs = this.$inputs();
+			var checked = $el.prop( 'checked' );
+			$inputs.prop( 'checked', checked ).trigger( 'change' );
 		},
 
 		onClickCustom: function ( e, $el ) {
