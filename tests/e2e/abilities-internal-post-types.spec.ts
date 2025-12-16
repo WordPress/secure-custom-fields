@@ -54,6 +54,17 @@ const ENTITY_TYPES = [
 			menu_slug: 'e2e-test-options',
 		},
 	},
+	{
+		name: 'Field Group',
+		slug: 'field-group',
+		slugPlural: 'field-groups',
+		identifierKey: 'key',
+		testEntity: {
+			key: 'group_e2e_test',
+			title: 'E2E Test Field Group',
+			fields: [],
+		},
+	},
 ];
 
 // Shared helper functions
