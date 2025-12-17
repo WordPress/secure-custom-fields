@@ -172,6 +172,111 @@ class Test_ACF_Internal_Post_Type extends BaseTestCase {
 	}
 
 	/**
+	 * Test filter_posts returns only active posts when active filter is true.
+	 *
+	 * Uses ignore_location_rules to test the parent's filter_posts method directly,
+	 * which is the code path used by the abilities API.
+	 */
+	public function test_filter_posts_with_active_true_returns_only_active() {
+		$posts = array(
+			array(
+				'key'    => 'group_active_1',
+				'title'  => 'Active Group 1',
+				'active' => true,
+			),
+			array(
+				'key'    => 'group_inactive_1',
+				'title'  => 'Inactive Group 1',
+				'active' => false,
+			),
+			array(
+				'key'    => 'group_active_2',
+				'title'  => 'Active Group 2',
+				'active' => true,
+			),
+		);
+
+		$filtered = $this->field_group->filter_posts(
+			$posts,
+			array(
+				'active'                => true,
+				'ignore_location_rules' => true,
+			)
+		);
+
+		$this->assertCount( 2, $filtered, 'Should return only active posts' );
+		foreach ( $filtered as $post ) {
+			$this->assertTrue( $post['active'], 'All filtered posts should be active' );
+		}
+	}
+
+	/**
+	 * Test filter_posts returns only inactive posts when active filter is false.
+	 *
+	 * This tests the bug where !empty(false) returns false, so the filter never runs.
+	 * Uses ignore_location_rules to test the parent's filter_posts method directly.
+	 */
+	public function test_filter_posts_with_active_false_returns_only_inactive() {
+		$posts = array(
+			array(
+				'key'    => 'group_active_1',
+				'title'  => 'Active Group 1',
+				'active' => true,
+			),
+			array(
+				'key'    => 'group_inactive_1',
+				'title'  => 'Inactive Group 1',
+				'active' => false,
+			),
+			array(
+				'key'    => 'group_active_2',
+				'title'  => 'Active Group 2',
+				'active' => true,
+			),
+		);
+
+		$filtered = $this->field_group->filter_posts(
+			$posts,
+			array(
+				'active'                => false,
+				'ignore_location_rules' => true,
+			)
+		);
+
+		$this->assertCount( 1, $filtered, 'Should return only inactive posts' );
+		foreach ( $filtered as $post ) {
+			$this->assertFalse( $post['active'], 'All filtered posts should be inactive' );
+		}
+	}
+
+	/**
+	 * Test filter_posts returns all posts when no active filter is provided.
+	 *
+	 * Uses ignore_location_rules to test the parent's filter_posts method directly.
+	 */
+	public function test_filter_posts_without_active_filter_returns_all() {
+		$posts = array(
+			array(
+				'key'    => 'group_active_1',
+				'title'  => 'Active Group 1',
+				'active' => true,
+			),
+			array(
+				'key'    => 'group_inactive_1',
+				'title'  => 'Inactive Group 1',
+				'active' => false,
+			),
+		);
+
+		$filtered = $this->field_group->filter_posts(
+			$posts,
+			array( 'ignore_location_rules' => true )
+		);
+
+		$this->assertCount( 2, $filtered, 'Should return all posts when no filter is applied' );
+	}
+
+	/**
 	 * Test post type duplication uses correct prefix (not group_).
 	 *
 	 * Post types should use 'post_type_' prefix, not the 'group_' prefix used by field groups.
