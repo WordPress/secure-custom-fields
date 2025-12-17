@@ -5,6 +5,7 @@
 	"description": "Shared definitions for SCF schemas",
 	"definitions": {
 		"wordpressReservedTerms": {
+			"description": "WordPress reserved terms that cannot be used as post type or taxonomy slugs. Using these terms will cause conflicts with WordPress core functionality.",
 			"enum": [
 				"action",
 				"attachment",
