@@ -443,11 +443,12 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * @return array
 		 */
 		public function filter_posts( $posts, $args = array() ) {
-			if ( ! empty( $args['active'] ) ) {
-				$posts = array_filter(
+			if ( isset( $args['active'] ) ) {
+				$active_filter = $args['active'];
+				$posts         = array_filter(
 					$posts,
-					function ( $post ) {
-						return $post['active'];
+					function ( $post ) use ( $active_filter ) {
+						return $post['active'] === $active_filter;
 					}
 				);
 			}
