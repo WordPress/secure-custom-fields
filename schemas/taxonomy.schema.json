@@ -79,12 +79,12 @@
 					"items": { "type": "string" },
 					"uniqueItems": true,
 					"default": [],
-					"description": "Post types to which this taxonomy should be attached (e.g. ['post', 'page', 'book'])"
+					"description": "Post types to which this taxonomy should be attached (e.g. ['post', 'page', 'book']). If empty, taxonomy exists but isn't usable from any post type."
 				},
 
 				"labels": {
 					"type": "object",
-					"description": "Labels for the taxonomy in various contexts",
+					"description": "Labels for the taxonomy in various contexts. If omitted, WordPress auto-generates labels from 'title'.",
 					"additionalProperties": false,
 					"properties": {
 						"name": {

@@ -6,7 +6,9 @@
 	"type": ["string", "integer"],
 	"examples": [
 		123,
+		"group_abc123",
 		"post_type_products",
-		"post_type_testimonials"
+		"taxonomy_product_categories",
+		"options_page_theme_settings"
 	]
 }

@@ -70,7 +70,7 @@
 
 				"labels": {
 					"type": "object",
-					"description": "Labels for the post type in various contexts",
+					"description": "Labels for the post type in various contexts. If omitted, WordPress auto-generates labels from 'title'.",
 					"additionalProperties": false,
 					"properties": {
 						"name": {
@@ -250,7 +250,7 @@
 				},
 				"menu_position": {
 					"type": [ "integer", "string", "null" ],
-					"description": "The position in the menu order. SCF exports as empty string or null when not set, integer when set. Import accepts all types and casts to integer."
+					"description": "The position in the menu order. SCF exports as empty string or null when not set, integer when set. Import accepts all types and casts to integer. If omitted, appears below Comments in admin menu."
 				},
 				"menu_icon": {
 					"oneOf": [
@@ -276,7 +276,7 @@
 							"description": "[SCF] SCF icon object format: {\"type\": \"dashicons\", \"value\": \"dashicons-admin-post\"}"
 						}
 					],
-					"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties."
+					"description": "The menu icon. Can be a string (URL or dashicon name) or SCF object format with type and value properties. If omitted, uses default posts icon (dashicons-admin-post)."
 				},
 				"admin_menu_parent": {
 					"type": "string",
@@ -297,7 +297,7 @@
 					"type": "array",
 					"items": { "type": "string" },
 					"uniqueItems": true,
-					"description": "Core feature(s) the post type supports. Common values: 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields', 'comments', 'revisions', 'page-attributes', 'post-formats'. Custom supports are also allowed."
+					"description": "Core feature(s) the post type supports. Common values: 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields', 'comments', 'revisions', 'page-attributes', 'post-formats'. Custom supports are also allowed. If omitted, defaults to ['title', 'editor']."
 				},
 				"taxonomies": {
 					"anyOf": [

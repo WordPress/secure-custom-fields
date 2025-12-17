@@ -42,15 +42,15 @@
 
 				"page_title": {
 					"type": "string",
-					"description": "The page title displayed in the browser tab and page heading"
+					"description": "The page title displayed in the browser tab and page heading. If omitted, falls back to 'title'."
 				},
 				"parent_slug": {
 					"type": "string",
-					"description": "The parent menu slug. Use 'none' for top-level menu, or a WordPress admin menu slug (e.g. 'options-general.php') for submenu."
+					"description": "The parent menu slug. Use 'none' for top-level menu, or a WordPress admin menu slug (e.g. 'options-general.php') for submenu. If omitted, defaults to top-level menu."
 				},
 				"menu_title": {
 					"type": "string",
-					"description": "The title displayed in the admin menu"
+					"description": "The title displayed in the admin menu. If omitted, falls back to 'title'."
 				},
 
 				"active": {
@@ -112,11 +112,11 @@
 							"description": "Empty array representing unset/default state (no icon configured)."
 						}
 					],
-					"description": "The menu icon displayed in the admin menu. Accepts object format with type/value properties, or empty array when no icon is configured."
+					"description": "The menu icon displayed in the admin menu. Accepts object format with type/value properties, or empty array when no icon is configured. If omitted, uses default gear icon (dashicons-admin-generic)."
 				},
 				"position": {
 					"type": [ "integer", "string", "null" ],
-					"description": "The position in the menu where this page should appear. SCF exports as empty string or null when not set, integer when set."
+					"description": "The position in the menu where this page should appear. SCF exports as empty string or null when not set, integer when set. If omitted, appears at bottom of admin menu."
 				},
 				"redirect": {
 					"type": "boolean",

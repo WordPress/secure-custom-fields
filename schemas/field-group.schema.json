@@ -36,12 +36,12 @@
 				"fields": {
 					"type": "array",
 					"items": { "$ref": "#/definitions/field" },
-					"description": "Array of field definitions"
+					"description": "Array of field definitions. If empty array, field group appears but contains no fields."
 				},
 				"location": {
 					"type": "array",
 					"items": { "$ref": "#/definitions/locationGroup" },
-					"description": "Location rules determining where this field group appears. Array of rule groups (OR logic between groups, AND logic within groups)."
+					"description": "Location rules determining where this field group appears. Array of rule groups (OR logic between groups, AND logic within groups). If omitted or empty, field group won't appear on any edit screens."
 				},
 				"menu_order": {
 					"type": "integer",
