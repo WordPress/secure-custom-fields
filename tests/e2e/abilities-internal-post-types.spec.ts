@@ -54,6 +54,17 @@ const ENTITY_TYPES = [
 			menu_slug: 'e2e-test-options',
 		},
 	},
+	{
+		name: 'Field Group',
+		slug: 'field-group',
+		slugPlural: 'field-groups',
+		identifierKey: 'key',
+		testEntity: {
+			key: 'group_e2e_test',
+			title: 'E2E Test Field Group',
+			fields: [],
+		},
+	},
 ];
 
 // Shared helper functions
@@ -465,10 +476,20 @@ for ( const entityType of ENTITY_TYPES ) {
 
 				expect( result ).toHaveProperty( 'key' );
 				expect( result ).toHaveProperty( identifierKey );
+
+				// When duplicating, the internal `key` always changes to a new unique value.
 				expect( result.key ).not.toBe( testEntity.key );
-				expect( result[ identifierKey ] ).toBe(
-					testEntity[ identifierKey ]
-				);
+
+				// For Post Types, Taxonomies, and Options Pages, the user-facing identifier
+				// (post_type, taxonomy, menu_slug) is preserved when duplicating.
+				// For Field Groups, the `key` IS the identifier - there's no separate
+				// user-facing identifier, so this assertion doesn't apply.
+				if ( identifierKey !== 'key' ) {
+					expect( result[ identifierKey ] ).toBe(
+						testEntity[ identifierKey ]
+					);
+				}
+
 				expect( result.title ).toContain( '(copy)' );
 			} );
 

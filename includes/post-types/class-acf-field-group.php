@@ -150,13 +150,34 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 		/**
 		 * Filter the posts returned by $this->get_posts().
 		 *
+		 * By default, field groups are filtered based on their location rules. This
+		 * determines which field groups appear on specific edit screens (e.g., a
+		 * "Product" field group only shows when editing WooCommerce products).
+		 *
+		 * IMPORTANT: Location rule filtering is a UX feature, not a security mechanism.
+		 * It controls which field groups are contextually relevant to display, not
+		 * who can access them. Access control is handled by WordPress capabilities.
+		 *
+		 * Pass 'ignore_location_rules' => true to bypass location-based filtering and
+		 * return all field groups. Use this for admin listings, REST/abilities APIs,
+		 * and other programmatic contexts where all field groups should be listed
+		 * regardless of their location rules.
+		 *
 		 * @since ACF 6.1
 		 *
 		 * @param array $posts An array of posts to filter.
 		 * @param array $args  An array of args to filter by.
+		 *                     - 'ignore_location_rules': Bypass location filtering when true.
+		 *                     - 'active': Filter by active status (handled by parent).
 		 * @return array
 		 */
 		public function filter_posts( $posts, $args = array() ) {
+			// If ignore_location_rules is set, bypass location-based filtering
+			// and use parent's filter (which only filters by active status).
+			if ( ! empty( $args['ignore_location_rules'] ) ) {
+				return parent::filter_posts( $posts, $args );
+			}
+
 			// Loop over field groups and check visibility.
 			$filtered = array();
 			if ( $posts ) {
