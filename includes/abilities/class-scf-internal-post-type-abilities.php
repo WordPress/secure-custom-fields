@@ -282,6 +282,8 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			$this->register_duplicate_ability();
 			$this->register_export_ability();
 			$this->register_import_ability();
+			$this->register_trash_ability();
+			$this->register_untrash_ability();
 		}
 
 		/**
@@ -830,6 +832,130 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				);
 			}
 			return $imported;
+		}
+
+		/**
+		 * Registers the trash ability.
+		 *
+		 * @return void
+		 */
+		private function register_trash_ability() {
+			wp_register_ability(
+				$this->ability_name( 'trash' ),
+				array(
+					'label'               => __( 'Trash', 'secure-custom-fields' ),
+					'description'         => sprintf(
+						/* translators: %s: Entity type */
+						__( 'Moves SCF %s to trash. Can be restored using untrash.', 'secure-custom-fields' ),
+						$this->entity_name()
+					),
+					'category'            => $this->ability_category(),
+					'execute_callback'    => array( $this, 'trash_callback' ),
+					'meta'                => array(
+						'show_in_rest' => true,
+						'mcp'          => array( 'public' => true ),
+						'annotations'  => array(
+							'readonly'    => false,
+							'destructive' => false,
+							'idempotent'  => true,
+						),
+					),
+					'permission_callback' => 'scf_current_user_has_capability',
+					'input_schema'        => array(
+						'type'       => 'object',
+						'properties' => array(
+							'identifier' => $this->get_scf_identifier_schema(),
+						),
+						'required'   => array( 'identifier' ),
+					),
+					'output_schema'       => array(
+						'type'        => 'boolean',
+						'description' => __( 'True on success.', 'secure-custom-fields' ),
+					),
+				)
+			);
+		}
+
+		/**
+		 * Handles the trash ability callback.
+		 *
+		 * @param array $input The input parameters.
+		 * @return bool|WP_Error True on success or error on failure.
+		 */
+		public function trash_callback( $input ) {
+			if ( ! $this->instance()->get_post( $input['identifier'] ) ) {
+				return $this->not_found_error();
+			}
+
+			if ( ! $this->instance()->trash_post( $input['identifier'] ) ) {
+				return new WP_Error(
+					'trash_failed',
+					__( 'Trash operation failed.', 'secure-custom-fields' )
+				);
+			}
+			return true;
+		}
+
+		/**
+		 * Registers the untrash ability.
+		 *
+		 * @return void
+		 */
+		private function register_untrash_ability() {
+			wp_register_ability(
+				$this->ability_name( 'untrash' ),
+				array(
+					'label'               => __( 'Restore', 'secure-custom-fields' ),
+					'description'         => sprintf(
+						/* translators: %s: Entity type */
+						__( 'Restores SCF %s from trash to previous status.', 'secure-custom-fields' ),
+						$this->entity_name()
+					),
+					'category'            => $this->ability_category(),
+					'execute_callback'    => array( $this, 'untrash_callback' ),
+					'meta'                => array(
+						'show_in_rest' => true,
+						'mcp'          => array( 'public' => true ),
+						'annotations'  => array(
+							'readonly'    => false,
+							'destructive' => false,
+							'idempotent'  => true,
+						),
+					),
+					'permission_callback' => 'scf_current_user_has_capability',
+					'input_schema'        => array(
+						'type'       => 'object',
+						'properties' => array(
+							'identifier' => $this->get_scf_identifier_schema(),
+						),
+						'required'   => array( 'identifier' ),
+					),
+					'output_schema'       => array(
+						'type'        => 'boolean',
+						'description' => __( 'True on success.', 'secure-custom-fields' ),
+					),
+				)
+			);
+		}
+
+		/**
+		 * Handles the untrash ability callback.
+		 *
+		 * @param array $input The input parameters.
+		 * @return bool|WP_Error True on success or error on failure.
+		 */
+		public function untrash_callback( $input ) {
+			if ( ! $this->instance()->get_post( $input['identifier'] ) ) {
+				return $this->not_found_error();
+			}
+
+			if ( ! $this->instance()->untrash_post( $input['identifier'] ) ) {
+				return new WP_Error(
+					'untrash_failed',
+					__( 'Restore operation failed.', 'secure-custom-fields' )
+				);
+			}
+			return true;
 		}
 
 		/**
