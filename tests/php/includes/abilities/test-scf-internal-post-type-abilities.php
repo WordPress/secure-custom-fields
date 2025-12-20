@@ -36,7 +36,7 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	private $abilities;
 
 	/**
-	 * Test taxonomy data
+	 * Test taxonomy data for create/import operations
 	 *
 	 * @var array
 	 */
@@ -44,6 +44,17 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 		'key'      => 'taxonomy_phpunit_test',
 		'title'    => 'PHPUnit Test Taxonomy',
 		'taxonomy' => 'phpunit_test',
+	);
+
+	/**
+	 * Reusable mock entity for mocked callback tests
+	 *
+	 * @var array
+	 */
+	private $mock_entity = array(
+		'ID'    => 123,
+		'key'   => 'test_key',
+		'title' => 'Test Taxonomy',
 	);
 
 	/**
@@ -775,14 +786,9 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 */
 	public function test_create_callback_returns_error_for_duplicate_key() {
 		$this->assert_callback_error(
-			array(
-				'get_post' => array(
-					'ID'  => 123,
-					'key' => 'existing_key',
-				),
-			),
+			array( 'get_post' => $this->mock_entity ),
 			array( $this->abilities, 'create_callback' ),
-			array( 'key' => 'existing_key' ),
+			array( 'key' => $this->mock_entity['key'] ),
 			'already_exists'
 		);
 	}
@@ -820,33 +826,24 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * Test update_callback succeeds with valid entity
 	 */
 	public function test_update_callback_success() {
-		$existing_entity = array(
-			'ID'    => 123,
-			'key'   => 'test_key',
-			'title' => 'Old Title',
-		);
-		$updated_entity  = array(
-			'ID'    => 123,
-			'key'   => 'test_key',
-			'title' => 'New Title',
-		);
+		$updated_entity = array_merge( $this->mock_entity, array( 'title' => 'New Title' ) );
 
 		$this->inject_mock_instance(
 			array(
-				'get_post'    => $existing_entity,
+				'get_post'    => $this->mock_entity,
 				'update_post' => $updated_entity,
 			)
 		);
 
 		$result = $this->abilities->update_callback(
 			array(
-				'ID'    => 123,
+				'ID'    => $this->mock_entity['ID'],
 				'title' => 'New Title',
 			)
 		);
 
 		$this->assertIsArray( $result );
-		$this->assertEquals( 123, $result['ID'] );
+		$this->assertEquals( $this->mock_entity['ID'], $result['ID'] );
 		$this->assertEquals( 'New Title', $result['title'] );
 	}
 
@@ -856,15 +853,12 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_delete_callback_success() {
 		$this->inject_mock_instance(
 			array(
-				'get_post'    => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'    => $this->mock_entity,
 				'delete_post' => true,
 			)
 		);
 
-		$result = $this->abilities->delete_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->delete_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertTrue( $result );
 	}
@@ -873,23 +867,19 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * Test duplicate_callback succeeds when entity exists
 	 */
 	public function test_duplicate_callback_success() {
-		$existing_entity   = array(
-			'ID'  => 123,
-			'key' => 'test_key',
-		);
 		$duplicated_entity = array(
 			'ID'  => 456,
-			'key' => 'test_key_copy',
+			'key' => $this->mock_entity['key'] . '_copy',
 		);
 
 		$this->inject_mock_instance(
 			array(
-				'get_post'       => $existing_entity,
+				'get_post'       => $this->mock_entity,
 				'duplicate_post' => $duplicated_entity,
 			)
 		);
 
-		$result = $this->abilities->duplicate_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->duplicate_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( 456, $result['ID'] );
@@ -901,14 +891,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_duplicate_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'       => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'       => $this->mock_entity,
 				'duplicate_post' => false,
 			),
 			array( $this->abilities, 'duplicate_callback' ),
-			array( 'identifier' => 123 ),
+			array( 'identifier' => $this->mock_entity['ID'] ),
 			'duplicate_failed'
 		);
 	}
@@ -917,18 +904,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * Test duplicate_callback returns error when new_post_id is provided but doesn't exist
 	 */
 	public function test_duplicate_callback_returns_error_for_invalid_new_post_id() {
-		$this->inject_mock_instance(
-			array(
-				'get_post' => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
-			)
-		);
+		$this->inject_mock_instance( array( 'get_post' => $this->mock_entity ) );
 
 		$result = $this->abilities->duplicate_callback(
 			array(
-				'identifier'  => 123,
+				'identifier'  => $this->mock_entity['ID'],
 				'new_post_id' => 99999, // Non-existent WordPress post.
 			)
 		);
@@ -942,27 +922,22 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * Test export_callback succeeds when entity exists
 	 */
 	public function test_export_callback_success() {
-		$existing_entity = array(
-			'ID'    => 123,
-			'key'   => 'test_key',
-			'title' => 'Test Taxonomy',
-		);
-		$exported_data   = array(
-			'key'   => 'test_key',
-			'title' => 'Test Taxonomy',
+		$exported_data = array(
+			'key'   => $this->mock_entity['key'],
+			'title' => $this->mock_entity['title'],
 		);
 
 		$this->inject_mock_instance(
 			array(
-				'get_post'                => $existing_entity,
+				'get_post'                => $this->mock_entity,
 				'prepare_post_for_export' => $exported_data,
 			)
 		);
 
-		$result = $this->abilities->export_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->export_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertIsArray( $result );
-		$this->assertEquals( 'test_key', $result['key'] );
+		$this->assertEquals( $this->mock_entity['key'], $result['key'] );
 	}
 
 	/**
@@ -971,14 +946,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_export_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'                => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'                => $this->mock_entity,
 				'prepare_post_for_export' => false,
 			),
 			array( $this->abilities, 'export_callback' ),
-			array( 'identifier' => 123 ),
+			array( 'identifier' => $this->mock_entity['ID'] ),
 			'export_failed'
 		);
 	}
@@ -1004,15 +976,12 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_update_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'    => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'    => $this->mock_entity,
 				'update_post' => false,
 			),
 			array( $this->abilities, 'update_callback' ),
 			array(
-				'ID'    => 123,
+				'ID'    => $this->mock_entity['ID'],
 				'title' => 'New Title',
 			),
 			'update_failed'
@@ -1025,14 +994,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_delete_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'    => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'    => $this->mock_entity,
 				'delete_post' => false,
 			),
 			array( $this->abilities, 'delete_callback' ),
-			array( 'identifier' => 123 ),
+			array( 'identifier' => $this->mock_entity['ID'] ),
 			'delete_failed'
 		);
 	}
@@ -1067,15 +1033,12 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_trash_callback_success() {
 		$this->inject_mock_instance(
 			array(
-				'get_post'   => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'   => $this->mock_entity,
 				'trash_post' => true,
 			)
 		);
 
-		$result = $this->abilities->trash_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->trash_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertTrue( $result );
 	}
@@ -1086,14 +1049,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_trash_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'   => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'   => $this->mock_entity,
 				'trash_post' => false,
 			),
 			array( $this->abilities, 'trash_callback' ),
-			array( 'identifier' => 123 ),
+			array( 'identifier' => $this->mock_entity['ID'] ),
 			'trash_failed'
 		);
 	}
@@ -1116,15 +1076,12 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_untrash_callback_success() {
 		$this->inject_mock_instance(
 			array(
-				'get_post'     => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'     => $this->mock_entity,
 				'untrash_post' => true,
 			)
 		);
 
-		$result = $this->abilities->untrash_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->untrash_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertTrue( $result );
 	}
@@ -1135,14 +1092,11 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	public function test_untrash_callback_returns_error_on_failure() {
 		$this->assert_callback_error(
 			array(
-				'get_post'     => array(
-					'ID'  => 123,
-					'key' => 'test_key',
-				),
+				'get_post'     => $this->mock_entity,
 				'untrash_post' => false,
 			),
 			array( $this->abilities, 'untrash_callback' ),
-			array( 'identifier' => 123 ),
+			array( 'identifier' => $this->mock_entity['ID'] ),
 			'untrash_failed'
 		);
 	}
@@ -1151,23 +1105,13 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * Test get_callback returns entity when found
 	 */
 	public function test_get_callback_success() {
-		$entity = array(
-			'ID'    => 123,
-			'key'   => 'test_key',
-			'title' => 'Test Taxonomy',
-		);
+		$this->inject_mock_instance( array( 'get_post' => $this->mock_entity ) );
 
-		$this->inject_mock_instance(
-			array(
-				'get_post' => $entity,
-			)
-		);
-
-		$result = $this->abilities->get_callback( array( 'identifier' => 123 ) );
+		$result = $this->abilities->get_callback( array( 'identifier' => $this->mock_entity['ID'] ) );
 
 		$this->assertIsArray( $result );
-		$this->assertEquals( 123, $result['ID'] );
-		$this->assertEquals( 'test_key', $result['key'] );
+		$this->assertEquals( $this->mock_entity['ID'], $result['ID'] );
+		$this->assertEquals( $this->mock_entity['key'], $result['key'] );
 	}
 
 	/**
