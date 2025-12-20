@@ -240,6 +240,8 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 			'scf/duplicate-taxonomy',
 			'scf/export-taxonomy',
 			'scf/import-taxonomy',
+			'scf/trash-taxonomy',
+			'scf/untrash-taxonomy',
 		);
 
 		foreach ( $expected_abilities as $ability_name ) {
@@ -356,6 +358,72 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 		$meta        = $ability['meta'] ?? array();
 		$annotations = $meta['annotations'] ?? array();
 		$this->assertTrue( $annotations['readonly'] ?? false, 'Get ability should be marked readonly' );
+	}
+
+	/**
+	 * Test trash ability is marked as idempotent but not destructive
+	 */
+	public function test_trash_ability_is_idempotent() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/trash-taxonomy', $mock_registered_abilities );
+		$ability     = $mock_registered_abilities['scf/trash-taxonomy'];
+		$meta        = $ability['meta'] ?? array();
+		$annotations = $meta['annotations'] ?? array();
+		$this->assertTrue( $annotations['idempotent'] ?? false, 'Trash ability should be marked idempotent' );
+		$this->assertFalse( $annotations['destructive'] ?? true, 'Trash ability should not be marked destructive' );
+		$this->assertFalse( $annotations['readonly'] ?? true, 'Trash ability should not be marked readonly' );
+	}
+
+	/**
+	 * Test untrash ability is marked as idempotent but not destructive
+	 */
+	public function test_untrash_ability_is_idempotent() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/untrash-taxonomy', $mock_registered_abilities );
+		$ability     = $mock_registered_abilities['scf/untrash-taxonomy'];
+		$meta        = $ability['meta'] ?? array();
+		$annotations = $meta['annotations'] ?? array();
+		$this->assertTrue( $annotations['idempotent'] ?? false, 'Untrash ability should be marked idempotent' );
+		$this->assertFalse( $annotations['destructive'] ?? true, 'Untrash ability should not be marked destructive' );
+		$this->assertFalse( $annotations['readonly'] ?? true, 'Untrash ability should not be marked readonly' );
+	}
+
+	/**
+	 * Test trash ability has boolean output schema
+	 */
+	public function test_trash_ability_has_boolean_output_schema() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/trash-taxonomy', $mock_registered_abilities );
+		$ability = $mock_registered_abilities['scf/trash-taxonomy'];
+		$this->assertArrayHasKey( 'output_schema', $ability );
+		$this->assertEquals( 'boolean', $ability['output_schema']['type'] );
+	}
+
+	/**
+	 * Test untrash ability has boolean output schema
+	 */
+	public function test_untrash_ability_has_boolean_output_schema() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/untrash-taxonomy', $mock_registered_abilities );
+		$ability = $mock_registered_abilities['scf/untrash-taxonomy'];
+		$this->assertArrayHasKey( 'output_schema', $ability );
+		$this->assertEquals( 'boolean', $ability['output_schema']['type'] );
 	}
 
 	/**
@@ -978,6 +1046,104 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 			array( $this->abilities, 'import_callback' ),
 			array( 'key' => 'test_key' ),
 			'import_failed'
+		);
+	}
+
+	/**
+	 * Test trash_callback returns WP_Error for non-existent entity
+	 */
+	public function test_trash_callback_not_found_returns_error() {
+		$this->assert_callback_error(
+			array( 'get_post' => null ),
+			array( $this->abilities, 'trash_callback' ),
+			array( 'identifier' => 999999 ),
+			'not_found'
+		);
+	}
+
+	/**
+	 * Test trash_callback succeeds when entity exists
+	 */
+	public function test_trash_callback_success() {
+		$this->inject_mock_instance(
+			array(
+				'get_post'   => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+				'trash_post' => true,
+			)
+		);
+
+		$result = $this->abilities->trash_callback( array( 'identifier' => 123 ) );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test trash_callback returns error when trashing fails
+	 */
+	public function test_trash_callback_returns_error_on_failure() {
+		$this->assert_callback_error(
+			array(
+				'get_post'   => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+				'trash_post' => false,
+			),
+			array( $this->abilities, 'trash_callback' ),
+			array( 'identifier' => 123 ),
+			'trash_failed'
+		);
+	}
+
+	/**
+	 * Test untrash_callback returns WP_Error for non-existent entity
+	 */
+	public function test_untrash_callback_not_found_returns_error() {
+		$this->assert_callback_error(
+			array( 'get_post' => null ),
+			array( $this->abilities, 'untrash_callback' ),
+			array( 'identifier' => 999999 ),
+			'not_found'
+		);
+	}
+
+	/**
+	 * Test untrash_callback succeeds when entity exists
+	 */
+	public function test_untrash_callback_success() {
+		$this->inject_mock_instance(
+			array(
+				'get_post'     => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+				'untrash_post' => true,
+			)
+		);
+
+		$result = $this->abilities->untrash_callback( array( 'identifier' => 123 ) );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test untrash_callback returns error when restoring fails
+	 */
+	public function test_untrash_callback_returns_error_on_failure() {
+		$this->assert_callback_error(
+			array(
+				'get_post'     => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+				'untrash_post' => false,
+			),
+			array( $this->abilities, 'untrash_callback' ),
+			array( 'identifier' => 123 ),
+			'untrash_failed'
 		);
 	}
 
