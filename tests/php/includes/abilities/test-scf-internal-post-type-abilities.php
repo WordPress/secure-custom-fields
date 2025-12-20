@@ -846,6 +846,31 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	}
 
 	/**
+	 * Test duplicate_callback returns error when new_post_id is provided but doesn't exist
+	 */
+	public function test_duplicate_callback_returns_error_for_invalid_new_post_id() {
+		$this->inject_mock_instance(
+			array(
+				'get_post' => array(
+					'ID'  => 123,
+					'key' => 'test_key',
+				),
+			)
+		);
+
+		$result = $this->abilities->duplicate_callback(
+			array(
+				'identifier'  => 123,
+				'new_post_id' => 99999, // Non-existent WordPress post.
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'invalid_new_post_id', $result->get_error_code() );
+		$this->assertEquals( 400, $result->get_error_data()['status'] );
+	}
+
+	/**
 	 * Test export_callback succeeds when entity exists
 	 */
 	public function test_export_callback_success() {

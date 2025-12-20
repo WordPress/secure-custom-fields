@@ -756,7 +756,21 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			}
 
 			$new_post_id = isset( $input['new_post_id'] ) ? $input['new_post_id'] : 0;
-			$duplicated  = $this->instance()->duplicate_post( $input['identifier'], $new_post_id );
+
+			// Validate that new_post_id references an existing WordPress post.
+			if ( $new_post_id && ! get_post( $new_post_id ) ) {
+				return new WP_Error(
+					'invalid_new_post_id',
+					sprintf(
+						/* translators: %d: Invalid post ID */
+						__( 'Invalid new_post_id: %d does not exist.', 'secure-custom-fields' ),
+						$new_post_id
+					),
+					array( 'status' => 400 )
+				);
+			}
+
+			$duplicated = $this->instance()->duplicate_post( $input['identifier'], $new_post_id );
 
 			if ( ! $duplicated ) {
 				return new WP_Error(
