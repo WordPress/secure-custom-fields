@@ -844,7 +844,11 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				$this->ability_name( 'trash' ),
 				array(
 					'label'               => __( 'Trash', 'secure-custom-fields' ),
-					'description'         => __( 'Moves the item to trash. The item can be restored later using untrash.', 'secure-custom-fields' ),
+					'description'         => sprintf(
+						/* translators: %s: Entity type */
+						__( 'Moves SCF %s to trash. Can be restored using untrash.', 'secure-custom-fields' ),
+						$this->entity_name()
+					),
 					'category'            => $this->ability_category(),
 					'execute_callback'    => array( $this, 'trash_callback' ),
 					'meta'                => array(
@@ -866,7 +870,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'output_schema'       => array(
 						'type'        => 'boolean',
-						'description' => __( 'True if the item was trashed successfully.', 'secure-custom-fields' ),
+						'description' => __( 'True on success.', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -886,7 +890,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			if ( ! $this->instance()->trash_post( $input['identifier'] ) ) {
 				return new WP_Error(
 					'trash_failed',
-					__( 'Failed to trash the item.', 'secure-custom-fields' )
+					__( 'Trash operation failed.', 'secure-custom-fields' )
 				);
 			}
 			return true;
@@ -902,7 +906,11 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				$this->ability_name( 'untrash' ),
 				array(
 					'label'               => __( 'Restore', 'secure-custom-fields' ),
-					'description'         => __( 'Restores the item from trash to its previous status.', 'secure-custom-fields' ),
+					'description'         => sprintf(
+						/* translators: %s: Entity type */
+						__( 'Restores SCF %s from trash to previous status.', 'secure-custom-fields' ),
+						$this->entity_name()
+					),
 					'category'            => $this->ability_category(),
 					'execute_callback'    => array( $this, 'untrash_callback' ),
 					'meta'                => array(
@@ -924,7 +932,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 					),
 					'output_schema'       => array(
 						'type'        => 'boolean',
-						'description' => __( 'True if the item was restored successfully.', 'secure-custom-fields' ),
+						'description' => __( 'True on success.', 'secure-custom-fields' ),
 					),
 				)
 			);
@@ -944,7 +952,7 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 			if ( ! $this->instance()->untrash_post( $input['identifier'] ) ) {
 				return new WP_Error(
 					'untrash_failed',
-					__( 'Failed to restore the item.', 'secure-custom-fields' )
+					__( 'Restore operation failed.', 'secure-custom-fields' )
 				);
 			}
 			return true;
