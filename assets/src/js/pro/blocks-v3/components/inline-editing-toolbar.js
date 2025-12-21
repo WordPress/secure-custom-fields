@@ -4,10 +4,9 @@
  * Handles field selection and editing for inline editable elements
  */
 
-import { useState, useEffect, useMemo, createPortal } from '@wordpress/element';
-import { Button, Modal } from '@wordpress/components';
+import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
+import { Toolbar, ToolbarGroup, ToolbarButton, Modal } from '@wordpress/components';
 import { PopoverWrapper } from './popover-wrapper';
-import { BlockForm } from './block-form';
 
 /**
  * InlineEditingToolbar component
@@ -16,7 +15,6 @@ import { BlockForm } from './block-form';
  * @param {Object} props - Component props
  * @param {Object} props.blockIcon - Block icon configuration
  * @param {Array} props.blockFieldInfo - Array of field information
- * @param {React.RefObject} props.acfFormRef - Reference to ACF form
  * @param {Function} props.setInlineEditingToolbarHasFocus - Setter for toolbar focus state
  * @param {Element|null} props.currentContentEditableElement - Current content editable element
  * @param {Element|null} props.currentInlineEditingElement - Current inline editing element
@@ -29,7 +27,6 @@ import { BlockForm } from './block-form';
 export const InlineEditingToolbar = ( {
 	blockIcon,
 	blockFieldInfo,
-	acfFormRef,
 	setInlineEditingToolbarHasFocus,
 	currentContentEditableElement,
 	currentInlineEditingElement,
@@ -38,19 +35,20 @@ export const InlineEditingToolbar = ( {
 	setCurrentBlockFormContainer,
 	contentEditableChangeInProgress,
 } ) => {
-	const [ isFieldPopoverOpen, setIsFieldPopoverOpen ] = useState( false );
-	const [ isFieldModalOpen, setIsFieldModalOpen ] = useState( false );
 	const [ selectedFieldKey, setSelectedFieldKey ] = useState( null );
-	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
-	const fieldPopoverContainerRef = useState( null );
+	const [ selectedFieldConfig, setSelectedFieldConfig ] = useState();
+	const [ selectedFieldButtonRef, setSelectedFieldButtonRef ] = useState();
+	const [ usePopover, setUsePopover ] = useState( true );
+	const fieldPopoverContainerRef = useRef();
 
-	// Parse inline fields from data attribute
+	// Get inline fields from data attribute
 	const inlineFieldsAttr = currentInlineEditingElement
 		? currentInlineEditingElement.getAttribute( 'data-acf-inline-fields' )
 		: null;
+
 	let inlineFields = [];
 	try {
-		inlineFields = JSON.parse( inlineFieldsAttr || '[]' );
+		inlineFields = JSON.parse( inlineFieldsAttr );
 	} catch ( e ) {
 		acf.debug(
 			'Inline fields were not a properly formatted JSON array',
@@ -59,243 +57,331 @@ export const InlineEditingToolbar = ( {
 	}
 
 	/**
-	 * Get field type by field name
+	 * Get field type class name from field name
 	 */
-	const getFieldType = ( fieldName ) => {
+	function getFieldTypeClassName( fieldName ) {
+		if ( ! fieldName || ! blockFieldInfo ) return '';
 		const field = blockFieldInfo.find( ( f ) => f.name === fieldName );
-		return field?.type || null;
-	};
-
-	/**
-	 * Get field info by field name
-	 */
-	const getFieldInfo = ( fieldName ) => {
-		return blockFieldInfo.find( ( f ) => f.name === fieldName ) || null;
-	};
-
-	/**
-	 * Get field label by field name
-	 */
-	const getFieldLabel = ( fieldName ) => {
-		const field = getFieldInfo( fieldName );
-		return field?.label || fieldName;
-	};
-
-	/**
-	 * Check if field type requires modal
-	 */
-	const isComplexFieldType = ( fieldType ) => {
-		return [ 'flexible_content', 'repeater', 'group' ].includes(
-			fieldType
-		);
-	};
-
-	/**
-	 * Get toolbar icon from data attribute or field or default
-	 */
-	const toolbarIcon = useMemo( () => {
-		// Check for custom toolbar icon in data attribute
-		const customIcon = currentInlineEditingElement?.getAttribute(
-			'data-acf-toolbar-icon'
-		);
-		if ( customIcon ) {
-			// Decode base64 SVG if present
-			try {
-				if ( customIcon.startsWith( 'data:image/svg+xml;base64,' ) ) {
-					return customIcon;
-				}
-			} catch ( e ) {
-				// Ignore
-			}
-		}
-
-		// Use field icon if available
-		if ( currentContentEditableElement ) {
-			const fieldSlug = currentContentEditableElement.getAttribute(
-				'data-acf-inline-contenteditable-field-slug'
-			);
-			const field = getFieldInfo( fieldSlug );
-			if ( field?.icon ) {
-				return field.icon;
-			}
-		}
-
-		// Default icon
-		return blockIcon || 'edit';
-	}, [
-		currentInlineEditingElement,
-		currentContentEditableElement,
-		blockIcon,
-	] );
-
-	/**
-	 * Get toolbar title from data attribute or element type or field label
-	 */
-	const toolbarTitle = useMemo( () => {
-		// Check for custom toolbar title in data attribute
-		const customTitle = currentInlineEditingElement?.getAttribute(
-			'data-acf-toolbar-title'
-		);
-		if ( customTitle ) {
-			return customTitle;
-		}
-
-		// Use content editable field label if available
-		if ( currentContentEditableElement ) {
-			const fieldSlug = currentContentEditableElement.getAttribute(
-				'data-acf-inline-contenteditable-field-slug'
-			);
-			return getFieldLabel( fieldSlug );
-		}
-
-		// Use element type (DIV, P, SPAN, etc.) if no field is selected
-		if ( currentInlineEditingElement ) {
-			const tagName = currentInlineEditingElement.tagName;
-			return tagName.charAt( 0 ) + tagName.slice( 1 ).toLowerCase();
-		}
-
-		return acf.__( 'Edit' );
-	}, [
-		currentInlineEditingElement,
-		currentContentEditableElement,
-		blockFieldInfo,
-	] );
-
-	/**
-	 * Handle field button click
-	 */
-	const handleFieldButtonClick = ( fieldName, buttonElement ) => {
-		const fieldType = getFieldType( fieldName );
-
-		// Set selected field
-		setSelectedFieldKey( fieldName );
-
-		// Open modal for complex field types
-		if ( isComplexFieldType( fieldType ) ) {
-			setIsFieldModalOpen( true );
-			setIsFieldPopoverOpen( false );
-		} else {
-			// Open popover for simple fields
-			setPopoverAnchor( buttonElement );
-			setIsFieldPopoverOpen( true );
-		}
-	};
-
-	/**
-	 * Close field popover/modal
-	 */
-	const closeFieldEditor = () => {
-		setIsFieldPopoverOpen( false );
-		setIsFieldModalOpen( false );
-		setSelectedFieldKey( null );
-		setPopoverAnchor( null );
-	};
-
-	// Clean up when toolbar loses focus
-	useEffect( () => {
-		setInlineEditingToolbarHasFocus( true );
-		return () => {
-			setInlineEditingToolbarHasFocus( false );
-		};
-	}, [] );
-
-	if ( ! currentInlineEditingElement || ! currentInlineEditingElementUid ) {
-		return null;
+		return field?.type ? field.type.replace( /_/g, '-' ) : '';
 	}
 
+	/**
+	 * Get field label from field name
+	 */
+	function getFieldLabel( fieldName ) {
+		if ( ! fieldName || ! blockFieldInfo ) return '';
+		const field = blockFieldInfo.find( ( f ) => f.name === fieldName );
+		return field ? field.label : '';
+	}
+
+	// Clear selected field when content editable changes
+	useEffect( () => {
+		setSelectedFieldKey( null );
+	}, [ contentEditableChangeInProgress ] );
+
+	// Generate toolbar icon
+	const toolbarIcon = useMemo( () => {
+		let icon =
+			currentContentEditableElement && ! currentInlineEditingElement
+				? currentContentEditableElement.getAttribute(
+						'data-acf-toolbar-icon'
+				  )
+				: null;
+
+		if ( ! icon && currentInlineEditingElement ) {
+			icon = currentInlineEditingElement
+				? currentInlineEditingElement.getAttribute(
+						'data-acf-toolbar-icon'
+				  )
+				: null;
+		}
+
+		if ( icon ) {
+			icon = <i dangerouslySetInnerHTML={ { __html: icon } } />;
+		}
+
+		if ( ! icon && currentContentEditableElement && ! currentInlineEditingElement ) {
+			const fieldSlug = currentContentEditableElement.getAttribute(
+				'data-acf-inline-contenteditable-field-slug'
+			);
+			icon = (
+				<i
+					className={ `field-type-icon field-type-icon-${ getFieldTypeClassName(
+						fieldSlug
+					) }` }
+				/>
+			);
+		}
+
+		if ( ! icon ) {
+			icon = React.isValidElement( blockIcon ) ? (
+				blockIcon
+			) : (
+				<span className={ `dashicon dashicons dashicons-${ blockIcon }` } />
+			);
+		}
+
+		return icon;
+	}, [ blockFieldInfo, currentContentEditableElement, currentInlineEditingElement ] );
+
+	// Generate toolbar title
+	const toolbarTitle = useMemo( () => {
+		let fieldName;
+
+		if ( currentContentEditableElement && ! currentInlineEditingElement ) {
+			const title = currentContentEditableElement.getAttribute(
+				'data-acf-toolbar-title'
+			);
+			if ( title ) return title;
+
+			fieldName = currentContentEditableElement.getAttribute(
+				'data-acf-inline-contenteditable-field-slug'
+			);
+		} else if ( currentInlineEditingElement ) {
+			const title =
+				currentInlineEditingElement.getAttribute( 'data-acf-toolbar-title' );
+			if ( title ) return title;
+
+			if ( inlineFields.length > 1 ) {
+				const elementTypeLabels = {
+					A: 'Link',
+					DIV: 'Division',
+					P: 'Paragraph',
+					SPAN: 'Span',
+					INPUT: 'Input',
+					BUTTON: 'Button',
+					IMG: 'Image',
+					UL: 'Unordered List',
+					OL: 'Ordered List',
+					LI: 'List Item',
+					H1: 'Heading 1',
+					H2: 'Heading 2',
+					H3: 'Heading 3',
+					H4: 'Heading 4',
+					H5: 'Heading 5',
+					H6: 'Heading 6',
+					TABLE: 'Table',
+					TR: 'Table Row',
+					TD: 'Table Cell',
+					TH: 'Table Header',
+					FORM: 'Form',
+					TEXTAREA: 'Text Area',
+					SELECT: 'Select',
+					OPTION: 'Option',
+				};
+				return elementTypeLabels[ currentInlineEditingElement.tagName ];
+			}
+
+			fieldName =
+				typeof inlineFields[ 0 ] === 'object'
+					? inlineFields[ 0 ].fieldName
+					: inlineFields[ 0 ];
+		}
+
+		return getFieldLabel( fieldName );
+	}, [ currentInlineEditingElement, currentContentEditableElement, blockFieldInfo ] );
+
 	return (
-		<div className="acf-inline-editing-toolbar-content">
-			<div className="acf-inline-editing-toolbar-header">
-				<div className="acf-inline-editing-toolbar-icon">
-					{ typeof toolbarIcon === 'string' &&
-					toolbarIcon.startsWith( 'data:image' ) ? (
-						<img src={ toolbarIcon } alt="" />
-					) : (
-						<span className={ `dashicons dashicons-${ toolbarIcon }` } />
-					) }
-				</div>
-				<div className="acf-inline-editing-toolbar-title">
-					{ toolbarTitle }
-				</div>
-			</div>
-
-			{ inlineFields.length > 0 && (
-				<div className="acf-inline-editing-toolbar-fields">
-					{ inlineFields.map( ( fieldName ) => {
-						const field = getFieldInfo( fieldName );
-						if ( ! field ) {
-							return null;
-						}
-
-						return (
-							<Button
-								key={ fieldName }
-								className="acf-toolbar-button"
-								onClick={ ( e ) => {
-									handleFieldButtonClick(
-										fieldName,
-										e.currentTarget
-									);
-								} }
-								icon={ field.icon || 'edit' }
-								label={ field.label }
-								showTooltip={ true }
-							/>
-						);
-					} ) }
-				</div>
-			) }
-
+		<>
 			{ /* Field popover for simple fields */ }
-			{ isFieldPopoverOpen && popoverAnchor && selectedFieldKey && (
-				<PopoverWrapper
-					className="acf-inline-fields-popover"
-					anchor={ popoverAnchor }
-					placement="bottom-start"
-					onClose={ closeFieldEditor }
-					focusOnMount={ false }
-					variant="unstyled"
-					gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
-				>
-					<div className="acf-inline-fields-popover-inner">
-						{ acfFormRef?.current &&
-							createPortal(
-								<div style={ { padding: '16px' } }>
-									{ /* Render specific field from form */ }
-									<div
-										dangerouslySetInnerHTML={ {
-											__html: acfFormRef.current.querySelector(
-												`[data-name="${ selectedFieldKey }"]`
-											)?.outerHTML,
+			{ selectedFieldKey &&
+				selectedFieldButtonRef &&
+				usePopover &&
+				currentInlineEditingElementUid && (
+					<PopoverWrapper
+						focusOnMount={ false }
+						className="acf-inline-fields-popover"
+						anchor={ selectedFieldButtonRef }
+						onClose={ ( event ) => {
+							if ( event.key === 'Escape' ) {
+								setSelectedFieldKey( null );
+								return true;
+							}
+							// Don't close if clicking inside the popover or anchor
+							if (
+								( event?.target &&
+									fieldPopoverContainerRef?.current &&
+									fieldPopoverContainerRef?.current.contains(
+										event.target
+									) ) ||
+								( selectedFieldButtonRef?.current &&
+									selectedFieldButtonRef?.current.contains(
+										event?.target
+									) )
+							) {
+								return false;
+							}
+							return undefined;
+						} }
+						variant={ usePopover ? 'toolbar' : 'unstyled' }
+						gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+						hidePrimaryBlockToolbar={ true }
+						animate={ true }
+					>
+						<div
+							ref={ fieldPopoverContainerRef }
+							onClick={ () => {
+								setInlineEditingToolbarHasFocus( true );
+							} }
+						>
+							<div
+								className="acf-inline-fields-popover-inner"
+								style={ {
+									minWidth: selectedFieldConfig?.popoverMinWidth
+										? selectedFieldConfig?.popoverMinWidth
+										: '300px',
+								} }
+								ref={ setCurrentBlockFormContainer }
+							/>
+						</div>
+					</PopoverWrapper>
+				) }
+
+			{ /* Modal for complex field types */ }
+			{ selectedFieldKey &&
+				selectedFieldButtonRef &&
+				! usePopover &&
+				currentInlineEditingElementUid && (
+					<Modal
+						className="acf-block-form-modal"
+						isFullScreen={ true }
+						title={
+							blockFieldInfo && selectedFieldKey
+								? blockFieldInfo.find(
+										( f ) => f.name === selectedFieldKey
+								  )?.label
+								: ''
+						}
+						onRequestClose={ () => {
+							setSelectedFieldKey( null );
+						} }
+					>
+						<div
+							ref={ fieldPopoverContainerRef }
+							onClick={ () => {
+								setInlineEditingToolbarHasFocus( true );
+							} }
+						>
+							<div
+								className="acf-inline-fields-popover-inner"
+								style={ {
+									minWidth: selectedFieldConfig?.popoverMinWidth
+										? selectedFieldConfig?.popoverMinWidth
+										: '300px',
+								} }
+								ref={ setCurrentBlockFormContainer }
+							/>
+						</div>
+					</Modal>
+				) }
+
+			{ /* Toolbar */ }
+			<Toolbar
+				orientation="horizontal"
+				className="components-accessible-toolbar block-editor-block-contextual-toolbar"
+				style={ { width: 'max-content' } }
+			>
+				<div className="block-editor-block-toolbar">
+					{ /* Toolbar icon and title */ }
+					<ToolbarGroup style={ { alignItems: 'center' } }>
+						<div
+							className="acf-blocks-toolbar-icon components-toolbar-group block-editor-block-toolbar__block-controls"
+							label={ toolbarTitle }
+						>
+							{ toolbarIcon }
+							<span>{ toolbarTitle }</span>
+						</div>
+					</ToolbarGroup>
+
+					{ /* Field buttons */ }
+					<ToolbarGroup>
+						{ ( () => {
+							if ( ! inlineFields || inlineFields.length === 0 ) {
+								return null;
+							}
+
+							const buttons = inlineFields.map( ( field, index ) => {
+								let fieldName = '';
+								let fieldIconSvg = null;
+								let fieldLabel = null;
+
+								if ( typeof field === 'object' ) {
+									fieldName = field.fieldName
+										? field.fieldName
+										: index;
+									fieldIconSvg = field.fieldIcon
+										? window.atob( field.fieldIcon )
+										: null;
+									fieldLabel = field.fieldLabel
+										? field.fieldLabel
+										: fieldName;
+								} else {
+									fieldName = field;
+								}
+
+								// Use 'edit' icon if field has useExpandedEditor flag
+								if ( ! fieldIconSvg && field?.useExpandedEditor ) {
+									fieldIconSvg = 'edit';
+								}
+
+								return (
+									<ToolbarButton
+										key={ fieldName }
+										disabled={ contentEditableChangeInProgress }
+										className="acf-toolbar-button"
+										icon={
+											fieldIconSvg ? (
+												typeof fieldIconSvg === 'string' &&
+												fieldIconSvg === 'edit' ? (
+													'edit'
+												) : (
+													<i
+														dangerouslySetInnerHTML={ {
+															__html: fieldIconSvg,
+														} }
+													/>
+												)
+											) : (
+												<i
+													className={ `field-type-icon field-type-icon-${ getFieldTypeClassName(
+														fieldName
+													) }` }
+												/>
+											)
+										}
+										label={ fieldLabel || getFieldLabel( fieldName ) }
+										isPressed={ fieldName === selectedFieldKey }
+										ref={
+											fieldName === selectedFieldKey
+												? setSelectedFieldButtonRef
+												: null
+										}
+										onClick={ () => {
+											setInlineEditingToolbarHasFocus( true );
+											if ( selectedFieldKey === fieldName ) {
+												setSelectedFieldKey( null );
+											} else {
+												// Determine if we should use modal or popover
+												setUsePopover( ! field?.useExpandedEditor );
+												setSelectedFieldKey( fieldName );
+												setSelectedFieldConfig( field );
+											}
 										} }
 									/>
-								</div>,
-								fieldPopoverContainerRef
-							) }
-					</div>
-				</PopoverWrapper>
-			) }
+								);
+							} );
 
-			{ /* Field modal for complex fields */ }
-			{ isFieldModalOpen && selectedFieldKey && (
-				<Modal
-					className="acf-inline-field-modal"
-					title={ getFieldLabel( selectedFieldKey ) }
-					onRequestClose={ closeFieldEditor }
-				>
-					<div className="acf-inline-field-modal-content">
-						{ acfFormRef?.current && (
-							<div
-								dangerouslySetInnerHTML={ {
-									__html: acfFormRef.current.querySelector(
-										`[data-name="${ selectedFieldKey }"]`
-									)?.outerHTML,
-								} }
-							/>
-						) }
-					</div>
-				</Modal>
-			) }
-		</div>
+							return buttons;
+						} )() }
+					</ToolbarGroup>
+				</div>
+			</Toolbar>
+
+			{ /* Style to show selected field */ }
+			{ ( () => {
+				const styleContent = `[data-name="${ selectedFieldKey }"]{ display: block!important; }`;
+				return <style>{ styleContent }</style>;
+			} )() }
+		</>
 	);
 };

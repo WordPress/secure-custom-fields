@@ -50,9 +50,7 @@ export const PopoverWrapper = ( {
 		 */
 		const handleEscapeKey = ( event ) => {
 			if ( event.key === 'Escape' ) {
-				event.preventDefault();
-				event.stopPropagation();
-				onClose?.();
+				onClose?.( event );
 			}
 		};
 
@@ -65,7 +63,7 @@ export const PopoverWrapper = ( {
 				'.' + className.split( ' ' ).join( '.' )
 			);
 			if ( ! popoverElement ) {
-				onClose?.();
+				onClose?.( event );
 			}
 		};
 
@@ -114,6 +112,15 @@ export const PopoverWrapper = ( {
 			placement={ placement }
 			animate={ animate }
 		>
+			{ hidePrimaryBlockToolbar && (
+				<style>
+					{ `
+					.components-popover.block-editor-block-popover.block-editor-block-list__block-popover{
+						display: none!important;
+					}
+				` }
+				</style>
+			) }
 			{ children }
 		</Popover>
 	);

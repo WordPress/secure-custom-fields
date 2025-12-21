@@ -49,7 +49,7 @@ const commonConfig = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-react' ],
+						presets: [ [ '@babel/preset-react', { runtime: 'automatic' } ] ],
 						plugins: process.env.COVERAGE_ENABLED
 							? [ 'istanbul' ]
 							: [],

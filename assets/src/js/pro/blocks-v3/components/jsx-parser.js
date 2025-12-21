@@ -154,9 +154,18 @@ function parseAttribute( attribute ) {
  *
  * @param {Node} node - The DOM node to parse
  * @param {number} depth - Current recursion depth (0-based)
+ * @param {Function} setCurrentInlineEditingElementUid - Setter for inline editing UID
+ * @param {Function} setCurrentContentEditableElement - Setter for contentEditable element
+ * @param {Array} blockFieldInfo - Array of field info objects
  * @returns {JSX.Element|null} - React element or null if node should be skipped
  */
-function parseNodeToJSX( node, depth = 0 ) {
+function parseNodeToJSX(
+	node,
+	depth = 0,
+	setCurrentInlineEditingElementUid = null,
+	setCurrentContentEditableElement = null,
+	blockFieldInfo = null
+) {
 	// Determine the component type for this node
 	const componentType = getComponentType( node.nodeName.toLowerCase() );
 
@@ -176,6 +185,152 @@ function parseNodeToJSX( node, depth = 0 ) {
 			props[ name ] = value;
 		} );
 
+	// Add inline fields event handlers
+	if ( node.hasAttribute( 'data-acf-inline-fields' ) ) {
+		props.style = {
+			...parseStyleAttribute( node.getAttribute( 'style' ) || '' ),
+			pointerEvents: 'all',
+		};
+		props.role = 'button';
+		props.tabIndex = 0;
+
+		props.onFocus = ( event ) => {
+			event.stopPropagation();
+			setCurrentInlineEditingElementUid &&
+				setCurrentInlineEditingElementUid(
+					node.attributes.getNamedItem(
+						'data-acf-inline-fields-uid'
+					).value
+				);
+		};
+
+		props.onMouseDown = ( event ) => event.stopPropagation();
+
+		props.onClick = ( event ) => {
+			event.stopPropagation();
+			const link = event.target.closest( 'a' );
+			if ( link && link.tagName === 'A' ) {
+				event.preventDefault();
+				acf.debug( `Navigation prevented for ${ link.href }` );
+			}
+			if (
+				! event.target.hasAttribute( 'data-acf-inline-contenteditable' )
+			) {
+				setCurrentInlineEditingElementUid &&
+					setCurrentInlineEditingElementUid(
+						node.attributes.getNamedItem(
+							'data-acf-inline-fields-uid'
+						).value
+					);
+			}
+		};
+
+		props.onKeyDown = ( event ) => {
+			if ( event.key === 'Tab' && event.shiftKey ) {
+				event.preventDefault();
+				const toolbar = document.querySelector(
+					'.acf-inline-editing-toolbar'
+				);
+				const button = toolbar?.querySelector( 'button' );
+				if ( button ) {
+					button.focus();
+					setCurrentInlineEditingElementUid &&
+						setCurrentInlineEditingElementUid(
+							node.attributes.getNamedItem(
+								'data-acf-inline-fields-uid'
+							).value
+						);
+				}
+			}
+			if ( event.key === 'Enter' ) {
+				event.stopPropagation();
+				const link = event.target.closest( 'a' );
+				if ( link && link.tagName === 'A' ) {
+					event.preventDefault();
+					acf.debug( `Navigation prevented for ${ link.href }` );
+				}
+				setCurrentInlineEditingElementUid &&
+					setCurrentInlineEditingElementUid(
+						node.attributes.getNamedItem(
+							'data-acf-inline-fields-uid'
+						).value
+					);
+			}
+		};
+	}
+
+	// Add contentEditable handlers
+	if ( node.hasAttribute( 'data-acf-inline-contenteditable' ) ) {
+		const fieldSlug = node.attributes.getNamedItem(
+			'data-acf-inline-contenteditable-field-slug'
+		).value;
+		const editableFields = blockFieldInfo
+			? blockFieldInfo.filter(
+					( field ) =>
+						field.name === fieldSlug &&
+						( field.type === 'text' || field.type === 'textarea' )
+			  )
+			: [];
+
+		if ( editableFields.length > 0 ) {
+			props.contentEditable = true;
+			props.suppressContentEditableWarning = true;
+			props.role = 'input';
+			props.tabIndex = 0;
+
+			props.onFocus = ( event ) => {
+				const link = event.target.closest( 'a' );
+				if ( link && link.tagName === 'A' ) {
+					event.preventDefault();
+					acf.debug( `Navigation prevented for ${ link.href }` );
+				}
+				event.stopPropagation();
+				setCurrentContentEditableElement &&
+					setCurrentContentEditableElement(
+						node.attributes.getNamedItem(
+							'data-acf-inline-contenteditable-field-slug'
+						).value
+					);
+
+				if ( node.hasAttribute( 'data-acf-inline-fields' ) ) {
+					setCurrentInlineEditingElementUid &&
+						setCurrentInlineEditingElementUid(
+							node.attributes.getNamedItem(
+								'data-acf-inline-fields-uid'
+							).value
+						);
+				} else {
+					setCurrentInlineEditingElementUid &&
+						setCurrentInlineEditingElementUid( null );
+				}
+			};
+
+			props.onPaste = ( event ) => {
+				event.preventDefault();
+				const text = event.clipboardData.getData( 'text/plain' );
+				event.currentTarget.textContent =
+					event.currentTarget.textContent + text;
+			};
+		} else {
+			// Remove invalid contentEditable attributes
+			delete props[ 'data-acf-inline-contenteditable-field-slug' ];
+			delete props[ 'data-acf-inline-contenteditable' ];
+		}
+	}
+
+	// Add click handler to clear selection if clicking outside inline fields
+	if (
+		! node.hasAttribute( 'data-acf-inline-fields' ) &&
+		! node.hasAttribute( 'data-acf-inline-contenteditable' )
+	) {
+		props.onClick = ( event ) => {
+			if ( event.target === event.currentTarget ) {
+				setCurrentInlineEditingElementUid &&
+					setCurrentInlineEditingElementUid( null );
+			}
+		};
+	}
+
 	// Handle special ACFInnerBlocks component
 	if ( componentType === 'ACFInnerBlocks' ) {
 		return createElement( ACFInnerBlocksComponent, { ...props } );
@@ -192,7 +347,15 @@ function parseNodeToJSX( node, depth = 0 ) {
 				elementArray.push( textContent );
 			}
 		} else {
-			elementArray.push( parseNodeToJSX( childNode, depth + 1 ) );
+			elementArray.push(
+				parseNodeToJSX(
+					childNode,
+					depth + 1,
+					setCurrentInlineEditingElementUid,
+					setCurrentContentEditableElement,
+					blockFieldInfo
+				)
+			);
 		}
 	} );
 
@@ -201,13 +364,45 @@ function parseNodeToJSX( node, depth = 0 ) {
 }
 
 /**
+ * Helper function to parse style attribute string into object
+ *
+ * @param {string} styleString - CSS style string
+ * @returns {Object} - Style object for React
+ */
+function parseStyleAttribute( styleString ) {
+	const styleObj = {};
+	if ( ! styleString ) return styleObj;
+
+	styleString.split( ';' ).forEach( ( rule ) => {
+		const [ property, value ] = rule.split( ':' ).map( ( s ) => s.trim() );
+		if ( property && value ) {
+			// Convert CSS property to camelCase
+			const camelProperty = property.replace( /-([a-z])/g, ( g ) =>
+				g[ 1 ].toUpperCase()
+			);
+			styleObj[ camelProperty ] = value;
+		}
+	} );
+
+	return styleObj;
+}
+
+/**
  * Main parseJSX function exposed on the acf global object
  * Converts HTML string to React elements for use in ACF blocks
  *
  * @param {string} htmlString - HTML markup to parse
+ * @param {Function} setCurrentInlineEditingElementUid - Setter for inline editing UID
+ * @param {Function} setCurrentContentEditableElement - Setter for contentEditable element
+ * @param {Array} blockFieldInfo - Array of field info objects
  * @returns {Array|JSX.Element} - React children from parsed HTML
  */
-export function parseJSX( htmlString ) {
+export function parseJSX(
+	htmlString,
+	setCurrentInlineEditingElementUid = null,
+	setCurrentContentEditableElement = null,
+	blockFieldInfo = null
+) {
 	// Wrap in div to ensure valid HTML structure
 	htmlString = '<div>' + htmlString + '</div>';
 
@@ -218,7 +413,13 @@ export function parseJSX( htmlString ) {
 	);
 
 	// Parse with jQuery, convert to React, and extract children from wrapper div
-	const parsedElement = parseNodeToJSX( jQuery( htmlString )[ 0 ], 0 );
+	const parsedElement = parseNodeToJSX(
+		jQuery( htmlString )[ 0 ],
+		0,
+		setCurrentInlineEditingElementUid,
+		setCurrentContentEditableElement,
+		blockFieldInfo
+	);
 	return parsedElement.props.children;
 }
 

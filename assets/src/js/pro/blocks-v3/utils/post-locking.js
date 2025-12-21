@@ -30,6 +30,20 @@ export const unlockPostSaving = ( clientId ) => {
 };
 
 /**
+ * Checks if post saving is currently locked for a specific block
+ *
+ * @param {string} clientId - The block's client ID
+ * @returns {boolean} - True if post saving is locked for this block
+ */
+export const isPostSavingLocked = ( clientId ) => {
+	const dispatch = wp.data.dispatch( 'core/editor' );
+	if ( ! dispatch ) {
+		return false;
+	}
+	return wp.data.select( 'core/editor' ).isPostSavingLocked( `acf/block/${ clientId }` );
+};
+
+/**
  * Locks post saving with a custom lock name
  * Used for global operations that aren't tied to a specific block
  *

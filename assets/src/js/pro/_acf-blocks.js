@@ -1086,52 +1086,57 @@ const md5 = require( 'md5' );
 
 		maybePreload( blockId, clientId, form ) {
 			acf.debug( 'Preload check', blockId, clientId, form );
-			if ( ! isBlockInQueryLoop( this.props.clientId ) ) {
-				const preloadedBlocks = acf.get( 'preloadedBlocks' );
-				const modeText = form ? 'form' : 'preview';
 
-				if ( preloadedBlocks && preloadedBlocks[ blockId ] ) {
-					// Ensure we only preload the correct block state (form or preview).
-					if (
-						( form && ! preloadedBlocks[ blockId ].form ) ||
-						( ! form && preloadedBlocks[ blockId ].form )
-					) {
-						acf.debug( 'Preload failed: state not preloaded.' );
-						return false;
-					}
-
-					// Set HTML to the preloaded version.
-					preloadedBlocks[ blockId ].html = preloadedBlocks[
-						blockId
-					].html.replaceAll( blockId, clientId );
-
-					// Replace blockId in errors.
-					if (
-						preloadedBlocks[ blockId ].validation &&
-						preloadedBlocks[ blockId ].validation.errors
-					) {
-						preloadedBlocks[ blockId ].validation.errors =
-							preloadedBlocks[ blockId ].validation.errors.map(
-								( error ) => {
-									error.input = error.input.replaceAll(
-										blockId,
-										clientId
-									);
-									return error;
-								}
-							);
-					}
-
-					// Return preloaded object.
-					acf.debug(
-						'Preload successful',
-						preloadedBlocks[ blockId ]
-					);
-					return preloadedBlocks[ blockId ];
-				}
+			// Early return if block is in query loop.
+			if ( isBlockInQueryLoop( this.props.clientId ) ) {
+				acf.debug( 'Preload failed: Block is in query loop.' );
+				return false;
 			}
-			acf.debug( 'Preload failed: not preloaded.' );
-			return false;
+
+			const preloadedBlocks = acf.get( 'preloadedBlocks' );
+
+			// Early return if no preloaded blocks exist.
+			if ( ! preloadedBlocks || ! preloadedBlocks[ blockId ] ) {
+				acf.debug( 'Preload failed: Block not preloaded.' );
+				return false;
+			}
+
+			// Create a copy to avoid mutating the original preloaded data.
+			const preloadedBlock = { ...preloadedBlocks[ blockId ] };
+
+			// Ensure we only preload the correct block state (form or preview).
+			if (
+				( form && ! preloadedBlock.form ) ||
+				( ! form && preloadedBlock.form )
+			) {
+				acf.debug(
+					'Preload failed: Correct state not preloaded.',
+					form ? 'form' : 'preview'
+				);
+				return false;
+			}
+
+			// Replace blockId with clientId in HTML.
+			preloadedBlock.html = preloadedBlock.html.replaceAll(
+				blockId,
+				clientId
+			);
+
+			// Replace blockId in validation errors.
+			if (
+				preloadedBlock.validation &&
+				preloadedBlock.validation.errors
+			) {
+				preloadedBlock.validation.errors =
+					preloadedBlock.validation.errors.map( ( error ) => {
+						error.input = error.input.replaceAll( blockId, clientId );
+						return error;
+					} );
+			}
+
+			// Return preloaded object.
+			acf.debug( 'Preload successful', preloadedBlock );
+			return preloadedBlock;
 		}
 
 		loadState() {
@@ -1254,7 +1259,16 @@ const md5 = require( 'md5' );
 				const $thisParent = $( this.el );
 
 				// Move $el into place.
-				$thisParent.html( $el );
+				// Skip this in StrictMode unless context is 'append' or component is subscribed.
+				if (
+					! (
+						acf.get( 'StrictMode' ) &&
+						context !== 'append' &&
+						! this.subscribed
+					)
+				) {
+					$thisParent.html( $el );
+				}
 
 				// Special case for reusable blocks.
 				// Multiple instances of the same reusable block share the same block id.
@@ -1870,12 +1884,11 @@ const md5 = require( 'md5' );
 		// Register block types.
 		const blockTypes = acf.get( 'blockTypes' );
 		if ( blockTypes ) {
-			// Only register blocks with version < 3 (v3 blocks are registered separately).
-			blockTypes
-				.filter(
-					( blockType ) => parseInt( blockType.acf_block_version ) < 3
-				)
-				.map( registerBlockType );
+			// Only register blocks with version <= 2 (v3+ blocks are registered separately).
+			blockTypes.forEach( ( blockType ) => {
+				parseInt( blockType.acf_block_version ) <= 2 &&
+					registerBlockType( blockType );
+			} );
 		}
 	}
 
