@@ -98,9 +98,9 @@
 					"description": "Screen elements to hide when this field group is displayed"
 				},
 				"active": {
-					"type": [ "boolean", "integer" ],
+					"type": "boolean",
 					"default": true,
-					"description": "Whether the field group is active"
+					"description": "[SCF] Whether the field group is active"
 				},
 				"description": {
 					"type": "string",

@@ -52,7 +52,7 @@
 				"advanced_configuration": {
 					"type": [ "boolean", "integer" ],
 					"default": false,
-					"description": "[SCF Export Only] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
+					"description": "[SCF] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
 				},
 				"import_source": {
 					"type": "string",
@@ -246,7 +246,7 @@
 					"type": "integer",
 					"minimum": 0,
 					"default": 0,
-					"description": "[SCF Export Only] The order of this post type in the admin menu"
+					"description": "The order of this post type in the admin menu"
 				},
 				"menu_position": {
 					"type": [ "integer", "string", "null" ],

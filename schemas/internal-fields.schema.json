@@ -24,7 +24,7 @@
 				},
 				"not_registered": {
 					"type": "boolean",
-					"description": "Flag indicating that this post entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
+					"description": "Flag indicating that this entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
 				}
 			},
 			"additionalProperties": false
