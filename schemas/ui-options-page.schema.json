@@ -27,18 +27,19 @@
 					"minLength": 1,
 					"description": "Unique identifier for the options page with ui_options_page_ prefix (e.g. 'ui_options_page_site_settings')"
 				},
-				"title": {
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 255,
-					"description": "The title/name of the options page"
-				},
+				"title": { "$ref": "file://common.schema.json#/definitions/title" },
 				"menu_slug": {
 					"type": "string",
 					"pattern": "^[a-z0-9_-]+$",
 					"minLength": 1,
 					"description": "The menu slug used in the admin URL (e.g. 'site-settings'). Lowercase letters, numbers, underscores, and dashes only."
 				},
+				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "file://common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "file://common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "file://common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "file://common.schema.json#/definitions/import_date" },
 
 				"page_title": {
 					"type": "string",
@@ -51,36 +52,6 @@
 				"menu_title": {
 					"type": "string",
 					"description": "The title displayed in the admin menu. If omitted, falls back to 'title'."
-				},
-
-				"active": {
-					"type": "boolean",
-					"default": true,
-					"description": "[SCF] Whether this options page is active"
-				},
-				"advanced_configuration": {
-					"type": [ "boolean", "integer" ],
-					"default": false,
-					"description": "[SCF] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
-				},
-				"import_source": {
-					"type": "string",
-					"description": "[SCF Export Only] Source of import if this options page was imported"
-				},
-				"import_date": {
-					"type": "string",
-					"description": "[SCF Export Only] Date when this options page was imported"
-				},
-				"modified": {
-					"type": "integer",
-					"minimum": 0,
-					"description": "[SCF Export Only] Unix timestamp of last modification"
-				},
-				"menu_order": {
-					"type": "integer",
-					"minimum": 0,
-					"default": 0,
-					"description": "The order of this options page in the admin menu"
 				},
 
 				"icon_url": {

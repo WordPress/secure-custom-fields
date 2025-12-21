@@ -27,12 +27,7 @@
 					"minLength": 1,
 					"description": "Unique identifier for the taxonomy with taxonomy_ prefix (e.g. 'taxonomy_genre')"
 				},
-				"title": {
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 255,
-					"description": "The title/name of the taxonomy"
-				},
+				"title": { "$ref": "file://common.schema.json#/definitions/title" },
 				"taxonomy": {
 					"type": "string",
 					"pattern": "^[a-z0-9_-]*$",
@@ -44,35 +39,12 @@
 					"description": "The taxonomy key passed to register_taxonomy() (e.g. 'genre', 'product_tag'). Max 32 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
 
-				"active": {
-					"type": "boolean",
-					"default": true,
-					"description": "[SCF] Whether this taxonomy is active"
-				},
-				"advanced_configuration": {
-					"type": [ "boolean", "integer" ],
-					"default": false,
-					"description": "[SCF] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
-				},
-				"import_source": {
-					"type": "string",
-					"description": "[SCF Export Only] Source of import if this taxonomy was imported"
-				},
-				"import_date": {
-					"type": "string",
-					"description": "[SCF Export Only] Date when this taxonomy was imported"
-				},
-				"modified": {
-					"type": "integer",
-					"minimum": 0,
-					"description": "[SCF Export Only] Unix timestamp of last modification"
-				},
-				"menu_order": {
-					"type": "integer",
-					"minimum": 0,
-					"default": 0,
-					"description": "The order of this taxonomy in the admin menu"
-				},
+				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "file://common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "file://common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "file://common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "file://common.schema.json#/definitions/import_date" },
 
 				"object_type": {
 					"type": "array",
