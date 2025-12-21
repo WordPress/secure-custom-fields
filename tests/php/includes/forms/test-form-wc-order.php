@@ -8,91 +8,13 @@
 use WorDBless\BaseTestCase;
 use SCF\Forms\WC_Order;
 
-/**
- * Mock WC_Order class for testing.
- */
-class Mock_WC_Order {
-	/**
-	 * Order ID.
-	 *
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * Order type.
-	 *
-	 * @var string
-	 */
-	private $type;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param int    $id   Order ID.
-	 * @param string $type Order type.
-	 */
-	public function __construct( $id = 1, $type = 'shop_order' ) {
-		$this->id   = $id;
-		$this->type = $type;
-	}
-
-	/**
-	 * Get order ID.
-	 *
-	 * @return int
-	 */
-	public function get_id() {
-		return $this->id;
-	}
-
-	/**
-	 * Get order type.
-	 *
-	 * @return string
-	 */
-	public function get_type() {
-		return $this->type;
-	}
-}
+// Load mock functions and classes.
+require_once __DIR__ . '/wc-order-test-functions.php';
 
 /**
  * Class Test_Form_WC_Order
  */
 class Test_Form_WC_Order extends BaseTestCase {
-
-	/**
-	 * Store original function existence states.
-	 *
-	 * @var array
-	 */
-	private $original_functions = array();
-
-	/**
-	 * Set up before each test.
-	 */
-	public function set_up() {
-		parent::set_up();
-
-		// Define WooCommerce mock functions if they don't exist.
-		if ( ! function_exists( 'wc_get_order_types' ) ) {
-			function wc_get_order_types( $for = '' ) {
-				return array( 'shop_order', 'shop_subscription', 'shop_order_refund' );
-			}
-		}
-
-		if ( ! function_exists( 'wc_get_order' ) ) {
-			function wc_get_order( $order_id ) {
-				return new Mock_WC_Order( $order_id );
-			}
-		}
-
-		if ( ! function_exists( 'wc_get_page_screen_id' ) ) {
-			function wc_get_page_screen_id( $page ) {
-				return 'woocommerce_page_wc-orders';
-			}
-		}
-	}
 
 	/**
 	 * Tear down after each test.
@@ -202,13 +124,6 @@ class Test_Form_WC_Order extends BaseTestCase {
 	 * Test get_hpos_screen_id handles shop_subscription when wcs_get_page_screen_id exists.
 	 */
 	public function test_get_hpos_screen_id_subscription_with_helper() {
-		// Define the WooCommerce Subscriptions helper function.
-		if ( ! function_exists( 'wcs_get_page_screen_id' ) ) {
-			function wcs_get_page_screen_id( $page ) {
-				return 'woocommerce_page_wc-orders--shop_subscription';
-			}
-		}
-
 		$wc_order = new WC_Order();
 
 		$method = new ReflectionMethod( WC_Order::class, 'get_hpos_screen_id' );
@@ -293,8 +208,6 @@ class Test_Form_WC_Order extends BaseTestCase {
 		$wc_order = new WC_Order();
 
 		// Pass null directly - the method should return early.
-		// Using a Mock that returns null from wc_get_order isn't easy,
-		// so we test by passing an invalid object that will fail the order check.
 		$wc_order->add_meta_boxes( 'shop_order', null );
 
 		// If we get here without errors, the test passes.
@@ -310,11 +223,10 @@ class Test_Form_WC_Order extends BaseTestCase {
 		// Create a mock order with a custom type.
 		$mock_order = new Mock_WC_Order( 123, 'shop_order_charge' );
 
-		// Track what location is passed to acf_get_field_groups.
-		$captured_args = null;
+		// Add filter to prevent further processing and track calls.
 		add_filter(
 			'acf/get_field_groups',
-			function ( $field_groups ) use ( &$captured_args ) {
+			function () {
 				return array(); // Return empty to prevent further processing.
 			}
 		);
@@ -357,7 +269,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 		// Capture output.
 		ob_start();
 		$wc_order->order_edit_form_top( $mock_order );
-		$output = ob_get_clean();
+		ob_get_clean();
 
 		// The acf_form_data function should be called with 'woo_order_456'.
 		// Since we can't easily capture function args, we just verify no errors.
