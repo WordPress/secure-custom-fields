@@ -27,12 +27,7 @@
 					"minLength": 1,
 					"description": "Unique identifier for the post type with post_type_ prefix (e.g. 'post_type_book')"
 				},
-				"title": {
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 255,
-					"description": "The title/name of the post type"
-				},
+				"title": { "$ref": "file://common.schema.json#/definitions/title" },
 				"post_type": {
 					"type": "string",
 					"pattern": "^[a-z0-9_-]+$",
@@ -43,30 +38,12 @@
 					},
 					"description": "The post type key passed to register_post_type() (e.g. 'book', 'product'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
-
-				"active": {
-					"type": "boolean",
-					"default": true,
-					"description": "[SCF] Whether this post type is active"
-				},
-				"advanced_configuration": {
-					"type": [ "boolean", "integer" ],
-					"default": false,
-					"description": "[SCF Export Only] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
-				},
-				"import_source": {
-					"type": "string",
-					"description": "[SCF Export Only] Source of import if this post type was imported"
-				},
-				"import_date": {
-					"type": "string",
-					"description": "[SCF Export Only] Date when this post type was imported"
-				},
-				"modified": {
-					"type": "integer",
-					"minimum": 0,
-					"description": "[SCF Export Only] Unix timestamp of last modification"
-				},
+				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "file://common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "file://common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "file://common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "file://common.schema.json#/definitions/import_date" },
 
 				"labels": {
 					"type": "object",
@@ -241,12 +218,6 @@
 				"show_in_menu": {
 					"type": "boolean",
 					"description": "Where to show the post type in the admin menu"
-				},
-				"menu_order": {
-					"type": "integer",
-					"minimum": 0,
-					"default": 0,
-					"description": "[SCF Export Only] The order of this post type in the admin menu"
 				},
 				"menu_position": {
 					"type": [ "integer", "string", "null" ],
