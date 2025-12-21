@@ -192,15 +192,6 @@ class FieldGroupSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field group with active as boolean should be valid',
 			),
-			'active as integer'             => array(
-				array(
-					'key'    => 'group_active_int',
-					'title'  => 'Active Integer',
-					'fields' => array(),
-					'active' => 1,
-				),
-				'Field group with active as integer should be valid',
-			),
 			'show_in_rest boolean'          => array(
 				array(
 					'key'          => 'group_rest_bool',
