@@ -37,5 +37,6 @@ ignore:
     - 'tests'
     - 'vendor'
     # Individual file exclusions
+    - 'secure-custom-fields.php' # Bootstrap/initialization code
     - 'includes/abilities/class-scf-ui-options-page-abilities.php' # Thin wrapper - logic tested via base class
     - 'includes/abilities/class-scf-field-group-abilities.php' # Thin wrapper - logic tested via base class
