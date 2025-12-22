@@ -284,4 +284,104 @@ class SCFFieldManagerTest extends BaseTestCase {
 		$this->manager->untrash_post( $field['ID'] );
 		$this->assertTrue( $called );
 	}
+
+	/**
+	 * Test get_posts returns an array.
+	 */
+	public function test_get_posts_returns_array() {
+		$result = $this->manager->get_posts();
+		$this->assertIsArray( $result );
+	}
+
+	/**
+	 * Test duplicate_post duplicates a field.
+	 */
+	public function test_duplicate_post_duplicates_field() {
+		$group = acf_update_field_group(
+			array(
+				'key'    => 'group_dup_test',
+				'title'  => 'Dup Test Group',
+				'fields' => array(),
+			)
+		);
+
+		$field = acf_update_field(
+			array(
+				'key'    => 'field_to_dup',
+				'name'   => 'to_dup',
+				'type'   => 'text',
+				'label'  => 'To Duplicate',
+				'parent' => $group['key'],
+			)
+		);
+
+		$duplicate = $this->manager->duplicate_post( $field['ID'] );
+
+		$this->assertIsArray( $duplicate );
+		$this->assertNotEquals( $field['key'], $duplicate['key'] );
+		$this->assertEquals( 'to_dup', $duplicate['name'] );
+	}
+
+	/**
+	 * Test prepare_post_for_export strips internal fields.
+	 */
+	public function test_prepare_post_for_export_strips_internal_fields() {
+		$field = array(
+			'key'    => 'field_export_test',
+			'name'   => 'export_test',
+			'type'   => 'text',
+			'label'  => 'Export Test',
+			'ID'     => 123,
+			'local'  => true,
+			'_valid' => 1,
+			'_name'  => 'internal_name',
+			'prefix' => 'acf',
+			'value'  => 'some value',
+			'id'     => 'acf-field_export_test',
+			'class'  => 'acf-field',
+		);
+
+		$result = $this->manager->prepare_post_for_export( $field );
+
+		$this->assertArrayNotHasKey( 'ID', $result );
+		$this->assertArrayNotHasKey( 'local', $result );
+		$this->assertArrayNotHasKey( '_valid', $result );
+		$this->assertArrayHasKey( 'key', $result );
+		$this->assertArrayHasKey( 'name', $result );
+	}
+
+	/**
+	 * Test import_post imports a field.
+	 */
+	public function test_import_post_imports_field() {
+		$group = acf_update_field_group(
+			array(
+				'key'    => 'group_import_test',
+				'title'  => 'Import Test Group',
+				'fields' => array(),
+			)
+		);
+
+		$called = false;
+		add_action(
+			'acf/import_field',
+			function () use ( &$called ) {
+				$called = true;
+			}
+		);
+
+		$result = $this->manager->import_post(
+			array(
+				'key'    => 'field_imported',
+				'name'   => 'imported_field',
+				'type'   => 'text',
+				'label'  => 'Imported Field',
+				'parent' => $group['key'],
+			)
+		);
+
+		$this->assertTrue( $called );
+		$this->assertIsArray( $result );
+		$this->assertEquals( 'field_imported', $result['key'] );
+	}
 }
