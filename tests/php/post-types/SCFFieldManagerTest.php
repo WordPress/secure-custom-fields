@@ -286,11 +286,36 @@ class SCFFieldManagerTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test get_posts returns an array.
+	 * Test get_posts returns fields from all field groups.
 	 */
-	public function test_get_posts_returns_array() {
+	public function test_get_posts_returns_fields_from_field_groups() {
+		acf_add_local_field_group(
+			array(
+				'key'    => 'group_local_test',
+				'title'  => 'Local Test Group',
+				'fields' => array(
+					array(
+						'key'   => 'field_local_1',
+						'name'  => 'local_field_1',
+						'type'  => 'text',
+						'label' => 'Local Field 1',
+					),
+					array(
+						'key'   => 'field_local_2',
+						'name'  => 'local_field_2',
+						'type'  => 'text',
+						'label' => 'Local Field 2',
+					),
+				),
+			)
+		);
+
 		$result = $this->manager->get_posts();
+
 		$this->assertIsArray( $result );
+		$keys = array_column( $result, 'key' );
+		$this->assertContains( 'field_local_1', $keys );
+		$this->assertContains( 'field_local_2', $keys );
 	}
 
 	/**
