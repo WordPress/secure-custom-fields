@@ -247,8 +247,9 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/blocks.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
 
-			// Include field group class.
+			// Include field group and field manager classes.
 			acf_include( 'includes/post-types/class-acf-field-group.php' );
+			acf_include( 'includes/post-types/class-scf-field-manager.php' );
 
 			// Include ajax.
 			acf_include( 'includes/ajax/class-acf-ajax.php' );
