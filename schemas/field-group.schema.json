@@ -30,7 +30,7 @@
 				"title": { "$ref": "file://common.schema.json#/definitions/title" },
 				"fields": {
 					"type": "array",
-					"items": { "$ref": "#/definitions/field" },
+					"items": { "$ref": "file://field.schema.json#/definitions/field" },
 					"description": "Array of field definitions. If empty array, field group appears but contains no fields."
 				},
 				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
@@ -105,131 +105,6 @@
 				}
 			}
 		},
-		"field": {
-			"type": "object",
-			"required": [ "key", "label", "name", "type" ],
-			"additionalProperties": true,
-			"properties": {
-				"key": {
-					"type": "string",
-					"pattern": "^field_.+$",
-					"minLength": 1,
-					"description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
-				},
-				"label": {
-					"type": "string",
-					"minLength": 1,
-					"description": "The label displayed for this field"
-				},
-				"name": {
-					"type": "string",
-					"pattern": "^[a-zA-Z0-9_-]*$",
-					"description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
-				},
-				"aria-label": {
-					"type": "string",
-					"description": "Accessible label for screen readers"
-				},
-				"type": {
-					"type": "string",
-					"enum": [
-						"text",
-						"textarea",
-						"number",
-						"range",
-						"email",
-						"url",
-						"password",
-						"image",
-						"file",
-						"wysiwyg",
-						"oembed",
-						"gallery",
-						"select",
-						"checkbox",
-						"radio",
-						"button_group",
-						"true_false",
-						"link",
-						"post_object",
-						"page_link",
-						"relationship",
-						"taxonomy",
-						"user",
-						"google_map",
-						"date_picker",
-						"date_time_picker",
-						"time_picker",
-						"color_picker",
-						"icon_picker",
-						"message",
-						"accordion",
-						"tab",
-						"group",
-						"repeater",
-						"flexible_content",
-						"clone",
-						"nav_menu",
-						"separator",
-						"output"
-					],
-					"description": "The type of field"
-				},
-				"instructions": {
-					"type": "string",
-					"description": "Instructions for content editors"
-				},
-				"required": {
-					"type": [ "boolean", "integer" ],
-					"default": false,
-					"description": "Whether the field is required"
-				},
-				"conditional_logic": {
-					"oneOf": [
-						{ "type": "boolean", "enum": [ false ] },
-						{ "type": "integer", "enum": [ 0 ] },
-						{
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/conditionalLogicGroup"
-							}
-						}
-					],
-					"description": "Conditional logic rules for field visibility"
-				},
-				"wrapper": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"width": {
-							"type": "string",
-							"description": "Width of the field wrapper (e.g. '50' for 50%)"
-						},
-						"class": {
-							"type": "string",
-							"description": "CSS class(es) for the field wrapper"
-						},
-						"id": {
-							"type": "string",
-							"description": "HTML ID for the field wrapper"
-						}
-					},
-					"description": "Wrapper element settings"
-				},
-				"menu_order": {
-					"type": "integer",
-					"description": "Order of the field within its parent"
-				},
-				"parent": {
-					"oneOf": [ { "type": "string" }, { "type": "integer" } ],
-					"description": "Parent field or field group key/ID"
-				},
-				"parent_layout": {
-					"type": "string",
-					"description": "Parent layout key for flexible content sub-fields"
-				}
-			}
-		},
 		"locationGroup": {
 			"type": "array",
 			"items": { "$ref": "#/definitions/locationRule" },
@@ -254,44 +129,6 @@
 				"value": {
 					"type": "string",
 					"description": "Value to compare against"
-				}
-			}
-		},
-		"conditionalLogicGroup": {
-			"type": "array",
-			"items": { "$ref": "#/definitions/conditionalLogicRule" },
-			"minItems": 1,
-			"description": "Group of conditional logic rules (AND logic within group)"
-		},
-		"conditionalLogicRule": {
-			"type": "object",
-			"required": [ "field", "operator" ],
-			"additionalProperties": false,
-			"properties": {
-				"field": {
-					"type": "string",
-					"pattern": "^field_.+$",
-					"description": "Field key to check"
-				},
-				"operator": {
-					"type": "string",
-					"enum": [
-						"==",
-						"!=",
-						"!==",
-						"==empty",
-						"!=empty",
-						"==pattern",
-						"==contains",
-						"!=contains",
-						"<",
-						">"
-					],
-					"description": "Comparison operator"
-				},
-				"value": {
-					"type": "string",
-					"description": "Value to compare against (not required for ==empty and !=empty operators)"
 				}
 			}
 		}
