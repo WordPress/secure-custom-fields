@@ -37,11 +37,11 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		private $manager = null;
 
 		/**
-		 * The entity schema.
+		 * The field schema.
 		 *
 		 * @var array|null
 		 */
-		private $entity_schema = null;
+		private $field_schema = null;
 
 		/**
 		 * The SCF identifier schema.
@@ -110,16 +110,16 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 *
 		 * @return array
 		 */
-		private function get_entity_schema() {
-			if ( null === $this->entity_schema ) {
-				$schema_path         = ACF_PATH . 'schemas/field.schema.json';
-				$schema_content      = file_get_contents( $schema_path );
-				$this->entity_schema = json_decode( $schema_content, true );
+		private function get_field_schema() {
+			if ( null === $this->field_schema ) {
+				$schema_path        = ACF_PATH . 'schemas/field.schema.json';
+				$schema_content     = file_get_contents( $schema_path );
+				$this->field_schema = json_decode( $schema_content, true );
 
 				// Resolve $ref references.
-				$this->entity_schema = $this->resolve_schema_refs( $this->entity_schema );
+				$this->field_schema = $this->resolve_schema_refs( $this->field_schema );
 			}
-			return $this->entity_schema;
+			return $this->field_schema;
 		}
 
 		/**
@@ -140,7 +140,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 				$ref = $schema['$ref'];
 				if ( strpos( $ref, '#/definitions/' ) === 0 ) {
 					$def_name   = substr( $ref, 14 );
-					$full       = $this->get_entity_schema();
+					$full       = $this->get_field_schema();
 					$definition = isset( $full['definitions'][ $def_name ] ) ? $full['definitions'][ $def_name ] : array();
 					if ( empty( $definition ) ) {
 						_doing_it_wrong( __METHOD__, 'Unresolvable $ref: ' . esc_html( $ref ), '6.8.0' );
@@ -179,58 +179,42 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		}
 
 		/**
-		 * Gets the internal fields schema for response augmentation.
+		 * Gets the internal fields schema for fields.
 		 *
 		 * @since 6.8.0
 		 *
 		 * @return array
 		 */
 		private function get_internal_fields_schema() {
-			static $schema = null;
-			if ( null === $schema ) {
-				$schema_path = ACF_PATH . 'schemas/internal-fields.schema.json';
-				$schema      = json_decode( file_get_contents( $schema_path ), true );
-			}
-			return $schema;
+			$validator = new SCF_JSON_Schema_Validator();
+			$schema    = $validator->load_schema( 'internal-fields' );
+			return json_decode( wp_json_encode( $schema->definitions->fieldInternalFields ), true );
 		}
 
 		/**
-		 * Gets the entity schema with internal fields merged.
+		 * Gets the field schema merged with internal fields.
+		 *
+		 * Used for output schemas of GET/LIST/CREATE/UPDATE/DUPLICATE abilities.
+		 * Export uses get_field_schema() directly (no internal fields).
+		 *
+		 * The field schema uses oneOf at the top level with the actual field definition
+		 * in definitions.field. Internal fields are merged into that definition.
 		 *
 		 * @since 6.8.0
 		 *
 		 * @return array
 		 */
-		private function get_entity_with_internal_fields_schema() {
-			$entity_schema   = $this->get_entity_schema();
-			$internal_schema = $this->get_internal_fields_schema();
+		private function get_field_with_internal_fields_schema() {
+			$schema   = $this->get_field_schema();
+			$internal = $this->get_internal_fields_schema();
 
-			// Safely get internal properties.
-			$internal_properties = isset( $internal_schema['properties'] ) ? $internal_schema['properties'] : array();
+			// Merge internal fields into the field definition's properties.
+			$schema['definitions']['field']['properties'] = array_merge(
+				$schema['definitions']['field']['properties'],
+				$internal['properties']
+			);
 
-			// If no internal properties to merge, return entity schema as-is.
-			if ( empty( $internal_properties ) ) {
-				return $entity_schema;
-			}
-
-			// Handle oneOf structure.
-			if ( isset( $entity_schema['oneOf'] ) ) {
-				foreach ( $entity_schema['oneOf'] as &$variant ) {
-					if ( isset( $variant['$ref'] ) && strpos( $variant['$ref'], '#/definitions/' ) === 0 ) {
-						$def_name = substr( $variant['$ref'], 14 );
-						if ( isset( $entity_schema['definitions'][ $def_name ]['properties'] ) ) {
-							$entity_schema['definitions'][ $def_name ]['properties'] = array_merge(
-								$entity_schema['definitions'][ $def_name ]['properties'],
-								$internal_properties
-							);
-						}
-					} elseif ( isset( $variant['properties'] ) ) {
-						$variant['properties'] = array_merge( $variant['properties'], $internal_properties );
-					}
-				}
-			}
-
-			return $entity_schema;
+			return $schema;
 		}
 
 		/**
@@ -314,7 +298,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 					),
 					'output_schema'       => array(
 						'type'  => 'array',
-						'items' => $this->get_entity_with_internal_fields_schema(),
+						'items' => $this->get_field_with_internal_fields_schema(),
 					),
 				)
 			);
@@ -350,7 +334,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							'identifier' => $this->get_scf_identifier_schema(),
 						),
 					),
-					'output_schema'       => $this->get_entity_with_internal_fields_schema(),
+					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)
 			);
 		}
@@ -378,8 +362,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							'idempotent'  => false,
 						),
 					),
-					'input_schema'        => $this->get_entity_schema(),
-					'output_schema'       => $this->get_entity_with_internal_fields_schema(),
+					'input_schema'        => $this->get_field_schema(),
+					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)
 			);
 		}
@@ -390,11 +374,11 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @since 6.8.0
 		 */
 		private function register_update_ability() {
-			// Get field properties from entity schema.
-			$entity_schema    = $this->get_entity_schema();
+			// Get field properties from field schema.
+			$field_schema     = $this->get_field_schema();
 			$field_properties = array();
-			if ( isset( $entity_schema['definitions']['field']['properties'] ) ) {
-				$field_properties = $entity_schema['definitions']['field']['properties'];
+			if ( isset( $field_schema['definitions']['field']['properties'] ) ) {
+				$field_properties = $field_schema['definitions']['field']['properties'];
 			}
 
 			wp_register_ability(
@@ -427,7 +411,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							$field_properties
 						),
 					),
-					'output_schema'       => $this->get_entity_with_internal_fields_schema(),
+					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)
 			);
 		}
@@ -503,7 +487,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							),
 						),
 					),
-					'output_schema'       => $this->get_entity_with_internal_fields_schema(),
+					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)
 			);
 		}
@@ -538,7 +522,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							'identifier' => $this->get_scf_identifier_schema(),
 						),
 					),
-					'output_schema'       => $this->get_entity_schema(),
+					'output_schema'       => $this->get_field_schema(),
 				)
 			);
 		}
@@ -566,8 +550,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							'idempotent'  => true,
 						),
 					),
-					'input_schema'        => $this->get_entity_schema(),
-					'output_schema'       => $this->get_entity_with_internal_fields_schema(),
+					'input_schema'        => $this->get_field_schema(),
+					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)
 			);
 		}
