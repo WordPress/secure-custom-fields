@@ -598,7 +598,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 
 			if ( empty( $input['parent'] ) ) {
 				return new WP_Error(
-					'ability_invalid_input',
+					'parent_missing',
 					__( 'Field requires a parent (field group ID).', 'secure-custom-fields' ),
 					array( 'status' => 400 )
 				);
@@ -756,7 +756,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		public function import_callback( $input ) {
 			if ( empty( $input['parent'] ) ) {
 				return new WP_Error(
-					'ability_invalid_input',
+					'parent_missing',
 					__( 'Field requires a parent (field group ID).', 'secure-custom-fields' ),
 					array( 'status' => 400 )
 				);

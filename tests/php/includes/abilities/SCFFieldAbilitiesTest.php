@@ -310,7 +310,7 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		$result = $this->abilities->create_callback( $field_without_parent );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'ability_invalid_input', $result->get_error_code() );
+		$this->assertEquals( 'parent_missing', $result->get_error_code() );
 	}
 
 	/**
@@ -598,7 +598,7 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		$result = $this->abilities->import_callback( $field_without_parent );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'ability_invalid_input', $result->get_error_code() );
+		$this->assertEquals( 'parent_missing', $result->get_error_code() );
 	}
 
 	/**
