@@ -39,25 +39,25 @@ class SCFFieldManagerTest extends BaseTestCase {
 				'key'    => 'field_1',
 				'name'   => 'text_field',
 				'type'   => 'text',
-				'parent' => 'group_123',
+				'parent' => 123,
 			),
 			array(
 				'key'    => 'field_2',
 				'name'   => 'image_field',
 				'type'   => 'image',
-				'parent' => 'group_123',
+				'parent' => 123,
 			),
 			array(
 				'key'    => 'field_3',
 				'name'   => 'another_text',
 				'type'   => 'text',
-				'parent' => 'group_456',
+				'parent' => 456,
 			),
 			array(
 				'key'    => 'field_4',
 				'name'   => 'email_field',
 				'type'   => 'email',
-				'parent' => 'group_456',
+				'parent' => 456,
 			),
 		);
 	}
@@ -91,11 +91,11 @@ class SCFFieldManagerTest extends BaseTestCase {
 	 * Test filter_posts by parent.
 	 */
 	public function test_filter_posts_by_parent() {
-		$result = $this->manager->filter_posts( $this->sample_fields, array( 'parent' => 'group_123' ) );
+		$result = $this->manager->filter_posts( $this->sample_fields, array( 'parent' => 123 ) );
 
 		$this->assertCount( 2, $result );
 		foreach ( $result as $field ) {
-			$this->assertEquals( 'group_123', $field['parent'] );
+			$this->assertEquals( 123, $field['parent'] );
 		}
 	}
 
@@ -128,7 +128,7 @@ class SCFFieldManagerTest extends BaseTestCase {
 		$result = $this->manager->filter_posts(
 			$this->sample_fields,
 			array(
-				'parent' => 'group_123',
+				'parent' => 123,
 				'type'   => 'text',
 			)
 		);
@@ -149,7 +149,7 @@ class SCFFieldManagerTest extends BaseTestCase {
 	 * Test filter_posts reindexes keys.
 	 */
 	public function test_filter_posts_reindexes_keys() {
-		$result = $this->manager->filter_posts( $this->sample_fields, array( 'parent' => 'group_456' ) );
+		$result = $this->manager->filter_posts( $this->sample_fields, array( 'parent' => 456 ) );
 
 		$this->assertArrayHasKey( 0, $result );
 		$this->assertArrayHasKey( 1, $result );
