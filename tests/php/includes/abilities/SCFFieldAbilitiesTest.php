@@ -466,6 +466,27 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		);
 	}
 
+	/**
+	 * Test duplicate_callback returns error when new_parent_id is invalid
+	 */
+	public function test_duplicate_callback_returns_error_when_new_parent_id_invalid() {
+		$this->inject_mock_manager(
+			array(
+				'get_post' => $this->mock_field,
+			)
+		);
+
+		$result = $this->abilities->duplicate_callback(
+			array(
+				'identifier'    => 'field_test_key',
+				'new_parent_id' => 999999, // Non-existent field group ID.
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'invalid_new_parent_id', $result->get_error_code() );
+	}
+
 	// Export callback tests.
 
 	/**
@@ -541,6 +562,35 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		);
 	}
 
+	/**
+	 * Test import_callback returns error when parent is missing
+	 */
+	public function test_import_callback_returns_error_when_parent_missing() {
+		$field_without_parent = $this->test_field;
+		unset( $field_without_parent['parent'] );
+
+		$result = $this->abilities->import_callback( $field_without_parent );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'ability_invalid_input', $result->get_error_code() );
+	}
+
+	/**
+	 * Test import_callback returns error when parent not found
+	 */
+	public function test_import_callback_returns_error_when_parent_not_found() {
+		// Mock the parent as NOT existing.
+		mock_parent_exists( 999, false );
+
+		$field_with_bad_parent           = $this->test_field;
+		$field_with_bad_parent['parent'] = 999;
+
+		$result = $this->abilities->import_callback( $field_with_bad_parent );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'parent_not_found', $result->get_error_code() );
+	}
+
 	// Trash callback tests.
 
 	/**
@@ -609,5 +659,39 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'untrash_failed', $result->get_error_code() );
+	}
+
+	// Schema resolution tests.
+
+	/**
+	 * Test resolve_schema_refs triggers _doing_it_wrong for missing definition
+	 */
+	public function test_resolve_schema_refs_triggers_doing_it_wrong_for_missing_definition() {
+		$reflection = new ReflectionClass( SCF_Field_Abilities::class );
+
+		// First, inject a custom field schema with limited definitions.
+		$property = $reflection->getProperty( 'field_schema' );
+		$property->setAccessible( true );
+		$property->setValue(
+			$this->abilities,
+			array(
+				'definitions' => array(
+					'existingDef' => array( 'type' => 'string' ),
+				),
+			)
+		);
+
+		$method = $reflection->getMethod( 'resolve_schema_refs' );
+		$method->setAccessible( true );
+
+		// Try to resolve a $ref to a non-existent definition.
+		$schema = array(
+			'$ref' => '#/definitions/nonExistentDef',
+		);
+
+		$result = $method->invoke( $this->abilities, $schema );
+
+		// Should return original schema when definition not found.
+		$this->assertEquals( $schema, $result );
 	}
 }

@@ -130,11 +130,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @param array $schema The schema to resolve.
 		 * @return array The resolved schema.
 		 */
-		private function resolve_schema_refs( $schema ) {
-			if ( ! is_array( $schema ) ) {
-				return $schema;
-			}
-
+		private function resolve_schema_refs( array $schema ) {
 			// If this object has a $ref, resolve it.
 			if ( isset( $schema['$ref'] ) ) {
 				$ref = $schema['$ref'];
