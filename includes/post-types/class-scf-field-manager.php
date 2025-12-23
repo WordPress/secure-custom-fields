@@ -89,10 +89,18 @@ if ( ! class_exists( 'SCF_Field_Manager' ) ) :
 		public function filter_posts( $posts, $args = array() ) {
 			if ( isset( $args['parent'] ) ) {
 				$parent_filter = $args['parent'];
+
+				// Convert key to ID if not numeric (same pattern as acf_update_field).
+				if ( $parent_filter && ! is_numeric( $parent_filter ) ) {
+					$parent_post   = acf_get_field_post( $parent_filter );
+					$parent_filter = $parent_post ? $parent_post->ID : 0;
+				}
+
+				$parent_filter = (int) $parent_filter;
 				$posts         = array_filter(
 					$posts,
 					function ( $post ) use ( $parent_filter ) {
-						return $post['parent'] === $parent_filter;
+						return (int) $post['parent'] === $parent_filter;
 					}
 				);
 			}
