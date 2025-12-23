@@ -3,22 +3,19 @@
 	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field.schema.json",
 	"title": "SCF Field",
 	"description": "Schema for Secure Custom Fields field definitions. Validates field structure and base properties. Type-specific field properties are allowed but not strictly validated.",
+	"$comment": "WordPress doesn't support 'allOf', so we use '$ref' with explicit 'required' arrays. Since PHP's array_merge() replaces (not merges) nested arrays, we must redeclare all required fields from the definition plus 'parent'.",
 	"oneOf": [
 		{
 			"description": "Single field object with required parent",
-			"allOf": [
-				{ "$ref": "#/definitions/field" },
-				{ "required": [ "parent" ] }
-			]
+			"$ref": "#/definitions/field",
+			"required": [ "key", "label", "name", "type", "parent" ]
 		},
 		{
 			"description": "Array of field objects with required parent",
 			"type": "array",
 			"items": {
-				"allOf": [
-					{ "$ref": "#/definitions/field" },
-					{ "required": [ "parent" ] }
-				]
+				"$ref": "#/definitions/field",
+				"required": [ "key", "label", "name", "type", "parent" ]
 			},
 			"minItems": 1
 		}

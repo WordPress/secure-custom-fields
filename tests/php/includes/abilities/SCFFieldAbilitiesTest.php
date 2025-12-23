@@ -299,21 +299,6 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test create_callback returns error when parent is missing
-	 */
-	public function test_create_callback_returns_error_when_parent_missing() {
-		$this->inject_mock_manager( array( 'get_post' => false ) );
-
-		$field_without_parent = $this->test_field;
-		unset( $field_without_parent['parent'] );
-
-		$result = $this->abilities->create_callback( $field_without_parent );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'parent_missing', $result->get_error_code() );
-	}
-
-	/**
 	 * Test create_callback returns error when creation fails
 	 */
 	public function test_create_callback_returns_error_when_creation_fails() {
@@ -353,16 +338,6 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( 'Updated Label', $result['label'] );
-	}
-
-	/**
-	 * Test update_callback returns error when ID is missing
-	 */
-	public function test_update_callback_returns_error_when_id_missing() {
-		$result = $this->abilities->update_callback( array( 'label' => 'New Label' ) );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'ability_invalid_input', $result->get_error_code() );
 	}
 
 	/**
@@ -586,19 +561,6 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 			$this->test_field,
 			'import_failed'
 		);
-	}
-
-	/**
-	 * Test import_callback returns error when parent is missing
-	 */
-	public function test_import_callback_returns_error_when_parent_missing() {
-		$field_without_parent = $this->test_field;
-		unset( $field_without_parent['parent'] );
-
-		$result = $this->abilities->import_callback( $field_without_parent );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'parent_missing', $result->get_error_code() );
 	}
 
 	/**

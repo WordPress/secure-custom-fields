@@ -596,14 +596,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 				);
 			}
 
-			if ( empty( $input['parent'] ) ) {
-				return new WP_Error(
-					'parent_missing',
-					__( 'Field requires a parent (field group ID).', 'secure-custom-fields' ),
-					array( 'status' => 400 )
-				);
-			}
-
 			if ( ! $this->parent_exists( $input['parent'] ) ) {
 				return new WP_Error(
 					'parent_not_found',
@@ -631,14 +623,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @return array|WP_Error Updated field or error on failure.
 		 */
 		public function update_callback( $input ) {
-			if ( empty( $input['ID'] ) ) {
-				return new WP_Error(
-					'ability_invalid_input',
-					__( 'Field ID is required for update.', 'secure-custom-fields' ),
-					array( 'status' => 400 )
-				);
-			}
-
 			$existing = $this->manager()->get_post( $input['ID'] );
 			if ( ! $existing ) {
 				return $this->not_found_error();
@@ -754,14 +738,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @return array|WP_Error Imported field or error on failure.
 		 */
 		public function import_callback( $input ) {
-			if ( empty( $input['parent'] ) ) {
-				return new WP_Error(
-					'parent_missing',
-					__( 'Field requires a parent (field group ID).', 'secure-custom-fields' ),
-					array( 'status' => 400 )
-				);
-			}
-
 			if ( ! $this->parent_exists( $input['parent'] ) ) {
 				return new WP_Error(
 					'parent_not_found',

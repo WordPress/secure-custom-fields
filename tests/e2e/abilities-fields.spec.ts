@@ -350,17 +350,6 @@ test.describe( 'Field Abilities', () => {
 				} )
 			);
 		} );
-
-		test( 'should return error when parent is missing', async ( {
-			requestUtils,
-		} ) => {
-			try {
-				await fieldApi.create( requestUtils, TEST_FIELD );
-				throw new Error( 'Expected error but request succeeded' );
-			} catch ( error ) {
-				expect( error.code ).toBe( 'parent_missing' );
-			}
-		} );
 	} );
 
 	// Update field - POST with body
