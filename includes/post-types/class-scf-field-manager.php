@@ -145,30 +145,6 @@ if ( ! class_exists( 'SCF_Field_Manager' ) ) :
 		}
 
 		/**
-		 * Moves a field to trash.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param int|string $id The field ID or key.
-		 * @return bool True on success, false on failure.
-		 */
-		public function trash_post( $id = 0 ) {
-			return acf_trash_field( $id );
-		}
-
-		/**
-		 * Restores a field from trash.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param int|string $id The field ID or key.
-		 * @return bool True on success, false on failure.
-		 */
-		public function untrash_post( $id = 0 ) {
-			return acf_untrash_field( $id );
-		}
-
-		/**
 		 * Duplicates a field.
 		 *
 		 * @since 6.8.0

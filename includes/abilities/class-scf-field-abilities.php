@@ -242,8 +242,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 			$this->register_duplicate_ability();
 			$this->register_export_ability();
 			$this->register_import_ability();
-			$this->register_trash_ability();
-			$this->register_untrash_ability();
 		}
 
 		/**
@@ -553,80 +551,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		}
 
 		/**
-		 * Registers the trash ability.
-		 *
-		 * @since 6.8.0
-		 */
-		private function register_trash_ability() {
-			wp_register_ability(
-				$this->ability_name( 'trash' ),
-				array(
-					'label'               => __( 'Trash Field', 'secure-custom-fields' ),
-					'description'         => __( 'Moves an SCF field to trash. Can be restored with untrash.', 'secure-custom-fields' ),
-					'category'            => $this->ability_category(),
-					'execute_callback'    => array( $this, 'trash_callback' ),
-					'permission_callback' => 'scf_current_user_has_capability',
-					'meta'                => array(
-						'show_in_rest' => true,
-						'mcp'          => array( 'public' => true ),
-						'annotations'  => array(
-							'readonly'    => false,
-							'destructive' => true,
-							'idempotent'  => true,
-						),
-					),
-					'input_schema'        => array(
-						'type'       => 'object',
-						'required'   => array( 'identifier' ),
-						'properties' => array(
-							'identifier' => $this->get_scf_identifier_schema(),
-						),
-					),
-					'output_schema'       => array(
-						'type' => 'boolean',
-					),
-				)
-			);
-		}
-
-		/**
-		 * Registers the untrash ability.
-		 *
-		 * @since 6.8.0
-		 */
-		private function register_untrash_ability() {
-			wp_register_ability(
-				$this->ability_name( 'untrash' ),
-				array(
-					'label'               => __( 'Untrash Field', 'secure-custom-fields' ),
-					'description'         => __( 'Restores an SCF field from trash.', 'secure-custom-fields' ),
-					'category'            => $this->ability_category(),
-					'execute_callback'    => array( $this, 'untrash_callback' ),
-					'permission_callback' => 'scf_current_user_has_capability',
-					'meta'                => array(
-						'show_in_rest' => true,
-						'mcp'          => array( 'public' => true ),
-						'annotations'  => array(
-							'readonly'    => false,
-							'destructive' => false,
-							'idempotent'  => true,
-						),
-					),
-					'input_schema'        => array(
-						'type'       => 'object',
-						'required'   => array( 'identifier' ),
-						'properties' => array(
-							'identifier' => $this->get_scf_identifier_schema(),
-						),
-					),
-					'output_schema'       => array(
-						'type' => 'boolean',
-					),
-				)
-			);
-		}
-
-		/**
 		 * Handles the list ability callback.
 		 *
 		 * @since 6.8.0
@@ -854,46 +778,6 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 				);
 			}
 			return $imported;
-		}
-
-		/**
-		 * Handles the trash ability callback.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param array $input The input parameters.
-		 * @return bool|WP_Error True on success or error on failure.
-		 */
-		public function trash_callback( $input ) {
-			if ( ! $this->manager()->get_post( $input['identifier'] ) ) {
-				return $this->not_found_error();
-			}
-
-			if ( ! $this->manager()->trash_post( $input['identifier'] ) ) {
-				return new WP_Error(
-					'trash_failed',
-					__( 'Trash operation failed.', 'secure-custom-fields' )
-				);
-			}
-			return true;
-		}
-
-		/**
-		 * Handles the untrash ability callback.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param array $input The input parameters.
-		 * @return bool|WP_Error True on success or error on failure.
-		 */
-		public function untrash_callback( $input ) {
-			if ( ! $this->manager()->untrash_post( $input['identifier'] ) ) {
-				return new WP_Error(
-					'untrash_failed',
-					__( 'Untrash operation failed.', 'secure-custom-fields' )
-				);
-			}
-			return true;
 		}
 
 		/**

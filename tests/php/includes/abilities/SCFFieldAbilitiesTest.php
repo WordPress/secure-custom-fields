@@ -192,8 +192,6 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 			'duplicate-field',
 			'export-field',
 			'import-field',
-			'trash-field',
-			'untrash-field',
 		);
 
 		foreach ( $expected_abilities as $ability_name ) {
@@ -617,76 +615,6 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'parent_not_found', $result->get_error_code() );
-	}
-
-	// Trash callback tests.
-
-	/**
-	 * Test trash_callback trashes field
-	 */
-	public function test_trash_callback_trashes_field() {
-		$this->inject_mock_manager(
-			array(
-				'get_post'   => $this->mock_field,
-				'trash_post' => true,
-			)
-		);
-
-		$result = $this->abilities->trash_callback( array( 'identifier' => 'field_test_key' ) );
-
-		$this->assertTrue( $result );
-	}
-
-	/**
-	 * Test trash_callback returns error when field not found
-	 */
-	public function test_trash_callback_returns_error_when_not_found() {
-		$this->assert_callback_error(
-			array( 'get_post' => false ),
-			array( $this->abilities, 'trash_callback' ),
-			array( 'identifier' => 'nonexistent' ),
-			'not_found'
-		);
-	}
-
-	/**
-	 * Test trash_callback returns error when trash fails
-	 */
-	public function test_trash_callback_returns_error_when_trash_fails() {
-		$this->assert_callback_error(
-			array(
-				'get_post'   => $this->mock_field,
-				'trash_post' => false,
-			),
-			array( $this->abilities, 'trash_callback' ),
-			array( 'identifier' => 'field_test_key' ),
-			'trash_failed'
-		);
-	}
-
-	// Untrash callback tests.
-
-	/**
-	 * Test untrash_callback untrashes field
-	 */
-	public function test_untrash_callback_untrashes_field() {
-		$this->inject_mock_manager( array( 'untrash_post' => true ) );
-
-		$result = $this->abilities->untrash_callback( array( 'identifier' => 'field_test_key' ) );
-
-		$this->assertTrue( $result );
-	}
-
-	/**
-	 * Test untrash_callback returns error when untrash fails
-	 */
-	public function test_untrash_callback_returns_error_when_untrash_fails() {
-		$this->inject_mock_manager( array( 'untrash_post' => false ) );
-
-		$result = $this->abilities->untrash_callback( array( 'identifier' => 'nonexistent' ) );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertEquals( 'untrash_failed', $result->get_error_code() );
 	}
 
 	// Parent existence tests.

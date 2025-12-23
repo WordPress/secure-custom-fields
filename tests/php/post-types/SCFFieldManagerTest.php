@@ -249,43 +249,6 @@ class SCFFieldManagerTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test trash_post calls acf_trash_field.
-	 */
-	public function test_trash_post_calls_acf_trash_field() {
-		$field  = $this->create_test_field( 'trash_test' );
-		$called = false;
-
-		add_action(
-			'acf/trash_field',
-			function () use ( &$called ) {
-				$called = true;
-			}
-		);
-
-		$this->manager->trash_post( $field['ID'] );
-		$this->assertTrue( $called );
-	}
-
-	/**
-	 * Test untrash_post calls acf_untrash_field.
-	 */
-	public function test_untrash_post_calls_acf_untrash_field() {
-		$field = $this->create_test_field( 'untrash_test' );
-		acf_trash_field( $field['ID'] );
-		$called = false;
-
-		add_action(
-			'acf/untrash_field',
-			function () use ( &$called ) {
-				$called = true;
-			}
-		);
-
-		$this->manager->untrash_post( $field['ID'] );
-		$this->assertTrue( $called );
-	}
-
-	/**
 	 * Test get_posts returns fields from all field groups.
 	 */
 	public function test_get_posts_returns_fields_from_field_groups() {
