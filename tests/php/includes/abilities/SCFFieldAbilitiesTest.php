@@ -59,13 +59,20 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 	);
 
 	/**
+	 * Parent exists filter callback for testing.
+	 *
+	 * @var callable|null
+	 */
+	private $parent_exists_filter = null;
+
+	/**
 	 * Setup test fixtures
 	 */
 	public function setUp(): void {
 		parent::setUp();
 		$this->abilities = acf_get_instance( 'SCF_Field_Abilities' );
 		// Mock the parent as existing by default for create/import tests.
-		mock_parent_exists( 123, true );
+		$this->set_parent_exists_filter( fn( $exists, $parent_id ) => 123 === $parent_id ? true : $exists );
 	}
 
 	/**
@@ -73,7 +80,28 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
-		clear_mock_parent_exists();
+		$this->remove_parent_exists_filter();
+	}
+
+	/**
+	 * Helper to set the parent exists filter for testing.
+	 *
+	 * @param callable $callback The filter callback.
+	 */
+	private function set_parent_exists_filter( callable $callback ) {
+		$this->remove_parent_exists_filter();
+		$this->parent_exists_filter = $callback;
+		add_filter( 'scf_field_parent_exists', $this->parent_exists_filter, 10, 2 );
+	}
+
+	/**
+	 * Helper to remove the parent exists filter.
+	 */
+	private function remove_parent_exists_filter() {
+		if ( $this->parent_exists_filter ) {
+			remove_filter( 'scf_field_parent_exists', $this->parent_exists_filter, 10 );
+			$this->parent_exists_filter = null;
+		}
 	}
 
 	/**
@@ -580,7 +608,7 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 	 */
 	public function test_import_callback_returns_error_when_parent_not_found() {
 		// Mock the parent as NOT existing.
-		mock_parent_exists( 999, false );
+		$this->set_parent_exists_filter( fn( $exists, $parent_id ) => 999 === $parent_id ? false : $exists );
 
 		$field_with_bad_parent           = $this->test_field;
 		$field_with_bad_parent['parent'] = 999;
@@ -659,6 +687,68 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'untrash_failed', $result->get_error_code() );
+	}
+
+	// Parent existence tests.
+
+	/**
+	 * Test parent_exists uses acf_get_field_group when filter returns null
+	 */
+	public function test_parent_exists_uses_real_lookup_when_filter_returns_null() {
+		// Remove the filter so the real lookup is used.
+		$this->remove_parent_exists_filter();
+
+		// Create a real field group in the database.
+		$field_group_id = wp_insert_post(
+			array(
+				'post_title'  => 'Test Field Group',
+				'post_type'   => 'acf-field-group',
+				'post_status' => 'publish',
+			)
+		);
+
+		// Inject a mock manager that doesn't interfere with parent checks.
+		$this->inject_mock_manager( array( 'update_post' => $this->mock_field ) );
+
+		// Try to create a field with the real field group as parent.
+		$field_data = array(
+			'key'    => 'field_test_real_parent',
+			'label'  => 'Test Field',
+			'name'   => 'test_real_parent',
+			'type'   => 'text',
+			'parent' => $field_group_id,
+		);
+
+		$result = $this->abilities->create_callback( $field_data );
+
+		// Should succeed because the real field group exists.
+		$this->assertIsArray( $result );
+
+		// Cleanup.
+		wp_delete_post( $field_group_id, true );
+	}
+
+	/**
+	 * Test parent_exists returns false for non-existent parent when filter returns null
+	 */
+	public function test_parent_exists_returns_false_for_nonexistent_parent() {
+		// Remove the filter so the real lookup is used.
+		$this->remove_parent_exists_filter();
+
+		// Try to create a field with a non-existent parent.
+		$field_data = array(
+			'key'    => 'field_test_bad_parent',
+			'label'  => 'Test Field',
+			'name'   => 'test_bad_parent',
+			'type'   => 'text',
+			'parent' => 999999, // Non-existent ID.
+		);
+
+		$result = $this->abilities->create_callback( $field_data );
+
+		// Should fail because the parent doesn't exist.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertEquals( 'parent_not_found', $result->get_error_code() );
 	}
 
 	// Schema resolution tests.

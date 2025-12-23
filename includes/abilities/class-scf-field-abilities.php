@@ -905,16 +905,21 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @return bool True if parent exists, false otherwise.
 		 */
 		private function parent_exists( $parent_id ) {
-			// Test mock support.
-			if ( function_exists( 'get_mock_parent_exists' ) ) {
-				$mock_result = get_mock_parent_exists( $parent_id );
-				if ( null !== $mock_result ) {
-					return $mock_result;
-				}
+			/**
+			 * Filters the result of the parent existence check.
+			 *
+			 * @since 6.8.0
+			 *
+			 * @param bool|null  $exists    The existence result. Null to use default logic.
+			 * @param int|string $parent_id The parent ID or key being checked.
+			 */
+			$filtered = apply_filters( 'scf_field_parent_exists', null, $parent_id );
+			if ( null !== $filtered ) {
+				return (bool) $filtered;
 			}
 
 			// Parent can be a field group or a parent field (for sub-fields).
-			return acf_get_field_group( $parent_id ) || acf_get_field( $parent_id );
+			return (bool) acf_get_field_group( $parent_id ) || (bool) acf_get_field( $parent_id );
 		}
 
 		/**
