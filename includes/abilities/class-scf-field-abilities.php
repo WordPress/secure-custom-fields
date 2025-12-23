@@ -678,20 +678,17 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 
 			$new_parent_id = isset( $input['new_parent_id'] ) ? $input['new_parent_id'] : 0;
 
-			// Validate that new_parent_id references an existing field group.
-			if ( $new_parent_id ) {
-				$parent_group = acf_get_field_group( $new_parent_id );
-				if ( ! $parent_group ) {
-					return new WP_Error(
-						'invalid_new_parent_id',
-						sprintf(
-							/* translators: %d: Invalid field group ID */
-							__( 'Invalid new_parent_id: %d is not a valid field group.', 'secure-custom-fields' ),
-							$new_parent_id
-						),
-						array( 'status' => 400 )
-					);
-				}
+			// Validate that new_parent_id references an existing parent (field group or parent field).
+			if ( $new_parent_id && ! $this->parent_exists( $new_parent_id ) ) {
+				return new WP_Error(
+					'invalid_new_parent_id',
+					sprintf(
+						/* translators: %d: Invalid parent ID */
+						__( 'Invalid new_parent_id: %d is not a valid field group or parent field.', 'secure-custom-fields' ),
+						$new_parent_id
+					),
+					array( 'status' => 400 )
+				);
 			}
 
 			$duplicated = $this->manager()->duplicate_post( $input['identifier'], $new_parent_id );
