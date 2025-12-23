@@ -102,6 +102,13 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 			$common_schema_content = wp_json_file_decode( $common_schema_path );
 			$schema_storage->addSchema( 'file://common.schema.json', $common_schema_content );
 
+			// Register field schema (needed for field-group schema $ref)
+			$field_schema_path    = $this->schema_path . 'field.schema.json';
+			$field_schema_content = wp_json_file_decode( $field_schema_path );
+			if ( $field_schema_content ) {
+				$schema_storage->addSchema( 'file://field.schema.json', $field_schema_content );
+			}
+
 			// Register main schema
 			$main_schema_uri = 'file://' . $schema_name . '.schema.json';
 			$schema_storage->addSchema( $main_schema_uri, $schema );
