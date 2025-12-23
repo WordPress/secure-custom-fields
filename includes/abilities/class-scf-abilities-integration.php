@@ -44,6 +44,7 @@ if ( ! class_exists( 'SCF_Abilities_Integration' ) ) {
 			acf_include( 'includes/abilities/class-scf-taxonomy-abilities.php' );
 			acf_include( 'includes/abilities/class-scf-ui-options-page-abilities.php' );
 			acf_include( 'includes/abilities/class-scf-field-group-abilities.php' );
+			acf_include( 'includes/abilities/class-scf-field-abilities.php' );
 		}
 
 		/**
