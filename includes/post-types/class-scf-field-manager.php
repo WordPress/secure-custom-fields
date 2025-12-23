@@ -2,9 +2,7 @@
 /**
  * SCF Field Manager
  *
- * Adapter class that wraps ACF field functions to provide the same interface
- * as ACF_Internal_Post_Type. This enables Field abilities to reuse the base
- * SCF_Internal_Post_Type_Abilities class.
+ * Manages field operations by wrapping ACF field functions.
  *
  * @package wordpress/secure-custom-fields
  * @since 6.8.0
@@ -19,10 +17,6 @@ if ( ! class_exists( 'SCF_Field_Manager' ) ) :
 
 	/**
 	 * SCF Field Manager class.
-	 *
-	 * Provides an interface compatible with ACF_Internal_Post_Type for field
-	 * operations, allowing the abilities system to treat fields like other
-	 * internal post types.
 	 *
 	 * @since 6.8.0
 	 */
