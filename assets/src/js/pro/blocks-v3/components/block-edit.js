@@ -8,6 +8,7 @@ import md5 from 'md5';
 import {
 	useState,
 	useEffect,
+	useLayoutEffect,
 	useRef,
 	createPortal,
 	useMemo,
@@ -587,6 +588,10 @@ function BlockEditInner( props ) {
 	const modalFormContainerRef = useRef();
 	const [ currentFormContainer, setCurrentFormContainer ] = useState();
 
+	// Render counter for debugging
+	const renderCount = useRef( 0 );
+	renderCount.current++;
+
 	// Detect Gutenberg iframe or document
 	useEffect( () => {
 		const gutenbergIframe = document.querySelector(
@@ -666,8 +671,8 @@ function BlockEditInner( props ) {
 		);
 		if ( ! fieldWrapper ) return;
 
-		const fieldKey = fieldWrapper.attributes.getNamedItem( 'data-key' )
-			?.value;
+		const fieldKey =
+			fieldWrapper.attributes.getNamedItem( 'data-key' )?.value;
 		if ( ! fieldKey ) return;
 
 		const fieldInput = acfFormRef.current.querySelector(
@@ -683,7 +688,10 @@ function BlockEditInner( props ) {
 		fieldInput.value = content;
 
 		const $form = $( acfFormRef?.current );
-		const serializedData = acf.serialize( $form, `acf-block_${ clientId }` );
+		const serializedData = acf.serialize(
+			$form,
+			`acf-block_${ clientId }`
+		);
 		if ( serializedData ) {
 			setTheSerializedAcfData( JSON.stringify( serializedData ) );
 		} else {
@@ -720,14 +728,19 @@ function BlockEditInner( props ) {
 
 					if (
 						element &&
-						element.hasAttribute( 'data-acf-inline-contenteditable' )
+						element.hasAttribute(
+							'data-acf-inline-contenteditable'
+						)
 					) {
 						const fieldSlug = element.attributes.getNamedItem(
 							'data-acf-inline-contenteditable-field-slug'
 						).value;
 						let content = element.innerHTML.trim();
 						if ( ! content ) content = '';
-						updateFieldValueFromContentEditable( content, fieldSlug );
+						updateFieldValueFromContentEditable(
+							content,
+							fieldSlug
+						);
 					}
 				}
 				// Handle attribute or child list changes
@@ -762,7 +775,10 @@ function BlockEditInner( props ) {
 							content = '';
 						}
 
-						updateFieldValueFromContentEditable( content, fieldSlug );
+						updateFieldValueFromContentEditable(
+							content,
+							fieldSlug
+						);
 					}
 				}
 			}
@@ -782,6 +798,120 @@ function BlockEditInner( props ) {
 			observer.disconnect();
 		};
 	}, [ blockPreviewHtml, gutenbergIframeOrDocument ] );
+
+	// Preserve cursor position during re-renders
+	const savedSelection = useRef( null );
+
+	// Save cursor position BEFORE rendering (capture during effect)
+	useEffect( () => {
+		const activeElement = document.activeElement;
+		if (
+			activeElement &&
+			activeElement.hasAttribute( 'data-acf-inline-contenteditable' ) &&
+			activeElement.isContentEditable
+		) {
+			const selection = window.getSelection();
+			if ( selection && selection.rangeCount > 0 ) {
+				const range = selection.getRangeAt( 0 );
+				const fieldSlug = activeElement.getAttribute(
+					'data-acf-inline-contenteditable-field-slug'
+				);
+				console.log(
+					'🟢 Saving cursor position - offset:',
+					range.startOffset,
+					'field:',
+					fieldSlug
+				);
+				savedSelection.current = {
+					fieldSlug, // Save field identifier instead of element reference
+					offset: range.startOffset,
+					textContent: activeElement.textContent,
+				};
+			}
+		}
+	}, [ theSerializedAcfData ] ); // Save when data changes (before re-render)
+
+	// Restore cursor position AFTER DOM updates
+	useLayoutEffect( () => {
+		if ( ! savedSelection.current ) return;
+
+		const { fieldSlug, offset, textContent } = savedSelection.current;
+		console.log(
+			'🔵 Restoring cursor - field:',
+			fieldSlug,
+			'offset:',
+			offset
+		);
+
+		try {
+			// Find the new element by field slug instead of using stale reference
+			const element = previewRef?.current?.querySelector(
+				`[data-acf-inline-contenteditable-field-slug="${ fieldSlug }"]`
+			);
+
+			if ( ! element || ! element.isContentEditable ) {
+				console.warn(
+					'🟡 Element not found or not editable for field:',
+					fieldSlug
+				);
+				savedSelection.current = null;
+				return;
+			}
+
+			// Verify the content is still the same (sanity check)
+			if ( element.textContent !== textContent ) {
+				console.warn(
+					'🟡 Content changed, skipping cursor restore for field:',
+					fieldSlug
+				);
+				savedSelection.current = null;
+				return;
+			}
+
+			const selection = window.getSelection();
+			const range = document.createRange();
+
+			// Get the first text node in the element
+			const walker = document.createTreeWalker(
+				element,
+				NodeFilter.SHOW_TEXT,
+				null,
+				false
+			);
+			let textNode = walker.nextNode();
+
+			if ( textNode ) {
+				const safeOffset = Math.min(
+					offset,
+					textNode.textContent?.length || 0
+				);
+				range.setStart( textNode, safeOffset );
+				range.collapse( true );
+
+				selection.removeAllRanges();
+				selection.addRange( range );
+
+				// Focus the element to ensure cursor is visible and editable
+				element.focus();
+
+				console.log(
+					'🔵 Restored cursor to offset:',
+					safeOffset,
+					'in field:',
+					fieldSlug
+				);
+			} else {
+				console.warn(
+					'🟡 No text node found in element for field:',
+					fieldSlug
+				);
+			}
+		} catch ( error ) {
+			console.error( '🔴 Error restoring cursor:', error );
+		} finally {
+			savedSelection.current = null;
+		}
+	} );
 
 	// Callback when a new inline editing element is selected
 	const handleNewInlineEditingElementSelected = ( uid ) => {
@@ -824,13 +954,22 @@ function BlockEditInner( props ) {
 	let inlineEditingToolbarAnchor = null;
 	if ( currentInlineEditingElement && currentContentEditableElement ) {
 		inlineEditingToolbarAnchor = currentInlineEditingElement;
-	} else if ( currentInlineEditingElement && ! currentContentEditableElement ) {
+	} else if (
+		currentInlineEditingElement &&
+		! currentContentEditableElement
+	) {
 		inlineEditingToolbarAnchor = currentInlineEditingElement;
-	} else if ( ! currentInlineEditingElement && currentContentEditableElement ) {
+	} else if (
+		! currentInlineEditingElement &&
+		currentContentEditableElement
+	) {
 		inlineEditingToolbarAnchor = currentContentEditableElement;
 	}
 	// Ensure anchor is connected to DOM
-	if ( inlineEditingToolbarAnchor && ! inlineEditingToolbarAnchor.isConnected ) {
+	if (
+		inlineEditingToolbarAnchor &&
+		! inlineEditingToolbarAnchor.isConnected
+	) {
 		inlineEditingToolbarAnchor = null;
 	}
 
@@ -845,8 +984,12 @@ function BlockEditInner( props ) {
 				setBlockFormModalOpen={ setBlockFormModalOpen }
 				blockFormModalOpen={ blockFormModalOpen }
 				currentInlineEditingElement={ currentInlineEditingElement }
-				setCurrentInlineEditingElement={ setCurrentInlineEditingElement }
-				currentInlineEditingElementUid={ currentInlineEditingElementUid }
+				setCurrentInlineEditingElement={
+					setCurrentInlineEditingElement
+				}
+				currentInlineEditingElementUid={
+					currentInlineEditingElementUid
+				}
 				onNewInlineEditingElementSelected={
 					handleNewInlineEditingElementSelected
 				}
@@ -971,93 +1114,96 @@ function BlockEditInner( props ) {
 
 			{ /* Inline Editing Toolbar */ }
 			{ inlineEditingToolbarAnchor && (
-					<PopoverWrapper
-						key={ currentContentEditableElement }
-						focusOnMount={ ( () => {
-							const activeElement = document.activeElement;
-							return activeElement && activeElement.isContentEditable, false;
-						} )() }
-						variant="unstyled"
-						anchor={ inlineEditingToolbarAnchor }
-						className="acf-inline-editing-toolbar block-editor-block-list__block-popover"
-						placement="top-start"
-						onClose={ ( event ) => {
-							// Don't close if clicking toolbar button
-							if (
-								event.key !== 'Escape' &&
-								event.target.closest( '.acf-toolbar-button' )
-							) {
-								return false;
-							}
+				<PopoverWrapper
+					key={ currentContentEditableElement }
+					focusOnMount={ ( () => {
+						const activeElement = document.activeElement;
+						return (
+							activeElement && activeElement.isContentEditable,
+							false
+						);
+					} )() }
+					variant="unstyled"
+					anchor={ inlineEditingToolbarAnchor }
+					className="acf-inline-editing-toolbar block-editor-block-list__block-popover"
+					placement="top-start"
+					onClose={ ( event ) => {
+						// Don't close if clicking toolbar button
+						if (
+							event.key !== 'Escape' &&
+							event.target.closest( '.acf-toolbar-button' )
+						) {
+							return false;
+						}
 
-							// Handle Escape key
-							if ( event.key === 'Escape' ) {
-								return (
-									! document.querySelector(
-										'.acf-inline-fields-popover-inner'
-									) &&
-									! inlineEditingToolbarHasFocus &&
-									( currentInlineEditingElement &&
-										currentInlineEditingElement.focus(),
-									setCurrentInlineEditingElementUid( null ),
-									setCurrentContentEditableElement( null ),
-									true )
-								);
-							}
-
-							// Don't close if clicking on contenteditable element
-							if (
-								event.target.getAttribute(
-									'data-acf-inline-contenteditable'
-								)
-							) {
-								return false;
-							}
-
-							// Don't close if clicking inside popover or modal
-							const inlineFieldsPopover = event.target.closest(
-								'.acf-inline-fields-popover-inner'
-							);
-							const modal = event.target.closest(
-								'.components-modal__content'
-							);
-
+						// Handle Escape key
+						if ( event.key === 'Escape' ) {
 							return (
-								inlineFieldsPopover ||
-									modal ||
-									( setCurrentInlineEditingElementUid( null ),
-									setCurrentContentEditableElement( null ) ),
-								true
+								! document.querySelector(
+									'.acf-inline-fields-popover-inner'
+								) &&
+								! inlineEditingToolbarHasFocus &&
+								( currentInlineEditingElement &&
+									currentInlineEditingElement.focus(),
+								setCurrentInlineEditingElementUid( null ),
+								setCurrentContentEditableElement( null ),
+								true )
 							);
-						} }
+						}
+
+						// Don't close if clicking on contenteditable element
+						if (
+							event.target.getAttribute(
+								'data-acf-inline-contenteditable'
+							)
+						) {
+							return false;
+						}
+
+						// Don't close if clicking inside popover or modal
+						const inlineFieldsPopover = event.target.closest(
+							'.acf-inline-fields-popover-inner'
+						);
+						const modal = event.target.closest(
+							'.components-modal__content'
+						);
+
+						return (
+							inlineFieldsPopover ||
+								modal ||
+								( setCurrentInlineEditingElementUid( null ),
+								setCurrentContentEditableElement( null ) ),
+							true
+						);
+					} }
+					gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+					hidePrimaryBlockToolbar={ true }
+				>
+					<InlineEditingToolbar
+						key={ currentInlineEditingElementUid }
+						blockIcon={ blockType.icon }
+						blockFieldInfo={ blockFieldInfo }
+						acfFormRef={ acfFormRef }
+						setInlineEditingToolbarHasFocus={
+							setInlineEditingToolbarHasFocus
+						}
+						currentContentEditableElement={
+							currentContentEditableElement
+						}
+						currentInlineEditingElement={
+							currentInlineEditingElement
+						}
+						currentInlineEditingElementUid={
+							currentInlineEditingElementUid
+						}
 						gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
-						hidePrimaryBlockToolbar={ true }
-					>
-						<InlineEditingToolbar
-							key={ currentInlineEditingElementUid }
-							blockIcon={ blockType.icon }
-							blockFieldInfo={ blockFieldInfo }
-							acfFormRef={ acfFormRef }
-							setInlineEditingToolbarHasFocus={
-								setInlineEditingToolbarHasFocus
-							}
-							currentContentEditableElement={
-								currentContentEditableElement
-							}
-							currentInlineEditingElement={
-								currentInlineEditingElement
-							}
-							currentInlineEditingElementUid={
-								currentInlineEditingElementUid
-							}
-							gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
-							setCurrentBlockFormContainer={ setCurrentFormContainer }
-							contentEditableChangeInProgress={
-								contentEditableChangeInProgress
-							}
-						/>
-					</PopoverWrapper>
-				) }
+						setCurrentBlockFormContainer={ setCurrentFormContainer }
+						contentEditableChangeInProgress={
+							contentEditableChangeInProgress
+						}
+					/>
+				</PopoverWrapper>
+			) }
 
 			{ /* Dynamic styles for inline field highlighting */ }
 			{ currentInlineEditingElementUid &&
@@ -1108,7 +1254,6 @@ function BlockEditInner( props ) {
 							}
 						} }
 					>
-						{ /* Show placeholder when no HTML */ }
 						{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
 							<BlockPlaceholder
 								setBlockFormModalOpen={ setIsModalOpen }
@@ -1124,20 +1269,17 @@ function BlockEditInner( props ) {
 						) }
 
 						{ /* Render actual preview HTML */ }
-					{ useMemo(
-						() =>
-							blockPreviewHtml !== 'acf-block-preview-loading' &&
+						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
 							blockPreviewHtml !== 'acf-block-preview-no-html' &&
-							blockPreviewHtml
-								? acf.parseJSX(
-										blockPreviewHtml,
-										setCurrentInlineEditingElementUid,
-										handleNewContentEditableElementSelected,
-										blockFieldInfo
-								  )
-								: null,
-						[ blockPreviewHtml, blockFieldInfo ]
-					) }
+							blockPreviewHtml &&
+							acf.parseJSX(
+								blockPreviewHtml,
+								setCurrentInlineEditingElementUid,
+								null,
+								handleNewContentEditableElementSelected,
+								blockFieldInfo,
+								$
+							) }
 					</ErrorBoundary>
 				</BlockPreview>
 			</>
