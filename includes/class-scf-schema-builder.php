@@ -1,6 +1,6 @@
 <?php
 /**
- * Schema Composer for SCF
+ * Schema Builder for SCF
  *
  * Handles JSON Schema operations like $ref resolution and schema composition.
  *
@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
+if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 
 	/**
-	 * SCF Schema Composer
+	 * SCF Schema Builder
 	 *
 	 * Builds composed field schemas and resolves $ref for WordPress.
 	 *
@@ -35,7 +35,7 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 	 *
 	 * @since 6.8.0
 	 */
-	class SCF_Schema_Composer {
+	class SCF_Schema_Builder {
 
 		/**
 		 * Recursively resolves $ref references in a JSON schema.
@@ -183,24 +183,23 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 			$schemas     = array();
 			$fields_path = ACF_PATH . 'schemas/fields/';
 
-			if ( ! is_dir( $fields_path ) ) {
+			if ( ! is_dir( $fields_path ) || ! is_readable( $fields_path ) ) {
 				return $schemas;
 			}
 
-			// Scan category directories.
-			$categories = scandir( $fields_path );
-			foreach ( $categories as $category ) {
-				if ( '.' === $category || '..' === $category ) {
-					continue;
-				}
+			// Get category directories using glob (safer than scandir).
+			$category_dirs = glob( $fields_path . '*', GLOB_ONLYDIR );
+			if ( ! is_array( $category_dirs ) ) {
+				return $schemas;
+			}
 
-				$category_path = $fields_path . $category . '/';
-				if ( ! is_dir( $category_path ) ) {
-					continue;
-				}
-
+			foreach ( $category_dirs as $category_path ) {
 				// Scan schema files in this category.
-				$files = glob( $category_path . '*.schema.json' );
+				$files = glob( $category_path . '/*.schema.json' );
+				if ( ! is_array( $files ) ) {
+					continue;
+				}
+
 				foreach ( $files as $file ) {
 					$content = file_get_contents( $file );
 					if ( false === $content ) {
@@ -224,7 +223,7 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 		}
 	}
 
-	// Initialize composer instance.
-	acf_new_instance( 'SCF_Schema_Composer' );
+	// Initialize builder instance.
+	acf_new_instance( 'SCF_Schema_Builder' );
 
 endif;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for SCF_Schema_Composer class.
+ * Tests for SCF_Schema_Builder class.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -8,25 +8,25 @@
 use WorDBless\BaseTestCase;
 
 /**
- * Tests for SCF_Schema_Composer.
+ * Tests for SCF_Schema_Builder.
  *
  * @group schema
  */
-class SCFSchemaComposerTest extends BaseTestCase {
+class SCFSchemaBuilderTest extends BaseTestCase {
 
 	/**
-	 * The composer instance.
+	 * The builder instance.
 	 *
-	 * @var SCF_Schema_Composer
+	 * @var SCF_Schema_Builder
 	 */
-	private $composer;
+	private $builder;
 
 	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		$this->composer = acf_get_instance( 'SCF_Schema_Composer' );
+		$this->builder = acf_get_instance( 'SCF_Schema_Builder' );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 			),
 		);
 
-		$result = $this->composer->resolve_refs( $schema, $root_schema );
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
 
 		$this->assertEquals( 'object', $result['type'] );
 		$this->assertArrayHasKey( 'properties', $result );
@@ -86,7 +86,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 			),
 		);
 
-		$result = $this->composer->resolve_refs( $schema, $root_schema );
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
 
 		// Outer array should be preserved.
 		$this->assertEquals( 'array', $result['type'] );
@@ -116,7 +116,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 			'definitions' => array(),
 		);
 
-		$result = $this->composer->resolve_refs( $schema, $root_schema );
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
 
 		$this->assertEquals( $schema, $result );
 	}
@@ -124,7 +124,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 	/**
 	 * Test resolve_refs triggers _doing_it_wrong for unresolvable $ref.
 	 *
-	 * @expectedIncorrectUsage SCF_Schema_Composer::resolve_refs
+	 * @expectedIncorrectUsage SCF_Schema_Builder::resolve_refs
 	 */
 	public function test_resolve_refs_triggers_doing_it_wrong_for_missing_definition() {
 		$schema = array(
@@ -137,7 +137,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 			),
 		);
 
-		$result = $this->composer->resolve_refs( $schema, $root_schema );
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
 
 		// Should return original schema when definition not found.
 		$this->assertEquals( $schema, $result );
@@ -147,7 +147,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 	 * Test compose_field_schema returns oneOf structure.
 	 */
 	public function test_compose_field_schema_returns_oneof_structure() {
-		$result = $this->composer->compose_field_schema();
+		$result = $this->builder->compose_field_schema();
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'oneOf', $result );
@@ -159,7 +159,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 	 * Test compose_field_schema includes fallback variant.
 	 */
 	public function test_compose_field_schema_includes_fallback_variant() {
-		$result = $this->composer->compose_field_schema();
+		$result = $this->builder->compose_field_schema();
 
 		// Last variant should be the fallback.
 		$last_variant = end( $result['oneOf'] );
@@ -172,7 +172,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 	 * Test compose_field_schema variants have required fields.
 	 */
 	public function test_compose_field_schema_variants_have_required_fields() {
-		$result = $this->composer->compose_field_schema();
+		$result = $this->builder->compose_field_schema();
 
 		foreach ( $result['oneOf'] as $variant ) {
 			$this->assertArrayHasKey( 'required', $variant );
@@ -188,7 +188,7 @@ class SCFSchemaComposerTest extends BaseTestCase {
 	 * Test compose_field_schema merges base and type properties.
 	 */
 	public function test_compose_field_schema_merges_properties() {
-		$result = $this->composer->compose_field_schema();
+		$result = $this->builder->compose_field_schema();
 
 		// Find a type-specific variant (not the fallback).
 		$type_variant = null;

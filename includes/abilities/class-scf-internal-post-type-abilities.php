@@ -154,8 +154,8 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				$entity  = $schema_array['definitions'][ $def_key ] ?? array();
 
 				// Resolve $ref references for WordPress Abilities API compatibility.
-				$composer            = acf_get_instance( 'SCF_Schema_Composer' );
-				$this->entity_schema = $composer->resolve_refs( $entity, $schema_array );
+				$builder             = acf_get_instance( 'SCF_Schema_Builder' );
+				$this->entity_schema = $builder->resolve_refs( $entity, $schema_array );
 			}
 			return $this->entity_schema;
 		}

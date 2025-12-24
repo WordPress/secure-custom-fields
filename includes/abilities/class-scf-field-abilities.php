@@ -106,7 +106,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		/**
 		 * Gets the composed field schema with oneOf variants for each field type.
 		 *
-		 * Uses SCF_Schema_Composer to build a schema where each field type has
+		 * Uses SCF_Schema_Builder to build a schema where each field type has
 		 * its own complete variant, allowing WordPress Abilities to validate
 		 * type-specific properties.
 		 *
@@ -116,8 +116,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 */
 		private function get_field_schema() {
 			if ( null === $this->field_schema ) {
-				$composer           = acf_get_instance( 'SCF_Schema_Composer' );
-				$this->field_schema = $composer->compose_field_schema();
+				$builder            = acf_get_instance( 'SCF_Schema_Builder' );
+				$this->field_schema = $builder->compose_field_schema();
 			}
 			return $this->field_schema;
 		}
