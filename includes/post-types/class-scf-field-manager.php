@@ -89,10 +89,18 @@ if ( ! class_exists( 'SCF_Field_Manager' ) ) :
 		public function filter_posts( $posts, $args = array() ) {
 			if ( isset( $args['parent'] ) ) {
 				$parent_filter = $args['parent'];
+
+				// Convert key to ID if not numeric (same pattern as acf_update_field).
+				if ( $parent_filter && ! is_numeric( $parent_filter ) ) {
+					$parent_post   = acf_get_field_post( $parent_filter );
+					$parent_filter = $parent_post ? $parent_post->ID : 0;
+				}
+
+				$parent_filter = (int) $parent_filter;
 				$posts         = array_filter(
 					$posts,
 					function ( $post ) use ( $parent_filter ) {
-						return $post['parent'] === $parent_filter;
+						return (int) $post['parent'] === $parent_filter;
 					}
 				);
 			}
@@ -142,30 +150,6 @@ if ( ! class_exists( 'SCF_Field_Manager' ) ) :
 		 */
 		public function delete_post( $id = 0 ) {
 			return acf_delete_field( $id );
-		}
-
-		/**
-		 * Moves a field to trash.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param int|string $id The field ID or key.
-		 * @return bool True on success, false on failure.
-		 */
-		public function trash_post( $id = 0 ) {
-			return acf_trash_field( $id );
-		}
-
-		/**
-		 * Restores a field from trash.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param int|string $id The field ID or key.
-		 * @return bool True on success, false on failure.
-		 */
-		public function untrash_post( $id = 0 ) {
-			return acf_untrash_field( $id );
 		}
 
 		/**

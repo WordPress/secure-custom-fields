@@ -2,32 +2,43 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/internal-fields.schema.json",
 	"title": "SCF Internal Fields",
-	"description": "Internal fields present in SCF entities (post types, taxonomies, field groups, options pages). These fields are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
+	"description": "Internal fields present in SCF entities. These fields are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
 	"definitions": {
+		"ID": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "WordPress post ID. Present in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs."
+		},
+		"_valid": {
+			"type": [ "boolean", "integer" ],
+			"description": "Validation cache flag. Indicates whether the entity passed validation. Can be boolean or integer (0/1)."
+		},
+		"local": {
+			"type": "string",
+			"enum": [ "json" ],
+			"description": "Source indicator. Present only if entity is locally-defined (e.g., from local JSON files). Stripped during export."
+		},
+		"not_registered": {
+			"type": "boolean",
+			"description": "Flag indicating that this entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
+		},
+		"fieldInternalFields": {
+			"type": "object",
+			"description": "Internal fields for field entities (ID and _valid only)",
+			"properties": {
+				"ID": { "$ref": "#/definitions/ID" },
+				"_valid": { "$ref": "#/definitions/_valid" }
+			}
+		},
 		"internalFields": {
 			"type": "object",
-			"description": "Internal system-managed fields that appear in entity responses",
+			"description": "Internal fields for internal post types (field groups, taxonomies, options pages)",
 			"properties": {
-				"ID": {
-					"type": "integer",
-					"minimum": 1,
-					"description": "WordPress post ID. Present in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs. Optional in IMPORT input - if provided, updates existing entity; if omitted, creates new entity."
-				},
-				"_valid": {
-					"type": "boolean",
-					"description": "Validation cache flag. Indicates whether the entity passed validation."
-				},
-				"local": {
-					"type": "string",
-					"enum": ["json"],
-					"description": "Source indicator. Present only if entity is locally-defined (e.g., from local JSON files). Stripped during export."
-				},
-				"not_registered": {
-					"type": "boolean",
-					"description": "Flag indicating that this entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
-				}
-			},
-			"additionalProperties": false
+				"ID": { "$ref": "#/definitions/ID" },
+				"_valid": { "$ref": "#/definitions/_valid" },
+				"local": { "$ref": "#/definitions/local" },
+				"not_registered": { "$ref": "#/definitions/not_registered" }
+			}
 		}
 	}
 }
