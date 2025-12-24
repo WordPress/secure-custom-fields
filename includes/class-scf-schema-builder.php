@@ -38,6 +38,20 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 	class SCF_Schema_Builder {
 
 		/**
+		 * Cached composed field schema.
+		 *
+		 * @var array|null
+		 */
+		private ?array $composed_field_schema = null;
+
+		/**
+		 * Cached base field schema.
+		 *
+		 * @var array|null
+		 */
+		private ?array $base_schema = null;
+
+		/**
 		 * Recursively resolves $ref references in a JSON schema.
 		 *
 		 * WordPress internal validation doesn't understand JSON Schema $ref,
@@ -108,10 +122,8 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * @return array The composed schema with oneOf variants.
 		 */
 		public function compose_field_schema(): array {
-			static $composed = null;
-
-			if ( null !== $composed ) {
-				return $composed;
+			if ( null !== $this->composed_field_schema ) {
+				return $this->composed_field_schema;
 			}
 
 			// Load and resolve base field schema.
@@ -134,19 +146,31 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 				);
 			}
 
-			// Add fallback variant for field types without specific schemas.
+			// Temporary fallback for field types without specific schemas.
+			// This will be removed once all 35 field types have dedicated schema files.
+			// Exclude types that have specific schemas by modifying the type enum.
+			$known_types    = array_keys( $type_schemas );
+			$all_types      = $base_props['type']['enum'] ?? array();
+			$fallback_types = array_values( array_diff( $all_types, $known_types ) );
+
+			$fallback_props         = $base_props;
+			$fallback_props['type'] = array(
+				'type' => 'string',
+				'enum' => $fallback_types,
+			);
+
 			$variants[] = array(
 				'type'                 => 'object',
 				'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
-				'properties'           => $base_props,
+				'properties'           => $fallback_props,
 				'additionalProperties' => true,
 			);
 
-			$composed = array(
+			$this->composed_field_schema = array(
 				'oneOf' => $variants,
 			);
 
-			return $composed;
+			return $this->composed_field_schema;
 		}
 
 		/**
@@ -157,15 +181,13 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * @return array The base field schema with refs resolved.
 		 */
 		private function load_base_field_schema(): array {
-			static $base_schema = null;
-
-			if ( null === $base_schema ) {
-				$schema_path = ACF_PATH . 'schemas/field.schema.json';
-				$base_schema = json_decode( file_get_contents( $schema_path ), true );
-				$base_schema = $this->resolve_refs( $base_schema );
+			if ( null === $this->base_schema ) {
+				$schema_path       = ACF_PATH . 'schemas/field.schema.json';
+				$this->base_schema = json_decode( file_get_contents( $schema_path ), true );
+				$this->base_schema = $this->resolve_refs( $this->base_schema );
 			}
 
-			return $base_schema;
+			return $this->base_schema;
 		}
 
 		/**
