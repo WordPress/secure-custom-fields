@@ -16,9 +16,22 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 	/**
 	 * SCF Schema Composer
 	 *
-	 * Provides utilities for JSON Schema operations including:
-	 * - Resolving $ref references within schemas
-	 * - Composing schemas with oneOf variants
+	 * Builds composed field schemas and resolves $ref for WordPress.
+	 *
+	 * Why $ref resolution:
+	 * - WordPress internal validation doesn't understand JSON Schema $ref
+	 * - We inline referenced definitions before passing schemas to WP
+	 *
+	 * Why oneOf composition:
+	 * - Field validation requires type-specific rules (text has maxlength, number has min/max)
+	 * - Base properties (key, label, name, type, parent) are shared across all types
+	 * - oneOf validates "valid text field OR valid number field OR ..."
+	 * - Each variant merges base + type-specific properties with additionalProperties: false
+	 * - Fallback variant allows unknown types until all 35 field types have schemas
+	 *
+	 * Schema structure:
+	 * - schemas/field.schema.json: Base properties shared by all types
+	 * - schemas/fields/{category}/{type}.schema.json: Type-specific properties
 	 *
 	 * @since 6.8.0
 	 */
@@ -27,7 +40,7 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 		/**
 		 * Recursively resolves $ref references in a JSON schema.
 		 *
-		 * WordPress Abilities API doesn't understand JSON Schema $ref,
+		 * WordPress internal validation doesn't understand JSON Schema $ref,
 		 * so we need to inline referenced definitions.
 		 *
 		 * @since 6.8.0
