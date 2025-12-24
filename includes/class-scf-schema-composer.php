@@ -83,6 +83,132 @@ if ( ! class_exists( 'SCF_Schema_Composer' ) ) :
 
 			return $schema;
 		}
+
+		/**
+		 * Composes a field schema with oneOf containing all type variants.
+		 *
+		 * Each variant merges base field properties with type-specific properties,
+		 * enabling complete validation without schema duplication in source files.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @return array The composed schema with oneOf variants.
+		 */
+		public function compose_field_schema(): array {
+			static $composed = null;
+
+			if ( null !== $composed ) {
+				return $composed;
+			}
+
+			// Load and resolve base field schema.
+			$base_schema = $this->load_base_field_schema();
+			$base_def    = $base_schema['definitions']['field'] ?? array();
+			$base_props  = $base_def['properties'] ?? array();
+
+			// Build oneOf variants for each field type with a schema.
+			$variants     = array();
+			$type_schemas = $this->load_type_schemas();
+
+			foreach ( $type_schemas as $type => $type_schema ) {
+				$type_props = $type_schema['properties'] ?? array();
+
+				$variants[] = array(
+					'title'                => ucfirst( str_replace( '_', ' ', $type ) ) . ' field',
+					'type'                 => 'object',
+					'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
+					'properties'           => array_merge( $base_props, $type_props ),
+					'additionalProperties' => $type_schema['additionalProperties'] ?? false,
+				);
+			}
+
+			// Add fallback variant for field types without specific schemas.
+			$variants[] = array(
+				'title'                => 'Other field types',
+				'type'                 => 'object',
+				'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
+				'properties'           => $base_props,
+				'additionalProperties' => true,
+			);
+
+			$composed = array(
+				'oneOf' => $variants,
+			);
+
+			return $composed;
+		}
+
+		/**
+		 * Loads and resolves the base field schema.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @return array The base field schema with refs resolved.
+		 */
+		private function load_base_field_schema(): array {
+			static $base_schema = null;
+
+			if ( null === $base_schema ) {
+				$schema_path = ACF_PATH . 'schemas/field.schema.json';
+				$base_schema = json_decode( file_get_contents( $schema_path ), true );
+				$base_schema = $this->resolve_refs( $base_schema );
+			}
+
+			return $base_schema;
+		}
+
+		/**
+		 * Loads all type-specific field schemas from category directories.
+		 *
+		 * Scans schemas/fields/{category}/ directories for type schema files.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @return array Associative array of type => schema data.
+		 */
+		private function load_type_schemas(): array {
+			$schemas     = array();
+			$fields_path = ACF_PATH . 'schemas/fields/';
+
+			if ( ! is_dir( $fields_path ) ) {
+				return $schemas;
+			}
+
+			// Scan category directories.
+			$categories = scandir( $fields_path );
+			foreach ( $categories as $category ) {
+				if ( '.' === $category || '..' === $category ) {
+					continue;
+				}
+
+				$category_path = $fields_path . $category . '/';
+				if ( ! is_dir( $category_path ) ) {
+					continue;
+				}
+
+				// Scan schema files in this category.
+				$files = glob( $category_path . '*.schema.json' );
+				foreach ( $files as $file ) {
+					$content = file_get_contents( $file );
+					if ( false === $content ) {
+						continue;
+					}
+
+					$schema = json_decode( $content, true );
+					if ( ! $schema ) {
+						continue;
+					}
+
+					// Extract field type from schema or filename.
+					$type = $schema['properties']['type']['enum'][0]
+						?? basename( $file, '.schema.json' );
+
+					$schemas[ $type ] = $schema;
+				}
+			}
+
+			return $schemas;
+		}
 	}
 
 	// Initialize composer instance.
