@@ -161,10 +161,9 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	public function test_compose_field_schema_includes_fallback_variant() {
 		$result = $this->builder->compose_field_schema();
 
-		// Last variant should be the fallback.
+		// Last variant should be the fallback with additionalProperties: true.
 		$last_variant = end( $result['oneOf'] );
 
-		$this->assertEquals( 'Other field types', $last_variant['title'] );
 		$this->assertTrue( $last_variant['additionalProperties'] );
 	}
 
@@ -190,10 +189,10 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	public function test_compose_field_schema_merges_properties() {
 		$result = $this->builder->compose_field_schema();
 
-		// Find a type-specific variant (not the fallback).
+		// Find a type-specific variant (not the fallback which has additionalProperties: true).
 		$type_variant = null;
 		foreach ( $result['oneOf'] as $variant ) {
-			if ( 'Other field types' !== $variant['title'] ) {
+			if ( false === $variant['additionalProperties'] ) {
 				$type_variant = $variant;
 				break;
 			}

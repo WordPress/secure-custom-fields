@@ -123,11 +123,10 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			$variants     = array();
 			$type_schemas = $this->load_type_schemas();
 
-			foreach ( $type_schemas as $type => $type_schema ) {
+			foreach ( $type_schemas as $type_schema ) {
 				$type_props = $type_schema['properties'] ?? array();
 
 				$variants[] = array(
-					'title'                => ucfirst( str_replace( '_', ' ', $type ) ) . ' field',
 					'type'                 => 'object',
 					'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
 					'properties'           => array_merge( $base_props, $type_props ),
@@ -137,7 +136,6 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 
 			// Add fallback variant for field types without specific schemas.
 			$variants[] = array(
-				'title'                => 'Other field types',
 				'type'                 => 'object',
 				'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
 				'properties'           => $base_props,
