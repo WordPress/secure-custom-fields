@@ -644,32 +644,27 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 	// Schema resolution tests.
 
 	/**
-	 * Test resolve_schema_refs triggers _doing_it_wrong for missing definition
+	 * Test resolve_refs triggers _doing_it_wrong for missing definition.
+	 *
+	 * Note: resolve_refs is now in SCF_Schema_Composer, but we test it here
+	 * as it's used by field abilities.
 	 */
-	public function test_resolve_schema_refs_triggers_doing_it_wrong_for_missing_definition() {
-		$reflection = new ReflectionClass( SCF_Field_Abilities::class );
+	public function test_resolve_refs_triggers_doing_it_wrong_for_missing_definition() {
+		$composer = acf_get_instance( 'SCF_Schema_Composer' );
 
-		// First, inject a custom field schema with limited definitions.
-		$property = $reflection->getProperty( 'field_schema' );
-		$property->setAccessible( true );
-		$property->setValue(
-			$this->abilities,
-			array(
-				'definitions' => array(
-					'existingDef' => array( 'type' => 'string' ),
-				),
-			)
-		);
-
-		$method = $reflection->getMethod( 'resolve_schema_refs' );
-		$method->setAccessible( true );
-
-		// Try to resolve a $ref to a non-existent definition.
+		// Create a schema with a $ref to a non-existent definition.
 		$schema = array(
 			'$ref' => '#/definitions/nonExistentDef',
 		);
 
-		$result = $method->invoke( $this->abilities, $schema );
+		// Root schema with limited definitions.
+		$root_schema = array(
+			'definitions' => array(
+				'existingDef' => array( 'type' => 'string' ),
+			),
+		);
+
+		$result = $composer->resolve_refs( $schema, $root_schema );
 
 		// Should return original schema when definition not found.
 		$this->assertEquals( $schema, $result );
