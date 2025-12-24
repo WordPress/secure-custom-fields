@@ -129,17 +129,10 @@ function parseAttribute( attribute ) {
 }
 
 /**
- * Main parseNodeToJSX function - Based on 6.7.0.2's function `m`
- * This is the exact logic from 6.7.0.2
+ * Main parseNodeToJSX function - Based on 6.7.0.2's function `O`
+ * Recursively converts DOM nodes to React/JSX elements
  */
-function parseNodeToJSX(
-	node,
-	depth = 0,
-	setCurrentInlineEditingElementUid = null,
-	onContentEditableChange = null,
-	setCurrentContentEditableElement = null,
-	blockFieldInfo = null
-) {
+function parseNodeToJSX( node, depth = 0 ) {
 	// Determine component type
 	const nodeName = node.nodeName.toLowerCase();
 	let componentType;
@@ -183,11 +176,18 @@ function parseNodeToJSX(
 
 		props.onFocus = ( event ) => {
 			event.stopPropagation();
-			setCurrentInlineEditingElementUid &&
-				setCurrentInlineEditingElementUid(
-					node.attributes.getNamedItem( 'data-acf-inline-fields-uid' )
-						.value
+			const uid = node.attributes.getNamedItem(
+				'data-acf-inline-fields-uid'
+			).value;
+			if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+				acf.blockEdit.setCurrentInlineEditingElementUid( uid );
+			}
+			// Also set the element reference for the toolbar to use
+			if ( acf.blockEdit?.setCurrentInlineEditingElement ) {
+				acf.blockEdit.setCurrentInlineEditingElement(
+					event.currentTarget
 				);
+			}
 		};
 
 		props.onMouseDown = ( event ) => event.stopPropagation();
@@ -202,12 +202,17 @@ function parseNodeToJSX(
 			if (
 				! event.target.hasAttribute( 'data-acf-inline-contenteditable' )
 			) {
-				setCurrentInlineEditingElementUid &&
-					setCurrentInlineEditingElementUid(
-						node.attributes.getNamedItem(
-							'data-acf-inline-fields-uid'
-						).value
+				const uid = node.attributes.getNamedItem(
+					'data-acf-inline-fields-uid'
+				).value;
+				if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+					acf.blockEdit.setCurrentInlineEditingElementUid( uid );
+				}
+				if ( acf.blockEdit?.setCurrentInlineEditingElement ) {
+					acf.blockEdit.setCurrentInlineEditingElement(
+						event.currentTarget
 					);
+				}
 			}
 		};
 
@@ -220,12 +225,12 @@ function parseNodeToJSX(
 				const button = toolbar?.querySelector( 'button' );
 				if ( button ) {
 					button.focus();
-					setCurrentInlineEditingElementUid &&
-						setCurrentInlineEditingElementUid(
-							node.attributes.getNamedItem(
-								'data-acf-inline-fields-uid'
-							).value
-						);
+					const uid = node.attributes.getNamedItem(
+						'data-acf-inline-fields-uid'
+					).value;
+					if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+						acf.blockEdit.setCurrentInlineEditingElementUid( uid );
+					}
 				}
 			}
 			if ( event.key === 'Enter' ) {
@@ -235,12 +240,17 @@ function parseNodeToJSX(
 					event.preventDefault();
 					acf.debug( `Navigation prevented for ${ link.href }` );
 				}
-				setCurrentInlineEditingElementUid &&
-					setCurrentInlineEditingElementUid(
-						node.attributes.getNamedItem(
-							'data-acf-inline-fields-uid'
-						).value
+				const uid = node.attributes.getNamedItem(
+					'data-acf-inline-fields-uid'
+				).value;
+				if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+					acf.blockEdit.setCurrentInlineEditingElementUid( uid );
+				}
+				if ( acf.blockEdit?.setCurrentInlineEditingElement ) {
+					acf.blockEdit.setCurrentInlineEditingElement(
+						event.currentTarget
 					);
+				}
 			}
 		};
 	}
@@ -251,6 +261,8 @@ function parseNodeToJSX(
 			'data-acf-inline-contenteditable-field-slug'
 		).value;
 
+		// Get block field info from state if available
+		const blockFieldInfo = acf.blockEdit?.getBlockFieldInfo?.();
 		const editableFields = blockFieldInfo
 			? blockFieldInfo.filter(
 					( field ) =>
@@ -264,8 +276,6 @@ function parseNodeToJSX(
 			props.suppressContentEditableWarning = true;
 			props.role = 'input';
 			props.tabIndex = 0;
-			// Add key to give React stable identity for this element
-			props.key = 'contenteditable-' + fieldSlug;
 
 			props.onFocus = ( event ) => {
 				const link = event.target.closest( 'a' );
@@ -274,22 +284,19 @@ function parseNodeToJSX(
 					acf.debug( `Navigation prevented for ${ link.href }` );
 				}
 				event.stopPropagation();
-				setCurrentContentEditableElement &&
-					setCurrentContentEditableElement(
-						node.attributes.getNamedItem(
-							'data-acf-inline-contenteditable-field-slug'
-						).value
-					);
 				if ( node.hasAttribute( 'data-acf-inline-fields' ) ) {
-					setCurrentInlineEditingElementUid &&
-						setCurrentInlineEditingElementUid(
-							node.attributes.getNamedItem(
-								'data-acf-inline-fields-uid'
-							).value
-						);
-				} else {
-					setCurrentInlineEditingElementUid &&
-						setCurrentInlineEditingElementUid( null );
+					const uid = node.attributes.getNamedItem(
+						'data-acf-inline-fields-uid'
+					).value;
+					if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+						acf.blockEdit.setCurrentInlineEditingElementUid( uid );
+					}
+					if ( acf.blockEdit?.setCurrentInlineEditingElement ) {
+						acf.blockEdit.setCurrentInlineEditingElement( event.currentTarget );
+					}
+				}
+				if ( acf.blockEdit?.setCurrentContentEditableElement ) {
+					acf.blockEdit.setCurrentContentEditableElement( event.currentTarget );
 				}
 			};
 
@@ -313,8 +320,15 @@ function parseNodeToJSX(
 	) {
 		props.onClick = ( event ) => {
 			if ( event.target === event.currentTarget ) {
-				setCurrentInlineEditingElementUid &&
-					setCurrentInlineEditingElementUid( null );
+				if ( acf.blockEdit?.setCurrentInlineEditingElementUid ) {
+					acf.blockEdit.setCurrentInlineEditingElementUid( null );
+				}
+				if ( acf.blockEdit?.setCurrentInlineEditingElement ) {
+					acf.blockEdit.setCurrentInlineEditingElement( null );
+				}
+				if ( acf.blockEdit?.setCurrentContentEditableElement ) {
+					acf.blockEdit.setCurrentContentEditableElement( null );
+				}
 			}
 		};
 	}
@@ -334,47 +348,20 @@ function parseNodeToJSX(
 				elementArgs.push( textContent );
 			}
 		} else {
-			elementArgs.push(
-				parseNodeToJSX(
-					childNode,
-					depth + 1,
-					setCurrentInlineEditingElementUid,
-					onContentEditableChange,
-					setCurrentContentEditableElement,
-					blockFieldInfo
-				)
-			);
+			elementArgs.push( parseNodeToJSX( childNode, depth + 1 ) );
 		}
 	} );
 
 	const element = createElement.apply( this, elementArgs );
-
-	// Debug logging for contentEditable elements
-	if ( props.contentEditable ) {
-		console.log( '🔵 Created contentEditable element:', {
-			componentType,
-			key: props.key,
-			textContent: element?.props?.children,
-		} );
-	}
 
 	return element;
 }
 
 /**
  * Main parseJSX function exposed on the acf global object
- * Wrapper function that matches 6.7.0.2's `h` function
+ * Matches 6.7.0.2's implementation exactly
  */
-export function parseJSX(
-	htmlString,
-	setCurrentInlineEditingElementUid = null,
-	onContentEditableChange = null,
-	setCurrentContentEditableElement = null,
-	blockFieldInfo = null,
-	$ = jQuery
-) {
-	console.log( '🟣 parseJSX called, React version:', React?.version );
-
+export function parseJSX( htmlString, $ = jQuery ) {
 	// Wrap in div to ensure valid HTML structure
 	htmlString = '<div>' + htmlString + '</div>';
 
@@ -385,14 +372,7 @@ export function parseJSX(
 	);
 
 	// Parse with jQuery, convert to React, and extract children from wrapper div
-	const parsedElement = parseNodeToJSX(
-		$( htmlString )[ 0 ],
-		0,
-		setCurrentInlineEditingElementUid,
-		onContentEditableChange,
-		setCurrentContentEditableElement,
-		blockFieldInfo
-	);
+	const parsedElement = parseNodeToJSX( $( htmlString )[ 0 ], 0 );
 	return parsedElement.props.children;
 }
 

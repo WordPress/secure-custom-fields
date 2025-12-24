@@ -8,7 +8,6 @@ import md5 from 'md5';
 import {
 	useState,
 	useEffect,
-	useLayoutEffect,
 	useRef,
 	createPortal,
 	useMemo,
@@ -135,6 +134,18 @@ export const BlockEdit = ( props ) => {
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
 	const debounceRef = useRef( null );
+
+	// Initialize acf.blockEdit namespace for jsx-parser to use
+	if ( ! acf.blockEdit ) {
+		acf.blockEdit = {};
+	}
+	acf.blockEdit.setCurrentInlineEditingElementUid =
+		setCurrentInlineEditingElementUid;
+	acf.blockEdit.setCurrentInlineEditingElement =
+		setCurrentInlineEditingElement;
+	acf.blockEdit.setCurrentContentEditableElement =
+		setCurrentContentEditableElement;
+	acf.blockEdit.getBlockFieldInfo = () => blockFieldInfo;
 
 	const attributesWithoutError = useMemo( () => {
 		const { hasAcfError, ...rest } = attributes;
@@ -799,120 +810,6 @@ function BlockEditInner( props ) {
 		};
 	}, [ blockPreviewHtml, gutenbergIframeOrDocument ] );
 
-	// Preserve cursor position during re-renders
-	const savedSelection = useRef( null );
-
-	// Save cursor position BEFORE rendering (capture during effect)
-	useEffect( () => {
-		const activeElement = document.activeElement;
-		if (
-			activeElement &&
-			activeElement.hasAttribute( 'data-acf-inline-contenteditable' ) &&
-			activeElement.isContentEditable
-		) {
-			const selection = window.getSelection();
-			if ( selection && selection.rangeCount > 0 ) {
-				const range = selection.getRangeAt( 0 );
-				const fieldSlug = activeElement.getAttribute(
-					'data-acf-inline-contenteditable-field-slug'
-				);
-				console.log(
-					'🟢 Saving cursor position - offset:',
-					range.startOffset,
-					'field:',
-					fieldSlug
-				);
-				savedSelection.current = {
-					fieldSlug, // Save field identifier instead of element reference
-					offset: range.startOffset,
-					textContent: activeElement.textContent,
-				};
-			}
-		}
-	}, [ theSerializedAcfData ] ); // Save when data changes (before re-render)
-
-	// Restore cursor position AFTER DOM updates
-	useLayoutEffect( () => {
-		if ( ! savedSelection.current ) return;
-
-		const { fieldSlug, offset, textContent } = savedSelection.current;
-		console.log(
-			'🔵 Restoring cursor - field:',
-			fieldSlug,
-			'offset:',
-			offset
-		);
-
-		try {
-			// Find the new element by field slug instead of using stale reference
-			const element = previewRef?.current?.querySelector(
-				`[data-acf-inline-contenteditable-field-slug="${ fieldSlug }"]`
-			);
-
-			if ( ! element || ! element.isContentEditable ) {
-				console.warn(
-					'🟡 Element not found or not editable for field:',
-					fieldSlug
-				);
-				savedSelection.current = null;
-				return;
-			}
-
-			// Verify the content is still the same (sanity check)
-			if ( element.textContent !== textContent ) {
-				console.warn(
-					'🟡 Content changed, skipping cursor restore for field:',
-					fieldSlug
-				);
-				savedSelection.current = null;
-				return;
-			}
-
-			const selection = window.getSelection();
-			const range = document.createRange();
-
-			// Get the first text node in the element
-			const walker = document.createTreeWalker(
-				element,
-				NodeFilter.SHOW_TEXT,
-				null,
-				false
-			);
-			let textNode = walker.nextNode();
-
-			if ( textNode ) {
-				const safeOffset = Math.min(
-					offset,
-					textNode.textContent?.length || 0
-				);
-				range.setStart( textNode, safeOffset );
-				range.collapse( true );
-
-				selection.removeAllRanges();
-				selection.addRange( range );
-
-				// Focus the element to ensure cursor is visible and editable
-				element.focus();
-
-				console.log(
-					'🔵 Restored cursor to offset:',
-					safeOffset,
-					'in field:',
-					fieldSlug
-				);
-			} else {
-				console.warn(
-					'🟡 No text node found in element for field:',
-					fieldSlug
-				);
-			}
-		} catch ( error ) {
-			console.error( '🔴 Error restoring cursor:', error );
-		} finally {
-			savedSelection.current = null;
-		}
-	} );
-
 	// Callback when a new inline editing element is selected
 	const handleNewInlineEditingElementSelected = ( uid ) => {
 		setTimeout( () => {
@@ -1272,14 +1169,7 @@ function BlockEditInner( props ) {
 						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
 							blockPreviewHtml !== 'acf-block-preview-no-html' &&
 							blockPreviewHtml &&
-							acf.parseJSX(
-								blockPreviewHtml,
-								setCurrentInlineEditingElementUid,
-								null,
-								handleNewContentEditableElementSelected,
-								blockFieldInfo,
-								$
-							) }
+							acf.parseJSX( blockPreviewHtml, $ ) }
 					</ErrorBoundary>
 				</BlockPreview>
 			</>
