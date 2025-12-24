@@ -492,7 +492,7 @@ class Test_SCF_JSON_Schema_Validator extends BaseTestCase {
 		$this->assertIsArray( $required, 'REQUIRED_SCHEMAS should be an array' );
 		$this->assertNotEmpty( $required, 'REQUIRED_SCHEMAS should not be empty' );
 		$this->assertContains( 'post-type', $required, 'Should include post-type' );
-		$this->assertContains( 'internal-fields', $required, 'Should include internal-fields' );
+		$this->assertContains( 'internal-properties', $required, 'Should include internal-properties' );
 		$this->assertContains( 'scf-identifier', $required, 'Should include scf-identifier' );
 	}
 

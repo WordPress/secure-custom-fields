@@ -147,8 +147,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 */
 		private function get_internal_fields_schema() {
 			$validator = new SCF_JSON_Schema_Validator();
-			$schema    = $validator->load_schema( 'internal-fields' );
-			return json_decode( wp_json_encode( $schema->definitions->fieldInternalFields ), true );
+			$schema    = $validator->load_schema( 'internal-properties' );
+			return json_decode( wp_json_encode( $schema->definitions->fieldInternalProperties ), true );
 		}
 
 		/**

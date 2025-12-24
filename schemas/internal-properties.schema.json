@@ -1,8 +1,8 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/internal-fields.schema.json",
-	"title": "SCF Internal Fields",
-	"description": "Internal fields present in SCF entities. These fields are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/internal-properties.schema.json",
+	"title": "SCF Internal Properties",
+	"description": "Internal properties present in SCF entities. These properties are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
 	"definitions": {
 		"ID": {
 			"type": "integer",
@@ -41,9 +41,9 @@
 			"type": "string",
 			"description": "Internal field name used during form processing."
 		},
-		"fieldInternalFields": {
+		"fieldInternalProperties": {
 			"type": "object",
-			"description": "Internal fields for field entities",
+			"description": "Internal properties for field entities",
 			"properties": {
 				"ID": { "$ref": "#/definitions/ID" },
 				"_valid": { "$ref": "#/definitions/_valid" },
@@ -54,9 +54,9 @@
 				"_name": { "$ref": "#/definitions/_name" }
 			}
 		},
-		"internalFields": {
+		"internalProperties": {
 			"type": "object",
-			"description": "Internal fields for internal post types (field groups, taxonomies, options pages)",
+			"description": "Internal properties for internal post types (field groups, taxonomies, options pages)",
 			"properties": {
 				"ID": { "$ref": "#/definitions/ID" },
 				"_valid": { "$ref": "#/definitions/_valid" },
