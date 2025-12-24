@@ -165,6 +165,70 @@ class SCFFieldManagerTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test filter_posts converts parent key to ID.
+	 *
+	 * This tests filtering sub-fields by their parent field's key (e.g., sub-fields of a repeater).
+	 * Uses cache to simulate acf_get_field_post behavior in unit tests.
+	 */
+	public function test_filter_posts_converts_parent_key_to_id() {
+		$parent_field_key = 'field_parent_repeater';
+
+		// Create a mock post for get_post() to return.
+		$parent_field_id = wp_insert_post(
+			array(
+				'post_type'   => 'acf-field',
+				'post_title'  => 'Parent Repeater',
+				'post_name'   => $parent_field_key,
+				'post_status' => 'publish',
+			)
+		);
+
+		// Pre-populate the cache so acf_get_field_post finds the field by key.
+		$cache_key = acf_cache_key( "acf_get_field_post:key:$parent_field_key" );
+		wp_cache_set( $cache_key, $parent_field_id, 'secure-custom-fields' );
+
+		// Filter using the parent field's key (string), not the numeric ID.
+		$sub_fields = array(
+			array(
+				'key'    => 'field_sub_1',
+				'name'   => 'sub_field_1',
+				'type'   => 'text',
+				'parent' => $parent_field_id,
+			),
+			array(
+				'key'    => 'field_sub_2',
+				'name'   => 'sub_field_2',
+				'type'   => 'text',
+				'parent' => 999, // Different parent.
+			),
+		);
+
+		$result = $this->manager->filter_posts( $sub_fields, array( 'parent' => $parent_field_key ) );
+
+		$this->assertCount( 1, $result );
+		$this->assertEquals( 'field_sub_1', $result[0]['key'] );
+	}
+
+	/**
+	 * Test filter_posts returns empty when parent key not found.
+	 */
+	public function test_filter_posts_returns_empty_when_parent_key_not_found() {
+		$fields = array(
+			array(
+				'key'    => 'field_1',
+				'name'   => 'test_field',
+				'type'   => 'text',
+				'parent' => 123,
+			),
+		);
+
+		// Filter using a non-existent field key - should convert to 0 and match nothing.
+		$result = $this->manager->filter_posts( $fields, array( 'parent' => 'field_nonexistent_key' ) );
+
+		$this->assertCount( 0, $result );
+	}
+
+	/**
 	 * Test post_type property.
 	 */
 	public function test_post_type_property() {
