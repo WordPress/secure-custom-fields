@@ -88,6 +88,9 @@ add_filter( 'acf/format_value', __NAMESPACE__ . '\populate_auto_inline_editing_v
 function apply_inline_editing_attributes_to_render_template( $path, $block, $is_preview ): string {
 	global $acf_fields_used_in_block_render_template, $acf_blocks_doing_auto_inline_editing;
 
+	// Suppress unused variable warning - parameter is part of the function signature for consistency.
+	unset( $is_preview );
+
 	// Don't apply autoInlineEditing if the current PHP doesn't include DOMDocument or DOMXPath.
 	if ( ! class_exists( 'DOMDocument' ) || ! class_exists( 'DOMXPath' ) ) {
 		ob_start();
