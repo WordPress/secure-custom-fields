@@ -56,6 +56,38 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test resolve_refs resolves nested path refs like #/definitions/shared/placeholder.
+	 */
+	public function test_resolve_refs_resolves_nested_path_refs() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'placeholder' => array( '$ref' => '#/definitions/shared/placeholder' ),
+			),
+		);
+
+		$root_schema = array(
+			'definitions' => array(
+				'shared' => array(
+					'placeholder' => array(
+						'type'        => 'string',
+						'default'     => '',
+						'description' => 'Placeholder text',
+					),
+				),
+			),
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
+
+		$this->assertEquals( 'object', $result['type'] );
+		$this->assertArrayHasKey( 'placeholder', $result['properties'] );
+		$this->assertArrayNotHasKey( '$ref', $result['properties']['placeholder'] );
+		$this->assertEquals( 'string', $result['properties']['placeholder']['type'] );
+		$this->assertEquals( '', $result['properties']['placeholder']['default'] );
+	}
+
+	/**
 	 * Test resolve_refs resolves nested $ref (ref pointing to ref).
 	 */
 	public function test_resolve_refs_resolves_nested_refs() {
@@ -204,5 +236,38 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 			$this->assertArrayHasKey( 'label', $type_variant['properties'] );
 			$this->assertArrayHasKey( 'type', $type_variant['properties'] );
 		}
+	}
+
+	/**
+	 * Test that $ref in type schemas are resolved using base schema definitions.
+	 */
+	public function test_type_schema_refs_resolved_from_base_definitions() {
+		$result = $this->builder->compose_field_schema();
+
+		// Find the email variant which uses $ref.
+		$email_variant = null;
+		foreach ( $result['oneOf'] as $variant ) {
+			if ( isset( $variant['properties']['type']['enum'] ) &&
+				in_array( 'email', $variant['properties']['type']['enum'], true ) ) {
+				$email_variant = $variant;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $email_variant, 'Email variant should exist' );
+
+		// Check that placeholder $ref was resolved to actual definition.
+		$this->assertArrayHasKey( 'placeholder', $email_variant['properties'] );
+		$placeholder = $email_variant['properties']['placeholder'];
+
+		// Should be resolved (have 'type' key), not still a $ref.
+		$this->assertArrayNotHasKey( '$ref', $placeholder, 'placeholder should be resolved, not a $ref' );
+		$this->assertEquals( 'string', $placeholder['type'], 'placeholder should be type string' );
+
+		// Check default_value is also resolved.
+		$this->assertArrayHasKey( 'default_value', $email_variant['properties'] );
+		$default_value = $email_variant['properties']['default_value'];
+		$this->assertArrayNotHasKey( '$ref', $default_value, 'default_value should be resolved' );
+		$this->assertEquals( 'string', $default_value['type'] );
 	}
 }

@@ -57,6 +57,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * WordPress internal validation doesn't understand JSON Schema $ref,
 		 * so we need to inline referenced definitions.
 		 *
+		 * Supports nested paths like "#/definitions/shared/placeholder" by
+		 * traversing the path segments.
+		 *
 		 * @since 6.8.0
 		 *
 		 * @param array      $schema      The schema to resolve.
@@ -74,12 +77,14 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			// If this is a $ref, resolve it.
 			if ( isset( $schema['$ref'] ) ) {
 				$ref = $schema['$ref'];
-				// Extract definition name from "#/definitions/name".
+				// Extract definition path from "#/definitions/path/to/def".
 				if ( preg_match( '~^#/definitions/(.+)$~', $ref, $matches ) ) {
-					$def_name = $matches[1];
-					if ( isset( $definitions[ $def_name ] ) ) {
+					$def_path = $matches[1];
+					$resolved = $this->traverse_path( $definitions, $def_path );
+
+					if ( null !== $resolved ) {
 						// Recursively resolve refs in the referenced definition.
-						$resolved = $this->resolve_refs( $definitions[ $def_name ], $root_schema );
+						$resolved = $this->resolve_refs( $resolved, $root_schema );
 						// Merge any additional properties from the original schema.
 						unset( $schema['$ref'] );
 						return array_merge( $resolved, $schema );
@@ -109,6 +114,29 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			}
 
 			return $schema;
+		}
+
+		/**
+		 * Traverses a nested array using a slash-separated path.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @param array  $data The array to traverse.
+		 * @param string $path Slash-separated path (e.g., "shared/placeholder").
+		 * @return array|null The value at the path, or null if not found.
+		 */
+		private function traverse_path( array $data, string $path ): ?array {
+			$segments = explode( '/', $path );
+			$current  = $data;
+
+			foreach ( $segments as $segment ) {
+				if ( ! is_array( $current ) || ! isset( $current[ $segment ] ) ) {
+					return null;
+				}
+				$current = $current[ $segment ];
+			}
+
+			return is_array( $current ) ? $current : null;
 		}
 
 		/**
@@ -194,6 +222,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * Loads all type-specific field schemas from category directories.
 		 *
 		 * Scans schemas/fields/{category}/ directories for type schema files.
+		 * Resolves $ref references using definitions from the base field schema.
 		 *
 		 * @since 6.8.0
 		 *
@@ -213,6 +242,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 				return $schemas;
 			}
 
+			// Load base schema for resolving $ref in type schemas.
+			$base_schema = $this->load_base_field_schema();
+
 			foreach ( $category_dirs as $category_path ) {
 				// Scan schema files in this category.
 				$files = glob( $category_path . '/*.schema.json' );
@@ -230,6 +262,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 					if ( ! $schema ) {
 						continue;
 					}
+
+					// Resolve $ref using base schema definitions.
+					$schema = $this->resolve_refs( $schema, $base_schema );
 
 					// Extract field type from schema or filename.
 					$type = $schema['properties']['type']['enum'][0]
