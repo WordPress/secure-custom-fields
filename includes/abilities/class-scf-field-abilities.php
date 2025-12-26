@@ -104,7 +104,11 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		}
 
 		/**
-		 * Gets the entity schema.
+		 * Gets the composed field schema with oneOf variants for each field type.
+		 *
+		 * Uses SCF_Schema_Builder to build a schema where each field type has
+		 * its own complete variant, allowing WordPress Abilities to validate
+		 * type-specific properties.
 		 *
 		 * @since 6.8.0
 		 *
@@ -112,50 +116,10 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 */
 		private function get_field_schema() {
 			if ( null === $this->field_schema ) {
-				$schema_path        = ACF_PATH . 'schemas/field.schema.json';
-				$schema_content     = file_get_contents( $schema_path );
-				$this->field_schema = json_decode( $schema_content, true );
-
-				// Resolve $ref references.
-				$this->field_schema = $this->resolve_schema_refs( $this->field_schema );
+				$builder            = acf_get_instance( 'SCF_Schema_Builder' );
+				$this->field_schema = $builder->compose_field_schema();
 			}
 			return $this->field_schema;
-		}
-
-		/**
-		 * Recursively resolves $ref references in a JSON schema.
-		 *
-		 * @since 6.8.0
-		 *
-		 * @param array $schema The schema to resolve.
-		 * @return array The resolved schema.
-		 */
-		private function resolve_schema_refs( array $schema ) {
-			// If this object has a $ref, resolve it.
-			if ( isset( $schema['$ref'] ) ) {
-				$ref = $schema['$ref'];
-				if ( strpos( $ref, '#/definitions/' ) === 0 ) {
-					$def_name   = substr( $ref, 14 );
-					$full       = $this->get_field_schema();
-					$definition = isset( $full['definitions'][ $def_name ] ) ? $full['definitions'][ $def_name ] : array();
-					if ( empty( $definition ) ) {
-						_doing_it_wrong( __METHOD__, 'Unresolvable $ref: ' . esc_html( $ref ), '6.8.0' );
-						return $schema;
-					}
-					// Merge resolved definition with any additional properties.
-					unset( $schema['$ref'] );
-					$schema = array_merge( $definition, $schema );
-				}
-			}
-
-			// Recurse into nested arrays/objects.
-			foreach ( $schema as $key => $value ) {
-				if ( is_array( $value ) ) {
-					$schema[ $key ] = $this->resolve_schema_refs( $value );
-				}
-			}
-
-			return $schema;
 		}
 
 		/**
@@ -183,8 +147,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 */
 		private function get_internal_fields_schema() {
 			$validator = new SCF_JSON_Schema_Validator();
-			$schema    = $validator->load_schema( 'internal-fields' );
-			return json_decode( wp_json_encode( $schema->definitions->fieldInternalFields ), true );
+			$schema    = $validator->load_schema( 'internal-properties' );
+			return json_decode( wp_json_encode( $schema->definitions->fieldInternalProperties ), true );
 		}
 
 		/**
@@ -193,8 +157,9 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * Used for output schemas of GET/LIST/CREATE/UPDATE/DUPLICATE abilities.
 		 * Export uses get_field_schema() directly (no internal fields).
 		 *
-		 * The field schema uses oneOf at the top level with the actual field definition
-		 * in definitions.field. Internal fields are merged into that definition.
+		 * The composed field schema uses oneOf at the top level with each variant
+		 * containing merged base + type-specific properties. Internal fields are
+		 * merged into each variant's properties.
 		 *
 		 * @since 6.8.0
 		 *
@@ -204,11 +169,18 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 			$schema   = $this->get_field_schema();
 			$internal = $this->get_internal_fields_schema();
 
-			// Merge internal fields into the field definition's properties.
-			$schema['definitions']['field']['properties'] = array_merge(
-				$schema['definitions']['field']['properties'],
-				$internal['properties']
-			);
+			// Merge internal fields into each oneOf variant's properties.
+			if ( isset( $schema['oneOf'] ) ) {
+				foreach ( $schema['oneOf'] as &$variant ) {
+					if ( isset( $variant['properties'] ) ) {
+						$variant['properties'] = array_merge(
+							$variant['properties'],
+							$internal['properties']
+						);
+					}
+				}
+				unset( $variant );
+			}
 
 			return $schema;
 		}

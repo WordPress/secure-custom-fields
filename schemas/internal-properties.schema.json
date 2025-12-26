@@ -1,0 +1,73 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/internal-properties.schema.json",
+	"title": "SCF Internal Properties",
+	"description": "Internal properties present in SCF entities. These properties are managed by the system and appear in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs, but are stripped during EXPORT.",
+	"definitions": {
+		"ID": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "WordPress post ID. Present in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs."
+		},
+		"_valid": {
+			"type": [ "boolean", "integer" ],
+			"description": "Validation cache flag. Indicates whether the entity passed validation. Can be boolean or integer (0/1)."
+		},
+		"local": {
+			"type": "string",
+			"enum": [ "json" ],
+			"description": "Source indicator. Present only if entity is locally-defined (e.g., from local JSON files). Stripped during export."
+		},
+		"not_registered": {
+			"type": "boolean",
+			"description": "Flag indicating that this entity could not be registered because another one with the same key already exists. Present only when registration was skipped."
+		},
+		"prefix": {
+			"type": "string",
+			"description": "Internal prefix used for field naming during rendering."
+		},
+		"value": {
+			"description": "Current field value. Type varies by field type."
+		},
+		"id": {
+			"type": "string",
+			"description": "HTML element ID attribute for the field input."
+		},
+		"class": {
+			"type": "string",
+			"description": "HTML element class attribute for the field input."
+		},
+		"_name": {
+			"type": "string",
+			"description": "Internal field name used during form processing."
+		},
+		"allow_in_bindings": {
+			"type": "boolean",
+			"description": "Whether the field value can be used in block bindings."
+		},
+		"fieldInternalProperties": {
+			"type": "object",
+			"description": "Internal properties for field entities",
+			"properties": {
+				"ID": { "$ref": "#/definitions/ID" },
+				"_valid": { "$ref": "#/definitions/_valid" },
+				"prefix": { "$ref": "#/definitions/prefix" },
+				"value": { "$ref": "#/definitions/value" },
+				"id": { "$ref": "#/definitions/id" },
+				"class": { "$ref": "#/definitions/class" },
+				"_name": { "$ref": "#/definitions/_name" },
+				"allow_in_bindings": { "$ref": "#/definitions/allow_in_bindings" }
+			}
+		},
+		"internalProperties": {
+			"type": "object",
+			"description": "Internal properties for internal post types (field groups, taxonomies, options pages)",
+			"properties": {
+				"ID": { "$ref": "#/definitions/ID" },
+				"_valid": { "$ref": "#/definitions/_valid" },
+				"local": { "$ref": "#/definitions/local" },
+				"not_registered": { "$ref": "#/definitions/not_registered" }
+			}
+		}
+	}
+}

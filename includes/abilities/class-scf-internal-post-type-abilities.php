@@ -146,65 +146,18 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				$validator = new SCF_JSON_Schema_Validator();
 				$schema    = $validator->load_schema( $this->schema_name() );
 
+				// Convert to array for processing.
+				$schema_array = json_decode( wp_json_encode( $schema ), true );
+
 				// Convert hook_name to camelCase for schema definition key (post_type → postType).
-				$def_key     = lcfirst( str_replace( ' ', '', ucwords( $this->entity_name() ) ) );
-				$entity      = json_decode( wp_json_encode( $schema->definitions->$def_key ), true );
-				$definitions = json_decode( wp_json_encode( $schema->definitions ), true );
+				$def_key = lcfirst( str_replace( ' ', '', ucwords( $this->entity_name() ) ) );
+				$entity  = $schema_array['definitions'][ $def_key ] ?? array();
 
 				// Resolve $ref references for WordPress Abilities API compatibility.
-				$this->entity_schema = $this->resolve_schema_refs( $entity, $definitions );
+				$builder             = acf_get_instance( 'SCF_Schema_Builder' );
+				$this->entity_schema = $builder->resolve_refs( $entity, $schema_array );
 			}
 			return $this->entity_schema;
-		}
-
-		/**
-		 * Recursively resolves $ref references in a schema.
-		 *
-		 * WordPress Abilities API doesn't understand JSON Schema $ref,
-		 * so we need to inline referenced definitions.
-		 *
-		 * @param array $schema      The schema or schema fragment to process.
-		 * @param array $definitions All available definitions from the schema.
-		 * @return array Schema with $ref resolved.
-		 */
-		private function resolve_schema_refs( $schema, $definitions ) {
-			if ( ! is_array( $schema ) ) {
-				return $schema;
-			}
-
-			// If this is a $ref, resolve it.
-			if ( isset( $schema['$ref'] ) ) {
-				$ref = $schema['$ref'];
-				// Extract definition name from "#/definitions/name".
-				if ( preg_match( '#^\#/definitions/(.+)$#', $ref, $matches ) ) {
-					$def_name = $matches[1];
-					if ( isset( $definitions[ $def_name ] ) ) {
-						// Recursively resolve refs in the referenced definition.
-						return $this->resolve_schema_refs( $definitions[ $def_name ], $definitions );
-					}
-				}
-
-				// Log warning for unresolvable $ref.
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html(
-						sprintf(
-						/* translators: %s: The unresolvable JSON Schema $ref value */
-							__( 'Could not resolve schema $ref: %s', 'secure-custom-fields' ),
-							$ref
-						)
-					),
-					'6.8.0'
-				);
-				return $schema;
-			}
-
-			// Recursively process all array elements.
-			foreach ( $schema as $key => $value ) {
-				$schema[ $key ] = $this->resolve_schema_refs( $value, $definitions );
-			}
-
-			return $schema;
 		}
 
 		/**
@@ -227,8 +180,8 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 */
 		private function get_internal_fields_schema() {
 			$validator = new SCF_JSON_Schema_Validator();
-			$schema    = $validator->load_schema( 'internal-fields' );
-			return json_decode( wp_json_encode( $schema->definitions->internalFields ), true );
+			$schema    = $validator->load_schema( 'internal-properties' );
+			return json_decode( wp_json_encode( $schema->definitions->internalProperties ), true );
 		}
 
 		/**

@@ -640,38 +640,4 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'parent_not_found', $result->get_error_code() );
 	}
-
-	// Schema resolution tests.
-
-	/**
-	 * Test resolve_schema_refs triggers _doing_it_wrong for missing definition
-	 */
-	public function test_resolve_schema_refs_triggers_doing_it_wrong_for_missing_definition() {
-		$reflection = new ReflectionClass( SCF_Field_Abilities::class );
-
-		// First, inject a custom field schema with limited definitions.
-		$property = $reflection->getProperty( 'field_schema' );
-		$property->setAccessible( true );
-		$property->setValue(
-			$this->abilities,
-			array(
-				'definitions' => array(
-					'existingDef' => array( 'type' => 'string' ),
-				),
-			)
-		);
-
-		$method = $reflection->getMethod( 'resolve_schema_refs' );
-		$method->setAccessible( true );
-
-		// Try to resolve a $ref to a non-existent definition.
-		$schema = array(
-			'$ref' => '#/definitions/nonExistentDef',
-		);
-
-		$result = $method->invoke( $this->abilities, $schema );
-
-		// Should return original schema when definition not found.
-		$this->assertEquals( $schema, $result );
-	}
 }

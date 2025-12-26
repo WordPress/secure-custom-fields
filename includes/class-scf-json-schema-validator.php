@@ -26,7 +26,7 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 		 *
 		 * @var array
 		 */
-		public const REQUIRED_SCHEMAS = array( 'post-type', 'taxonomy', 'ui-options-page', 'field-group', 'internal-fields', 'scf-identifier' );
+		public const REQUIRED_SCHEMAS = array( 'post-type', 'taxonomy', 'ui-options-page', 'field-group', 'internal-properties', 'scf-identifier' );
 
 		/**
 		 * The last validation errors.
