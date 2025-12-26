@@ -30,8 +30,8 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 	 * - Fallback variant allows unknown types until all 35 field types have schemas
 	 *
 	 * Schema structure:
-	 * - schemas/field.schema.json: Base properties shared by all types
-	 * - schemas/fields/{category}/{type}.schema.json: Type-specific properties
+	 * - schemas/field-fragments/field-base.schema.json: Base properties shared by all types
+	 * - schemas/field-fragments/{category}/{type}.schema.json: Type-specific properties
 	 *
 	 * @since 6.8.0
 	 */
@@ -151,17 +151,19 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		}
 
 		/**
-		 * Loads and resolves the base field schema.
+		 * Loads the base field schema without resolving refs.
+		 *
+		 * Refs are kept intact so the generated field.schema.json stays compact.
+		 * Consumers (like Field Abilities) resolve refs at runtime when needed.
 		 *
 		 * @since 6.8.0
 		 *
-		 * @return array The base field schema with refs resolved.
+		 * @return array The base field schema with refs intact.
 		 */
 		private function load_base_field_schema(): array {
 			if ( null === $this->base_schema ) {
-				$schema_path       = ACF_PATH . 'schemas/field.schema.json';
+				$schema_path       = ACF_PATH . 'schemas/field-fragments/field-base.schema.json';
 				$this->base_schema = json_decode( file_get_contents( $schema_path ), true );
-				$this->base_schema = $this->resolve_refs( $this->base_schema );
 			}
 
 			return $this->base_schema;
@@ -170,7 +172,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		/**
 		 * Loads all type-specific field schemas from category directories.
 		 *
-		 * Scans schemas/fields/{category}/ directories for type schema files.
+		 * Scans schemas/field-fragments/{category}/ directories for type schema files.
 		 *
 		 * @since 6.8.0
 		 *
@@ -178,7 +180,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 */
 		private function load_type_schemas(): array {
 			$schemas     = array();
-			$fields_path = ACF_PATH . 'schemas/fields/';
+			$fields_path = ACF_PATH . 'schemas/field-fragments/';
 
 			if ( ! is_dir( $fields_path ) || ! is_readable( $fields_path ) ) {
 				return $schemas;
@@ -220,7 +222,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		}
 	}
 
-	// Initialize builder instance.
-	acf_new_instance( 'SCF_Schema_Builder' );
+	// Initialize only in WordPress context, not in the CLI.
+	if ( function_exists( 'acf_new_instance' ) ) {
+		acf_new_instance( 'SCF_Schema_Builder' );
+	}
 
 endif;

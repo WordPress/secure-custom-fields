@@ -1,8 +1,8 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field.schema.json",
-	"title": "SCF Field",
-	"description": "Schema for Secure Custom Fields field definitions. Validates field structure and base properties. Type-specific field properties are allowed but not strictly validated.",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field-fragments/field-base.schema.json",
+	"title": "SCF Field Base",
+	"description": "Base field schema with shared properties and definitions. Used by the generation script to compose field.schema.json.",
 	"$comment": "WordPress doesn't support 'allOf', so we use '$ref' with explicit 'required' arrays. Since PHP's array_merge() replaces (not merges) nested arrays, we must redeclare all required fields from the definition plus 'parent'.",
 	"oneOf": [
 		{
