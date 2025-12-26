@@ -41,6 +41,10 @@
 			"type": "string",
 			"description": "Internal field name used during form processing."
 		},
+		"allow_in_bindings": {
+			"type": "boolean",
+			"description": "Whether the field value can be used in block bindings."
+		},
 		"fieldInternalProperties": {
 			"type": "object",
 			"description": "Internal properties for field entities",
@@ -51,7 +55,8 @@
 				"value": { "$ref": "#/definitions/value" },
 				"id": { "$ref": "#/definitions/id" },
 				"class": { "$ref": "#/definitions/class" },
-				"_name": { "$ref": "#/definitions/_name" }
+				"_name": { "$ref": "#/definitions/_name" },
+				"allow_in_bindings": { "$ref": "#/definitions/allow_in_bindings" }
 			}
 		},
 		"internalProperties": {
