@@ -3,6 +3,8 @@
  * Applying auto inline editing to SCF blocks.
  *
  * @package wordpress/secure-custom-fields
+ *
+ * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
  */
 
 /**
