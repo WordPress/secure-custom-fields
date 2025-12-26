@@ -122,11 +122,9 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test resolve_refs triggers _doing_it_wrong for unresolvable $ref.
-	 *
-	 * @expectedIncorrectUsage SCF_Schema_Builder::resolve_refs
+	 * Test resolve_refs returns original schema for unresolvable $ref.
 	 */
-	public function test_resolve_refs_triggers_doing_it_wrong_for_missing_definition() {
+	public function test_resolve_refs_returns_original_for_missing_definition() {
 		$schema = array(
 			'$ref' => '#/definitions/nonExistentDef',
 		);
@@ -204,5 +202,32 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 			$this->assertArrayHasKey( 'label', $type_variant['properties'] );
 			$this->assertArrayHasKey( 'type', $type_variant['properties'] );
 		}
+	}
+
+	/**
+	 * Test resolve_refs handles nested definition paths.
+	 *
+	 * Refs like "#/definitions/shared/default_value" should resolve nested paths.
+	 */
+	public function test_resolve_refs_resolves_nested_definition_paths() {
+		$schema = array(
+			'$ref' => '#/definitions/shared/nested',
+		);
+
+		$root_schema = array(
+			'definitions' => array(
+				'shared' => array(
+					'nested' => array(
+						'type'        => 'string',
+						'description' => 'A nested definition',
+					),
+				),
+			),
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $root_schema );
+
+		$this->assertEquals( 'string', $result['type'] );
+		$this->assertEquals( 'A nested definition', $result['description'] );
 	}
 }

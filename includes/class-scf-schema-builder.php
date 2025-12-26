@@ -55,7 +55,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * Recursively resolves $ref references in a JSON schema.
 		 *
 		 * WordPress internal validation doesn't understand JSON Schema $ref,
-		 * so we need to inline referenced definitions.
+		 * so we inline referenced definitions before passing schemas to WP.
 		 *
 		 * @since 6.8.0
 		 *
@@ -64,44 +64,21 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * @return array The resolved schema.
 		 */
 		public function resolve_refs( array $schema, ?array $root_schema = null ): array {
-			// Use the schema itself as root if not provided (first call).
-			if ( null === $root_schema ) {
-				$root_schema = $schema;
-			}
-
+			$root_schema = $root_schema ?? $schema;
 			$definitions = $root_schema['definitions'] ?? array();
 
-			// If this is a $ref, resolve it.
-			if ( isset( $schema['$ref'] ) ) {
-				$ref = $schema['$ref'];
-				// Extract definition name from "#/definitions/name".
-				if ( preg_match( '~^#/definitions/(.+)$~', $ref, $matches ) ) {
-					$def_name = $matches[1];
-					if ( isset( $definitions[ $def_name ] ) ) {
-						// Recursively resolve refs in the referenced definition.
-						$resolved = $this->resolve_refs( $definitions[ $def_name ], $root_schema );
-						// Merge any additional properties from the original schema.
-						unset( $schema['$ref'] );
-						return array_merge( $resolved, $schema );
-					}
+			if ( isset( $schema['$ref'] ) && preg_match( '~^#/definitions/(.+)$~', $schema['$ref'], $matches ) ) {
+				$resolved = $definitions;
+				foreach ( explode( '/', $matches[1] ) as $part ) {
+					$resolved = $resolved[ $part ] ?? null;
 				}
 
-				// Log warning for unresolvable $ref.
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html(
-						sprintf(
-							/* translators: %s: The unresolvable JSON Schema $ref value */
-							__( 'Could not resolve schema $ref: %s', 'secure-custom-fields' ),
-							$ref
-						)
-					),
-					'6.8.0'
-				);
-				return $schema;
+				if ( is_array( $resolved ) ) {
+					unset( $schema['$ref'] );
+					return array_merge( $this->resolve_refs( $resolved, $root_schema ), $schema );
+				}
 			}
 
-			// Recursively process all array elements.
 			foreach ( $schema as $key => $value ) {
 				if ( is_array( $value ) ) {
 					$schema[ $key ] = $this->resolve_refs( $value, $root_schema );

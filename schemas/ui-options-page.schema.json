@@ -27,19 +27,19 @@
 					"minLength": 1,
 					"description": "Unique identifier for the options page with ui_options_page_ prefix (e.g. 'ui_options_page_site_settings')"
 				},
-				"title": { "$ref": "file://common.schema.json#/definitions/title" },
+				"title": { "$ref": "common.schema.json#/definitions/title" },
 				"menu_slug": {
 					"type": "string",
 					"pattern": "^[a-z0-9_-]+$",
 					"minLength": 1,
 					"description": "The menu slug used in the admin URL (e.g. 'site-settings'). Lowercase letters, numbers, underscores, and dashes only."
 				},
-				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
-				"active": { "$ref": "file://common.schema.json#/definitions/active" },
-				"advanced_configuration": { "$ref": "file://common.schema.json#/definitions/advanced_configuration" },
-				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
-				"import_source": { "$ref": "file://common.schema.json#/definitions/import_source" },
-				"import_date": { "$ref": "file://common.schema.json#/definitions/import_date" },
+				"menu_order": { "$ref": "common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "common.schema.json#/definitions/import_date" },
 
 				"page_title": {
 					"type": "string",

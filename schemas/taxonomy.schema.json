@@ -27,24 +27,24 @@
 					"minLength": 1,
 					"description": "Unique identifier for the taxonomy with taxonomy_ prefix (e.g. 'taxonomy_genre')"
 				},
-				"title": { "$ref": "file://common.schema.json#/definitions/title" },
+				"title": { "$ref": "common.schema.json#/definitions/title" },
 				"taxonomy": {
 					"type": "string",
 					"pattern": "^[a-z0-9_-]*$",
 					"minLength": 1,
 					"maxLength": 32,
 					"not": {
-						"$ref": "file://common.schema.json#/definitions/wordpressReservedTerms"
+						"$ref": "common.schema.json#/definitions/wordpressReservedTerms"
 					},
 					"description": "The taxonomy key passed to register_taxonomy() (e.g. 'genre', 'product_tag'). Max 32 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
 				},
 
-				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
-				"active": { "$ref": "file://common.schema.json#/definitions/active" },
-				"advanced_configuration": { "$ref": "file://common.schema.json#/definitions/advanced_configuration" },
-				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
-				"import_source": { "$ref": "file://common.schema.json#/definitions/import_source" },
-				"import_date": { "$ref": "file://common.schema.json#/definitions/import_date" },
+				"menu_order": { "$ref": "common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "common.schema.json#/definitions/import_date" },
 
 				"object_type": {
 					"type": "array",

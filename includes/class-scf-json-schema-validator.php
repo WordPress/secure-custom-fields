@@ -94,23 +94,27 @@ if ( ! class_exists( 'SCF_JSON_Schema_Validator' ) ) :
 				$data = json_decode( wp_json_encode( $data ) );
 			}
 
-			// Create schema storage and register schemas for $ref support
+			// Create schema storage and register schemas for $ref support.
+			// Use full file:// URIs so relative refs resolve correctly within the schemas directory.
 			$schema_storage = new JsonSchema\SchemaStorage();
 
-			// Register common schema
+			// Build base URI for the schemas directory.
+			$schemas_base_uri = 'file://' . realpath( $this->schema_path ) . '/';
+
+			// Register common schema (referenced by post-type, taxonomy, ui-options-page, field-group).
 			$common_schema_path    = $this->schema_path . 'common.schema.json';
 			$common_schema_content = wp_json_file_decode( $common_schema_path );
-			$schema_storage->addSchema( 'file://common.schema.json', $common_schema_content );
+			$schema_storage->addSchema( $schemas_base_uri . 'common.schema.json', $common_schema_content );
 
-			// Register field schema (needed for field-group schema $ref)
+			// Register field schema (referenced by field-group).
 			$field_schema_path    = $this->schema_path . 'field.schema.json';
 			$field_schema_content = wp_json_file_decode( $field_schema_path );
 			if ( $field_schema_content ) {
-				$schema_storage->addSchema( 'file://field.schema.json', $field_schema_content );
+				$schema_storage->addSchema( $schemas_base_uri . 'field.schema.json', $field_schema_content );
 			}
 
-			// Register main schema
-			$main_schema_uri = 'file://' . $schema_name . '.schema.json';
+			// Register main schema with full path so relative refs resolve to sibling schemas.
+			$main_schema_uri = $schemas_base_uri . $schema_name . '.schema.json';
 			$schema_storage->addSchema( $main_schema_uri, $schema );
 
 			$validator = new JsonSchema\Validator( new JsonSchema\Constraints\Factory( $schema_storage ) );

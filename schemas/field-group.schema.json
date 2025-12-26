@@ -27,15 +27,15 @@
 					"minLength": 1,
 					"description": "Unique identifier for the field group with group_ prefix (e.g. 'group_abc123')"
 				},
-				"title": { "$ref": "file://common.schema.json#/definitions/title" },
+				"title": { "$ref": "common.schema.json#/definitions/title" },
 				"fields": {
 					"type": "array",
-					"items": { "$ref": "file://field.schema.json#/definitions/field" },
+					"items": { "$ref": "field.schema.json#/definitions/field" },
 					"description": "Array of field definitions. If empty array, field group appears but contains no fields."
 				},
-				"menu_order": { "$ref": "file://common.schema.json#/definitions/menu_order" },
-				"active": { "$ref": "file://common.schema.json#/definitions/active" },
-				"modified": { "$ref": "file://common.schema.json#/definitions/modified" },
+				"menu_order": { "$ref": "common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "common.schema.json#/definitions/active" },
+				"modified": { "$ref": "common.schema.json#/definitions/modified" },
 				"location": {
 					"type": "array",
 					"items": { "$ref": "#/definitions/locationGroup" },
