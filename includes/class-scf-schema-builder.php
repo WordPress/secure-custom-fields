@@ -179,15 +179,10 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * @return array Associative array of type => schema data.
 		 */
 		private function load_type_schemas(): array {
-			$schemas     = array();
-			$fields_path = ACF_PATH . 'schemas/field-fragments/';
-
-			if ( ! is_dir( $fields_path ) || ! is_readable( $fields_path ) ) {
-				return $schemas;
-			}
-
-			// Get category directories using glob (safer than scandir).
+			$schemas       = array();
+			$fields_path   = ACF_PATH . 'schemas/field-fragments/';
 			$category_dirs = glob( $fields_path . '*', GLOB_ONLYDIR );
+
 			if ( ! is_array( $category_dirs ) ) {
 				return $schemas;
 			}
