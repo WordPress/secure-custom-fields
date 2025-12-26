@@ -1804,11 +1804,11 @@ function acf_inline_text_editing_attrs( $field_name, $args = array() ): string {
 		'toolbar_icon'  => null,
 		'toolbar_title' => null,
 		'placeholder'   => null,
-		'render'        => null,
 	);
 
-	$args           = wp_parse_args( $args, $default_args );
-	$args['render'] = acf_get_data( 'acf_doing_block_preview' );
+	$args = wp_parse_args( $args, $default_args );
+
+	$render = acf_get_data( 'acf_doing_block_preview' );
 
 	if ( ! $render ) {
 		return '';
