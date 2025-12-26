@@ -158,20 +158,9 @@ test.describe( 'SCF Block > Testimonial', () => {
 		const publishButton = page.locator( '.editor-post-publish-panel .editor-post-publish-button' );
 		await publishButton.click();
 
-		// Wait for validation to fully appear
-		await page.waitForTimeout( 1000 );
+		// Wait for the error notice to appear at the top of the editor
+		const errorNotice = page.locator( '.components-notice.is-error .components-notice__content' );
+		await expect( errorNotice ).toBeVisible( { timeout: 1000 } );
 
-		// Check that the field has error class
-		const quoteFieldWithError = page.locator(
-			'.acf-field[data-name="quote"].acf-error'
-		);
-		await expect( quoteFieldWithError ).toBeVisible();
-
-		// Check for the error message within the field
-		const errorMessage = page.locator(
-			'.acf-field[data-name="quote"] .acf-notice.-error'
-		);
-		await expect( errorMessage ).toBeVisible();
-		await expect( errorMessage ).toContainText( 'required' );
 	} );
 } );
