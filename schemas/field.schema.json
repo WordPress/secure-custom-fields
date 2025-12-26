@@ -184,6 +184,61 @@
 					"description": "Value to compare against (not required for ==empty and !=empty operators)"
 				}
 			}
+		},
+		"shared": {
+			"$comment": "Reusable property definitions for type-specific field schemas. Reference via #/definitions/shared/{property}",
+			"default_value": {
+				"type": "string",
+				"default": "",
+				"description": "Default value for the field"
+			},
+			"default_value_numeric": {
+				"type": [ "string", "number" ],
+				"default": "",
+				"description": "Default value for numeric fields (string for empty, number for value)"
+			},
+			"placeholder": {
+				"type": "string",
+				"default": "",
+				"description": "Placeholder text shown when field is empty"
+			},
+			"prepend": {
+				"type": "string",
+				"default": "",
+				"description": "Text or HTML displayed before the input"
+			},
+			"append": {
+				"type": "string",
+				"default": "",
+				"description": "Text or HTML displayed after the input"
+			},
+			"choices": {
+				"type": "object",
+				"additionalProperties": { "type": "string" },
+				"default": {},
+				"description": "Key-value pairs of choices (value => label)"
+			},
+			"allow_null": {
+				"type": [ "boolean", "integer" ],
+				"default": false,
+				"description": "Allow a null/empty value to be selected"
+			},
+			"layout": {
+				"type": "string",
+				"enum": [ "vertical", "horizontal", "table", "block", "row" ],
+				"default": "vertical",
+				"description": "Layout style for displaying the field"
+			},
+			"min": {
+				"type": [ "integer", "string" ],
+				"default": "",
+				"description": "Minimum number of items (empty string for unlimited)"
+			},
+			"max": {
+				"type": [ "integer", "string" ],
+				"default": "",
+				"description": "Maximum number of items (empty string for unlimited)"
+			}
 		}
 	}
 }
