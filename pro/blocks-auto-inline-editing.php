@@ -1,7 +1,8 @@
 <?php
 /**
- * @package wordpress/secure-custom-fields
+ * Applying auto inline editing to SCF blocks.
  *
+ * @package wordpress/secure-custom-fields
  */
 
 /**
@@ -131,7 +132,7 @@ function apply_inline_editing_attributes_to_render_template( $path, $block, $is_
 		foreach ( $element->childNodes as $child ) {
 			// Check if the child node is a text node
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-			if ( $child->nodeType === XML_TEXT_NODE ) {
+			if ( XML_TEXT_NODE === $child->nodeType ) {
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				$top_level_text .= $child->nodeValue;
 			}
@@ -168,7 +169,7 @@ function apply_inline_editing_attributes_to_render_template( $path, $block, $is_
 							}
 
 							// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-							if ( $field_value !== 'acf_auto_inline_editing_field_name_' . $field_slug ) {
+							if ( 'acf_auto_inline_editing_field_name_' . $field_slug !== $field_value ) {
 								// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 								$element->nodeValue = $field_value;
 							} else {
@@ -206,7 +207,7 @@ function apply_inline_editing_attributes_to_render_template( $path, $block, $is_
 
 		// Loop over each attribute. If an attribute comes from acf, make it popup when parent is selected.
 		foreach ( $element->attributes as $attribute ) {
-			if ( $attribute->name === 'data-acf-inline-contenteditable-field-slug' ) {
+			if ( 'data-acf-inline-contenteditable-field-slug' === $attribute->name ) {
 				continue;
 			}
 			$attribute_value = trim( $attribute->value );
@@ -234,7 +235,7 @@ function apply_inline_editing_attributes_to_render_template( $path, $block, $is_
 
 		// Don't add popover fields to the top level element unless it has text content (as opposed to html/non-text content, which is what most top level elements contain).
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-		$is_top_level = isset( $element->parentNode->tagName ) && $element->parentNode->tagName === 'body';
+		$is_top_level = isset( $element->parentNode->tagName ) && 'body' === $element->parentNode->tagName;
 
 		if ( ! $is_top_level && ! empty( $field_names_for_popover ) ) {
 			$preexisting_inline_fields_uid = $element->getAttribute( 'data-acf-inline-fields-uid' );

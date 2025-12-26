@@ -1304,7 +1304,7 @@ function acf_get_block_id( $attributes, $context = array(), $force = false ) {
  * @return string A prefixed block ID.
  */
 function acf_ensure_block_id_prefix( $block_id ) {
-	if ( substr( $block_id, 0, 6 ) === 'block_' ) {
+	if ( 'block_' === substr( $block_id, 0, 6 ) ) {
 		return $block_id;
 	}
 	return 'block_' . $block_id;
@@ -1639,27 +1639,24 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
 /**
  * Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
  *
- * @param array $fields Array {
- * Required. A list of the fields, each of which which will be displayed in the popup toolbar.
- *
- * Each field can be passed as:
+ * Required. A list of the fields, each of which will be displayed in the popup toolbar.
+ * Each field can be passed as one of the following.
  *
  * - A string (e.g. `'my_field_name'`)
  * - An associative array with specific keys:
+ *
  * @type string  $field_name  The name of the field to display in the toolbar.
  * @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
  * @type string  $field_label A string to use as the label for the button in the toolbar.
  * @type boolean $use_expanded_editor Default is false, which opens the field in the popover. Set to true to open in the expanded editor.
  * @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
- * }
  *
- * @param array $args   Array {
- * Optional. An array of additional args which can control how the toolbar is displayed and used.
+ * @param array $fields List of fields.
+ * @param array $args   Additional options controlling toolbar display and behavior.
  *
  * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
  * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
  * @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
- * }
  *
  * @return string A string containing the attributes.
  */
@@ -1835,17 +1832,17 @@ function acf_inline_text_editing_attrs( $field_name, $args = array() ): string {
 /**
  * This function prepares a fields array for being localized and used on the frontend as block toolbar fields.
  *
- * @param array $fields Array {
- * Required. A list of the fields, each of which which will be displayed in the popup toolbar.
- *
- * Each field can be passed as:
+ * Required. A list of the fields, each of which will be displayed in the popup toolbar.
+ * Each field can be passed as one of the following.
  *
  * - A string (e.g. `'my_field_name'`)
  * - An associative array with specific keys:
+ *
  * @type string $field_name  The name of the field to display in the toolbar.
  * @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
  * @type string $field_label A string to use as the label for the button in the toolbar.
- * }
+ *
+ * @param array $fields List of fields.
  *
  * @return array The array of fields, prepared for JS localization.
  */
@@ -1873,13 +1870,13 @@ function acf_process_block_toolbar_fields( $fields ) {
  * This is relevant when autoInlineEditing is enabled for a block, because empty fields
  * will have acf_auto_inline_editing_field_name_ + field_name as their value if they are empty.
  *
- * @param  string $field_name True if the field is empty, false if it has a value.
+ * @param string $field_name Field name.
  * @return boolean True if the field is empty, false if it has a value.
  */
 function acf_inline_editing_field_is_empty( $field_name ) {
 	$field_value = get_field( $field_name );
 
-	if ( empty( $field_value ) || $field_value === 'acf_auto_inline_editing_field_name_' . $field_name ) {
+	if ( empty( $field_value ) || 'acf_auto_inline_editing_field_name_' . $field_name === $field_value ) {
 		return true;
 	}
 
