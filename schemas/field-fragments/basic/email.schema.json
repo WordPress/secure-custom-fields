@@ -1,0 +1,14 @@
+{
+	"title": "SCF Email Field Fragment",
+	"description": "Type-specific properties for email fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "email" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"prepend": { "$ref": "#/definitions/prepend" },
+		"append": { "$ref": "#/definitions/append" }
+	}
+}
