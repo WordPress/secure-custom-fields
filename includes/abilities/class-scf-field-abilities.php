@@ -106,9 +106,8 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		/**
 		 * Gets the composed field schema with oneOf variants for each field type.
 		 *
-		 * Uses SCF_Schema_Builder to build a schema where each field type has
-		 * its own complete variant, allowing WordPress Abilities to validate
-		 * type-specific properties.
+		 * Loads the generated field.schema.json and resolves internal refs
+		 * (like conditionalLogicGroup) for WordPress Abilities API compatibility.
 		 *
 		 * @since 6.8.0
 		 *
@@ -116,8 +115,14 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 */
 		private function get_field_schema() {
 			if ( null === $this->field_schema ) {
+				$schema_path    = ACF_PATH . 'schemas/field.schema.json';
+				$schema_content = file_get_contents( $schema_path );
+				$schema         = json_decode( $schema_content, true );
+				$field_def      = $schema['definitions']['field'] ?? array();
+
+				// Resolve internal refs (conditionalLogicGroup, etc.) at runtime.
 				$builder            = acf_get_instance( 'SCF_Schema_Builder' );
-				$this->field_schema = $builder->compose_field_schema();
+				$this->field_schema = $builder->resolve_refs( $field_def, $schema );
 			}
 			return $this->field_schema;
 		}

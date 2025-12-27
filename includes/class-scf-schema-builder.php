@@ -30,8 +30,8 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 	 * - Fallback variant allows unknown types until all 35 field types have schemas
 	 *
 	 * Schema structure:
-	 * - schemas/field.schema.json: Base properties shared by all types
-	 * - schemas/fields/{category}/{type}.schema.json: Type-specific properties
+	 * - schemas/field-fragments/field-base.schema.json: Base properties shared by all types
+	 * - schemas/field-fragments/{category}/{type}.schema.json: Type-specific properties
 	 *
 	 * @since 6.8.0
 	 */
@@ -55,56 +55,61 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * Recursively resolves $ref references in a JSON schema.
 		 *
 		 * WordPress internal validation doesn't understand JSON Schema $ref,
-		 * so we need to inline referenced definitions.
+		 * so we inline referenced definitions before passing schemas to WP.
+		 *
+		 * Supports two ref formats:
+		 * - Internal refs: #/definitions/foo (resolved from root_schema)
+		 * - Relative file refs: file.schema.json#/definitions/foo (loaded from base_path)
 		 *
 		 * @since 6.8.0
 		 *
-		 * @param array      $schema      The schema to resolve.
-		 * @param array|null $root_schema The root schema containing definitions. If null, uses $schema.
+		 * @param array       $schema      The schema to resolve.
+		 * @param array|null  $root_schema The root schema containing definitions. If null, uses $schema.
+		 * @param string|null $base_path   Base path for loading external schema files. Defaults to schemas/.
 		 * @return array The resolved schema.
 		 */
-		public function resolve_refs( array $schema, ?array $root_schema = null ): array {
-			// Use the schema itself as root if not provided (first call).
-			if ( null === $root_schema ) {
-				$root_schema = $schema;
-			}
-
+		public function resolve_refs( array $schema, ?array $root_schema = null, ?string $base_path = null ): array {
+			$root_schema = $root_schema ?? $schema;
 			$definitions = $root_schema['definitions'] ?? array();
+			$base_path   = $base_path ?? acf_get_path( 'schemas/' );
 
-			// If this is a $ref, resolve it.
 			if ( isset( $schema['$ref'] ) ) {
-				$ref = $schema['$ref'];
-				// Extract definition name from "#/definitions/name".
+				$ref      = $schema['$ref'];
+				$resolved = null;
+
+				// Internal ref: #/definitions/path/to/def
 				if ( preg_match( '~^#/definitions/(.+)$~', $ref, $matches ) ) {
-					$def_name = $matches[1];
-					if ( isset( $definitions[ $def_name ] ) ) {
-						// Recursively resolve refs in the referenced definition.
-						$resolved = $this->resolve_refs( $definitions[ $def_name ], $root_schema );
-						// Merge any additional properties from the original schema.
-						unset( $schema['$ref'] );
-						return array_merge( $resolved, $schema );
+					$resolved = $definitions;
+					foreach ( explode( '/', $matches[1] ) as $part ) {
+						$resolved = $resolved[ $part ] ?? null;
+					}
+				} elseif ( preg_match( '~^([^#]+)#/definitions/(.+)$~', $ref, $matches ) ) {
+					// Relative file ref: file.schema.json#/definitions/path/to/def
+					$file_path = $base_path . $matches[1];
+					$def_path  = $matches[2];
+
+					if ( file_exists( $file_path ) ) {
+						$external_content = file_get_contents( $file_path );
+						$external_schema  = json_decode( $external_content, true );
+
+						if ( is_array( $external_schema ) ) {
+							$resolved = $external_schema['definitions'] ?? array();
+							foreach ( explode( '/', $def_path ) as $part ) {
+								$resolved = $resolved[ $part ] ?? null;
+							}
+						}
 					}
 				}
 
-				// Log warning for unresolvable $ref.
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html(
-						sprintf(
-							/* translators: %s: The unresolvable JSON Schema $ref value */
-							__( 'Could not resolve schema $ref: %s', 'secure-custom-fields' ),
-							$ref
-						)
-					),
-					'6.8.0'
-				);
-				return $schema;
+				if ( is_array( $resolved ) ) {
+					unset( $schema['$ref'] );
+					return array_merge( $this->resolve_refs( $resolved, $root_schema, $base_path ), $schema );
+				}
 			}
 
-			// Recursively process all array elements.
 			foreach ( $schema as $key => $value ) {
 				if ( is_array( $value ) ) {
-					$schema[ $key ] = $this->resolve_refs( $value, $root_schema );
+					$schema[ $key ] = $this->resolve_refs( $value, $root_schema, $base_path );
 				}
 			}
 
@@ -174,17 +179,19 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		}
 
 		/**
-		 * Loads and resolves the base field schema.
+		 * Loads the base field schema without resolving refs.
+		 *
+		 * Refs are kept intact so the generated field.schema.json stays compact.
+		 * Consumers (like Field Abilities) resolve refs at runtime when needed.
 		 *
 		 * @since 6.8.0
 		 *
-		 * @return array The base field schema with refs resolved.
+		 * @return array The base field schema with refs intact.
 		 */
 		private function load_base_field_schema(): array {
 			if ( null === $this->base_schema ) {
-				$schema_path       = ACF_PATH . 'schemas/field.schema.json';
+				$schema_path       = ACF_PATH . 'schemas/field-fragments/field-base.schema.json';
 				$this->base_schema = json_decode( file_get_contents( $schema_path ), true );
-				$this->base_schema = $this->resolve_refs( $this->base_schema );
 			}
 
 			return $this->base_schema;
@@ -193,22 +200,17 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		/**
 		 * Loads all type-specific field schemas from category directories.
 		 *
-		 * Scans schemas/fields/{category}/ directories for type schema files.
+		 * Scans schemas/field-fragments/{category}/ directories for type schema files.
 		 *
 		 * @since 6.8.0
 		 *
 		 * @return array Associative array of type => schema data.
 		 */
 		private function load_type_schemas(): array {
-			$schemas     = array();
-			$fields_path = ACF_PATH . 'schemas/fields/';
-
-			if ( ! is_dir( $fields_path ) || ! is_readable( $fields_path ) ) {
-				return $schemas;
-			}
-
-			// Get category directories using glob (safer than scandir).
+			$schemas       = array();
+			$fields_path   = ACF_PATH . 'schemas/field-fragments/';
 			$category_dirs = glob( $fields_path . '*', GLOB_ONLYDIR );
+
 			if ( ! is_array( $category_dirs ) ) {
 				return $schemas;
 			}
@@ -243,7 +245,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		}
 	}
 
-	// Initialize builder instance.
-	acf_new_instance( 'SCF_Schema_Builder' );
+	// Initialize only in WordPress context, not in the CLI.
+	if ( function_exists( 'acf_new_instance' ) ) {
+		acf_new_instance( 'SCF_Schema_Builder' );
+	}
 
 endif;
