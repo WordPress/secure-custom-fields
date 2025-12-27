@@ -1,0 +1,15 @@
+{
+	"title": "SCF File Field Fragment",
+	"description": "Type-specific properties for file fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "file" ]
+		},
+		"return_format": { "$ref": "#/definitions/return_format_media" },
+		"library": { "$ref": "#/definitions/library" },
+		"min_size": { "$ref": "#/definitions/min_size" },
+		"max_size": { "$ref": "#/definitions/max_size" },
+		"mime_types": { "$ref": "#/definitions/mime_types" }
+	}
+}
