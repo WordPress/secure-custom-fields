@@ -1,0 +1,15 @@
+{
+	"title": "SCF Textarea Field Fragment",
+	"description": "Type-specific properties for textarea fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "textarea" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"maxlength": { "$ref": "#/definitions/maxlength" },
+		"rows": { "$ref": "#/definitions/rows" },
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"new_lines": { "$ref": "#/definitions/new_lines" }
+	}
+}
