@@ -1,0 +1,20 @@
+{
+	"title": "SCF Image Field Fragment",
+	"description": "Type-specific properties for image fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "image" ]
+		},
+		"return_format": { "$ref": "#/definitions/return_format_media" },
+		"preview_size": { "$ref": "#/definitions/preview_size" },
+		"library": { "$ref": "#/definitions/library" },
+		"min_width": { "$ref": "#/definitions/min_width" },
+		"min_height": { "$ref": "#/definitions/min_height" },
+		"min_size": { "$ref": "#/definitions/min_size" },
+		"max_width": { "$ref": "#/definitions/max_width" },
+		"max_height": { "$ref": "#/definitions/max_height" },
+		"max_size": { "$ref": "#/definitions/max_size" },
+		"mime_types": { "$ref": "#/definitions/mime_types" }
+	}
+}
