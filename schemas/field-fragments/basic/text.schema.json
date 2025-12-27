@@ -1,39 +1,15 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field-fragments/basic/text.schema.json",
-	"title": "SCF Text Field",
+	"title": "SCF Text Field Fragment",
 	"description": "Type-specific properties for text fields",
 	"type": "object",
-	"required": [ "type" ],
 	"properties": {
 		"type": {
 			"enum": [ "text" ]
 		},
-		"default_value": {
-			"type": "string",
-			"default": "",
-			"description": "Default value for the field"
-		},
-		"maxlength": {
-			"type": [ "integer", "string" ],
-			"default": "",
-			"description": "Maximum character length (empty string for unlimited)"
-		},
-		"placeholder": {
-			"type": "string",
-			"default": "",
-			"description": "Placeholder text shown when field is empty"
-		},
-		"prepend": {
-			"type": "string",
-			"default": "",
-			"description": "Text or HTML displayed before the input"
-		},
-		"append": {
-			"type": "string",
-			"default": "",
-			"description": "Text or HTML displayed after the input"
-		}
-	},
-	"additionalProperties": false
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"maxlength": { "$ref": "#/definitions/maxlength" },
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"prepend": { "$ref": "#/definitions/prepend" },
+		"append": { "$ref": "#/definitions/append" }
+	}
 }
