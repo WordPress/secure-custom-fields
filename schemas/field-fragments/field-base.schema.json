@@ -184,6 +184,47 @@
 					"description": "Value to compare against (not required for ==empty and !=empty operators)"
 				}
 			}
+		},
+		"default_value": {
+			"type": "string",
+			"default": "",
+			"description": "Default value for the field"
+		},
+		"default_value_numeric": {
+			"type": [ "string", "number" ],
+			"default": "",
+			"description": "Default value for numeric fields (string for empty, number for value)"
+		},
+		"placeholder": {
+			"type": "string",
+			"default": "",
+			"description": "Placeholder text shown when field is empty"
+		},
+		"prepend": {
+			"type": "string",
+			"default": "",
+			"description": "Text or HTML displayed before the input"
+		},
+		"append": {
+			"type": "string",
+			"default": "",
+			"description": "Text or HTML displayed after the input"
+		},
+		"maxlength": {
+			"type": [ "integer", "string" ],
+			"default": "",
+			"description": "Maximum character length (empty string for unlimited)"
+		},
+		"rows": {
+			"type": [ "integer", "string" ],
+			"default": "",
+			"description": "Number of rows for textarea display"
+		},
+		"new_lines": {
+			"type": "string",
+			"enum": [ "wpautop", "br", "" ],
+			"default": "",
+			"description": "How to handle new lines in output (wpautop, br, or none)"
 		}
 	}
 }

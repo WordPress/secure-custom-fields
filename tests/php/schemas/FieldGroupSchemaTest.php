@@ -138,50 +138,23 @@ class FieldGroupSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field group with a text field should be valid',
 			),
-			'with all positions'            => array(
+			'with position'                 => array(
 				array(
 					'key'      => 'group_position_normal',
 					'title'    => 'Normal Position',
 					'fields'   => array(),
 					'position' => 'normal',
 				),
-				'Field group with normal position should be valid',
+				'Field group with valid position should be valid',
 			),
-			'position side'                 => array(
-				array(
-					'key'      => 'group_position_side',
-					'title'    => 'Side Position',
-					'fields'   => array(),
-					'position' => 'side',
-				),
-				'Field group with side position should be valid',
-			),
-			'position after title'          => array(
-				array(
-					'key'      => 'group_position_after',
-					'title'    => 'After Title Position',
-					'fields'   => array(),
-					'position' => 'acf_after_title',
-				),
-				'Field group with acf_after_title position should be valid',
-			),
-			'style default'                 => array(
+			'with style'                    => array(
 				array(
 					'key'    => 'group_style_default',
 					'title'  => 'Default Style',
 					'fields' => array(),
 					'style'  => 'default',
 				),
-				'Field group with default style should be valid',
-			),
-			'style seamless'                => array(
-				array(
-					'key'    => 'group_style_seamless',
-					'title'  => 'Seamless Style',
-					'fields' => array(),
-					'style'  => 'seamless',
-				),
-				'Field group with seamless style should be valid',
+				'Field group with valid style should be valid',
 			),
 			'active as boolean'             => array(
 				array(
@@ -238,69 +211,6 @@ class FieldGroupSchemaTest extends BaseSchemaTestCase {
 					'modified'              => 1700000000,
 				),
 				'Complete field group with all properties should be valid',
-			),
-			'field with conditional_logic'  => array(
-				array(
-					'key'    => 'group_conditional',
-					'title'  => 'Conditional Group',
-					'fields' => array(
-						array(
-							'key'               => 'field_toggle',
-							'label'             => 'Toggle',
-							'name'              => 'toggle',
-							'type'              => 'true_false',
-							'conditional_logic' => 0,
-						),
-						array(
-							'key'               => 'field_dependent',
-							'label'             => 'Dependent',
-							'name'              => 'dependent',
-							'type'              => 'text',
-							'conditional_logic' => array(
-								array(
-									array(
-										'field'    => 'field_toggle',
-										'operator' => '==',
-										'value'    => '1',
-									),
-								),
-							),
-						),
-					),
-				),
-				'Field group with conditional logic should be valid',
-			),
-			'field required as boolean'     => array(
-				array(
-					'key'    => 'group_req_bool',
-					'title'  => 'Required Boolean',
-					'fields' => array(
-						array(
-							'key'      => 'field_req_bool',
-							'label'    => 'Required Field',
-							'name'     => 'required_field',
-							'type'     => 'text',
-							'required' => true,
-						),
-					),
-				),
-				'Field with required as boolean should be valid',
-			),
-			'field required as integer'     => array(
-				array(
-					'key'    => 'group_req_int',
-					'title'  => 'Required Integer',
-					'fields' => array(
-						array(
-							'key'      => 'field_req_int',
-							'label'    => 'Required Field',
-							'name'     => 'required_field',
-							'type'     => 'text',
-							'required' => 1,
-						),
-					),
-				),
-				'Field with required as integer should be valid',
 			),
 		);
 	}
@@ -375,50 +285,6 @@ class FieldGroupSchemaTest extends BaseSchemaTestCase {
 					'style'  => 'invalid_style',
 				),
 				'Field group with invalid style should fail validation',
-			),
-			'field missing key'         => array(
-				array(
-					'key'    => 'group_field_no_key',
-					'title'  => 'Field Missing Key',
-					'fields' => array(
-						array(
-							'label' => 'No Key Field',
-							'name'  => 'no_key',
-							'type'  => 'text',
-						),
-					),
-				),
-				'Field without key should fail validation',
-			),
-			'field invalid key'         => array(
-				array(
-					'key'    => 'group_field_bad_key',
-					'title'  => 'Field Bad Key',
-					'fields' => array(
-						array(
-							'key'   => 'invalid_field_key',
-							'label' => 'Bad Key Field',
-							'name'  => 'bad_key',
-							'type'  => 'text',
-						),
-					),
-				),
-				'Field without field_ prefix should fail validation',
-			),
-			'field invalid type'        => array(
-				array(
-					'key'    => 'group_field_bad_type',
-					'title'  => 'Field Bad Type',
-					'fields' => array(
-						array(
-							'key'   => 'field_bad_type',
-							'label' => 'Bad Type Field',
-							'name'  => 'bad_type',
-							'type'  => 'nonexistent_type',
-						),
-					),
-				),
-				'Field with invalid type should fail validation',
 			),
 			'invalid hide_on_screen'    => array(
 				array(

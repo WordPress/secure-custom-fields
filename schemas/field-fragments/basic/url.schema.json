@@ -1,0 +1,12 @@
+{
+	"title": "SCF URL Field Fragment",
+	"description": "Type-specific properties for URL fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "url" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"placeholder": { "$ref": "#/definitions/placeholder" }
+	}
+}
