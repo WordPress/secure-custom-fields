@@ -57,31 +57,59 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * WordPress internal validation doesn't understand JSON Schema $ref,
 		 * so we inline referenced definitions before passing schemas to WP.
 		 *
+		 * Supports two ref formats:
+		 * - Internal refs: #/definitions/foo (resolved from root_schema)
+		 * - Relative file refs: file.schema.json#/definitions/foo (loaded from base_path)
+		 *
 		 * @since 6.8.0
 		 *
-		 * @param array      $schema      The schema to resolve.
-		 * @param array|null $root_schema The root schema containing definitions. If null, uses $schema.
+		 * @param array       $schema      The schema to resolve.
+		 * @param array|null  $root_schema The root schema containing definitions. If null, uses $schema.
+		 * @param string|null $base_path   Base path for loading external schema files. Defaults to schemas/.
 		 * @return array The resolved schema.
 		 */
-		public function resolve_refs( array $schema, ?array $root_schema = null ): array {
+		public function resolve_refs( array $schema, ?array $root_schema = null, ?string $base_path = null ): array {
 			$root_schema = $root_schema ?? $schema;
 			$definitions = $root_schema['definitions'] ?? array();
+			$base_path   = $base_path ?? acf_get_path( 'schemas/' );
 
-			if ( isset( $schema['$ref'] ) && preg_match( '~^#/definitions/(.+)$~', $schema['$ref'], $matches ) ) {
-				$resolved = $definitions;
-				foreach ( explode( '/', $matches[1] ) as $part ) {
-					$resolved = $resolved[ $part ] ?? null;
+			if ( isset( $schema['$ref'] ) ) {
+				$ref      = $schema['$ref'];
+				$resolved = null;
+
+				// Internal ref: #/definitions/path/to/def
+				if ( preg_match( '~^#/definitions/(.+)$~', $ref, $matches ) ) {
+					$resolved = $definitions;
+					foreach ( explode( '/', $matches[1] ) as $part ) {
+						$resolved = $resolved[ $part ] ?? null;
+					}
+				} elseif ( preg_match( '~^([^#]+)#/definitions/(.+)$~', $ref, $matches ) ) {
+					// Relative file ref: file.schema.json#/definitions/path/to/def
+					$file_path = $base_path . $matches[1];
+					$def_path  = $matches[2];
+
+					if ( file_exists( $file_path ) ) {
+						$external_content = file_get_contents( $file_path );
+						$external_schema  = json_decode( $external_content, true );
+
+						if ( is_array( $external_schema ) ) {
+							$resolved = $external_schema['definitions'] ?? array();
+							foreach ( explode( '/', $def_path ) as $part ) {
+								$resolved = $resolved[ $part ] ?? null;
+							}
+						}
+					}
 				}
 
 				if ( is_array( $resolved ) ) {
 					unset( $schema['$ref'] );
-					return array_merge( $this->resolve_refs( $resolved, $root_schema ), $schema );
+					return array_merge( $this->resolve_refs( $resolved, $root_schema, $base_path ), $schema );
 				}
 			}
 
 			foreach ( $schema as $key => $value ) {
 				if ( is_array( $value ) ) {
-					$schema[ $key ] = $this->resolve_refs( $value, $root_schema );
+					$schema[ $key ] = $this->resolve_refs( $value, $root_schema, $base_path );
 				}
 			}
 

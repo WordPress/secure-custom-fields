@@ -230,4 +230,88 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 		$this->assertEquals( 'string', $result['type'] );
 		$this->assertEquals( 'A nested definition', $result['description'] );
 	}
+
+	/**
+	 * Test resolve_refs resolves relative file refs.
+	 *
+	 * Refs like "common.schema.json#/definitions/title" should load and resolve
+	 * definitions from external schema files.
+	 */
+	public function test_resolve_refs_resolves_relative_file_refs() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'title' => array(
+					'$ref' => 'common.schema.json#/definitions/title',
+				),
+			),
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema );
+
+		// The title property should be resolved from common.schema.json.
+		$this->assertArrayHasKey( 'title', $result['properties'] );
+		$this->assertEquals( 'string', $result['properties']['title']['type'] );
+		$this->assertArrayNotHasKey( '$ref', $result['properties']['title'] );
+	}
+
+	/**
+	 * Test resolve_refs resolves wordpressReservedTerms from common.schema.json.
+	 *
+	 * This validates the specific use case where post-type.schema.json uses:
+	 * "not": { "$ref": "common.schema.json#/definitions/wordpressReservedTerms" }
+	 */
+	public function test_resolve_refs_resolves_wordpress_reserved_terms() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'post_type' => array(
+					'type' => 'string',
+					'not'  => array(
+						'$ref' => 'common.schema.json#/definitions/wordpressReservedTerms',
+					),
+				),
+			),
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema );
+
+		// The "not" constraint should be resolved with the enum of reserved terms.
+		$this->assertArrayHasKey( 'not', $result['properties']['post_type'] );
+		$this->assertArrayHasKey( 'enum', $result['properties']['post_type']['not'] );
+		$this->assertContains( 'post', $result['properties']['post_type']['not']['enum'] );
+		$this->assertContains( 'page', $result['properties']['post_type']['not']['enum'] );
+		$this->assertContains( 'attachment', $result['properties']['post_type']['not']['enum'] );
+	}
+
+	/**
+	 * Test resolve_refs returns original schema for non-existent external file.
+	 */
+	public function test_resolve_refs_returns_original_for_missing_external_file() {
+		$schema = array(
+			'$ref' => 'nonexistent.schema.json#/definitions/foo',
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema );
+
+		// Should return original schema when external file not found.
+		$this->assertEquals( $schema, $result );
+	}
+
+	/**
+	 * Test resolve_refs with custom base_path parameter.
+	 */
+	public function test_resolve_refs_with_custom_base_path() {
+		$schema = array(
+			'$ref' => 'common.schema.json#/definitions/active',
+		);
+
+		// Use explicit base path.
+		$base_path = ACF_PATH . 'schemas/';
+		$result    = $this->builder->resolve_refs( $schema, $schema, $base_path );
+
+		// Should resolve the active definition.
+		$this->assertEquals( 'boolean', $result['type'] );
+		$this->assertArrayNotHasKey( '$ref', $result );
+	}
 }

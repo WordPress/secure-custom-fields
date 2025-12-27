@@ -618,6 +618,59 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	}
 
 	/**
+	 * Test get_entity_schema resolves relative file refs from common.schema.json.
+	 *
+	 * This ensures that refs like "$ref": "common.schema.json#/definitions/title"
+	 * are properly resolved before being passed to WordPress Abilities API.
+	 */
+	public function test_get_entity_schema_resolves_relative_file_refs() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_entity_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		// Title property should be resolved from common.schema.json (not a $ref).
+		$this->assertArrayHasKey( 'title', $schema['properties'] );
+		$this->assertArrayNotHasKey( '$ref', $schema['properties']['title'], 'Title should be resolved, not a $ref' );
+		$this->assertEquals( 'string', $schema['properties']['title']['type'] );
+
+		// Active property should also be resolved.
+		$this->assertArrayHasKey( 'active', $schema['properties'] );
+		$this->assertArrayNotHasKey( '$ref', $schema['properties']['active'], 'Active should be resolved, not a $ref' );
+		$this->assertEquals( 'boolean', $schema['properties']['active']['type'] );
+	}
+
+	/**
+	 * Test get_entity_schema resolves wordpressReservedTerms constraint.
+	 *
+	 * The taxonomy.schema.json uses "not": { "$ref": "common.schema.json#/definitions/wordpressReservedTerms" }
+	 * to prevent reserved terms. This should be resolved to include the actual enum values.
+	 */
+	public function test_get_entity_schema_resolves_reserved_terms_constraint() {
+		$reflection = new ReflectionClass( $this->abilities );
+		$method     = $reflection->getMethod( 'get_entity_schema' );
+		$method->setAccessible( true );
+
+		$schema = $method->invoke( $this->abilities );
+
+		// The taxonomy property should have a "not" constraint with resolved enum.
+		$this->assertArrayHasKey( 'taxonomy', $schema['properties'] );
+		$taxonomy_schema = $schema['properties']['taxonomy'];
+
+		$this->assertArrayHasKey( 'not', $taxonomy_schema, 'Taxonomy should have "not" constraint' );
+		$this->assertArrayNotHasKey( '$ref', $taxonomy_schema['not'], 'Reserved terms should be resolved, not a $ref' );
+		$this->assertArrayHasKey( 'enum', $taxonomy_schema['not'], 'Reserved terms should be an enum' );
+
+		// Verify some known reserved terms are present.
+		$reserved_terms = $taxonomy_schema['not']['enum'];
+		$this->assertContains( 'post', $reserved_terms, 'Reserved terms should include "post"' );
+		$this->assertContains( 'page', $reserved_terms, 'Reserved terms should include "page"' );
+		$this->assertContains( 'attachment', $reserved_terms, 'Reserved terms should include "attachment"' );
+		$this->assertContains( 'category', $reserved_terms, 'Reserved terms should include "category"' );
+	}
+
+	/**
 	 * Test get_scf_identifier_schema returns valid schema
 	 */
 	public function test_get_scf_identifier_schema_returns_array() {
