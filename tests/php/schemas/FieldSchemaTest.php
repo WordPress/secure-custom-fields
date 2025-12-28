@@ -763,6 +763,17 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Separator field with all type-specific properties should be valid',
 			),
+			'output field complete'           => array(
+				array(
+					'key'    => 'field_output_full',
+					'label'  => 'Full Output',
+					'name'   => 'output_full',
+					'type'   => 'output',
+					'parent' => 'group_test',
+					'html'   => true,
+				),
+				'Output field with all type-specific properties should be valid',
+			),
 		);
 	}
 
@@ -1151,6 +1162,17 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'layout' => 'invalid_layout',
 				),
 				'Clone with invalid layout should fail validation',
+			),
+			'invalid output html type'                 => array(
+				array(
+					'key'    => 'field_output_bad',
+					'label'  => 'Bad Output',
+					'name'   => 'bad_output',
+					'type'   => 'output',
+					'parent' => 'group_test',
+					'html'   => 'yes',
+				),
+				'Output with non-boolean html should fail validation',
 			),
 		);
 	}

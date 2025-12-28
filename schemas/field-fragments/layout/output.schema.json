@@ -1,0 +1,15 @@
+{
+	"title": "SCF Output Field Fragment",
+	"description": "Type-specific properties for output fields (deprecated since ACF 6.3.2)",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "output" ]
+		},
+		"html": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to output raw HTML"
+		}
+	}
+}

@@ -4085,6 +4085,127 @@
                         },
                         "type": {
                             "enum": [
+                                "output"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "html": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Whether to output raw HTML"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
                                 "repeater"
                             ]
                         },
@@ -5338,9 +5459,7 @@
                         },
                         "type": {
                             "type": "string",
-                            "enum": [
-                                "output"
-                            ]
+                            "enum": []
                         },
                         "instructions": {
                             "type": "string",
