@@ -1,0 +1,22 @@
+{
+	"title": "SCF Nav Menu Field Fragment",
+	"description": "Type-specific properties for navigation menu fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "nav_menu" ]
+		},
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"save_format": {
+			"type": "string",
+			"enum": [ "id", "object", "menu" ],
+			"default": "id",
+			"description": "Return format (ID, Nav Menu object, or rendered HTML)"
+		},
+		"container": {
+			"type": "string",
+			"default": "div",
+			"description": "HTML container element for menu when returning HTML"
+		}
+	}
+}
