@@ -154,15 +154,20 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test compose_field_schema includes fallback variant.
+	 * Test compose_field_schema only adds fallback when types are missing schemas.
+	 *
+	 * With all 39 field types having dedicated schemas, no fallback variant
+	 * should be present. The fallback (with additionalProperties: true) is
+	 * only added when there are field types without schema files.
 	 */
-	public function test_compose_field_schema_includes_fallback_variant() {
+	public function test_compose_field_schema_no_fallback_when_all_types_have_schemas() {
 		$result = $this->builder->compose_field_schema();
 
-		// Last variant should be the fallback with additionalProperties: true.
+		// All dedicated schemas have additionalProperties: false.
+		// If a fallback exists, it would have additionalProperties: true.
 		$last_variant = end( $result['oneOf'] );
 
-		$this->assertTrue( $last_variant['additionalProperties'] );
+		$this->assertFalse( $last_variant['additionalProperties'] );
 	}
 
 	/**
