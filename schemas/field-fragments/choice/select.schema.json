@@ -21,6 +21,16 @@
 			"type": "integer",
 			"default": 0,
 			"description": "Use AJAX to lazy load choices (1 for yes, 0 for no)"
+		},
+		"create_options": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow new options to be created while editing (1 for yes, 0 for no)"
+		},
+		"save_options": {
+			"type": "integer",
+			"default": 0,
+			"description": "Save newly created options to the field choices (1 for yes, 0 for no)"
 		}
 	}
 }
