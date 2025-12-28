@@ -368,6 +368,104 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'oEmbed field with all type-specific properties should be valid',
 			),
+
+			// Choice fields.
+			'select field complete'        => array(
+				array(
+					'key'           => 'field_select_full',
+					'label'         => 'Full Select',
+					'name'          => 'select_full',
+					'type'          => 'select',
+					'parent'        => 'group_test',
+					'choices'       => array(),
+					'default_value' => '',
+					'return_format' => 'value',
+					'multiple'      => 0,
+					'allow_null'    => 0,
+					'placeholder'   => '',
+					'ui'            => 1,
+					'ajax'          => 0,
+				),
+				'Select field with all type-specific properties should be valid',
+			),
+			'checkbox field complete'      => array(
+				array(
+					'key'                       => 'field_checkbox_full',
+					'label'                     => 'Full Checkbox',
+					'name'                      => 'checkbox_full',
+					'type'                      => 'checkbox',
+					'parent'                    => 'group_test',
+					'choices'                   => array(),
+					'default_value'             => '',
+					'return_format'             => 'value',
+					'layout'                    => 'vertical',
+					'toggle'                    => 0,
+					'allow_custom'              => 0,
+					'save_custom'               => 0,
+					'custom_choice_button_text' => '',
+				),
+				'Checkbox field with all type-specific properties should be valid',
+			),
+			'radio field complete'         => array(
+				array(
+					'key'               => 'field_radio_full',
+					'label'             => 'Full Radio',
+					'name'              => 'radio_full',
+					'type'              => 'radio',
+					'parent'            => 'group_test',
+					'choices'           => array(),
+					'default_value'     => '',
+					'return_format'     => 'value',
+					'layout'            => 'vertical',
+					'allow_null'        => 0,
+					'other_choice'      => 0,
+					'save_other_choice' => 0,
+				),
+				'Radio field with all type-specific properties should be valid',
+			),
+			'button_group field complete'  => array(
+				array(
+					'key'           => 'field_button_group_full',
+					'label'         => 'Full Button Group',
+					'name'          => 'button_group_full',
+					'type'          => 'button_group',
+					'parent'        => 'group_test',
+					'choices'       => array(),
+					'default_value' => '',
+					'return_format' => 'value',
+					'layout'        => 'horizontal',
+					'allow_null'    => 0,
+				),
+				'Button Group field with all type-specific properties should be valid',
+			),
+			'true_false field complete'    => array(
+				array(
+					'key'           => 'field_true_false_full',
+					'label'         => 'Full True/False',
+					'name'          => 'true_false_full',
+					'type'          => 'true_false',
+					'parent'        => 'group_test',
+					'default_value' => 0,
+					'message'       => 'Toggle this option',
+					'ui'            => 1,
+					'ui_on_text'    => 'Yes',
+					'ui_off_text'   => 'No',
+				),
+				'True/False field with all type-specific properties should be valid',
+			),
+			'nav_menu field complete'      => array(
+				array(
+					'key'         => 'field_nav_menu_full',
+					'label'       => 'Full Nav Menu',
+					'name'        => 'nav_menu_full',
+					'type'        => 'nav_menu',
+					'parent'      => 'group_test',
+					'allow_null'  => 0,
+					'save_format' => 'id',
+					'container'   => 'div',
+				),
+				'Nav Menu field with all type-specific properties should be valid',
+			),
 		);
 	}
 
@@ -379,7 +477,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 	public function invalidEntitiesProvider(): array {
 		return array(
 			// Required fields validation.
-			'missing key'                 => array(
+			'missing key'                  => array(
 				array(
 					'label'  => 'No Key Field',
 					'name'   => 'no_key',
@@ -388,7 +486,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without key should fail validation',
 			),
-			'missing label'               => array(
+			'missing label'                => array(
 				array(
 					'key'    => 'field_no_label',
 					'name'   => 'no_label',
@@ -397,7 +495,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without label should fail validation',
 			),
-			'missing type'                => array(
+			'missing type'                 => array(
 				array(
 					'key'    => 'field_no_type',
 					'label'  => 'No Type',
@@ -406,7 +504,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without type should fail validation',
 			),
-			'missing parent'              => array(
+			'missing parent'               => array(
 				array(
 					'key'   => 'field_no_parent',
 					'label' => 'No Parent',
@@ -417,7 +515,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Pattern validation.
-			'invalid key pattern'         => array(
+			'invalid key pattern'          => array(
 				array(
 					'key'    => 'invalid_field_key',
 					'label'  => 'Bad Key Field',
@@ -429,7 +527,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Enum validation.
-			'invalid type'                => array(
+			'invalid type'                 => array(
 				array(
 					'key'    => 'field_bad_type',
 					'label'  => 'Bad Type Field',
@@ -439,7 +537,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field with invalid type should fail validation',
 			),
-			'invalid new_lines enum'      => array(
+			'invalid new_lines enum'       => array(
 				array(
 					'key'       => 'field_textarea_bad_nl',
 					'label'     => 'Bad New Lines',
@@ -452,7 +550,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Content field validation.
-			'invalid image return_format' => array(
+			'invalid image return_format'  => array(
 				array(
 					'key'           => 'field_image_bad',
 					'label'         => 'Bad Image',
@@ -463,7 +561,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid return_format should fail validation',
 			),
-			'invalid image library'       => array(
+			'invalid image library'        => array(
 				array(
 					'key'     => 'field_image_bad_lib',
 					'label'   => 'Bad Image Library',
@@ -474,7 +572,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid library should fail validation',
 			),
-			'invalid gallery insert'      => array(
+			'invalid gallery insert'       => array(
 				array(
 					'key'    => 'field_gallery_bad_insert',
 					'label'  => 'Bad Gallery Insert',
@@ -485,7 +583,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Gallery with invalid insert should fail validation',
 			),
-			'invalid wysiwyg tabs'        => array(
+			'invalid wysiwyg tabs'         => array(
 				array(
 					'key'    => 'field_wysiwyg_bad_tabs',
 					'label'  => 'Bad WYSIWYG Tabs',
@@ -495,6 +593,41 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'tabs'   => 'invalid_tabs',
 				),
 				'WYSIWYG with invalid tabs should fail validation',
+			),
+
+			// Choice field validation.
+			'invalid select return_format' => array(
+				array(
+					'key'           => 'field_select_bad',
+					'label'         => 'Bad Select',
+					'name'          => 'bad_select',
+					'type'          => 'select',
+					'parent'        => 'group_test',
+					'return_format' => 'invalid_format',
+				),
+				'Select with invalid return_format should fail validation',
+			),
+			'invalid checkbox layout'      => array(
+				array(
+					'key'    => 'field_checkbox_bad',
+					'label'  => 'Bad Checkbox',
+					'name'   => 'bad_checkbox',
+					'type'   => 'checkbox',
+					'parent' => 'group_test',
+					'layout' => 'diagonal',
+				),
+				'Checkbox with invalid layout should fail validation',
+			),
+			'invalid nav_menu save_format' => array(
+				array(
+					'key'         => 'field_nav_menu_bad',
+					'label'       => 'Bad Nav Menu',
+					'name'        => 'bad_nav_menu',
+					'type'        => 'nav_menu',
+					'parent'      => 'group_test',
+					'save_format' => 'invalid_format',
+				),
+				'Nav Menu with invalid save_format should fail validation',
 			),
 		);
 	}
