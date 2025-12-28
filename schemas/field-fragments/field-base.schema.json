@@ -271,12 +271,12 @@
 		"min_size": {
 			"type": "integer",
 			"default": 0,
-			"description": "Minimum file size in bytes (0 for no limit)"
+			"description": "Minimum file size in MB (0 for no limit)"
 		},
 		"max_size": {
 			"type": "integer",
 			"default": 0,
-			"description": "Maximum file size in bytes (0 for no limit)"
+			"description": "Maximum file size in MB (0 for no limit)"
 		}
 	}
 }
