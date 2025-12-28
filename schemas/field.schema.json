@@ -64,6 +64,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "color_picker"
                             ]
@@ -218,6 +219,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "date_picker"
                             ]
@@ -350,6 +352,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "date_time_picker"
                             ]
@@ -482,6 +485,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "google_map"
                             ]
@@ -618,6 +622,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "icon_picker"
                             ]
@@ -774,6 +779,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "time_picker"
                             ]
@@ -900,6 +906,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "email"
                             ]
@@ -1028,6 +1035,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "number"
                             ]
@@ -1183,6 +1191,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "password"
                             ]
@@ -1308,6 +1317,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "range"
                             ]
@@ -1460,6 +1470,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "text"
                             ]
@@ -1591,6 +1602,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "textarea"
                             ]
@@ -1722,6 +1734,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "url"
                             ]
@@ -1844,6 +1857,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "button_group"
                             ]
@@ -1981,6 +1995,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "checkbox"
                             ]
@@ -2129,6 +2144,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "nav_menu"
                             ]
@@ -2263,6 +2279,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "radio"
                             ]
@@ -2404,6 +2421,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "select"
                             ]
@@ -2558,6 +2576,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "true_false"
                             ]
@@ -2699,6 +2718,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "file"
                             ]
@@ -2830,6 +2850,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "gallery"
                             ]
@@ -2991,6 +3012,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "image"
                             ]
@@ -3137,6 +3159,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "oembed"
                             ]
@@ -3263,6 +3286,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "wysiwyg"
                             ]
@@ -3407,6 +3431,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "accordion"
                             ]
@@ -3536,6 +3561,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "clone"
                             ]
@@ -3683,6 +3709,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "flexible_content"
                             ]
@@ -3825,6 +3852,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "group"
                             ]
@@ -3948,6 +3976,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "message"
                             ]
@@ -4084,6 +4113,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "output"
                             ]
@@ -4205,6 +4235,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "repeater"
                             ]
@@ -4304,6 +4335,14 @@
                         "button_label": {
                             "$ref": "#/definitions/button_label"
                         },
+                        "pagination": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": 0,
+                            "description": "Enable pagination for repeaters with many rows"
+                        },
                         "rows_per_page": {
                             "type": "integer",
                             "default": 20,
@@ -4347,6 +4386,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "separator"
                             ]
@@ -4463,6 +4503,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "tab"
                             ]
@@ -4596,6 +4637,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "link"
                             ]
@@ -4721,6 +4763,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "page_link"
                             ]
@@ -4854,6 +4897,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "post_object"
                             ]
@@ -4999,6 +5043,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "relationship"
                             ]
@@ -5153,6 +5198,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "taxonomy"
                             ]
@@ -5318,6 +5364,7 @@
                             "description": "Accessible label for screen readers"
                         },
                         "type": {
+                            "type": "string",
                             "enum": [
                                 "user"
                             ]
@@ -5427,121 +5474,6 @@
                         }
                     },
                     "additionalProperties": false
-                },
-                {
-                    "type": "object",
-                    "required": [
-                        "key",
-                        "label",
-                        "name",
-                        "type"
-                    ],
-                    "properties": {
-                        "key": {
-                            "type": "string",
-                            "pattern": "^field_.+$",
-                            "minLength": 1,
-                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
-                        },
-                        "label": {
-                            "type": "string",
-                            "minLength": 1,
-                            "description": "The label displayed for this field"
-                        },
-                        "name": {
-                            "type": "string",
-                            "pattern": "^[a-zA-Z0-9_-]*$",
-                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
-                        },
-                        "aria-label": {
-                            "type": "string",
-                            "description": "Accessible label for screen readers"
-                        },
-                        "type": {
-                            "type": "string",
-                            "enum": []
-                        },
-                        "instructions": {
-                            "type": "string",
-                            "description": "Instructions for content editors"
-                        },
-                        "required": {
-                            "type": [
-                                "boolean",
-                                "integer"
-                            ],
-                            "default": false,
-                            "description": "Whether the field is required"
-                        },
-                        "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
-                            ],
-                            "description": "Conditional logic rules for field visibility"
-                        },
-                        "wrapper": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                                "width": {
-                                    "type": "string",
-                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
-                                },
-                                "class": {
-                                    "type": "string",
-                                    "description": "CSS class(es) for the field wrapper"
-                                },
-                                "id": {
-                                    "type": "string",
-                                    "description": "HTML ID for the field wrapper"
-                                }
-                            },
-                            "description": "Wrapper element settings"
-                        },
-                        "menu_order": {
-                            "type": "integer",
-                            "description": "Order of the field within its parent"
-                        },
-                        "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
-                            ],
-                            "description": "Parent field or field group key/ID"
-                        },
-                        "parent_layout": {
-                            "type": "string",
-                            "description": "Parent layout key for flexible content sub-fields"
-                        }
-                    },
-                    "additionalProperties": true
                 }
             ]
         },
