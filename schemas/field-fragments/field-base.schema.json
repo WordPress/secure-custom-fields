@@ -8,14 +8,26 @@
 		{
 			"description": "Single field object with required parent",
 			"$ref": "#/definitions/field",
-			"required": [ "key", "label", "name", "type", "parent" ]
+			"required": [
+				"key",
+				"label",
+				"name",
+				"type",
+				"parent"
+			]
 		},
 		{
 			"description": "Array of field objects with required parent",
 			"type": "array",
 			"items": {
 				"$ref": "#/definitions/field",
-				"required": [ "key", "label", "name", "type", "parent" ]
+				"required": [
+					"key",
+					"label",
+					"name",
+					"type",
+					"parent"
+				]
 			},
 			"minItems": 1
 		}
@@ -23,7 +35,12 @@
 	"definitions": {
 		"field": {
 			"type": "object",
-			"required": [ "key", "label", "name", "type" ],
+			"required": [
+				"key",
+				"label",
+				"name",
+				"type"
+			],
 			"additionalProperties": true,
 			"properties": {
 				"key": {
@@ -96,23 +113,22 @@
 					"description": "Instructions for content editors"
 				},
 				"required": {
-					"type": [ "boolean", "integer" ],
+					"type": [
+						"boolean",
+						"integer"
+					],
 					"default": false,
 					"description": "Whether the field is required"
 				},
 				"conditional_logic": {
-					"anyOf": [
-						{ "type": "boolean", "enum": [ false ] },
-						{ "type": "integer", "enum": [ 0 ] },
-						{ "type": "string", "enum": [ "" ] },
-						{
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/conditionalLogicGroup"
-							}
-						}
+					"type": [
+						"boolean",
+						"integer",
+						"string",
+						"array"
 					],
-					"description": "Conditional logic rules for field visibility"
+					"default": 0,
+					"description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
 				},
 				"wrapper": {
 					"type": "object",
@@ -138,7 +154,10 @@
 					"description": "Order of the field within its parent"
 				},
 				"parent": {
-					"oneOf": [ { "type": "string" }, { "type": "integer" } ],
+					"type": [
+						"string",
+						"integer"
+					],
 					"description": "Parent field or field group key/ID"
 				},
 				"parent_layout": {
@@ -149,13 +168,18 @@
 		},
 		"conditionalLogicGroup": {
 			"type": "array",
-			"items": { "$ref": "#/definitions/conditionalLogicRule" },
+			"items": {
+				"$ref": "#/definitions/conditionalLogicRule"
+			},
 			"minItems": 1,
 			"description": "Group of conditional logic rules (AND logic within group)"
 		},
 		"conditionalLogicRule": {
 			"type": "object",
-			"required": [ "field", "operator" ],
+			"required": [
+				"field",
+				"operator"
+			],
 			"additionalProperties": false,
 			"properties": {
 				"field": {
@@ -191,12 +215,18 @@
 			"description": "Default value for the field"
 		},
 		"default_value_numeric": {
-			"type": [ "string", "number" ],
+			"type": [
+				"string",
+				"number"
+			],
 			"default": "",
 			"description": "Default value for numeric fields (string for empty, number for value)"
 		},
 		"default_value_multi": {
-			"type": [ "string", "array" ],
+			"type": [
+				"string",
+				"array"
+			],
 			"default": "",
 			"description": "Default value(s) for multi-select fields (string for single, array for multiple)"
 		},
@@ -216,30 +246,47 @@
 			"description": "Text or HTML displayed after the input"
 		},
 		"maxlength": {
-			"type": [ "integer", "string" ],
+			"type": [
+				"integer",
+				"string"
+			],
 			"default": "",
 			"description": "Maximum character length (empty string for unlimited)"
 		},
 		"rows": {
-			"type": [ "integer", "string" ],
+			"type": [
+				"integer",
+				"string"
+			],
 			"default": "",
 			"description": "Number of rows for textarea display"
 		},
 		"new_lines": {
 			"type": "string",
-			"enum": [ "wpautop", "br", "" ],
+			"enum": [
+				"wpautop",
+				"br",
+				""
+			],
 			"default": "",
 			"description": "How to handle new lines in output (wpautop, br, or none)"
 		},
 		"return_format_media": {
 			"type": "string",
-			"enum": [ "array", "url", "id" ],
+			"enum": [
+				"array",
+				"url",
+				"id"
+			],
 			"default": "array",
 			"description": "How the media value is returned (array of data, URL string, or attachment ID)"
 		},
 		"library": {
 			"type": "string",
-			"enum": [ "all", "uploadedTo" ],
+			"enum": [
+				"all",
+				"uploadedTo"
+			],
 			"default": "all",
 			"description": "Media library source (all media or uploaded to current post only)"
 		},
@@ -284,7 +331,10 @@
 			"description": "Maximum file size in MB (0 for no limit)"
 		},
 		"choices": {
-			"type": [ "object", "array" ],
+			"type": [
+				"object",
+				"array"
+			],
 			"default": {},
 			"description": "Available choices as value:label pairs (object when populated, array when empty)"
 		},
@@ -300,13 +350,20 @@
 		},
 		"return_format_choice": {
 			"type": "string",
-			"enum": [ "value", "label", "array" ],
+			"enum": [
+				"value",
+				"label",
+				"array"
+			],
 			"default": "value",
 			"description": "Value returned (value, label, or both as array)"
 		},
 		"layout_choice": {
 			"type": "string",
-			"enum": [ "vertical", "horizontal" ],
+			"enum": [
+				"vertical",
+				"horizontal"
+			],
 			"default": "vertical",
 			"description": "Layout direction for choices (default varies by field type)"
 		},
@@ -352,7 +409,11 @@
 		},
 		"layout_display": {
 			"type": "string",
-			"enum": [ "block", "table", "row" ],
+			"enum": [
+				"block",
+				"table",
+				"row"
+			],
 			"description": "Visual layout style for rendering fields"
 		},
 		"button_label": {
