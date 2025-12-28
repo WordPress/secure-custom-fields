@@ -22,6 +22,7 @@
 			"default": "",
 			"description": "Step increment (empty string for default, 'any' for no restriction)"
 		},
+		"placeholder": { "$ref": "#/definitions/placeholder" },
 		"prepend": { "$ref": "#/definitions/prepend" },
 		"append": { "$ref": "#/definitions/append" }
 	}
