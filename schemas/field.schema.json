@@ -1009,6 +1009,843 @@
                         },
                         "type": {
                             "enum": [
+                                "button_group"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "choices": {
+                            "$ref": "#/definitions/choices"
+                        },
+                        "default_value": {
+                            "$ref": "#/definitions/default_value"
+                        },
+                        "return_format": {
+                            "$ref": "#/definitions/return_format_choice"
+                        },
+                        "layout": {
+                            "$ref": "#/definitions/layout_choice"
+                        },
+                        "allow_null": {
+                            "$ref": "#/definitions/allow_null"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
+                                "checkbox"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "choices": {
+                            "$ref": "#/definitions/choices"
+                        },
+                        "default_value": {
+                            "$ref": "#/definitions/default_value"
+                        },
+                        "return_format": {
+                            "$ref": "#/definitions/return_format_choice"
+                        },
+                        "layout": {
+                            "$ref": "#/definitions/layout_choice"
+                        },
+                        "toggle": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Show a toggle all checkbox (1 for yes, 0 for no)"
+                        },
+                        "allow_custom": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Allow custom values to be added (1 for yes, 0 for no)"
+                        },
+                        "save_custom": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Save custom values to the field choices (1 for yes, 0 for no)"
+                        },
+                        "custom_choice_button_text": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Text for the add custom choice button"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
+                                "nav_menu"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_null": {
+                            "$ref": "#/definitions/allow_null"
+                        },
+                        "save_format": {
+                            "type": "string",
+                            "enum": [
+                                "id",
+                                "object",
+                                "menu"
+                            ],
+                            "default": "id",
+                            "description": "Return format (ID, Nav Menu object, or rendered HTML)"
+                        },
+                        "container": {
+                            "type": "string",
+                            "default": "div",
+                            "description": "HTML container element for menu when returning HTML"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
+                                "radio"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "choices": {
+                            "$ref": "#/definitions/choices"
+                        },
+                        "default_value": {
+                            "$ref": "#/definitions/default_value"
+                        },
+                        "return_format": {
+                            "$ref": "#/definitions/return_format_choice"
+                        },
+                        "layout": {
+                            "$ref": "#/definitions/layout_choice"
+                        },
+                        "allow_null": {
+                            "$ref": "#/definitions/allow_null"
+                        },
+                        "other_choice": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Add an other choice with text input (1 for yes, 0 for no)"
+                        },
+                        "save_other_choice": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Save other choice values to the field choices (1 for yes, 0 for no)"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
+                                "select"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "choices": {
+                            "$ref": "#/definitions/choices"
+                        },
+                        "default_value": {
+                            "$ref": "#/definitions/default_value"
+                        },
+                        "return_format": {
+                            "$ref": "#/definitions/return_format_choice"
+                        },
+                        "multiple": {
+                            "$ref": "#/definitions/multiple"
+                        },
+                        "allow_null": {
+                            "$ref": "#/definitions/allow_null"
+                        },
+                        "placeholder": {
+                            "$ref": "#/definitions/placeholder"
+                        },
+                        "ui": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Use enhanced Select2 UI (1 for yes, 0 for no)"
+                        },
+                        "ajax": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Use AJAX to lazy load choices (1 for yes, 0 for no)"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
+                                "true_false"
+                            ]
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "anyOf": [
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        false
+                                    ]
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        ""
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/conditionalLogicGroup"
+                                    }
+                                }
+                            ],
+                            "description": "Conditional logic rules for field visibility"
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "default_value": {
+                            "$ref": "#/definitions/default_value_numeric"
+                        },
+                        "message": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Text displayed alongside the checkbox"
+                        },
+                        "ui": {
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Use stylized toggle UI (1 for yes, 0 for no)"
+                        },
+                        "ui_on_text": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Text shown when toggle is on (empty for default 'Yes')"
+                        },
+                        "ui_off_text": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Text shown when toggle is off (empty for default 'No')"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "enum": [
                                 "file"
                             ]
                         },
@@ -1722,11 +2559,6 @@
                         "type": {
                             "type": "string",
                             "enum": [
-                                "select",
-                                "checkbox",
-                                "radio",
-                                "button_group",
-                                "true_false",
                                 "link",
                                 "post_object",
                                 "page_link",
@@ -1746,7 +2578,6 @@
                                 "repeater",
                                 "flexible_content",
                                 "clone",
-                                "nav_menu",
                                 "separator",
                                 "output"
                             ]
@@ -1990,6 +2821,43 @@
             "type": "integer",
             "default": 0,
             "description": "Maximum file size in MB (0 for no limit)"
+        },
+        "choices": {
+            "type": [
+                "object",
+                "array"
+            ],
+            "default": [],
+            "description": "Available choices as value:label pairs (object when populated, array when empty)"
+        },
+        "allow_null": {
+            "type": "integer",
+            "default": 0,
+            "description": "Allow a null/empty value to be selected (1 for yes, 0 for no)"
+        },
+        "multiple": {
+            "type": "integer",
+            "default": 0,
+            "description": "Allow multiple values to be selected (1 for yes, 0 for no)"
+        },
+        "return_format_choice": {
+            "type": "string",
+            "enum": [
+                "value",
+                "label",
+                "array"
+            ],
+            "default": "value",
+            "description": "Value returned (value, label, or both as array)"
+        },
+        "layout_choice": {
+            "type": "string",
+            "enum": [
+                "vertical",
+                "horizontal"
+            ],
+            "default": "vertical",
+            "description": "Layout direction for choices (default varies by field type)"
         }
     }
 }
