@@ -1086,6 +1086,17 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Repeater with invalid layout should fail validation',
 			),
+			'invalid repeater rows_per_page type'      => array(
+				array(
+					'key'           => 'field_repeater_bad_rows',
+					'label'         => 'Bad Repeater Rows',
+					'name'          => 'bad_repeater_rows',
+					'type'          => 'repeater',
+					'parent'        => 'group_test',
+					'rows_per_page' => 'twenty',
+				),
+				'Repeater with non-integer rows_per_page should fail validation',
+			),
 			'invalid tab placement'                    => array(
 				array(
 					'key'       => 'field_tab_bad',
@@ -1096,6 +1107,17 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'placement' => 'bottom',
 				),
 				'Tab with invalid placement should fail validation',
+			),
+			'invalid accordion open type'              => array(
+				array(
+					'key'    => 'field_accordion_bad_open',
+					'label'  => 'Bad Accordion Open',
+					'name'   => 'bad_accordion_open',
+					'type'   => 'accordion',
+					'parent' => 'group_test',
+					'open'   => 'yes',
+				),
+				'Accordion with non-integer open should fail validation',
 			),
 			'invalid message new_lines'                => array(
 				array(
