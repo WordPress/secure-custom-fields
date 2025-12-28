@@ -1,0 +1,33 @@
+{
+	"title": "SCF Repeater Field Fragment",
+	"description": "Type-specific properties for repeater fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "repeater" ]
+		},
+		"sub_fields": { "$ref": "#/definitions/sub_fields" },
+		"min": { "$ref": "#/definitions/min" },
+		"max": { "$ref": "#/definitions/max" },
+		"layout": {
+			"$ref": "#/definitions/layout_display",
+			"default": "table"
+		},
+		"button_label": { "$ref": "#/definitions/button_label" },
+		"pagination": {
+			"type": [ "boolean", "integer" ],
+			"default": 0,
+			"description": "Enable pagination for repeaters with many rows"
+		},
+		"rows_per_page": {
+			"type": "integer",
+			"default": 20,
+			"description": "Number of rows displayed per page when pagination is enabled"
+		},
+		"collapsed": {
+			"type": "string",
+			"default": "",
+			"description": "Field key to use as collapsed row title"
+		}
+	}
+}

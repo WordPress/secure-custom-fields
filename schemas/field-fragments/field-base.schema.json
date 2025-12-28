@@ -344,6 +344,26 @@
 			"type": "integer",
 			"default": 0,
 			"description": "Set current date/time as default value (1 for yes, 0 for no)"
+		},
+		"sub_fields": {
+			"type": "array",
+			"default": [],
+			"description": "Nested fields within this field"
+		},
+		"layout_display": {
+			"type": "string",
+			"enum": [ "block", "table", "row" ],
+			"description": "Visual layout style for rendering fields"
+		},
+		"button_label": {
+			"type": "string",
+			"default": "",
+			"description": "Text label for the add row button"
+		},
+		"endpoint": {
+			"type": "integer",
+			"default": 0,
+			"description": "Define an endpoint for the previous accordion/tab group"
 		}
 	}
 }

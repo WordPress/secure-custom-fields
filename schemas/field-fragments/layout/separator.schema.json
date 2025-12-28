@@ -1,0 +1,10 @@
+{
+	"title": "SCF Separator Field Fragment",
+	"description": "Type-specific properties for separator fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "separator" ]
+		}
+	}
+}
