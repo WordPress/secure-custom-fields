@@ -1,0 +1,22 @@
+{
+	"title": "SCF Date Time Picker Field Fragment",
+	"description": "Type-specific properties for date and time picker fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "date_time_picker" ]
+		},
+		"display_format": {
+			"type": "string",
+			"default": "d/m/Y g:i a",
+			"description": "Date/time format shown to user in field UI"
+		},
+		"return_format": {
+			"type": "string",
+			"default": "d/m/Y g:i a",
+			"description": "Date/time format returned by get_field()"
+		},
+		"first_day": { "$ref": "#/definitions/first_day" },
+		"default_to_current_date": { "$ref": "#/definitions/default_to_current_date" }
+	}
+}
