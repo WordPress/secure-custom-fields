@@ -1,0 +1,30 @@
+{
+	"title": "SCF Google Map Field Fragment",
+	"description": "Type-specific properties for Google Map fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "google_map" ]
+		},
+		"height": {
+			"type": "string",
+			"default": "",
+			"description": "Map height in pixels (empty uses default 400)"
+		},
+		"center_lat": {
+			"type": "string",
+			"default": "",
+			"description": "Initial map center latitude (empty uses default)"
+		},
+		"center_lng": {
+			"type": "string",
+			"default": "",
+			"description": "Initial map center longitude (empty uses default)"
+		},
+		"zoom": {
+			"type": "string",
+			"default": "",
+			"description": "Initial map zoom level (empty uses default 14)"
+		}
+	}
+}
