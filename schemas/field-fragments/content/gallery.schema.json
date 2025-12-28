@@ -16,16 +16,8 @@
 		"max_height": { "$ref": "#/definitions/max_height" },
 		"max_size": { "$ref": "#/definitions/max_size" },
 		"mime_types": { "$ref": "#/definitions/mime_types" },
-		"min": {
-			"type": "integer",
-			"default": 0,
-			"description": "Minimum number of images required"
-		},
-		"max": {
-			"type": "integer",
-			"default": 0,
-			"description": "Maximum number of images allowed (0 for no limit)"
-		},
+		"min": { "$ref": "#/definitions/min" },
+		"max": { "$ref": "#/definitions/max" },
 		"insert": {
 			"type": "string",
 			"enum": [ "append", "prepend" ],

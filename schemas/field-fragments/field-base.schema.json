@@ -309,6 +309,31 @@
 			"enum": [ "vertical", "horizontal" ],
 			"default": "vertical",
 			"description": "Layout direction for choices (default varies by field type)"
+		},
+		"min": {
+			"type": "integer",
+			"default": 0,
+			"description": "Minimum number of items required (0 for no minimum)"
+		},
+		"max": {
+			"type": "integer",
+			"default": 0,
+			"description": "Maximum number of items allowed (0 for no limit)"
+		},
+		"post_type": {
+			"type": "array",
+			"default": [],
+			"description": "Limit selection to specific post types (empty for all)"
+		},
+		"taxonomy_filter": {
+			"type": "array",
+			"default": [],
+			"description": "Limit selection to posts with specific taxonomy terms"
+		},
+		"bidirectional_target": {
+			"type": "array",
+			"default": [],
+			"description": "Target fields for bidirectional relationships"
 		}
 	}
 }

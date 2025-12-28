@@ -468,6 +468,103 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Nav Menu field with all type-specific properties should be valid',
 			),
+
+			// Relational fields.
+			'post_object field complete'   => array(
+				array(
+					'key'                  => 'field_post_object_full',
+					'label'                => 'Full Post Object',
+					'name'                 => 'post_object_full',
+					'type'                 => 'post_object',
+					'parent'               => 'group_test',
+					'post_type'            => array(),
+					'taxonomy'             => array(),
+					'allow_null'           => 0,
+					'multiple'             => 0,
+					'return_format'        => 'object',
+					'ui'                   => 1,
+					'bidirectional_target' => array(),
+				),
+				'Post Object field with all type-specific properties should be valid',
+			),
+			'page_link field complete'     => array(
+				array(
+					'key'            => 'field_page_link_full',
+					'label'          => 'Full Page Link',
+					'name'           => 'page_link_full',
+					'type'           => 'page_link',
+					'parent'         => 'group_test',
+					'post_type'      => array(),
+					'taxonomy'       => array(),
+					'allow_null'     => 0,
+					'multiple'       => 0,
+					'allow_archives' => 1,
+				),
+				'Page Link field with all type-specific properties should be valid',
+			),
+			'relationship field complete'  => array(
+				array(
+					'key'                  => 'field_relationship_full',
+					'label'                => 'Full Relationship',
+					'name'                 => 'relationship_full',
+					'type'                 => 'relationship',
+					'parent'               => 'group_test',
+					'post_type'            => array(),
+					'taxonomy'             => array(),
+					'min'                  => 0,
+					'max'                  => 5,
+					'filters'              => array( 'search', 'post_type' ),
+					'elements'             => array(),
+					'return_format'        => 'object',
+					'bidirectional_target' => array(),
+				),
+				'Relationship field with all type-specific properties should be valid',
+			),
+			'taxonomy field complete'      => array(
+				array(
+					'key'                  => 'field_taxonomy_full',
+					'label'                => 'Full Taxonomy',
+					'name'                 => 'taxonomy_full',
+					'type'                 => 'taxonomy',
+					'parent'               => 'group_test',
+					'taxonomy'             => 'category',
+					'field_type'           => 'checkbox',
+					'multiple'             => 0,
+					'allow_null'           => 0,
+					'return_format'        => 'id',
+					'add_term'             => 1,
+					'load_terms'           => 0,
+					'save_terms'           => 0,
+					'bidirectional_target' => array(),
+				),
+				'Taxonomy field with all type-specific properties should be valid',
+			),
+			'user field complete'          => array(
+				array(
+					'key'                  => 'field_user_full',
+					'label'                => 'Full User',
+					'name'                 => 'user_full',
+					'type'                 => 'user',
+					'parent'               => 'group_test',
+					'role'                 => '',
+					'multiple'             => 0,
+					'allow_null'           => 0,
+					'return_format'        => 'array',
+					'bidirectional_target' => array(),
+				),
+				'User field with all type-specific properties should be valid',
+			),
+			'link field complete'          => array(
+				array(
+					'key'           => 'field_link_full',
+					'label'         => 'Full Link',
+					'name'          => 'link_full',
+					'type'          => 'link',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+				),
+				'Link field with all type-specific properties should be valid',
+			),
 		);
 	}
 
@@ -479,7 +576,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 	public function invalidEntitiesProvider(): array {
 		return array(
 			// Required fields validation.
-			'missing key'                  => array(
+			'missing key'                        => array(
 				array(
 					'label'  => 'No Key Field',
 					'name'   => 'no_key',
@@ -488,7 +585,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without key should fail validation',
 			),
-			'missing label'                => array(
+			'missing label'                      => array(
 				array(
 					'key'    => 'field_no_label',
 					'name'   => 'no_label',
@@ -497,7 +594,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without label should fail validation',
 			),
-			'missing type'                 => array(
+			'missing type'                       => array(
 				array(
 					'key'    => 'field_no_type',
 					'label'  => 'No Type',
@@ -506,7 +603,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without type should fail validation',
 			),
-			'missing parent'               => array(
+			'missing parent'                     => array(
 				array(
 					'key'   => 'field_no_parent',
 					'label' => 'No Parent',
@@ -517,7 +614,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Pattern validation.
-			'invalid key pattern'          => array(
+			'invalid key pattern'                => array(
 				array(
 					'key'    => 'invalid_field_key',
 					'label'  => 'Bad Key Field',
@@ -529,7 +626,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Enum validation.
-			'invalid type'                 => array(
+			'invalid type'                       => array(
 				array(
 					'key'    => 'field_bad_type',
 					'label'  => 'Bad Type Field',
@@ -539,7 +636,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field with invalid type should fail validation',
 			),
-			'invalid new_lines enum'       => array(
+			'invalid new_lines enum'             => array(
 				array(
 					'key'       => 'field_textarea_bad_nl',
 					'label'     => 'Bad New Lines',
@@ -552,7 +649,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Content field validation.
-			'invalid image return_format'  => array(
+			'invalid image return_format'        => array(
 				array(
 					'key'           => 'field_image_bad',
 					'label'         => 'Bad Image',
@@ -563,7 +660,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid return_format should fail validation',
 			),
-			'invalid image library'        => array(
+			'invalid image library'              => array(
 				array(
 					'key'     => 'field_image_bad_lib',
 					'label'   => 'Bad Image Library',
@@ -574,7 +671,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid library should fail validation',
 			),
-			'invalid gallery insert'       => array(
+			'invalid gallery insert'             => array(
 				array(
 					'key'    => 'field_gallery_bad_insert',
 					'label'  => 'Bad Gallery Insert',
@@ -585,7 +682,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Gallery with invalid insert should fail validation',
 			),
-			'invalid wysiwyg tabs'         => array(
+			'invalid wysiwyg tabs'               => array(
 				array(
 					'key'    => 'field_wysiwyg_bad_tabs',
 					'label'  => 'Bad WYSIWYG Tabs',
@@ -598,7 +695,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Choice field validation.
-			'invalid select return_format' => array(
+			'invalid select return_format'       => array(
 				array(
 					'key'           => 'field_select_bad',
 					'label'         => 'Bad Select',
@@ -609,7 +706,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Select with invalid return_format should fail validation',
 			),
-			'invalid checkbox layout'      => array(
+			'invalid checkbox layout'            => array(
 				array(
 					'key'    => 'field_checkbox_bad',
 					'label'  => 'Bad Checkbox',
@@ -620,7 +717,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Checkbox with invalid layout should fail validation',
 			),
-			'invalid nav_menu save_format' => array(
+			'invalid nav_menu save_format'       => array(
 				array(
 					'key'         => 'field_nav_menu_bad',
 					'label'       => 'Bad Nav Menu',
@@ -630,6 +727,74 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'save_format' => 'invalid_format',
 				),
 				'Nav Menu with invalid save_format should fail validation',
+			),
+
+			// Relational field validation.
+			'invalid post_object return_format'  => array(
+				array(
+					'key'           => 'field_post_object_bad',
+					'label'         => 'Bad Post Object',
+					'name'          => 'bad_post_object',
+					'type'          => 'post_object',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+				),
+				'Post Object with invalid return_format should fail validation',
+			),
+			'invalid relationship return_format' => array(
+				array(
+					'key'           => 'field_relationship_bad',
+					'label'         => 'Bad Relationship',
+					'name'          => 'bad_relationship',
+					'type'          => 'relationship',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+				),
+				'Relationship with invalid return_format should fail validation',
+			),
+			'invalid taxonomy field_type'        => array(
+				array(
+					'key'        => 'field_taxonomy_bad_type',
+					'label'      => 'Bad Taxonomy Type',
+					'name'       => 'bad_taxonomy_type',
+					'type'       => 'taxonomy',
+					'parent'     => 'group_test',
+					'field_type' => 'invalid_type',
+				),
+				'Taxonomy with invalid field_type should fail validation',
+			),
+			'invalid taxonomy return_format'     => array(
+				array(
+					'key'           => 'field_taxonomy_bad_format',
+					'label'         => 'Bad Taxonomy Format',
+					'name'          => 'bad_taxonomy_format',
+					'type'          => 'taxonomy',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+				),
+				'Taxonomy with invalid return_format should fail validation',
+			),
+			'invalid user return_format'         => array(
+				array(
+					'key'           => 'field_user_bad',
+					'label'         => 'Bad User',
+					'name'          => 'bad_user',
+					'type'          => 'user',
+					'parent'        => 'group_test',
+					'return_format' => 'invalid_format',
+				),
+				'User with invalid return_format should fail validation',
+			),
+			'invalid link return_format'         => array(
+				array(
+					'key'           => 'field_link_bad',
+					'label'         => 'Bad Link',
+					'name'          => 'bad_link',
+					'type'          => 'link',
+					'parent'        => 'group_test',
+					'return_format' => 'object',
+				),
+				'Link with invalid return_format should fail validation',
 			),
 		);
 	}

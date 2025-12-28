@@ -1,0 +1,19 @@
+{
+	"title": "SCF Page Link Field Fragment",
+	"description": "Type-specific properties for page link fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "page_link" ]
+		},
+		"post_type": { "$ref": "#/definitions/post_type" },
+		"taxonomy": { "$ref": "#/definitions/taxonomy_filter" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"multiple": { "$ref": "#/definitions/multiple" },
+		"allow_archives": {
+			"type": "integer",
+			"default": 1,
+			"description": "Allow archive URLs to be selected (1 for yes, 0 for no)"
+		}
+	}
+}

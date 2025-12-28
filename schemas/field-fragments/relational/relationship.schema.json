@@ -1,0 +1,31 @@
+{
+	"title": "SCF Relationship Field Fragment",
+	"description": "Type-specific properties for relationship fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "relationship" ]
+		},
+		"post_type": { "$ref": "#/definitions/post_type" },
+		"taxonomy": { "$ref": "#/definitions/taxonomy_filter" },
+		"min": { "$ref": "#/definitions/min" },
+		"max": { "$ref": "#/definitions/max" },
+		"filters": {
+			"type": "array",
+			"default": [ "search", "post_type", "taxonomy" ],
+			"description": "Enabled filters for the relationship field UI"
+		},
+		"elements": {
+			"type": "array",
+			"default": [],
+			"description": "Additional elements to display (e.g., 'featured_image')"
+		},
+		"return_format": {
+			"type": "string",
+			"enum": [ "object", "id" ],
+			"default": "object",
+			"description": "Value returned (WP_Post object or post ID)"
+		},
+		"bidirectional_target": { "$ref": "#/definitions/bidirectional_target" }
+	}
+}

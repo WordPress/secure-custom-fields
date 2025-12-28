@@ -1,0 +1,16 @@
+{
+	"title": "SCF Link Field Fragment",
+	"description": "Type-specific properties for link fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "link" ]
+		},
+		"return_format": {
+			"type": "string",
+			"enum": [ "array", "url" ],
+			"default": "array",
+			"description": "Value returned (array with url/title/target or just URL string)"
+		}
+	}
+}

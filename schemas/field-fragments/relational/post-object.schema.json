@@ -1,0 +1,26 @@
+{
+	"title": "SCF Post Object Field Fragment",
+	"description": "Type-specific properties for post object fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "post_object" ]
+		},
+		"post_type": { "$ref": "#/definitions/post_type" },
+		"taxonomy": { "$ref": "#/definitions/taxonomy_filter" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"multiple": { "$ref": "#/definitions/multiple" },
+		"return_format": {
+			"type": "string",
+			"enum": [ "object", "id" ],
+			"default": "object",
+			"description": "Value returned (WP_Post object or post ID)"
+		},
+		"ui": {
+			"type": "integer",
+			"default": 1,
+			"description": "Use enhanced Select2 UI (1 for yes, 0 for no)"
+		},
+		"bidirectional_target": { "$ref": "#/definitions/bidirectional_target" }
+	}
+}
