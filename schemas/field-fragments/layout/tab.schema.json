@@ -1,0 +1,22 @@
+{
+	"title": "SCF Tab Field Fragment",
+	"description": "Type-specific properties for tab fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "tab" ]
+		},
+		"placement": {
+			"type": "string",
+			"enum": [ "top", "left" ],
+			"default": "top",
+			"description": "Tab placement position"
+		},
+		"endpoint": { "$ref": "#/definitions/endpoint" },
+		"selected": {
+			"type": "integer",
+			"default": 0,
+			"description": "Whether this tab is selected by default"
+		}
+	}
+}
