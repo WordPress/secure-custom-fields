@@ -277,6 +277,33 @@
 			"type": "integer",
 			"default": 0,
 			"description": "Maximum file size in MB (0 for no limit)"
+		},
+		"choices": {
+			"type": [ "object", "array" ],
+			"default": {},
+			"description": "Available choices as value:label pairs (object when populated, array when empty)"
+		},
+		"allow_null": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow a null/empty value to be selected (1 for yes, 0 for no)"
+		},
+		"multiple": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow multiple values to be selected (1 for yes, 0 for no)"
+		},
+		"return_format_choice": {
+			"type": "string",
+			"enum": [ "value", "label", "array" ],
+			"default": "value",
+			"description": "Value returned (value, label, or both as array)"
+		},
+		"layout_choice": {
+			"type": "string",
+			"enum": [ "vertical", "horizontal" ],
+			"default": "vertical",
+			"description": "Layout direction for choices (default varies by field type)"
 		}
 	}
 }
