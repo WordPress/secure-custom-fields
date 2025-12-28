@@ -1,0 +1,36 @@
+{
+	"title": "SCF Select Field Fragment",
+	"description": "Type-specific properties for select dropdown fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "select" ]
+		},
+		"choices": { "$ref": "#/definitions/choices" },
+		"default_value": { "$ref": "#/definitions/default_value_multi" },
+		"return_format": { "$ref": "#/definitions/return_format_choice" },
+		"multiple": { "$ref": "#/definitions/multiple" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"ui": {
+			"type": "integer",
+			"default": 0,
+			"description": "Use enhanced Select2 UI (1 for yes, 0 for no)"
+		},
+		"ajax": {
+			"type": "integer",
+			"default": 0,
+			"description": "Use AJAX to lazy load choices (1 for yes, 0 for no)"
+		},
+		"create_options": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow new options to be created while editing (1 for yes, 0 for no)"
+		},
+		"save_options": {
+			"type": "integer",
+			"default": 0,
+			"description": "Save newly created options to the field choices (1 for yes, 0 for no)"
+		}
+	}
+}

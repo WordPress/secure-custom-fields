@@ -1,0 +1,25 @@
+{
+	"title": "SCF Radio Field Fragment",
+	"description": "Type-specific properties for radio button fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "radio" ]
+		},
+		"choices": { "$ref": "#/definitions/choices" },
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"return_format": { "$ref": "#/definitions/return_format_choice" },
+		"layout": { "$ref": "#/definitions/layout_choice" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"other_choice": {
+			"type": "integer",
+			"default": 0,
+			"description": "Add an other choice with text input (1 for yes, 0 for no)"
+		},
+		"save_other_choice": {
+			"type": "integer",
+			"default": 0,
+			"description": "Save other choice values to the field choices (1 for yes, 0 for no)"
+		}
+	}
+}

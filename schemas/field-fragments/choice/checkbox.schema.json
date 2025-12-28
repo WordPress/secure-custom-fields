@@ -1,0 +1,34 @@
+{
+	"title": "SCF Checkbox Field Fragment",
+	"description": "Type-specific properties for checkbox fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "checkbox" ]
+		},
+		"choices": { "$ref": "#/definitions/choices" },
+		"default_value": { "$ref": "#/definitions/default_value_multi" },
+		"return_format": { "$ref": "#/definitions/return_format_choice" },
+		"layout": { "$ref": "#/definitions/layout_choice" },
+		"toggle": {
+			"type": "integer",
+			"default": 0,
+			"description": "Show a toggle all checkbox (1 for yes, 0 for no)"
+		},
+		"allow_custom": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow custom values to be added (1 for yes, 0 for no)"
+		},
+		"save_custom": {
+			"type": "integer",
+			"default": 0,
+			"description": "Save custom values to the field choices (1 for yes, 0 for no)"
+		},
+		"custom_choice_button_text": {
+			"type": "string",
+			"default": "Add new choice",
+			"description": "Text for the add custom choice button (translatable)"
+		}
+	}
+}
