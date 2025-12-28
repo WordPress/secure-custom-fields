@@ -67,7 +67,8 @@
                             "type": "string",
                             "enum": [
                                 "color_picker"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -82,33 +83,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -134,13 +116,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -222,7 +200,8 @@
                             "type": "string",
                             "enum": [
                                 "date_picker"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -237,33 +216,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -289,13 +249,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -355,7 +311,8 @@
                             "type": "string",
                             "enum": [
                                 "date_time_picker"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -370,33 +327,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -422,13 +360,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -488,7 +422,8 @@
                             "type": "string",
                             "enum": [
                                 "google_map"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -503,33 +438,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -555,13 +471,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -625,7 +537,8 @@
                             "type": "string",
                             "enum": [
                                 "icon_picker"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -640,33 +553,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -692,13 +586,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -782,7 +672,8 @@
                             "type": "string",
                             "enum": [
                                 "time_picker"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -797,33 +688,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -849,13 +721,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -909,7 +777,8 @@
                             "type": "string",
                             "enum": [
                                 "email"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -924,33 +793,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -976,13 +826,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1038,7 +884,8 @@
                             "type": "string",
                             "enum": [
                                 "number"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1053,33 +900,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1105,13 +933,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1194,7 +1018,8 @@
                             "type": "string",
                             "enum": [
                                 "password"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1209,33 +1034,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1261,13 +1067,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1320,7 +1122,8 @@
                             "type": "string",
                             "enum": [
                                 "range"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1335,33 +1138,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1387,13 +1171,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1430,6 +1210,9 @@
                             ],
                             "default": "",
                             "description": "Step increment (empty string for default, 'any' for no restriction)"
+                        },
+                        "placeholder": {
+                            "$ref": "#/definitions/placeholder"
                         },
                         "prepend": {
                             "$ref": "#/definitions/prepend"
@@ -1473,7 +1256,8 @@
                             "type": "string",
                             "enum": [
                                 "text"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1488,33 +1272,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1540,13 +1305,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1605,7 +1366,8 @@
                             "type": "string",
                             "enum": [
                                 "textarea"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1620,33 +1382,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1672,13 +1415,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1737,7 +1476,8 @@
                             "type": "string",
                             "enum": [
                                 "url"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1752,33 +1492,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1804,13 +1525,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1860,7 +1577,8 @@
                             "type": "string",
                             "enum": [
                                 "button_group"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -1875,33 +1593,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -1927,13 +1626,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -1998,7 +1693,8 @@
                             "type": "string",
                             "enum": [
                                 "checkbox"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2013,33 +1709,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2065,13 +1742,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2147,7 +1820,8 @@
                             "type": "string",
                             "enum": [
                                 "nav_menu"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2162,33 +1836,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2214,13 +1869,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2282,7 +1933,8 @@
                             "type": "string",
                             "enum": [
                                 "radio"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2297,33 +1949,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2349,13 +1982,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2424,7 +2053,8 @@
                             "type": "string",
                             "enum": [
                                 "select"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2439,33 +2069,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2491,13 +2102,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2579,7 +2186,8 @@
                             "type": "string",
                             "enum": [
                                 "true_false"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2594,33 +2202,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2646,13 +2235,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2721,7 +2306,8 @@
                             "type": "string",
                             "enum": [
                                 "file"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2736,33 +2322,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2788,13 +2355,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -2853,7 +2416,8 @@
                             "type": "string",
                             "enum": [
                                 "gallery"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -2868,33 +2432,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -2920,13 +2465,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3015,7 +2556,8 @@
                             "type": "string",
                             "enum": [
                                 "image"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3030,33 +2572,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3082,13 +2605,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3162,7 +2681,8 @@
                             "type": "string",
                             "enum": [
                                 "oembed"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3177,33 +2697,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3229,13 +2730,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3289,7 +2786,8 @@
                             "type": "string",
                             "enum": [
                                 "wysiwyg"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3304,33 +2802,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3356,13 +2835,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3434,7 +2909,8 @@
                             "type": "string",
                             "enum": [
                                 "accordion"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3449,33 +2925,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3501,13 +2958,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3564,7 +3017,8 @@
                             "type": "string",
                             "enum": [
                                 "clone"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3579,33 +3033,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3631,13 +3066,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3712,7 +3143,8 @@
                             "type": "string",
                             "enum": [
                                 "flexible_content"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3727,33 +3159,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3779,13 +3192,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3855,7 +3264,8 @@
                             "type": "string",
                             "enum": [
                                 "group"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3870,33 +3280,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -3922,13 +3313,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -3979,7 +3366,8 @@
                             "type": "string",
                             "enum": [
                                 "message"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -3994,33 +3382,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4046,13 +3415,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4116,7 +3481,8 @@
                             "type": "string",
                             "enum": [
                                 "output"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4131,33 +3497,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4183,13 +3530,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4238,7 +3581,8 @@
                             "type": "string",
                             "enum": [
                                 "repeater"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4253,33 +3597,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4305,13 +3630,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4389,7 +3710,8 @@
                             "type": "string",
                             "enum": [
                                 "separator"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4404,33 +3726,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4456,13 +3759,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4506,7 +3805,8 @@
                             "type": "string",
                             "enum": [
                                 "tab"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4521,33 +3821,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4573,13 +3854,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4640,7 +3917,8 @@
                             "type": "string",
                             "enum": [
                                 "link"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4655,33 +3933,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4707,13 +3966,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4766,7 +4021,8 @@
                             "type": "string",
                             "enum": [
                                 "page_link"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4781,33 +4037,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4833,13 +4070,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -4900,7 +4133,8 @@
                             "type": "string",
                             "enum": [
                                 "post_object"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -4915,33 +4149,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -4967,13 +4182,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -5046,7 +4257,8 @@
                             "type": "string",
                             "enum": [
                                 "relationship"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -5061,33 +4273,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -5113,13 +4306,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -5201,7 +4390,8 @@
                             "type": "string",
                             "enum": [
                                 "taxonomy"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -5216,33 +4406,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -5268,13 +4439,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
@@ -5367,7 +4534,8 @@
                             "type": "string",
                             "enum": [
                                 "user"
-                            ]
+                            ],
+                            "description": "The type of field"
                         },
                         "instructions": {
                             "type": "string",
@@ -5382,33 +4550,14 @@
                             "description": "Whether the field is required"
                         },
                         "conditional_logic": {
-                            "anyOf": [
-                                {
-                                    "type": "boolean",
-                                    "enum": [
-                                        false
-                                    ]
-                                },
-                                {
-                                    "type": "integer",
-                                    "enum": [
-                                        0
-                                    ]
-                                },
-                                {
-                                    "type": "string",
-                                    "enum": [
-                                        ""
-                                    ]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/conditionalLogicGroup"
-                                    }
-                                }
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
                             ],
-                            "description": "Conditional logic rules for field visibility"
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
                         },
                         "wrapper": {
                             "type": "object",
@@ -5434,13 +4583,9 @@
                             "description": "Order of the field within its parent"
                         },
                         "parent": {
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
+                            "type": [
+                                "string",
+                                "integer"
                             ],
                             "description": "Parent field or field group key/ID"
                         },
