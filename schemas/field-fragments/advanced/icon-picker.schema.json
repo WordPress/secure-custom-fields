@@ -1,0 +1,40 @@
+{
+	"title": "SCF Icon Picker Field Fragment",
+	"description": "Type-specific properties for icon picker fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "icon_picker" ]
+		},
+		"library": {
+			"type": "string",
+			"default": "all",
+			"description": "Icon library source (all or specific library)"
+		},
+		"tabs": {
+			"type": "array",
+			"default": [ "dashicons", "media_library", "url" ],
+			"description": "Available tabs for icon selection"
+		},
+		"return_format": {
+			"type": "string",
+			"default": "string",
+			"description": "Value returned (string or structured data)"
+		},
+		"default_value": {
+			"type": "object",
+			"default": {},
+			"description": "Default icon value with type and value properties",
+			"properties": {
+				"type": {
+					"type": [ "string", "null" ],
+					"description": "Icon type (dashicons, media_library, url)"
+				},
+				"value": {
+					"type": [ "string", "null" ],
+					"description": "Icon value (icon class, attachment ID, or URL)"
+				}
+			}
+		}
+	}
+}
