@@ -117,10 +117,11 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		}
 
 		/**
-		 * Merges schema properties intelligently, preserving base type definitions.
+		 * Merges base and type-specific schema properties.
 		 *
-		 * When merging the 'type' property, if the fragment only defines 'enum',
-		 * we preserve the base's 'type': 'string' definition.
+		 * Uses array_merge for nested arrays: fragment values overwrite base values,
+		 * but base-only keys are preserved (e.g., base's "type": "string" is kept
+		 * when fragment only provides "enum").
 		 *
 		 * @since 6.8.0
 		 *
@@ -132,24 +133,8 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			$merged = $base_props;
 
 			foreach ( $type_props as $prop_name => $prop_value ) {
-				// Special handling for 'type' property to preserve "type": "string".
-				if ( 'type' === $prop_name && isset( $merged['type'] ) && is_array( $merged['type'] ) && is_array( $prop_value ) ) {
-					// If base has "type": "string" and fragment only has "enum", merge them.
-					if ( isset( $merged['type']['type'] ) && isset( $prop_value['enum'] ) ) {
-						$merged['type'] = array(
-							'type' => $merged['type']['type'],
-							'enum' => $prop_value['enum'],
-						);
-						// Preserve description if present in base.
-						if ( isset( $merged['type']['description'] ) ) {
-							$merged['type']['description'] = $merged['type']['description'];
-						}
-						continue;
-					}
-				}
-
-				// For other properties, recursively merge arrays or overwrite.
 				if ( isset( $merged[ $prop_name ] ) && is_array( $merged[ $prop_name ] ) && is_array( $prop_value ) ) {
+					// Merge arrays: fragment values overwrite base, but base-only keys preserved.
 					$merged[ $prop_name ] = array_merge( $merged[ $prop_name ], $prop_value );
 				} else {
 					$merged[ $prop_name ] = $prop_value;
@@ -191,27 +176,6 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 					'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
 					'properties'           => $this->merge_schema_properties( $base_props, $type_props ),
 					'additionalProperties' => $type_schema['additionalProperties'] ?? false,
-				);
-			}
-
-			// Temporary fallback for field types without specific schemas.
-			// Only added when there are types that don't have dedicated schema files.
-			$known_types    = array_keys( $type_schemas );
-			$all_types      = $base_props['type']['enum'] ?? array();
-			$fallback_types = array_values( array_diff( $all_types, $known_types ) );
-
-			if ( ! empty( $fallback_types ) ) {
-				$fallback_props         = $base_props;
-				$fallback_props['type'] = array(
-					'type' => 'string',
-					'enum' => $fallback_types,
-				);
-
-				$variants[] = array(
-					'type'                 => 'object',
-					'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
-					'properties'           => $fallback_props,
-					'additionalProperties' => true,
 				);
 			}
 
