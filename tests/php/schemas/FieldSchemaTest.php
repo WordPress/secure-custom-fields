@@ -654,6 +654,115 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Google Map field with all type-specific properties should be valid',
 			),
+
+			// Layout fields.
+			'group field complete'            => array(
+				array(
+					'key'        => 'field_group_full',
+					'label'      => 'Full Group',
+					'name'       => 'group_full',
+					'type'       => 'group',
+					'parent'     => 'group_test',
+					'sub_fields' => array(),
+					'layout'     => 'block',
+				),
+				'Group field with all type-specific properties should be valid',
+			),
+			'repeater field complete'         => array(
+				array(
+					'key'           => 'field_repeater_full',
+					'label'         => 'Full Repeater',
+					'name'          => 'repeater_full',
+					'type'          => 'repeater',
+					'parent'        => 'group_test',
+					'sub_fields'    => array(),
+					'min'           => 0,
+					'max'           => 0,
+					'layout'        => 'table',
+					'button_label'  => '',
+					'rows_per_page' => 20,
+					'collapsed'     => '',
+				),
+				'Repeater field with all type-specific properties should be valid',
+			),
+			'flexible_content field complete' => array(
+				array(
+					'key'          => 'field_flexible_content_full',
+					'label'        => 'Full Flexible Content',
+					'name'         => 'flexible_content_full',
+					'type'         => 'flexible_content',
+					'parent'       => 'group_test',
+					'layouts'      => array(),
+					'min'          => '',
+					'max'          => '',
+					'button_label' => 'Add Row',
+				),
+				'Flexible Content field with all type-specific properties should be valid',
+			),
+			'tab field complete'              => array(
+				array(
+					'key'       => 'field_tab_full',
+					'label'     => 'Full Tab',
+					'name'      => 'tab_full',
+					'type'      => 'tab',
+					'parent'    => 'group_test',
+					'placement' => 'top',
+					'endpoint'  => 0,
+					'selected'  => 0,
+				),
+				'Tab field with all type-specific properties should be valid',
+			),
+			'accordion field complete'        => array(
+				array(
+					'key'          => 'field_accordion_full',
+					'label'        => 'Full Accordion',
+					'name'         => 'accordion_full',
+					'type'         => 'accordion',
+					'parent'       => 'group_test',
+					'open'         => 0,
+					'multi_expand' => 0,
+					'endpoint'     => 0,
+				),
+				'Accordion field with all type-specific properties should be valid',
+			),
+			'message field complete'          => array(
+				array(
+					'key'       => 'field_message_full',
+					'label'     => 'Full Message',
+					'name'      => 'message_full',
+					'type'      => 'message',
+					'parent'    => 'group_test',
+					'message'   => 'Hello world',
+					'esc_html'  => 0,
+					'new_lines' => 'wpautop',
+				),
+				'Message field with all type-specific properties should be valid',
+			),
+			'clone field complete'            => array(
+				array(
+					'key'          => 'field_clone_full',
+					'label'        => 'Full Clone',
+					'name'         => 'clone_full',
+					'type'         => 'clone',
+					'parent'       => 'group_test',
+					'clone'        => '',
+					'prefix_label' => 0,
+					'prefix_name'  => 0,
+					'display'      => 'seamless',
+					'layout'       => 'block',
+				),
+				'Clone field with all type-specific properties should be valid',
+			),
+			'separator field complete'        => array(
+				array(
+					'key'    => 'field_separator_full',
+					'label'  => 'Full Separator',
+					'name'   => 'separator_full',
+					'type'   => 'separator',
+					'parent' => 'group_test',
+				),
+				'Separator field with all type-specific properties should be valid',
+			),
 		);
 	}
 
@@ -952,6 +1061,74 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'height' => 400,
 				),
 				'Google Map with non-string height should fail validation',
+			),
+
+			// Layout field validation.
+			'invalid group layout'                     => array(
+				array(
+					'key'    => 'field_group_bad',
+					'label'  => 'Bad Group',
+					'name'   => 'bad_group',
+					'type'   => 'group',
+					'parent' => 'group_test',
+					'layout' => 'invalid_layout',
+				),
+				'Group with invalid layout should fail validation',
+			),
+			'invalid repeater layout'                  => array(
+				array(
+					'key'    => 'field_repeater_bad',
+					'label'  => 'Bad Repeater',
+					'name'   => 'bad_repeater',
+					'type'   => 'repeater',
+					'parent' => 'group_test',
+					'layout' => 'invalid_layout',
+				),
+				'Repeater with invalid layout should fail validation',
+			),
+			'invalid tab placement'                    => array(
+				array(
+					'key'       => 'field_tab_bad',
+					'label'     => 'Bad Tab',
+					'name'      => 'bad_tab',
+					'type'      => 'tab',
+					'parent'    => 'group_test',
+					'placement' => 'bottom',
+				),
+				'Tab with invalid placement should fail validation',
+			),
+			'invalid message new_lines'                => array(
+				array(
+					'key'       => 'field_message_bad',
+					'label'     => 'Bad Message',
+					'name'      => 'bad_message',
+					'type'      => 'message',
+					'parent'    => 'group_test',
+					'new_lines' => 'invalid_value',
+				),
+				'Message with invalid new_lines should fail validation',
+			),
+			'invalid clone display'                    => array(
+				array(
+					'key'     => 'field_clone_bad',
+					'label'   => 'Bad Clone',
+					'name'    => 'bad_clone',
+					'type'    => 'clone',
+					'parent'  => 'group_test',
+					'display' => 'invalid_display',
+				),
+				'Clone with invalid display should fail validation',
+			),
+			'invalid clone layout'                     => array(
+				array(
+					'key'    => 'field_clone_bad_layout',
+					'label'  => 'Bad Clone Layout',
+					'name'   => 'bad_clone_layout',
+					'type'   => 'clone',
+					'parent' => 'group_test',
+					'layout' => 'invalid_layout',
+				),
+				'Clone with invalid layout should fail validation',
 			),
 		);
 	}
