@@ -1,0 +1,24 @@
+{
+	"title": "SCF User Field Fragment",
+	"description": "Type-specific properties for user selection fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "user" ]
+		},
+		"role": {
+			"type": "string",
+			"default": "",
+			"description": "Limit to specific user role (empty for all roles)"
+		},
+		"multiple": { "$ref": "#/definitions/multiple" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"return_format": {
+			"type": "string",
+			"enum": [ "array", "object", "id" ],
+			"default": "array",
+			"description": "Value returned (user array, WP_User object, or user ID)"
+		},
+		"bidirectional_target": { "$ref": "#/definitions/bidirectional_target" }
+	}
+}
