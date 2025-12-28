@@ -1,0 +1,26 @@
+{
+	"title": "SCF Message Field Fragment",
+	"description": "Type-specific properties for message fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "message" ]
+		},
+		"message": {
+			"type": "string",
+			"default": "",
+			"description": "Message content to display"
+		},
+		"esc_html": {
+			"type": "integer",
+			"default": 0,
+			"description": "Display HTML as visible text instead of rendering"
+		},
+		"new_lines": {
+			"type": "string",
+			"enum": [ "wpautop", "br", "" ],
+			"default": "wpautop",
+			"description": "Controls how new lines are rendered"
+		}
+	}
+}
