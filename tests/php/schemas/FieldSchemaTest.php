@@ -281,6 +281,93 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Password field with all type-specific properties should be valid',
 			),
+
+			// Content fields.
+			'image field complete'         => array(
+				array(
+					'key'           => 'field_image_full',
+					'label'         => 'Full Image',
+					'name'          => 'image_full',
+					'type'          => 'image',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+					'preview_size'  => 'medium',
+					'library'       => 'all',
+					'min_width'     => 0,
+					'min_height'    => 0,
+					'min_size'      => 0,
+					'max_width'     => 0,
+					'max_height'    => 0,
+					'max_size'      => 0,
+					'mime_types'    => '',
+				),
+				'Image field with all type-specific properties should be valid',
+			),
+			'file field complete'          => array(
+				array(
+					'key'           => 'field_file_full',
+					'label'         => 'Full File',
+					'name'          => 'file_full',
+					'type'          => 'file',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+					'library'       => 'all',
+					'min_size'      => 0,
+					'max_size'      => 0,
+					'mime_types'    => '',
+				),
+				'File field with all type-specific properties should be valid',
+			),
+			'gallery field complete'       => array(
+				array(
+					'key'           => 'field_gallery_full',
+					'label'         => 'Full Gallery',
+					'name'          => 'gallery_full',
+					'type'          => 'gallery',
+					'parent'        => 'group_test',
+					'return_format' => 'array',
+					'preview_size'  => 'medium',
+					'library'       => 'all',
+					'min'           => 0,
+					'max'           => 0,
+					'min_width'     => 0,
+					'min_height'    => 0,
+					'min_size'      => 0,
+					'max_width'     => 0,
+					'max_height'    => 0,
+					'max_size'      => 0,
+					'mime_types'    => '',
+					'insert'        => 'append',
+				),
+				'Gallery field with all type-specific properties should be valid',
+			),
+			'wysiwyg field complete'       => array(
+				array(
+					'key'           => 'field_wysiwyg_full',
+					'label'         => 'Full WYSIWYG',
+					'name'          => 'wysiwyg_full',
+					'type'          => 'wysiwyg',
+					'parent'        => 'group_test',
+					'default_value' => '',
+					'tabs'          => 'all',
+					'toolbar'       => 'full',
+					'media_upload'  => 1,
+					'delay'         => 0,
+				),
+				'WYSIWYG field with all type-specific properties should be valid',
+			),
+			'oembed field complete'        => array(
+				array(
+					'key'    => 'field_oembed_full',
+					'label'  => 'Full oEmbed',
+					'name'   => 'oembed_full',
+					'type'   => 'oembed',
+					'parent' => 'group_test',
+					'width'  => '',
+					'height' => '',
+				),
+				'oEmbed field with all type-specific properties should be valid',
+			),
 		);
 	}
 
@@ -292,7 +379,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 	public function invalidEntitiesProvider(): array {
 		return array(
 			// Required fields validation.
-			'missing key'            => array(
+			'missing key'                 => array(
 				array(
 					'label'  => 'No Key Field',
 					'name'   => 'no_key',
@@ -301,7 +388,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without key should fail validation',
 			),
-			'missing label'          => array(
+			'missing label'               => array(
 				array(
 					'key'    => 'field_no_label',
 					'name'   => 'no_label',
@@ -310,7 +397,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without label should fail validation',
 			),
-			'missing type'           => array(
+			'missing type'                => array(
 				array(
 					'key'    => 'field_no_type',
 					'label'  => 'No Type',
@@ -319,7 +406,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without type should fail validation',
 			),
-			'missing parent'         => array(
+			'missing parent'              => array(
 				array(
 					'key'   => 'field_no_parent',
 					'label' => 'No Parent',
@@ -330,7 +417,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Pattern validation.
-			'invalid key pattern'    => array(
+			'invalid key pattern'         => array(
 				array(
 					'key'    => 'invalid_field_key',
 					'label'  => 'Bad Key Field',
@@ -342,7 +429,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Enum validation.
-			'invalid type'           => array(
+			'invalid type'                => array(
 				array(
 					'key'    => 'field_bad_type',
 					'label'  => 'Bad Type Field',
@@ -352,7 +439,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field with invalid type should fail validation',
 			),
-			'invalid new_lines enum' => array(
+			'invalid new_lines enum'      => array(
 				array(
 					'key'       => 'field_textarea_bad_nl',
 					'label'     => 'Bad New Lines',
@@ -362,6 +449,52 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'new_lines' => 'invalid_value',
 				),
 				'Textarea with invalid new_lines value should fail validation',
+			),
+
+			// Content field validation.
+			'invalid image return_format' => array(
+				array(
+					'key'           => 'field_image_bad',
+					'label'         => 'Bad Image',
+					'name'          => 'bad_image',
+					'type'          => 'image',
+					'parent'        => 'group_test',
+					'return_format' => 'invalid_format',
+				),
+				'Image with invalid return_format should fail validation',
+			),
+			'invalid image library'       => array(
+				array(
+					'key'     => 'field_image_bad_lib',
+					'label'   => 'Bad Image Library',
+					'name'    => 'bad_image_lib',
+					'type'    => 'image',
+					'parent'  => 'group_test',
+					'library' => 'invalid_library',
+				),
+				'Image with invalid library should fail validation',
+			),
+			'invalid gallery insert'      => array(
+				array(
+					'key'    => 'field_gallery_bad_insert',
+					'label'  => 'Bad Gallery Insert',
+					'name'   => 'bad_gallery_insert',
+					'type'   => 'gallery',
+					'parent' => 'group_test',
+					'insert' => 'invalid_insert',
+				),
+				'Gallery with invalid insert should fail validation',
+			),
+			'invalid wysiwyg tabs'        => array(
+				array(
+					'key'    => 'field_wysiwyg_bad_tabs',
+					'label'  => 'Bad WYSIWYG Tabs',
+					'name'   => 'bad_wysiwyg_tabs',
+					'type'   => 'wysiwyg',
+					'parent' => 'group_test',
+					'tabs'   => 'invalid_tabs',
+				),
+				'WYSIWYG with invalid tabs should fail validation',
 			),
 		);
 	}
