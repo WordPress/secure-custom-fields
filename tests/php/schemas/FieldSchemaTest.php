@@ -114,7 +114,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 	public function validEntitiesProvider(): array {
 		return array(
 			// Base field tests.
-			'array of fields'              => array(
+			'array of fields'                 => array(
 				array(
 					array(
 						'key'    => 'field_first',
@@ -133,7 +133,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Array of fields should validate successfully',
 			),
-			'field with conditional_logic' => array(
+			'field with conditional_logic'    => array(
 				array(
 					'key'               => 'field_with_logic',
 					'label'             => 'Conditional Field',
@@ -154,7 +154,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Multi-type property tests (properties accepting different types).
-			'maxlength as empty string'    => array(
+			'maxlength as empty string'       => array(
 				array(
 					'key'       => 'field_maxlen_str',
 					'label'     => 'Maxlength String',
@@ -165,7 +165,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Maxlength as empty string should be valid',
 			),
-			'required as integer'          => array(
+			'required as integer'             => array(
 				array(
 					'key'      => 'field_req_int',
 					'label'    => 'Required Integer',
@@ -178,7 +178,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Complete field for each implemented type.
-			'text field complete'          => array(
+			'text field complete'             => array(
 				array(
 					'key'           => 'field_text_full',
 					'label'         => 'Full Text Field',
@@ -194,7 +194,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Text field with all type-specific properties should be valid',
 			),
-			'textarea field complete'      => array(
+			'textarea field complete'         => array(
 				array(
 					'key'           => 'field_textarea_full',
 					'label'         => 'Full Textarea',
@@ -209,7 +209,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Textarea field with all type-specific properties should be valid',
 			),
-			'number field complete'        => array(
+			'number field complete'           => array(
 				array(
 					'key'           => 'field_number_full',
 					'label'         => 'Full Number',
@@ -226,7 +226,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Number field with all type-specific properties should be valid',
 			),
-			'range field complete'         => array(
+			'range field complete'            => array(
 				array(
 					'key'           => 'field_range_full',
 					'label'         => 'Full Range',
@@ -242,7 +242,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Range field with all type-specific properties should be valid',
 			),
-			'email field complete'         => array(
+			'email field complete'            => array(
 				array(
 					'key'           => 'field_email_full',
 					'label'         => 'Full Email',
@@ -256,7 +256,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Email field with all type-specific properties should be valid',
 			),
-			'url field complete'           => array(
+			'url field complete'              => array(
 				array(
 					'key'           => 'field_url_full',
 					'label'         => 'Full URL',
@@ -268,7 +268,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'URL field with all type-specific properties should be valid',
 			),
-			'password field complete'      => array(
+			'password field complete'         => array(
 				array(
 					'key'         => 'field_password_full',
 					'label'       => 'Full Password',
@@ -283,7 +283,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Content fields.
-			'image field complete'         => array(
+			'image field complete'            => array(
 				array(
 					'key'           => 'field_image_full',
 					'label'         => 'Full Image',
@@ -303,7 +303,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image field with all type-specific properties should be valid',
 			),
-			'file field complete'          => array(
+			'file field complete'             => array(
 				array(
 					'key'           => 'field_file_full',
 					'label'         => 'Full File',
@@ -318,7 +318,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'File field with all type-specific properties should be valid',
 			),
-			'gallery field complete'       => array(
+			'gallery field complete'          => array(
 				array(
 					'key'           => 'field_gallery_full',
 					'label'         => 'Full Gallery',
@@ -341,7 +341,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Gallery field with all type-specific properties should be valid',
 			),
-			'wysiwyg field complete'       => array(
+			'wysiwyg field complete'          => array(
 				array(
 					'key'           => 'field_wysiwyg_full',
 					'label'         => 'Full WYSIWYG',
@@ -356,7 +356,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'WYSIWYG field with all type-specific properties should be valid',
 			),
-			'oembed field complete'        => array(
+			'oembed field complete'           => array(
 				array(
 					'key'    => 'field_oembed_full',
 					'label'  => 'Full oEmbed',
@@ -370,7 +370,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Choice fields.
-			'select field complete'        => array(
+			'select field complete'           => array(
 				array(
 					'key'            => 'field_select_full',
 					'label'          => 'Full Select',
@@ -390,7 +390,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Select field with all type-specific properties should be valid',
 			),
-			'checkbox field complete'      => array(
+			'checkbox field complete'         => array(
 				array(
 					'key'                       => 'field_checkbox_full',
 					'label'                     => 'Full Checkbox',
@@ -408,7 +408,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Checkbox field with all type-specific properties should be valid',
 			),
-			'radio field complete'         => array(
+			'radio field complete'            => array(
 				array(
 					'key'               => 'field_radio_full',
 					'label'             => 'Full Radio',
@@ -425,7 +425,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Radio field with all type-specific properties should be valid',
 			),
-			'button_group field complete'  => array(
+			'button_group field complete'     => array(
 				array(
 					'key'           => 'field_button_group_full',
 					'label'         => 'Full Button Group',
@@ -440,7 +440,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Button Group field with all type-specific properties should be valid',
 			),
-			'true_false field complete'    => array(
+			'true_false field complete'       => array(
 				array(
 					'key'           => 'field_true_false_full',
 					'label'         => 'Full True/False',
@@ -455,7 +455,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'True/False field with all type-specific properties should be valid',
 			),
-			'nav_menu field complete'      => array(
+			'nav_menu field complete'         => array(
 				array(
 					'key'         => 'field_nav_menu_full',
 					'label'       => 'Full Nav Menu',
@@ -470,7 +470,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Relational fields.
-			'post_object field complete'   => array(
+			'post_object field complete'      => array(
 				array(
 					'key'                  => 'field_post_object_full',
 					'label'                => 'Full Post Object',
@@ -487,7 +487,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Post Object field with all type-specific properties should be valid',
 			),
-			'page_link field complete'     => array(
+			'page_link field complete'        => array(
 				array(
 					'key'            => 'field_page_link_full',
 					'label'          => 'Full Page Link',
@@ -502,7 +502,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Page Link field with all type-specific properties should be valid',
 			),
-			'relationship field complete'  => array(
+			'relationship field complete'     => array(
 				array(
 					'key'                  => 'field_relationship_full',
 					'label'                => 'Full Relationship',
@@ -520,7 +520,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Relationship field with all type-specific properties should be valid',
 			),
-			'taxonomy field complete'      => array(
+			'taxonomy field complete'         => array(
 				array(
 					'key'                  => 'field_taxonomy_full',
 					'label'                => 'Full Taxonomy',
@@ -539,7 +539,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Taxonomy field with all type-specific properties should be valid',
 			),
-			'user field complete'          => array(
+			'user field complete'             => array(
 				array(
 					'key'                  => 'field_user_full',
 					'label'                => 'Full User',
@@ -554,7 +554,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'User field with all type-specific properties should be valid',
 			),
-			'link field complete'          => array(
+			'link field complete'             => array(
 				array(
 					'key'           => 'field_link_full',
 					'label'         => 'Full Link',
@@ -564,6 +564,95 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'return_format' => 'array',
 				),
 				'Link field with all type-specific properties should be valid',
+			),
+
+			// Advanced fields.
+			'date_picker field complete'      => array(
+				array(
+					'key'                     => 'field_date_picker_full',
+					'label'                   => 'Full Date Picker',
+					'name'                    => 'date_picker_full',
+					'type'                    => 'date_picker',
+					'parent'                  => 'group_test',
+					'display_format'          => 'd/m/Y',
+					'return_format'           => 'd/m/Y',
+					'first_day'               => 1,
+					'default_to_current_date' => 0,
+				),
+				'Date Picker field with all type-specific properties should be valid',
+			),
+			'date_time_picker field complete' => array(
+				array(
+					'key'                     => 'field_date_time_picker_full',
+					'label'                   => 'Full Date Time Picker',
+					'name'                    => 'date_time_picker_full',
+					'type'                    => 'date_time_picker',
+					'parent'                  => 'group_test',
+					'display_format'          => 'd/m/Y g:i a',
+					'return_format'           => 'd/m/Y g:i a',
+					'first_day'               => 1,
+					'default_to_current_date' => 0,
+				),
+				'Date Time Picker field with all type-specific properties should be valid',
+			),
+			'time_picker field complete'      => array(
+				array(
+					'key'            => 'field_time_picker_full',
+					'label'          => 'Full Time Picker',
+					'name'           => 'time_picker_full',
+					'type'           => 'time_picker',
+					'parent'         => 'group_test',
+					'display_format' => 'g:i a',
+					'return_format'  => 'g:i a',
+				),
+				'Time Picker field with all type-specific properties should be valid',
+			),
+			'color_picker field complete'     => array(
+				array(
+					'key'                   => 'field_color_picker_full',
+					'label'                 => 'Full Color Picker',
+					'name'                  => 'color_picker_full',
+					'type'                  => 'color_picker',
+					'parent'                => 'group_test',
+					'default_value'         => '',
+					'enable_opacity'        => false,
+					'custom_palette_source' => '',
+					'palette_colors'        => '',
+					'show_color_wheel'      => true,
+					'return_format'         => 'string',
+				),
+				'Color Picker field with all type-specific properties should be valid',
+			),
+			'icon_picker field complete'      => array(
+				array(
+					'key'           => 'field_icon_picker_full',
+					'label'         => 'Full Icon Picker',
+					'name'          => 'icon_picker_full',
+					'type'          => 'icon_picker',
+					'parent'        => 'group_test',
+					'library'       => 'all',
+					'tabs'          => array( 'dashicons', 'media_library', 'url' ),
+					'return_format' => 'string',
+					'default_value' => array(
+						'type'  => null,
+						'value' => null,
+					),
+				),
+				'Icon Picker field with all type-specific properties should be valid',
+			),
+			'google_map field complete'       => array(
+				array(
+					'key'        => 'field_google_map_full',
+					'label'      => 'Full Google Map',
+					'name'       => 'google_map_full',
+					'type'       => 'google_map',
+					'parent'     => 'group_test',
+					'height'     => '',
+					'center_lat' => '',
+					'center_lng' => '',
+					'zoom'       => '',
+				),
+				'Google Map field with all type-specific properties should be valid',
 			),
 		);
 	}
@@ -576,7 +665,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 	public function invalidEntitiesProvider(): array {
 		return array(
 			// Required fields validation.
-			'missing key'                        => array(
+			'missing key'                              => array(
 				array(
 					'label'  => 'No Key Field',
 					'name'   => 'no_key',
@@ -585,7 +674,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without key should fail validation',
 			),
-			'missing label'                      => array(
+			'missing label'                            => array(
 				array(
 					'key'    => 'field_no_label',
 					'name'   => 'no_label',
@@ -594,7 +683,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without label should fail validation',
 			),
-			'missing type'                       => array(
+			'missing type'                             => array(
 				array(
 					'key'    => 'field_no_type',
 					'label'  => 'No Type',
@@ -603,7 +692,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field without type should fail validation',
 			),
-			'missing parent'                     => array(
+			'missing parent'                           => array(
 				array(
 					'key'   => 'field_no_parent',
 					'label' => 'No Parent',
@@ -614,7 +703,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Pattern validation.
-			'invalid key pattern'                => array(
+			'invalid key pattern'                      => array(
 				array(
 					'key'    => 'invalid_field_key',
 					'label'  => 'Bad Key Field',
@@ -626,7 +715,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Enum validation.
-			'invalid type'                       => array(
+			'invalid type'                             => array(
 				array(
 					'key'    => 'field_bad_type',
 					'label'  => 'Bad Type Field',
@@ -636,7 +725,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field with invalid type should fail validation',
 			),
-			'invalid new_lines enum'             => array(
+			'invalid new_lines enum'                   => array(
 				array(
 					'key'       => 'field_textarea_bad_nl',
 					'label'     => 'Bad New Lines',
@@ -649,7 +738,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Content field validation.
-			'invalid image return_format'        => array(
+			'invalid image return_format'              => array(
 				array(
 					'key'           => 'field_image_bad',
 					'label'         => 'Bad Image',
@@ -660,7 +749,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid return_format should fail validation',
 			),
-			'invalid image library'              => array(
+			'invalid image library'                    => array(
 				array(
 					'key'     => 'field_image_bad_lib',
 					'label'   => 'Bad Image Library',
@@ -671,7 +760,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Image with invalid library should fail validation',
 			),
-			'invalid gallery insert'             => array(
+			'invalid gallery insert'                   => array(
 				array(
 					'key'    => 'field_gallery_bad_insert',
 					'label'  => 'Bad Gallery Insert',
@@ -682,7 +771,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Gallery with invalid insert should fail validation',
 			),
-			'invalid wysiwyg tabs'               => array(
+			'invalid wysiwyg tabs'                     => array(
 				array(
 					'key'    => 'field_wysiwyg_bad_tabs',
 					'label'  => 'Bad WYSIWYG Tabs',
@@ -695,7 +784,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Choice field validation.
-			'invalid select return_format'       => array(
+			'invalid select return_format'             => array(
 				array(
 					'key'           => 'field_select_bad',
 					'label'         => 'Bad Select',
@@ -706,7 +795,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Select with invalid return_format should fail validation',
 			),
-			'invalid checkbox layout'            => array(
+			'invalid checkbox layout'                  => array(
 				array(
 					'key'    => 'field_checkbox_bad',
 					'label'  => 'Bad Checkbox',
@@ -717,7 +806,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Checkbox with invalid layout should fail validation',
 			),
-			'invalid nav_menu save_format'       => array(
+			'invalid nav_menu save_format'             => array(
 				array(
 					'key'         => 'field_nav_menu_bad',
 					'label'       => 'Bad Nav Menu',
@@ -730,7 +819,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Relational field validation.
-			'invalid post_object return_format'  => array(
+			'invalid post_object return_format'        => array(
 				array(
 					'key'           => 'field_post_object_bad',
 					'label'         => 'Bad Post Object',
@@ -741,7 +830,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Post Object with invalid return_format should fail validation',
 			),
-			'invalid relationship return_format' => array(
+			'invalid relationship return_format'       => array(
 				array(
 					'key'           => 'field_relationship_bad',
 					'label'         => 'Bad Relationship',
@@ -752,7 +841,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Relationship with invalid return_format should fail validation',
 			),
-			'invalid taxonomy field_type'        => array(
+			'invalid taxonomy field_type'              => array(
 				array(
 					'key'        => 'field_taxonomy_bad_type',
 					'label'      => 'Bad Taxonomy Type',
@@ -763,7 +852,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Taxonomy with invalid field_type should fail validation',
 			),
-			'invalid taxonomy return_format'     => array(
+			'invalid taxonomy return_format'           => array(
 				array(
 					'key'           => 'field_taxonomy_bad_format',
 					'label'         => 'Bad Taxonomy Format',
@@ -774,7 +863,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Taxonomy with invalid return_format should fail validation',
 			),
-			'invalid user return_format'         => array(
+			'invalid user return_format'               => array(
 				array(
 					'key'           => 'field_user_bad',
 					'label'         => 'Bad User',
@@ -785,7 +874,7 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'User with invalid return_format should fail validation',
 			),
-			'invalid link return_format'         => array(
+			'invalid link return_format'               => array(
 				array(
 					'key'           => 'field_link_bad',
 					'label'         => 'Bad Link',
@@ -795,6 +884,74 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 					'return_format' => 'object',
 				),
 				'Link with invalid return_format should fail validation',
+			),
+
+			// Advanced field validation.
+			'invalid color_picker return_format'       => array(
+				array(
+					'key'           => 'field_color_picker_bad',
+					'label'         => 'Bad Color Picker',
+					'name'          => 'bad_color_picker',
+					'type'          => 'color_picker',
+					'parent'        => 'group_test',
+					'return_format' => 'invalid_format',
+				),
+				'Color Picker with invalid return_format should fail validation',
+			),
+			'invalid color_picker enable_opacity type' => array(
+				array(
+					'key'            => 'field_color_picker_bad_opacity',
+					'label'          => 'Bad Color Picker Opacity',
+					'name'           => 'bad_color_picker_opacity',
+					'type'           => 'color_picker',
+					'parent'         => 'group_test',
+					'enable_opacity' => 'yes',
+				),
+				'Color Picker with non-boolean enable_opacity should fail validation',
+			),
+			'invalid date_picker first_day type'       => array(
+				array(
+					'key'       => 'field_date_picker_bad',
+					'label'     => 'Bad Date Picker',
+					'name'      => 'bad_date_picker',
+					'type'      => 'date_picker',
+					'parent'    => 'group_test',
+					'first_day' => 'monday',
+				),
+				'Date Picker with non-integer first_day should fail validation',
+			),
+			'invalid date_time_picker default_to_current_date type' => array(
+				array(
+					'key'                     => 'field_date_time_picker_bad',
+					'label'                   => 'Bad Date Time Picker',
+					'name'                    => 'bad_date_time_picker',
+					'type'                    => 'date_time_picker',
+					'parent'                  => 'group_test',
+					'default_to_current_date' => true,
+				),
+				'Date Time Picker with non-integer default_to_current_date should fail validation',
+			),
+			'invalid icon_picker tabs type'            => array(
+				array(
+					'key'    => 'field_icon_picker_bad',
+					'label'  => 'Bad Icon Picker',
+					'name'   => 'bad_icon_picker',
+					'type'   => 'icon_picker',
+					'parent' => 'group_test',
+					'tabs'   => 'dashicons',
+				),
+				'Icon Picker with non-array tabs should fail validation',
+			),
+			'invalid google_map height type'           => array(
+				array(
+					'key'    => 'field_google_map_bad',
+					'label'  => 'Bad Google Map',
+					'name'   => 'bad_google_map',
+					'type'   => 'google_map',
+					'parent' => 'group_test',
+					'height' => 400,
+				),
+				'Google Map with non-string height should fail validation',
 			),
 		);
 	}

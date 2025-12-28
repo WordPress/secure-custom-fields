@@ -1,0 +1,20 @@
+{
+	"title": "SCF Time Picker Field Fragment",
+	"description": "Type-specific properties for time picker fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "time_picker" ]
+		},
+		"display_format": {
+			"type": "string",
+			"default": "g:i a",
+			"description": "Time format shown to user in field UI"
+		},
+		"return_format": {
+			"type": "string",
+			"default": "g:i a",
+			"description": "Time format returned by get_field()"
+		}
+	}
+}
