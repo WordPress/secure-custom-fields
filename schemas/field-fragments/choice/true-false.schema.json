@@ -6,7 +6,11 @@
 		"type": {
 			"enum": [ "true_false" ]
 		},
-		"default_value": { "$ref": "#/definitions/default_value_numeric" },
+		"default_value": {
+			"type": "integer",
+			"default": 0,
+			"description": "Default state (0 for off, 1 for on)"
+		},
 		"message": {
 			"type": "string",
 			"default": "",

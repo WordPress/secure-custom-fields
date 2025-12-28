@@ -27,8 +27,8 @@
 		},
 		"custom_choice_button_text": {
 			"type": "string",
-			"default": "",
-			"description": "Text for the add custom choice button"
+			"default": "Add new choice",
+			"description": "Text for the add custom choice button (translatable)"
 		}
 	}
 }

@@ -1101,7 +1101,13 @@
                             "$ref": "#/definitions/return_format_choice"
                         },
                         "layout": {
-                            "$ref": "#/definitions/layout_choice"
+                            "type": "string",
+                            "enum": [
+                                "vertical",
+                                "horizontal"
+                            ],
+                            "default": "horizontal",
+                            "description": "Layout direction for button choices"
                         },
                         "allow_null": {
                             "$ref": "#/definitions/allow_null"
@@ -1251,8 +1257,8 @@
                         },
                         "custom_choice_button_text": {
                             "type": "string",
-                            "default": "",
-                            "description": "Text for the add custom choice button"
+                            "default": "Add new choice",
+                            "description": "Text for the add custom choice button (translatable)"
                         }
                     },
                     "additionalProperties": false
@@ -1800,7 +1806,9 @@
                             "description": "Parent layout key for flexible content sub-fields"
                         },
                         "default_value": {
-                            "$ref": "#/definitions/default_value_numeric"
+                            "type": "integer",
+                            "default": 0,
+                            "description": "Default state (0 for off, 1 for on)"
                         },
                         "message": {
                             "type": "string",
