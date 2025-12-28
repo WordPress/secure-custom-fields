@@ -146,14 +146,21 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		/**
 		 * Gets the internal fields schema for fields.
 		 *
+		 * Resolves $ref references since WordPress REST API doesn't understand them.
+		 *
 		 * @since 6.8.0
 		 *
 		 * @return array
 		 */
 		private function get_internal_fields_schema() {
-			$validator = new SCF_JSON_Schema_Validator();
-			$schema    = $validator->load_schema( 'internal-properties' );
-			return json_decode( wp_json_encode( $schema->definitions->fieldInternalProperties ), true );
+			$validator        = new SCF_JSON_Schema_Validator();
+			$schema           = $validator->load_schema( 'internal-properties' );
+			$schema_array     = json_decode( wp_json_encode( $schema ), true );
+			$field_properties = $schema_array['definitions']['fieldInternalProperties'] ?? array();
+
+			// Resolve $refs for WordPress REST API compatibility.
+			$builder = acf_get_instance( 'SCF_Schema_Builder' );
+			return $builder->resolve_refs( $field_properties, $schema_array );
 		}
 
 		/**
