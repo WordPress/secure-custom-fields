@@ -1226,7 +1226,7 @@
                             "$ref": "#/definitions/choices"
                         },
                         "default_value": {
-                            "$ref": "#/definitions/default_value"
+                            "$ref": "#/definitions/default_value_multi"
                         },
                         "return_format": {
                             "$ref": "#/definitions/return_format_choice"
@@ -1649,7 +1649,7 @@
                             "$ref": "#/definitions/choices"
                         },
                         "default_value": {
-                            "$ref": "#/definitions/default_value"
+                            "$ref": "#/definitions/default_value_multi"
                         },
                         "return_format": {
                             "$ref": "#/definitions/return_format_choice"
@@ -2731,6 +2731,14 @@
             ],
             "default": "",
             "description": "Default value for numeric fields (string for empty, number for value)"
+        },
+        "default_value_multi": {
+            "type": [
+                "string",
+                "array"
+            ],
+            "default": "",
+            "description": "Default value(s) for multi-select fields (string for single, array for multiple)"
         },
         "placeholder": {
             "type": "string",

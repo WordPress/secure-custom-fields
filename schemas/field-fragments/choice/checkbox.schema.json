@@ -7,7 +7,7 @@
 			"enum": [ "checkbox" ]
 		},
 		"choices": { "$ref": "#/definitions/choices" },
-		"default_value": { "$ref": "#/definitions/default_value" },
+		"default_value": { "$ref": "#/definitions/default_value_multi" },
 		"return_format": { "$ref": "#/definitions/return_format_choice" },
 		"layout": { "$ref": "#/definitions/layout_choice" },
 		"toggle": {
