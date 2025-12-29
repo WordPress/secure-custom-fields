@@ -4,10 +4,10 @@
  */
 
 // Import utilities
-import './blocks-v3/utils/post-locking';
+// import './blocks-v3/utils/post-locking';
 
 // Import JSX parser and expose on acf global
-import './blocks-v3/components/jsx-parser';
+// import './blocks-v3/components/jsx-parser';
 
 // Import block registration (initializes automatically via acf.addAction)
-import './blocks-v3/register-block-type-v3';
+// import './blocks-v3/register-block-type-v3';

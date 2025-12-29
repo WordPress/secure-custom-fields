@@ -808,11 +808,14 @@ a.acf-icon.dark.-minus:hover, a.acf-icon.dark.-cancel:hover {
   background: #b4b9be;
   color: #fff !important;
 }
-.acf-icon.grey:hover {
+.acf-icon.grey:hover, .acf-icon.grey:focus {
   background: #00a0d2;
   color: #fff;
 }
-.acf-icon.grey.-minus:hover, .acf-icon.grey.-cancel:hover {
+.acf-icon.grey.-minus:hover,
+.acf-icon.grey.-minus:focus,
+.acf-icon.grey.-cancel:hover,
+.acf-icon.grey.-cancel:focus {
   background: #32373c;
 }
 

@@ -234,6 +234,34 @@
 	margin: 16px -16px -16px;
 }
 
+.acf-block-form-modal .components-modal__content {
+    padding: 4px 8px 8px !important;
+}
+
+.acf-block-form-modal .components-modal__content .acf-block-panel .acf-block-fields {
+    border: none !important;
+}
+
+.acf-block-form-modal .components-modal__content .acf-fields>.acf-field {
+    border: none !important;
+}
+
+.acf-block-form-modal .components-modal__header {
+    padding: 24px;
+    border-bottom: #ddd solid 1px !important;
+    max-height: 64px !important;
+}
+
+.acf-block-form-modal .components-modal__header h1 {
+    font-weight: 500;
+    font-size: 15px !important;
+}
+
+html[dir=rtl] .acf-block-form-modal .components-modal__header .components-button {
+    left: 0;
+    right: auto;
+}
+
 
 @media(min-width: 600px)and (min-width: 782px) {
     .acf-block-form-modal {
@@ -247,11 +275,6 @@
 	html[dir=rtl] .acf-block-form-modal {
         right: auto;
         left: 0
-    }
-
-    html[dir=rtl] .acf-block-form-modal .components-modal__header .components-button {
-        left: 0;
-        right: auto
     }
 
     @keyframes components-modal__appear-animation {
@@ -322,4 +345,52 @@
 .acf-blocks-open-expanded-editor-btn.has-text.has-icon {
     width: 100%;
     justify-content: center
+}
+
+.acf-blocks-toolbar-icon {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    padding-right: .6rem;
+}
+
+.acf-blocks-toolbar-icon i {
+    display: flex;
+}
+
+.acf-inline-fields-popover {
+    z-index: 59899;
+    min-width: 300px;
+}
+
+.acf-inline-fields-popover-inner>.acf-block-panel>.acf-block-fields>.acf-field {
+    display: none;
+    border-top-style: none !important;
+}
+
+.acf-inline-fields-popover-inner .acf-tab-wrap {
+    display: none;
+}
+
+.acf-inline-fields-popover-inner .acf-block-fields>.acf-error-message {
+    display: none;
+}
+
+.acf-inline-editing-toolbar .acf-inline-fields-popover-inner .acf-tab-group {
+    display: flex;
+    white-space: nowrap;
+}
+
+.block-editor-block-toolbar .field-type-icon {
+    top: 0;
+    background-color: initial;
+    border: 0;
+}
+
+.block-editor-block-toolbar .field-type-icon:before {
+    background-color: #000;
+}
+
+.block-editor-block-toolbar .is-pressed .field-type-icon:before {
+    background-color: #fff;
 }

@@ -14,23 +14,18 @@ import {
 } from '@wordpress/element';
 
 import {
-	BlockControls,
 	InspectorControls,
 	useBlockProps,
 	useBlockEditContext,
 } from '@wordpress/block-editor';
-import {
-	Button,
-	ToolbarGroup,
-	ToolbarButton,
-	Placeholder,
-	Spinner,
-	Modal,
-} from '@wordpress/components';
+import { Button, Placeholder, Spinner, Modal } from '@wordpress/components';
 import { BlockPlaceholder } from './block-placeholder';
 import { BlockForm } from './block-form';
 import { BlockPreview } from './block-preview';
 import { ErrorBoundary, BlockPreviewErrorFallback } from './error-boundary';
+import { BlockToolbarFields } from './block-toolbar-fields';
+import { InlineEditingToolbar } from './inline-editing-toolbar';
+import { PopoverWrapper } from './popover-wrapper';
 import {
 	lockPostSaving,
 	unlockPostSaving,
@@ -109,9 +104,48 @@ export const BlockEdit = ( props ) => {
 	const [ hasFetchedOnce, setHasFetchedOnce ] = useState( false );
 	const [ ajaxRequest, setAjaxRequest ] = useState();
 
+	// New state for inline editing features
+	const [ blockToolbarFields, setBlockToolbarFields ] = useState( [] );
+	const [ blockFieldInfo, setBlockFieldInfo ] = useState( null );
+	const [ gutenbergIframeOrDocument, setGutenbergIframeOrDocument ] =
+		useState( () => {
+			const iframe = document.querySelector( '[name="editor-canvas"]' );
+			return iframe
+				? iframe.contentDocument || iframe.contentWindow.document
+				: document;
+		} );
+	const [ currentInlineEditingElement, setCurrentInlineEditingElement ] =
+		useState( null );
+	const [
+		currentInlineEditingElementUid,
+		setCurrentInlineEditingElementUid,
+	] = useState( null );
+	const [ currentContentEditableElement, setCurrentContentEditableElement ] =
+		useState( null );
+	const [ inlineEditingToolbarHasFocus, setInlineEditingToolbarHasFocus ] =
+		useState( false );
+	const [
+		contentEditableChangeInProgress,
+		setContentEditableChangeInProgress,
+	] = useState( false );
+	const [ acfDynamicStylesElement, setAcfDynamicStylesElement ] =
+		useState( null );
+
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
 	const debounceRef = useRef( null );
+
+	// Initialize acf.blockEdit namespace for jsx-parser to use
+	if ( ! acf.blockEdit ) {
+		acf.blockEdit = {};
+	}
+	acf.blockEdit.setCurrentInlineEditingElementUid =
+		setCurrentInlineEditingElementUid;
+	acf.blockEdit.setCurrentInlineEditingElement =
+		setCurrentInlineEditingElement;
+	acf.blockEdit.setCurrentContentEditableElement =
+		setCurrentContentEditableElement;
+	acf.blockEdit.getBlockFieldInfo = () => blockFieldInfo;
 
 	const attributesWithoutError = useMemo( () => {
 		const { hasAcfError, ...rest } = attributes;
@@ -186,6 +220,16 @@ export const BlockEdit = ( props ) => {
 				unlockPostSavingByName( 'acf-fetching-block' );
 
 				setBlockFormHtml( response.data.form );
+
+				// Handle new field metadata for inline editing
+				if ( response.data.fields ) {
+					setBlockFieldInfo( response.data.fields );
+				}
+
+				// Handle block toolbar fields configuration
+				if ( response.data.blockToolbarFields ) {
+					setBlockToolbarFields( response.data.blockToolbarFields );
+				}
 
 				if ( response.data.preview ) {
 					setBlockPreviewHtml(
@@ -318,6 +362,16 @@ export const BlockEdit = ( props ) => {
 			);
 		}
 
+		// Handle block toolbar fields from preloaded data
+		if ( data?.blockToolbarFields ) {
+			setBlockToolbarFields( data.blockToolbarFields );
+		}
+
+		// Handle field info from preloaded data
+		if ( data?.fields ) {
+			setBlockFieldInfo( data.fields );
+		}
+
 		if (
 			data?.validation &&
 			! data.validation.valid &&
@@ -362,9 +416,13 @@ export const BlockEdit = ( props ) => {
 
 	// Listen for validation error events from other blocks
 	useEffect( () => {
-		const handleErrorEvent = () => {
-			lockPostSaving( clientId );
-			setShowValidationErrors( true );
+		const handleErrorEvent = ( event ) => {
+			// Only handle if this event is for this specific block
+			if ( clientId === event.detail.acfBlocksWithValidationErrors ) {
+				lockPostSaving( clientId );
+				setShowValidationErrors( true );
+				setCurrentInlineEditingElementUid( null );
+			}
 		};
 
 		document.addEventListener( 'acf/block/has-error', handleErrorEvent );
@@ -374,7 +432,6 @@ export const BlockEdit = ( props ) => {
 				'acf/block/has-error',
 				handleErrorEvent
 			);
-			unlockPostSaving( clientId );
 		};
 	}, [] );
 
@@ -389,6 +446,7 @@ export const BlockEdit = ( props ) => {
 	// Handle form data changes with debouncing
 	useEffect( () => {
 		clearTimeout( debounceRef.current );
+		lockPostSavingByName( 'acf-fetching-block' );
 
 		debounceRef.current = setTimeout( () => {
 			const parsedData = JSON.parse( theSerializedAcfData );
@@ -421,6 +479,12 @@ export const BlockEdit = ( props ) => {
 			};
 			setAttributes( updatedAttributes );
 		}, 200 );
+
+		// Cleanup function to unlock post saving
+		return () => {
+			clearTimeout( debounceRef.current );
+			unlockPostSavingByName( 'acf-fetching-block' );
+		};
 	}, [ theSerializedAcfData, attributesWithoutError ] );
 
 	// Trigger ACF actions when preview is rendered
@@ -435,6 +499,14 @@ export const BlockEdit = ( props ) => {
 				$preview,
 				attributes
 			);
+
+			// If there's an active inline editing element, re-initialize it after preview renders
+			if ( currentInlineEditingElementUid ) {
+				const inlineElement = previewRef?.current.querySelector(
+					`[data-acf-inline-fields-uid="${ currentInlineEditingElementUid }"]`
+				);
+				setCurrentInlineEditingElement( inlineElement );
+			}
 		}
 	}, [ blockPreviewHtml ] );
 
@@ -453,6 +525,28 @@ export const BlockEdit = ( props ) => {
 			setUserHasInteractedWithForm={ setUserHasInteractedWithForm }
 			previewRef={ previewRef }
 			hasFetchedOnce={ hasFetchedOnce }
+			blockToolbarFields={ blockToolbarFields }
+			blockFieldInfo={ blockFieldInfo }
+			gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+			setGutenbergIframeOrDocument={ setGutenbergIframeOrDocument }
+			currentInlineEditingElement={ currentInlineEditingElement }
+			setCurrentInlineEditingElement={ setCurrentInlineEditingElement }
+			currentInlineEditingElementUid={ currentInlineEditingElementUid }
+			setCurrentInlineEditingElementUid={
+				setCurrentInlineEditingElementUid
+			}
+			currentContentEditableElement={ currentContentEditableElement }
+			setCurrentContentEditableElement={
+				setCurrentContentEditableElement
+			}
+			inlineEditingToolbarHasFocus={ inlineEditingToolbarHasFocus }
+			setInlineEditingToolbarHasFocus={ setInlineEditingToolbarHasFocus }
+			contentEditableChangeInProgress={ contentEditableChangeInProgress }
+			setContentEditableChangeInProgress={
+				setContentEditableChangeInProgress
+			}
+			acfDynamicStylesElement={ acfDynamicStylesElement }
+			setAcfDynamicStylesElement={ setAcfDynamicStylesElement }
 		/>
 	);
 };
@@ -477,15 +571,63 @@ function BlockEditInner( props ) {
 		blockPreviewHtml,
 		blockFetcher,
 		userHasInteractedWithForm,
+		setUserHasInteractedWithForm,
 		previewRef,
 		hasFetchedOnce,
+		blockToolbarFields,
+		blockFieldInfo,
+		gutenbergIframeOrDocument,
+		setGutenbergIframeOrDocument,
+		currentInlineEditingElement,
+		setCurrentInlineEditingElement,
+		currentInlineEditingElementUid,
+		setCurrentInlineEditingElementUid,
+		currentContentEditableElement,
+		setCurrentContentEditableElement,
+		inlineEditingToolbarHasFocus,
+		setInlineEditingToolbarHasFocus,
+		contentEditableChangeInProgress,
+		setContentEditableChangeInProgress,
+		acfDynamicStylesElement,
+		setAcfDynamicStylesElement,
 	} = props;
 
 	const { clientId } = useBlockEditContext();
 	const inspectorControlsRef = useRef();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ blockFormModalOpen, setBlockFormModalOpen ] = useState( false );
 	const modalFormContainerRef = useRef();
 	const [ currentFormContainer, setCurrentFormContainer ] = useState();
+
+	// Render counter for debugging
+	const renderCount = useRef( 0 );
+	renderCount.current++;
+
+	// Detect Gutenberg iframe or document
+	useEffect( () => {
+		const gutenbergIframe = document.querySelector(
+			'iframe[name="editor-canvas"]'
+		);
+		if ( gutenbergIframe?.contentDocument ) {
+			setGutenbergIframeOrDocument( gutenbergIframe.contentDocument );
+		} else {
+			setGutenbergIframeOrDocument( document );
+		}
+	}, [] );
+
+	// Create/get dynamic styles element for inline field highlighting
+	useEffect( () => {
+		if ( ! gutenbergIframeOrDocument ) return;
+
+		let styleElement =
+			gutenbergIframeOrDocument.getElementById( 'acf-dynamic-styles' );
+		if ( ! styleElement ) {
+			styleElement = document.createElement( 'style' );
+			styleElement.id = 'acf-dynamic-styles';
+			gutenbergIframeOrDocument.head.appendChild( styleElement );
+		}
+		setAcfDynamicStylesElement( styleElement );
+	}, [ gutenbergIframeOrDocument ] );
 
 	// Set current form container when modal opens
 	useEffect( () => {
@@ -531,6 +673,172 @@ function BlockEditInner( props ) {
 		...useBlockProps( { className: blockClasses, ref: previewRef } ),
 	};
 
+	// Update field value from contentEditable changes (matches 6.7.0.2)
+	const updateFieldValueFromContentEditable = ( content, fieldSlug ) => {
+		if ( ! acfFormRef?.current || ! fieldSlug ) return;
+
+		const fieldWrapper = acfFormRef.current.querySelector(
+			`[data-name=${ fieldSlug }]`
+		);
+		if ( ! fieldWrapper ) return;
+
+		const fieldKey =
+			fieldWrapper.attributes.getNamedItem( 'data-key' )?.value;
+		if ( ! fieldKey ) return;
+
+		const fieldInput = acfFormRef.current.querySelector(
+			`[name="acf-block_${ clientId }[${ fieldKey }]"`
+		);
+		if ( ! fieldInput ) return;
+
+		// Update field value and trigger serialization (debouncing happens in useEffect)
+		if ( content ) {
+			setUserHasInteractedWithForm( true );
+		}
+		setContentEditableChangeInProgress( false );
+		fieldInput.value = content;
+
+		const $form = $( acfFormRef?.current );
+		const serializedData = acf.serialize(
+			$form,
+			`acf-block_${ clientId }`
+		);
+		if ( serializedData ) {
+			setTheSerializedAcfData( JSON.stringify( serializedData ) );
+		} else {
+			setUserHasInteractedWithForm( false );
+		}
+	};
+
+	// Watch for changes in contentEditable fields using MutationObserver
+	useEffect( () => {
+		if ( ! gutenbergIframeOrDocument || ! blockPreviewHtml ) return;
+
+		const observer = new MutationObserver( ( mutations ) => {
+			for ( const mutation of mutations ) {
+				// Handle text content changes
+				if ( mutation.type === 'characterData' ) {
+					let element = mutation.target.parentNode;
+					const blockElement = element?.closest( '[data-block]' );
+					const blockId = blockElement?.getAttribute( 'data-block' );
+
+					if ( ! element || ! blockElement || blockId !== clientId )
+						return;
+
+					// Find the contentEditable element
+					if (
+						element &&
+						! element.hasAttribute(
+							'data-acf-inline-contenteditable'
+						)
+					) {
+						element = element.closest(
+							'[data-acf-inline-contenteditable]'
+						);
+					}
+
+					if (
+						element &&
+						element.hasAttribute(
+							'data-acf-inline-contenteditable'
+						)
+					) {
+						const fieldSlug = element.attributes.getNamedItem(
+							'data-acf-inline-contenteditable-field-slug'
+						).value;
+						let content = element.innerHTML.trim();
+						if ( ! content ) content = '';
+						updateFieldValueFromContentEditable(
+							content,
+							fieldSlug
+						);
+					}
+				}
+				// Handle attribute or child list changes
+				else {
+					const element = mutation.target.closest(
+						'[data-acf-inline-contenteditable]'
+					);
+					const blockElement = element?.closest( '[data-block]' );
+
+					if (
+						! element ||
+						! blockElement ||
+						blockElement.getAttribute( 'data-block' ) !== clientId
+					)
+						return;
+
+					if ( element ) {
+						const fieldSlug = element.attributes.getNamedItem(
+							'data-acf-inline-contenteditable-field-slug'
+						).value;
+						let content = element.innerHTML.trim();
+
+						// Handle empty content - remove empty BR tags
+						if (
+							! content ||
+							( element.textContent.trim().length === 0 &&
+								element.children.length === 1 &&
+								element.firstElementChild &&
+								element.firstElementChild.nodeName === 'BR' )
+						) {
+							element.innerHTML = '';
+							content = '';
+						}
+
+						updateFieldValueFromContentEditable(
+							content,
+							fieldSlug
+						);
+					}
+				}
+			}
+		} );
+
+		// Observe the gutenberg iframe/document for changes
+		observer.observe( gutenbergIframeOrDocument, {
+			attributes: true,
+			childList: true,
+			subtree: true,
+			characterData: true,
+			attributeFilter: [ 'data-acf-inline-contenteditable' ],
+		} );
+
+		// Cleanup
+		return () => {
+			observer.disconnect();
+		};
+	}, [ blockPreviewHtml, gutenbergIframeOrDocument ] );
+
+	// Callback when a new inline editing element is selected
+	const handleNewInlineEditingElementSelected = ( uid ) => {
+		setTimeout( () => {
+			setCurrentInlineEditingElementUid( uid );
+			const element = previewRef?.current.querySelector(
+				`[data-acf-inline-fields-uid="${ uid }"]`
+			);
+			setCurrentInlineEditingElement( element );
+			if ( element ) {
+				element.scrollIntoView( {
+					behavior: 'smooth',
+					block: 'nearest',
+				} );
+			}
+		}, 1 );
+	};
+
+	// Callback when a new contentEditable element is selected
+	const handleNewContentEditableElementSelected = ( fieldSlug ) => {
+		if ( fieldSlug ) {
+			const element = previewRef?.current.querySelector(
+				`[data-acf-inline-contenteditable-field-slug="${ fieldSlug }"]`
+			);
+			setCurrentContentEditableElement( element );
+		} else {
+			setCurrentContentEditableElement( null );
+		}
+	};
+
 	// Determine portal target
 	let portalTarget = null;
 	if ( currentFormContainer ) {
@@ -539,21 +847,50 @@ function BlockEditInner( props ) {
 		portalTarget = inspectorControlsRef.current;
 	}
 
+	// Determine inline editing toolbar anchor (matches 6.7.0.2 logic)
+	let inlineEditingToolbarAnchor = null;
+	if ( currentInlineEditingElement && currentContentEditableElement ) {
+		inlineEditingToolbarAnchor = currentInlineEditingElement;
+	} else if (
+		currentInlineEditingElement &&
+		! currentContentEditableElement
+	) {
+		inlineEditingToolbarAnchor = currentInlineEditingElement;
+	} else if (
+		! currentInlineEditingElement &&
+		currentContentEditableElement
+	) {
+		inlineEditingToolbarAnchor = currentContentEditableElement;
+	}
+	// Ensure anchor is connected to DOM
+	if (
+		inlineEditingToolbarAnchor &&
+		! inlineEditingToolbarAnchor.isConnected
+	) {
+		inlineEditingToolbarAnchor = null;
+	}
+
 	return (
 		<>
-			{ /* Block toolbar controls */ }
-			<BlockControls>
-				<ToolbarGroup>
-					<ToolbarButton
-						className="components-icon-button components-toolbar__control"
-						label={ acf.__( 'Edit Block' ) }
-						icon="edit"
-						onClick={ () => {
-							setIsModalOpen( true );
-						} }
-					/>
-				</ToolbarGroup>
-			</BlockControls>
+			{ /* Block toolbar controls with inline editing support */ }
+			<BlockToolbarFields
+				blockToolbarFields={ blockToolbarFields }
+				blockFieldInfo={ blockFieldInfo }
+				setCurrentBlockFormContainer={ setCurrentFormContainer }
+				gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+				setBlockFormModalOpen={ setBlockFormModalOpen }
+				blockFormModalOpen={ blockFormModalOpen }
+				currentInlineEditingElement={ currentInlineEditingElement }
+				setCurrentInlineEditingElement={
+					setCurrentInlineEditingElement
+				}
+				currentInlineEditingElementUid={
+					currentInlineEditingElementUid
+				}
+				onNewInlineEditingElementSelected={
+					handleNewInlineEditingElementSelected
+				}
+			/>
 
 			{ /* Inspector panel container */ }
 			<InspectorControls>
@@ -637,9 +974,32 @@ function BlockEditInner( props ) {
 						isFullScreen={ true }
 						title={ blockType.title }
 						onRequestClose={ () => {
-							setCurrentFormContainer( null );
-							setIsModalOpen( false );
+							// Check if block is fetching
+							const isFetching =
+								document.body.classList.contains(
+									'acf-fetching-block'
+								);
+							if ( ! isFetching ) {
+								setCurrentFormContainer( null );
+								setIsModalOpen( false );
+							}
 						} }
+						isDismissible={ false }
+						headerActions={ [
+							<Button
+								key="done"
+								variant="primary"
+								disabled={ document.body.classList.contains(
+									'acf-fetching-block'
+								) }
+								onClick={ () => {
+									setCurrentFormContainer( null );
+									setIsModalOpen( false );
+								} }
+							>
+								{ acf.__( 'Done' ) }
+							</Button>,
+						] }
 					>
 						<div
 							className="acf-modal-block-form-container"
@@ -648,6 +1008,112 @@ function BlockEditInner( props ) {
 					</Modal>
 				) }
 			</>
+
+			{ /* Inline Editing Toolbar */ }
+			{ inlineEditingToolbarAnchor && (
+				<PopoverWrapper
+					key={ currentContentEditableElement }
+					focusOnMount={ ( () => {
+						const activeElement = document.activeElement;
+						return (
+							activeElement && activeElement.isContentEditable,
+							false
+						);
+					} )() }
+					variant="unstyled"
+					anchor={ inlineEditingToolbarAnchor }
+					className="acf-inline-editing-toolbar block-editor-block-list__block-popover"
+					placement="top-start"
+					onClose={ ( event ) => {
+						// Don't close if clicking toolbar button
+						if (
+							event.key !== 'Escape' &&
+							event.target.closest( '.acf-toolbar-button' )
+						) {
+							return false;
+						}
+
+						// Handle Escape key
+						if ( event.key === 'Escape' ) {
+							return (
+								! document.querySelector(
+									'.acf-inline-fields-popover-inner'
+								) &&
+								! inlineEditingToolbarHasFocus &&
+								( currentInlineEditingElement &&
+									currentInlineEditingElement.focus(),
+								setCurrentInlineEditingElementUid( null ),
+								setCurrentContentEditableElement( null ),
+								true )
+							);
+						}
+
+						// Don't close if clicking on contenteditable element
+						if (
+							event.target.getAttribute(
+								'data-acf-inline-contenteditable'
+							)
+						) {
+							return false;
+						}
+
+						// Don't close if clicking inside popover or modal
+						const inlineFieldsPopover = event.target.closest(
+							'.acf-inline-fields-popover-inner'
+						);
+						const modal = event.target.closest(
+							'.components-modal__content'
+						);
+
+						return (
+							inlineFieldsPopover ||
+								modal ||
+								( setCurrentInlineEditingElementUid( null ),
+								setCurrentContentEditableElement( null ) ),
+							true
+						);
+					} }
+					gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+					hidePrimaryBlockToolbar={ true }
+				>
+					<InlineEditingToolbar
+						key={ currentInlineEditingElementUid }
+						blockIcon={ blockType.icon }
+						blockFieldInfo={ blockFieldInfo }
+						acfFormRef={ acfFormRef }
+						setInlineEditingToolbarHasFocus={
+							setInlineEditingToolbarHasFocus
+						}
+						currentContentEditableElement={
+							currentContentEditableElement
+						}
+						currentInlineEditingElement={
+							currentInlineEditingElement
+						}
+						currentInlineEditingElementUid={
+							currentInlineEditingElementUid
+						}
+						gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
+						setCurrentBlockFormContainer={ setCurrentFormContainer }
+						contentEditableChangeInProgress={
+							contentEditableChangeInProgress
+						}
+					/>
+				</PopoverWrapper>
+			) }
+
+			{ /* Dynamic styles for inline field highlighting */ }
+			{ currentInlineEditingElementUid &&
+				acfDynamicStylesElement &&
+				createPortal(
+					<style>
+						{ `[data-acf-inline-fields-uid="${ currentInlineEditingElementUid }"]{
+							outline: 2px solid var(--wp-admin-theme-color);
+							outline-offset: 2px;
+						}` }
+					</style>,
+					acfDynamicStylesElement
+				) }
 
 			{ /* Block preview */ }
 			<>
@@ -685,7 +1151,6 @@ function BlockEditInner( props ) {
 							}
 						} }
 					>
-						{ /* Show placeholder when no HTML */ }
 						{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
 							<BlockPlaceholder
 								setBlockFormModalOpen={ setIsModalOpen }
@@ -704,7 +1169,7 @@ function BlockEditInner( props ) {
 						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
 							blockPreviewHtml !== 'acf-block-preview-no-html' &&
 							blockPreviewHtml &&
-							acf.parseJSX( blockPreviewHtml ) }
+							acf.parseJSX( blockPreviewHtml, $ ) }
 					</ErrorBoundary>
 				</BlockPreview>
 			</>

@@ -9,12 +9,9 @@
  *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child elements to render
- * @param {string} props.blockPreviewHtml - HTML string of the block preview (used as key)
  * @param {Object} props.blockProps - Block props from useBlockProps hook
  * @returns {JSX.Element} - Rendered preview wrapper
  */
-export const BlockPreview = ( { children, blockPreviewHtml, blockProps } ) => (
-	<div { ...blockProps } key={ blockPreviewHtml }>
-		{ children }
-	</div>
+export const BlockPreview = ( { children, blockProps } ) => (
+	<div { ...blockProps }>{ children }</div>
 );

@@ -1177,9 +1177,10 @@
 										new CustomEvent(
 											'acf/block/has-error',
 											{
-												acfBlocksWithValidationErrors: [
-													block,
-												],
+												detail: {
+													acfBlocksWithValidationErrors:
+														block.clientId,
+												},
 											}
 										)
 									);
