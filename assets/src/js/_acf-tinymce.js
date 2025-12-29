@@ -111,7 +111,6 @@
 					if ( ! $textarea.closest( '.attachment-info' ).length ) {
 						$textarea.trigger( 'change' );
 					}
-					$textarea.trigger( 'change' );
 				} );
 
 				ed.on( 'blur', function ( e ) {
