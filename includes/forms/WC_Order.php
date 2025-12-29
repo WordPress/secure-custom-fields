@@ -43,7 +43,7 @@ class WC_Order {
 	/**
 	 * Registers initialization hooks for all WooCommerce order types.
 	 *
-	 * @since 6.4.4
+	 * @since 6.7.2
 	 * @return void
 	 */
 	public function register_order_type_hooks() {
@@ -170,7 +170,7 @@ class WC_Order {
 	/**
 	 * Gets the HPOS screen ID for an order type.
 	 *
-	 * @since 6.4.4
+	 * @since 6.7.2
 	 *
 	 * @param string $order_type The order type (e.g., 'shop_order', 'shop_subscription', 'shop_order_charge').
 	 * @return string The screen ID.
