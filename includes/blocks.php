@@ -951,7 +951,7 @@ function acf_enqueue_in_iframe_styles() {
 	if ( is_admin() ) {
 		$min      = defined( 'ACF_DEVELOPMENT_MODE' ) && ACF_DEVELOPMENT_MODE ? '' : '.min';
 		$css_path = acf_get_url( "assets/build/css/pro/acf-styles-in-iframe-for-blocks{$min}.css" );
-		wp_enqueue_style( 'acf-inline-editing-styles', $css_path, ACF_VERSION, true );
+		wp_enqueue_style( 'acf-inline-editing-styles', $css_path, array(), ACF_VERSION, 'all' );
 	}
 }
 add_action( 'enqueue_block_assets', 'acf_enqueue_in_iframe_styles' );
