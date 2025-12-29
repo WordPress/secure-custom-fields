@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require( './fixtures' );
+const { test, expect, wpVersionAtLeast } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-testimonial-block';
@@ -17,6 +17,15 @@ test.describe( 'SCF Block > Testimonial', () => {
 		await requestUtils.deactivatePlugin( TEST_PLUGIN_SLUG );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
 		await requestUtils.deleteAllPosts();
+	} );
+
+	test.beforeEach( async ( { page } ) => {
+		// ACF block version 3 with sidebar fields requires WordPress 6.3+
+		await page.goto( '/wp-admin/' );
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'ACF block version 3 with sidebar fields requires WordPress 6.3+'
+		);
 	} );
 
 	test( 'should use testimonial block with fields', async ( {
@@ -50,9 +59,7 @@ test.describe( 'SCF Block > Testimonial', () => {
 		const quoteField = page.locator(
 			'.acf-field[data-name="quote"] textarea'
 		);
-		await quoteField.fill(
-			'Amazing Quote'
-		);
+		await quoteField.fill( 'Amazing Quote' );
 
 		// Wait for the preview to update
 		await page.waitForTimeout( 1000 );
@@ -83,18 +90,22 @@ test.describe( 'SCF Block > Testimonial', () => {
 		const canvas = await editor.canvas;
 
 		// Verify the preview shows the content (within the selected block in canvas)
-		const blockPreview = canvas.locator( '[data-type="scf/testimonial"] .testimonial__blockquote' );
-		await blockPreview.waitFor( { state: 'visible', timeout: 5000 } );
-		await expect( blockPreview ).toContainText(
-			'Amazing Quote'
+		const blockPreview = canvas.locator(
+			'[data-type="scf/testimonial"] .testimonial__blockquote'
 		);
+		await blockPreview.waitFor( { state: 'visible', timeout: 5000 } );
+		await expect( blockPreview ).toContainText( 'Amazing Quote' );
 
 		// Author and role should appear in the attribution footer
-		const authorCite = canvas.locator( '[data-type="scf/testimonial"] .testimonial__author' );
+		const authorCite = canvas.locator(
+			'[data-type="scf/testimonial"] .testimonial__author'
+		);
 		await expect( authorCite ).toBeVisible();
 		await expect( authorCite ).toContainText( 'John Doe' );
 
-		const roleSpan = canvas.locator( '[data-type="scf/testimonial"] .testimonial__role' );
+		const roleSpan = canvas.locator(
+			'[data-type="scf/testimonial"] .testimonial__role'
+		);
 		await expect( roleSpan ).toBeVisible();
 		await expect( roleSpan ).toContainText( 'CEO, Example Company' );
 
@@ -140,27 +151,32 @@ test.describe( 'SCF Block > Testimonial', () => {
 			'.acf-field[data-name="quote"] textarea'
 		);
 		await quoteTextarea.clear();
-		
+
 		// Blur to trigger field validation
 		await quoteTextarea.blur();
-		
+
 		// Wait a moment for blur validation
 		await page.waitForTimeout( 500 );
 
 		// Try to publish to trigger full validation
-		const publishToggle = page.locator( '.editor-post-publish-panel__toggle' );
+		const publishToggle = page.locator(
+			'.editor-post-publish-panel__toggle'
+		);
 		await publishToggle.click();
 
 		// Wait for publish panel to open
 		await page.waitForTimeout( 500 );
 
 		// Click the actual publish button in the panel
-		const publishButton = page.locator( '.editor-post-publish-panel .editor-post-publish-button' );
+		const publishButton = page.locator(
+			'.editor-post-publish-panel .editor-post-publish-button'
+		);
 		await publishButton.click();
 
 		// Wait for the error notice to appear at the top of the editor
-		const errorNotice = page.locator( '.components-notice.is-error .components-notice__content' );
+		const errorNotice = page.locator(
+			'.components-notice.is-error .components-notice__content'
+		);
 		await expect( errorNotice ).toBeVisible( { timeout: 1000 } );
-
 	} );
 } );
