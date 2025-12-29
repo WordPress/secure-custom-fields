@@ -418,7 +418,7 @@ export const BlockEdit = ( props ) => {
 	useEffect( () => {
 		const handleErrorEvent = ( event ) => {
 			// Only handle if this event is for this specific block
-			if ( clientId === event.detail.acfBlockWithValidationErrors ) {
+			if ( clientId === event.detail.acfBlocksWithValidationErrors ) {
 				lockPostSaving( clientId );
 				setShowValidationErrors( true );
 				setCurrentInlineEditingElementUid( null );
