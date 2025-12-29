@@ -105,72 +105,34 @@ class Test_ACF_Field_Group_Functions extends BaseTestCase {
 	// =========================================================================
 
 	/**
-	 * Test acf_is_field_group_key returns true for valid field group keys.
+	 * Data provider for field group key validation tests.
+	 *
+	 * @return array Test cases with input, expected result, and description.
 	 */
-	public function test_acf_is_field_group_key_returns_true_for_valid_key() {
-		$this->assertTrue(
-			acf_is_field_group_key( 'group_123456' ),
-			'Should return true for valid group_ prefixed key'
+	public function field_group_key_provider() {
+		return array(
+			'valid group_ prefixed key'   => array( 'group_123456', true ),
+			'group_ key with underscores' => array( 'group_my_custom_fields', true ),
+			'field_ prefixed key'         => array( 'field_123456', false ),
+			'post_type_ prefixed key'     => array( 'post_type_123456', false ),
+			'empty string'                => array( '', false ),
+			'numeric value'               => array( 12345, false ),
+			'null value'                  => array( null, false ),
 		);
 	}
 
 	/**
-	 * Test acf_is_field_group_key returns true for keys with underscores.
+	 * Test acf_is_field_group_key validates keys correctly.
+	 *
+	 * @dataProvider field_group_key_provider
+	 *
+	 * @param mixed $input    The input to test.
+	 * @param bool  $expected The expected result.
 	 */
-	public function test_acf_is_field_group_key_returns_true_for_key_with_underscores() {
-		$this->assertTrue(
-			acf_is_field_group_key( 'group_my_custom_fields' ),
-			'Should return true for group_ key with underscores'
-		);
-	}
-
-	/**
-	 * Test acf_is_field_group_key returns false for non-group keys.
-	 */
-	public function test_acf_is_field_group_key_returns_false_for_field_key() {
-		$this->assertFalse(
-			acf_is_field_group_key( 'field_123456' ),
-			'Should return false for field_ prefixed key'
-		);
-	}
-
-	/**
-	 * Test acf_is_field_group_key returns false for post type keys.
-	 */
-	public function test_acf_is_field_group_key_returns_false_for_post_type_key() {
-		$this->assertFalse(
-			acf_is_field_group_key( 'post_type_123456' ),
-			'Should return false for post_type_ prefixed key'
-		);
-	}
-
-	/**
-	 * Test acf_is_field_group_key returns false for empty string.
-	 */
-	public function test_acf_is_field_group_key_returns_false_for_empty_string() {
-		$this->assertFalse(
-			acf_is_field_group_key( '' ),
-			'Should return false for empty string'
-		);
-	}
-
-	/**
-	 * Test acf_is_field_group_key returns false for numeric value.
-	 */
-	public function test_acf_is_field_group_key_returns_false_for_numeric() {
-		$this->assertFalse(
-			acf_is_field_group_key( 12345 ),
-			'Should return false for numeric value'
-		);
-	}
-
-	/**
-	 * Test acf_is_field_group_key returns false for null.
-	 */
-	public function test_acf_is_field_group_key_returns_false_for_null() {
-		$this->assertFalse(
-			acf_is_field_group_key( null ),
-			'Should return false for null'
+	public function test_acf_is_field_group_key( $input, $expected ) {
+		$this->assertSame(
+			$expected,
+			acf_is_field_group_key( $input )
 		);
 	}
 
