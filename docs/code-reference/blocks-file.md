@@ -351,9 +351,8 @@ Helper function that returns the HTML attributes required for toolbar inline edi
 
 * Required. A list of the fields, each of which will be displayed in the popup toolbar.
 Each field can be passed as one of the following.
-  * A string (e.g. `'my_field_name'`)
-  * An associative array with specific keys:
-
+* A string (e.g. `'my_field_name'`)
+An associative array with specific keys:
 * @type string  $field_name  The name of the field to display in the toolbar.
 * @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
 * @type string  $field_label A string to use as the label for the button in the toolbar.
@@ -385,9 +384,8 @@ This function prepares a fields array for being localized and used on the fronte
 
 * Required. A list of the fields, each of which will be displayed in the popup toolbar.
 Each field can be passed as one of the following.
-  * A string (e.g. `'my_field_name'`)
-  * An associative array with specific keys:
-
+* A string (e.g. `'my_field_name'`)
+An associative array with specific keys:
 * @type string $field_name  The name of the field to display in the toolbar.
 * @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
 * @type string $field_label A string to use as the label for the button in the toolbar.
