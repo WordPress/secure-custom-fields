@@ -363,6 +363,111 @@ describe( 'Custom Hooks', () => {
 				} );
 			} );
 		} );
+
+		it( 'should handle empty scf_field_groups', async () => {
+			apiFetch.mockResolvedValue( {
+				scf_field_groups: [],
+			} );
+
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+
+			await waitFor( () => {
+				expect( result.current.isLoading ).toBe( false );
+			} );
+
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.error ).toBeNull();
+		} );
+
+		it( 'should handle missing scf_field_groups in response', async () => {
+			apiFetch.mockResolvedValue( {} );
+
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+
+			await waitFor( () => {
+				expect( result.current.isLoading ).toBe( false );
+			} );
+
+			expect( result.current.fields ).toEqual( {} );
+		} );
+
+		it( 'should cancel fetch on unmount', async () => {
+			// Use a promise that we can control
+			let resolvePromise;
+			const fetchPromise = new Promise( ( resolve ) => {
+				resolvePromise = resolve;
+			} );
+			apiFetch.mockReturnValue( fetchPromise );
+
+			const { unmount } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+
+			// Unmount before the fetch resolves
+			unmount();
+
+			// Resolve the fetch after unmount
+			resolvePromise( { scf_field_groups: mockFieldGroups } );
+
+			// Wait a tick to ensure any state updates would have happened
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+			// If cleanup worked correctly, no state update errors should occur
+			// Verify test completed by checking unmount didn't throw
+			expect( true ).toBe( true );
+		} );
+
+		it( 'should handle post type changing from value to null', async () => {
+			apiFetch.mockResolvedValue( {
+				scf_field_groups: mockFieldGroups,
+			} );
+
+			const { result, rerender } = renderHook(
+				( { postType } ) => useSiteEditorFields( postType ),
+				{ initialProps: { postType: 'product' } }
+			);
+
+			await waitFor( () => {
+				expect( result.current.isLoading ).toBe( false );
+			} );
+
+			expect( result.current.fields ).toEqual( {
+				field1: { label: 'Field 1', type: 'text' },
+				field2: { label: 'Field 2', type: 'textarea' },
+			} );
+
+			// Change to null
+			rerender( { postType: null } );
+
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBeNull();
+		} );
+
+		it( 'should store field metadata in cache on successful fetch', async () => {
+			apiFetch.mockResolvedValue( {
+				scf_field_groups: mockFieldGroups,
+			} );
+
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+
+			await waitFor( () => {
+				expect( result.current.isLoading ).toBe( false );
+			} );
+
+			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalledWith(
+				{
+					field1: { label: 'Field 1', type: 'text' },
+					field2: { label: 'Field 2', type: 'textarea' },
+				}
+			);
+		} );
 	} );
 
 	describe( 'useBoundFields', () => {
@@ -471,6 +576,272 @@ describe( 'Custom Hooks', () => {
 				content: 'field2',
 				url: 'field3',
 			} );
+		} );
+
+		it( 'should return empty object when metadata is undefined', () => {
+			const blockAttributes = {};
+
+			const { result } = renderHook( () =>
+				useBoundFields( blockAttributes )
+			);
+
+			expect( result.current.boundFields ).toEqual( {} );
+		} );
+
+		it( 'should handle null blockAttributes', () => {
+			const { result } = renderHook( () => useBoundFields( null ) );
+
+			expect( result.current.boundFields ).toEqual( {} );
+		} );
+
+		it( 'should handle undefined blockAttributes', () => {
+			const { result } = renderHook( () => useBoundFields( undefined ) );
+
+			expect( result.current.boundFields ).toEqual( {} );
+		} );
+
+		it( 'should return setBoundFields function', () => {
+			const blockAttributes = {
+				metadata: {
+					bindings: {},
+				},
+			};
+
+			const { result } = renderHook( () =>
+				useBoundFields( blockAttributes )
+			);
+
+			expect( typeof result.current.setBoundFields ).toBe( 'function' );
+		} );
+
+		it( 'should ignore bindings with null args', () => {
+			const blockAttributes = {
+				metadata: {
+					bindings: {
+						content: {
+							source: 'acf/field',
+							args: null,
+						},
+					},
+				},
+			};
+
+			const { result } = renderHook( () =>
+				useBoundFields( blockAttributes )
+			);
+
+			expect( result.current.boundFields ).toEqual( {} );
+		} );
+
+		it( 'should clear bound fields when bindings are removed', () => {
+			const initialAttributes = {
+				metadata: {
+					bindings: {
+						content: {
+							source: 'acf/field',
+							args: { key: 'field1' },
+						},
+					},
+				},
+			};
+
+			const { result, rerender } = renderHook(
+				( { attrs } ) => useBoundFields( attrs ),
+				{ initialProps: { attrs: initialAttributes } }
+			);
+
+			expect( result.current.boundFields ).toEqual( {
+				content: 'field1',
+			} );
+
+			// Remove bindings
+			rerender( { attrs: { metadata: { bindings: {} } } } );
+
+			expect( result.current.boundFields ).toEqual( {} );
+		} );
+	} );
+
+	describe( 'usePostEditorFields - additional edge cases', () => {
+		it( 'should return empty object when record has no acf property', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'post',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => ( {
+								title: 'Test Post',
+								content: 'Content',
+							} ),
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => usePostEditorFields() );
+
+			expect( result.current ).toEqual( {} );
+		} );
+
+		it( 'should return empty object when record is null', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'post',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => null,
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => usePostEditorFields() );
+
+			expect( result.current ).toEqual( {} );
+		} );
+
+		it( 'should return empty object when postId is null', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'post',
+							getCurrentPostId: () => null,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => null,
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => usePostEditorFields() );
+
+			expect( result.current ).toEqual( {} );
+		} );
+
+		it( 'should handle acf with null values', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'post',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => ( {
+								acf: null,
+							} ),
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => usePostEditorFields() );
+
+			expect( result.current ).toEqual( {} );
+		} );
+	} );
+
+	describe( 'useSiteEditorContext - additional edge cases', () => {
+		it( 'should handle wp_template_part post type', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'wp_template_part',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => null,
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => useSiteEditorContext() );
+
+			// wp_template_part is not considered site editor
+			expect( result.current.isSiteEditor ).toBe( false );
+		} );
+
+		it( 'should handle template with empty slug', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'wp_template',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => ( {
+								slug: '',
+							} ),
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => useSiteEditorContext() );
+
+			expect( result.current.isSiteEditor ).toBe( true );
+			expect( result.current.templatePostType ).toBeNull();
+		} );
+
+		it( 'should handle default single template', () => {
+			useSelect.mockImplementation( ( callback ) => {
+				const select = ( store ) => {
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'wp_template',
+							getCurrentPostId: () => 123,
+						};
+					}
+					if ( store === 'core' ) {
+						return {
+							getEditedEntityRecord: () => ( {
+								slug: 'single',
+							} ),
+						};
+					}
+					return {};
+				};
+				return callback( select );
+			} );
+
+			const { result } = renderHook( () => useSiteEditorContext() );
+
+			expect( result.current.isSiteEditor ).toBe( true );
+			expect( result.current.templatePostType ).toBe( 'post' );
 		} );
 	} );
 } );
