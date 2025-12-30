@@ -32,21 +32,14 @@ describe( 'Field Processing Utils', () => {
 			} );
 		} );
 
-		it( 'should return empty object when post has no acf property', () => {
-			const post = { id: 1, title: 'Test' };
-			const result = getSCFFields( post );
-			expect( result ).toEqual( {} );
-		} );
-
-		it( 'should return empty object when post is null', () => {
-			const result = getSCFFields( null );
-			expect( result ).toEqual( {} );
-		} );
-
-		it( 'should return empty object when acf is null', () => {
-			const post = { acf: null };
-			const result = getSCFFields( post );
-			expect( result ).toEqual( {} );
+		it.each( [
+			[ 'null post', null ],
+			[ 'undefined post', undefined ],
+			[ 'post without acf', { id: 1 } ],
+			[ 'post with null acf', { acf: null } ],
+			[ 'post with empty acf', { acf: {} } ],
+		] )( 'should return empty object for %s', ( _desc, post ) => {
+			expect( getSCFFields( post ) ).toEqual( {} );
 		} );
 
 		it( 'should only include fields with _source counterparts', () => {
@@ -54,15 +47,27 @@ describe( 'Field Processing Utils', () => {
 				acf: {
 					field1: 'value1',
 					field1_source: { type: 'text', formatted_value: 'value1' },
-					field2: 'value2',
-					// No field2_source
+					field2: 'value2', // No _source
 				},
 			};
-
-			const result = getSCFFields( post );
-			expect( result ).toEqual( {
+			expect( getSCFFields( post ) ).toEqual( {
 				field1: { type: 'text', formatted_value: 'value1' },
 			} );
+		} );
+
+		it( 'should handle complex image field values', () => {
+			const post = {
+				acf: {
+					img_source: {
+						type: 'image',
+						formatted_value: {
+							id: 123,
+							url: 'https://example.com/image.jpg',
+						},
+					},
+				},
+			};
+			expect( getSCFFields( post ).img.formatted_value.id ).toBe( 123 );
 		} );
 	} );
 
@@ -75,235 +80,224 @@ describe( 'Field Processing Utils', () => {
 			title: 'Test Title',
 		};
 
-		it( 'should resolve url attribute', () => {
-			expect( resolveImageAttribute( imageObj, 'url' ) ).toBe(
-				'https://example.com/image.jpg'
-			);
-		} );
-
-		it( 'should resolve alt attribute', () => {
-			expect( resolveImageAttribute( imageObj, 'alt' ) ).toBe(
-				'Test image'
-			);
-		} );
-
-		it( 'should resolve title attribute', () => {
-			expect( resolveImageAttribute( imageObj, 'title' ) ).toBe(
-				'Test Title'
-			);
-		} );
-
-		it( 'should resolve id attribute', () => {
-			expect( resolveImageAttribute( imageObj, 'id' ) ).toBe( 123 );
+		it.each( [
+			[ 'url', 'https://example.com/image.jpg' ],
+			[ 'alt', 'Test image' ],
+			[ 'title', 'Test Title' ],
+			[ 'id', 123 ],
+		] )( 'should resolve %s attribute', ( attr, expected ) => {
+			expect( resolveImageAttribute( imageObj, attr ) ).toBe( expected );
 		} );
 
 		it( 'should fallback to ID property for id attribute', () => {
-			const img = { ID: 456 };
-			expect( resolveImageAttribute( img, 'id' ) ).toBe( 456 );
+			expect( resolveImageAttribute( { ID: 456 }, 'id' ) ).toBe( 456 );
 		} );
 
-		it( 'should return empty string for missing attributes', () => {
-			const img = {};
-			expect( resolveImageAttribute( img, 'url' ) ).toBe( '' );
-			expect( resolveImageAttribute( img, 'alt' ) ).toBe( '' );
-			expect( resolveImageAttribute( img, 'title' ) ).toBe( '' );
+		it.each( [
+			[ 'missing attribute', imageObj, 'unknown' ],
+			[ 'null imageObj', null, 'url' ],
+			[ 'empty imageObj', {}, 'url' ],
+		] )( 'should return empty string for %s', ( _desc, img, attr ) => {
+			expect( resolveImageAttribute( img, attr ) ).toBe( '' );
 		} );
 
-		it( 'should return empty string for unknown attribute', () => {
-			expect( resolveImageAttribute( imageObj, 'unknown' ) ).toBe( '' );
-		} );
+		// Test the || '' fallback branches for each attribute
+		it.each( [
+			[ 'url', { url: '' } ],
+			[ 'alt', { alt: '' } ],
+			[ 'title', { title: '' } ],
+		] )(
+			'should return empty string when %s is empty string',
+			( attr, img ) => {
+				expect( resolveImageAttribute( img, attr ) ).toBe( '' );
+			}
+		);
 
-		it( 'should return empty string for null imageObj', () => {
-			expect( resolveImageAttribute( null, 'url' ) ).toBe( '' );
+		it( 'should return empty string when both id and ID are missing', () => {
+			expect( resolveImageAttribute( { url: 'test' }, 'id' ) ).toBe( '' );
 		} );
 	} );
 
 	describe( 'processFieldBinding', () => {
 		const scfFields = {
-			text_field: {
-				type: 'text',
-				formatted_value: 'Hello World',
+			text_field: { type: 'text', formatted_value: 'Hello World' },
+			textarea_field: {
+				type: 'textarea',
+				formatted_value: 'Long content',
 			},
 			image_field: {
 				type: 'image',
 				formatted_value: {
 					url: 'https://example.com/image.jpg',
-					alt: 'Test image',
-					title: 'Test Title',
+					alt: 'Alt text',
+					title: 'Title',
 					id: 123,
 				},
 			},
 			checkbox_field: {
 				type: 'checkbox',
-				formatted_value: [ 'option1', 'option2' ],
+				formatted_value: [ 'opt1', 'opt2' ],
 			},
-			number_field: {
-				type: 'number',
-				formatted_value: 42,
-			},
-			textarea_field: {
-				type: 'textarea',
-				formatted_value: 'Long text content',
-			},
+			number_field: { type: 'number', formatted_value: 42 },
 		};
 
-		it( 'should process text field', () => {
-			const result = processFieldBinding(
-				'content',
-				{ key: 'text_field' },
-				scfFields
-			);
-			expect( result ).toBe( 'Hello World' );
-		} );
-
-		it( 'should process image field url attribute', () => {
-			const result = processFieldBinding(
-				'url',
-				{ key: 'image_field' },
-				scfFields
-			);
-			expect( result ).toBe( 'https://example.com/image.jpg' );
-		} );
-
-		it( 'should process image field alt attribute', () => {
-			const result = processFieldBinding(
-				'alt',
-				{ key: 'image_field' },
-				scfFields
-			);
-			expect( result ).toBe( 'Test image' );
-		} );
-
-		it( 'should process checkbox field as joined string', () => {
-			const result = processFieldBinding(
-				'content',
-				{ key: 'checkbox_field' },
-				scfFields
-			);
-			expect( result ).toBe( 'option1, option2' );
-		} );
-
-		it( 'should process number field as string', () => {
-			const result = processFieldBinding(
-				'content',
-				{ key: 'number_field' },
-				scfFields
-			);
-			expect( result ).toBe( '42' );
-		} );
-
-		it( 'should return empty string for missing field', () => {
-			const result = processFieldBinding(
-				'content',
-				{ key: 'nonexistent_field' },
-				scfFields
-			);
-			expect( result ).toBe( '' );
-		} );
-
-		it( 'should return empty string when args is null', () => {
-			const result = processFieldBinding( 'content', null, scfFields );
-			expect( result ).toBe( '' );
-		} );
-
-		it( 'should return empty string when key is missing', () => {
-			const result = processFieldBinding( 'content', {}, scfFields );
-			expect( result ).toBe( '' );
-		} );
-
-		it( 'should handle empty field value', () => {
+		// Test all simple field types that return formatted_value directly
+		it.each( [
+			[ 'text', 'text_field', 'Hello World' ],
+			[ 'textarea', 'textarea_field', 'Long content' ],
+			[ 'date_picker', 'date_field', '2024-01-15' ],
+			[ 'url', 'url_field', 'https://example.com' ],
+			[ 'email', 'email_field', 'test@example.com' ],
+			[ 'select', 'select_field', 'option_one' ],
+			[ 'unknown custom type', 'custom_field', 'custom value' ],
+		] )( 'should process %s field', ( type, key, value ) => {
 			const fields = {
-				empty_field: {
-					type: 'text',
-					formatted_value: '',
+				[ key ]: {
+					type: type === 'unknown custom type' ? 'custom' : type,
+					formatted_value: value,
 				},
 			};
-			const result = processFieldBinding(
-				'content',
-				{ key: 'empty_field' },
-				fields
+			expect( processFieldBinding( 'content', { key }, fields ) ).toBe(
+				value
 			);
-			expect( result ).toBe( '' );
 		} );
 
-		it( 'should handle checkbox with string value', () => {
+		// Test numeric fields that convert to string
+		it.each( [
+			[ 'number', 42, '42' ],
+			[ 'range', 75, '75' ],
+		] )( 'should convert %s field to string', ( type, value, expected ) => {
+			const fields = { field: { type, formatted_value: value } };
+			expect(
+				processFieldBinding( 'content', { key: 'field' }, fields )
+			).toBe( expected );
+		} );
+
+		it( 'should process checkbox array as joined string', () => {
+			expect(
+				processFieldBinding(
+					'content',
+					{ key: 'checkbox_field' },
+					scfFields
+				)
+			).toBe( 'opt1, opt2' );
+		} );
+
+		it( 'should process checkbox with string value', () => {
 			const fields = {
-				checkbox_string: {
-					type: 'checkbox',
-					formatted_value: 'single-value',
-				},
+				cb: { type: 'checkbox', formatted_value: 'single' },
 			};
-			const result = processFieldBinding(
-				'content',
-				{ key: 'checkbox_string' },
-				fields
-			);
-			expect( result ).toBe( 'single-value' );
+			expect(
+				processFieldBinding( 'content', { key: 'cb' }, fields )
+			).toBe( 'single' );
+		} );
+
+		// Test image attribute resolution
+		it.each( [
+			[ 'url', 'https://example.com/image.jpg' ],
+			[ 'alt', 'Alt text' ],
+			[ 'title', 'Title' ],
+			[ 'id', 123 ],
+		] )( 'should resolve image %s attribute', ( attr, expected ) => {
+			expect(
+				processFieldBinding( attr, { key: 'image_field' }, scfFields )
+			).toBe( expected );
+		} );
+
+		// Test empty/missing returns
+		it.each( [
+			[ 'missing field', { key: 'nonexistent' }, scfFields ],
+			[ 'null args', null, scfFields ],
+			[ 'missing key in args', {}, scfFields ],
+			[
+				'null formatted_value',
+				{ key: 'f' },
+				{ f: { type: 'text', formatted_value: null } },
+			],
+			[
+				'undefined formatted_value',
+				{ key: 'f' },
+				{ f: { type: 'text', formatted_value: undefined } },
+			],
+			[
+				'empty checkbox array',
+				{ key: 'f' },
+				{ f: { type: 'checkbox', formatted_value: [] } },
+			],
+			[
+				'false checkbox',
+				{ key: 'f' },
+				{ f: { type: 'checkbox', formatted_value: false } },
+			],
+			[
+				'zero number',
+				{ key: 'f' },
+				{ f: { type: 'number', formatted_value: 0 } },
+			],
+			[
+				'zero range',
+				{ key: 'f' },
+				{ f: { type: 'range', formatted_value: 0 } },
+			],
+		] )( 'should return empty string for %s', ( _desc, args, fields ) => {
+			expect( processFieldBinding( 'content', args, fields ) ).toBe( '' );
 		} );
 	} );
 
 	describe( 'formatFieldLabel', () => {
-		it( 'should format field key with underscores', () => {
-			expect( formatFieldLabel( 'my_field_name' ) ).toBe(
-				'My Field Name'
-			);
+		it.each( [
+			[ 'my_field_name', 'My Field Name' ],
+			[ 'field', 'Field' ],
+			[ 'My_Field', 'My Field' ],
+			[ 'my__field', 'My  Field' ],
+		] )( 'should format "%s" to "%s"', ( input, expected ) => {
+			expect( formatFieldLabel( input ) ).toBe( expected );
 		} );
 
-		it( 'should format single word', () => {
-			expect( formatFieldLabel( 'field' ) ).toBe( 'Field' );
-		} );
-
-		it( 'should handle already capitalized words', () => {
-			expect( formatFieldLabel( 'My_Field' ) ).toBe( 'My Field' );
-		} );
-
-		it( 'should return empty string for empty input', () => {
-			expect( formatFieldLabel( '' ) ).toBe( '' );
-		} );
-
-		it( 'should return empty string for null input', () => {
-			expect( formatFieldLabel( null ) ).toBe( '' );
-		} );
-
-		it( 'should handle multiple consecutive underscores', () => {
-			expect( formatFieldLabel( 'my__field' ) ).toBe( 'My  Field' );
-		} );
+		it.each( [ '', null ] )(
+			'should return empty string for %s',
+			( input ) => {
+				expect( formatFieldLabel( input ) ).toBe( '' );
+			}
+		);
 	} );
 
 	describe( 'getFieldLabel', () => {
-		const fieldMetadata = {
-			field1: { label: 'Custom Label 1', type: 'text' },
-			field2: { label: 'Custom Label 2', type: 'textarea' },
+		const metadata = {
+			field1: { label: 'Custom Label', type: 'text' },
+			field_no_label: { type: 'text' }, // Field exists but has no label property
 		};
 
-		it( 'should return label from metadata', () => {
-			const result = getFieldLabel( 'field1', fieldMetadata );
-			expect( result ).toBe( 'Custom Label 1' );
+		it( 'should return label from metadata when available', () => {
+			expect( getFieldLabel( 'field1', metadata ) ).toBe(
+				'Custom Label'
+			);
 		} );
 
-		it( 'should format field key when metadata not provided', () => {
-			const result = getFieldLabel( 'my_field', null );
-			expect( result ).toBe( 'My Field' );
+		it( 'should format key when field exists in metadata but has no label', () => {
+			// Tests the ?.label optional chaining branch
+			expect( getFieldLabel( 'field_no_label', metadata ) ).toBe(
+				'Field No Label'
+			);
 		} );
 
-		it( 'should format field key when field not in metadata', () => {
-			const result = getFieldLabel( 'unknown_field', fieldMetadata );
-			expect( result ).toBe( 'Unknown Field' );
-		} );
+		it.each( [
+			[ 'no metadata', 'my_field', null, undefined, 'My Field' ],
+			[ 'field not in metadata', 'other', metadata, undefined, 'Other' ],
+			[ 'empty key with default', '', metadata, 'Default', 'Default' ],
+			[ 'null key with default', null, metadata, 'Default', 'Default' ],
+		] )(
+			'should handle %s',
+			( _desc, key, meta, defaultLabel, expected ) => {
+				expect( getFieldLabel( key, meta, defaultLabel ) ).toBe(
+					expected
+				);
+			}
+		);
 
-		it( 'should return default label when field key is empty', () => {
-			const result = getFieldLabel( '', fieldMetadata, 'Default' );
-			expect( result ).toBe( 'Default' );
-		} );
-
-		it( 'should return default label when field key is null', () => {
-			const result = getFieldLabel( null, fieldMetadata, 'Default' );
-			expect( result ).toBe( 'Default' );
-		} );
-
-		it( 'should format field key when no default provided', () => {
-			const result = getFieldLabel( 'my_field' );
-			expect( result ).toBe( 'My Field' );
+		it( 'should use default parameters when called with only fieldKey', () => {
+			// Tests the default parameter branches (fieldMetadata = null, defaultLabel = '')
+			expect( getFieldLabel( 'my_field' ) ).toBe( 'My Field' );
 		} );
 	} );
 } );

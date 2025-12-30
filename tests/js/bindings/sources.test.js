@@ -3,7 +3,6 @@
  */
 
 import { registerBlockBindingsSource } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
 import * as fieldMetadataCache from '../../../assets/src/js/bindings/fieldMetadataCache';
 
 // Mock field processing module
@@ -67,6 +66,22 @@ describe( 'Block Binding Sources', () => {
 			expect( registeredConfig ).not.toBeNull();
 			expect( registeredConfig.name ).toBe( 'acf/field' );
 		} );
+
+		it( 'should register with a label', () => {
+			expect( registeredConfig.label ).toBe( 'SCF Fields' );
+		} );
+
+		it( 'should have all required methods', () => {
+			expect( typeof registeredConfig.getLabel ).toBe( 'function' );
+			expect( typeof registeredConfig.getValues ).toBe( 'function' );
+			expect( typeof registeredConfig.canUserEditValue ).toBe(
+				'function'
+			);
+		} );
+
+		it( 'should only register once', () => {
+			expect( registerBlockBindingsSource ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 
 	describe( 'getLabel', () => {
@@ -107,6 +122,35 @@ describe( 'Block Binding Sources', () => {
 			} );
 
 			expect( label ).toBe( 'My Field' );
+		} );
+
+		it( 'should return default label when args is undefined', () => {
+			const label = registeredConfig.getLabel( {
+				args: undefined,
+				select: jest.fn(),
+			} );
+
+			expect( label ).toBe( 'SCF Fields' );
+		} );
+
+		it( 'should handle metadata with empty label', () => {
+			fieldMetadataCache.getFieldMetadata.mockReturnValue( {
+				label: '',
+				type: 'text',
+			} );
+
+			const {
+				formatFieldLabel,
+			} = require( '../../../assets/src/js/bindings/field-processing' );
+			formatFieldLabel.mockReturnValue( 'Fallback Label' );
+
+			const label = registeredConfig.getLabel( {
+				args: { key: 'my_field' },
+				select: jest.fn(),
+			} );
+
+			// Should fallback to formatFieldLabel when label is empty
+			expect( label ).toBe( 'Fallback Label' );
 		} );
 	} );
 
@@ -219,6 +263,209 @@ describe( 'Block Binding Sources', () => {
 			expect( values ).toEqual( {
 				content: 'Test Title',
 			} );
+		} );
+
+		it( 'should handle empty bindings object', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'post',
+					};
+				}
+				if ( storeName === 'core' ) {
+					return {
+						getEditedEntityRecord: () => ( { acf: {} } ),
+					};
+				}
+				return {};
+			} );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: { postType: 'post', postId: 123 },
+				bindings: {},
+			} );
+
+			expect( values ).toEqual( {} );
+		} );
+
+		it( 'should handle missing context in post editor', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'post',
+					};
+				}
+				if ( storeName === 'core' ) {
+					return {
+						getEditedEntityRecord: () => undefined,
+					};
+				}
+				return {};
+			} );
+
+			const {
+				processFieldBinding,
+			} = require( '../../../assets/src/js/bindings/field-processing' );
+			processFieldBinding.mockReturnValue( '' );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: {},
+				bindings: {
+					content: { args: { key: 'my_field' } },
+				},
+			} );
+
+			expect( values ).toEqual( {
+				content: '',
+			} );
+		} );
+
+		it( 'should handle binding without args in site editor', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'wp_template',
+					};
+				}
+				return {};
+			} );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: {},
+				bindings: {
+					content: {},
+				},
+			} );
+
+			expect( values ).toEqual( {
+				content: '',
+			} );
+		} );
+
+		it( 'should handle binding with null key in site editor', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'wp_template',
+					};
+				}
+				return {};
+			} );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: {},
+				bindings: {
+					content: { args: { key: null } },
+				},
+			} );
+
+			expect( values ).toEqual( {
+				content: '',
+			} );
+		} );
+
+		it( 'should handle multiple bindings in post editor', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'post',
+					};
+				}
+				if ( storeName === 'core' ) {
+					return {
+						getEditedEntityRecord: () => ( {
+							acf: {
+								field1_source: { formatted_value: 'Value 1' },
+								field2_source: { formatted_value: 'Value 2' },
+							},
+						} ),
+					};
+				}
+				return {};
+			} );
+
+			const {
+				processFieldBinding,
+			} = require( '../../../assets/src/js/bindings/field-processing' );
+			processFieldBinding
+				.mockReturnValueOnce( 'Value 1' )
+				.mockReturnValueOnce( 'Value 2' );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: { postType: 'post', postId: 123 },
+				bindings: {
+					content: { args: { key: 'field1' } },
+					url: { args: { key: 'field2' } },
+				},
+			} );
+
+			expect( values ).toEqual( {
+				content: 'Value 1',
+				url: 'Value 2',
+			} );
+		} );
+
+		it( 'should handle binding without args in post editor', () => {
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'post',
+					};
+				}
+				if ( storeName === 'core' ) {
+					return {
+						getEditedEntityRecord: () => ( { acf: {} } ),
+					};
+				}
+				return {};
+			} );
+
+			const {
+				processFieldBinding,
+			} = require( '../../../assets/src/js/bindings/field-processing' );
+			processFieldBinding.mockReturnValue( '' );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: { postType: 'post', postId: 123 },
+				bindings: {
+					content: {},
+				},
+			} );
+
+			expect( values ).toEqual( {
+				content: '',
+			} );
+		} );
+	} );
+
+	describe( 'canUserEditValue', () => {
+		it( 'should return false to prevent direct editing', () => {
+			const result = registeredConfig.canUserEditValue();
+
+			expect( result ).toBe( false );
+		} );
+
+		it( 'should return false regardless of arguments', () => {
+			const result = registeredConfig.canUserEditValue( {
+				context: { postType: 'post', postId: 123 },
+				args: { key: 'my_field' },
+			} );
+
+			expect( result ).toBe( false );
+		} );
+
+		it( 'should return false for site editor context', () => {
+			const result = registeredConfig.canUserEditValue( {
+				context: { postType: 'wp_template' },
+			} );
+
+			expect( result ).toBe( false );
 		} );
 	} );
 } );
