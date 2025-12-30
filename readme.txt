@@ -52,6 +52,27 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.8.0 =
+*Release Date 30 Dec 2025*
+
+*Features*
+
+- Abilities integration: addded field abilities for Field Groups.
+- Abilities integration: added trash/untrash abilities for internal post types.
+- All backports up to 6.7.0.2.
+- JSON Schemas: Added several fields schemas.
+- WooCommerce HPOS: Added support for custom fields on any WooCommerce Order Types.
+- Added PHPUnit tests.
+
+*Fixes*
+
+- Hide duplicated Command Palette Commands on WP 6.9+.
+- Fix field schema validation for WP Rest API.
+- Fix checkbox toggle functionality.
+
+
+= 6.7.0 =
+
 = 6.7.1 =
 *Release Date 10 Dec 2025*
 
