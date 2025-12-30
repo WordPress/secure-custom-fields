@@ -181,6 +181,13 @@ Enqueues and localizes block scripts and styles.
 * @since   ACF 5.7.13
 * @return  void
 
+## `acf_enqueue_in_iframe_styles()`
+
+Enqueues scripts and styles to load inside the block editor iframe.
+This allows us to do things like style contenteditable, and other inline editing elements.
+
+* @since ACF 6.7
+
 ## `acf_enqueue_block_type_assets()`
 
 Enqueues scripts and styles for a specific block type.
@@ -337,5 +344,63 @@ that need to be saved to post meta.
 * @since ACF 6.3
 * @param string $content The content saved for the post.
 * @return array An array containing the field values that need to be saved.
+
+## `acf_inline_toolbar_editing_attrs()`
+
+Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
+
+* Required. A list of the fields, each of which will be displayed in the popup toolbar.
+Each field can be passed as one of the following.
+  * A string (e.g. `'my_field_name'`)
+  * An associative array with specific keys:
+
+* @type string  $field_name  The name of the field to display in the toolbar.
+* @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string  $field_label A string to use as the label for the button in the toolbar.
+* @type boolean $use_expanded_editor Default is false, which opens the field in the popover. Set to true to open in the expanded editor.
+* @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
+* @param array $fields List of fields.
+* @param array $args   Additional options controlling toolbar display and behavior.
+* @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+* @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+* @return string A string containing the attributes.
+
+## `acf_inline_text_editing_attrs()`
+
+Helper function that returns the HTML attributes required for inline text editing as a string, escaped and ready for output.
+
+* @param string $field_name A string which is the name of the field to update when the user types into the HTML element.
+* @param array  $args       Array {
+Optional. An array of additional args which can control how the popover identifier is displayed.
+* @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+* @type string $placeholder   Optional. Optional. A string which will be used as the placeholder in the typable text area.
+}
+* @return string A string containing the attributes.
+
+## `acf_process_block_toolbar_fields()`
+
+This function prepares a fields array for being localized and used on the frontend as block toolbar fields.
+
+* Required. A list of the fields, each of which will be displayed in the popup toolbar.
+Each field can be passed as one of the following.
+  * A string (e.g. `'my_field_name'`)
+  * An associative array with specific keys:
+
+* @type string $field_name  The name of the field to display in the toolbar.
+* @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string $field_label A string to use as the label for the button in the toolbar.
+* @param array $fields List of fields.
+* @return array The array of fields, prepared for JS localization.
+
+## `acf_inline_editing_field_is_empty()`
+
+Helper function for block render templates to check if an acf field has a value.
+This is relevant when autoInlineEditing is enabled for a block, because empty fields
+will have acf_auto_inline_editing_field_name_ + field_name as their value if they are empty.
+
+* @param string $field_name Field name.
+* @return boolean True if the field is empty, false if it has a value.
 
 ---
