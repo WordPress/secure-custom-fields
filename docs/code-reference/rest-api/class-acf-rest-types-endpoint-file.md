@@ -9,37 +9,47 @@ Class SCF_Rest_Types_Endpoint
 
 ### `__construct`
 
-Initialize the class.
+Initialize the class and register hooks.
 
 * @since SCF 6.5.0
+* @since 6.7.0 Simplified hook registration.
+
+### `is_valid_source`
+
+Validate source parameter.
+
+* @since 6.7.0
+* @param string $source The source value to validate.
+* @return bool True if valid, false otherwise.
 
 ### `filter_types_request`
 
-Filter post types requests, fires for both collection and individual requests.
-We only want to handle individual requets to ensure the post type requested matches the source.
+Filter post types requests for individual post type requests.
 
 * @since SCF 6.5.0
-* @param mixed           $response The current response, either response or null.
+* @since 6.7.0 Use is_valid_source() helper method.
+* @param mixed           $response The current response.
 * @param array           $handler  The handler for the route.
 * @param WP_REST_Request $request  The request object.
-* @return mixed The response or null.
+* @return mixed The response or WP_Error.
 
 ### `filter_post_type`
 
 Filter individual post type in the response.
 
 * @since SCF 6.5.0
-* @param WP_REST_Response $response The response object.
+* @since 6.7.0 Use is_valid_source() helper method.
+* @param WP_REST_Response $response  The response object.
 * @param WP_Post_Type     $post_type The post type object.
-* @param WP_REST_Request  $request The request object.
-* @return WP_REST_Response|null The filtered response or null to filter it out.
+* @param WP_REST_Request  $request   The request object.
+* @return WP_REST_Response|null The filtered response or null.
 
 ### `get_source_post_types`
 
-Get an array of post types for each source.
+Get post types for a specific source.
 
 * @since SCF 6.5.0
-* @param string $source The source to get post types for.
+* @param string $source The source to get post types for (core, scf, other).
 * @return array An array of post type names for the specified source.
 
 ### `register_extra_fields`
@@ -75,6 +85,7 @@ Register the source parameter for the post types endpoint.
 Get the source parameter definition
 
 * @since SCF 6.5.0
+* @since 6.7.0 Use VALID_SOURCES constant.
 * @return array Parameter definition
 
 ### `add_parameter_to_endpoints`

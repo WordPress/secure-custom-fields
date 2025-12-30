@@ -10,6 +10,12 @@ This file tracks code elements that need documentation.
 - `acf/bindings/field_not_supported_message`
 - `acf/blocks/binding_value`
 
+## abilities/class-scf-field-abilities.php
+
+### Hooks
+
+- `scf_field_parent_exists`
+
 ## acf-bidirectional-functions.php
 
 ### Hooks
@@ -372,12 +378,16 @@ This file tracks code elements that need documentation.
 
 - `acf/blocks/default_block_version`
 - `acf/blocks/default_block_version`
+- `acf/blocks/fields_needing_wide_popover`
+- `acf/blocks/fields_to_open_in_expanded_editor`
 - `acf/blocks/no_fields_assigned_message`
 - `acf/blocks/post_block_template_render`
 - `acf/blocks/pre_block_template_render`
 - `acf/blocks/prevent_edit_forms_on_rest_endpoints`
 - `acf/blocks/render_capability`
 - `acf/blocks/template_not_found_message`
+- `acf/blocks/top_toolbar_fields`
+- `acf/blocks/top_toolbar_fields`
 - `acf/blocks/wrap_frontend_innerblocks`
 - `acf/pre_save_block`
 - `acf/register_block_type_args`
@@ -603,6 +613,12 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/ui_options_page/registration_args`
+
+## post-types/class-scf-field-manager.php
+
+### Hooks
+
+- `acf/prepare_field_for_export`
 
 ## rest-api/acf-rest-api-functions.php
 
