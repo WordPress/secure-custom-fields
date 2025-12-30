@@ -1642,8 +1642,8 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
  * Required. A list of the fields, each of which will be displayed in the popup toolbar.
  * Each field can be passed as one of the following.
  *
- * - A string (e.g. `'my_field_name'`)
- * - An associative array with specific keys:
+ * A string (e.g. `'my_field_name'`)
+ * An associative array with specific keys:
  *
  * @type string  $field_name  The name of the field to display in the toolbar.
  * @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
@@ -1835,8 +1835,8 @@ function acf_inline_text_editing_attrs( $field_name, $args = array() ): string {
  * Required. A list of the fields, each of which will be displayed in the popup toolbar.
  * Each field can be passed as one of the following.
  *
- * - A string (e.g. `'my_field_name'`)
- * - An associative array with specific keys:
+ * A string (e.g. `'my_field_name'`)
+ * An associative array with specific keys:
  *
  * @type string $field_name  The name of the field to display in the toolbar.
  * @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
