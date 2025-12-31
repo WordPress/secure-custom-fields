@@ -210,8 +210,11 @@ class Test_Form_WC_Order extends BaseTestCase {
 		// Pass null directly - the method should return early.
 		$wc_order->add_meta_boxes( 'shop_order', null );
 
-		// If we get here without errors, the test passes.
-		$this->assertTrue( true );
+		// When order is null, the method returns early before adding the order_edit_form_top action.
+		$this->assertFalse(
+			has_action( 'order_edit_form_top', array( $wc_order, 'order_edit_form_top' ) ),
+			'order_edit_form_top action should not be added when order is null'
+		);
 	}
 
 	/**
@@ -269,20 +272,52 @@ class Test_Form_WC_Order extends BaseTestCase {
 		// Capture output.
 		ob_start();
 		$wc_order->order_edit_form_top( $mock_order );
-		ob_get_clean();
+		$output = ob_get_clean();
 
-		// The acf_form_data function should be called with 'woo_order_456'.
-		// Since we can't easily capture function args, we just verify no errors.
-		$this->assertTrue( true );
+		// Verify the output contains the correct post_id format.
+		$this->assertStringContainsString(
+			'woo_order_456',
+			$output,
+			'Form data should use woo_order_{id} format for post_id'
+		);
+
+		// Verify the hidden input structure is present.
+		$this->assertStringContainsString(
+			'id="acf-form-data"',
+			$output,
+			'Should output acf-form-data container'
+		);
 	}
 
 	/**
-	 * Test render_meta_box handles WP_Post object.
+	 * Data provider for render_meta_box input types.
+	 *
+	 * @return array
 	 */
-	public function test_render_meta_box_handles_wp_post() {
+	public function render_meta_box_input_provider() {
+		return array(
+			'WP_Post object'  => array(
+				'input'       => new WP_Post( (object) array( 'ID' => 789 ) ),
+				'expected_id' => 'woo_order_789',
+			),
+			'WC_Order object' => array(
+				'input'       => new Mock_WC_Order( 321 ),
+				'expected_id' => 'woo_order_321',
+			),
+		);
+	}
+
+	/**
+	 * Test render_meta_box handles different input types correctly.
+	 *
+	 * @dataProvider render_meta_box_input_provider
+	 *
+	 * @param object $input       The input object (WP_Post or Mock_WC_Order).
+	 * @param string $expected_id The expected post_id format.
+	 */
+	public function test_render_meta_box_uses_correct_post_id_format( $input, $expected_id ) {
 		$wc_order = new WC_Order();
 
-		$post    = new WP_Post( (object) array( 'ID' => 789 ) );
 		$metabox = array(
 			'args' => array(
 				'field_group' => array(
@@ -294,38 +329,32 @@ class Test_Form_WC_Order extends BaseTestCase {
 			),
 		);
 
-		// This should not throw any errors.
+		// Track if acf_render_fields action was triggered with correct post_id.
+		$rendered_post_id = null;
+		$action_callback  = function ( $fields, $post_id ) use ( &$rendered_post_id ) {
+			$rendered_post_id = $post_id;
+		};
+		add_action( 'acf/render_fields', $action_callback, 10, 2 );
+
 		ob_start();
-		$wc_order->render_meta_box( $post, $metabox );
+		$wc_order->render_meta_box( $input, $metabox );
 		ob_get_clean();
 
-		$this->assertTrue( true );
-	}
+		// Cleanup action to prevent pollution.
+		remove_action( 'acf/render_fields', $action_callback, 10 );
 
-	/**
-	 * Test render_meta_box handles WC_Order object directly.
-	 */
-	public function test_render_meta_box_handles_wc_order() {
-		$wc_order = new WC_Order();
-
-		$mock_order = new Mock_WC_Order( 321 );
-		$metabox    = array(
-			'args' => array(
-				'field_group' => array(
-					'ID'                    => 1,
-					'key'                   => 'group_test',
-					'title'                 => 'Test Group',
-					'instruction_placement' => 'label',
-				),
-			),
+		// Verify the action was actually called.
+		$this->assertNotNull(
+			$rendered_post_id,
+			'acf/render_fields action should have been triggered'
 		);
 
-		// This should not throw any errors.
-		ob_start();
-		$wc_order->render_meta_box( $mock_order, $metabox );
-		ob_get_clean();
-
-		$this->assertTrue( true );
+		// Verify the post_id format used is woo_order_{id}.
+		$this->assertEquals(
+			$expected_id,
+			$rendered_post_id,
+			'render_meta_box should use woo_order_{id} format'
+		);
 	}
 
 	/**
@@ -339,11 +368,21 @@ class Test_Form_WC_Order extends BaseTestCase {
 
 		$wc_order->method( 'is_hpos_enabled' )->willReturn( false );
 
-		// Call save_order - should return early without calling acf_save_post.
+		// Add the action first.
+		add_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ), 10 );
+
+		// Call save_order - should return early without removing the action.
 		$wc_order->save_order( 123 );
 
-		// If we get here without errors, the early return worked.
-		$this->assertTrue( true );
+		// When HPOS is disabled, the method returns early before remove_action,
+		// so the action should still be present.
+		$this->assertNotFalse(
+			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
+			'save_order should return early and not remove the action when HPOS is disabled'
+		);
+
+		// Cleanup.
+		remove_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ), 10 );
 	}
 
 	/**
