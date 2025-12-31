@@ -3,17 +3,13 @@
  * Tests for acf_field_clone class.
  *
  * @package wordpress/secure-custom-fields
+ * @group fields
  */
-
-use WorDBless\BaseTestCase;
-
-// Ensure the clone field class is loaded.
-acf_include( 'includes/fields/class-acf-field-clone.php' );
 
 /**
  * Test acf_field_clone functionality.
  */
-class Test_ACF_Field_Clone extends BaseTestCase {
+class Test_ACF_Field_Clone extends Abstract_ACF_Field_Test {
 
 	/**
 	 * Clone field instance.
@@ -23,10 +19,42 @@ class Test_ACF_Field_Clone extends BaseTestCase {
 	private $clone_field;
 
 	/**
+	 * Get the field type for this test class.
+	 *
+	 * @return string
+	 */
+	protected function get_field_type() {
+		return 'clone';
+	}
+
+	/**
+	 * Get a base clone field configuration.
+	 *
+	 * @param array $overrides Optional overrides.
+	 * @return array
+	 */
+	protected function get_field( $overrides = array() ) {
+		return array_merge(
+			array(
+				'key'          => 'field_clone_test',
+				'name'         => 'test_clone',
+				'type'         => 'clone',
+				'label'        => 'Test Clone',
+				'required'     => 0,
+				'display'      => 'seamless',
+				'clone'        => array(),
+				'prefix_label' => 0,
+				'prefix_name'  => 0,
+			),
+			$overrides
+		);
+	}
+
+	/**
 	 * Set up test fixtures.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		// Create a new instance of the clone field.
 		$this->clone_field = new acf_field_clone();
