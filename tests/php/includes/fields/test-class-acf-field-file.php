@@ -6,12 +6,10 @@
  * @group fields
  */
 
-use WorDBless\BaseTestCase;
-
 /**
  * Tests for acf_field_file.
  */
-class Test_ACF_Field_File extends BaseTestCase {
+class Test_ACF_Field_File extends Abstract_ACF_Field_Test {
 
 	/**
 	 * Test attachment ID.
@@ -21,31 +19,39 @@ class Test_ACF_Field_File extends BaseTestCase {
 	protected $attachment_id;
 
 	/**
-	 * Test post ID.
+	 * Get the field type for this test class.
 	 *
-	 * @var int
+	 * @return string
 	 */
-	protected $post_id;
+	protected function get_field_type() {
+		return 'file';
+	}
+
+	/**
+	 * Get a base file field configuration.
+	 *
+	 * @param array $overrides Optional overrides.
+	 * @return array
+	 */
+	protected function get_field( $overrides = array() ) {
+		return array_merge(
+			array(
+				'key'           => 'field_file_test',
+				'name'          => 'test_file',
+				'type'          => 'file',
+				'label'         => 'Test File',
+				'required'      => 0,
+				'return_format' => 'array',
+			),
+			$overrides
+		);
+	}
 
 	/**
 	 * Set up the test case.
 	 */
 	public function set_up() {
 		parent::set_up();
-
-		// Ensure SCF field types are loaded.
-		if ( ! class_exists( 'acf_field_file' ) ) {
-			acf_include( 'includes/fields/class-acf-field-file.php' );
-		}
-
-		// Create a test post.
-		$this->post_id = wp_insert_post(
-			array(
-				'post_title'  => 'Test Post',
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
 
 		// Create a test attachment.
 		$this->attachment_id = wp_insert_attachment(
@@ -74,9 +80,6 @@ class Test_ACF_Field_File extends BaseTestCase {
 		if ( $this->attachment_id ) {
 			wp_delete_attachment( $this->attachment_id, true );
 		}
-		if ( $this->post_id ) {
-			wp_delete_post( $this->post_id, true );
-		}
 		parent::tear_down();
 	}
 
@@ -101,15 +104,10 @@ class Test_ACF_Field_File extends BaseTestCase {
 	 * @param string $return_format The return format setting.
 	 */
 	public function test_rest_format_matches_standard_format( $return_format ) {
-		$field_instance = acf_get_field_type( 'file' );
-		$field          = array(
-			'type'          => 'file',
-			'name'          => 'test_file',
-			'return_format' => $return_format,
-		);
+		$field = $this->get_field( array( 'return_format' => $return_format ) );
 
-		$rest_result     = $field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
-		$standard_result = $field_instance->format_value( $this->attachment_id, $this->post_id, $field );
+		$rest_result     = $this->field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
+		$standard_result = $this->field_instance->format_value( $this->attachment_id, $this->post_id, $field );
 
 		$this->assertEquals( $standard_result, $rest_result );
 	}
@@ -118,14 +116,9 @@ class Test_ACF_Field_File extends BaseTestCase {
 	 * Test URL format returns a string containing the filename.
 	 */
 	public function test_url_format_returns_string_with_filename() {
-		$field_instance = acf_get_field_type( 'file' );
-		$field          = array(
-			'type'          => 'file',
-			'name'          => 'test_file',
-			'return_format' => 'url',
-		);
+		$field = $this->get_field( array( 'return_format' => 'url' ) );
 
-		$result = $field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
+		$result = $this->field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
 
 		$this->assertIsString( $result );
 		$this->assertStringContainsString( 'test-file.pdf', $result );
@@ -135,14 +128,9 @@ class Test_ACF_Field_File extends BaseTestCase {
 	 * Test array format returns expected structure.
 	 */
 	public function test_array_format_returns_expected_structure() {
-		$field_instance = acf_get_field_type( 'file' );
-		$field          = array(
-			'type'          => 'file',
-			'name'          => 'test_file',
-			'return_format' => 'array',
-		);
+		$field = $this->get_field( array( 'return_format' => 'array' ) );
 
-		$result = $field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
+		$result = $this->field_instance->format_value_for_rest( $this->attachment_id, $this->post_id, $field );
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'ID', $result );

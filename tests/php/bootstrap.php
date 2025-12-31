@@ -13,3 +13,6 @@ require_once dirname( dirname( __DIR__ ) ) . '/vendor/autoload.php';
 
 // Load our plugin.
 require dirname( dirname( __DIR__ ) ) . '/secure-custom-fields.php';
+
+// Load abstract test base classes.
+require_once __DIR__ . '/includes/fields/abstract-class-acf-field-test.php';
