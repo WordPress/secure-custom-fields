@@ -157,11 +157,14 @@ class Test_Form_Attachment extends BaseTestCase {
 		// Mock a non-attachment screen.
 		set_current_screen( 'edit-post' );
 
-		// This should not throw any errors and should exit early.
+		// Call the method.
 		$form_attachment->admin_enqueue_scripts();
 
-		// If we get here without errors, the test passes.
-		$this->assertTrue( true );
+		// On wrong screen, admin_footer action should NOT be added.
+		$this->assertFalse(
+			has_action( 'admin_footer', array( $form_attachment, 'admin_footer' ) ),
+			'admin_footer action should not be added on non-attachment screens'
+		);
 	}
 
 	/**

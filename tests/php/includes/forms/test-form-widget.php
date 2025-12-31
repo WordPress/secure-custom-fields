@@ -60,6 +60,8 @@ class Test_Form_Widget extends BaseTestCase {
 
 	/**
 	 * Test acf_validate_save_post returns early without widget_id.
+	 *
+	 * This test verifies the early-exit code path executes without error.
 	 */
 	public function test_acf_validate_save_post_returns_early_without_widget_id() {
 		$form_widget = new acf_form_widget();
@@ -67,14 +69,19 @@ class Test_Form_Widget extends BaseTestCase {
 		// Clear any widget ID.
 		unset( $_POST['_acf_widget_id'] );
 
-		// Should not throw any errors.
+		// Verify no validation errors are generated when widget ID is empty.
+		acf_reset_validation_errors();
 		$form_widget->acf_validate_save_post();
+		$errors = acf_get_validation_errors();
 
-		$this->assertTrue( true, 'Should return early when no widget ID' );
+		$this->assertEmpty( $errors, 'No validation errors should be generated when no widget ID' );
 	}
 
 	/**
 	 * Test acf_validate_save_post processes widget values.
+	 *
+	 * This test verifies the method executes the validation code path.
+	 * Since test field keys don't exist, no actual validation errors occur.
 	 */
 	public function test_acf_validate_save_post_processes_widget_values() {
 		$form_widget = new acf_form_widget();
@@ -90,8 +97,10 @@ class Test_Form_Widget extends BaseTestCase {
 			),
 		);
 
-		// Should not throw any errors.
+		// Verify method executes without error and processes the values.
+		acf_reset_validation_errors();
 		$form_widget->acf_validate_save_post();
+		$errors = acf_get_validation_errors();
 
 		// Cleanup.
 		unset( $_POST['_acf_widget_id'] );
@@ -99,7 +108,8 @@ class Test_Form_Widget extends BaseTestCase {
 		unset( $_POST['_acf_widget_prefix'] );
 		unset( $_POST['widget-test_widget'] );
 
-		$this->assertTrue( true, 'Should process widget values' );
+		// No errors expected since field_test doesn't exist as a registered field.
+		$this->assertEmpty( $errors, 'No validation errors should occur for non-existent fields' );
 	}
 
 	/**

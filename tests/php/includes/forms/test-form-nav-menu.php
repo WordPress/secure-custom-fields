@@ -86,6 +86,8 @@ class Test_Form_Nav_Menu extends BaseTestCase {
 
 	/**
 	 * Test acf_validate_save_post returns early when no menu-item-acf data.
+	 *
+	 * This test verifies the early-exit code path executes without error.
 	 */
 	public function test_acf_validate_save_post_returns_early_without_menu_item_data() {
 		$form_nav_menu = new acf_form_nav_menu();
@@ -93,41 +95,40 @@ class Test_Form_Nav_Menu extends BaseTestCase {
 		// Clear any menu-item-acf data.
 		unset( $_POST['menu-item-acf'] );
 
-		// Should not throw any errors and should return early.
+		// Verify no validation errors are generated when data is empty.
+		acf_reset_validation_errors();
 		$form_nav_menu->acf_validate_save_post();
+		$errors = acf_get_validation_errors();
 
-		$this->assertTrue( true, 'Should return early when no menu-item-acf data' );
+		$this->assertEmpty( $errors, 'No validation errors should be generated when no menu-item-acf data' );
 	}
 
 	/**
 	 * Test acf_validate_save_post processes menu item values.
+	 *
+	 * This test verifies the method executes the validation code path.
+	 * Since test field keys don't exist, no actual validation errors occur.
 	 */
 	public function test_acf_validate_save_post_processes_menu_items() {
 		$form_nav_menu = new acf_form_nav_menu();
 
-		// Set up menu-item-acf data.
+		// Set up menu-item-acf data with fake field key.
 		$_POST['menu-item-acf'] = array(
 			123 => array(
 				'field_test' => 'test value',
 			),
 		);
 
-		// Track validation calls.
-		$validated = false;
-		add_action(
-			'acf/validate_values',
-			function () use ( &$validated ) {
-				$validated = true;
-			}
-		);
-
+		// Verify method executes without error.
+		acf_reset_validation_errors();
 		$form_nav_menu->acf_validate_save_post();
+		$errors = acf_get_validation_errors();
 
 		// Cleanup.
 		unset( $_POST['menu-item-acf'] );
 
-		// The function should complete without errors.
-		$this->assertTrue( true, 'Should process menu item values' );
+		// No errors expected since field_test doesn't exist as a registered field.
+		$this->assertEmpty( $errors, 'No validation errors should occur for non-existent fields' );
 	}
 
 	/**
@@ -271,10 +272,18 @@ class Test_Form_Nav_Menu extends BaseTestCase {
 		// Clear any menu-item-acf data.
 		unset( $_POST['menu-item-acf'] );
 
-		// Should not throw any errors.
+		// Track if save was called.
+		$saved = false;
+		add_action(
+			'acf/save_post',
+			function () use ( &$saved ) {
+				$saved = true;
+			}
+		);
+
 		$form_nav_menu->update_nav_menu_items( 123 );
 
-		$this->assertTrue( true, 'Should return early when no menu-item-acf data' );
+		$this->assertFalse( $saved, 'acf_save_post should not be called when no menu-item-acf data' );
 	}
 
 	/**
