@@ -309,18 +309,23 @@ class Test_Form_WC_Order extends BaseTestCase {
 
 		// Track if acf_render_fields action was triggered with correct post_id.
 		$rendered_post_id = null;
-		add_action(
-			'acf/render_fields',
-			function ( $fields, $post_id ) use ( &$rendered_post_id ) {
-				$rendered_post_id = $post_id;
-			},
-			10,
-			2
-		);
+		$action_callback  = function ( $fields, $post_id ) use ( &$rendered_post_id ) {
+			$rendered_post_id = $post_id;
+		};
+		add_action( 'acf/render_fields', $action_callback, 10, 2 );
 
 		ob_start();
 		$wc_order->render_meta_box( $post, $metabox );
-		$output = ob_get_clean();
+		ob_get_clean();
+
+		// Cleanup action to prevent pollution.
+		remove_action( 'acf/render_fields', $action_callback, 10 );
+
+		// Verify the action was actually called.
+		$this->assertNotNull(
+			$rendered_post_id,
+			'acf/render_fields action should have been triggered'
+		);
 
 		// Verify the post_id format used is woo_order_{id}.
 		$this->assertEquals(
@@ -350,18 +355,23 @@ class Test_Form_WC_Order extends BaseTestCase {
 
 		// Track if acf_render_fields action was triggered with correct post_id.
 		$rendered_post_id = null;
-		add_action(
-			'acf/render_fields',
-			function ( $fields, $post_id ) use ( &$rendered_post_id ) {
-				$rendered_post_id = $post_id;
-			},
-			10,
-			2
-		);
+		$action_callback  = function ( $fields, $post_id ) use ( &$rendered_post_id ) {
+			$rendered_post_id = $post_id;
+		};
+		add_action( 'acf/render_fields', $action_callback, 10, 2 );
 
 		ob_start();
 		$wc_order->render_meta_box( $mock_order, $metabox );
-		$output = ob_get_clean();
+		ob_get_clean();
+
+		// Cleanup action to prevent pollution.
+		remove_action( 'acf/render_fields', $action_callback, 10 );
+
+		// Verify the action was actually called.
+		$this->assertNotNull(
+			$rendered_post_id,
+			'acf/render_fields action should have been triggered'
+		);
 
 		// Verify the post_id format used is woo_order_{id}.
 		$this->assertEquals(
