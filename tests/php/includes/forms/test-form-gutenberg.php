@@ -23,6 +23,7 @@ class Test_Form_Gutenberg extends BaseTestCase {
 
 		// Reset global $current_screen to prevent polluting other tests.
 		global $current_screen;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
 		$current_screen = null;
 	}
 

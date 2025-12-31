@@ -23,6 +23,7 @@ class Test_Form_Taxonomy extends BaseTestCase {
 
 		// Reset globals to prevent polluting other tests.
 		global $pagenow;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
 		$pagenow = null;
 	}
 

@@ -23,8 +23,10 @@ class Test_Form_Comment extends BaseTestCase {
 
 		// Reset globals to prevent polluting other tests.
 		global $pagenow, $post;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
 		$pagenow = null;
-		$post    = null;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
+		$post = null;
 	}
 
 	/**
