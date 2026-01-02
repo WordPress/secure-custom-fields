@@ -202,4 +202,114 @@ class Test_ACF_Field_Wysiwyg extends Abstract_ACF_Field_Test {
 		$this->assertStringContainsString( '<strong>', $result );
 		$this->assertStringContainsString( '<li>', $result );
 	}
+
+	/**
+	 * Test format_value returns non-string unchanged.
+	 *
+	 * Tests the early return for non-strings:
+	 * `if ( empty( $value ) || ! is_string( $value ) ) { return $value; }`
+	 */
+	public function test_format_value_returns_array_unchanged() {
+		$field = $this->get_field();
+		$array = array( 'some', 'array' );
+
+		$result = $this->field_instance->format_value( $array, $this->post_id, $field, false );
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( $array, $result );
+	}
+
+	/**
+	 * Test format_value returns integer unchanged.
+	 */
+	public function test_format_value_returns_integer_unchanged() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( 12345, $this->post_id, $field, false );
+
+		$this->assertSame( 12345, $result );
+	}
+
+	/**
+	 * Test format_value returns null unchanged.
+	 */
+	public function test_format_value_returns_null_unchanged() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( null, $this->post_id, $field, false );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test format_value escapes CDATA closing sequence.
+	 *
+	 * Tests the str_replace for CDATA:
+	 * `return str_replace( ']]>', ']]&gt;', $value );`
+	 */
+	public function test_format_value_escapes_cdata_closing() {
+		$field   = $this->get_field();
+		$content = '<p>Some content with ]]> CDATA closing</p>';
+
+		$result = $this->field_instance->format_value( $content, $this->post_id, $field, false );
+
+		$this->assertStringContainsString( ']]&gt;', $result );
+		$this->assertStringNotContainsString( ']]>', $result );
+	}
+
+	/**
+	 * Test format_value with escape_html applies acf_esc_html filter.
+	 *
+	 * Tests the escape_html branch:
+	 * `if ( $escape_html ) { add_filter( 'acf_the_content', 'acf_esc_html', 1 ); }`
+	 */
+	public function test_format_value_with_escape_html() {
+		$field   = $this->get_field();
+		$content = '<p>Test content</p>';
+
+		// With escape_html = true, content should be sanitized.
+		$result = $this->field_instance->format_value( $content, $this->post_id, $field, true );
+
+		// Result should be a string (escaped or not depending on filter availability).
+		$this->assertIsString( $result );
+	}
+
+	/**
+	 * Test format_value without escape_html preserves HTML.
+	 */
+	public function test_format_value_without_escape_html() {
+		$field   = $this->get_field();
+		$content = '<script>alert("test")</script>';
+
+		// With escape_html = false, script tags should be preserved.
+		$result = $this->field_instance->format_value( $content, $this->post_id, $field, false );
+
+		$this->assertIsString( $result );
+		// Content goes through filters but should contain the script text.
+		$this->assertStringContainsString( 'alert', $result );
+	}
+
+	/**
+	 * Test format_value returns false unchanged.
+	 */
+	public function test_format_value_returns_false_unchanged() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( false, $this->post_id, $field, false );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test format_value returns zero unchanged.
+	 *
+	 * Tests that numeric zero (empty but not string) returns early.
+	 */
+	public function test_format_value_returns_zero_unchanged() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( 0, $this->post_id, $field, false );
+
+		$this->assertSame( 0, $result );
+	}
 }

@@ -193,4 +193,144 @@ class Test_ACF_Field_Radio extends Abstract_ACF_Field_Test {
 		// Unknown choices should return the value itself.
 		$this->assertEquals( 'unknown', $result );
 	}
+
+	/**
+	 * Test load_value extracts single value from array.
+	 *
+	 * Tests the load_value array handling:
+	 * `if ( is_array( $value ) ) { $value = array_pop( $value ); }`
+	 */
+	public function test_load_value_extracts_from_array() {
+		$field = $this->get_field();
+
+		// Radio is single-select, so if stored as array, should extract last value.
+		$result = $this->field_instance->load_value( array( 'red', 'green', 'blue' ), $this->post_id, $field );
+
+		$this->assertEquals( 'blue', $result );
+	}
+
+	/**
+	 * Test load_value returns single value unchanged.
+	 */
+	public function test_load_value_single_unchanged() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->load_value( 'green', $this->post_id, $field );
+
+		$this->assertEquals( 'green', $result );
+	}
+
+	/**
+	 * Test update_value allows numeric zero through.
+	 *
+	 * Tests the early return condition:
+	 * `if ( ! $value && ! is_numeric( $value ) ) { return $value; }`
+	 */
+	public function test_update_value_allows_numeric_zero() {
+		$field = $this->get_field(
+			array(
+				'choices' => array(
+					'0' => 'Zero',
+					'1' => 'One',
+					'2' => 'Two',
+				),
+			)
+		);
+
+		// Numeric 0 should pass through, not return early.
+		$result = $this->field_instance->update_value( 0, $this->post_id, $field );
+
+		$this->assertSame( 0, $result );
+	}
+
+	/**
+	 * Test update_value allows string zero through.
+	 */
+	public function test_update_value_allows_string_zero() {
+		$field = $this->get_field(
+			array(
+				'choices' => array(
+					'0' => 'Zero',
+					'1' => 'One',
+				),
+			)
+		);
+
+		$result = $this->field_instance->update_value( '0', $this->post_id, $field );
+
+		$this->assertSame( '0', $result );
+	}
+
+	/**
+	 * Test update_value returns empty string early.
+	 *
+	 * Tests that non-numeric empty values return early.
+	 */
+	public function test_update_value_empty_returns_early() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( '', $this->post_id, $field );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * Test update_value returns null early.
+	 */
+	public function test_update_value_null_returns_early() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( null, $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test get_rest_schema includes enum without other_choice.
+	 *
+	 * Tests the enum generation:
+	 * `if ( empty( $field['other_choice'] ) ) { return $schema; }`
+	 */
+	public function test_get_rest_schema_includes_enum() {
+		$field = $this->get_field( array( 'other_choice' => 0 ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'enum', $schema );
+	}
+
+	/**
+	 * Test get_rest_schema excludes enum with other_choice.
+	 *
+	 * Tests the early return when other_choice is enabled:
+	 * `if ( ! empty( $field['other_choice'] ) ) { return $schema; }`
+	 */
+	public function test_get_rest_schema_no_enum_with_other_choice() {
+		$field = $this->get_field( array( 'other_choice' => 1 ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		// With other_choice enabled, enum should NOT be set.
+		$this->assertArrayNotHasKey( 'enum', $schema );
+	}
+
+	/**
+	 * Test get_rest_schema includes null in enum when allow_null.
+	 *
+	 * Tests the allow_null enum addition:
+	 * `if ( ! empty( $field['allow_null'] ) ) { $schema['enum'][] = null; }`
+	 */
+	public function test_get_rest_schema_enum_includes_null_when_allowed() {
+		$field = $this->get_field(
+			array(
+				'allow_null'   => 1,
+				'other_choice' => 0,
+			)
+		);
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'enum', $schema );
+		$this->assertContains( null, $schema['enum'] );
+	}
 }

@@ -136,4 +136,118 @@ class Test_ACF_Field_Oembed extends Abstract_ACF_Field_Test {
 
 		$this->assertTrue( $valid );
 	}
+
+	/**
+	 * Test prepare_field sets default width when empty.
+	 *
+	 * Tests the default width logic:
+	 * `if ( ! $field['width'] ) { $field['width'] = $this->width; }`
+	 */
+	public function test_prepare_field_sets_default_width() {
+		$field = $this->get_field( array( 'width' => '' ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( 640, $prepared['width'] );  // Default is 640.
+	}
+
+	/**
+	 * Test prepare_field sets default height when empty.
+	 *
+	 * Tests the default height logic:
+	 * `if ( ! $field['height'] ) { $field['height'] = $this->height; }`
+	 */
+	public function test_prepare_field_sets_default_height() {
+		$field = $this->get_field( array( 'height' => '' ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( 390, $prepared['height'] );  // Default is 390.
+	}
+
+	/**
+	 * Test prepare_field preserves custom width.
+	 */
+	public function test_prepare_field_preserves_custom_width() {
+		$field = $this->get_field( array( 'width' => '800' ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( '800', $prepared['width'] );
+	}
+
+	/**
+	 * Test prepare_field preserves custom height.
+	 */
+	public function test_prepare_field_preserves_custom_height() {
+		$field = $this->get_field( array( 'height' => '600' ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( '600', $prepared['height'] );
+	}
+
+	/**
+	 * Test prepare_field with zero width uses default.
+	 *
+	 * Tests falsy check (0 is treated as empty).
+	 */
+	public function test_prepare_field_zero_width_uses_default() {
+		$field = $this->get_field( array( 'width' => 0 ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( 640, $prepared['width'] );
+	}
+
+	/**
+	 * Test prepare_field with zero height uses default.
+	 */
+	public function test_prepare_field_zero_height_uses_default() {
+		$field = $this->get_field( array( 'height' => 0 ) );
+
+		$prepared = $this->field_instance->prepare_field( $field );
+
+		$this->assertEquals( 390, $prepared['height'] );
+	}
+
+	/**
+	 * Test format_value returns empty for null.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $value ) ) { return $value; }`
+	 */
+	public function test_format_value_null_returns_early() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( null, $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test format_value returns empty for false.
+	 */
+	public function test_format_value_false_returns_early() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( false, $this->post_id, $field );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test get_rest_schema adds uri format.
+	 *
+	 * Tests the format addition:
+	 * `$schema['format'] = 'uri';`
+	 */
+	public function test_get_rest_schema_includes_uri_format() {
+		$field = $this->get_field();
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'format', $schema );
+		$this->assertEquals( 'uri', $schema['format'] );
+	}
 }
