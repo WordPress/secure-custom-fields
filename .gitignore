@@ -62,6 +62,7 @@ assets/build/**/*.php
 # Code Coverage
 /coverage/
 /.nyc_output/
+/.php-coverage/
 
 # Claude settings
 **/.claude/settings.local.json
