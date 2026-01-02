@@ -10,10 +10,23 @@ use WorDBless\BaseTestCase;
 // Load the ACF_Form_User class.
 acf_include( 'includes/forms/form-user.php' );
 
+// Load the location type for user_form to enable field group matching.
+acf_include( 'includes/locations/class-acf-location-user-form.php' );
+
 /**
  * Class Test_Form_User
  */
 class Test_Form_User extends BaseTestCase {
+
+	/**
+	 * Set up each test to prevent global state pollution.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		// Reset form data store to prevent pollution from other tests.
+		acf_get_store( 'form' )->reset();
+	}
 
 	/**
 	 * Test if the ACF_Form_User class exists.
@@ -318,5 +331,87 @@ class Test_Form_User extends BaseTestCase {
 		$output = ob_get_clean();
 
 		$this->assertEmpty( $output, 'Should render nothing for register view when no field groups match' );
+	}
+
+	/**
+	 * Test admin_enqueue_scripts returns early when not on user screens.
+	 *
+	 * In test environment, get_current_screen() returns null, so acf_is_screen()
+	 * returns false, triggering the early return path.
+	 */
+	public function test_admin_enqueue_scripts_bails_when_not_on_user_screen() {
+		$form_user = new ACF_Form_User();
+
+		// Track if acf_enqueue_scripts was called.
+		$enqueue_called = false;
+		add_action(
+			'acf/enqueue_scripts',
+			function () use ( &$enqueue_called ) {
+				$enqueue_called = true;
+			}
+		);
+
+		// Call admin_enqueue_scripts - should return early since no screen is set.
+		$form_user->admin_enqueue_scripts();
+
+		// acf_enqueue_scripts should NOT be called when not on user screen.
+		$this->assertFalse( $enqueue_called, 'acf_enqueue_scripts should not be called when not on user screen' );
+	}
+
+	/**
+	 * Test render_edit renders nothing without field groups.
+	 */
+	public function test_render_edit_renders_nothing_without_field_groups() {
+		$form_user = new ACF_Form_User();
+
+		// Create a mock user object.
+		$user     = new stdClass();
+		$user->ID = 123;
+
+		// Return no field groups.
+		add_filter(
+			'acf/get_field_groups',
+			function () {
+				return array();
+			}
+		);
+
+		ob_start();
+		$form_user->render_edit( $user );
+		$output = ob_get_clean();
+
+		// Should complete without error and render nothing when no field groups.
+		$this->assertEmpty( $output, 'render_edit should render nothing without field groups' );
+	}
+
+	/**
+	 * Test render_edit with different user IDs.
+	 *
+	 * Verify render_edit works correctly with various user ID values.
+	 */
+	public function test_render_edit_with_different_user_ids() {
+		$form_user = new ACF_Form_User();
+
+		// Return no field groups.
+		add_filter(
+			'acf/get_field_groups',
+			function () {
+				return array();
+			}
+		);
+
+		// Test with various user IDs.
+		$user_ids = array( 1, 100, 999 );
+
+		foreach ( $user_ids as $user_id ) {
+			$user     = new stdClass();
+			$user->ID = $user_id;
+
+			ob_start();
+			$form_user->render_edit( $user );
+			$output = ob_get_clean();
+
+			$this->assertEmpty( $output, "render_edit should handle user_id $user_id without error" );
+		}
 	}
 }

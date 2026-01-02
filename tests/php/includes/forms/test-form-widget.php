@@ -336,4 +336,23 @@ class Test_Form_Widget extends BaseTestCase {
 		unset( $_POST['_acf_nonce'] );
 		unset( $_POST['wp_customize'] );
 	}
+
+	/**
+	 * Test admin_enqueue_scripts returns early when not on widgets screen.
+	 *
+	 * In test environment, get_current_screen() returns null, so acf_is_screen()
+	 * returns false, triggering the early return path.
+	 */
+	public function test_admin_enqueue_scripts_bails_when_not_on_widgets_screen() {
+		$form_widget = new acf_form_widget();
+
+		// Call admin_enqueue_scripts - should return early since no screen is set.
+		$form_widget->admin_enqueue_scripts();
+
+		// acf/input/admin_footer action should NOT be added when not on widgets screen.
+		$this->assertFalse(
+			has_action( 'acf/input/admin_footer', array( $form_widget, 'admin_footer' ) ),
+			'admin_footer action should not be added when not on widgets screen'
+		);
+	}
 }

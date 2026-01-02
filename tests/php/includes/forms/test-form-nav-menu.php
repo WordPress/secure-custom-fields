@@ -316,4 +316,23 @@ class Test_Form_Nav_Menu extends BaseTestCase {
 		$this->assertEquals( $expected, $result, 'Should return walker class unchanged' );
 		$this->assertEquals( $menu_id, acf_get_data( 'nav_menu_id' ), 'Should store menu ID' );
 	}
+
+	/**
+	 * Test admin_enqueue_scripts returns early when not on nav-menus screen.
+	 *
+	 * In test environment, get_current_screen() returns null, so acf_is_screen()
+	 * returns false, triggering the early return path.
+	 */
+	public function test_admin_enqueue_scripts_bails_when_not_on_nav_menus_screen() {
+		$form_nav_menu = new acf_form_nav_menu();
+
+		// Call admin_enqueue_scripts - should return early since no screen is set.
+		$form_nav_menu->admin_enqueue_scripts();
+
+		// admin_footer action should NOT be added when not on nav-menus screen.
+		$this->assertFalse(
+			has_action( 'admin_footer', array( $form_nav_menu, 'admin_footer' ) ),
+			'admin_footer action should not be added when not on nav-menus screen'
+		);
+	}
 }

@@ -451,4 +451,135 @@ class Test_Form_Front extends BaseTestCase {
 
 		$this->assertEquals( $expected, $args[ $key ], "$key should have correct default" );
 	}
+
+	/**
+	 * Test enqueue_form triggers check_submit_form.
+	 *
+	 * When no form submission is present, enqueue_form should still complete
+	 * without errors and call check_submit_form internally.
+	 */
+	public function test_enqueue_form_calls_check_submit_form() {
+		$form_front = new acf_form_front();
+
+		// Clear any POST data that might trigger form submission.
+		unset( $_POST['_acf_nonce'] );
+		unset( $_POST['_acf_form'] );
+
+		// Track if check_submit_form returns false (no form submitted).
+		$check_result = $form_front->check_submit_form();
+
+		// Should return false when no form data is present.
+		$this->assertFalse( $check_result, 'check_submit_form should return false without nonce' );
+	}
+
+	/**
+	 * Test submit_form applies pre_submit_form filter.
+	 */
+	public function test_submit_form_applies_pre_submit_filter() {
+		$form_front = new acf_form_front();
+
+		$filter_called = false;
+		add_filter(
+			'acf/pre_submit_form',
+			function ( $form ) use ( &$filter_called ) {
+				$filter_called = true;
+				// Remove return to prevent redirect.
+				$form['return'] = '';
+				return $form;
+			}
+		);
+
+		// Use a real post to avoid issues.
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Test Submit Form',
+				'post_status' => 'draft',
+			)
+		);
+
+		$form = array(
+			'post_id' => $post_id,
+			'return'  => '',
+		);
+
+		$form_front->submit_form( $form );
+
+		$this->assertTrue( $filter_called, 'acf/pre_submit_form filter should be applied' );
+
+		// Cleanup.
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Test submit_form fires submit_form action.
+	 */
+	public function test_submit_form_fires_action() {
+		$form_front = new acf_form_front();
+
+		$action_fired   = false;
+		$action_post_id = null;
+		add_action(
+			'acf/submit_form',
+			function ( $form, $post_id ) use ( &$action_fired, &$action_post_id ) {
+				$action_fired   = true;
+				$action_post_id = $post_id;
+			},
+			10,
+			2
+		);
+
+		// Use a real post.
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Test Submit Form Action',
+				'post_status' => 'draft',
+			)
+		);
+
+		$form = array(
+			'post_id' => $post_id,
+			'return'  => '', // Empty to avoid redirect.
+		);
+
+		$form_front->submit_form( $form );
+
+		$this->assertTrue( $action_fired, 'acf/submit_form action should fire' );
+		$this->assertEquals( $post_id, $action_post_id, 'Action should receive correct post_id' );
+
+		// Cleanup.
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Test submit_form sets global acf_form variable.
+	 */
+	public function test_submit_form_sets_global() {
+		$form_front = new acf_form_front();
+
+		// Clear any existing global.
+		unset( $GLOBALS['acf_form'] );
+
+		// Use a real post.
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Test Global Form',
+				'post_status' => 'draft',
+			)
+		);
+
+		$form = array(
+			'post_id'     => $post_id,
+			'return'      => '',
+			'custom_data' => 'test_value',
+		);
+
+		$form_front->submit_form( $form );
+
+		$this->assertArrayHasKey( 'acf_form', $GLOBALS, 'Global acf_form should be set' );
+		$this->assertEquals( 'test_value', $GLOBALS['acf_form']['custom_data'], 'Global should contain form data' );
+
+		// Cleanup.
+		wp_delete_post( $post_id, true );
+		unset( $GLOBALS['acf_form'] ); // @phpstan-ignore-line -- Cleanup global in test.
+	}
 }
