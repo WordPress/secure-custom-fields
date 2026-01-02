@@ -8,6 +8,7 @@ module.exports = {
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+		'^jquery$': '<rootDir>/tests/js/mocks/jquery.js',
 	},
 	collectCoverageFrom: [
 		'assets/src/js/**/*.{js,jsx}',
