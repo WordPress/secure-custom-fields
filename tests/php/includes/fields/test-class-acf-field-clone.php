@@ -188,4 +188,54 @@ class Test_ACF_Field_Clone extends Abstract_ACF_Field_Test {
 		$this->assertCount( 1, $result );
 		$this->assertEquals( 'clone', $result[0]['type'] );
 	}
+
+	/**
+	 * Test field category is layout.
+	 */
+	public function test_field_category_is_layout() {
+		$this->assertEquals( 'layout', $this->clone_field->category );
+	}
+
+	/**
+	 * Test field is marked as pro.
+	 */
+	public function test_field_is_pro() {
+		$this->assertTrue( $this->clone_field->pro );
+	}
+
+	/**
+	 * Test field does not support bindings.
+	 */
+	public function test_does_not_support_bindings() {
+		$this->assertArrayHasKey( 'bindings', $this->clone_field->supports );
+		$this->assertFalse( $this->clone_field->supports['bindings'] );
+	}
+
+	/**
+	 * Test default values are set correctly.
+	 */
+	public function test_default_values() {
+		$this->assertEquals( '', $this->clone_field->defaults['clone'] );
+		$this->assertEquals( 0, $this->clone_field->defaults['prefix_label'] );
+		$this->assertEquals( 0, $this->clone_field->defaults['prefix_name'] );
+		$this->assertEquals( 'seamless', $this->clone_field->defaults['display'] );
+		$this->assertEquals( 'block', $this->clone_field->defaults['layout'] );
+	}
+
+	/**
+	 * Test have_rows property is set to single.
+	 */
+	public function test_have_rows_is_single() {
+		$this->assertEquals( 'single', $this->clone_field->have_rows );
+	}
+
+	/**
+	 * Test acf_get_fields handles empty array.
+	 */
+	public function test_acf_get_fields_handles_empty_array() {
+		$result = $this->clone_field->acf_get_fields( array(), array() );
+
+		$this->assertIsArray( $result );
+		$this->assertEmpty( $result );
+	}
 }

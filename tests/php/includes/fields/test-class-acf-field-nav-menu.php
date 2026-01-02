@@ -91,4 +91,35 @@ class Test_ACF_Field_Nav_Menu extends Abstract_ACF_Field_Test {
 		// Empty value with allow_null returns null or false.
 		$this->assertTrue( null === $result || false === $result );
 	}
+
+	/**
+	 * Test field category is choice.
+	 */
+	public function test_field_category_is_choice() {
+		$this->assertEquals( 'choice', $this->field_instance->category );
+	}
+
+	/**
+	 * Test default values are set correctly.
+	 */
+	public function test_default_values() {
+		$this->assertEquals( 'id', $this->field_instance->defaults['save_format'] );
+		$this->assertEquals( 0, $this->field_instance->defaults['allow_null'] );
+		$this->assertEquals( 'div', $this->field_instance->defaults['container'] );
+	}
+
+	/**
+	 * Test field has preview image.
+	 */
+	public function test_has_preview_image() {
+		$this->assertNotEmpty( $this->field_instance->preview_image );
+		$this->assertStringContainsString( 'field-preview-select', $this->field_instance->preview_image );
+	}
+
+	/**
+	 * Test field name is nav_menu.
+	 */
+	public function test_field_name() {
+		$this->assertEquals( 'nav_menu', $this->field_instance->name );
+	}
 }

@@ -76,4 +76,44 @@ class Test_ACF_Field_Separator extends Abstract_ACF_Field_Test {
 
 		$this->assertEquals( 0, $result['required'] );
 	}
+
+	/**
+	 * Test load_field sets value to false.
+	 */
+	public function test_load_field_sets_value_false() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->load_field( $field );
+
+		$this->assertFalse( $result['value'] );
+	}
+
+	/**
+	 * Test field does not support bindings.
+	 */
+	public function test_does_not_support_bindings() {
+		// Separator only has 'required' in supports array.
+		$this->assertArrayNotHasKey( 'bindings', $this->field_instance->supports );
+	}
+
+	/**
+	 * Test render_field returns nothing (void function).
+	 */
+	public function test_render_field_outputs_nothing() {
+		$field = $this->get_field();
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$output = ob_get_clean();
+
+		$this->assertEmpty( $output );
+	}
+
+	/**
+	 * Test field has preview image.
+	 */
+	public function test_has_preview_image() {
+		$this->assertNotEmpty( $this->field_instance->preview_image );
+		$this->assertStringContainsString( 'field-preview-separator', $this->field_instance->preview_image );
+	}
 }

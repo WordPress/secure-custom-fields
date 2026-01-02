@@ -88,4 +88,76 @@ class Test_ACF_Field_Accordion extends Abstract_ACF_Field_Test {
 		$this->assertIsArray( $schema );
 		$this->assertContains( 'null', $schema['type'] );
 	}
+
+	/**
+	 * Test field has correct category.
+	 */
+	public function test_field_category_is_layout() {
+		$this->assertEquals( 'layout', $this->field_instance->category );
+	}
+
+	/**
+	 * Test field does not show in REST by default.
+	 */
+	public function test_show_in_rest_is_false() {
+		$this->assertFalse( $this->field_instance->show_in_rest );
+	}
+
+	/**
+	 * Test field does not support required.
+	 */
+	public function test_does_not_support_required() {
+		$this->assertArrayHasKey( 'required', $this->field_instance->supports );
+		$this->assertFalse( $this->field_instance->supports['required'] );
+	}
+
+	/**
+	 * Test field does not support bindings.
+	 */
+	public function test_does_not_support_bindings() {
+		$this->assertArrayHasKey( 'bindings', $this->field_instance->supports );
+		$this->assertFalse( $this->field_instance->supports['bindings'] );
+	}
+
+	/**
+	 * Test default values are set correctly.
+	 */
+	public function test_default_values() {
+		$this->assertEquals( 0, $this->field_instance->defaults['open'] );
+		$this->assertEquals( 0, $this->field_instance->defaults['multi_expand'] );
+		$this->assertEquals( 0, $this->field_instance->defaults['endpoint'] );
+	}
+
+	/**
+	 * Test load_field with open option enabled.
+	 */
+	public function test_load_field_preserves_open_option() {
+		$field = $this->get_field( array( 'open' => 1 ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 1, $loaded['open'] );
+	}
+
+	/**
+	 * Test load_field with multi_expand option enabled.
+	 */
+	public function test_load_field_preserves_multi_expand_option() {
+		$field = $this->get_field( array( 'multi_expand' => 1 ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 1, $loaded['multi_expand'] );
+	}
+
+	/**
+	 * Test load_field with endpoint option enabled.
+	 */
+	public function test_load_field_preserves_endpoint_option() {
+		$field = $this->get_field( array( 'endpoint' => 1 ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 1, $loaded['endpoint'] );
+	}
 }

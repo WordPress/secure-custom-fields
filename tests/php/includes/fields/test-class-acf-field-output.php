@@ -67,4 +67,31 @@ class Test_ACF_Field_Output extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'html', $this->field_instance->defaults );
 		$this->assertFalse( $this->field_instance->defaults['html'] );
 	}
+
+	/**
+	 * Test field name is 'output'.
+	 */
+	public function test_field_name() {
+		$this->assertEquals( 'output', $this->field_instance->name );
+	}
+
+	/**
+	 * Test field label is 'output'.
+	 */
+	public function test_field_label() {
+		$this->assertEquals( 'output', $this->field_instance->label );
+	}
+
+	/**
+	 * Test render_field with html option enabled still returns false.
+	 *
+	 * @expectedDeprecated acf_field_output::render_field
+	 */
+	public function test_render_field_with_html_returns_false() {
+		$field = $this->get_field( array( 'html' => true ) );
+
+		$result = $this->field_instance->render_field( $field );
+
+		$this->assertFalse( $result );
+	}
 }

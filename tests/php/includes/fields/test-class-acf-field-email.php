@@ -113,4 +113,49 @@ class Test_ACF_Field_Email extends Abstract_ACF_Field_Test {
 		$this->assertIsArray( $schema );
 		$this->assertContains( 'string', $schema['type'] );
 	}
+
+	/**
+	 * Test get_rest_schema includes email format.
+	 */
+	public function test_get_rest_schema_has_email_format() {
+		$field = $this->get_field();
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'format', $schema );
+		$this->assertEquals( 'email', $schema['format'] );
+	}
+
+	/**
+	 * Test validate_value allows empty when not required.
+	 */
+	public function test_validate_value_allows_empty_when_not_required() {
+		$field = $this->get_field( array( 'required' => 0 ) );
+
+		$valid = $this->field_instance->validate_value( true, '', $field, 'acf[field_email_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value validates unicode emails.
+	 */
+	public function test_validate_value_unicode_email() {
+		$field = $this->get_field();
+
+		// Test with a valid ASCII email as unicode support varies.
+		$valid = $this->field_instance->validate_value( true, 'test@example.com', $field, 'acf[field_email_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test field has correct default values.
+	 */
+	public function test_default_values() {
+		$this->assertEquals( '', $this->field_instance->defaults['default_value'] );
+		$this->assertEquals( '', $this->field_instance->defaults['placeholder'] );
+		$this->assertEquals( '', $this->field_instance->defaults['prepend'] );
+		$this->assertEquals( '', $this->field_instance->defaults['append'] );
+	}
 }

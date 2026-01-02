@@ -137,4 +137,71 @@ class Test_ACF_Field_File extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'url', $result );
 		$this->assertEquals( $this->attachment_id, $result['ID'] );
 	}
+
+	/**
+	 * Test format_value returns false for empty value.
+	 */
+	public function test_format_value_empty_returns_false() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( '', $this->post_id, $field );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test format_value returns false for invalid attachment.
+	 */
+	public function test_format_value_invalid_attachment_returns_false() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( 999999, $this->post_id, $field );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test ID format returns integer.
+	 */
+	public function test_id_format_returns_integer() {
+		$field = $this->get_field( array( 'return_format' => 'id' ) );
+
+		$result = $this->field_instance->format_value( $this->attachment_id, $this->post_id, $field );
+
+		$this->assertIsInt( $result );
+		$this->assertEquals( $this->attachment_id, $result );
+	}
+
+	/**
+	 * Test get_rest_schema returns valid schema.
+	 */
+	public function test_get_rest_schema() {
+		$field = $this->get_field();
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertIsArray( $schema );
+	}
+
+	/**
+	 * Test update_value saves attachment ID.
+	 */
+	public function test_update_value_saves_id() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( $this->attachment_id, $this->post_id, $field );
+
+		$this->assertEquals( $this->attachment_id, $result );
+	}
+
+	/**
+	 * Test update_value handles empty value.
+	 */
+	public function test_update_value_handles_empty() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( '', $this->post_id, $field );
+
+		$this->assertEmpty( $result );
+	}
 }
