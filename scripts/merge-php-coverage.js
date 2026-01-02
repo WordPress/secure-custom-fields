@@ -50,12 +50,13 @@ function parseArgs() {
 /**
  * Read all coverage JSON files from the coverage directory.
  *
- * @return {Array} Array of coverage data objects.
+ * @return {Array|null} Array of coverage data objects, or null if none found.
  */
 function readCoverageFiles() {
 	if ( ! fs.existsSync( COVERAGE_DIR ) ) {
-		console.error( `Coverage directory not found: ${ COVERAGE_DIR }` );
-		process.exit( 1 );
+		console.log( `No PHP coverage directory found: ${ COVERAGE_DIR }` );
+		console.log( 'Skipping PHP coverage report generation.' );
+		return null;
 	}
 
 	const files = fs
@@ -63,8 +64,9 @@ function readCoverageFiles() {
 		.filter( ( f ) => f.endsWith( '.json' ) );
 
 	if ( files.length === 0 ) {
-		console.error( 'No coverage files found.' );
-		process.exit( 1 );
+		console.log( 'No PHP coverage files found.' );
+		console.log( 'Skipping PHP coverage report generation.' );
+		return null;
 	}
 
 	console.log( `Found ${ files.length } coverage files.` );
@@ -307,6 +309,12 @@ function main() {
 	console.log( 'Merging PHP coverage files...' );
 
 	const coverageFiles = readCoverageFiles();
+
+	if ( coverageFiles === null ) {
+		// No coverage files found, exit gracefully.
+		return;
+	}
+
 	const merged = mergeCoverage( coverageFiles );
 	const stats = calculateStats( merged );
 
