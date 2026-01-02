@@ -64,28 +64,44 @@ jobs:
             - name: Install wp-env
               run: npm install -g @wordpress/env
 
-            - name: Start wp-env
-              run: wp-env start
+            - name: Start wp-env with Xdebug coverage
+              run: wp-env start --xdebug=coverage
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
 
             - name: Run e2e tests with coverage
+              env:
+                  PHP_COVERAGE_ENABLED: true
               run: npm run test:e2e:coverage
 
             - name: Generate LCOV report from Istanbul coverage
               if: always()
               run: npm run test:e2e:coverage:report
 
-            - name: Upload E2E Coverage to Codecov
+            - name: Generate PHP coverage report
+              if: always()
+              run: npm run test:e2e:php-coverage:report
+
+            - name: Upload E2E JS Coverage to Codecov
               if: always()
               uses: codecov/codecov-action@v5
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   files: ./coverage/e2e/lcov.info
-                  flags: e2e
+                  flags: e2e-js
                   slug: WordPress/secure-custom-fields
-                  name: e2e-coverage
+                  name: e2e-js-coverage
+
+            - name: Upload E2E PHP Coverage to Codecov
+              if: always()
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  files: ./coverage/php-e2e/lcov.info
+                  flags: e2e-php
+                  slug: WordPress/secure-custom-fields
+                  name: e2e-php-coverage
 
             - name: Stop wp-env
               if: always()
