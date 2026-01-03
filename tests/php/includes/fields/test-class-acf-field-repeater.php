@@ -42,16 +42,18 @@ class Test_ACF_Field_Repeater extends Abstract_ACF_Field_Test {
 	protected function get_field( $overrides = array() ) {
 		return array_merge(
 			array(
-				'key'        => 'field_repeater_test',
-				'name'       => 'test_repeater',
-				'type'       => 'repeater',
-				'label'      => 'Test Repeater',
-				'required'   => 0,
-				'min'        => 0,
-				'max'        => 0,
-				'layout'     => 'table',
-				'pagination' => 0,
-				'sub_fields' => array(
+				'ID'           => 0,
+				'key'          => 'field_repeater_test',
+				'name'         => 'test_repeater',
+				'type'         => 'repeater',
+				'label'        => 'Test Repeater',
+				'required'     => 0,
+				'min'          => 0,
+				'max'          => 0,
+				'layout'       => 'table',
+				'pagination'   => 0,
+				'button_label' => 'Add Row',
+				'sub_fields'   => array(
 					array(
 						'key'       => 'field_sub_text',
 						'name'      => 'sub_text',
@@ -467,5 +469,248 @@ class Test_ACF_Field_Repeater extends Abstract_ACF_Field_Test {
 		$valid = $this->field_instance->validate_value( true, $value, $field, 'acf[field_repeater_test]' );
 
 		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test load_field casts min/max to integers.
+	 *
+	 * Tests the casting logic:
+	 * `$field['min'] = (int) $field['min'];`
+	 * `$field['max'] = (int) $field['max'];`
+	 */
+	public function test_load_field_casts_min_max_to_int() {
+		$field = $this->get_field(
+			array(
+				'min' => '5',
+				'max' => '10',
+			)
+		);
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertSame( 5, $loaded['min'] );
+		$this->assertSame( 10, $loaded['max'] );
+	}
+
+	/**
+	 * Test load_field sets default rows_per_page when empty.
+	 *
+	 * Tests the rows_per_page default:
+	 * `if ( empty( $field['rows_per_page'] ) || (int) $field['rows_per_page'] < 1 )`
+	 */
+	public function test_load_field_sets_default_rows_per_page() {
+		$field = $this->get_field( array( 'rows_per_page' => '' ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 20, $loaded['rows_per_page'] );
+	}
+
+	/**
+	 * Test load_field sets default rows_per_page when zero.
+	 */
+	public function test_load_field_zero_rows_per_page_uses_default() {
+		$field = $this->get_field( array( 'rows_per_page' => 0 ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 20, $loaded['rows_per_page'] );
+	}
+
+	/**
+	 * Test load_field sets default button_label.
+	 *
+	 * Tests the button_label default:
+	 * `if ( '' === $field['button_label'] ) { $field['button_label'] = __( 'Add Row'... ); }`
+	 */
+	public function test_load_field_sets_default_button_label() {
+		$field = $this->get_field( array( 'button_label' => '' ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 'Add Row', $loaded['button_label'] );
+	}
+
+	/**
+	 * Test load_field preserves custom button_label.
+	 */
+	public function test_load_field_preserves_custom_button_label() {
+		$field = $this->get_field( array( 'button_label' => 'Add Item' ) );
+
+		$loaded = $this->field_instance->load_field( $field );
+
+		$this->assertEquals( 'Add Item', $loaded['button_label'] );
+	}
+
+	/**
+	 * Test format_value returns false for non-array.
+	 *
+	 * Tests the early return:
+	 * `if ( ! is_array( $value ) ) { return false; }`
+	 */
+	public function test_format_value_non_array_returns_false() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( 'not an array', $this->post_id, $field );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test format_value returns false with no sub_fields.
+	 *
+	 * Tests the sub_fields check:
+	 * `if ( empty( $field['sub_fields'] ) ) { return false; }`
+	 */
+	public function test_format_value_no_subfields_returns_false() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$value = array( array( 'some_key' => 'some_value' ) );
+
+		$result = $this->field_instance->format_value( $value, $this->post_id, $field );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test update_row returns false for non-array row.
+	 *
+	 * Tests the early return:
+	 * `if ( ! is_array( $row ) ) { return false; }`
+	 */
+	public function test_update_row_non_array_returns_false() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_row( 'not an array', 0, $field, $this->post_id );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test update_row returns false with no sub_fields.
+	 *
+	 * Tests the sub_fields check:
+	 * `if ( empty( $field['sub_fields'] ) ) { return false; }`
+	 */
+	public function test_update_row_no_subfields_returns_false() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$row   = array( 'field_sub_text' => 'value' );
+
+		$result = $this->field_instance->update_row( $row, 0, $field, $this->post_id );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test delete_row returns false with no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return false; }`
+	 */
+	public function test_delete_row_no_subfields_returns_false() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+
+		$result = $this->field_instance->delete_row( 0, $field, $this->post_id );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test get_rest_schema includes minItems when min is set.
+	 *
+	 * Tests the minItems addition:
+	 * `if ( ! empty( $field['min'] ) ) { $schema['minItems'] = (int) $field['min']; }`
+	 */
+	public function test_get_rest_schema_includes_min_items() {
+		$field = $this->get_field( array( 'min' => 2 ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'minItems', $schema );
+		$this->assertEquals( 2, $schema['minItems'] );
+	}
+
+	/**
+	 * Test get_rest_schema includes maxItems when max is set.
+	 *
+	 * Tests the maxItems addition:
+	 * `if ( ! empty( $field['max'] ) ) { $schema['maxItems'] = (int) $field['max']; }`
+	 */
+	public function test_get_rest_schema_includes_max_items() {
+		$field = $this->get_field( array( 'max' => 5 ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'maxItems', $schema );
+		$this->assertEquals( 5, $schema['maxItems'] );
+	}
+
+	/**
+	 * Test format_value_for_rest returns null for empty.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $value ) || ! is_array( $value ) || empty( $field['sub_fields'] ) ) { return null; }`
+	 */
+	public function test_format_value_for_rest_empty_returns_null() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value_for_rest( array(), $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test format_value_for_rest returns null for non-array.
+	 */
+	public function test_format_value_for_rest_non_array_returns_null() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value_for_rest( 'string', $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test format_value_for_rest returns null with no sub_fields.
+	 */
+	public function test_format_value_for_rest_no_subfields_returns_null() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$value = array( array( 'key' => 'value' ) );
+
+		$result = $this->field_instance->format_value_for_rest( $value, $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test validate_any_field migrates column_width to wrapper.
+	 *
+	 * Tests the column_width migration:
+	 * `if ( isset( $field['column_width'] ) ) { $field['wrapper']['width'] = ... }`
+	 */
+	public function test_validate_any_field_migrates_column_width() {
+		$field = array(
+			'key'          => 'field_test',
+			'column_width' => '50',
+			'wrapper'      => array(),
+		);
+
+		$result = $this->field_instance->validate_any_field( $field );
+
+		$this->assertEquals( '50', $result['wrapper']['width'] );
+		$this->assertArrayNotHasKey( 'column_width', $result );
+	}
+
+	/**
+	 * Test update_value converts non-array to empty array.
+	 *
+	 * Tests the non-array handling:
+	 * `if ( ! is_array( $value ) ) { $value = array(); }`
+	 */
+	public function test_update_value_non_array_converts_to_empty() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( 'not an array', $this->post_id, $field );
+
+		$this->assertEmpty( $result );
 	}
 }

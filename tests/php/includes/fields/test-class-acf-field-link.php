@@ -218,4 +218,179 @@ class Test_ACF_Field_Link extends Abstract_ACF_Field_Test {
 
 		$this->assertEquals( '/about/', $result['url'] );
 	}
+
+	/**
+	 * Test get_link with array value (ACF 5.6.0+).
+	 *
+	 * Tests the array merge branch:
+	 * `if ( is_array( $value ) ) { $link = array_merge( $link, $value ); }`
+	 */
+	public function test_get_link_array_format() {
+		$input = array(
+			'title'  => 'Custom Title',
+			'url'    => 'https://custom.com',
+			'target' => '_blank',
+		);
+
+		$result = $this->field_instance->get_link( $input );
+
+		$this->assertEquals( 'Custom Title', $result['title'] );
+		$this->assertEquals( 'https://custom.com', $result['url'] );
+		$this->assertEquals( '_blank', $result['target'] );
+	}
+
+	/**
+	 * Test get_link with string value (legacy ACF < 5.6.0).
+	 *
+	 * Tests the string branch:
+	 * `elseif ( is_string( $value ) ) { $link['url'] = $value; }`
+	 */
+	public function test_get_link_string_format() {
+		$result = $this->field_instance->get_link( 'https://example.com/page' );
+
+		$this->assertEquals( '', $result['title'] );
+		$this->assertEquals( 'https://example.com/page', $result['url'] );
+		$this->assertEquals( '', $result['target'] );
+	}
+
+	/**
+	 * Test get_link with empty string returns defaults.
+	 */
+	public function test_get_link_empty_string() {
+		$result = $this->field_instance->get_link( '' );
+
+		$this->assertEquals( '', $result['title'] );
+		$this->assertEquals( '', $result['url'] );
+		$this->assertEquals( '', $result['target'] );
+	}
+
+	/**
+	 * Test get_link with partial array fills defaults.
+	 */
+	public function test_get_link_partial_array() {
+		$result = $this->field_instance->get_link( array( 'url' => 'https://partial.com' ) );
+
+		$this->assertEquals( '', $result['title'] );
+		$this->assertEquals( 'https://partial.com', $result['url'] );
+		$this->assertEquals( '', $result['target'] );
+	}
+
+	/**
+	 * Test validate_value returns early when not required.
+	 *
+	 * Tests the early return:
+	 * `if ( ! $field['required'] ) { return $valid; }`
+	 */
+	public function test_validate_value_not_required_returns_valid() {
+		$field = $this->get_field( array( 'required' => 0 ) );
+
+		// Even with empty value, should return passed $valid when not required.
+		$valid = $this->field_instance->validate_value( true, '', $field, 'acf[field_link_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value with empty URL when required fails.
+	 *
+	 * Tests the URL check:
+	 * `if ( empty( $value ) || empty( $value['url'] ) ) { return false; }`
+	 */
+	public function test_validate_value_empty_url_required_fails() {
+		$field = $this->get_field( array( 'required' => 1 ) );
+		$link  = array(
+			'title'  => 'Has title',
+			'url'    => '',  // Empty URL.
+			'target' => '',
+		);
+
+		$valid = $this->field_instance->validate_value( true, $link, $field, 'acf[field_link_test]' );
+
+		$this->assertFalse( $valid );
+	}
+
+	/**
+	 * Test update_value converts empty URL array to empty string.
+	 *
+	 * Tests the empty check:
+	 * `if ( empty( $value ) || empty( $value['url'] ) ) { $value = ''; }`
+	 */
+	public function test_update_value_empty_url_converts_to_empty_string() {
+		$field = $this->get_field();
+		$link  = array(
+			'title'  => 'Has title',
+			'url'    => '',
+			'target' => '_blank',
+		);
+
+		$result = $this->field_instance->update_value( $link, $this->post_id, $field );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * Test update_value with null converts to empty string.
+	 */
+	public function test_update_value_null_converts_to_empty_string() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( null, $this->post_id, $field );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * Test update_value preserves valid link data.
+	 */
+	public function test_update_value_preserves_valid_link() {
+		$field = $this->get_field();
+		$link  = array(
+			'title'  => 'Title',
+			'url'    => 'https://valid.com',
+			'target' => '_blank',
+		);
+
+		$result = $this->field_instance->update_value( $link, $this->post_id, $field );
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( 'https://valid.com', $result['url'] );
+	}
+
+	/**
+	 * Test format_value with URL return_format.
+	 *
+	 * Tests the return_format branch:
+	 * `if ( $field['return_format'] == 'url' ) { return $link['url']; }`
+	 */
+	public function test_format_value_url_return_format() {
+		$field = $this->get_field( array( 'return_format' => 'url' ) );
+		$link  = array(
+			'title'  => 'Title',
+			'url'    => 'https://url-only.com',
+			'target' => '',
+		);
+
+		$result = $this->field_instance->format_value( $link, $this->post_id, $field );
+
+		$this->assertEquals( 'https://url-only.com', $result );
+	}
+
+	/**
+	 * Test format_value with array return_format returns full link.
+	 */
+	public function test_format_value_array_return_format() {
+		$field = $this->get_field( array( 'return_format' => 'array' ) );
+		$link  = array(
+			'title'  => 'Full Title',
+			'url'    => 'https://array.com',
+			'target' => '_self',
+		);
+
+		$result = $this->field_instance->format_value( $link, $this->post_id, $field );
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( 'Full Title', $result['title'] );
+		$this->assertEquals( 'https://array.com', $result['url'] );
+		$this->assertEquals( '_self', $result['target'] );
+	}
 }

@@ -336,4 +336,190 @@ class Test_ACF_Field_Type_Group extends Abstract_ACF_Field_Test {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'inner_group', $result );
 	}
+
+	/**
+	 * Test update_value returns null for non-array value.
+	 *
+	 * Tests the early return:
+	 * `if ( ! acf_is_array( $value ) ) { return null; }`
+	 */
+	public function test_update_value_non_array_returns_null() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( 'not an array', $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test update_value returns null for null value.
+	 */
+	public function test_update_value_null_returns_null() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->update_value( null, $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test update_value returns null for no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return null; }`
+	 */
+	public function test_update_value_no_subfields_returns_null() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$value = array( 'some_key' => 'some_value' );
+
+		$result = $this->field_instance->update_value( $value, $this->post_id, $field );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test update_value returns empty string for valid input.
+	 *
+	 * Tests the final return:
+	 * `return '';`
+	 */
+	public function test_update_value_valid_returns_empty_string() {
+		$field = $this->get_field();
+		$value = array(
+			'field_sub_text'  => 'Hello',
+			'field_sub_email' => 'test@example.com',
+		);
+
+		$result = $this->field_instance->update_value( $value, $this->post_id, $field );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * Test format_value_for_rest returns value unchanged for empty.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $value ) || ! is_array( $value ) || empty( $field['sub_fields'] ) ) { return $value; }`
+	 */
+	public function test_format_value_for_rest_empty_returns_value() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value_for_rest( '', $this->post_id, $field );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * Test format_value_for_rest returns value unchanged for non-array.
+	 */
+	public function test_format_value_for_rest_non_array_returns_value() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value_for_rest( 'string value', $this->post_id, $field );
+
+		$this->assertEquals( 'string value', $result );
+	}
+
+	/**
+	 * Test format_value_for_rest returns value unchanged when no sub_fields.
+	 */
+	public function test_format_value_for_rest_no_subfields_returns_value() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$value = array( 'key' => 'value' );
+
+		$result = $this->field_instance->format_value_for_rest( $value, $this->post_id, $field );
+
+		$this->assertEquals( $value, $result );
+	}
+
+	/**
+	 * Test prepare_field_for_db returns field unchanged when no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return $field; }`
+	 */
+	public function test_prepare_field_for_db_no_subfields_returns_unchanged() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+
+		$result = $this->field_instance->prepare_field_for_db( $field );
+
+		$this->assertEquals( $field, $result );
+	}
+
+	/**
+	 * Test prepare_field_for_db prefixes sub_field names.
+	 *
+	 * Tests the name prefixing logic:
+	 * `$sub_field['name'] = $field['name'] . '_' . $sub_field['_name'];`
+	 */
+	public function test_prepare_field_for_db_prefixes_subfield_names() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->prepare_field_for_db( $field );
+
+		// Check that sub_field names were prefixed with parent field name.
+		$this->assertEquals( 'test_group_sub_text', $result['sub_fields'][0]['name'] );
+		$this->assertEquals( 'test_group_sub_email', $result['sub_fields'][1]['name'] );
+	}
+
+	/**
+	 * Test validate_value returns early for empty value.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $value ) ) { return $valid; }`
+	 */
+	public function test_validate_value_empty_returns_valid_unchanged() {
+		$field = $this->get_field();
+
+		// Pass true, should return true unchanged.
+		$result = $this->field_instance->validate_value( true, array(), $field, 'acf[test]' );
+		$this->assertTrue( $result );
+
+		// Pass false, should return false unchanged.
+		$result = $this->field_instance->validate_value( false, array(), $field, 'acf[test]' );
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test validate_value returns early when no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return $valid; }`
+	 */
+	public function test_validate_value_no_subfields_returns_valid_unchanged() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+		$value = array( 'some_key' => 'some_value' );
+
+		$result = $this->field_instance->validate_value( true, $value, $field, 'acf[test]' );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test load_value returns value unchanged when no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return $value; }`
+	 */
+	public function test_load_value_no_subfields_returns_value_unchanged() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+
+		$result = $this->field_instance->load_value( 'original', $this->post_id, $field );
+
+		$this->assertEquals( 'original', $result );
+	}
+
+	/**
+	 * Test delete_value returns null when no sub_fields.
+	 *
+	 * Tests the early return:
+	 * `if ( empty( $field['sub_fields'] ) ) { return null; }`
+	 */
+	public function test_delete_value_no_subfields_returns_null() {
+		$field = $this->get_field( array( 'sub_fields' => array() ) );
+
+		$result = $this->field_instance->delete_value( $this->post_id, 'test_group', $field );
+
+		$this->assertNull( $result );
+	}
 }

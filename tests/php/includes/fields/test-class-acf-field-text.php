@@ -111,4 +111,108 @@ class Test_ACF_Field_Text extends Abstract_ACF_Field_Test {
 
 		$this->assertEmpty( $result );
 	}
+
+	/**
+	 * Test validate_value with no maxlength passes.
+	 *
+	 * Tests the condition:
+	 * `if ( isset( $field['maxlength'] ) && $field['maxlength'] && ... )`
+	 */
+	public function test_validate_value_no_maxlength_passes() {
+		$field = $this->get_field( array( 'maxlength' => '' ) );
+
+		$valid = $this->field_instance->validate_value( true, 'Any length text is fine', $field, 'acf[field_text_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value with zero maxlength passes.
+	 *
+	 * Tests that maxlength of 0 is treated as "no limit" (falsy check).
+	 */
+	public function test_validate_value_zero_maxlength_passes() {
+		$field = $this->get_field( array( 'maxlength' => 0 ) );
+
+		$valid = $this->field_instance->validate_value( true, 'Long text with zero maxlength', $field, 'acf[field_text_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value at exact maxlength boundary passes.
+	 */
+	public function test_validate_value_exact_maxlength_passes() {
+		$field = $this->get_field( array( 'maxlength' => 10 ) );
+
+		// Exactly 10 characters.
+		$valid = $this->field_instance->validate_value( true, '1234567890', $field, 'acf[field_text_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value one over maxlength fails.
+	 */
+	public function test_validate_value_one_over_maxlength_fails() {
+		$field = $this->get_field( array( 'maxlength' => 10 ) );
+
+		// 11 characters (one over).
+		$valid = $this->field_instance->validate_value( true, '12345678901', $field, 'acf[field_text_test]' );
+
+		$this->assertIsString( $valid );
+		$this->assertStringContainsString( '10', $valid );  // Should mention the limit.
+	}
+
+	/**
+	 * Test validate_value preserves passed $valid state.
+	 *
+	 * Tests that the function returns the passed $valid when no maxlength issue.
+	 */
+	public function test_validate_value_preserves_valid_state() {
+		$field = $this->get_field( array( 'maxlength' => 100 ) );
+
+		// Pass false as initial $valid - should be preserved and returned.
+		$valid = $this->field_instance->validate_value( false, 'Short', $field, 'acf[field_text_test]' );
+
+		$this->assertFalse( $valid );
+	}
+
+	/**
+	 * Test get_rest_schema includes maxLength when set.
+	 *
+	 * Tests the maxLength addition:
+	 * `if ( ! empty( $field['maxlength'] ) ) { $schema['maxLength'] = (int) $field['maxlength']; }`
+	 */
+	public function test_get_rest_schema_includes_maxlength() {
+		$field = $this->get_field( array( 'maxlength' => 50 ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'maxLength', $schema );
+		$this->assertEquals( 50, $schema['maxLength'] );
+	}
+
+	/**
+	 * Test get_rest_schema excludes maxLength when empty.
+	 */
+	public function test_get_rest_schema_excludes_empty_maxlength() {
+		$field = $this->get_field( array( 'maxlength' => '' ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayNotHasKey( 'maxLength', $schema );
+	}
+
+	/**
+	 * Test get_rest_schema casts maxLength to integer.
+	 */
+	public function test_get_rest_schema_casts_maxlength_to_int() {
+		$field = $this->get_field( array( 'maxlength' => '25' ) );
+
+		$schema = $this->field_instance->get_rest_schema( $field );
+
+		$this->assertArrayHasKey( 'maxLength', $schema );
+		$this->assertSame( 25, $schema['maxLength'] );  // Should be int, not string.
+	}
 }
