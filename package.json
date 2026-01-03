@@ -10,6 +10,9 @@
 		"test:e2e:coverage": "rm -rf .nyc_output && COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:coverage:report": "nyc report --reporter=html --reporter=lcov",
 		"test:e2e:debug": "wp-scripts test-playwright --debug --ui",
+		"test:e2e:php-coverage": "rm -rf .php-coverage && PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
+		"test:e2e:php-coverage:report": "node scripts/merge-php-coverage.js",
+		"test:e2e:all-coverage": "rm -rf .nyc_output .php-coverage && COVERAGE_ENABLED=true PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch"
