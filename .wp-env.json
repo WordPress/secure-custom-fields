@@ -1,6 +1,9 @@
 {
   "$schema": "./schemas/json/wp-env.json",
   "plugins": ["."],
+  "lifecycleScripts": {
+    "afterStart": "bash ./scripts/install-pcov.sh"
+  },
   "env": {
     "tests": {
       "mappings": {

@@ -64,8 +64,10 @@ jobs:
             - name: Install wp-env
               run: npm install -g @wordpress/env
 
-            - name: Start wp-env with Xdebug coverage
-              run: wp-env start --xdebug=coverage
+            - name: Start wp-env and install PCOV
+              env:
+                  PHP_COVERAGE_ENABLED: true
+              run: wp-env start
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps

@@ -2,10 +2,9 @@
 /**
  * PHP Code Coverage Collector for E2E Tests
  *
- * This mu-plugin collects PHP code coverage during e2e test execution.
- * It only activates when the X-PHP-Coverage header is present (sent by
- * Playwright when PHP_COVERAGE_ENABLED env var is set) or when the
- * PHP_COVERAGE_ENABLED constant is defined in wp-config.php.
+ * This mu-plugin collects PHP code coverage during e2e test execution using PCOV.
+ * It only activates when the X-PHP-Coverage header is present (sent by Playwright
+ * when PHP_COVERAGE_ENABLED env var is set).
  *
  * Coverage data is written to .php-coverage/ directory as JSON files
  * which can be merged using the merge-php-coverage.js script.
@@ -18,18 +17,14 @@
  * phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
  */
 
-// Only run if coverage header is present or constant is defined.
-// The header is the primary trigger - it's sent by Playwright tests.
+// Only run if coverage header is present.
 if ( ! isset( $_SERVER['HTTP_X_PHP_COVERAGE'] ) && ! isset( $_COOKIE['PHP_COVERAGE'] ) ) {
-	// Also check for the constant as a fallback.
-	if ( ! defined( 'PHP_COVERAGE_ENABLED' ) || ! PHP_COVERAGE_ENABLED ) {
-		return;
-	}
+	return;
 }
 
-// Check if Xdebug coverage mode is available.
-if ( ! extension_loaded( 'xdebug' ) || ! function_exists( 'xdebug_start_code_coverage' ) ) {
-	error_log( 'PHP Coverage: Xdebug not available or coverage mode not enabled' );
+// Check if PCOV is available.
+if ( ! extension_loaded( 'pcov' ) || ! function_exists( 'pcov\start' ) ) {
+	error_log( 'PHP Coverage: PCOV extension not available' );
 	return;
 }
 
@@ -51,15 +46,15 @@ if ( ! is_dir( $coverage_dir ) ) {
 }
 
 // Start code coverage collection.
-xdebug_start_code_coverage( XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE );
+\pcov\start();
 
 /**
  * Stop coverage and write data on shutdown.
  */
 register_shutdown_function(
 	function () use ( $coverage_id, $coverage_dir ) {
-		$coverage_data = xdebug_get_code_coverage();
-		xdebug_stop_code_coverage();
+		$coverage_data = \pcov\collect();
+		\pcov\stop();
 
 		if ( empty( $coverage_data ) ) {
 			return;
@@ -101,7 +96,7 @@ register_shutdown_function(
 			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
 			: 'unknown';
 
-		// Write coverage data as JSON (easier to process).
+		// Write coverage data as JSON.
 		$json_data = json_encode(
 			array(
 				'coverage_id' => $coverage_id,
