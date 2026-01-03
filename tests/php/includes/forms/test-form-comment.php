@@ -201,6 +201,122 @@ class Test_Form_Comment extends BaseTestCase {
 	}
 
 	/**
+	 * Test admin_enqueue_scripts returns early on non-comment pages.
+	 */
+	public function test_admin_enqueue_scripts_bails_on_wrong_page() {
+		$form_comment = new acf_form_comment();
+
+		// Set pagenow to a non-comment page.
+		global $pagenow;
+		$pagenow = 'edit.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Test requires setting global.
+
+		$form_comment->admin_enqueue_scripts();
+
+		// On wrong page, admin_footer action should NOT be added.
+		$this->assertFalse(
+			has_action( 'admin_footer', array( $form_comment, 'admin_footer' ) ),
+			'admin_footer action should not be added on non-comment pages'
+		);
+	}
+
+	/**
+	 * Test admin_enqueue_scripts adds actions on comment.php.
+	 */
+	public function test_admin_enqueue_scripts_adds_actions_on_comment_page() {
+		$form_comment = new acf_form_comment();
+
+		// Set pagenow to comment.php.
+		global $pagenow;
+		$pagenow = 'comment.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Test requires setting global.
+
+		$form_comment->admin_enqueue_scripts();
+
+		// On comment page, admin_footer action should be added.
+		$this->assertNotFalse(
+			has_action( 'admin_footer', array( $form_comment, 'admin_footer' ) ),
+			'admin_footer action should be added on comment.php'
+		);
+
+		// edit_comment action should be added.
+		$this->assertNotFalse(
+			has_action( 'add_meta_boxes_comment', array( $form_comment, 'edit_comment' ) ),
+			'add_meta_boxes_comment action should be added on comment.php'
+		);
+	}
+
+	/**
+	 * Test edit_comment stores correct form data.
+	 */
+	public function test_edit_comment_renders_nothing_without_field_groups() {
+		$form_comment = new acf_form_comment();
+
+		// Create a mock comment object.
+		$comment                  = new stdClass();
+		$comment->comment_ID      = 123;
+		$comment->comment_post_ID = 1;
+
+		// Ensure no field groups match to avoid rendering.
+		add_filter(
+			'acf/get_field_groups',
+			function () {
+				return array();
+			}
+		);
+
+		ob_start();
+		$form_comment->edit_comment( $comment );
+		$output = ob_get_clean();
+
+		// No output should be generated when no field groups match.
+		$this->assertEmpty( $output, 'edit_comment should render nothing without field groups' );
+	}
+
+	/**
+	 * Test edit_comment uses correct post_id format.
+	 *
+	 * When field groups exist, edit_comment should store form data with
+	 * post_id formatted as "comment_{comment_ID}".
+	 */
+	public function test_edit_comment_uses_correct_post_id_format() {
+		$form_comment = new acf_form_comment();
+
+		// Create a mock comment object.
+		$comment                  = new stdClass();
+		$comment->comment_ID      = 456;
+		$comment->comment_post_ID = 1;
+
+		// Register a real field group to trigger the rendering path.
+		$field_group = acf_update_field_group(
+			array(
+				'key'                   => 'group_comment_test',
+				'title'                 => 'Comment Test Group',
+				'location'              => array(
+					array(
+						array(
+							'param'    => 'comment',
+							'operator' => '==',
+							'value'    => 'all',
+						),
+					),
+				),
+				'instruction_placement' => 'label',
+			)
+		);
+
+		// Capture output to prevent it from polluting test output.
+		ob_start();
+		$form_comment->edit_comment( $comment );
+		ob_get_clean();
+
+		// Verify form data was stored with correct post_id format.
+		$form_data = acf_get_form_data( 'post_id' );
+		$this->assertEquals( 'comment_456', $form_data, 'post_id should be formatted as comment_{id}' );
+
+		// Cleanup: delete the field group.
+		acf_delete_field_group( $field_group['ID'] );
+	}
+
+	/**
 	 * Test admin_footer outputs spinner JavaScript.
 	 */
 	public function test_admin_footer_outputs_spinner_script() {

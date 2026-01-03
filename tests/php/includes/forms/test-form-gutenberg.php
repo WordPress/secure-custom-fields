@@ -375,4 +375,57 @@ class Test_Form_Gutenberg extends BaseTestCase {
 		unset( $_GET['meta-box-loader'] );
 		acf_reset_validation_errors();
 	}
+
+	/**
+	 * Test add_meta_boxes removes edit_form_after_title action.
+	 */
+	public function test_add_meta_boxes_removes_edit_form_after_title_action() {
+		$form_gutenberg = new ACF_Form_Gutenberg();
+		$form_post      = acf_get_instance( 'ACF_Form_Post' );
+
+		// Add the action that should be removed.
+		add_action( 'edit_form_after_title', array( $form_post, 'edit_form_after_title' ) );
+
+		// Verify it's added.
+		$this->assertNotFalse(
+			has_action( 'edit_form_after_title', array( $form_post, 'edit_form_after_title' ) ),
+			'edit_form_after_title action should be added first'
+		);
+
+		// Call add_meta_boxes which should remove it.
+		$form_gutenberg->add_meta_boxes();
+
+		// Verify it's removed.
+		$this->assertFalse(
+			has_action( 'edit_form_after_title', array( $form_post, 'edit_form_after_title' ) ),
+			'edit_form_after_title action should be removed by add_meta_boxes'
+		);
+	}
+
+	/**
+	 * Test block_editor_meta_box_hidden_fields relies on ACF_Form_Post.
+	 *
+	 * The block_editor_meta_box_hidden_fields method calls
+	 * ACF_Form_Post::edit_form_after_title() which requires complex WordPress
+	 * setup (current_screen, global $post, meta boxes). We verify the method
+	 * exists and is callable, while the actual behavior is tested through
+	 * integration tests or the ACF_Form_Post tests.
+	 */
+	public function test_block_editor_meta_box_hidden_fields_method_exists() {
+		$form_gutenberg = new ACF_Form_Gutenberg();
+
+		// Verify the method exists and is callable.
+		$this->assertTrue(
+			method_exists( $form_gutenberg, 'block_editor_meta_box_hidden_fields' ),
+			'block_editor_meta_box_hidden_fields method should exist'
+		);
+
+		// Verify it's registered as an action via enqueue_block_editor_assets.
+		$form_gutenberg->enqueue_block_editor_assets();
+
+		$this->assertNotFalse(
+			has_action( 'block_editor_meta_box_hidden_fields', array( $form_gutenberg, 'block_editor_meta_box_hidden_fields' ) ),
+			'block_editor_meta_box_hidden_fields should be registered as action'
+		);
+	}
 }

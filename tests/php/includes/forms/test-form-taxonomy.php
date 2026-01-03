@@ -266,6 +266,25 @@ class Test_Form_Taxonomy extends BaseTestCase {
 	}
 
 	/**
+	 * Test admin_enqueue_scripts returns early on non-taxonomy pages.
+	 */
+	public function test_admin_enqueue_scripts_bails_on_wrong_page() {
+		$form_taxonomy = new acf_form_taxonomy();
+
+		// Set pagenow to a non-taxonomy page.
+		global $pagenow;
+		$pagenow = 'edit.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Test requires setting global.
+
+		$form_taxonomy->admin_enqueue_scripts();
+
+		// On wrong page, admin_footer action should NOT be added.
+		$this->assertFalse(
+			has_action( 'admin_footer', array( $form_taxonomy, 'admin_footer' ) ),
+			'admin_footer action should not be added on non-taxonomy pages'
+		);
+	}
+
+	/**
 	 * Data provider for view states.
 	 *
 	 * @return array
