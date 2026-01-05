@@ -9,6 +9,263 @@
  */
 
 /**
+ * Register field group with all testable field types.
+ */
+function scf_test_register_all_field_types_group() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_all_field_types',
+			'title'                 => 'All Field Types Test Group',
+			'fields'                => array(
+				// Text-based fields
+				array(
+					'key'   => 'field_test_text',
+					'label' => 'Text Field',
+					'name'  => 'text_field',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_test_textarea',
+					'label' => 'Textarea Field',
+					'name'  => 'textarea_field',
+					'type'  => 'textarea',
+					'rows'  => 3,
+				),
+				array(
+					'key'   => 'field_test_email',
+					'label' => 'Email Field',
+					'name'  => 'email_field',
+					'type'  => 'email',
+				),
+				array(
+					'key'   => 'field_test_url',
+					'label' => 'URL Field',
+					'name'  => 'url_field',
+					'type'  => 'url',
+				),
+				array(
+					'key'   => 'field_test_password',
+					'label' => 'Password Field',
+					'name'  => 'password_field',
+					'type'  => 'password',
+				),
+				array(
+					'key'   => 'field_test_number',
+					'label' => 'Number Field',
+					'name'  => 'number_field',
+					'type'  => 'number',
+				),
+				array(
+					'key'           => 'field_test_range',
+					'label'         => 'Range Field',
+					'name'          => 'range_field',
+					'type'          => 'range',
+					'min'           => 0,
+					'max'           => 100,
+					'default_value' => 50,
+				),
+
+				// Selection fields
+				array(
+					'key'     => 'field_test_select',
+					'label'   => 'Select Field',
+					'name'    => 'select_field',
+					'type'    => 'select',
+					'choices' => array(
+						'option_1' => 'Option 1',
+						'option_2' => 'Option 2',
+						'option_3' => 'Option 3',
+					),
+				),
+				array(
+					'key'     => 'field_test_checkbox',
+					'label'   => 'Checkbox Field',
+					'name'    => 'checkbox_field',
+					'type'    => 'checkbox',
+					'choices' => array(
+						'check_a' => 'Check A',
+						'check_b' => 'Check B',
+						'check_c' => 'Check C',
+					),
+				),
+				array(
+					'key'     => 'field_test_radio',
+					'label'   => 'Radio Field',
+					'name'    => 'radio_field',
+					'type'    => 'radio',
+					'choices' => array(
+						'radio_1' => 'Radio 1',
+						'radio_2' => 'Radio 2',
+						'radio_3' => 'Radio 3',
+					),
+				),
+				array(
+					'key'     => 'field_test_button_group',
+					'label'   => 'Button Group Field',
+					'name'    => 'button_group_field',
+					'type'    => 'button_group',
+					'choices' => array(
+						'button_1' => 'Button 1',
+						'button_2' => 'Button 2',
+						'button_3' => 'Button 3',
+					),
+				),
+				array(
+					'key'   => 'field_test_true_false',
+					'label' => 'True/False Field',
+					'name'  => 'true_false_field',
+					'type'  => 'true_false',
+					'ui'    => 1,
+				),
+
+				// Date/time fields
+				array(
+					'key'            => 'field_test_date_picker',
+					'label'          => 'Date Picker Field',
+					'name'           => 'date_picker_field',
+					'type'           => 'date_picker',
+					'display_format' => 'F j, Y',
+					'return_format'  => 'Y-m-d',
+				),
+				array(
+					'key'            => 'field_test_time_picker',
+					'label'          => 'Time Picker Field',
+					'name'           => 'time_picker_field',
+					'type'           => 'time_picker',
+					'display_format' => 'g:i a',
+					'return_format'  => 'H:i:s',
+				),
+				array(
+					'key'            => 'field_test_date_time_picker',
+					'label'          => 'Date Time Picker Field',
+					'name'           => 'date_time_picker_field',
+					'type'           => 'date_time_picker',
+					'display_format' => 'F j, Y g:i a',
+					'return_format'  => 'Y-m-d H:i:s',
+				),
+
+				// Content fields
+				array(
+					'key'     => 'field_test_wysiwyg',
+					'label'   => 'WYSIWYG Field',
+					'name'    => 'wysiwyg_field',
+					'type'    => 'wysiwyg',
+					'tabs'    => 'all',
+					'toolbar' => 'full',
+				),
+				array(
+					'key'   => 'field_test_color_picker',
+					'label' => 'Color Picker Field',
+					'name'  => 'color_picker_field',
+					'type'  => 'color_picker',
+				),
+				array(
+					'key'   => 'field_test_link',
+					'label' => 'Link Field',
+					'name'  => 'link_field',
+					'type'  => 'link',
+				),
+
+				// Media field
+				array(
+					'key'           => 'field_test_image',
+					'label'         => 'Image Field',
+					'name'          => 'image_field',
+					'type'          => 'image',
+					'return_format' => 'array',
+					'preview_size'  => 'thumbnail',
+				),
+
+				// Relationship fields
+				array(
+					'key'           => 'field_test_user',
+					'label'         => 'User Field',
+					'name'          => 'user_field',
+					'type'          => 'user',
+					'return_format' => 'object',
+					'multiple'      => 0,
+				),
+				array(
+					'key'           => 'field_test_taxonomy',
+					'label'         => 'Taxonomy Field',
+					'name'          => 'taxonomy_field',
+					'type'          => 'taxonomy',
+					'taxonomy'      => 'category',
+					'field_type'    => 'select',
+					'return_format' => 'object',
+				),
+
+				// Container fields
+				array(
+					'key'        => 'field_test_group',
+					'label'      => 'Group Field',
+					'name'       => 'group_field',
+					'type'       => 'group',
+					'layout'     => 'block',
+					'sub_fields' => array(
+						array(
+							'key'   => 'field_test_group_text',
+							'label' => 'Group Text',
+							'name'  => 'group_text',
+							'type'  => 'text',
+						),
+						array(
+							'key'   => 'field_test_group_number',
+							'label' => 'Group Number',
+							'name'  => 'group_number',
+							'type'  => 'number',
+						),
+					),
+				),
+				array(
+					'key'        => 'field_test_repeater',
+					'label'      => 'Repeater Field',
+					'name'       => 'repeater_field',
+					'type'       => 'repeater',
+					'layout'     => 'table',
+					'min'        => 0,
+					'max'        => 5,
+					'sub_fields' => array(
+						array(
+							'key'   => 'field_test_repeater_text',
+							'label' => 'Repeater Text',
+							'name'  => 'repeater_text',
+							'type'  => 'text',
+						),
+						array(
+							'key'   => 'field_test_repeater_number',
+							'label' => 'Repeater Number',
+							'name'  => 'repeater_number',
+							'type'  => 'number',
+						),
+					),
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'post',
+					),
+				),
+			),
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
+			'active'                => true,
+		)
+	);
+}
+add_action( 'acf/init', 'scf_test_register_all_field_types_group' );
+
+/**
  * Output all SCF field values on post content.
  *
  * This plugin dynamically renders ALL field values for the current post
