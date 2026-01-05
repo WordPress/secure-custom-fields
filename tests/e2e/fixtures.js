@@ -38,7 +38,7 @@ async function saveCoverage( coverage ) {
 }
 
 /**
- * Generate a coverage ID for PHP coverage tracking.
+ * Generate a coverage ID for PHP coverage tracking from test info.
  * Format: testfile-testname-timestamp
  *
  * @param {import('@playwright/test').TestInfo} testInfo - Playwright test info.
@@ -46,10 +46,20 @@ async function saveCoverage( coverage ) {
  */
 function generateCoverageId( testInfo ) {
 	const testFile = path.basename( testInfo.file, '.spec.ts' );
-	const testName = testInfo.title
-		.replace( /[^a-zA-Z0-9]/g, '_' )
-		.slice( 0, 50 );
+	const testName = testInfo.title.replace( /[^a-zA-Z0-9]/g, '_' ).slice( 0, 50 );
 	return `${ testFile }-${ testName }-${ Date.now() }`;
+}
+
+/**
+ * Generate a coverage ID for PHP coverage tracking from worker info.
+ * Used for worker-scoped fixtures like requestUtils.
+ * Format: worker-workerIndex-timestamp
+ *
+ * @param {import('@playwright/test').WorkerInfo} workerInfo - Playwright worker info.
+ * @return {string} Coverage ID.
+ */
+function generateWorkerCoverageId( workerInfo ) {
+	return `worker-${ workerInfo.workerIndex }-${ Date.now() }`;
 }
 
 // Extend WordPress test with Istanbul coverage collection and WP version compatibility
@@ -74,6 +84,29 @@ const test = wpTest.extend( {
 				await saveCoverage( coverage );
 			}
 		}
+	},
+
+	// Extend requestUtils to add PHP coverage headers to REST API calls.
+	// Note: requestUtils is worker-scoped, so we use workerInfo instead of testInfo.
+	requestUtils: async ( { requestUtils }, use, workerInfo ) => {
+		if ( process.env.PHP_COVERAGE_ENABLED ) {
+			const coverageId = generateWorkerCoverageId( workerInfo );
+			const originalRest = requestUtils.rest.bind( requestUtils );
+
+			// Wrap the rest method to add coverage headers.
+			requestUtils.rest = async ( options ) => {
+				const headers = options.headers || {};
+				return originalRest( {
+					...options,
+					headers: {
+						...headers,
+						'X-PHP-Coverage': coverageId,
+					},
+				} );
+			};
+		}
+
+		await use( requestUtils );
 	},
 
 	// Override editor fixture to provide version-compatible methods.
