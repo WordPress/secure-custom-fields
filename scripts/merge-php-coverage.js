@@ -181,15 +181,23 @@ function generateLcov( mergedCoverage ) {
 		lcov += `SF:${ relativePath }\n`;
 
 		Object.entries( lines ).forEach( ( [ lineNum, hitCount ] ) => {
-			// Only include executable lines (hitCount >= 0 means it was tracked).
-			if ( hitCount >= 0 ) {
+			// PCOV returns: positive = executed count, -1 = executable but not executed.
+			if ( hitCount > 0 ) {
 				lcov += `DA:${ lineNum },${ hitCount }\n`;
+			} else if ( hitCount === -1 ) {
+				// Executable but not executed - report as uncovered (0 hits).
+				lcov += `DA:${ lineNum },0\n`;
+			}
+			// hitCount === 0 shouldn't occur with PCOV, but include it if it does.
+			else if ( hitCount === 0 ) {
+				lcov += `DA:${ lineNum },0\n`;
 			}
 		} );
 
 		const lineNumbers = Object.keys( lines );
+		// Count all executable lines (executed or not executed).
 		const linesFound = lineNumbers.filter(
-			( ln ) => lines[ ln ] >= 0
+			( ln ) => lines[ ln ] > 0 || lines[ ln ] === -1 || lines[ ln ] === 0
 		).length;
 		const linesHit = lineNumbers.filter( ( ln ) => lines[ ln ] > 0 ).length;
 
