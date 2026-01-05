@@ -2,12 +2,7 @@
 # Reference: https://docs.codecov.com/docs/codecovyml-reference
 
 codecov:
-    # Wait for CI to pass before posting coverage status
     require_ci_to_pass: true
-    notify:
-        # Wait for all CI jobs to complete before computing coverage
-        # This ensures all shards have uploaded before status is reported
-        wait_for_ci: true
 
 flags:
     e2e-js:
