@@ -78,22 +78,10 @@ const test = wpTest.extend( {
 		await use( page );
 
 		// Collect JS coverage after test completes.
-		// eslint-disable-next-line no-console
-		console.log(
-			`[Coverage Debug] COVERAGE_ENABLED=${ process.env.COVERAGE_ENABLED }, test=${ testInfo.title }`
-		);
 		if ( process.env.COVERAGE_ENABLED ) {
 			const coverage = await page.evaluate( () => window.__coverage__ );
-			// eslint-disable-next-line no-console
-			console.log(
-				`[Coverage Debug] window.__coverage__ exists=${ !! coverage }, keys=${ coverage ? Object.keys( coverage ).length : 0 }`
-			);
 			if ( coverage ) {
 				await saveCoverage( coverage );
-				// eslint-disable-next-line no-console
-				console.log(
-					`[Coverage Debug] Saved coverage to ${ coverageDir }`
-				);
 			}
 		}
 	},

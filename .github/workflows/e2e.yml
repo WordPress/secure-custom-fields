@@ -78,15 +78,6 @@ jobs:
                   PHP_COVERAGE_ENABLED: true
               run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
 
-            - name: Debug coverage directories
-              if: always()
-              run: |
-                  echo "Current directory: $(pwd)"
-                  echo "=== .nyc_output/ ==="
-                  ls -la .nyc_output/ 2>/dev/null || echo "Directory not found"
-                  echo "=== .php-coverage/ ==="
-                  ls -la .php-coverage/ 2>/dev/null || echo "Directory not found"
-
             - name: Upload E2E JS coverage artifact
               if: always()
               uses: actions/upload-artifact@v4
