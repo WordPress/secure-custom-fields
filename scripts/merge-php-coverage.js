@@ -20,6 +20,7 @@ const path = require( 'path' );
 
 const COVERAGE_DIR = path.join( process.cwd(), '.php-coverage' );
 const OUTPUT_DIR = path.join( process.cwd(), 'coverage', 'php-e2e' );
+const SOURCE_DIR = path.join( process.cwd(), 'includes' );
 
 // Docker container path prefix to strip for relative paths.
 const CONTAINER_PLUGIN_PATH =
@@ -45,6 +46,166 @@ function parseArgs() {
 	} );
 
 	return args;
+}
+
+/**
+ * Recursively find all PHP files in a directory.
+ *
+ * @param {string} dir - Directory to scan.
+ * @param {Array}  files - Accumulator for found files.
+ * @return {Array} Array of absolute file paths.
+ */
+function findPhpFiles( dir, files = [] ) {
+	const entries = fs.readdirSync( dir, { withFileTypes: true } );
+
+	for ( const entry of entries ) {
+		const fullPath = path.join( dir, entry.name );
+
+		if ( entry.isDirectory() ) {
+			// Skip vendor, node_modules, tests directories.
+			if (
+				! [ 'vendor', 'node_modules', 'tests' ].includes( entry.name )
+			) {
+				findPhpFiles( fullPath, files );
+			}
+		} else if ( entry.isFile() && entry.name.endsWith( '.php' ) ) {
+			files.push( fullPath );
+		}
+	}
+
+	return files;
+}
+
+/**
+ * Parse a PHP file to find executable line numbers.
+ * Returns line numbers that contain executable code (not comments, not blank, not just braces).
+ *
+ * @param {string} filePath - Path to PHP file.
+ * @return {Array} Array of executable line numbers.
+ */
+function findExecutableLines( filePath ) {
+	const content = fs.readFileSync( filePath, 'utf8' );
+	const lines = content.split( '\n' );
+	const executableLines = [];
+
+	let inMultiLineComment = false;
+	let inHeredoc = false;
+	let heredocEnd = null;
+
+	for ( let i = 0; i < lines.length; i++ ) {
+		const lineNum = i + 1;
+		let line = lines[ i ].trim();
+
+		// Handle heredoc/nowdoc.
+		if ( inHeredoc ) {
+			if ( line === heredocEnd || line === heredocEnd + ';' ) {
+				inHeredoc = false;
+				heredocEnd = null;
+			}
+			continue;
+		}
+
+		// Check for heredoc/nowdoc start.
+		const heredocMatch = line.match( /<<<['"]?(\w+)['"]?$/ );
+		if ( heredocMatch ) {
+			inHeredoc = true;
+			heredocEnd = heredocMatch[ 1 ];
+			executableLines.push( lineNum );
+			continue;
+		}
+
+		// Handle multi-line comments.
+		if ( inMultiLineComment ) {
+			if ( line.includes( '*/' ) ) {
+				inMultiLineComment = false;
+				// Check if there's code after the comment end.
+				const afterComment = line.split( '*/' )[ 1 ].trim();
+				if ( afterComment && ! afterComment.startsWith( '//' ) ) {
+					executableLines.push( lineNum );
+				}
+			}
+			continue;
+		}
+
+		// Check for multi-line comment start.
+		if ( line.startsWith( '/*' ) || line.startsWith( '/**' ) ) {
+			if ( ! line.includes( '*/' ) ) {
+				inMultiLineComment = true;
+			}
+			continue;
+		}
+
+		// Skip empty lines.
+		if ( line === '' ) {
+			continue;
+		}
+
+		// Skip single-line comments.
+		if ( line.startsWith( '//' ) || line.startsWith( '#' ) ) {
+			continue;
+		}
+
+		// Skip PHP open/close tags alone.
+		if ( line === '<?php' || line === '?>' || line === '<?php' ) {
+			continue;
+		}
+
+		// Skip lines that are just braces or structural.
+		if ( /^[{})\]]+;?$/.test( line ) ) {
+			continue;
+		}
+
+		// Skip lines that are just class/function declarations without code.
+		// These are structural but we include them as they're part of the definition.
+		if (
+			/^(abstract\s+)?(class|interface|trait|enum)\s+\w+/.test( line ) ||
+			/^(public|private|protected|static|\s)*function\s+\w+/.test( line )
+		) {
+			executableLines.push( lineNum );
+			continue;
+		}
+
+		// Skip 'use' statements for traits (they're declarations).
+		if ( /^use\s+[\w\\]+\s*;/.test( line ) && ! line.includes( '(' ) ) {
+			continue;
+		}
+
+		// This line likely contains executable code.
+		executableLines.push( lineNum );
+	}
+
+	return executableLines;
+}
+
+/**
+ * Build baseline coverage from all PHP source files.
+ * Files not covered by PCOV will have all executable lines marked as uncovered.
+ *
+ * @return {Object} Baseline coverage data with all files and their executable lines.
+ */
+function buildBaselineCoverage() {
+	console.log( `Scanning PHP files in ${ SOURCE_DIR }...` );
+	const phpFiles = findPhpFiles( SOURCE_DIR );
+	console.log( `Found ${ phpFiles.length } PHP files.` );
+
+	const baseline = {};
+
+	for ( const file of phpFiles ) {
+		const executableLines = findExecutableLines( file );
+		if ( executableLines.length > 0 ) {
+			// Convert to container path format for consistency with PCOV output.
+			const relativePath = file.slice( process.cwd().length );
+			const containerPath = CONTAINER_PLUGIN_PATH + relativePath;
+
+			// Mark all executable lines as uncovered (-1 means executable but not hit).
+			baseline[ containerPath ] = {};
+			for ( const lineNum of executableLines ) {
+				baseline[ containerPath ][ lineNum ] = -1;
+			}
+		}
+	}
+
+	return baseline;
 }
 
 /**
@@ -314,17 +475,61 @@ function generateHtml( stats ) {
 function main() {
 	const args = parseArgs();
 
-	console.log( 'Merging PHP coverage files...' );
+	console.log( 'Building PHP coverage report...' );
 
-	const coverageFiles = readCoverageFiles();
+	// Step 1: Build baseline from all PHP source files.
+	const baseline = buildBaselineCoverage();
+	const baselineFileCount = Object.keys( baseline ).length;
 
-	if ( coverageFiles === null ) {
-		// No coverage files found, exit gracefully.
+	if ( baselineFileCount === 0 ) {
+		console.log( 'No PHP source files found in includes/.' );
 		return;
 	}
 
-	const merged = mergeCoverage( coverageFiles );
+	// Step 2: Read PCOV coverage files (if any).
+	const coverageFiles = readCoverageFiles();
+
+	// Step 3: Merge PCOV data on top of baseline.
+	// Start with baseline (all files, all lines marked as uncovered).
+	let merged = { ...baseline };
+
+	if ( coverageFiles !== null ) {
+		// Merge PCOV data - this will override baseline values with actual coverage.
+		const pcovMerged = mergeCoverage( coverageFiles );
+
+		// Merge PCOV data into baseline.
+		for ( const [ file, lines ] of Object.entries( pcovMerged ) ) {
+			if ( ! merged[ file ] ) {
+				// File from PCOV not in baseline (shouldn't happen, but handle it).
+				merged[ file ] = {};
+			}
+
+			for ( const [ lineNum, hitCount ] of Object.entries( lines ) ) {
+				// PCOV data takes precedence over baseline.
+				if ( hitCount > 0 ) {
+					merged[ file ][ lineNum ] = hitCount;
+				} else if (
+					! merged[ file ][ lineNum ] ||
+					merged[ file ][ lineNum ] < 0
+				) {
+					// Only set negative values if we don't have a positive hit.
+					merged[ file ][ lineNum ] = hitCount;
+				}
+			}
+		}
+
+		console.log(
+			`Merged PCOV data from ${ coverageFiles.length } coverage files.`
+		);
+	} else {
+		console.log( 'No PCOV coverage files found - using baseline only.' );
+	}
+
 	const stats = calculateStats( merged );
+	const pcovFileCount = coverageFiles ? coverageFiles.length : 0;
+
+	console.log( `\nBaseline: ${ baselineFileCount } PHP files scanned.` );
+	console.log( `PCOV: ${ pcovFileCount } coverage files merged.` );
 
 	console.log( `\nCoverage Summary:` );
 	console.log( `  Files: ${ stats.totalFiles }` );
