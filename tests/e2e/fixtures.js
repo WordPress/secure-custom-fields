@@ -76,6 +76,28 @@ const test = wpTest.extend( {
 		}
 	},
 
+	// Extend requestUtils to add PHP coverage headers to REST API calls.
+	requestUtils: async ( { requestUtils }, use, testInfo ) => {
+		if ( process.env.PHP_COVERAGE_ENABLED ) {
+			const coverageId = generateCoverageId( testInfo );
+			const originalRest = requestUtils.rest.bind( requestUtils );
+
+			// Wrap the rest method to add coverage headers.
+			requestUtils.rest = async ( options ) => {
+				const headers = options.headers || {};
+				return originalRest( {
+					...options,
+					headers: {
+						...headers,
+						'X-PHP-Coverage': coverageId,
+					},
+				} );
+			};
+		}
+
+		await use( requestUtils );
+	},
+
 	// Override editor fixture to provide version-compatible methods.
 	// WP 6.3+ has "View" button and iframe canvas, WP 6.2 has "Preview" button and no iframe.
 	editor: async ( { editor, page, context }, use ) => {
