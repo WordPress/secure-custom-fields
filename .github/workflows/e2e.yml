@@ -31,7 +31,7 @@ jobs:
                 node: ['22', '24']
                 wp: ['6.2', 'latest', 'trunk']
                 exclude:
-                    # On PRs: only test Node 22 + WP trunk for fast feedback
+                    # On PRs: only test Node 22 + WP latest for fast feedback
                     # On trunk: full matrix with minimum and latest WP versions
                     - event: 'pull_request'
                       node: '24'
@@ -78,100 +78,48 @@ jobs:
                   PHP_COVERAGE_ENABLED: true
               run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
 
-            - name: Upload E2E JS coverage artifact
+            - name: Generate E2E JS coverage report
               if: always()
-              uses: actions/upload-artifact@v4
-              with:
-                  name: e2e-js-coverage-node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
-                  path: .nyc_output/
-                  if-no-files-found: ignore
-                  include-hidden-files: true
-                  retention-days: 1
-
-            - name: Upload E2E PHP coverage artifact
-              if: always()
-              uses: actions/upload-artifact@v4
-              with:
-                  name: e2e-php-coverage-node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
-                  path: .php-coverage/
-                  if-no-files-found: ignore
-                  include-hidden-files: true
-                  retention-days: 1
-
-            - name: Stop wp-env
-              if: always()
-              run: wp-env stop
-
-    coverage:
-        name: Merge and Upload Coverage
-        runs-on: ubuntu-latest
-        needs: test
-        if: always()
-        permissions:
-            contents: read
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '22'
-                  cache: 'npm'
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Download all E2E JS coverage artifacts
-              uses: actions/download-artifact@v4
-              with:
-                  pattern: e2e-js-coverage-*
-                  path: .nyc_output/
-                  merge-multiple: true
-
-            - name: Download all E2E PHP coverage artifacts
-              uses: actions/download-artifact@v4
-              with:
-                  pattern: e2e-php-coverage-*
-                  path: .php-coverage/
-                  merge-multiple: true
-
-            - name: Merge E2E JS coverage and generate report
               run: |
                   if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output 2>/dev/null)" ]; then
-                    echo "Merging E2E JS coverage from $(ls .nyc_output | wc -l) files"
+                    echo "Generating JS coverage report"
                     npm run test:e2e:coverage:report
                   else
-                    echo "No E2E JS coverage data found"
+                    echo "No JS coverage data found"
                   fi
 
-            - name: Merge E2E PHP coverage and generate report
+            - name: Generate E2E PHP coverage report
+              if: always()
               run: |
                   if [ -d ".php-coverage" ] && [ "$(ls -A .php-coverage 2>/dev/null)" ]; then
-                    echo "Merging E2E PHP coverage from $(ls .php-coverage | wc -l) files"
+                    echo "Generating PHP coverage report with baseline"
                     npm run test:e2e:php-coverage:report
                   else
-                    echo "No E2E PHP coverage data found"
+                    echo "No PHP coverage data found"
                   fi
 
             - name: Upload E2E JS Coverage to Codecov
-              if: ${{ hashFiles('./coverage/e2e/lcov.info') != '' }}
+              if: always() && hashFiles('./coverage/e2e/lcov.info') != ''
               uses: codecov/codecov-action@v5
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   files: ./coverage/e2e/lcov.info
                   flags: e2e-js
                   slug: WordPress/secure-custom-fields
-                  name: e2e-js-merged
+                  name: e2e-js-shard${{ matrix.shard }}
                   disable_search: true
 
             - name: Upload E2E PHP Coverage to Codecov
-              if: ${{ hashFiles('./coverage/php-e2e/lcov.info') != '' }}
+              if: always() && hashFiles('./coverage/php-e2e/lcov.info') != ''
               uses: codecov/codecov-action@v5
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   files: ./coverage/php-e2e/lcov.info
                   flags: e2e-php
                   slug: WordPress/secure-custom-fields
-                  name: e2e-php-merged
+                  name: e2e-php-shard${{ matrix.shard }}
                   disable_search: true
+
+            - name: Stop wp-env
+              if: always()
+              run: wp-env stop
