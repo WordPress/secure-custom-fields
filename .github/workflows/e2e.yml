@@ -78,6 +78,15 @@ jobs:
                   PHP_COVERAGE_ENABLED: true
               run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
 
+            - name: Debug coverage directories
+              if: always()
+              run: |
+                  echo "Current directory: $(pwd)"
+                  echo "=== .nyc_output/ ==="
+                  ls -la .nyc_output/ 2>/dev/null || echo "Directory not found"
+                  echo "=== .php-coverage/ ==="
+                  ls -la .php-coverage/ 2>/dev/null || echo "Directory not found"
+
             - name: Upload E2E JS coverage artifact
               if: always()
               uses: actions/upload-artifact@v4
@@ -85,6 +94,7 @@ jobs:
                   name: e2e-js-coverage-node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: .nyc_output/
                   if-no-files-found: ignore
+                  include-hidden-files: true
                   retention-days: 1
 
             - name: Upload E2E PHP coverage artifact
@@ -94,6 +104,7 @@ jobs:
                   name: e2e-php-coverage-node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: .php-coverage/
                   if-no-files-found: ignore
+                  include-hidden-files: true
                   retention-days: 1
 
             - name: Stop wp-env
