@@ -90,13 +90,7 @@ jobs:
 
             - name: Generate E2E PHP coverage report
               if: always()
-              run: |
-                  if [ -d ".php-coverage" ] && [ "$(ls -A .php-coverage 2>/dev/null)" ]; then
-                    echo "Generating PHP coverage report with baseline"
-                    npm run test:e2e:php-coverage:report
-                  else
-                    echo "No PHP coverage data found"
-                  fi
+              run: npm run test:e2e:php-coverage:report
 
             - name: Upload E2E JS Coverage to Codecov
               if: always() && hashFiles('./coverage/e2e/lcov.info') != ''
