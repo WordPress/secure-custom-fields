@@ -115,7 +115,8 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		const emptyParagraph = frameLocator.locator(
 			'[data-type="core/paragraph"][data-empty="true"]'
 		);
-		await emptyParagraph.click();
+		// Force click to bypass WP 7.0's side-inserter popover overlay.
+		await emptyParagraph.click( { force: true } );
 
 		// Wait for the "Connect to a field" panel to appear in the block inspector
 		await page.waitForSelector(
