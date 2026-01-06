@@ -35,7 +35,7 @@ To install and manage Secure Custom Fields in your WordPress theme or plugin, it
 
 This ensures that SCF is properly versioned, loaded automatically, and easy to update.
 
-### Why integrate **Secure Custom Fields (SCF)** with Composer?
+#### Why integrate **Secure Custom Fields (SCF)** with Composer?
 
 Integrating SCF using Composer offers several important advantages for the professional development of WordPress plugins and themes:
 
@@ -62,7 +62,7 @@ Integrating SCF using Composer offers several important advantages for the profe
 
 ---
 
-### How to Load and Use **Secure Custom Fields (SCF)** with Composer
+#### How to Load and Use **Secure Custom Fields (SCF)** with Composer
 
 Add the following configuration to your `composer.json` file:
 
@@ -104,7 +104,7 @@ composer i
 
 ---
 
-### Add the Composer Autoloader
+#### Add the Composer Autoloader
 
 To ensure Composer dependencies are loaded correctly, add the following line in your plugin or theme:
 
@@ -112,7 +112,7 @@ To ensure Composer dependencies are loaded correctly, add the following line in 
 require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
 ```
 
-### Load Secure Custom Fields
+#### Load Secure Custom Fields
 
 Now you need to manually load the Secure Custom Fields plugin and define its paths. Adjust the paths according to the structure of your plugin or theme:
 
@@ -129,13 +129,13 @@ if (! class_exists('ACF')) {
 
 ⚠️ **Note:** Replace MY_SCF_PATH and MY_SCF_URL with constants that match your plugin/theme structure if necessary.
 
-### Done
+#### Done
 
 You have successfully installed and integrated Secure Custom Fields via Composer. You can now use it as you would with a normal installation, but with all the benefits of Composer-based dependency management.
 
 ---
 
-### Optional: Hide SCF Admin Menu and Updates
+#### Optional: Hide SCF Admin Menu and Updates
 
 If you want to hide the **Secure Custom Fields (SCF)** admin menu from the WordPress dashboard and prevent the plugin's update notifications from appearing, you can use the following code:
 
@@ -147,7 +147,7 @@ add_filter( 'acf/settings/show_admin', '__return_false' );
 add_filter( 'acf/settings/show_updates', '__return_false', 100 );
 ```
 
-#### What does this do?
+##### What does this do?
 
 - **Hide Admin Menu:**  
   The first filter disables the SCF menu in the WordPress admin area, preventing users from accessing SCF field groups or settings.
@@ -155,7 +155,7 @@ add_filter( 'acf/settings/show_updates', '__return_false', 100 );
 - **Hide Update Notifications:**  
   The second filter disables the SCF update notices, so users won't see update prompts for the plugin inside the admin dashboard.
 
-#### When should you use it?
+##### When should you use it?
 
 - If you are bundling SCF inside your plugin or theme and want to **control all the custom fields yourself** without allowing clients or users to modify them.
 - If you want to **maintain full control** over SCF versions and updates to avoid compatibility issues caused by manual updates.

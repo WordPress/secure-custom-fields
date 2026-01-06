@@ -1,0 +1,21 @@
+{
+	"title": "SCF Accordion Field Fragment",
+	"description": "Type-specific properties for accordion fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "accordion" ]
+		},
+		"open": {
+			"type": "integer",
+			"default": 0,
+			"description": "Display this accordion as open on page load"
+		},
+		"multi_expand": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow this accordion to open without closing others"
+		},
+		"endpoint": { "$ref": "#/definitions/endpoint" }
+	}
+}

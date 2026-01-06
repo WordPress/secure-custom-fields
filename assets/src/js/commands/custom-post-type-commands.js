@@ -37,64 +37,87 @@ const registerPostTypeCommands = () => {
 	const adminUrl = window.acf.data.admin_url || '';
 	const postTypes = window.acf.data.customPostTypes;
 
+	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
+	const wpVersion = window.acf.data.wp_version;
+	const isWp69Plus =
+		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
+
 	postTypes.forEach( ( postType ) => {
 		// Skip invalid post types or those missing required labels
-		if ( ! postType?.name || ! postType?.all_items || ! postType?.add_new_item ) {
+		if (
+			! postType?.name ||
+			! postType?.all_items ||
+			! postType?.add_new_item
+		) {
 			return;
 		}
 
-		// Register "View All" command for this post type
-		commandStore.registerCommand( {
-			name: `scf/cpt-${ postType.name }`,
-			label: postType.all_items,
-			icon: createElement( Icon, { icon: page } ),
-			context: 'admin',
-			description: postType.all_items,
-			keywords: [
-				'post type',
-				'content',
-				'cpt',
-				postType.name,
-				postType.label,
-			].filter( Boolean ),
-			callback: ( { close } ) => {
-				document.location = addQueryArgs(adminUrl + 'edit.php', {
-					post_type: postType.name
-				});
-				close();
-			},
-		} );
+		// Navigation commands are already included in WP 6.9+.
+		if ( ! isWp69Plus ) {
+			// Register "View All" command for this post type
+			commandStore.registerCommand( {
+				name: `scf/cpt-${ postType.name }`,
+				label: postType.all_items,
+				icon: createElement( Icon, { icon: page } ),
+				context: 'admin',
+				description: postType.all_items,
+				keywords: [
+					'post type',
+					'content',
+					'cpt',
+					postType.name,
+					postType.label,
+				].filter( Boolean ),
+				callback: ( { close } ) => {
+					document.location = addQueryArgs( adminUrl + 'edit.php', {
+						post_type: postType.name,
+					} );
+					close();
+				},
+			} );
 
-		// Register "Add New" command for this post type
-		commandStore.registerCommand( {
-			name: `scf/new-${ postType.name }`,
-			label: postType.add_new_item,
-			icon: createElement( Icon, { icon: plus } ),
-			context: 'admin',
-			description: postType.add_new_item,
-			keywords: [
-				'add',
-				'new',
-				'create',
-				'content',
-				postType.name,
-				postType.label,
-			],
-			callback: ( { close } ) => {
-				document.location = addQueryArgs(adminUrl + 'post-new.php', {
-					post_type: postType.name
-				});
-				close();
-			},
-		} );
+			// Register "Add New" command for this post type
+			commandStore.registerCommand( {
+				name: `scf/new-${ postType.name }`,
+				label: postType.add_new_item,
+				icon: createElement( Icon, { icon: plus } ),
+				context: 'admin',
+				description: postType.add_new_item,
+				keywords: [
+					'add',
+					'new',
+					'create',
+					'content',
+					postType.name,
+					postType.label,
+				],
+				callback: ( { close } ) => {
+					document.location = addQueryArgs(
+						adminUrl + 'post-new.php',
+						{
+							post_type: postType.name,
+						}
+					);
+					close();
+				},
+			} );
+		}
 
-		// Register "Edit Post Type" command for registered CPTs
+		// Register "Edit Post Type" command
 		commandStore.registerCommand( {
 			name: `scf/edit-${ postType.name }`,
-			label: sprintf(__('Edit post type: %s', 'secure-custom-fields'), postType.label),
+			label: sprintf(
+				/* translators: %s: post type label */
+				__( 'Edit post type: %s', 'secure-custom-fields' ),
+				postType.label
+			),
 			icon: createElement( Icon, { icon: edit } ),
 			context: 'admin',
-			description: sprintf(__('Edit the %s post type settings', 'secure-custom-fields'), postType.label),
+			description: sprintf(
+				/* translators: %s: post type label */
+				__( 'Edit the %s post type settings', 'secure-custom-fields' ),
+				postType.label
+			),
 			keywords: [
 				'edit',
 				'modify',
@@ -105,10 +128,10 @@ const registerPostTypeCommands = () => {
 				postType.label,
 			],
 			callback: ( { close } ) => {
-				document.location = addQueryArgs(adminUrl + 'post.php', {
+				document.location = addQueryArgs( adminUrl + 'post.php', {
 					post: postType.id,
-					action: 'edit'
-				});
+					action: 'edit',
+				} );
 				close();
 			},
 		} );

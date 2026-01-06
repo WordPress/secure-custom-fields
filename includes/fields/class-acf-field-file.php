@@ -130,7 +130,7 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 					)
 				);
 				?>
-				<div class="show-if-value file-wrap">
+				<div class="show-if-value file-wrap" tabindex="0" role="button" aria-label="<?php esc_attr_e( 'Selected file. Press tab to access file options.', 'secure-custom-fields' ); ?>">
 					<div class="file-icon">
 						<img data-name="icon" src="<?php echo esc_url( $o['icon'] ); ?>" alt="" />
 					</div>
@@ -148,14 +148,14 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 						</p>
 					</div>
 					<div class="acf-actions -hover">
-						<?php if ( $uploader != 'basic' ) : ?>
-							<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>"></a>
+						<?php if ( 'basic' !== $uploader ) : ?>
+							<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Edit file', 'secure-custom-fields' ); ?>"></a>
 						<?php endif; ?>
-						<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
+						<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Remove file', 'secure-custom-fields' ); ?>"></a>
 					</div>
 				</div>
 				<div class="hide-if-value">
-					<?php if ( $uploader == 'basic' ) : ?>
+					<?php if ( 'basic' === $uploader ) : ?>
 
 						<?php if ( $field['value'] && ! is_numeric( $field['value'] ) ) : ?>
 							<div class="acf-error-message">
@@ -165,13 +165,17 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 
 						<label class="acf-basic-uploader">
 							<?php
-							acf_file_input(
-								array(
-									'name' => $field['name'],
-									'id'   => $field['id'],
-									'key'  => $field['key'],
-								)
+							$args = array(
+								'name' => $field['name'],
+								'id'   => $field['id'],
+								'key'  => $field['key'],
 							);
+
+							if ( ! empty( $field['mime_types'] ) ) {
+								$args['accept'] = $field['mime_types'];
+							}
+
+							acf_file_input( $args );
 							?>
 						</label>
 
@@ -509,13 +513,16 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
-		 * @param mixed          $value
-		 * @param string|integer $post_id
-		 * @param array          $field
-		 * @return mixed
+		 * @since ACF 5.0.0
+		 * @since SCF 6.8.0 Now respects the return_format field setting.
+		 *
+		 * @param mixed          $value   The field value.
+		 * @param string|integer $post_id The post ID.
+		 * @param array          $field   The field array.
+		 * @return mixed The formatted value based on return_format setting.
 		 */
 		public function format_value_for_rest( $value, $post_id, array $field ) {
-			return acf_format_numerics( $value );
+			return $this->format_value( $value, $post_id, $field );
 		}
 	}
 

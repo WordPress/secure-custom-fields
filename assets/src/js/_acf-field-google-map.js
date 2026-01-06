@@ -7,9 +7,9 @@
 		wait: 'load',
 
 		events: {
-			'click a[data-name="clear"]': 'onClickClear',
-			'click a[data-name="locate"]': 'onClickLocate',
-			'click a[data-name="search"]': 'onClickSearch',
+			'click button[data-name="clear"]': 'onClickClear',
+			'click button[data-name="locate"]': 'onClickLocate',
+			'click button[data-name="search"]': 'onClickSearch',
 			'keydown .search': 'onKeydownSearch',
 			'keyup .search': 'onKeyupSearch',
 			'focus .search': 'onFocusSearch',
@@ -513,8 +513,13 @@
 			this.searchAddress( this.$search().val() );
 		},
 
-		onFocusSearch: function ( e, $el ) {
-			this.setState( 'searching' );
+		onFocusSearch: function ( event, searchInput ) {
+			const currentValue = this.val();
+			const currentAddress = currentValue ? currentValue.address : '';
+
+			if ( searchInput.val() !== currentAddress ) {
+				this.setState( 'searching' );
+			}
 		},
 
 		onBlurSearch: function ( e, $el ) {
@@ -529,9 +534,20 @@
 		},
 
 		onKeyupSearch: function ( e, $el ) {
-			// Clear empty value.
-			if ( ! $el.val() ) {
+			const val = this.val();
+			const address = val ? val.address : '';
+
+			if ( $el.val() ) {
+				// If search input has value
+				if ( $el.val() !== address ) {
+					this.setState( 'searching' );
+				} else {
+					this.setState( 'default' );
+				}
+			} else {
+				// If search input is empty
 				this.val( false );
+				this.setState( 'default' );
 			}
 		},
 

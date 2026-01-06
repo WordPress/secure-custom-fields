@@ -1,5 +1,5 @@
 ( function ( $, undefined ) {
-	var Field = acf.models.ImageField.extend( {
+	const Field = acf.models.ImageField.extend( {
 		type: 'file',
 
 		$control: function () {
@@ -9,7 +9,13 @@
 		$input: function () {
 			return this.$( 'input[type="hidden"]:first' );
 		},
-
+		events: {
+			'click a[data-name="add"]': 'onClickAdd',
+			'click a[data-name="edit"]': 'onClickEdit',
+			'click a[data-name="remove"]': 'onClickRemove',
+			'change input[type="file"]': 'onChange',
+			'keydown .file-wrap': 'onImageWrapKeydown',
+		},
 		validateAttachment: function ( attachment ) {
 			// defaults
 			attachment = attachment || {};
@@ -54,14 +60,17 @@
 			);
 
 			// vars
-			var val = attachment.id || '';
+			const val = attachment.id || '';
 
 			// update val
 			acf.val( this.$input(), val );
-
-			// update class
 			if ( val ) {
+				// update class
 				this.$control().addClass( 'has-value' );
+				const fileWrap = this.$( '.file-wrap' );
+				if ( fileWrap.length ) {
+					fileWrap.trigger( 'focus' );
+				}
 			} else {
 				this.$control().removeClass( 'has-value' );
 			}
@@ -69,11 +78,11 @@
 
 		selectAttachment: function () {
 			// vars
-			var parent = this.parent();
-			var multiple = parent && parent.get( 'type' ) === 'repeater';
+			const parent = this.parent();
+			const multiple = parent && parent.get( 'type' ) === 'repeater';
 
 			// new frame
-			var frame = acf.newMediaPopup( {
+			const frame = acf.newMediaPopup( {
 				mode: 'select',
 				title: acf.__( 'Select File' ),
 				field: this.get( 'key' ),
@@ -90,9 +99,9 @@
 			} );
 		},
 
-		editAttachment: function () {
+		editAttachment: function ( button ) {
 			// vars
-			var val = this.val();
+			const val = this.val();
 
 			// bail early if no val
 			if ( ! val ) {
@@ -106,8 +115,21 @@
 				button: acf.__( 'Update File' ),
 				attachment: val,
 				field: this.get( 'key' ),
-				select: $.proxy( function ( attachment, i ) {
+				select: $.proxy( function ( attachment ) {
 					this.render( attachment );
+				}, this ),
+				close: $.proxy( function () {
+					if ( 'edit-button' === button ) {
+						const edit = this.$el.find( 'a[data-name="edit"]' );
+						if ( edit.length ) {
+							edit.trigger( 'focus' );
+						}
+					} else {
+						const imageWrap = this.$el.find( '.image-wrap' );
+						if ( imageWrap.length ) {
+							imageWrap.trigger( 'focus' );
+						}
+					}
 				}, this ),
 			} );
 		},

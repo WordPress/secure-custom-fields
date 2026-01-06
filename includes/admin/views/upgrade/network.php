@@ -60,7 +60,7 @@
 				?>
 			<tr
 				<?php
-				if ( $i % 2 == 0 ) :
+				if ( 0 === $i % 2 ) :
 					?>
 				class="alternate"<?php endif; ?>>
 				<th class="check-column" scope="row">
@@ -73,8 +73,16 @@
 				</td>
 				<td>
 				<?php if ( acf_has_upgrade() ) : ?>
-					<?php // translators: %1 current db version, %2 available db version ?>
-					<span class="response"><?php echo esc_html( printf( __( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ), acf_get_db_version(), ACF_VERSION ) ); ?></span>
+					<span class="response">
+						<?php
+						printf(
+							/* translators: %1$s current db version, %2$s available db version */
+							esc_html__( 'Site requires database upgrade from %1$s to %2$s', 'secure-custom-fields' ),
+							esc_html( acf_get_db_version() ),
+							esc_html( ACF_VERSION )
+						);
+						?>
+					</span>
 				<?php else : ?>
 					<?php esc_html_e( 'Site is up to date', 'secure-custom-fields' ); ?>
 				<?php endif; ?>

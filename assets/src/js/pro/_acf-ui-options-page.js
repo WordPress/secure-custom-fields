@@ -1,5 +1,4 @@
 ( function ( $, undefined ) {
-
 	const parentPageSelectTemplate = function ( selection ) {
 		if ( 'undefined' === typeof selection.element ) {
 			return selection;
@@ -27,27 +26,24 @@
 		const $selection = $( '<span class="acf-selection"></span>' );
 		$selection.html( acf.strEscape( selection.element.innerHTML ) );
 
-		if (
-			selection.id === 'options' ||
-			selection.id === 'edit_posts'
-		) {
+		if ( selection.id === 'options' || selection.id === 'edit_posts' ) {
 			$selection.append(
 				'<span class="acf-select2-default-pill">' +
-				acf.__( 'Default' ) +
-				'</span>'
+					acf.__( 'Default' ) +
+					'</span>'
 			);
 		}
 		$selection.data( 'element', selection.element );
 		return $selection;
 	};
 
-	const UIOptionsPageManager = new acf.Model({
+	const UIOptionsPageManager = new acf.Model( {
 		id: 'UIOptionsPageManager',
 		wait: 'ready',
 		events: {
-			'change .acf-options-page-parent_slug' : 'toggleMenuPositionDesc',
+			'change .acf-options-page-parent_slug': 'toggleMenuPositionDesc',
 		},
-		initialize: function() {
+		initialize: function () {
 			if ( 'ui_options_page' !== acf.get( 'screen' ) ) {
 				return;
 			}
@@ -55,7 +51,7 @@
 				field: false,
 				templateSelection: parentPageSelectTemplate,
 				templateResult: parentPageSelectTemplate,
-				dropdownCssClass: 'field-type-select-results'
+				dropdownCssClass: 'field-type-select-results',
 			} );
 
 			acf.newSelect2( $( 'select.acf-options-page-capability' ), {
@@ -73,7 +69,7 @@
 			this.toggleMenuPositionDesc();
 		},
 
-		toggleMenuPositionDesc: function( e, $el ) {
+		toggleMenuPositionDesc: function ( e, $el ) {
 			const parentPage = $( 'select.acf-options-page-parent_slug' ).val();
 
 			if ( 'none' === parentPage ) {
@@ -84,14 +80,14 @@
 				$( '.acf-menu-position-desc-child' ).show();
 			}
 		},
-	});
+	} );
 
 	const optionsPageModalManager = new acf.Model( {
 		id: 'optionsPageModalManager',
 		events: {
 			'change .location-rule-value': 'createOptionsPage',
 		},
-		createOptionsPage: function( e ) {
+		createOptionsPage: function ( e ) {
 			const $locationSelect = $( e.target );
 
 			if ( 'add_new_options_page' !== $locationSelect.val() ) {
@@ -100,11 +96,14 @@
 
 			let popup = false;
 
-			const getForm = function() {
+			const getForm = function () {
 				const fieldGroupTitle = $( '.acf-headerbar-title-field' ).val();
 				const ajaxData = {
 					action: 'acf/create_options_page',
-					acf_parent_page_choices: this.acf.data.optionPageParentOptions ? this.acf.data.optionPageParentOptions : []
+					acf_parent_page_choices: this.acf.data
+						.optionPageParentOptions
+						? this.acf.data.optionPageParentOptions
+						: [],
 				};
 
 				if ( fieldGroupTitle.length ) {
@@ -120,7 +119,7 @@
 				} );
 			};
 
-			const populateForm = function( response ) {
+			const populateForm = function ( response ) {
 				popup = acf.newPopup( {
 					title: response.data.title,
 					content: response.data.content,
@@ -130,37 +129,41 @@
 				popup.$el.addClass( 'acf-create-options-page-popup' );
 
 				// Hack to focus with the cursor at the end of the input.
-				const $pageTitle = popup.$el.find( '#acf_ui_options_page-page_title' );
+				const $pageTitle = popup.$el.find(
+					'#acf_ui_options_page-page_title'
+				);
 				const pageTitleVal = $pageTitle.val();
-				$pageTitle.focus().val( '' ).val( pageTitleVal );
+				$pageTitle.trigger( 'focus' ).val( '' ).val( pageTitleVal );
 
 				acf.newSelect2( $( '#acf_ui_options_page-parent_slug' ), {
 					field: false,
 					templateSelection: parentPageSelectTemplate,
 					templateResult: parentPageSelectTemplate,
-					dropdownCssClass: 'field-type-select-results'
+					dropdownCssClass: 'field-type-select-results',
 				} );
 
 				popup.on( 'submit', 'form', validateForm );
 			};
 
-			const validateForm = function( e ) {
+			const validateForm = function ( e ) {
 				e.preventDefault();
 
 				acf.validateForm( {
 					form: $( '#acf-create-options-page-form' ),
 					success: submitForm,
-					failure: onFail
+					failure: onFail,
 				} );
-			}
+			};
 
-			const submitForm = function() {
-				const formValues = $( '#acf-create-options-page-form' ).serializeArray();
+			const submitForm = function () {
+				const formValues = $(
+					'#acf-create-options-page-form'
+				).serializeArray();
 				const ajaxData = {
-					action: 'acf/create_options_page'
+					action: 'acf/create_options_page',
 				};
 
-				formValues.forEach( setting => {
+				formValues.forEach( ( setting ) => {
 					ajaxData[ setting.name ] = setting.value;
 				} );
 
@@ -173,34 +176,43 @@
 				} );
 			};
 
-			const onFail = function( e ) {
+			const onFail = function ( e ) {
 				const $form = $( '#acf-create-options-page-form' );
-				const $fieldNotices = $form.find( '.acf-field .acf-error-message' );
+				const $fieldNotices = $form.find(
+					'.acf-field .acf-error-message'
+				);
 
 				// Hide the general validation failed notice.
 				$form.find( '.acf-notice' ).first().remove();
 
 				// Update class for inline notices and move into field label.
-				$fieldNotices.each( function() {
-					const $label = $( this ).closest( '.acf-field' ).find( '.acf-label:first' );
-					$( this ).attr( 'class', 'acf-options-page-modal-error' ).appendTo( $label );
+				$fieldNotices.each( function () {
+					const $label = $( this )
+						.closest( '.acf-field' )
+						.find( '.acf-label:first' );
+					$( this )
+						.attr( 'class', 'acf-options-page-modal-error' )
+						.appendTo( $label );
 				} );
 			};
 
-			const populateLocationSelect = function( response ) {
+			const populateLocationSelect = function ( response ) {
 				if ( response.success && response.data.menu_slug ) {
 					$locationSelect.prepend(
-						'<option value="' + response.data.menu_slug + '">' + response.data.page_title + '</option>'
+						'<option value="' +
+							response.data.menu_slug +
+							'">' +
+							response.data.page_title +
+							'</option>'
 					);
 					$locationSelect.val( response.data.menu_slug );
 					popup.close();
 				} else if ( ! response.success && response.data.error ) {
-					alert(response.data.error);
+					alert( response.data.error );
 				}
 			};
 
 			getForm();
 		},
 	} );
-
 } )( jQuery );

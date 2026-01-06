@@ -66,11 +66,18 @@
 
 				let isDefault = false;
 
-				if ( $parentSelect.filter( '.acf-taxonomy-manage_terms, .acf-taxonomy-edit_terms, .acf-taxonomy-delete_terms' ).length &&
+				if (
+					$parentSelect.filter(
+						'.acf-taxonomy-manage_terms, .acf-taxonomy-edit_terms, .acf-taxonomy-delete_terms'
+					).length &&
 					selection.id === 'manage_categories'
 				) {
 					isDefault = true;
-				} else if ( $parentSelect.filter( '.acf-taxonomy-assign_terms' ).length && selection.id === 'edit_posts' ) {
+				} else if (
+					$parentSelect.filter( '.acf-taxonomy-assign_terms' )
+						.length &&
+					selection.id === 'edit_posts'
+				) {
 					isDefault = true;
 				} else if (
 					selection.id === 'taxonomy_key' ||
@@ -83,8 +90,8 @@
 				if ( isDefault ) {
 					$selection.append(
 						'<span class="acf-select2-default-pill">' +
-						acf.__( 'Default' ) +
-						'</span>'
+							acf.__( 'Default' ) +
+							'</span>'
 					);
 				}
 
@@ -391,7 +398,7 @@
 				const val = $select.val();
 
 				if ( ! val.length ) {
-					$select.focus();
+					$select.trigger( 'focus' );
 					return;
 				}
 
@@ -419,7 +426,7 @@
 					);
 				}
 
-				popup.$( 'button.acf-close-popup' ).focus();
+				popup.$( 'button.acf-close-popup' ).trigger( 'focus' );
 			};
 
 			step1();

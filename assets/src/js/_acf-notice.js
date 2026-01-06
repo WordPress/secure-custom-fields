@@ -36,7 +36,7 @@
 			this.type( this.get( 'type' ) );
 
 			// text
-			this.html( '<p>' + acf.strEscape( this.get( 'text' ) ) + '</p>' );
+			this.html( '<p>' + acf.escHtml( this.get( 'text' ) ) + '</p>' );
 
 			// close
 			if ( this.get( 'dismiss' ) ) {
@@ -133,7 +133,9 @@
 		priority: 1,
 		initialize: function () {
 			const $notices = $( '.acf-admin-notice' );
-
+			if ( ! $notices.length ) {
+				return;
+			}
 			$notices.each( function () {
 				if ( $( this ).data( 'persisted' ) ) {
 					let dismissed = acf.getPreference( 'dismissed-notices' );

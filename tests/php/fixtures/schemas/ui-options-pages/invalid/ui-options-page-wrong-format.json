@@ -1,0 +1,15 @@
+{
+	"key": "group_theme_settings_options_page",
+	"title": "Theme Settings",
+	"type": "options_page",
+	"menu_slug": "theme-settings",
+	"menu_title": "Theme Settings",
+	"parent_slug": "",
+	"position": "",
+	"icon_url": "",
+	"redirect": false,
+	"post_id": "option",
+	"autoload": false,
+	"capability": "manage_options",
+	"updated_at": "2025-12-03 00:00:00"
+}

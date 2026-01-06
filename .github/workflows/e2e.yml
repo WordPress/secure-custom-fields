@@ -1,42 +1,119 @@
 name: E2E Tests
 
 on:
-  pull_request:
-    branches: [trunk]
+    pull_request:
+        branches: [trunk]
+    push:
+        branches: [trunk]
+    # Allow manually triggering the workflow
+    workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+    cancel-in-progress: true
+
+# Disable permissions for all available scopes by default
+permissions: {}
 
 jobs:
-  test:
-    name: Playwright e2e Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    test:
+        name: E2E - Node ${{ matrix.node }} / WP ${{ matrix.wp }} / Shard ${{ matrix.shard }}/4
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
+        strategy:
+            fail-fast: false
+            matrix:
+                event: ['${{ github.event_name }}']
+                shard: [1, 2, 3, 4]
+                node: ['22', '24']
+                wp: ['6.2', 'latest', 'trunk']
+                exclude:
+                    # On PRs: only test Node 22 + WP latest for fast feedback
+                    # On trunk: full matrix with minimum and latest WP versions
+                    - event: 'pull_request'
+                      node: '24'
+                    - event: 'pull_request'
+                      wp: '6.2'
+                    - event: 'pull_request'
+                      wp: 'trunk'
 
-      - name: Install dependencies
-        run: |
-          npm ci
-          composer install --prefer-dist --no-progress
+        env:
+            WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
 
-      - name: Npm build
-        run: npm run build
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Install wp-env
-        run: npm install -g @wordpress/env
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node }}
+                  cache: 'npm'
 
-      - name: Start wp-env
-        run: wp-env start
+            - name: Install dependencies
+              run: |
+                  npm ci
+                  composer install --prefer-dist --no-progress
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+            - name: Npm build with coverage instrumentation
+              env:
+                  COVERAGE_ENABLED: true
+              run: npm run build
 
-      - name: Run e2e tests
-        run: npm run test:e2e
+            - name: Install wp-env
+              run: npm install -g @wordpress/env
 
-      - name: Stop wp-env
-        if: always()
-        run: wp-env stop
+            - name: Start wp-env and install PCOV
+              env:
+                  PHP_COVERAGE_ENABLED: true
+              run: wp-env start
+
+            - name: Install Playwright browsers
+              run: npx playwright install --with-deps
+
+            - name: Run e2e tests with coverage
+              env:
+                  PHP_COVERAGE_ENABLED: true
+              run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
+
+            - name: Generate E2E JS coverage report
+              if: always()
+              run: |
+                  if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output 2>/dev/null)" ]; then
+                    echo "Generating JS coverage report"
+                    npm run test:e2e:coverage:report
+                  else
+                    echo "No JS coverage data found"
+                  fi
+
+            - name: Generate E2E PHP coverage report
+              if: always()
+              run: npm run test:e2e:php-coverage:report
+
+            - name: Upload E2E JS Coverage to Codecov
+              if: always() && hashFiles('./coverage/e2e/lcov.info') != ''
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  files: ./coverage/e2e/lcov.info
+                  flags: e2e-js
+                  slug: WordPress/secure-custom-fields
+                  name: e2e-js-shard${{ matrix.shard }}
+                  disable_search: true
+
+            - name: Upload E2E PHP Coverage to Codecov
+              if: always() && hashFiles('./coverage/php-e2e/lcov.info') != ''
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  files: ./coverage/php-e2e/lcov.info
+                  flags: e2e-php
+                  slug: WordPress/secure-custom-fields
+                  name: e2e-php-shard${{ matrix.shard }}
+                  disable_search: true
+
+            - name: Stop wp-env
+              if: always()
+              run: wp-env stop

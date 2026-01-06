@@ -1,0 +1,430 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/field-fragments/field-base.schema.json",
+	"title": "SCF Field Base",
+	"description": "Base field schema with shared properties and definitions. Used by the generation script to compose field.schema.json.",
+	"$comment": "WordPress doesn't support 'allOf', so we use '$ref' with explicit 'required' arrays. Since PHP's array_merge() replaces (not merges) nested arrays, we must redeclare all required fields from the definition plus 'parent'.",
+	"oneOf": [
+		{
+			"description": "Single field object with required parent",
+			"$ref": "#/definitions/field",
+			"required": [
+				"key",
+				"label",
+				"name",
+				"type",
+				"parent"
+			]
+		},
+		{
+			"description": "Array of field objects with required parent",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/field",
+				"required": [
+					"key",
+					"label",
+					"name",
+					"type",
+					"parent"
+				]
+			},
+			"minItems": 1
+		}
+	],
+	"definitions": {
+		"field": {
+			"type": "object",
+			"required": [
+				"key",
+				"label",
+				"name",
+				"type"
+			],
+			"additionalProperties": true,
+			"properties": {
+				"key": {
+					"type": "string",
+					"pattern": "^field_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+				},
+				"label": {
+					"type": "string",
+					"minLength": 1,
+					"description": "The label displayed for this field"
+				},
+				"name": {
+					"type": "string",
+					"pattern": "^[a-zA-Z0-9_-]*$",
+					"description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+				},
+				"aria-label": {
+					"type": "string",
+					"description": "Accessible label for screen readers"
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"text",
+						"textarea",
+						"number",
+						"range",
+						"email",
+						"url",
+						"password",
+						"image",
+						"file",
+						"wysiwyg",
+						"oembed",
+						"gallery",
+						"select",
+						"checkbox",
+						"radio",
+						"button_group",
+						"true_false",
+						"link",
+						"post_object",
+						"page_link",
+						"relationship",
+						"taxonomy",
+						"user",
+						"google_map",
+						"date_picker",
+						"date_time_picker",
+						"time_picker",
+						"color_picker",
+						"icon_picker",
+						"message",
+						"accordion",
+						"tab",
+						"group",
+						"repeater",
+						"flexible_content",
+						"clone",
+						"nav_menu",
+						"separator",
+						"output"
+					],
+					"description": "The type of field"
+				},
+				"instructions": {
+					"type": "string",
+					"description": "Instructions for content editors"
+				},
+				"required": {
+					"type": [
+						"boolean",
+						"integer"
+					],
+					"default": false,
+					"description": "Whether the field is required"
+				},
+				"conditional_logic": {
+					"type": [
+						"boolean",
+						"integer",
+						"string",
+						"array"
+					],
+					"default": 0,
+					"description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
+				},
+				"wrapper": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"width": {
+							"type": "string",
+							"description": "Width of the field wrapper (e.g. '50' for 50%)"
+						},
+						"class": {
+							"type": "string",
+							"description": "CSS class(es) for the field wrapper"
+						},
+						"id": {
+							"type": "string",
+							"description": "HTML ID for the field wrapper"
+						}
+					},
+					"description": "Wrapper element settings"
+				},
+				"menu_order": {
+					"type": "integer",
+					"description": "Order of the field within its parent"
+				},
+				"parent": {
+					"type": [
+						"string",
+						"integer"
+					],
+					"description": "Parent field or field group key/ID"
+				},
+				"parent_layout": {
+					"type": "string",
+					"description": "Parent layout key for flexible content sub-fields"
+				}
+			}
+		},
+		"conditionalLogicGroup": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/conditionalLogicRule"
+			},
+			"minItems": 1,
+			"description": "Group of conditional logic rules (AND logic within group)"
+		},
+		"conditionalLogicRule": {
+			"type": "object",
+			"required": [
+				"field",
+				"operator"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"field": {
+					"type": "string",
+					"pattern": "^field_.+$",
+					"description": "Field key to check"
+				},
+				"operator": {
+					"type": "string",
+					"enum": [
+						"==",
+						"!=",
+						"!==",
+						"==empty",
+						"!=empty",
+						"==pattern",
+						"==contains",
+						"!=contains",
+						"<",
+						">"
+					],
+					"description": "Comparison operator"
+				},
+				"value": {
+					"type": "string",
+					"description": "Value to compare against (not required for ==empty and !=empty operators)"
+				}
+			}
+		},
+		"default_value": {
+			"type": "string",
+			"default": "",
+			"description": "Default value for the field"
+		},
+		"default_value_numeric": {
+			"type": [
+				"string",
+				"number"
+			],
+			"default": "",
+			"description": "Default value for numeric fields (string for empty, number for value)"
+		},
+		"default_value_multi": {
+			"type": [
+				"string",
+				"array"
+			],
+			"default": "",
+			"description": "Default value(s) for multi-select fields (string for single, array for multiple)"
+		},
+		"placeholder": {
+			"type": "string",
+			"default": "",
+			"description": "Placeholder text shown when field is empty"
+		},
+		"prepend": {
+			"type": "string",
+			"default": "",
+			"description": "Text or HTML displayed before the input"
+		},
+		"append": {
+			"type": "string",
+			"default": "",
+			"description": "Text or HTML displayed after the input"
+		},
+		"maxlength": {
+			"type": [
+				"integer",
+				"string"
+			],
+			"default": "",
+			"description": "Maximum character length (empty string for unlimited)"
+		},
+		"rows": {
+			"type": [
+				"integer",
+				"string"
+			],
+			"default": "",
+			"description": "Number of rows for textarea display"
+		},
+		"new_lines": {
+			"type": "string",
+			"enum": [
+				"wpautop",
+				"br",
+				""
+			],
+			"default": "",
+			"description": "How to handle new lines in output (wpautop, br, or none)"
+		},
+		"return_format_media": {
+			"type": "string",
+			"enum": [
+				"array",
+				"url",
+				"id"
+			],
+			"default": "array",
+			"description": "How the media value is returned (array of data, URL string, or attachment ID)"
+		},
+		"library": {
+			"type": "string",
+			"enum": [
+				"all",
+				"uploadedTo"
+			],
+			"default": "all",
+			"description": "Media library source (all media or uploaded to current post only)"
+		},
+		"mime_types": {
+			"type": "string",
+			"default": "",
+			"description": "Comma-separated list of allowed MIME types (e.g., 'image/png, image/jpeg')"
+		},
+		"preview_size": {
+			"type": "string",
+			"default": "medium",
+			"description": "Image size for preview display in admin"
+		},
+		"min_width": {
+			"type": "integer",
+			"default": 0,
+			"description": "Minimum image width in pixels (0 for no limit)"
+		},
+		"min_height": {
+			"type": "integer",
+			"default": 0,
+			"description": "Minimum image height in pixels (0 for no limit)"
+		},
+		"max_width": {
+			"type": "integer",
+			"default": 0,
+			"description": "Maximum image width in pixels (0 for no limit)"
+		},
+		"max_height": {
+			"type": "integer",
+			"default": 0,
+			"description": "Maximum image height in pixels (0 for no limit)"
+		},
+		"min_size": {
+			"type": "integer",
+			"default": 0,
+			"description": "Minimum file size in MB (0 for no limit)"
+		},
+		"max_size": {
+			"type": "integer",
+			"default": 0,
+			"description": "Maximum file size in MB (0 for no limit)"
+		},
+		"choices": {
+			"type": [
+				"object",
+				"array"
+			],
+			"default": {},
+			"description": "Available choices as value:label pairs (object when populated, array when empty)"
+		},
+		"allow_null": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow a null/empty value to be selected (1 for yes, 0 for no)"
+		},
+		"multiple": {
+			"type": "integer",
+			"default": 0,
+			"description": "Allow multiple values to be selected (1 for yes, 0 for no)"
+		},
+		"return_format_choice": {
+			"type": "string",
+			"enum": [
+				"value",
+				"label",
+				"array"
+			],
+			"default": "value",
+			"description": "Value returned (value, label, or both as array)"
+		},
+		"layout_choice": {
+			"type": "string",
+			"enum": [
+				"vertical",
+				"horizontal"
+			],
+			"default": "vertical",
+			"description": "Layout direction for choices (default varies by field type)"
+		},
+		"min": {
+			"type": "integer",
+			"default": 0,
+			"description": "Minimum number of items required (0 for no minimum)"
+		},
+		"max": {
+			"type": "integer",
+			"default": 0,
+			"description": "Maximum number of items allowed (0 for no limit)"
+		},
+		"post_type": {
+			"type": "array",
+			"default": [],
+			"description": "Limit selection to specific post types (empty for all)"
+		},
+		"taxonomy_filter": {
+			"type": "array",
+			"default": [],
+			"description": "Limit selection to posts with specific taxonomy terms"
+		},
+		"bidirectional_target": {
+			"type": "array",
+			"default": [],
+			"description": "Target fields for bidirectional relationships"
+		},
+		"first_day": {
+			"type": "integer",
+			"default": 1,
+			"description": "Week start day (0 = Sunday, 1 = Monday, etc.)"
+		},
+		"default_to_current_date": {
+			"type": "integer",
+			"default": 0,
+			"description": "Set current date/time as default value (1 for yes, 0 for no)"
+		},
+		"sub_fields": {
+			"type": "array",
+			"default": [],
+			"description": "Nested fields within this field"
+		},
+		"layout_display": {
+			"type": "string",
+			"enum": [
+				"block",
+				"table",
+				"row"
+			],
+			"description": "Visual layout style for rendering fields"
+		},
+		"button_label": {
+			"type": "string",
+			"default": "",
+			"description": "Text label for the add row button"
+		},
+		"endpoint": {
+			"type": "integer",
+			"default": 0,
+			"description": "Define an endpoint for the previous accordion/tab group"
+		}
+	}
+}

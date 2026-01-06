@@ -1,0 +1,28 @@
+{
+	"title": "SCF Gallery Field Fragment",
+	"description": "Type-specific properties for gallery fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "gallery" ]
+		},
+		"return_format": { "$ref": "#/definitions/return_format_media" },
+		"preview_size": { "$ref": "#/definitions/preview_size" },
+		"library": { "$ref": "#/definitions/library" },
+		"min_width": { "$ref": "#/definitions/min_width" },
+		"min_height": { "$ref": "#/definitions/min_height" },
+		"min_size": { "$ref": "#/definitions/min_size" },
+		"max_width": { "$ref": "#/definitions/max_width" },
+		"max_height": { "$ref": "#/definitions/max_height" },
+		"max_size": { "$ref": "#/definitions/max_size" },
+		"mime_types": { "$ref": "#/definitions/mime_types" },
+		"min": { "$ref": "#/definitions/min" },
+		"max": { "$ref": "#/definitions/max" },
+		"insert": {
+			"type": "string",
+			"enum": [ "append", "prepend" ],
+			"default": "append",
+			"description": "Where to insert new images (append or prepend)"
+		}
+	}
+}

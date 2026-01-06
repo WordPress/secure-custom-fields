@@ -80,7 +80,13 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$li = '';
 			$ul = array(
 				'class' => 'acf-checkbox-list',
+				'role'  => 'group',
 			);
+
+			// Add aria-labelledby if field has an ID for proper screen reader announcement
+			if ( ! empty( $field['id'] ) ) {
+				$ul['aria-labelledby'] = $field['id'] . '-label';
+			}
 
 			// append to class
 			$ul['class'] .= ' ' . ( 'horizontal' === acf_maybe_get( $field, 'layout' ) ? 'acf-hl' : 'acf-bl' );

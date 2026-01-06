@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/scf-identifier.schema.json",
+	"title": "SCF Identifier",
+	"description": "Schema for SCF entity identifiers (post types, field groups, fields, taxonomies, etc.)",
+	"type": ["string", "integer"],
+	"examples": [
+		123,
+		"group_abc123",
+		"post_type_products",
+		"taxonomy_product_categories",
+		"ui_options_page_theme_settings"
+	]
+}

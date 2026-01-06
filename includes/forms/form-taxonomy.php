@@ -184,16 +184,16 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 
 				foreach ( $field_groups as $field_group ) {
 
-						// title
-					if ( $field_group['style'] == 'default' ) {
-						echo '<h2>' . esc_html( $field_group['title'] ) . '</h2>';
+					// title
+					if ( 'default' === $field_group['style'] ) {
+						echo '<h2>' . acf_esc_html( acf_get_field_group_title( $field_group ) ) . '</h2>';
 					}
 
-						// fields
-						echo '<table class="form-table">';
+					// fields
+					echo '<table class="form-table">';
 					$fields = acf_get_fields( $field_group );
 					acf_render_fields( $fields, $post_id, 'tr', 'field' );
-						echo '</table>';
+					echo '</table>';
 				}
 			}
 		}

@@ -1,0 +1,35 @@
+{
+	"title": "SCF Clone Field Fragment",
+	"description": "Type-specific properties for clone fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "clone" ]
+		},
+		"clone": {
+			"type": [ "string", "array" ],
+			"default": "",
+			"description": "Field keys or group keys to clone"
+		},
+		"prefix_label": {
+			"type": "integer",
+			"default": 0,
+			"description": "Prefix cloned field labels with this field's label"
+		},
+		"prefix_name": {
+			"type": "integer",
+			"default": 0,
+			"description": "Prefix cloned field names with this field's name"
+		},
+		"display": {
+			"type": "string",
+			"enum": [ "group", "seamless" ],
+			"default": "seamless",
+			"description": "Display style for cloned fields"
+		},
+		"layout": {
+			"$ref": "#/definitions/layout_display",
+			"default": "block"
+		}
+	}
+}

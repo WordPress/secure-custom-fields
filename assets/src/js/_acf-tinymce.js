@@ -108,12 +108,21 @@
 			init.setup = function ( ed ) {
 				ed.on( 'change', function ( e ) {
 					ed.save(); // save to textarea
-					$textarea.trigger( 'change' );
+					if ( ! $textarea.closest( '.attachment-info' ).length ) {
+						$textarea.trigger( 'change' );
+					}
+				} );
+
+				ed.on( 'blur', function ( e ) {
+					if ( $textarea.closest( '.attachment-info' ).length ) {
+						ed.save();
+						$textarea.trigger( 'change' );
+					}
 				} );
 
 				// Fix bug where Gutenberg does not hear "mouseup" event and tries to select multiple blocks.
 				ed.on( 'mouseup', function ( e ) {
-					var event = new MouseEvent( 'mouseup' );
+					const event = new MouseEvent( 'mouseup' );
 					window.dispatchEvent( event );
 				} );
 
@@ -352,7 +361,9 @@
 
 			// Ensure textarea element is visible
 			// - Fixes bug in block editor when switching between "Block" and "Document" tabs.
-			$( '#' + id ).show();
+			if ( ! tinymce.get( id ) ) {
+				$( '#' + id ).show();
+			}
 
 			// toggle
 			switchEditors.go( id, 'tmce' );

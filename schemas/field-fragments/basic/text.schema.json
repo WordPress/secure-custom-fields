@@ -1,0 +1,15 @@
+{
+	"title": "SCF Text Field Fragment",
+	"description": "Type-specific properties for text fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "text" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"maxlength": { "$ref": "#/definitions/maxlength" },
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"prepend": { "$ref": "#/definitions/prepend" },
+		"append": { "$ref": "#/definitions/append" }
+	}
+}

@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@use './blocks';
 /*--------------------------------------------------------------------------------------------
 *
 *	Vars
@@ -191,6 +192,8 @@ body.acf-keydown-shift .acf-repeater .acf-row:hover > .acf-row-handle .acf-icon.
 *---------------------------------------------------------------------------------------------*/
 .acf-flexible-content {
   position: relative;
+  container-name: flexible-content;
+  container-type: inline-size;
 }
 .acf-flexible-content > .clones {
   display: none;
@@ -319,8 +322,13 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   gap: 5px
 }
 
+.acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-layout-controls .disabled .acf-icon {
+    background: #ccc !important
+}
+
 .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-layout-controls .acf-icon.-plus-alt,
 .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-layout-controls .acf-icon.-duplicate-alt,
+.acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-layout-controls .acf-icon.-trash-alt,
 .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-layout-controls .acf-icon.-more-actions {
   visibility: hidden;
   background: #101828
@@ -400,8 +408,13 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   color: hsla(0, 0%, 100%, .5)
 }
 
+.acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .disabled .acf-icon {
+    background: hsla(0, 0%, 100%, .3)
+}
+
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-plus-alt,
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-duplicate-alt,
+.acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-trash-alt,
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-more-actions {
   background: #fff;
   visibility: visible
@@ -437,9 +450,11 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
 }
 .acf-flexible-content .layout:hover .acf-fc-layout-controls .acf-icon.-plus-alt,
 .acf-flexible-content .layout:hover .acf-fc-layout-controls .acf-icon.-duplicate-alt,
+.acf-flexible-content .layout:hover .acf-fc-layout-controls .acf-icon.-trash-alt,
 .acf-flexible-content .layout:hover .acf-fc-layout-controls .acf-icon.-more-actions,
 .acf-flexible-content .layout.-hover .acf-fc-layout-controls .acf-icon.-plus-alt,
 .acf-flexible-content .layout.-hover .acf-fc-layout-controls .acf-icon.-duplicate-alt,
+.acf-flexible-content .layout.-hover .acf-fc-layout-controls .acf-icon.-trash-alt,
 .acf-flexible-content .layout.-hover .acf-fc-layout-controls .acf-icon.-more-actions {
   visibility: visible
 }
@@ -506,6 +521,29 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
   align-items: center
 }
 
+@container flexible-content (max-width: 400px) {
+    .acf-flexible-content>.acf-actions.acf-fc-top-actions {
+        flex-wrap: wrap;
+        gap: 10px
+    }
+
+    .acf-flexible-content>.acf-actions.acf-fc-top-actions .acf-separator {
+        display: none
+    }
+
+    .acf-flexible-content>.acf-actions.acf-fc-top-actions .acf-btn-clear {
+        flex: 1 1 auto;
+        text-align: center;
+        justify-content: center
+    }
+
+    .acf-flexible-content>.acf-actions.acf-fc-top-actions .acf-button {
+        flex: 1 1 100%;
+        justify-content: center;
+        width: 100%
+    }
+}
+
 #acf-popup .acf-rename-layout-popup .inner .acf-field:first-child {
   margin-top: 0
 }
@@ -552,7 +590,7 @@ html[dir=rtl] .acf-flexible-content .layout .acf-fc-layout-actions-wrap .acf-fc-
 }
 
 body:not(.block-editor-page) .acf-flexible-content .acf-fc-top-actions {
-  height: 30px
+  min-height: 30px
 }
 
 body:not(.block-editor-page) .acf-flexible-content .acf-fc-top-actions .acf-separator {
@@ -701,26 +739,12 @@ body:not(.block-editor-page) .acf-flexible-content .layout.active-layout>.acf-ta
   mask-image: url("../../../images/icons/icon-visible.svg")
 }
 
-.acf-fc-popup.acf-more-layout-actions li a.acf-delete-layout {
-  color: #b71137
+.acf-fc-popup.acf-more-layout-actions li a.acf-toggle-layout.disabled {
+    pointer-events: none
 }
 
-.acf-fc-popup.acf-more-layout-actions li a.acf-delete-layout:before {
-  -webkit-mask-image: url("../../../images/icons/icon-trash-alt.svg");
-  mask-image: url("../../../images/icons/icon-trash-alt.svg");
-  background: #b71137
-}
-
-.acf-fc-popup.acf-more-layout-actions li a.acf-delete-layout:hover {
-  color: rgb(146.4, 13.6, 44)
-}
-
-.acf-fc-popup.acf-more-layout-actions li a.acf-delete-layout:hover:before {
-  background: rgb(146.4, 13.6, 44)
-}
-
-.acf-fc-popup.acf-more-layout-actions li:last-child {
-  border-top: 1px #d0d5dd solid
+.acf-fc-popup.acf-more-layout-actions li a.acf-toggle-layout.disabled:before {
+    background: #888
 }
 
 .acf-fc-popup.acf-more-layout-actions.enable-layout .acf-toggle-layout.disable {

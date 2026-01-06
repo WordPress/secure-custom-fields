@@ -1,0 +1,20 @@
+{
+	"title": "SCF oEmbed Field Fragment",
+	"description": "Type-specific properties for oEmbed fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "oembed" ]
+		},
+		"width": {
+			"type": "string",
+			"default": "",
+			"description": "Maximum width of embedded content in pixels (empty for default)"
+		},
+		"height": {
+			"type": "string",
+			"default": "",
+			"description": "Maximum height of embedded content in pixels (empty for default)"
+		}
+	}
+}

@@ -8,6 +8,9 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+require_once dirname( __DIR__ ) . '/pro/blocks-auto-inline-editing.php';
+use function SCF\Blocks\AutoInlineEditing\apply_inline_editing_attributes_to_render_template;
+
 // Register store.
 acf_register_store( 'block-types' );
 acf_register_store( 'block-cache' );
@@ -51,6 +54,17 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		return $settings;
 	}
 
+	/**
+	 * Filters the default ACF block version for blocks registered via block.json.
+	 *
+	 * @since 6.6.0
+	 *
+	 * @param integer $default_acf_block_version The default ACF block version.
+	 * @param array   $settings                  An array of block settings.
+	 * @return integer
+	 */
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 2, $settings );
+
 	// Setup SCF defaults.
 	$settings = wp_parse_args(
 		$settings,
@@ -64,8 +78,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 			'uses_context'      => array(),
 			'supports'          => array(),
 			'attributes'        => array(),
-			'acf_block_version' => 2,
-			'api_version'       => 2,
+			'acf_block_version' => $default_acf_block_version,
 			'validate'          => true,
 			'validate_on_load'  => true,
 			'use_post_meta'     => false,
@@ -105,14 +118,16 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 
 	// Map custom SCF properties from the SCF key, with localization.
 	$property_mappings = array(
-		'renderCallback' => 'render_callback',
-		'renderTemplate' => 'render_template',
-		'mode'           => 'mode',
-		'blockVersion'   => 'acf_block_version',
-		'postTypes'      => 'post_types',
-		'validate'       => 'validate',
-		'validateOnLoad' => 'validate_on_load',
-		'usePostMeta'    => 'use_post_meta',
+		'renderCallback'      => 'render_callback',
+		'renderTemplate'      => 'render_template',
+		'mode'                => 'mode',
+		'blockVersion'        => 'acf_block_version',
+		'postTypes'           => 'post_types',
+		'validate'            => 'validate',
+		'validateOnLoad'      => 'validate_on_load',
+		'usePostMeta'         => 'use_post_meta',
+		'hideFieldsInSidebar' => 'hide_fields_in_sidebar',
+		'autoInlineEditing'   => 'auto_inline_editing',
 	);
 	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
@@ -125,6 +140,17 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 				$settings[ $mapped_key ] = translate_settings_using_i18n_schema( $i18n_schema->$key, $settings[ $key ], $textdomain );
 			}
 		}
+	}
+
+	if ( isset( $metadata['apiVersion'] ) ) {
+		// Use the apiVersion defined in block.json if it exists.
+		$settings['api_version'] = $metadata['apiVersion'];
+	} elseif ( $settings['acf_block_version'] >= 3 && version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
+		// Otherwise, if we're on WP 6.3+ and the block is ACF block version 3 or greater, use apiVersion 3.
+		$settings['api_version'] = 3;
+	} else {
+		// Otherwise, default to apiVersion 2.
+		$settings['api_version'] = 2;
 	}
 
 	// Add the block name and registration path to settings.
@@ -198,11 +224,28 @@ function acf_register_block_type( $block ) {
 
 	// Set ACF required attributes.
 	$block['attributes'] = acf_get_block_type_default_attributes( $block );
-	if ( ! isset( $block['api_version'] ) ) {
-		$block['api_version'] = 2;
-	}
+
+	/**
+	 * Filters the default ACF block version for blocks registered via acf_register_block_type().
+	 *
+	 * @since 6.6.0
+	 *
+	 * @param integer $default_acf_block_version The default ACF block version.
+	 * @param array   $block                     An array of block settings.
+	 * @return integer
+	 */
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 1, $block );
+
 	if ( ! isset( $block['acf_block_version'] ) ) {
-		$block['acf_block_version'] = 1;
+		$block['acf_block_version'] = $default_acf_block_version;
+	}
+
+	if ( ! isset( $block['api_version'] ) ) {
+		if ( $block['acf_block_version'] >= 3 && version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
+			$block['api_version'] = 3;
+		} else {
+			$block['api_version'] = 2;
+		}
 	}
 
 	// Add to storage.
@@ -559,8 +602,16 @@ function acf_render_block_callback( $attributes, $content = '', $wp_block = null
  * @return  string   The block HTML.
  */
 function acf_rendered_block( $attributes, $content = '', $is_preview = false, $post_id = 0, $wp_block = null, $context = false, $is_ajax_render = false ) {
-	$mode = isset( $attributes['mode'] ) ? $attributes['mode'] : 'auto';
-	$form = ( 'edit' === $mode && $is_preview );
+	$registry      = WP_Block_Type_Registry::get_instance();
+	$wp_block_type = $registry->get_registered( $attributes['name'] );
+
+	if ( isset( $wp_block_type->acf_block_version ) && $wp_block_type->acf_block_version >= 3 ) {
+		$mode = 'preview';
+		$form = false;
+	} else {
+		$mode = isset( $attributes['mode'] ) ? $attributes['mode'] : 'auto';
+		$form = ( 'edit' === $mode && $is_preview );
+	}
 
 	// If context is available from the WP_Block class object and we have no context of our own, use that.
 	if ( empty( $context ) && ! empty( $wp_block->context ) ) {
@@ -628,8 +679,11 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 			 * If we're in preloaded preview, we need to get the validation state for a preview too.
 			 * Because the block render resets meta once it's finished to not pollute $post_id, we need to redo that process here.
 			 */
-			$block = acf_prepare_block( $attributes );
-			$block = acf_add_block_meta_values( $block, $post_id );
+			$block                = acf_prepare_block( $attributes );
+			$block                = acf_add_block_meta_values( $block, $post_id );
+			$block_toolbar_fields = acf_process_block_toolbar_fields( apply_filters( 'acf/blocks/top_toolbar_fields', array(), $block, $content, $is_preview, $post_id, $wp_block, $context ) );
+			$fields               = acf_get_block_fields( $block );
+
 			acf_setup_meta( $block['data'], $block['id'], true );
 			if ( ! empty( $block['validate'] ) ) {
 				$validation = acf_get_block_validation_state( $block, false, false, true );
@@ -667,6 +721,14 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 	if ( $is_preview && $validation ) {
 		// If we're in the preview, also store the validation status in the block cache.
 		$block_cache['validation'] = $validation;
+	}
+
+	if ( isset( $block_toolbar_fields ) ) {
+		$block_cache['blockToolbarFields'] = $block_toolbar_fields;
+	}
+
+	if ( isset( $fields ) ) {
+		$block_cache['fields'] = $fields;
 	}
 
 	// Store in cache for preloading if we're in the backend.
@@ -754,12 +816,26 @@ function acf_block_render_template( $block, $content, $is_preview, $post_id, $wp
 		$path = locate_template( $block['render_template'] );
 	}
 
+	do_action( 'acf/blocks/pre_block_template_render', $block, $content, $is_preview, $post_id, $wp_block, $context );
+
 	// Include template.
 	if ( file_exists( $path ) ) {
-		include $path;
+		if ( $is_preview && ! empty( $block['auto_inline_editing'] ) ) {
+			$result = apply_inline_editing_attributes_to_render_template( $path, $block, $is_preview );
+
+			// In order to allow block render templates to support any html tags,
+			// we must assume that escaping has already been properly handled by the block render template here.
+			// Typically we'd use something like wp_kses here, but that would limit the HTML tags that can be used.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $result;
+		} else {
+			include $path;
+		}
 	} elseif ( $is_preview ) {
 		echo acf_esc_html( apply_filters( 'acf/blocks/template_not_found_message', '<p>' . __( 'The render template for this ACF Block was not found', 'secure-custom-fields' ) . '</p>' ) );
 	}
+
+	do_action( 'acf/blocks/post_block_template_render', $block, $content, $is_preview, $post_id, $wp_block, $context );
 }
 
 /**
@@ -808,14 +884,18 @@ function acf_enqueue_block_assets() {
 	// Localize text.
 	acf_localize_text(
 		array(
-			'Switch to Edit'           => __( 'Switch to Edit', 'secure-custom-fields' ),
-			'Switch to Preview'        => __( 'Switch to Preview', 'secure-custom-fields' ),
-			'Change content alignment' => __( 'Change content alignment', 'secure-custom-fields' ),
-			'Error previewing block'   => __( 'An error occurred when loading the preview for this block.', 'secure-custom-fields' ),
-			'Error loading block form' => __( 'An error occurred when loading the block in edit mode.', 'secure-custom-fields' ),
-
+			'Switch to Edit'            => __( 'Switch to Edit', 'secure-custom-fields' ),
+			'Switch to Preview'         => __( 'Switch to Preview', 'secure-custom-fields' ),
+			'Change content alignment'  => __( 'Change content alignment', 'secure-custom-fields' ),
+			'Error previewing block'    => __( 'An error occurred when loading the preview for this block.', 'secure-custom-fields' ),
+			'Error loading block form'  => __( 'An error occurred when loading the block in edit mode.', 'secure-custom-fields' ),
+			'Edit Block'                => __( 'Edit Block', 'secure-custom-fields' ),
+			'Open Expanded Editor'      => __( 'Open Expanded Editor', 'secure-custom-fields' ),
+			'Error previewing block v3' => __( 'The preview for this block couldn’t be loaded. Review its content or settings for issues.', 'secure-custom-fields' ),
+			'ACF Block'                 => __( 'ACF Block', 'secure-custom-fields' ),
+			'Done'                      => __( 'Done', 'secure-custom-fields' ),
 			/* translators: %s: Block type title */
-			'%s settings'              => __( '%s settings', 'secure-custom-fields' ),
+			'%s settings'               => __( '%s settings', 'secure-custom-fields' ),
 		)
 	);
 
@@ -851,6 +931,7 @@ function acf_enqueue_block_assets() {
 	// Retrieve any cached block HTML and include this in the localized data.
 	if ( acf_get_setting( 'preload_blocks' ) ) {
 		$preloaded_blocks = acf_get_store( 'block-cache' )->get_data();
+
 		acf_localize_data(
 			array(
 				'preloadedBlocks' => $preloaded_blocks,
@@ -858,6 +939,22 @@ function acf_enqueue_block_assets() {
 		);
 	}
 }
+
+
+/**
+ * Enqueues scripts and styles to load inside the block editor iframe.
+ * This allows us to do things like style contenteditable, and other inline editing elements.
+ *
+ * @since ACF 6.7
+ */
+function acf_enqueue_in_iframe_styles() {
+	if ( is_admin() ) {
+		$min      = defined( 'ACF_DEVELOPMENT_MODE' ) && ACF_DEVELOPMENT_MODE ? '' : '.min';
+		$css_path = acf_get_url( "assets/build/css/pro/acf-styles-in-iframe-for-blocks{$min}.css" );
+		wp_enqueue_style( 'acf-inline-editing-styles', $css_path, array(), ACF_VERSION, 'all' );
+	}
+}
+add_action( 'enqueue_block_assets', 'acf_enqueue_in_iframe_styles' );
 
 /**
  * Enqueues scripts and styles for a specific block type.
@@ -1014,6 +1111,8 @@ function acf_ajax_fetch_block() {
 		acf_prefix_fields( $fields, "acf-{$block['id']}" );
 
 		if ( $fields ) {
+			$response['fields'] = $fields;
+
 			// Start Capture.
 			ob_start();
 
@@ -1038,8 +1137,9 @@ function acf_ajax_fetch_block() {
 
 		// Render and store HTML.
 		$response['preview'] = acf_rendered_block( $block, $content, $is_preview, $post_id, null, $context, true );
-	}
 
+		$response['blockToolbarFields'] = acf_process_block_toolbar_fields( apply_filters( 'acf/blocks/top_toolbar_fields', array(), $block, $content, $is_preview, $post_id, null, $context ) );
+	}
 	// Send response.
 	wp_send_json_success( $response );
 }
@@ -1204,7 +1304,7 @@ function acf_get_block_id( $attributes, $context = array(), $force = false ) {
  * @return string A prefixed block ID.
  */
 function acf_ensure_block_id_prefix( $block_id ) {
-	if ( substr( $block_id, 0, 6 ) === 'block_' ) {
+	if ( 'block_' === substr( $block_id, 0, 6 ) ) {
 		return $block_id;
 	}
 	return 'block_' . $block_id;
@@ -1533,4 +1633,252 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
 	}
 
 	return $meta_values;
+}
+
+
+/**
+ * Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
+ *
+ * Required. A list of the fields, each of which will be displayed in the popup toolbar.
+ * Each field can be passed as one of the following.
+ *
+ * A string (e.g. `'my_field_name'`)
+ * An associative array with specific keys:
+ *
+ * @type string  $field_name  The name of the field to display in the toolbar.
+ * @type string  $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string  $field_label A string to use as the label for the button in the toolbar.
+ * @type boolean $use_expanded_editor Default is false, which opens the field in the popover. Set to true to open in the expanded editor.
+ * @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
+ *
+ * @param array $fields List of fields.
+ * @param array $args   Additional options controlling toolbar display and behavior.
+ *
+ * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+ * @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+ *
+ * @return string A string containing the attributes.
+ */
+function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
+
+	if ( empty( $fields ) ) {
+		return '';
+	}
+
+	$default_args = array(
+		'toolbar_icon'  => null,
+		'toolbar_title' => null,
+		'uid'           => null,
+	);
+
+	$args = wp_parse_args( $args, $default_args );
+
+	$render = acf_get_data( 'acf_doing_block_preview' );
+
+	if ( ! $render ) {
+		return '';
+	}
+
+	// Get the block id.
+	$meta_instance = acf_get_instance( 'ACF_Local_Meta' );
+	$block_id      = $meta_instance->post_id;
+
+	if ( empty( $block_id ) || ! str_starts_with( $block_id, 'block_' ) ) {
+		return '';
+	}
+
+	// Prefix the generated uid with the blockid.
+	$generated_uid = $block_id;
+
+	$fields_processed = array();
+
+	/**
+	 * Filters the field types that should open in the expanded editor by default.
+	 *
+	 * @since ACF 6.7.0
+	 *
+	 * @param array $field_types An array of field type names.
+	 * @return array
+	 */
+	$fields_to_open_in_expanded_editor = apply_filters(
+		'acf/blocks/fields_to_open_in_expanded_editor',
+		array(
+			'repeater',
+			'flexible_content',
+		)
+	);
+
+	/**
+	 * Filters the field types that require a wider popover for inline editing.
+	 *
+	 * @since ACF 6.7.0
+	 *
+	 * @param array $field_types An array of field type names.
+	 * @return array
+	 */
+	$fields_needing_wide_popover = apply_filters(
+		'acf/blocks/fields_needing_wide_popover',
+		array(
+			'gallery',
+			'relationship',
+			'wysiwyg',
+			'google_map',
+		)
+	);
+
+	$popover_min_width_normal = '300px';
+	$popover_min_width_wide   = '600px';
+
+	foreach ( $fields as $field ) {
+		if ( is_array( $field ) ) {
+			$full_field_data = acf_get_field( $field['field_name'] );
+			if ( $full_field_data ) {
+				$use_expanded_editor_default = in_array( $full_field_data['type'], $fields_to_open_in_expanded_editor, true ) ? true : false;
+				$popover_min_width_default   = in_array( $full_field_data['type'], $fields_needing_wide_popover, true ) ? $popover_min_width_wide : $popover_min_width_normal;
+
+				$generated_uid     .= $field['field_name'];
+				$fields_processed[] = array(
+					'fieldName'         => $field['field_name'],
+					// Base64 allows us to embed html in an attribute without causing issues with quotes, etc.
+					'fieldIcon'         => ! empty( $field['field_icon'] ) ? base64_encode( $field['field_icon'] ) : null, // phpcs:ignore
+					'fieldLabel'        => ! empty( $field['field_label'] ) ? $field['field_label'] : $full_field_data['label'],
+					'useExpandedEditor' => ! empty( $field['use_expanded_editor'] ) ? $field['use_expanded_editor'] : $use_expanded_editor_default,
+					'popoverMinWidth'   => ! empty( $field['popover_min_width'] ) ? $field['popover_min_width'] : $popover_min_width_default,
+				);
+			}
+		} else {
+			$full_field_data = acf_get_field( $field );
+
+			if ( $full_field_data ) {
+				$fields_processed[] = array(
+					'fieldName'         => $field,
+					'fieldIcon'         => null,
+					'fieldLabel'        => $full_field_data['label'],
+					'useExpandedEditor' => in_array( $full_field_data['type'], $fields_to_open_in_expanded_editor, true ) ? true : false,
+					'popoverMinWidth'   => in_array( $full_field_data['type'], $fields_needing_wide_popover, true ) ? $popover_min_width_wide : $popover_min_width_normal,
+				);
+			}
+
+			$generated_uid .= $field;
+		}
+	}
+
+	if ( empty( $args['uid'] ) ) {
+		$args['uid'] = $generated_uid;
+	}
+
+	if ( ! empty( $args['toolbar_icon'] ) ) {
+		$args['toolbar_icon'] = 'data-acf-toolbar-icon="' . esc_attr( $args['toolbar_icon'] ) . '" ';
+	}
+
+	if ( ! empty( $args['toolbar_title'] ) ) {
+		$args['toolbar_title'] = 'data-acf-toolbar-title="' . esc_attr( $args['toolbar_title'] ) . '" ';
+	}
+
+	return 'data-acf-inline-fields-uid="' . esc_attr( $args['uid'] ) . '" data-acf-inline-fields="' . esc_attr( wp_json_encode( $fields_processed ) ) . '" ' . $args['toolbar_icon'] . $args['toolbar_title'] . 'role="button" tabindex="0"';
+}
+
+/**
+ * Helper function that returns the HTML attributes required for inline text editing as a string, escaped and ready for output.
+ *
+ * @param string $field_name A string which is the name of the field to update when the user types into the HTML element.
+ *
+ * @param array  $args       Array {
+ * Optional. An array of additional args which can control how the popover identifier is displayed.
+ *
+ * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+ * @type string $placeholder   Optional. Optional. A string which will be used as the placeholder in the typable text area.
+ * }
+ *
+ * @return string A string containing the attributes.
+ */
+function acf_inline_text_editing_attrs( $field_name, $args = array() ): string {
+
+	if ( empty( $field_name ) ) {
+		return '';
+	}
+
+	$default_args = array(
+		'toolbar_icon'  => null,
+		'toolbar_title' => null,
+		'placeholder'   => null,
+	);
+
+	$args = wp_parse_args( $args, $default_args );
+
+	$render = acf_get_data( 'acf_doing_block_preview' );
+
+	if ( ! $render ) {
+		return '';
+	}
+
+	if ( ! empty( $args['toolbar_icon'] ) ) {
+		$args['toolbar_icon'] = 'data-acf-toolbar-icon="' . esc_attr( $args['toolbar_icon'] ) . '" ';
+	}
+
+	if ( ! empty( $args['toolbar_title'] ) ) {
+		$args['toolbar_title'] = 'data-acf-toolbar-title="' . esc_attr( $args['toolbar_title'] ) . '" ';
+	}
+
+	if ( ! $args['placeholder'] ) {
+		$args['placeholder'] = __( 'Type to edit...', 'secure-custom-fields' );
+	}
+
+	return 'data-acf-inline-contenteditable="1" data-acf-inline-contenteditable-field-slug="' . esc_attr( $field_name ) . '" data-acf-placeholder="' . esc_attr( $args['placeholder'] ) . '" ' . $args['toolbar_icon'] . $args['toolbar_title'];
+}
+
+/**
+ * This function prepares a fields array for being localized and used on the frontend as block toolbar fields.
+ *
+ * Required. A list of the fields, each of which will be displayed in the popup toolbar.
+ * Each field can be passed as one of the following.
+ *
+ * A string (e.g. `'my_field_name'`)
+ * An associative array with specific keys:
+ *
+ * @type string $field_name  The name of the field to display in the toolbar.
+ * @type string $field_icon  An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string $field_label A string to use as the label for the button in the toolbar.
+ *
+ * @param array $fields List of fields.
+ *
+ * @return array The array of fields, prepared for JS localization.
+ */
+function acf_process_block_toolbar_fields( $fields ) {
+	$fields_processed = array();
+
+	foreach ( $fields as $index => $field ) {
+		if ( is_array( $field ) ) {
+			$fields_processed[] = array(
+				'fieldName'  => ! empty( $field['field_name'] ) ? $field['field_name'] : $index,
+				// Base64 allows us to embed html in an attribute without causing issues with quotes, etc.
+				'fieldIcon'  => ! empty( $field['field_icon'] ) ? base64_encode( $field['field_icon'] ) : null, // phpcs:ignore
+				'fieldLabel' => ! empty( $field['field_label'] ) ? $field['field_label'] : null,
+			);
+		} else {
+			$fields_processed[] = $field;
+		}
+	}
+
+	return $fields_processed;
+}
+
+/**
+ * Helper function for block render templates to check if an acf field has a value.
+ * This is relevant when autoInlineEditing is enabled for a block, because empty fields
+ * will have acf_auto_inline_editing_field_name_ + field_name as their value if they are empty.
+ *
+ * @param string $field_name Field name.
+ * @return boolean True if the field is empty, false if it has a value.
+ */
+function acf_inline_editing_field_is_empty( $field_name ) {
+	$field_value = get_field( $field_name );
+
+	if ( empty( $field_value ) || 'acf_auto_inline_editing_field_name_' . $field_name === $field_value ) {
+		return true;
+	}
+
+	return false;
 }

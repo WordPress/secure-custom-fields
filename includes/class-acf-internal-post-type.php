@@ -166,7 +166,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * @since ACF 6.1
 		 *
 		 * @param integer|string $id The post ID, key, or name.
-		 * @return WP_Post|bool The post object, or false on failure.
+		 * @return WP_Post|boolean The post object, or false on failure.
 		 */
 		public function get_post_object( $id = 0 ) {
 			if ( is_numeric( $id ) ) {
@@ -443,11 +443,12 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * @return array
 		 */
 		public function filter_posts( $posts, $args = array() ) {
-			if ( ! empty( $args['active'] ) ) {
-				$posts = array_filter(
+			if ( isset( $args['active'] ) ) {
+				$active_filter = $args['active'];
+				$posts         = array_filter(
 					$posts,
-					function ( $post ) {
-						return $post['active'];
+					function ( $post ) use ( $active_filter ) {
+						return $post['active'] === $active_filter;
 					}
 				);
 			}
@@ -724,7 +725,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 
 			// Update attributes.
 			$post['ID']  = $new_post_id;
-			$post['key'] = uniqid( 'group_' );
+			$post['key'] = uniqid( $this->post_key_prefix ); // See https://github.com/WordPress/secure-custom-fields/pull/240
 
 			// Add (copy) to title when appropriate.
 			if ( ! $new_post_id ) {
@@ -734,7 +735,12 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			// When importing a new field group, insert a temporary post and set the field group's ID.
 			// This allows fields to be updated before the field group (field group ID is needed for field parent setting).
 			if ( ! $post['ID'] ) {
-				$post['ID'] = wp_insert_post( array( 'post_title' => $post['key'] ) );
+				$post['ID'] = wp_insert_post(
+					array(
+						'post_title' => $post['key'],
+						'post_type'  => $this->post_type,
+					)
+				);
 			}
 
 			$post = $this->update_post( $post );

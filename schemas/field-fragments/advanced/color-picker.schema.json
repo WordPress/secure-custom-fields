@@ -1,0 +1,37 @@
+{
+	"title": "SCF Color Picker Field Fragment",
+	"description": "Type-specific properties for color picker fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "color_picker" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"enable_opacity": {
+			"type": [ "boolean", "integer" ],
+			"default": false,
+			"description": "Enable alpha/opacity selector for RGBA colors"
+		},
+		"custom_palette_source": {
+			"type": "string",
+			"default": "",
+			"description": "Source for custom color palette (empty for default)"
+		},
+		"palette_colors": {
+			"type": "string",
+			"default": "",
+			"description": "Custom palette colors as comma-separated hex values"
+		},
+		"show_color_wheel": {
+			"type": [ "boolean", "integer" ],
+			"default": true,
+			"description": "Display the color wheel picker interface"
+		},
+		"return_format": {
+			"type": "string",
+			"enum": [ "string", "array" ],
+			"default": "string",
+			"description": "Value returned (hex string or RGBA array)"
+		}
+	}
+}

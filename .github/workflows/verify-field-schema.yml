@@ -1,0 +1,38 @@
+name: Verify Field Schema
+
+on:
+  push:
+    branches:
+      - trunk
+      - 'branch/*'
+    paths:
+      - 'schemas/field-fragments/**'
+      - 'schemas/field.schema.json'
+      - 'bin/generate-field-schema.php'
+      - 'includes/class-scf-schema-builder.php'
+  pull_request:
+    branches:
+      - trunk
+      - 'branch/*'
+    paths:
+      - 'schemas/field-fragments/**'
+      - 'schemas/field.schema.json'
+      - 'bin/generate-field-schema.php'
+      - 'includes/class-scf-schema-builder.php'
+
+jobs:
+  verify-schema:
+    name: Verify field.schema.json is in sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Verify field.schema.json is in sync with fragments
+        run: php bin/generate-field-schema.php --check

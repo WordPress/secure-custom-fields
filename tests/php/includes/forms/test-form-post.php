@@ -142,4 +142,141 @@ class Test_Form_Post extends BaseTestCase {
 		// Cleanup
 		unset( $_POST['post_ID'] );
 	}
+
+	/**
+	 * Test is_block_field_group method with block location rules.
+	 */
+	public function test_is_block_field_group_with_block_location() {
+		$form_post = new ACF_Form_Post();
+
+		// Test field group with block location rule
+		$field_group_with_block = array(
+			'location' => array(
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/testimonial',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue(
+			$form_post->is_block_field_group( $field_group_with_block ),
+			'Field group with block location should be identified as block field group'
+		);
+	}
+
+	/**
+	 * Test is_block_field_group method with non-block location rules.
+	 */
+	public function test_is_block_field_group_with_non_block_location() {
+		$form_post = new ACF_Form_Post();
+
+		// Test field group with post type location rule
+		$field_group_with_post_type = array(
+			'location' => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'post',
+					),
+				),
+			),
+		);
+
+		$this->assertFalse(
+			$form_post->is_block_field_group( $field_group_with_post_type ),
+			'Field group with only post_type location should not be identified as block field group'
+		);
+	}
+
+	/**
+	 * Test is_block_field_group method with empty location.
+	 */
+	public function test_is_block_field_group_with_empty_location() {
+		$form_post = new ACF_Form_Post();
+
+		// Test field group with no location
+		$field_group_empty_location = array(
+			'location' => array(),
+		);
+
+		$this->assertFalse(
+			$form_post->is_block_field_group( $field_group_empty_location ),
+			'Field group with empty location should not be identified as block field group'
+		);
+
+		// Test field group with missing location key
+		$field_group_no_location = array();
+
+		$this->assertFalse(
+			$form_post->is_block_field_group( $field_group_no_location ),
+			'Field group without location key should not be identified as block field group'
+		);
+	}
+
+	/**
+	 * Test is_block_field_group method with multiple location groups.
+	 */
+	public function test_is_block_field_group_with_multiple_location_groups() {
+		$form_post = new ACF_Form_Post();
+
+		// Test field group with multiple location groups, one containing block
+		$field_group_multiple_groups = array(
+			'location' => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'post',
+					),
+				),
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/testimonial',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue(
+			$form_post->is_block_field_group( $field_group_multiple_groups ),
+			'Field group with block location in any group should be identified as block field group'
+		);
+	}
+
+	/**
+	 * Test is_block_field_group method with mixed rules in same group.
+	 */
+	public function test_is_block_field_group_with_mixed_rules() {
+		$form_post = new ACF_Form_Post();
+
+		// Test field group with block AND post_type in same group
+		$field_group_mixed_rules = array(
+			'location' => array(
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/testimonial',
+					),
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'post',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue(
+			$form_post->is_block_field_group( $field_group_mixed_rules ),
+			'Field group with block location among other rules should be identified as block field group'
+		);
+	}
 }

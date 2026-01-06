@@ -1,0 +1,15 @@
+{
+	"title": "SCF Group Field Fragment",
+	"description": "Type-specific properties for group fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "group" ]
+		},
+		"sub_fields": { "$ref": "#/definitions/sub_fields" },
+		"layout": {
+			"$ref": "#/definitions/layout_display",
+			"default": "block"
+		}
+	}
+}

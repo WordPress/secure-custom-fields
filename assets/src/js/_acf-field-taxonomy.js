@@ -13,6 +13,7 @@
 		events: {
 			'click a[data-name="add"]': 'onClickAdd',
 			'click input[type="radio"]': 'onClickRadio',
+			'keydown label': 'onKeyDownLabel',
 			removeField: 'onRemove',
 		},
 
@@ -317,6 +318,17 @@
 			if ( this.get( 'allow_null' ) && selected ) {
 				$label.removeClass( 'selected' );
 				$el.prop( 'checked', false ).trigger( 'change' );
+			}
+		},
+		onKeyDownLabel: function ( e, $el ) {
+			// bail early if not space or enter
+			if ( e.which !== 13 ) {
+				return;
+			}
+			e.preventDefault();
+			const firstInput = $el.find( 'input' ).first();
+			if ( firstInput.length ) {
+				firstInput.trigger( 'click' ).trigger( 'focus' );
 			}
 		},
 	} );

@@ -1,0 +1,35 @@
+{
+	"title": "SCF True/False Field Fragment",
+	"description": "Type-specific properties for true/false toggle fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "true_false" ]
+		},
+		"default_value": {
+			"type": "integer",
+			"default": 0,
+			"description": "Default state (0 for off, 1 for on)"
+		},
+		"message": {
+			"type": "string",
+			"default": "",
+			"description": "Text displayed alongside the checkbox"
+		},
+		"ui": {
+			"type": "integer",
+			"default": 0,
+			"description": "Use stylized toggle UI (1 for yes, 0 for no)"
+		},
+		"ui_on_text": {
+			"type": "string",
+			"default": "",
+			"description": "Text shown when toggle is on (empty for default 'Yes')"
+		},
+		"ui_off_text": {
+			"type": "string",
+			"default": "",
+			"description": "Text shown when toggle is off (empty for default 'No')"
+		}
+	}
+}

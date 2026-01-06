@@ -1,0 +1,210 @@
+{
+	"key": "group_site_settings",
+	"title": "Site Settings",
+	"location": [
+		[
+			{
+				"param": "options_page",
+				"operator": "==",
+				"value": "theme-settings"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Example field group with many field types",
+	"fields": [
+		{
+			"key": "field_site_title",
+			"label": "Site Title",
+			"name": "site_title",
+			"type": "text",
+			"instructions": "Main title for the site",
+			"required": 0
+		},
+		{
+			"key": "field_site_tagline",
+			"label": "Tagline",
+			"name": "site_tagline",
+			"type": "textarea",
+			"instructions": "Short description used in SEO and headers",
+			"required": 0,
+			"rows": 3,
+			"new_lines": ""
+		},
+		{
+			"key": "field_items_per_page",
+			"label": "Items Per Page",
+			"name": "items_per_page",
+			"type": "number",
+			"instructions": "Default number of items to list",
+			"required": 0,
+			"min": 1,
+			"max": 100,
+			"step": 1
+		},
+		{
+			"key": "field_contact_email",
+			"label": "Contact Email",
+			"name": "contact_email",
+			"type": "email",
+			"required": 0
+		},
+		{
+			"key": "field_primary_url",
+			"label": "Primary URL",
+			"name": "primary_url",
+			"type": "url",
+			"required": 0
+		},
+		{
+			"key": "field_logo",
+			"label": "Logo",
+			"name": "logo",
+			"type": "image",
+			"return_format": "array",
+			"preview_size": "medium",
+			"library": "all"
+		},
+		{
+			"key": "field_download_file",
+			"label": "Download File",
+			"name": "download_file",
+			"type": "file",
+			"return_format": "array",
+			"library": "all"
+		},
+		{
+			"key": "field_enable_feature",
+			"label": "Enable Feature",
+			"name": "enable_feature",
+			"type": "true_false",
+			"ui": 1,
+			"ui_on_text": "Enabled",
+			"ui_off_text": "Disabled"
+		},
+		{
+			"key": "field_color_scheme",
+			"label": "Color Scheme",
+			"name": "color_scheme",
+			"type": "select",
+			"choices": {
+				"light": "Light",
+				"dark": "Dark",
+				"auto": "Auto"
+			},
+			"default_value": "auto",
+			"ui": 1,
+			"return_format": "value",
+			"ajax": 0,
+			"multiple": 0,
+			"allow_null": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_display_elements",
+			"label": "Display Elements",
+			"name": "display_elements",
+			"type": "checkbox",
+			"choices": {
+				"search": "Search Box",
+				"breadcrumbs": "Breadcrumbs",
+				"footer_widgets": "Footer Widgets"
+			},
+			"default_value": [],
+			"layout": "vertical",
+			"return_format": "value"
+		},
+		{
+			"key": "field_layout_style",
+			"label": "Layout Style",
+			"name": "layout_style",
+			"type": "radio",
+			"choices": {
+				"boxed": "Boxed",
+				"full": "Full Width"
+			},
+			"layout": "horizontal",
+			"return_format": "value"
+		},
+		{
+			"key": "field_launch_date",
+			"label": "Launch Date",
+			"name": "launch_date",
+			"type": "date_picker",
+			"display_format": "Y-m-d",
+			"return_format": "Y-m-d",
+			"first_day": 1
+		},
+		{
+			"key": "field_social_links",
+			"label": "Social Links",
+			"name": "social_links",
+			"type": "repeater",
+			"instructions": "Add social media profiles",
+			"min": 0,
+			"max": 0,
+			"layout": "row",
+			"button_label": "Add Social Link",
+			"sub_fields": [
+				{
+					"key": "field_social_network",
+					"label": "Network",
+					"name": "network",
+					"type": "select",
+					"choices": {
+						"facebook": "Facebook",
+						"twitter": "X / Twitter",
+						"instagram": "Instagram",
+						"linkedin": "LinkedIn"
+					},
+					"ui": 1,
+					"return_format": "value"
+				},
+				{
+					"key": "field_social_url",
+					"label": "Profile URL",
+					"name": "url",
+					"type": "url"
+				}
+			]
+		},
+		{
+			"key": "field_seo_group",
+			"label": "SEO Settings",
+			"name": "seo_settings",
+			"type": "group",
+			"layout": "block",
+			"sub_fields": [
+				{
+					"key": "field_seo_title",
+					"label": "SEO Title",
+					"name": "seo_title",
+					"type": "text"
+				},
+				{
+					"key": "field_seo_description",
+					"label": "SEO Description",
+					"name": "seo_description",
+					"type": "textarea",
+					"rows": 3
+				},
+				{
+					"key": "field_seo_index",
+					"label": "Allow Indexing",
+					"name": "seo_index",
+					"type": "true_false",
+					"ui": 1,
+					"ui_on_text": "Index",
+					"ui_off_text": "Noindex"
+				}
+			]
+		}
+	],
+	"modified": 1700000000
+}

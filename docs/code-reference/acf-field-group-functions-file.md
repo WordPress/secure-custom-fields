@@ -284,4 +284,12 @@ Checks if a field group has the provided location rule.
 * @param string  $location The location type to check for.
 * @return boolean
 
+## `acf_get_field_group_title()`
+
+Retrieves the field group title, or display title if set.
+
+* @since ACF 6.6
+* @param array|integer $field_group The field group array or ID.
+* @return string The field group title.
+
 ---

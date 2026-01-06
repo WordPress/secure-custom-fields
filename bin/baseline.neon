@@ -90,29 +90,6 @@ parameters:
 			count: 1
 			path: ../includes/admin/views/upgrade/notice.php
 
-		-
-			message: '#^Path in include_once\(\) "\./wp\-admin/includes/plugin\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^Path in require_once\(\) "\.//wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^Path in require_once\(\) "\.//wp\-admin/includes/image\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../includes/api/api-helpers.php
-
-		-
-			message: '#^Path in require_once\(\) "\.//wp\-admin/includes/media\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../includes/api/api-helpers.php
 
 		-
 			message: '#^Offset ''thumb'' on array\{alt\: string, author\: string, authorName\: string, caption\: string, compat\: array, context\: string, date\: int, dateFormatted\: string, \.\.\.\}\|null in isset\(\) does not exist\.$#'
@@ -120,11 +97,6 @@ parameters:
 			count: 1
 			path: ../includes/fields/class-acf-field-gallery.php
 
-		-
-			message: '#^Path in require\(\) "\./wp\-admin/includes/media\.php" is not a file or it does not exist\.$#'
-			identifier: require.fileNotFound
-			count: 1
-			path: ../includes/fields/class-acf-field-wysiwyg.php
 
 		-
 			message: '#^Undefined variable\: \$method$#'
@@ -137,3 +109,9 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../includes/locations/abstract-acf-legacy-location.php
+
+		-
+			message: '#^Path in require_once\(\) "\./wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 2
+			path: ../includes/class-scf-json-schema-validator.php

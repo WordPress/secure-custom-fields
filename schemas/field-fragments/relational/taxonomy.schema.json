@@ -1,0 +1,45 @@
+{
+	"title": "SCF Taxonomy Field Fragment",
+	"description": "Type-specific properties for taxonomy term selection fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "taxonomy" ]
+		},
+		"taxonomy": {
+			"type": "string",
+			"default": "category",
+			"description": "The taxonomy to select terms from"
+		},
+		"field_type": {
+			"type": "string",
+			"enum": [ "checkbox", "multi_select", "radio", "select" ],
+			"default": "checkbox",
+			"description": "UI type for term selection"
+		},
+		"multiple": { "$ref": "#/definitions/multiple" },
+		"allow_null": { "$ref": "#/definitions/allow_null" },
+		"return_format": {
+			"type": "string",
+			"enum": [ "object", "id" ],
+			"default": "id",
+			"description": "Value returned (WP_Term object or term ID)"
+		},
+		"add_term": {
+			"type": "integer",
+			"default": 1,
+			"description": "Allow new terms to be created (1 for yes, 0 for no)"
+		},
+		"load_terms": {
+			"type": "integer",
+			"default": 0,
+			"description": "Load terms assigned to post (1 for yes, 0 for no)"
+		},
+		"save_terms": {
+			"type": "integer",
+			"default": 0,
+			"description": "Connect selected terms to post (1 for yes, 0 for no)"
+		},
+		"bidirectional_target": { "$ref": "#/definitions/bidirectional_target" }
+	}
+}

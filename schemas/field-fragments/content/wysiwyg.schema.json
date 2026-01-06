@@ -1,0 +1,32 @@
+{
+	"title": "SCF WYSIWYG Field Fragment",
+	"description": "Type-specific properties for WYSIWYG editor fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "wysiwyg" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"tabs": {
+			"type": "string",
+			"enum": [ "all", "visual", "text" ],
+			"default": "all",
+			"description": "Which editor tabs to show (all, visual only, or text only)"
+		},
+		"toolbar": {
+			"type": "string",
+			"default": "full",
+			"description": "Toolbar configuration (full or basic)"
+		},
+		"media_upload": {
+			"type": "integer",
+			"default": 1,
+			"description": "Show media upload button (1 for yes, 0 for no)"
+		},
+		"delay": {
+			"type": "integer",
+			"default": 0,
+			"description": "Delay TinyMCE initialization until field is clicked (1 for yes, 0 for no)"
+		}
+	}
+}

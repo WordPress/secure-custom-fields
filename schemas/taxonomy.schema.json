@@ -1,0 +1,446 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/taxonomy.schema.json",
+	"title": "SCF Taxonomy(s)",
+	"description": "Schema for Secure Custom Fields taxonomy definitions - accepts single object or array. Properties marked '[SCF Export Only]' are preserved during export but not used functionally during import.",
+	"oneOf": [
+		{
+			"description": "Single taxonomy object",
+			"$ref": "#/definitions/taxonomy"
+		},
+		{
+			"description": "Array of taxonomy objects (export format)",
+			"type": "array",
+			"items": { "$ref": "#/definitions/taxonomy" },
+			"minItems": 1
+		}
+	],
+	"definitions": {
+		"taxonomy": {
+			"type": "object",
+			"required": [ "key", "title", "taxonomy" ],
+			"additionalProperties": false,
+			"properties": {
+				"key": {
+					"type": "string",
+					"pattern": "^taxonomy_.+$",
+					"minLength": 1,
+					"description": "Unique identifier for the taxonomy with taxonomy_ prefix (e.g. 'taxonomy_genre')"
+				},
+				"title": { "$ref": "common.schema.json#/definitions/title" },
+				"taxonomy": {
+					"type": "string",
+					"pattern": "^[a-z0-9_-]*$",
+					"minLength": 1,
+					"maxLength": 32,
+					"not": {
+						"$ref": "common.schema.json#/definitions/wordpressReservedTerms"
+					},
+					"description": "The taxonomy key passed to register_taxonomy() (e.g. 'genre', 'product_tag'). Max 32 characters, lowercase letters/numbers/underscores/dashes only, cannot be WordPress reserved terms."
+				},
+
+				"menu_order": { "$ref": "common.schema.json#/definitions/menu_order" },
+				"active": { "$ref": "common.schema.json#/definitions/active" },
+				"advanced_configuration": { "$ref": "common.schema.json#/definitions/advanced_configuration" },
+				"modified": { "$ref": "common.schema.json#/definitions/modified" },
+				"import_source": { "$ref": "common.schema.json#/definitions/import_source" },
+				"import_date": { "$ref": "common.schema.json#/definitions/import_date" },
+
+				"object_type": {
+					"type": "array",
+					"items": { "type": "string" },
+					"uniqueItems": true,
+					"default": [],
+					"description": "Post types to which this taxonomy should be attached (e.g. ['post', 'page', 'book']). If empty, taxonomy exists but isn't usable from any post type."
+				},
+
+				"labels": {
+					"type": "object",
+					"description": "Labels for the taxonomy in various contexts. If omitted, WordPress auto-generates labels from 'title'.",
+					"additionalProperties": false,
+					"properties": {
+						"name": {
+							"type": "string",
+							"description": "General name for the taxonomy, usually plural"
+						},
+						"singular_name": {
+							"type": "string",
+							"description": "Name for one object of this taxonomy"
+						},
+						"menu_name": {
+							"type": "string",
+							"description": "The menu name text"
+						},
+						"search_items": {
+							"type": "string",
+							"description": "The 'Search Items' text"
+						},
+						"popular_items": {
+							"type": "string",
+							"description": "The 'Popular Items' text (used for non-hierarchical taxonomies)"
+						},
+						"all_items": {
+							"type": "string",
+							"description": "The 'All Items' text"
+						},
+						"parent_item": {
+							"type": "string",
+							"description": "The 'Parent Item' text (used for hierarchical taxonomies)"
+						},
+						"parent_item_colon": {
+							"type": "string",
+							"description": "The 'Parent Item:' text"
+						},
+						"name_field_description": {
+							"type": "string",
+							"description": "Description for the Name field on the term edit screen"
+						},
+						"slug_field_description": {
+							"type": "string",
+							"description": "Description for the Slug field on the term edit screen"
+						},
+						"parent_field_description": {
+							"type": "string",
+							"description": "Description for the Parent field on the term edit screen"
+						},
+						"desc_field_description": {
+							"type": "string",
+							"description": "Description for the Description field on the term edit screen"
+						},
+						"edit_item": {
+							"type": "string",
+							"description": "The 'Edit Item' text"
+						},
+						"view_item": {
+							"type": "string",
+							"description": "The 'View Item' text"
+						},
+						"update_item": {
+							"type": "string",
+							"description": "The 'Update Item' text"
+						},
+						"add_new_item": {
+							"type": "string",
+							"description": "The 'Add New Item' text"
+						},
+						"new_item_name": {
+							"type": "string",
+							"description": "The 'New Item Name' text"
+						},
+						"separate_items_with_commas": {
+							"type": "string",
+							"description": "The 'Separate items with commas' text (used for non-hierarchical taxonomies)"
+						},
+						"add_or_remove_items": {
+							"type": "string",
+							"description": "The 'Add or remove items' text (used for non-hierarchical taxonomies)"
+						},
+						"choose_from_most_used": {
+							"type": "string",
+							"description": "The 'Choose from most used' text (used for non-hierarchical taxonomies)"
+						},
+						"not_found": {
+							"type": "string",
+							"description": "The 'Not Found' text"
+						},
+						"no_terms": {
+							"type": "string",
+							"description": "The 'No terms' text"
+						},
+						"filter_by_item": {
+							"type": "string",
+							"description": "The 'Filter by item' text (used for hierarchical taxonomies)"
+						},
+						"items_list_navigation": {
+							"type": "string",
+							"description": "The 'Items list navigation' text"
+						},
+						"items_list": {
+							"type": "string",
+							"description": "The 'Items list' text"
+						},
+						"most_used": {
+							"type": "string",
+							"description": "The 'Most Used' text"
+						},
+						"back_to_items": {
+							"type": "string",
+							"description": "The 'Back to items' text"
+						},
+						"item_link": {
+							"type": "string",
+							"description": "The 'Item Link' text"
+						},
+						"item_link_description": {
+							"type": "string",
+							"description": "The 'Item Link Description' text"
+						}
+					}
+				},
+				"description": {
+					"type": "string",
+					"description": "A short description of what your taxonomy is"
+				},
+
+				"public": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users"
+				},
+				"publicly_queryable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether the taxonomy is publicly queryable"
+				},
+				"hierarchical": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether the taxonomy is hierarchical (like categories) or flat (like tags)"
+				},
+
+				"show_ui": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to generate and allow a UI for managing this taxonomy in the admin"
+				},
+				"show_in_menu": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to show the taxonomy in the admin menu"
+				},
+				"show_in_nav_menus": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether the taxonomy is available for selection in navigation menus"
+				},
+				"show_tagcloud": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to allow the Tag Cloud widget to use this taxonomy"
+				},
+				"show_in_quick_edit": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to show the taxonomy in the quick/bulk edit panel"
+				},
+				"show_admin_column": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to show a column for this taxonomy on the associated post type listing screens"
+				},
+
+				"capabilities": {
+					"type": "object",
+					"description": "Capabilities for this taxonomy",
+					"additionalProperties": false,
+					"properties": {
+						"manage_terms": {
+							"type": "string",
+							"default": "manage_categories",
+							"description": "Capability for managing terms"
+						},
+						"edit_terms": {
+							"type": "string",
+							"default": "manage_categories",
+							"description": "Capability for editing terms"
+						},
+						"delete_terms": {
+							"type": "string",
+							"default": "manage_categories",
+							"description": "Capability for deleting terms"
+						},
+						"assign_terms": {
+							"type": "string",
+							"default": "edit_posts",
+							"description": "Capability for assigning terms to posts"
+						}
+					}
+				},
+
+				"rewrite": {
+					"type": [ "object", "boolean" ],
+					"description": "Triggers the handling of rewrites for this taxonomy",
+					"oneOf": [
+						{ "type": "boolean" },
+						{
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"permalink_rewrite": {
+									"type": "string",
+									"description": "[SCF] SCF-specific permalink rewrite option"
+								},
+								"slug": {
+									"type": "string",
+									"description": "Customize the permalink structure slug"
+								},
+								"with_front": {
+									"type": [ "boolean", "string" ],
+									"default": true,
+									"description": "Whether the permalink structure should be prepended with WP_Rewrite::$front (accepts boolean or string '0'/'1' for backward compatibility)"
+								},
+								"rewrite_hierarchical": {
+									"type": [ "boolean", "string" ],
+									"default": false,
+									"description": "Whether hierarchical URLs should be used (accepts boolean or string '0'/'1' for backward compatibility)"
+								}
+							}
+						}
+					]
+				},
+				"query_var": {
+					"type": [ "boolean", "string" ],
+					"description": "Sets the query_var key for this taxonomy"
+				},
+				"query_var_name": {
+					"type": "string",
+					"description": "[SCF] SCF-specific query variable name"
+				},
+
+				"default_term": {
+					"type": "object",
+					"description": "Default term configuration for this taxonomy",
+					"additionalProperties": false,
+					"properties": {
+						"default_term_enabled": {
+							"type": "boolean",
+							"default": false,
+							"description": "Whether a default term is enabled"
+						},
+						"default_term_name": {
+							"type": "string",
+							"description": "Name of the default term"
+						},
+						"default_term_slug": {
+							"type": "string",
+							"description": "Slug of the default term"
+						},
+						"default_term_description": {
+							"type": "string",
+							"description": "Description of the default term"
+						}
+					}
+				},
+				"sort": {
+					"type": [ "boolean", "null" ],
+					"description": "Whether terms in this taxonomy should be sorted in the order they are provided to wp_set_object_terms()"
+				},
+
+				"meta_box": {
+					"type": "string",
+					"description": "[SCF] Meta box display setting. Options: 'default', 'custom', 'disabled'."
+				},
+				"meta_box_cb": {
+					"type": "string",
+					"description": "Callback function name for custom meta box"
+				},
+				"meta_box_sanitize_cb": {
+					"type": "string",
+					"description": "Callback function name for sanitizing taxonomy data saved from the meta box"
+				},
+
+				"show_in_rest": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to include the taxonomy in the REST API"
+				},
+				"rest_base": {
+					"type": "string",
+					"description": "To change the base URL of REST API route"
+				},
+				"rest_namespace": {
+					"type": "string",
+					"default": "wp/v2",
+					"description": "To change the namespace URL of REST API route"
+				},
+				"rest_controller_class": {
+					"type": "string",
+					"default": "WP_REST_Terms_Controller",
+					"description": "REST API Controller to use for this taxonomy"
+				}
+			}
+		}
+	},
+	"examples": [
+		{
+			"key": "taxonomy_682abc123def",
+			"title": "Genres",
+			"menu_order": 0,
+			"active": true,
+			"taxonomy": "genre",
+			"object_type": [ "book", "movie" ],
+			"advanced_configuration": 0,
+			"import_source": "",
+			"import_date": "",
+			"labels": {
+				"name": "Genres",
+				"singular_name": "Genre",
+				"menu_name": "Genres",
+				"all_items": "All Genres",
+				"edit_item": "Edit Genre",
+				"view_item": "View Genre",
+				"update_item": "Update Genre",
+				"add_new_item": "Add New Genre",
+				"new_item_name": "New Genre Name",
+				"parent_item": "Parent Genre",
+				"parent_item_colon": "Parent Genre:",
+				"search_items": "Search Genres",
+				"popular_items": "",
+				"separate_items_with_commas": "",
+				"add_or_remove_items": "",
+				"choose_from_most_used": "",
+				"not_found": "No genres found",
+				"no_terms": "No genres",
+				"filter_by_item": "Filter by genre",
+				"items_list_navigation": "Genres list navigation",
+				"items_list": "Genres list",
+				"most_used": "Most Used",
+				"back_to_items": "Back to Genres",
+				"item_link": "Genre Link",
+				"item_link_description": "A link to a genre.",
+				"name_field_description": "",
+				"slug_field_description": "",
+				"parent_field_description": "",
+				"desc_field_description": ""
+			},
+			"description": "Categorize content by genre",
+			"public": true,
+			"publicly_queryable": true,
+			"hierarchical": true,
+			"show_ui": true,
+			"show_in_menu": true,
+			"show_in_nav_menus": true,
+			"show_in_rest": true,
+			"rest_base": "",
+			"rest_namespace": "wp/v2",
+			"rest_controller_class": "WP_REST_Terms_Controller",
+			"show_tagcloud": true,
+			"show_in_quick_edit": true,
+			"show_admin_column": true,
+			"capabilities": {
+				"manage_terms": "manage_categories",
+				"edit_terms": "manage_categories",
+				"delete_terms": "manage_categories",
+				"assign_terms": "edit_posts"
+			},
+			"rewrite": {
+				"permalink_rewrite": "taxonomy_key",
+				"slug": "",
+				"with_front": true,
+				"rewrite_hierarchical": false
+			},
+			"query_var": "taxonomy_key",
+			"query_var_name": "",
+			"default_term": {
+				"default_term_enabled": false,
+				"default_term_name": "",
+				"default_term_slug": "",
+				"default_term_description": ""
+			},
+			"sort": null,
+			"meta_box": "default",
+			"meta_box_cb": "",
+			"meta_box_sanitize_cb": ""
+		}
+	]
+}

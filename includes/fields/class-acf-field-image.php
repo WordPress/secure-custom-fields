@@ -127,17 +127,17 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 				)
 			);
 			?>
-	<div class="show-if-value image-wrap" style="max-width: <?php echo esc_attr( $size_w ); ?>">
+	<div class="show-if-value image-wrap" style="max-width: <?php echo esc_attr( $size_w ); ?>" tabindex="0" role="button" aria-label="<?php esc_attr_e( 'Selected image. Press tab to access image options.', 'secure-custom-fields' ); ?>">
 		<img <?php echo acf_esc_attrs( $img_attrs ); ?> />
 		<div class="acf-actions -hover">
-			<?php if ( $uploader !== 'basic' ) : ?>
-			<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>"></a>
+			<?php if ( 'basic' !== $uploader ) : ?>
+			<a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php esc_attr_e( 'Edit', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Edit image', 'secure-custom-fields' ); ?>"></a>
 			<?php endif; ?>
-			<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>"></a>
+			<a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php esc_attr_e( 'Remove', 'secure-custom-fields' ); ?>" aria-label="<?php esc_attr_e( 'Remove image', 'secure-custom-fields' ); ?>"></a>
 		</div>
 	</div>
 	<div class="hide-if-value">
-			<?php if ( $uploader === 'basic' ) : ?>
+			<?php if ( 'basic' === $uploader ) : ?>
 				<?php if ( $field['value'] && ! is_numeric( $field['value'] ) ) : ?>
 				<div class="acf-error-message"><p><?php echo acf_esc_html( $field['value'] ); ?></p></div>
 			<?php endif; ?>
@@ -450,13 +450,16 @@ if ( ! class_exists( 'acf_field_image' ) ) :
 		/**
 		 * Apply basic formatting to prepare the value for default REST output.
 		 *
+		 * @since ACF 5.0.0
+		 * @since SCF 6.8.0 Now respects the return_format field setting.
+		 *
 		 * @param  mixed          $value   The field value
 		 * @param  string|integer $post_id The post ID
 		 * @param  array          $field   The field array
-		 * @return mixed
+		 * @return mixed The formatted value based on return_format setting.
 		 */
 		public function format_value_for_rest( $value, $post_id, array $field ) {
-			return acf_format_numerics( $value );
+			return $this->format_value( $value, $post_id, $field );
 		}
 	}
 

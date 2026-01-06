@@ -2,7 +2,6 @@
 
 // vars
 $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . ']';
-
 ?>
 <tr data-id="<?php echo esc_attr( $rule['id'] ); ?>">
 	<td class="param">

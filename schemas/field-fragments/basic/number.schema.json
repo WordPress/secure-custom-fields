@@ -1,0 +1,29 @@
+{
+	"title": "SCF Number Field Fragment",
+	"description": "Type-specific properties for number fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "number" ]
+		},
+		"default_value": { "$ref": "#/definitions/default_value_numeric" },
+		"min": {
+			"type": [ "integer", "number", "string" ],
+			"default": "",
+			"description": "Minimum value (empty string for unlimited)"
+		},
+		"max": {
+			"type": [ "integer", "number", "string" ],
+			"default": "",
+			"description": "Maximum value (empty string for unlimited)"
+		},
+		"step": {
+			"type": [ "integer", "number", "string" ],
+			"default": "",
+			"description": "Step increment (empty string for default, 'any' for no restriction)"
+		},
+		"placeholder": { "$ref": "#/definitions/placeholder" },
+		"prepend": { "$ref": "#/definitions/prepend" },
+		"append": { "$ref": "#/definitions/append" }
+	}
+}

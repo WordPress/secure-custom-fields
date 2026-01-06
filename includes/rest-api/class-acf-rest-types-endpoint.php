@@ -21,37 +21,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SCF_Rest_Types_Endpoint {
 
 	/**
-	 * Initialize the class.
+	 * Valid source types for filtering post types.
+	 *
+	 * @since 6.7.0
+	 * @var array
+	 */
+	const VALID_SOURCES = array( 'core', 'scf', 'other' );
+
+	/**
+	 * Initialize the class and register hooks.
 	 *
 	 * @since SCF 6.5.0
+	 * @since 6.7.0 Simplified hook registration.
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
-
-		// Add filter to process REST API requests by route
 		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
-
-		// Add filter to process each post type individually
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
-
-		// Clean up null entries from the response
 		add_filter( 'rest_pre_echo_response', array( $this, 'clean_types_response' ), 10, 3 );
 	}
 
 	/**
-	 * Filter post types requests, fires for both collection and individual requests.
-	 * We only want to handle individual requets to ensure the post type requested matches the source.
+	 * Validate source parameter.
+	 *
+	 * @since 6.7.0
+	 *
+	 * @param string $source The source value to validate.
+	 * @return bool True if valid, false otherwise.
+	 */
+	private function is_valid_source( $source ) {
+		return in_array( $source, self::VALID_SOURCES, true );
+	}
+
+	/**
+	 * Filter post types requests for individual post type requests.
 	 *
 	 * @since SCF 6.5.0
+	 * @since 6.7.0 Use is_valid_source() helper method.
 	 *
-	 * @param mixed           $response The current response, either response or null.
+	 * @param mixed           $response The current response.
 	 * @param array           $handler  The handler for the route.
 	 * @param WP_REST_Request $request  The request object.
-	 * @return mixed The response or null.
+	 * @return mixed The response or WP_Error.
 	 */
 	public function filter_types_request( $response, $handler, $request ) {
-		// We only want to handle individual requests
+		// Only handle individual post type requests
 		$route = $request->get_route();
 		if ( ! preg_match( '#^/wp/v2/types/([^/]+)$#', $route, $matches ) ) {
 			return $response;
@@ -60,14 +75,14 @@ class SCF_Rest_Types_Endpoint {
 		$source = $request->get_param( 'source' );
 
 		// Only proceed if source parameter is provided and valid
-		if ( ! $source || ! in_array( $source, array( 'core', 'scf', 'other' ), true ) ) {
+		if ( ! $source || ! $this->is_valid_source( $source ) ) {
 			return $response;
 		}
 
 		$source_post_types = $this->get_source_post_types( $source );
+		$requested_type    = $matches[1];
 
 		// Check if the requested type matches the source
-		$requested_type = $matches[1];
 		if ( ! in_array( $requested_type, $source_post_types, true ) ) {
 			return new WP_Error(
 				'rest_post_type_invalid',
@@ -83,17 +98,18 @@ class SCF_Rest_Types_Endpoint {
 	 * Filter individual post type in the response.
 	 *
 	 * @since SCF 6.5.0
+	 * @since 6.7.0 Use is_valid_source() helper method.
 	 *
-	 * @param WP_REST_Response $response The response object.
+	 * @param WP_REST_Response $response  The response object.
 	 * @param WP_Post_Type     $post_type The post type object.
-	 * @param WP_REST_Request  $request The request object.
-	 * @return WP_REST_Response|null The filtered response or null to filter it out.
+	 * @param WP_REST_Request  $request   The request object.
+	 * @return WP_REST_Response|null The filtered response or null.
 	 */
 	public function filter_post_type( $response, $post_type, $request ) {
 		$source = $request->get_param( 'source' );
 
 		// Only apply filtering if source parameter is provided and valid
-		if ( ! $source || ! in_array( $source, array( 'core', 'scf', 'other' ), true ) ) {
+		if ( ! $source || ! $this->is_valid_source( $source ) ) {
 			return $response;
 		}
 
@@ -107,18 +123,18 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
-	 * Get an array of post types for each source.
+	 * Get post types for a specific source.
 	 *
 	 * @since SCF 6.5.0
 	 *
-	 * @param string $source The source to get post types for.
+	 * @param string $source The source to get post types for (core, scf, other).
 	 * @return array An array of post type names for the specified source.
 	 */
 	private function get_source_post_types( $source ) {
-
 		$core_types = array();
 		$scf_types  = array();
 
+		// Get core post types
 		if ( 'core' === $source || 'other' === $source ) {
 			$all_post_types = get_post_types( array( '_builtin' => true ), 'objects' );
 			foreach ( $all_post_types as $post_type ) {
@@ -126,8 +142,8 @@ class SCF_Rest_Types_Endpoint {
 			}
 		}
 
+		// Get SCF-managed post types
 		if ( 'scf' === $source || 'other' === $source ) {
-			// Get SCF-managed post types
 			if ( function_exists( 'acf_get_internal_post_type_posts' ) ) {
 				$scf_managed_post_types = acf_get_internal_post_type_posts( 'acf-post-type' );
 				foreach ( $scf_managed_post_types as $scf_post_type ) {
@@ -138,22 +154,17 @@ class SCF_Rest_Types_Endpoint {
 
 		switch ( $source ) {
 			case 'core':
-				$result = $core_types;
-				break;
+				return $core_types;
 			case 'scf':
-				$result = $scf_types;
-				break;
+				return $scf_types;
 			case 'other':
-				$result = array_diff(
+				return array_diff(
 					array_keys( get_post_types( array(), 'objects' ) ),
 					array_merge( $core_types, $scf_types )
 				);
-				break;
 			default:
-				$result = array();
+				return array();
 		}
-
-		return $result;
 	}
 
 	/**
@@ -164,10 +175,6 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
-		if ( ! (bool) get_option( 'scf_beta_feature_editor_sidebar_enabled', false ) ) {
-			return;
-		}
-
 		register_rest_field(
 			'type',
 			'scf_field_groups',
@@ -195,11 +202,14 @@ class SCF_Rest_Types_Endpoint {
 			$fields       = acf_get_fields( $field_group );
 			$group_fields = array();
 
-			foreach ( $fields as $field ) {
-				$group_fields[] = array(
-					'label' => $field['label'],
-					'type'  => $field['type'],
-				);
+			if ( is_array( $fields ) ) {
+				foreach ( $fields as $field ) {
+					$group_fields[] = array(
+						'name'  => $field['name'],
+						'label' => $field['label'],
+						'type'  => $field['type'],
+					);
+				}
 			}
 
 			$field_groups_data[] = array(
@@ -220,28 +230,32 @@ class SCF_Rest_Types_Endpoint {
 	 */
 	private function get_field_schema() {
 		return array(
-			'description' => 'Field groups attached to this post type.',
+			'description' => __( 'Field groups attached to this post type.', 'secure-custom-fields' ),
 			'type'        => 'array',
 			'items'       => array(
 				'type'       => 'object',
 				'properties' => array(
 					'title'  => array(
 						'type'        => 'string',
-						'description' => 'The field group title.',
+						'description' => __( 'The field group title.', 'secure-custom-fields' ),
 					),
 					'fields' => array(
 						'type'        => 'array',
-						'description' => 'The fields in this field group.',
+						'description' => __( 'The fields in this field group.', 'secure-custom-fields' ),
 						'items'       => array(
 							'type'       => 'object',
 							'properties' => array(
+								'name'  => array(
+									'type'        => 'string',
+									'description' => __( 'The field name.', 'secure-custom-fields' ),
+								),
 								'label' => array(
 									'type'        => 'string',
-									'description' => 'The field label.',
+									'description' => __( 'The field label.', 'secure-custom-fields' ),
 								),
 								'type'  => array(
 									'type'        => 'string',
-									'description' => 'The field type.',
+									'description' => __( 'The field type.', 'secure-custom-fields' ),
 								),
 							),
 						),
@@ -262,11 +276,8 @@ class SCF_Rest_Types_Endpoint {
 			return;
 		}
 
-		// Register the query parameter with the REST API
 		add_filter( 'rest_type_collection_params', array( $this, 'add_collection_params' ) );
 		add_filter( 'rest_types_collection_params', array( $this, 'add_collection_params' ) );
-
-		// Direct registration for OpenAPI documentation
 		add_filter( 'rest_endpoints', array( $this, 'add_parameter_to_endpoints' ) );
 	}
 
@@ -274,6 +285,7 @@ class SCF_Rest_Types_Endpoint {
 	 * Get the source parameter definition
 	 *
 	 * @since SCF 6.5.0
+	 * @since 6.7.0 Use VALID_SOURCES constant.
 	 *
 	 * @return array Parameter definition
 	 */
@@ -281,12 +293,11 @@ class SCF_Rest_Types_Endpoint {
 		return array(
 			'description'       => __( 'Filter post types by their source.', 'secure-custom-fields' ),
 			'type'              => 'string',
-			'enum'              => array( 'core', 'scf', 'other' ),
+			'enum'              => self::VALID_SOURCES,
 			'required'          => false,
 			'validate_callback' => 'rest_validate_request_arg',
 			'sanitize_callback' => 'sanitize_text_field',
 			'default'           => null,
-			'in'                => 'query',
 		);
 	}
 

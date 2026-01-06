@@ -59,8 +59,16 @@ assets/build/**/*.php
 /playwright/.cache/
 /artifacts/
 
+# Code Coverage
+/coverage/
+/.nyc_output/
+/.php-coverage/
+
 # Claude settings
 **/.claude/settings.local.json
+
+# Serena MCP
+/.serena/
 
 # Release folder
 release/

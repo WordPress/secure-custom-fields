@@ -22,8 +22,9 @@ class WC_Order {
 	 */
 	public function __construct() {
 		add_action( 'load-woocommerce_page_wc-orders', array( $this, 'initialize' ) );
-		add_action( 'load-woocommerce_page_wc-orders--shop_subscription', array( $this, 'initialize' ) );
 		add_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10, 1 );
+		// Defer registering other order type hooks to after all order types are registered
+		add_action( 'wp_loaded', array( $this, 'register_order_type_hooks' ) );
 	}
 
 	/**
@@ -40,6 +41,25 @@ class WC_Order {
 	}
 
 	/**
+	 * Registers initialization hooks for all WooCommerce order types.
+	 *
+	 * @since 6.8.0
+	 * @return void
+	 */
+	public function register_order_type_hooks() {
+
+		$order_types = wc_get_order_types( 'view-orders' );
+
+		foreach ( $order_types as $order_type ) {
+			// shop_order uses the base hook without suffix
+			if ( 'shop_order' === $order_type ) {
+				continue;
+			}
+			add_action( 'load-woocommerce_page_wc-orders--' . $order_type, array( $this, 'initialize' ) );
+		}
+	}
+
+	/**
 	 * Adds ACF metaboxes to the WooCommerce Order pages.
 	 *
 	 * @since 6.5
@@ -52,13 +72,19 @@ class WC_Order {
 		// Storage for localized postboxes.
 		$postboxes = array();
 
-		$location = 'shop_order';
-		$order    = ( $post instanceof \WP_Post ) ? wc_get_order( $post->ID ) : $post;
-		$screen   = $this->is_hpos_enabled() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
+		$order = ( $post instanceof \WP_Post ) ? wc_get_order( $post->ID ) : $post;
+		if ( ! $order ) {
+			return;
+		}
 
-		if ( $order instanceof \WC_Subscription ) {
-			$location = 'shop_subscription';
-			$screen   = function_exists( 'wcs_get_page_screen_id' ) ? wcs_get_page_screen_id( 'shop_subscription' ) : 'shop_subscription';
+		// Dynamically get order type from the order object
+		$location = $order->get_type();
+
+		// Determine screen ID based on HPOS status and order type
+		if ( $this->is_hpos_enabled() ) {
+			$screen = $this->get_hpos_screen_id( $location );
+		} else {
+			$screen = $location;
 		}
 
 		// Get field groups for this screen.
@@ -73,7 +99,6 @@ class WC_Order {
 		if ( $field_groups ) {
 			foreach ( $field_groups as $field_group ) {
 				$id       = "acf-{$field_group['key']}"; // acf-group_123
-				$title    = $field_group['title'];       // Group 1
 				$context  = $field_group['position'];    // normal, side, acf_after_title
 				$priority = 'core';                      // high, core, default, low
 
@@ -104,7 +129,7 @@ class WC_Order {
 				// Add the meta box.
 				add_meta_box(
 					$id,
-					esc_html( $title ),
+					acf_esc_html( acf_get_field_group_title( $field_group ) ),
 					array( $this, 'render_meta_box' ),
 					$screen,
 					$context,
@@ -140,6 +165,30 @@ class WC_Order {
 		 * @param array    $field_groups The field groups added.
 		 */
 		do_action( 'acf/add_meta_boxes', $post_type, $post, $field_groups );
+	}
+
+	/**
+	 * Gets the HPOS screen ID for an order type.
+	 *
+	 * @since 6.8.0
+	 *
+	 * @param string $order_type The order type (e.g., 'shop_order', 'shop_subscription', 'shop_order_charge').
+	 * @return string The screen ID.
+	 */
+	protected function get_hpos_screen_id( string $order_type ): string {
+		// Check for WooCommerce Subscriptions helper function
+		if ( 'shop_subscription' === $order_type && function_exists( 'wcs_get_page_screen_id' ) ) {
+			return wcs_get_page_screen_id( 'shop_subscription' );
+		}
+
+		// For shop_order, use the standard WC function
+		if ( 'shop_order' === $order_type ) {
+			return wc_get_page_screen_id( 'shop-order' );
+		}
+
+		// For custom order types, construct the screen ID
+		// Pattern: woocommerce_page_wc-orders--{order_type}
+		return 'woocommerce_page_wc-orders--' . $order_type;
 	}
 
 	/**

@@ -35,6 +35,8 @@ const commonConfig = {
 		'css/pro/acf-pro-field-group':
 			'./assets/src/sass/pro/acf-pro-field-group.scss',
 		'css/pro/acf-pro-input': './assets/src/sass/pro/acf-pro-input.scss',
+		'css/pro/acf-styles-in-iframe-for-blocks':
+			'./assets/src/sass/pro/acf-styles-in-iframe-for-blocks.scss',
 	},
 	output: {
 		path: path.resolve( __dirname, 'assets/build/' ),
@@ -47,7 +49,10 @@ const commonConfig = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-react' ],
+						presets: [ [ '@babel/preset-react', { runtime: 'automatic' } ] ],
+						plugins: process.env.COVERAGE_ENABLED
+							? [ 'istanbul' ]
+							: [],
 					},
 				},
 			},

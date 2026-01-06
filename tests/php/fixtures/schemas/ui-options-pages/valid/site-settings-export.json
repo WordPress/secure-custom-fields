@@ -1,0 +1,27 @@
+{
+	"key": "ui_options_page_682abc123def",
+	"title": "Site Settings",
+	"menu_order": 0,
+	"active": true,
+	"page_title": "Site Settings",
+	"menu_slug": "site-settings",
+	"parent_slug": "none",
+	"advanced_configuration": 0,
+	"import_source": "",
+	"import_date": "",
+	"icon_url": "",
+	"menu_title": "Site Settings",
+	"position": 80,
+	"redirect": true,
+	"description": "Global site configuration options",
+	"menu_icon": {
+		"type": "dashicons",
+		"value": "dashicons-admin-generic"
+	},
+	"update_button": "Save Settings",
+	"updated_message": "Settings saved successfully",
+	"capability": "manage_options",
+	"data_storage": "options",
+	"post_id": "",
+	"autoload": true
+}

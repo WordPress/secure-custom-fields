@@ -9,7 +9,8 @@
 		}
 	],
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"justinrainbow/json-schema": "^5.2"
 	},
 	"require-dev": {
 		"automattic/wordbless": "^0.5.0",
@@ -29,9 +30,9 @@
 	"autoload": {
 		"psr-4": {
 			"ACF\\Blocks\\": "includes/Blocks/",
+			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/",
 			"SCF\\Forms\\": "includes/forms/",
-			"SCF\\Meta\\": "includes/Meta/",
-			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/"
+			"SCF\\Meta\\": "includes/Meta/"
 		}
 	},
 	"config": {
@@ -41,11 +42,11 @@
 			"phpstan/extension-installer": true,
 			"roots/wordpress-core-installer": true
 		},
+		"classmap-authoritative": true,
+		"optimize-autoloader": true,
 		"platform": {
 			"php": "7.4"
-		},
-		"optimize-autoloader": true,
-		"classmap-authoritative": true
+		}
 	},
 	"scripts": {
 		"post-install-cmd": "WorDBless\\Composer\\InstallDropin::copy",

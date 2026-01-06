@@ -1,0 +1,91 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/common.schema.json",
+	"title": "SCF Common Definitions",
+	"description": "Shared definitions for SCF schemas including common entity properties and reserved terms",
+	"definitions": {
+		"title": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 255,
+			"description": "The title/name of this entity"
+		},
+		"menu_order": {
+			"type": "integer",
+			"minimum": 0,
+			"default": 0,
+			"description": "The order of this entity in the admin menu"
+		},
+
+		"active": {
+			"type": "boolean",
+			"default": true,
+			"description": "[SCF] Whether this entity is active"
+		},
+		"advanced_configuration": {
+			"type": [ "boolean", "integer" ],
+			"default": false,
+			"description": "[SCF] Whether advanced configuration options are enabled. Accepts boolean or integer (0/1)."
+		},
+
+		"modified": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "[SCF Export Only] Unix timestamp of last modification"
+		},
+		"import_source": {
+			"type": "string",
+			"description": "[SCF Export Only] Source of import if this entity was imported"
+		},
+		"import_date": {
+			"type": "string",
+			"description": "[SCF Export Only] Date when this entity was imported"
+		},
+
+		"wordpressReservedTerms": {
+			"description": "WordPress reserved terms that cannot be used as post type or taxonomy slugs. Using these terms will cause conflicts with WordPress core functionality.",
+			"enum": [
+				"action",
+				"attachment",
+				"author",
+				"category",
+				"comment",
+				"custom_css",
+				"customize_changeset",
+				"day",
+				"feed",
+				"hour",
+				"link_category",
+				"minute",
+				"month",
+				"name",
+				"nav_menu_item",
+				"oembed_cache",
+				"order",
+				"orderby",
+				"page",
+				"paged",
+				"post",
+				"post_format",
+				"post_tag",
+				"post_type",
+				"revision",
+				"search",
+				"second",
+				"tag",
+				"taxonomy",
+				"term",
+				"theme",
+				"type",
+				"user_request",
+				"w",
+				"wp_block",
+				"wp_global_styles",
+				"wp_navigation",
+				"wp_template",
+				"wp_template_part",
+				"year"
+			]
+		}
+	}
+}

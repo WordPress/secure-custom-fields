@@ -24,6 +24,8 @@
 		<!-- Refactoring of this scale is not in scope yet.-->
 		<exclude name="WordPress.Files.FileName" />
 		<!-- Exclude the entire filename rule -->
+		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
+		<!-- file_get_contents is safe for reading local plugin files bundled with the plugin. -->
 	</rule>
 
 	<rule ref="WordPress.Security.EscapeOutput">

@@ -16,7 +16,16 @@ import { createElement } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { layout, plus, postList, category, settings, tool, upload, download } from '@wordpress/icons';
+import {
+	layout,
+	plus,
+	postList,
+	category,
+	settings,
+	tool,
+	upload,
+	download,
+} from '@wordpress/icons';
 
 /**
  * Register admin commands for SCF
@@ -29,7 +38,7 @@ const registerAdminCommands = () => {
 	const commandStore = dispatch( 'core/commands' );
 	const adminUrl = window.acf?.data?.admin_url || '';
 
-	const commands = [
+	const viewCommands = [
 		{
 			name: 'field-groups',
 			label: __( 'Field Groups', 'secure-custom-fields' ),
@@ -48,24 +57,6 @@ const registerAdminCommands = () => {
 			],
 		},
 		{
-			name: 'new-field-group',
-			label: __( 'Create New Field Group', 'secure-custom-fields' ),
-			url: 'post-new.php',
-			urlArgs: { post_type: 'acf-field-group' },
-			icon: plus,
-			description: __(
-				'SCF: Create a new field group to organize custom fields',
-				'secure-custom-fields'
-			),
-			keywords: [
-				'add',
-				'new',
-				'create',
-				'field group',
-				'custom fields',
-			],
-		},
-		{
 			name: 'post-types',
 			label: __( 'Post Types', 'secure-custom-fields' ),
 			url: 'edit.php',
@@ -76,18 +67,6 @@ const registerAdminCommands = () => {
 				'secure-custom-fields'
 			),
 			keywords: [ 'cpt', 'content types', 'manage post types' ],
-		},
-		{
-			name: 'new-post-type',
-			label: __( 'Create New Post Type', 'secure-custom-fields' ),
-			url: 'post-new.php',
-			urlArgs: { post_type: 'acf-post-type' },
-			icon: plus,
-			description: __(
-				'SCF: Create a new custom post type',
-				'secure-custom-fields'
-			),
-			keywords: [ 'add', 'new', 'create', 'cpt', 'content type' ],
 		},
 		{
 			name: 'taxonomies',
@@ -102,25 +81,6 @@ const registerAdminCommands = () => {
 			keywords: [ 'categories', 'tags', 'terms', 'custom taxonomies' ],
 		},
 		{
-			name: 'new-taxonomy',
-			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
-			url: 'post-new.php',
-			urlArgs: { post_type: 'acf-taxonomy' },
-			icon: plus,
-			description: __(
-				'SCF: Create a new custom taxonomy',
-				'secure-custom-fields'
-			),
-			keywords: [
-				'add',
-				'new',
-				'create',
-				'taxonomy',
-				'categories',
-				'tags',
-			],
-		},
-		{
 			name: 'options-pages',
 			label: __( 'Options Pages', 'secure-custom-fields' ),
 			url: 'edit.php',
@@ -131,18 +91,6 @@ const registerAdminCommands = () => {
 				'secure-custom-fields'
 			),
 			keywords: [ 'settings', 'global options', 'site options' ],
-		},
-		{
-			name: 'new-options-page',
-			label: __( 'Create New Options Page', 'secure-custom-fields' ),
-			url: 'post-new.php',
-			urlArgs: { post_type: 'acf-ui-options-page' },
-			icon: plus,
-			description: __(
-				'SCF: Create a new custom options page',
-				'secure-custom-fields'
-			),
-			keywords: [ 'add', 'new', 'create', 'options', 'settings page' ],
 		},
 		{
 			name: 'tools',
@@ -182,7 +130,72 @@ const registerAdminCommands = () => {
 		},
 	];
 
-	commands.forEach( ( command ) => {
+	// Create commands - not in SCF's admin menu, so not duplicated.
+	const createCommands = [
+		{
+			name: 'new-field-group',
+			label: __( 'Create New Field Group', 'secure-custom-fields' ),
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-field-group' },
+			icon: plus,
+			description: __(
+				'SCF: Create a new field group to organize custom fields',
+				'secure-custom-fields'
+			),
+			keywords: [
+				'add',
+				'new',
+				'create',
+				'field group',
+				'custom fields',
+			],
+		},
+		{
+			name: 'new-post-type',
+			label: __( 'Create New Post Type', 'secure-custom-fields' ),
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-post-type' },
+			icon: plus,
+			description: __(
+				'SCF: Create a new custom post type',
+				'secure-custom-fields'
+			),
+			keywords: [ 'add', 'new', 'create', 'cpt', 'content type' ],
+		},
+		{
+			name: 'new-taxonomy',
+			label: __( 'Create New Taxonomy', 'secure-custom-fields' ),
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-taxonomy' },
+			icon: plus,
+			description: __(
+				'SCF: Create a new custom taxonomy',
+				'secure-custom-fields'
+			),
+			keywords: [
+				'add',
+				'new',
+				'create',
+				'taxonomy',
+				'categories',
+				'tags',
+			],
+		},
+		{
+			name: 'new-options-page',
+			label: __( 'Create New Options Page', 'secure-custom-fields' ),
+			url: 'post-new.php',
+			urlArgs: { post_type: 'acf-ui-options-page' },
+			icon: plus,
+			description: __(
+				'SCF: Create a new custom options page',
+				'secure-custom-fields'
+			),
+			keywords: [ 'add', 'new', 'create', 'options', 'settings page' ],
+		},
+	];
+
+	const registerCommand = ( command ) => {
 		commandStore.registerCommand( {
 			name: 'scf/' + command.name,
 			label: command.label,
@@ -197,7 +210,17 @@ const registerAdminCommands = () => {
 				close();
 			},
 		} );
-	} );
+	};
+
+	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
+	const wpVersion = window.acf.data.wp_version;
+	const isWp69Plus =
+		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
+
+	if ( ! isWp69Plus ) {
+		viewCommands.forEach( registerCommand );
+	}
+	createCommands.forEach( registerCommand );
 };
 
 if ( 'requestIdleCallback' in window ) {

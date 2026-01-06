@@ -14,15 +14,22 @@ jobs:
   test:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
-    
+
     strategy:
-      matrix:
-        include:
-          # Minimum supported PHP
-          - php: '7.4'
-          # Latest stable PHP
-          - php: '8.4'
       fail-fast: false
+      matrix:
+        event: ['${{ github.event_name }}']
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        exclude:
+          # On PRs: only test minimum and latest PHP versions
+          - event: 'pull_request'
+            php: '8.0'
+          - event: 'pull_request'
+            php: '8.1'
+          - event: 'pull_request'
+            php: '8.2'
+          - event: 'pull_request'
+            php: '8.3'
 
     steps:
       - name: Checkout code
@@ -32,12 +39,21 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          coverage: none
+          coverage: xdebug
           tools: composer:v2
 
       - name: Install dependencies
         run: |
           composer install --no-progress --prefer-dist --no-interaction
 
-      - name: Run PHPUnit
-        run: composer test:php
+      - name: Run PHPUnit with coverage
+        run: mkdir -p coverage/phpunit && vendor/bin/phpunit --coverage-clover=coverage/phpunit/coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: WordPress/secure-custom-fields
+          files: ./coverage/phpunit/coverage.xml
+          flags: phpunit
+          name: phpunit-php-${{ matrix.php }}

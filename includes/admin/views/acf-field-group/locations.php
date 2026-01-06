@@ -2,7 +2,6 @@
 
 // global
 global $field_group;
-
 ?>
 <div class="acf-field">
 	<div class="acf-label">

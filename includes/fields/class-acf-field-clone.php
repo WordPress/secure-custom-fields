@@ -139,6 +139,12 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 			$count = count( $fields );
 			while ( $i < $count ) {
 
+				// Skip invalid/null field entries.
+				if ( ! isset( $fields[ $i ] ) || ! is_array( $fields[ $i ] ) ) {
+					++$i;
+					continue;
+				}
+
 				// vars.
 				$field = $fields[ $i ];
 

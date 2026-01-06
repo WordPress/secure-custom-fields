@@ -407,11 +407,21 @@
 
 			// update label
 			$handle.find( '.li-field-label strong a' ).html( label );
+			let shouldConvertToLowercase = name === name.toLowerCase();
+			shouldConvertToLowercase = acf.applyFilters(
+				'convert_field_name_to_lowercase',
+				shouldConvertToLowercase,
+				this
+			);
 
 			// update name
 			$handle
 				.find( '.li-field-name' )
-				.html( this.makeCopyable( acf.strSanitize( name ) ) );
+				.html(
+					this.makeCopyable(
+						acf.strSanitize( name, shouldConvertToLowercase )
+					)
+				);
 
 			// update type
 			const iconName = acf.strSlugify( this.getType() );
@@ -680,12 +690,41 @@
 		},
 
 		onChangeName: function ( e, $el ) {
-			const sanitizedName = acf.strSanitize( $el.val(), false );
+			const id = this.get( 'id' );
+			let forceSanitize = false;
+			// If id is not a number or is zero, force sanitize
+			if ( typeof id !== 'number' || id === 0 ) {
+				forceSanitize = true;
+			}
 
-			$el.val( sanitizedName );
-			this.set( 'name', sanitizedName );
+			// Get the input's value attribute
+			const valueAttr = input.attr( 'value' );
 
-			if ( sanitizedName.startsWith( 'field_' ) ) {
+			// If value is a lowercase string, force sanitize
+			if (
+				typeof valueAttr === 'string' &&
+				valueAttr === valueAttr.toLowerCase()
+			) {
+				forceSanitize = true;
+			}
+
+			forceSanitize = acf.applyFilters(
+				'convert_field_name_to_lowercase',
+				forceSanitize,
+				this
+			);
+
+			// Sanitize the input value (force if needed)
+			const sanitized = acf.strSanitize( $el.val(), forceSanitize );
+
+			// Set the sanitized value back to the input
+			$el.val( sanitized );
+
+			// Update the field's name property
+			this.set( 'name', sanitized );
+
+			// Warn if the name starts with "field_"
+			if ( sanitized.startsWith( 'field_' ) ) {
 				alert(
 					acf.__(
 						'The string "field_" may not be used at the start of a field name'
@@ -969,7 +1008,7 @@
 					);
 				}
 
-				popup.$( '.acf-close-popup' ).focus();
+				popup.$( '.acf-close-popup' ).trigger( 'focus' );
 
 				field.removeAnimate();
 			};

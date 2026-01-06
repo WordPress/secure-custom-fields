@@ -1,0 +1,30 @@
+{
+	"title": "SCF Flexible Content Field Fragment",
+	"description": "Type-specific properties for flexible content fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "flexible_content" ]
+		},
+		"layouts": {
+			"type": "array",
+			"default": [],
+			"description": "Available layout configurations"
+		},
+		"min": {
+			"type": [ "integer", "string" ],
+			"default": "",
+			"description": "Minimum number of layouts (empty for no limit)"
+		},
+		"max": {
+			"type": [ "integer", "string" ],
+			"default": "",
+			"description": "Maximum number of layouts (empty for no limit)"
+		},
+		"button_label": {
+			"type": "string",
+			"default": "Add Row",
+			"description": "Text label for the add row button"
+		}
+	}
+}

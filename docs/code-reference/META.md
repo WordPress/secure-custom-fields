@@ -10,6 +10,12 @@ This file tracks code elements that need documentation.
 - `acf/bindings/field_not_supported_message`
 - `acf/blocks/binding_value`
 
+## abilities/class-scf-field-abilities.php
+
+### Hooks
+
+- `scf_field_parent_exists`
+
 ## acf-bidirectional-functions.php
 
 ### Hooks
@@ -46,6 +52,7 @@ This file tracks code elements that need documentation.
 
 - `acf/field_group/additional_group_settings_tabs`
 - `acf/get_field_group_style`
+- `acf/get_field_group_title`
 
 ## acf-form-functions.php
 
@@ -224,6 +231,9 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/field_group/render_additional_group_settings`
+- `acf/field_group/render_additional_location_settings`
+- `acf/field_group/render_additional_presentation_settings`
 - `acf/render_field_group_settings`
 
 ## admin/views/acf-post-type/advanced-settings.php
@@ -366,10 +376,18 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/blocks/default_block_version`
+- `acf/blocks/default_block_version`
+- `acf/blocks/fields_needing_wide_popover`
+- `acf/blocks/fields_to_open_in_expanded_editor`
 - `acf/blocks/no_fields_assigned_message`
+- `acf/blocks/post_block_template_render`
+- `acf/blocks/pre_block_template_render`
 - `acf/blocks/prevent_edit_forms_on_rest_endpoints`
 - `acf/blocks/render_capability`
 - `acf/blocks/template_not_found_message`
+- `acf/blocks/top_toolbar_fields`
+- `acf/blocks/top_toolbar_fields`
 - `acf/blocks/wrap_frontend_innerblocks`
 - `acf/pre_save_block`
 - `acf/register_block_type_args`
@@ -398,13 +416,23 @@ This file tracks code elements that need documentation.
 - `acf/get_field_types`
 - `acf/localized_field_categories`
 
+## fields/FlexibleContent/Layout.php
+
+### Hooks
+
+- `acf/fields/flexible_content/layout_title`
+
+## fields/FlexibleContent/Render.php
+
+### Hooks
+
+- `acf/fields/flexible_content/no_value_message`
+
 ## fields/class-acf-field-flexible-content.php
 
 ### Hooks
 
 - `acf/fields/flexible_content/layout_default_expanded`
-- `acf/fields/flexible_content/layout_title`
-- `acf/fields/flexible_content/no_value_message`
 
 ## fields/class-acf-field-gallery.php
 
@@ -585,6 +613,12 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/ui_options_page/registration_args`
+
+## post-types/class-scf-field-manager.php
+
+### Hooks
+
+- `acf/prepare_field_for_export`
 
 ## rest-api/acf-rest-api-functions.php
 

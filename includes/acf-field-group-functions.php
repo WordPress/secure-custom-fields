@@ -540,3 +540,31 @@ function acf_field_group_has_location_type( int $post_id, string $location ) {
 
 	return false;
 }
+
+
+/**
+ * Retrieves the field group title, or display title if set.
+ *
+ * @since ACF 6.6
+ *
+ * @param array|integer $field_group The field group array or ID.
+ * @return string The field group title.
+ */
+function acf_get_field_group_title( $field_group ): string {
+	if ( is_numeric( $field_group ) ) {
+		$field_group = acf_get_field_group( $field_group );
+	}
+
+	$title = '';
+	if ( ! empty( $field_group['title'] ) && is_string( $field_group['title'] ) ) {
+		$title = $field_group['title'];
+	}
+
+	// Override with the Display Title if set.
+	if ( ! empty( $field_group['display_title'] ) && is_string( $field_group['display_title'] ) ) {
+		$title = $field_group['display_title'];
+	}
+
+	// Filter and return.
+	return apply_filters( 'acf/get_field_group_title', esc_html( $title ), $field_group );
+}

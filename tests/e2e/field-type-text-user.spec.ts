@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const { test, expect } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-user-title';
@@ -109,12 +109,11 @@ test.describe( 'Field Type > Text', () => {
 		} );
         // Visit the author archive page
 		await page.goto( '/?author=1' );
-		
+
 		// Verify the custom field value appears on the frontend
-		await page.waitForSelector( '#scf-test-user-title' );
 		await expect(
-			page.locator( '#scf-test-user-title' )
-		).toContainText( 'User title: Test User Title' );
+			page.getByText( 'User title: Test User Title' )
+		).toBeVisible();
 
     } );
 } );

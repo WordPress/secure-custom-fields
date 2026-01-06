@@ -1,0 +1,20 @@
+{
+	"title": "SCF Button Group Field Fragment",
+	"description": "Type-specific properties for button group fields",
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": [ "button_group" ]
+		},
+		"choices": { "$ref": "#/definitions/choices" },
+		"default_value": { "$ref": "#/definitions/default_value" },
+		"return_format": { "$ref": "#/definitions/return_format_choice" },
+		"layout": {
+			"type": "string",
+			"enum": [ "vertical", "horizontal" ],
+			"default": "horizontal",
+			"description": "Layout direction for button choices"
+		},
+		"allow_null": { "$ref": "#/definitions/allow_null" }
+	}
+}

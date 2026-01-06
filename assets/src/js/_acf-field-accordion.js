@@ -94,6 +94,15 @@
 				accordionManager.iconHtml( { open: this.get( 'open' ) } )
 			);
 
+			$label.attr( {
+				tabindex: 0,
+				role: 'button',
+				'aria-expanded': this.get( 'open' ) ? 'true' : 'false',
+			} );
+			$input.attr( {
+				role: 'region',
+			} );
+
 			// classes
 			// - remove 'inside' which is a #poststuff WP class
 			var $parent = $field.parent();
@@ -131,6 +140,7 @@
 
 		events: {
 			'click .acf-accordion-title': 'onClick',
+			'keydown .acf-accordion-title': 'onKeydown',
 			'invalidField .acf-accordion': 'onInvalidField',
 		},
 
@@ -174,6 +184,10 @@
 				this.iconHtml( { open: true } )
 			);
 			$el.addClass( '-open' );
+			$el.find( '.acf-accordion-title:first' ).attr(
+				'aria-expanded',
+				'true'
+			);
 
 			// action
 			acf.doAction( 'show', $el );
@@ -195,6 +209,10 @@
 				this.iconHtml( { open: false } )
 			);
 			$el.removeClass( '-open' );
+			$el.find( '.acf-accordion-title:first' ).attr(
+				'aria-expanded',
+				'false'
+			);
 
 			// action
 			acf.doAction( 'hide', $el );
@@ -207,7 +225,15 @@
 			// open close
 			this.toggle( $el.parent() );
 		},
-
+		onKeydown: function ( e, $el ) {
+			// check for enter or space
+			if ( 13 === e.which ) {
+				// prevent Default
+				e.preventDefault();
+				// open close
+				this.toggle( $el.parent() );
+			}
+		},
 		onInvalidField: function ( e, $el ) {
 			// bail early if already focused
 			if ( this.busy ) {

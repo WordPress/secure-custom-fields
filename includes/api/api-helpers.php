@@ -1288,8 +1288,19 @@ function acf_get_grouped_posts( $args ) {
 
 	// find array of post_type
 	$post_types          = acf_get_array( $args['post_type'] );
-	$post_types_labels   = acf_get_pretty_post_types( $post_types );
-	$is_single_post_type = ( count( $post_types ) == 1 );
+	$is_single_post_type = ( count( $post_types ) === 1 );
+
+	// WordPress 6.8+ sorts post_type arrays for cache key generation
+	// We need to use the same sorted order when processing results
+	if (
+		! $is_single_post_type &&
+		-1 !== $args['posts_per_page'] &&
+		version_compare( get_bloginfo( 'version' ), '6.8', '>=' )
+	) {
+		sort( $post_types );
+	}
+
+	$post_types_labels = acf_get_pretty_post_types( $post_types );
 
 	// attachment doesn't work if it is the only item in an array
 	if ( $is_single_post_type ) {
@@ -2733,6 +2744,16 @@ function acf_current_user_can_admin() {
 }
 
 /**
+ * Checks if the current user has the SCF capability for programmatic access, without considering show_admin setting.
+ *
+ * @since 6.6.0
+ * @return bool True if the user has the ACF capability.
+ */
+function scf_current_user_has_capability() {
+	return current_user_can( acf_get_setting( 'capability' ) );
+}
+
+/**
  * Wrapper function for current_user_can( 'edit_post', $post_id ).
  *
  * @since ACF 6.3.4
@@ -2879,9 +2900,9 @@ function acf_get_valid_terms( $terms = false, $taxonomy = 'category' ) {
  *
  * @since   ACF 5.2.3
  *
- * @param   $attachment (array) attachment data. Changes based on context
- * @param   $field (array) field settings containing restrictions
- * @param   context (string)                                     $file is different when uploading / preparing
+ * @param   array  $attachment attachment data. Changes based on context.
+ * @param   array  $field field settings containing restrictions.
+ * @param   string $context context is different when uploading / preparing.
  * @return  $errors (array)
  */
 function acf_validate_attachment( $attachment, $field, $context = 'prepare' ) {
@@ -3277,7 +3298,7 @@ function acf_is_ajax( $action = '' ) {
 	$is_ajax = false;
 
 	// check if is doing ajax
-	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+	if ( wp_doing_ajax() ) {
 		$is_ajax = true;
 	}
 
