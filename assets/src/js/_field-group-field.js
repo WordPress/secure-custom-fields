@@ -698,7 +698,7 @@
 			}
 
 			// Get the input's value attribute
-			const valueAttr = input.attr( 'value' );
+			const valueAttr = $el.val();
 
 			// If value is a lowercase string, force sanitize
 			if (
