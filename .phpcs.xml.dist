@@ -28,6 +28,20 @@
 		<!-- file_get_contents is safe for reading local plugin files bundled with the plugin. -->
 	</rule>
 
+	<!-- Test files can use direct filesystem functions and development functions -->
+	<rule ref="WordPress.WP.AlternativeFunctions">
+		<exclude-pattern>/tests/</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DevelopmentFunctions">
+		<exclude-pattern>/tests/</exclude-pattern>
+	</rule>
+
+	<!-- Contributor scripts use error silencing for external API calls -->
+	<rule ref="WordPress.PHP.NoSilencedErrors.Discouraged">
+		<exclude-pattern>/bin/backfill-contributors\.php$</exclude-pattern>
+		<exclude-pattern>/bin/contributors-functions\.php$</exclude-pattern>
+	</rule>
+
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
 			<property name="customEscapingFunctions" type="array">

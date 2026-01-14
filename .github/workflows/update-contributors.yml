@@ -1,0 +1,70 @@
+name: Update Contributors
+
+on:
+  # Manual trigger for release process
+  workflow_dispatch:
+    inputs:
+      update_output_files:
+        description: 'Update output files (readme.txt, CONTRIBUTORS.md, docs page)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+# Disable permissions for all available scopes by default
+# Any needed permissions should be configured at the job level
+permissions: {}
+
+jobs:
+  # This job runs manually during release process to update contributor data and output files
+  update-contributor-list:
+    name: Update contributor list
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Run contributor backfill
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ inputs.update_output_files }}" = "true" ]; then
+            php bin/backfill-contributors.php
+          else
+            php bin/backfill-contributors.php --skip-output
+          fi
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if ! git diff --quiet -- contributors.json readme.txt CONTRIBUTORS.md docs/contributing/contributors.md 2>/dev/null; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add contributors.json readme.txt CONTRIBUTORS.md docs/contributing/contributors.md
+          git commit -m "Update contributor list"
+          git push

@@ -1,0 +1,831 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Backfill historical contributors from GitHub API
+ *
+ * This script collects all historical contributors from the GitHub repository
+ * using both REST and GraphQL APIs, then stores them in contributors.json.
+ * It also looks up WordPress.org profile data for linked accounts and
+ * generates output files (readme.txt, CONTRIBUTORS.md, docs page).
+ *
+ * By default, the script runs in incremental mode, only fetching PRs merged
+ * after the last processed cursor. Use --full to fetch all historical data.
+ *
+ * Usage: php bin/backfill-contributors.php [--full] [--dry-run] [--skip-wporg] [--skip-output]
+ *
+ * Environment variables:
+ *   GITHUB_TOKEN - GitHub API token for authentication (required)
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+// phpcs:disable WordPress.WP.AlternativeFunctions
+
+namespace WordPress\SCF\Scripts;
+
+// Ensure we're in the right directory.
+chdir( dirname( __DIR__ ) );
+
+// Load the contributor helper functions.
+require_once __DIR__ . '/contributors-functions.php';
+
+use function WordPress\SCF\Contributors\read_contributors;
+use function WordPress\SCF\Contributors\read_contributors_metadata;
+use function WordPress\SCF\Contributors\write_contributors_with_metadata;
+use function WordPress\SCF\Contributors\merge_contributors;
+use function WordPress\SCF\Contributors\update_contributors_with_wporg_data;
+use function WordPress\SCF\Contributors\generate_all_output_files;
+use function WordPress\SCF\Contributors\parse_rate_limit_headers;
+use function WordPress\SCF\Contributors\calculate_smart_backoff;
+use function WordPress\SCF\Contributors\filter_bot_accounts;
+use function WordPress\SCF\Contributors\add_to_contributors_map;
+
+use const WordPress\SCF\Contributors\WPORG_MAX_RETRIES;
+use const WordPress\SCF\Contributors\BOT_EXCLUSION_LIST;
+
+/**
+ * GitHub repository configuration
+ */
+const GITHUB_OWNER = 'WordPress';
+const GITHUB_REPO  = 'secure-custom-fields';
+
+/**
+ * Handles backfilling contributors from GitHub APIs
+ */
+class Contributor_Backfill {
+
+	/**
+	 * GitHub API token
+	 *
+	 * @var string
+	 */
+	private $github_token;
+
+	/**
+	 * Full backfill mode flag (ignore cursor, fetch all)
+	 *
+	 * @var bool
+	 */
+	private $full_backfill = false;
+
+	/**
+	 * Dry run mode flag
+	 *
+	 * @var bool
+	 */
+	private $dry_run = false;
+
+	/**
+	 * Skip WordPress.org lookup flag
+	 *
+	 * @var bool
+	 */
+	private $skip_wporg = false;
+
+	/**
+	 * Skip output file generation flag
+	 *
+	 * @var bool
+	 */
+	private $skip_output = false;
+
+	/**
+	 * Last processed PR cursor from metadata
+	 *
+	 * @var string|null
+	 */
+	private $last_cursor = null;
+
+	/**
+	 * New cursor after processing
+	 *
+	 * @var string|null
+	 */
+	private $new_cursor = null;
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $github_token   GitHub API token.
+	 * @param bool   $full_backfill  Whether to do a full backfill (ignore cursor).
+	 * @param bool   $dry_run        Whether to run in dry-run mode.
+	 * @param bool   $skip_wporg     Whether to skip WordPress.org lookup.
+	 * @param bool   $skip_output    Whether to skip output file generation.
+	 */
+	public function __construct( string $github_token, bool $full_backfill = false, bool $dry_run = false, bool $skip_wporg = false, bool $skip_output = false ) {
+		$this->github_token  = $github_token;
+		$this->full_backfill = $full_backfill;
+		$this->dry_run       = $dry_run;
+		$this->skip_wporg    = $skip_wporg;
+		$this->skip_output   = $skip_output;
+	}
+
+	/**
+	 * Run the backfill process
+	 */
+	public function run() {
+		echo "Starting contributor backfill...\n";
+
+		if ( $this->dry_run ) {
+			echo "[DRY RUN] No changes will be saved.\n";
+		}
+
+		// Determine if we need a full backfill.
+		$is_incremental = $this->determine_backfill_mode();
+
+		if ( $is_incremental ) {
+			echo "[INCREMENTAL] Using cursor from last run.\n";
+		} else {
+			echo "[FULL] Fetching all historical data.\n";
+		}
+
+		// Collect contributors from REST API (commit authors) - always full for commits.
+		echo "\nFetching commit authors from REST API...\n";
+		$commit_contributors = $this->fetch_rest_api_contributors();
+		printf( "Found %d commit authors.\n", count( $commit_contributors ) );
+
+		// Collect contributors from GraphQL API (reviewers, commenters, issue reporters).
+		echo "\nFetching PR contributors from GraphQL API...\n";
+		$pr_contributors = $this->fetch_graphql_contributors( $is_incremental );
+		printf( "Found %d PR contributors (reviewers, commenters, issue reporters).\n", count( $pr_contributors ) );
+
+		// Merge all contributors.
+		echo "\nMerging contributors...\n";
+		$all_contributors = $this->merge_all_contributors( $commit_contributors, $pr_contributors );
+
+		// Filter bot accounts.
+		echo "Filtering bot accounts...\n";
+		$filtered_contributors = filter_bot_accounts( $all_contributors );
+		printf( "Filtered out %d bot accounts.\n", count( $all_contributors ) - count( $filtered_contributors ) );
+
+		// Load existing contributors and merge.
+		$existing_contributors = read_contributors();
+		printf( "Found %d existing contributors in contributors.json.\n", count( $existing_contributors ) );
+
+		$final_contributors = merge_contributors( $existing_contributors, $filtered_contributors );
+		printf( "Total unique contributors after merge: %d\n", count( $final_contributors ) );
+
+		// Perform WordPress.org profile lookup.
+		if ( ! $this->skip_wporg ) {
+			echo "\nLooking up WordPress.org profiles...\n";
+			$final_contributors = update_contributors_with_wporg_data(
+				$final_contributors,
+				function ( $message ) {
+					echo "  $message\n";
+				}
+			);
+
+			$linked_count = count(
+				array_filter(
+					$final_contributors,
+					function ( $c ) {
+						return ! empty( $c['wporg_username'] );
+					}
+				)
+			);
+			printf( "Found %d contributors with linked WordPress.org accounts.\n", $linked_count );
+		} else {
+			echo "\nSkipping WordPress.org profile lookup.\n";
+		}
+
+		// Save or display results.
+		if ( $this->dry_run ) {
+			echo "\n[DRY RUN] Would save the following contributors:\n";
+			foreach ( $final_contributors as $contributor ) {
+				$wporg = $contributor['wporg_username'] ? " (wporg: {$contributor['wporg_username']})" : '';
+				printf(
+					"  - %s%s: %s\n",
+					$contributor['github_username'],
+					$wporg,
+					implode( ', ', $contributor['contribution_types'] )
+				);
+			}
+			if ( $this->new_cursor ) {
+				echo "\n[DRY RUN] Would update cursor to: {$this->new_cursor}\n";
+			}
+		} else {
+			// Build metadata for the new format.
+			$metadata = $this->build_metadata( $is_incremental );
+
+			$result = write_contributors_with_metadata( $final_contributors, $metadata );
+			if ( $result ) {
+				echo "\nSuccessfully saved contributors to contributors.json\n";
+				if ( $this->new_cursor ) {
+					echo "Updated cursor for incremental processing.\n";
+				}
+			} else {
+				echo "\nError: Failed to save contributors.json\n";
+				exit( 1 );
+			}
+
+			// Generate output files.
+			if ( ! $this->skip_output ) {
+				echo "\nGenerating output files...\n";
+				$output_results = generate_all_output_files(
+					$final_contributors,
+					function ( $message ) {
+						echo "  $message\n";
+					}
+				);
+
+				$success_count = count( array_filter( $output_results ) );
+				$total_count   = count( $output_results );
+				printf( "Generated %d/%d output files successfully.\n", $success_count, $total_count );
+			} else {
+				echo "\nSkipping output file generation.\n";
+			}
+		}
+
+		echo "\nBackfill complete!\n";
+	}
+
+	/**
+	 * Determine if we should run in incremental mode
+	 *
+	 * Incremental mode is used when:
+	 * - --full flag is NOT set
+	 * - A valid cursor exists in the metadata
+	 *
+	 * @return bool True for incremental mode, false for full backfill.
+	 */
+	private function determine_backfill_mode() {
+		// --full flag forces full backfill.
+		if ( $this->full_backfill ) {
+			return false;
+		}
+
+		// Check for existing cursor.
+		$metadata = read_contributors_metadata();
+		if ( ! empty( $metadata['last_processed_pr_cursor'] ) ) {
+			$this->last_cursor = $metadata['last_processed_pr_cursor'];
+			return true;
+		}
+
+		// No cursor means we need a full backfill.
+		return false;
+	}
+
+	/**
+	 * Build metadata for the contributors file
+	 *
+	 * @param bool $is_incremental Whether this was an incremental run.
+	 * @return array Metadata array.
+	 */
+	private function build_metadata( bool $is_incremental ) {
+		$now = gmdate( 'c' ); // ISO 8601 format.
+
+		// Start with existing metadata or create new.
+		$existing_metadata = read_contributors_metadata();
+
+		$metadata = array(
+			'last_processed_pr_cursor' => $this->new_cursor ?? $existing_metadata['last_processed_pr_cursor'] ?? null,
+			'last_processed_date'      => $now,
+			'last_full_backfill'       => $is_incremental
+				? ( $existing_metadata['last_full_backfill'] ?? $now )
+				: $now,
+		);
+
+		return $metadata;
+	}
+
+	/**
+	 * Fetch contributors from GitHub REST API
+	 *
+	 * Uses the contributors endpoint to get commit authors, then fetches
+	 * the first commit date for each contributor.
+	 *
+	 * @return array List of contributors from commits.
+	 */
+	private function fetch_rest_api_contributors() {
+		$contributors = array();
+		$page         = 1;
+		$per_page     = 100;
+
+		// First, collect all contributor data (username and commit count).
+		$contributor_data = array();
+		do {
+			$url      = sprintf(
+				'https://api.github.com/repos/%s/%s/contributors?per_page=%d&page=%d',
+				GITHUB_OWNER,
+				GITHUB_REPO,
+				$per_page,
+				$page
+			);
+			$response = $this->make_rest_request( $url );
+
+			if ( empty( $response ) || ! is_array( $response ) ) {
+				break;
+			}
+
+			foreach ( $response as $contributor ) {
+				if ( isset( $contributor['login'] ) ) {
+					$contributor_data[] = array(
+						'login'        => $contributor['login'],
+						'commit_count' => $contributor['contributions'] ?? 1,
+					);
+				}
+			}
+
+			$response_count = count( $response );
+			++$page;
+		} while ( $response_count === $per_page );
+
+		// Fetch first commit date for each contributor.
+		$total = count( $contributor_data );
+		foreach ( $contributor_data as $index => $data ) {
+			$first_commit_date = $this->fetch_first_commit_date( $data['login'] );
+
+			$contributors[] = array(
+				'github_username'         => $data['login'],
+				'wporg_username'          => null,
+				'wporg_display_name'      => null,
+				'contribution_types'      => array( 'commit' ),
+				'contribution_counts'     => array( 'commit' => $data['commit_count'] ),
+				'first_contribution_date' => $first_commit_date,
+			);
+
+			// Progress indicator every 10 contributors.
+			if ( 0 === ( $index + 1 ) % 10 || ( $index + 1 ) === $total ) {
+				printf( "  Fetched commit dates for %d/%d contributors...\n", $index + 1, $total );
+			}
+		}
+
+		return $contributors;
+	}
+
+	/**
+	 * Fetch the first commit date for a contributor
+	 *
+	 * Queries the commits endpoint sorted by author-date ascending
+	 * to find the earliest commit by this author.
+	 *
+	 * @param string $username GitHub username.
+	 * @return string Date in YYYY-MM-DD format.
+	 */
+	private function fetch_first_commit_date( string $username ) {
+		$url = sprintf(
+			'https://api.github.com/repos/%s/%s/commits?author=%s&per_page=1&order=asc',
+			GITHUB_OWNER,
+			GITHUB_REPO,
+			rawurlencode( $username )
+		);
+
+		$response = $this->make_rest_request( $url );
+
+		if ( ! empty( $response ) && is_array( $response ) && isset( $response[0]['commit']['author']['date'] ) ) {
+			$date = $response[0]['commit']['author']['date'];
+			// Extract YYYY-MM-DD from ISO 8601 format.
+			return substr( $date, 0, 10 );
+		}
+
+		// Fallback to today if we can't determine the date.
+		return gmdate( 'Y-m-d' );
+	}
+
+	/**
+	 * Fetch contributors from GitHub GraphQL API
+	 *
+	 * Queries merged PRs to find reviewers, commenters, and linked issue reporters.
+	 * In incremental mode, starts from the last processed cursor to only fetch new PRs.
+	 *
+	 * @param bool $is_incremental Whether to use incremental mode (start from last cursor).
+	 * @return array List of contributors from PRs.
+	 */
+	private function fetch_graphql_contributors( bool $is_incremental = false ) {
+		$contributors_map = array();
+		$page_count       = 0;
+		$max_pages        = 100; // Safety limit.
+		$first_cursor     = null; // Track the first cursor for saving as the new cursor.
+
+		// In incremental mode, start from the last processed cursor.
+		$cursor = $is_incremental ? $this->last_cursor : null;
+
+		if ( $is_incremental && $cursor ) {
+			printf( "  Starting from cursor: %s\n", substr( $cursor, 0, 30 ) . '...' );
+		}
+
+		do {
+			$query    = $this->build_graphql_query( $cursor );
+			$response = $this->make_graphql_request( $query );
+
+			if ( ! $response || ! isset( $response['data']['repository']['pullRequests'] ) ) {
+				echo "Warning: GraphQL request failed or returned unexpected format.\n";
+				break;
+			}
+
+			$prs      = $response['data']['repository']['pullRequests'];
+			$pr_nodes = $prs['nodes'] ?? array();
+
+			foreach ( $pr_nodes as $pr ) {
+				$this->process_pr_contributors( $pr, $contributors_map );
+			}
+
+			$has_next_page = $prs['pageInfo']['hasNextPage'] ?? false;
+			$end_cursor    = $prs['pageInfo']['endCursor'] ?? null;
+
+			// Save the first end cursor we see as the new cursor for next incremental run.
+			if ( null === $first_cursor && $end_cursor ) {
+				$first_cursor = $end_cursor;
+			}
+
+			$cursor = $end_cursor;
+			++$page_count;
+
+			if ( 0 === $page_count % 10 ) {
+				printf( "  Processed %d pages of PRs...\n", $page_count );
+			}
+		} while ( $has_next_page && $cursor && $page_count < $max_pages );
+
+		// Store the new cursor for saving in metadata.
+		// For full backfill, use the last cursor (end of the list).
+		if ( ! $is_incremental && $cursor ) {
+			$this->new_cursor = $cursor;
+		} elseif ( ! $is_incremental && $first_cursor ) {
+			$this->new_cursor = $first_cursor;
+		}
+
+		return array_values( $contributors_map );
+	}
+
+	/**
+	 * Build GraphQL query for merged PRs
+	 *
+	 * @param string|null $cursor Pagination cursor.
+	 * @return string GraphQL query.
+	 */
+	private function build_graphql_query( $cursor = null ) {
+		$after = $cursor ? sprintf( ', after: "%s"', $cursor ) : '';
+
+		return <<<GRAPHQL
+{
+  repository(owner: "WordPress", name: "secure-custom-fields") {
+    pullRequests(states: MERGED, first: 100{$after}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        number
+        mergedAt
+        author {
+          login
+        }
+        reviews(first: 100) {
+          nodes {
+            author {
+              login
+            }
+          }
+        }
+        comments(first: 100) {
+          nodes {
+            author {
+              login
+            }
+          }
+        }
+        closingIssuesReferences(first: 10) {
+          nodes {
+            author {
+              login
+            }
+          }
+        }
+      }
+    }
+  }
+}
+GRAPHQL;
+	}
+
+	/**
+	 * Process PR contributors and add to map
+	 *
+	 * @param array $pr              PR data from GraphQL.
+	 * @param array $contributors_map Reference to contributors map.
+	 */
+	private function process_pr_contributors( array $pr, array &$contributors_map ) {
+		$merged_at = $pr['mergedAt'] ?? null;
+		$date      = $merged_at ? substr( $merged_at, 0, 10 ) : gmdate( 'Y-m-d' );
+
+		// Process reviews.
+		$reviews = $pr['reviews']['nodes'] ?? array();
+		foreach ( $reviews as $review ) {
+			$login = $review['author']['login'] ?? null;
+			if ( $login ) {
+				add_to_contributors_map( $contributors_map, $login, 'review', $date );
+			}
+		}
+
+		// Process comments.
+		$comments = $pr['comments']['nodes'] ?? array();
+		foreach ( $comments as $comment ) {
+			$login = $comment['author']['login'] ?? null;
+			if ( $login ) {
+				add_to_contributors_map( $contributors_map, $login, 'comment', $date );
+			}
+		}
+
+		// Process linked issues.
+		$issues = $pr['closingIssuesReferences']['nodes'] ?? array();
+		foreach ( $issues as $issue ) {
+			$login = $issue['author']['login'] ?? null;
+			if ( $login ) {
+				add_to_contributors_map( $contributors_map, $login, 'issue', $date );
+			}
+		}
+	}
+
+	/**
+	 * Merge commit and PR contributors
+	 *
+	 * @param array $commit_contributors Contributors from REST API.
+	 * @param array $pr_contributors     Contributors from GraphQL API.
+	 * @return array Merged contributors.
+	 */
+	private function merge_all_contributors( array $commit_contributors, array $pr_contributors ) {
+		$contributors_map = array();
+
+		// Add commit contributors.
+		foreach ( $commit_contributors as $contributor ) {
+			$key                      = strtolower( $contributor['github_username'] );
+			$contributors_map[ $key ] = $contributor;
+		}
+
+		// Merge PR contributors.
+		foreach ( $pr_contributors as $contributor ) {
+			$key = strtolower( $contributor['github_username'] );
+
+			if ( isset( $contributors_map[ $key ] ) ) {
+				// Merge contribution types.
+				$existing_types = $contributors_map[ $key ]['contribution_types'];
+				$new_types      = $contributor['contribution_types'];
+				$merged_types   = array_unique( array_merge( $existing_types, $new_types ) );
+				sort( $merged_types );
+				$contributors_map[ $key ]['contribution_types'] = $merged_types;
+
+				// Merge contribution counts.
+				$existing_counts = $contributors_map[ $key ]['contribution_counts'] ?? array();
+				$new_counts      = $contributor['contribution_counts'] ?? array();
+				foreach ( $new_counts as $type => $count ) {
+					$existing_counts[ $type ] = ( $existing_counts[ $type ] ?? 0 ) + $count;
+				}
+				ksort( $existing_counts );
+				$contributors_map[ $key ]['contribution_counts'] = $existing_counts;
+
+				// Keep earliest date.
+				if ( $contributor['first_contribution_date'] < $contributors_map[ $key ]['first_contribution_date'] ) {
+					$contributors_map[ $key ]['first_contribution_date'] = $contributor['first_contribution_date'];
+				}
+			} else {
+				$contributors_map[ $key ] = $contributor;
+			}
+		}
+
+		return array_values( $contributors_map );
+	}
+
+	/**
+	 * Make REST API request to GitHub with retry logic and rate limit handling.
+	 *
+	 * @param string $url API URL.
+	 * @return array|null Response data or null on failure.
+	 */
+	private function make_rest_request( string $url ) {
+		$attempt = 0;
+
+		while ( $attempt < WPORG_MAX_RETRIES ) {
+			++$attempt;
+
+			$context = stream_context_create(
+				array(
+					'http' => array(
+						'method'        => 'GET',
+						'header'        => implode(
+							"\r\n",
+							array(
+								'Accept: application/vnd.github+json',
+								'Authorization: Bearer ' . $this->github_token,
+								'User-Agent: WordPress-SCF-Contributor-Backfill',
+								'X-GitHub-Api-Version: 2022-11-28',
+							)
+						),
+						'timeout'       => 30,
+						'ignore_errors' => true,
+					),
+				)
+			);
+
+			$response = @file_get_contents( $url, false, $context );
+
+			// Extract status code and rate limit info from response headers.
+			$status_code     = 0;
+			$rate_limit_info = array(
+				'remaining'   => null,
+				'reset'       => null,
+				'retry_after' => null,
+			);
+
+			if ( isset( $http_response_header ) && is_array( $http_response_header ) ) {
+				foreach ( $http_response_header as $header ) {
+					if ( preg_match( '/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches ) ) {
+						$status_code = (int) $matches[1];
+					}
+				}
+				$rate_limit_info = parse_rate_limit_headers( $http_response_header );
+			}
+
+			// Success case.
+			if ( false !== $response && $status_code >= 200 && $status_code < 300 ) {
+				return json_decode( $response, true );
+			}
+
+			// Check if we should retry.
+			$should_retry = ( 0 === $status_code ) ||
+				( 429 === $status_code ) ||
+				( $status_code >= 500 && $status_code < 600 );
+
+			if ( ! $should_retry || $attempt >= WPORG_MAX_RETRIES ) {
+				break;
+			}
+
+			// Calculate delay using smart backoff.
+			$delay_ms = calculate_smart_backoff( $rate_limit_info, $attempt );
+			usleep( $delay_ms * 1000 );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Make GraphQL request to GitHub with retry logic and rate limit handling.
+	 *
+	 * @param string $query GraphQL query.
+	 * @return array|null Response data or null on failure.
+	 */
+	private function make_graphql_request( string $query ) {
+		$url     = 'https://api.github.com/graphql';
+		$data    = json_encode( array( 'query' => $query ) );
+		$attempt = 0;
+
+		while ( $attempt < WPORG_MAX_RETRIES ) {
+			++$attempt;
+
+			$context = stream_context_create(
+				array(
+					'http' => array(
+						'method'        => 'POST',
+						'header'        => implode(
+							"\r\n",
+							array(
+								'Content-Type: application/json',
+								'Authorization: Bearer ' . $this->github_token,
+								'User-Agent: WordPress-SCF-Contributor-Backfill',
+							)
+						),
+						'content'       => $data,
+						'timeout'       => 30,
+						'ignore_errors' => true,
+					),
+				)
+			);
+
+			$response = @file_get_contents( $url, false, $context );
+
+			// Extract status code and rate limit info from response headers.
+			$status_code     = 0;
+			$rate_limit_info = array(
+				'remaining'   => null,
+				'reset'       => null,
+				'retry_after' => null,
+			);
+
+			if ( isset( $http_response_header ) && is_array( $http_response_header ) ) {
+				foreach ( $http_response_header as $header ) {
+					if ( preg_match( '/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches ) ) {
+						$status_code = (int) $matches[1];
+					}
+				}
+				$rate_limit_info = parse_rate_limit_headers( $http_response_header );
+			}
+
+			// Success case.
+			if ( false !== $response && $status_code >= 200 && $status_code < 300 ) {
+				return json_decode( $response, true );
+			}
+
+			// Check if we should retry.
+			$should_retry = ( 0 === $status_code ) ||
+				( 429 === $status_code ) ||
+				( $status_code >= 500 && $status_code < 600 );
+
+			if ( ! $should_retry || $attempt >= WPORG_MAX_RETRIES ) {
+				break;
+			}
+
+			// Calculate delay using smart backoff.
+			$delay_ms = calculate_smart_backoff( $rate_limit_info, $attempt );
+			usleep( $delay_ms * 1000 );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Parse command-line arguments
+	 *
+	 * @param array $args Command-line arguments.
+	 * @return array Parsed options.
+	 */
+	public static function parse_arguments( array $args ) {
+		$options = array(
+			'full'        => false,
+			'dry_run'     => false,
+			'skip_wporg'  => false,
+			'skip_output' => false,
+			'help'        => false,
+		);
+
+		foreach ( $args as $arg ) {
+			if ( '--full' === $arg ) {
+				$options['full'] = true;
+			} elseif ( '--dry-run' === $arg ) {
+				$options['dry_run'] = true;
+			} elseif ( '--skip-wporg' === $arg ) {
+				$options['skip_wporg'] = true;
+			} elseif ( '--skip-output' === $arg ) {
+				$options['skip_output'] = true;
+			} elseif ( '--help' === $arg || '-h' === $arg ) {
+				$options['help'] = true;
+			}
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Display help message
+	 */
+	public static function display_help() {
+		echo <<<'HELP'
+Backfill historical contributors from GitHub API
+
+Usage: php bin/backfill-contributors.php [options]
+
+Options:
+  --full         Force full backfill (ignore cursor, fetch all historical data)
+  --dry-run      Preview changes without saving to contributors.json
+  --skip-wporg   Skip WordPress.org profile lookup
+  --skip-output  Skip output file generation (readme.txt, CONTRIBUTORS.md, docs page)
+  --help, -h     Display this help message
+
+Environment variables:
+  GITHUB_TOKEN  GitHub API token for authentication (required)
+
+Incremental Processing:
+  By default, the script runs in incremental mode. After the first run, it saves
+  a cursor that tracks the last processed PR. Subsequent runs only fetch PRs
+  merged after that point, significantly reducing API calls and processing time.
+
+  Use --full to force a complete backfill of all historical data.
+
+This script:
+  1. Fetches commit authors from GitHub REST API
+  2. Fetches reviewers, commenters, and issue reporters from GitHub GraphQL API
+  3. Filters out bot accounts
+  4. Merges with existing contributors.json data
+  5. Looks up WordPress.org profiles for linked accounts
+  6. Saves the updated contributor list with metadata for incremental processing
+  7. Generates output files (readme.txt, CONTRIBUTORS.md, docs/contributing/contributors.md)
+
+HELP;
+	}
+}
+
+// Main execution.
+$options = Contributor_Backfill::parse_arguments( array_slice( $argv, 1 ) );
+
+if ( $options['help'] ) {
+	Contributor_Backfill::display_help();
+	exit( 0 );
+}
+
+// Check for GITHUB_TOKEN.
+$github_token = getenv( 'GITHUB_TOKEN' );
+if ( ! $github_token ) {
+	echo "Error: GITHUB_TOKEN environment variable is required.\n";
+	echo "Set it with: export GITHUB_TOKEN=your_token_here\n";
+	exit( 1 );
+}
+
+// Run the backfill.
+$backfill = new Contributor_Backfill(
+	$github_token,
+	$options['full'],
+	$options['dry_run'],
+	$options['skip_wporg'],
+	$options['skip_output']
+);
+$backfill->run();

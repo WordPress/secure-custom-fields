@@ -54,6 +54,7 @@
 		"post-autoload-dump": [
 			"php bin/remove-installed-versions.php"
 		],
+		"contributors:update": "php bin/backfill-contributors.php",
 		"docs": [
 			"@docs:parse",
 			"@docs:links",
