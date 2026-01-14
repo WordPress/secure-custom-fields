@@ -1,0 +1,95 @@
+name: Milestone Automation
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+# Disable permissions for all available scopes by default.
+# Any needed permissions should be configured at the job level.
+permissions: {}
+
+jobs:
+  # Assigns merged PRs to the appropriate milestone
+  assign-milestone:
+    name: Assign milestone to merged PR
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+      issues: write
+    # Only run on merged PRs
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Assign or update milestone
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const prNumber = pr.number;
+            const currentMilestone = pr.milestone;
+
+            // Fetch all open milestones
+            const { data: milestones } = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'due_on',
+              direction: 'asc'
+            });
+
+            if (milestones.length === 0) {
+              console.log('No open milestones found. Skipping milestone assignment.');
+              return;
+            }
+
+            // Sort milestones: first by due_on (earliest first), then by title (version number)
+            const sortedMilestones = milestones.sort((a, b) => {
+              // If both have due dates, sort by due date
+              if (a.due_on && b.due_on) {
+                return new Date(a.due_on) - new Date(b.due_on);
+              }
+              // If only one has a due date, prioritize it
+              if (a.due_on) return -1;
+              if (b.due_on) return 1;
+              // Otherwise sort by title (version number) - lower version first
+              return a.title.localeCompare(b.title, undefined, { numeric: true });
+            });
+
+            const targetMilestone = sortedMilestones[0];
+            console.log(`Target milestone: ${targetMilestone.title} (#${targetMilestone.number})`);
+
+            // Case 1: PR has no milestone - assign to target milestone
+            if (!currentMilestone) {
+              console.log(`PR #${prNumber} has no milestone. Assigning to ${targetMilestone.title}.`);
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                milestone: targetMilestone.number
+              });
+              return;
+            }
+
+            // Case 2: PR has an open milestone - keep it
+            if (currentMilestone.state === 'open') {
+              console.log(`PR #${prNumber} already has open milestone: ${currentMilestone.title}. Keeping it.`);
+              return;
+            }
+
+            // Case 3: PR has a closed milestone - update and comment
+            console.log(`PR #${prNumber} has closed milestone: ${currentMilestone.title}. Updating to ${targetMilestone.title}.`);
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              milestone: targetMilestone.number
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `This PR was merged with a closed milestone (\`${currentMilestone.title}\`). It has been automatically moved to \`${targetMilestone.title}\`.\n\nIf this was intentional (e.g., a backport), please manually update the milestone.`
+            });
