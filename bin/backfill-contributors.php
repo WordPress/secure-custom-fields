@@ -92,6 +92,13 @@ class Contributor_Backfill {
 	private $skip_output = false;
 
 	/**
+	 * Validate against props-bot comments flag
+	 *
+	 * @var bool
+	 */
+	private $validate = false;
+
+	/**
 	 * Last processed PR cursor from metadata
 	 *
 	 * @var string|null
@@ -113,13 +120,15 @@ class Contributor_Backfill {
 	 * @param bool   $dry_run        Whether to run in dry-run mode.
 	 * @param bool   $skip_wporg     Whether to skip WordPress.org lookup.
 	 * @param bool   $skip_output    Whether to skip output file generation.
+	 * @param bool   $validate       Whether to validate against props-bot comments.
 	 */
-	public function __construct( string $github_token, bool $full_backfill = false, bool $dry_run = false, bool $skip_wporg = false, bool $skip_output = false ) {
+	public function __construct( string $github_token, bool $full_backfill = false, bool $dry_run = false, bool $skip_wporg = false, bool $skip_output = false, bool $validate = false ) {
 		$this->github_token  = $github_token;
 		$this->full_backfill = $full_backfill;
 		$this->dry_run       = $dry_run;
 		$this->skip_wporg    = $skip_wporg;
 		$this->skip_output   = $skip_output;
+		$this->validate      = $validate;
 	}
 
 	/**
@@ -235,6 +244,32 @@ class Contributor_Backfill {
 				printf( "Generated %d/%d output files successfully.\n", $success_count, $total_count );
 			} else {
 				echo "\nSkipping output file generation.\n";
+			}
+
+			// Validate against props-bot comments if requested.
+			if ( $this->validate ) {
+				echo "\nValidating against props-bot comments...\n";
+				$validation_result = $this->validate_against_props_bot( $final_contributors );
+
+				if ( ! empty( $validation_result['added'] ) ) {
+					// Re-save with newly added contributors.
+					$final_contributors = $validation_result['contributors'];
+					$result             = write_contributors_with_metadata( $final_contributors, $metadata );
+					if ( $result ) {
+						echo "Updated contributors.json with validated contributors.\n";
+					}
+
+					// Regenerate output files if we added contributors.
+					if ( ! $this->skip_output ) {
+						echo "Regenerating output files with validated contributors...\n";
+						generate_all_output_files(
+							$final_contributors,
+							function ( $message ) {
+								echo "  $message\n";
+							}
+						);
+					}
+				}
 			}
 		}
 
@@ -734,6 +769,179 @@ GRAPHQL;
 	}
 
 	/**
+	 * Validate contributors against props-bot comments on merged PRs
+	 *
+	 * Fetches props-bot comments from merged PRs and ensures all mentioned
+	 * WordPress.org usernames are in our contributor data.
+	 *
+	 * @param array $contributors Current contributor data.
+	 * @return array Array with 'contributors' (updated list) and 'added' (newly added wporg usernames).
+	 */
+	private function validate_against_props_bot( array $contributors ) {
+		$props_usernames = $this->fetch_props_bot_usernames();
+		printf( "Found %d unique usernames in props-bot comments.\n", count( $props_usernames ) );
+
+		// Build a set of existing wporg usernames (case-insensitive).
+		$existing_wporg = array();
+		foreach ( $contributors as $contributor ) {
+			if ( ! empty( $contributor['wporg_username'] ) ) {
+				$existing_wporg[ strtolower( $contributor['wporg_username'] ) ] = true;
+			}
+		}
+
+		// Find missing usernames.
+		$missing = array();
+		$pr_map  = array(); // Track which PRs each username came from.
+		foreach ( $props_usernames as $username => $prs ) {
+			if ( ! isset( $existing_wporg[ strtolower( $username ) ] ) ) {
+				$missing[]           = $username;
+				$pr_map[ $username ] = $prs;
+			}
+		}
+
+		if ( empty( $missing ) ) {
+			echo "✓ All props-bot contributors are in our system.\n";
+			return array(
+				'contributors' => $contributors,
+				'added'        => array(),
+			);
+		}
+
+		printf( "Adding %d missing contributors from props-bot:\n", count( $missing ) );
+		$added = array();
+		foreach ( $missing as $wporg_username ) {
+			$prs = $pr_map[ $wporg_username ];
+			printf( "  + @%s (from PR %s)\n", $wporg_username, implode( ', ', array_slice( $prs, 0, 3 ) ) );
+
+			// Add as a new contributor with wporg_username.
+			// We use wporg_username as github_username placeholder since we don't have the mapping.
+			$contributors[] = array(
+				'github_username'         => $wporg_username,
+				'wporg_username'          => $wporg_username,
+				'wporg_display_name'      => null,
+				'contribution_types'      => array( 'review' ), // Assume review since props-bot tracks PR activity.
+				'contribution_counts'     => array( 'review' => count( $prs ) ),
+				'first_contribution_date' => gmdate( 'Y-m-d' ),
+			);
+			$added[]        = $wporg_username;
+		}
+
+		return array(
+			'contributors' => $contributors,
+			'added'        => $added,
+		);
+	}
+
+	/**
+	 * Fetch WordPress.org usernames from props-bot comments on merged PRs
+	 *
+	 * @return array Map of wporg_username => array of PR numbers where they were mentioned.
+	 */
+	private function fetch_props_bot_usernames() {
+		$usernames = array();
+		$page      = 1;
+		$per_page  = 100;
+
+		echo "Fetching merged PRs with props-bot comments...\n";
+
+		do {
+			// Fetch merged PRs.
+			$url      = sprintf(
+				'https://api.github.com/repos/%s/%s/pulls?state=closed&per_page=%d&page=%d',
+				GITHUB_OWNER,
+				GITHUB_REPO,
+				$per_page,
+				$page
+			);
+			$response = $this->make_rest_request( $url );
+
+			if ( empty( $response ) || ! is_array( $response ) ) {
+				break;
+			}
+
+			foreach ( $response as $pr ) {
+				// Only process merged PRs.
+				if ( empty( $pr['merged_at'] ) ) {
+					continue;
+				}
+
+				$pr_number = $pr['number'];
+
+				// Fetch comments for this PR.
+				$comments_url = sprintf(
+					'https://api.github.com/repos/%s/%s/issues/%d/comments',
+					GITHUB_OWNER,
+					GITHUB_REPO,
+					$pr_number
+				);
+				$comments     = $this->make_rest_request( $comments_url );
+
+				if ( empty( $comments ) || ! is_array( $comments ) ) {
+					continue;
+				}
+
+				// Look for props-bot comments.
+				foreach ( $comments as $comment ) {
+					if ( 'github-actions[bot]' !== ( $comment['user']['login'] ?? '' ) ) {
+						continue;
+					}
+
+					// Parse props line from comment body.
+					$parsed = $this->parse_props_from_comment( $comment['body'] ?? '' );
+					foreach ( $parsed as $username ) {
+						if ( ! isset( $usernames[ $username ] ) ) {
+							$usernames[ $username ] = array();
+						}
+						if ( ! in_array( $pr_number, $usernames[ $username ], true ) ) {
+							$usernames[ $username ][] = $pr_number;
+						}
+					}
+				}
+			}
+
+			$response_count = count( $response );
+			++$page;
+
+			// Limit to first 500 PRs for performance.
+			if ( $page > 5 ) {
+				break;
+			}
+		} while ( $response_count === $per_page );
+
+		return $usernames;
+	}
+
+	/**
+	 * Parse WordPress.org usernames from a props-bot comment
+	 *
+	 * Props-bot comments contain a line like:
+	 * Props username1, username2, username3.
+	 *
+	 * @param string $body Comment body.
+	 * @return array List of usernames found.
+	 */
+	private function parse_props_from_comment( string $body ) {
+		$usernames = array();
+
+		// Look for "Props username1, username2." pattern.
+		if ( preg_match( '/^Props\s+([^.]+)\./m', $body, $matches ) ) {
+			$props_line = $matches[1];
+			// Split by comma and clean up.
+			$parts = explode( ',', $props_line );
+			foreach ( $parts as $part ) {
+				$username = trim( $part );
+				// Remove any @ prefix if present.
+				$username = ltrim( $username, '@' );
+				if ( ! empty( $username ) ) {
+					$usernames[] = $username;
+				}
+			}
+		}
+
+		return $usernames;
+	}
+
+	/**
 	 * Parse command-line arguments
 	 *
 	 * @param array $args Command-line arguments.
@@ -745,6 +953,7 @@ GRAPHQL;
 			'dry_run'     => false,
 			'skip_wporg'  => false,
 			'skip_output' => false,
+			'validate'    => false,
 			'help'        => false,
 		);
 
@@ -757,6 +966,8 @@ GRAPHQL;
 				$options['skip_wporg'] = true;
 			} elseif ( '--skip-output' === $arg ) {
 				$options['skip_output'] = true;
+			} elseif ( '--validate' === $arg ) {
+				$options['validate'] = true;
 			} elseif ( '--help' === $arg || '-h' === $arg ) {
 				$options['help'] = true;
 			}
@@ -776,6 +987,7 @@ Usage: php bin/backfill-contributors.php [options]
 
 Options:
   --full         Force full backfill (ignore cursor, fetch all historical data)
+  --validate     Validate against props-bot comments and add missing contributors
   --dry-run      Preview changes without saving to contributors.json
   --skip-wporg   Skip WordPress.org profile lookup
   --skip-output  Skip output file generation (readme.txt, CONTRIBUTORS.md, docs page)
@@ -791,6 +1003,11 @@ Incremental Processing:
 
   Use --full to force a complete backfill of all historical data.
 
+Props-bot Validation:
+  Use --validate to cross-check against props-bot comments on merged PRs.
+  This ensures any WordPress.org usernames mentioned in props-bot comments
+  are included in the contributor list. Missing contributors are automatically added.
+
 This script:
   1. Fetches commit authors from GitHub REST API
   2. Fetches reviewers, commenters, and issue reporters from GitHub GraphQL API
@@ -799,6 +1016,7 @@ This script:
   5. Looks up WordPress.org profiles for linked accounts
   6. Saves the updated contributor list with metadata for incremental processing
   7. Generates output files (readme.txt, CONTRIBUTORS.md, docs/contributing/contributors.md)
+  8. (Optional) Validates against props-bot comments when --validate is used
 
 HELP;
 	}
@@ -826,6 +1044,7 @@ $backfill = new Contributor_Backfill(
 	$options['full'],
 	$options['dry_run'],
 	$options['skip_wporg'],
-	$options['skip_output']
+	$options['skip_output'],
+	$options['validate']
 );
 $backfill->run();
