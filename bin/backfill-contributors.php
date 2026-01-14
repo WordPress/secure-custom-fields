@@ -113,6 +113,20 @@ class Contributor_Backfill {
 	private $new_cursor = null;
 
 	/**
+	 * Last validated merge date for props-bot incremental processing
+	 *
+	 * @var string|null
+	 */
+	private $last_validated_merge_date = null;
+
+	/**
+	 * Newest merge date seen during props-bot validation
+	 *
+	 * @var string|null
+	 */
+	private $new_validated_merge_date = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $github_token   GitHub API token.
@@ -315,11 +329,12 @@ class Contributor_Backfill {
 		$existing_metadata = read_contributors_metadata();
 
 		$metadata = array(
-			'last_processed_pr_cursor' => $this->new_cursor ?? $existing_metadata['last_processed_pr_cursor'] ?? null,
-			'last_processed_date'      => $now,
-			'last_full_backfill'       => $is_incremental
+			'last_processed_pr_cursor'  => $this->new_cursor ?? $existing_metadata['last_processed_pr_cursor'] ?? null,
+			'last_processed_date'       => $now,
+			'last_full_backfill'        => $is_incremental
 				? ( $existing_metadata['last_full_backfill'] ?? $now )
 				: $now,
+			'last_validated_merge_date' => $this->new_validated_merge_date ?? $existing_metadata['last_validated_merge_date'] ?? null,
 		);
 
 		return $metadata;
@@ -653,6 +668,7 @@ GRAPHQL;
 				'retry_after' => null,
 			);
 
+			// @phpstan-ignore isset.variable (http_response_header is a magic PHP variable set by file_get_contents)
 			if ( isset( $http_response_header ) && is_array( $http_response_header ) ) {
 				foreach ( $http_response_header as $header ) {
 					if ( preg_match( '/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches ) ) {
@@ -727,6 +743,7 @@ GRAPHQL;
 				'retry_after' => null,
 			);
 
+			// @phpstan-ignore isset.variable (http_response_header is a magic PHP variable set by file_get_contents)
 			if ( isset( $http_response_header ) && is_array( $http_response_header ) ) {
 				foreach ( $http_response_header as $header ) {
 					if ( preg_match( '/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches ) ) {
@@ -768,6 +785,18 @@ GRAPHQL;
 	 * @return array Array with 'contributors' (updated list) and 'added' (newly added wporg usernames).
 	 */
 	private function validate_against_props_bot( array $contributors ) {
+		// Load last validated merge date for incremental processing.
+		$existing_metadata               = read_contributors_metadata();
+		$this->last_validated_merge_date = $existing_metadata['last_validated_merge_date'] ?? null;
+
+		if ( $this->full_backfill ) {
+			// Full backfill ignores the last validated date.
+			$this->last_validated_merge_date = null;
+			echo "Validating all merged PRs (full mode)...\n";
+		} elseif ( $this->last_validated_merge_date ) {
+			printf( "Validating PRs merged after %s (incremental)...\n", $this->last_validated_merge_date );
+		}
+
 		$props_usernames = $this->fetch_props_bot_usernames();
 		printf( "Found %d unique usernames in props-bot comments.\n", count( $props_usernames ) );
 
@@ -824,19 +853,25 @@ GRAPHQL;
 	/**
 	 * Fetch WordPress.org usernames from props-bot comments on merged PRs
 	 *
+	 * Uses incremental processing based on last_validated_merge_date.
+	 * PRs are fetched sorted by update time (most recent first), so we can
+	 * stop early when we reach PRs we've already processed.
+	 *
 	 * @return array Map of wporg_username => array of PR numbers where they were mentioned.
 	 */
 	private function fetch_props_bot_usernames() {
-		$usernames = array();
-		$page      = 1;
-		$per_page  = 100;
+		$usernames     = array();
+		$page          = 1;
+		$per_page      = 100;
+		$prs_processed = 0;
+		$reached_old   = false;
 
 		echo "Fetching merged PRs with props-bot comments...\n";
 
 		do {
-			// Fetch merged PRs.
+			// Fetch merged PRs sorted by updated (most recent first).
 			$url      = sprintf(
-				'https://api.github.com/repos/%s/%s/pulls?state=closed&per_page=%d&page=%d',
+				'https://api.github.com/repos/%s/%s/pulls?state=closed&sort=updated&direction=desc&per_page=%d&page=%d',
 				GITHUB_OWNER,
 				GITHUB_REPO,
 				$per_page,
@@ -854,7 +889,21 @@ GRAPHQL;
 					continue;
 				}
 
+				$merged_at = $pr['merged_at'];
 				$pr_number = $pr['number'];
+
+				// Track the newest merge date we see (for saving to metadata).
+				if ( null === $this->new_validated_merge_date || $merged_at > $this->new_validated_merge_date ) {
+					$this->new_validated_merge_date = $merged_at;
+				}
+
+				// In incremental mode, skip PRs merged before our last validated date.
+				if ( $this->last_validated_merge_date && $merged_at <= $this->last_validated_merge_date ) {
+					$reached_old = true;
+					continue;
+				}
+
+				++$prs_processed;
 
 				// Fetch comments for this PR.
 				$comments_url = sprintf(
@@ -891,11 +940,16 @@ GRAPHQL;
 			$response_count = count( $response );
 			++$page;
 
-			// Limit to first 500 PRs for performance.
-			if ( $page > 5 ) {
+			// In incremental mode, stop if we've reached old PRs.
+			// In full mode, limit to 10 pages (1000 PRs) for safety.
+			if ( $reached_old || ( ! $this->last_validated_merge_date && $page > 10 ) ) {
 				break;
 			}
 		} while ( $response_count === $per_page );
+
+		if ( $prs_processed > 0 ) {
+			printf( "Processed %d merged PRs.\n", $prs_processed );
+		}
 
 		return $usernames;
 	}

@@ -461,6 +461,7 @@ function make_wporg_api_request( array $usernames ) {
 		'retry_after' => null,
 	);
 
+	// @phpstan-ignore isset.variable (http_response_header is a magic PHP variable set by file_get_contents)
 	if ( isset( $http_response_header ) && is_array( $http_response_header ) ) {
 		foreach ( $http_response_header as $header ) {
 			if ( preg_match( '/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches ) ) {

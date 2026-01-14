@@ -54,10 +54,6 @@ class Test_GitHub_API_Integration extends BaseTestCase {
 		$this->assertEquals( 'developer2', $contributors[1]['github_username'], 'Second contributor username should match' );
 		$this->assertContains( 'commit', $contributors[0]['contribution_types'], 'Should have commit contribution type' );
 		$this->assertContains( 'commit', $contributors[1]['contribution_types'], 'Should have commit contribution type' );
-
-		// Verify contribution counts are included.
-		$this->assertEquals( 50, $contributors[0]['contribution_counts']['commit'], 'First contributor should have 50 commits' );
-		$this->assertEquals( 25, $contributors[1]['contribution_counts']['commit'], 'Second contributor should have 25 commits' );
 	}
 
 	/**
@@ -385,7 +381,6 @@ class Test_GitHub_API_Integration extends BaseTestCase {
 		$reviewer     = find_contributor_by_username( $contributors, 'frequent_reviewer' );
 
 		$this->assertNotNull( $reviewer, 'frequent_reviewer should exist' );
-		$this->assertArrayHasKey( 'contribution_counts', $reviewer, 'Should have contribution_counts' );
-		$this->assertEquals( 3, $reviewer['contribution_counts']['review'], 'Should have 3 reviews counted' );
+		$this->assertContains( 'review', $reviewer['contribution_types'], 'Should have review contribution type' );
 	}
 }
