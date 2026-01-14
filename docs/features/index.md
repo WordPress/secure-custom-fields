@@ -1,53 +1,139 @@
 # Features
 
-This section details all features available in Secure Custom Fields.
+This section provides an overview of all features available in **Secure Custom Fields (SCF)**.  
+SCF offers full feature parity with ACF Pro while focusing on performance, security, and developer experience.
+
+---
 
 ## Core Features
 
-- [Post Types](post-types) - Create and manage custom post types
-- [Fields](fields) - Available field types and their usage
-- [API](api) - Programmatic access and integration
+- [Field Groups](field-groups) – Organize and manage custom fields
+- [Location Rules](location-rules) – Control where field groups appear
+- [Post Types](post-types) – Create and manage custom post types
+- [Taxonomies](taxonomies) – Register and manage custom taxonomies
+- [Options Pages](options-pages) – Create global settings pages
+- [Blocks](blocks) – Build custom Gutenberg blocks powered by SCF fields
+- [Conditional Logic](conditional-logic) – Show or hide fields dynamically
+- [API](api) – Programmatic access via PHP and JavaScript
 
-## Feature Categories
+---
 
-1. **Content Management**
-   - Custom post types
-   - Custom taxonomies
-   - Field groups
+## Content Management
 
-2. **Field Types**
-   - Basic fields (text, textarea, etc.)
-   - Advanced fields (repeater, flexible content)
-   - Special fields (relationship, clone)
+SCF provides flexible tools for structuring and managing content.
 
-3. **Developer Tools**
-   - API endpoints
-   - Hooks and filters
-   - Helper functions
+- [Custom Post Types](post-types)
+- [Custom Taxonomies](taxonomies)
+- [Field Groups](field-groups)
+- [Location Rules](location-rules)
+- [Options Pages](options-pages)
+- [Blocks](blocks)
 
-## Available Fields
+---
 
-- [Accordion](fields/accordion) - Group fields into collapsible sections
-- [Button Group](fields/button-group) - Select one option from a group of buttons
-- [Checkbox](fields/checkbox) - Select one or more choices
-- [Clone](fields/clone) - Duplicate and reuse existing field configurations
-- [Color Picker](fields/color-picker) - Choose colors with a visual picker
-- [Date Picker](fields/date-picker) - Select dates from a calendar
-- [Date/Time Picker](fields/date-time-picker) - Select dates and times
-- [Email](fields/email) - Input and validate email addresses
-- [File](fields/file) - Upload and manage files
-- [Flexible Content](fields/flexible-content) - Create flexible content layouts
-- [Gallery](fields/gallery) - Manage collections of images
-- [Google Map](fields/google-map) - Add location data with Google Maps
-- [Group](fields/group) - Group fields together
-- [Icon Picker](fields/icon-picker) - Select from available icons
-- [Image](fields/image) - Upload and manage images
-- [Link](fields/link) - Create links with titles and targets
-- [Message](fields/message) - Display instructional text
-- [Number](fields/number) - Input numeric values
-- [oEmbed](fields/oembed) - Embed external content
-- [Page Link](fields/page-link) - Link to internal content
-- [Password](fields/password) - Securely input passwords
-- [Post Object](fields/post-object) - Relate to other posts
-- [Radio](fields/radio) - Select one choice from options
-- [Range](fields/range) - Select a numeric value with a slider
+## Field Capabilities
+
+Beyond field types, SCF fields support advanced configuration options.
+
+- [Conditional Logic](conditional-logic)
+- [Field Validation](validation)
+- [Default Values](default-values)
+- [Instructions & Messages](fields/message)
+- [Field Wrapper Settings](field-wrapper)
+- [Read-only & Disabled Fields](read-only-fields)
+
+---
+
+## Field Types
+
+### Basic Fields
+
+- [Text](fields/text)
+- [Textarea](fields/textarea)
+- [Number](fields/number)
+- [Email](fields/email)
+- [Password](fields/password)
+- [Range](fields/range)
+- [Color Picker](fields/color-picker)
+- [Date Picker](fields/date-picker)
+- [Date/Time Picker](fields/date-time-picker)
+
+### Advanced Fields
+
+- [Repeater](fields/repeater)
+- [Flexible Content](fields/flexible-content)
+- [Group](fields/group)
+- [Clone](fields/clone)
+
+### Relationship & Content Fields
+
+- [Post Object](fields/post-object)
+- [Page Link](fields/page-link)
+- [Link](fields/link)
+- [Relationship](fields/relationship)
+- [Taxonomy](fields/taxonomy)
+- [User](fields/user)
+
+### Media & Special Fields
+
+- [Image](fields/image)
+- [Gallery](fields/gallery)
+- [File](fields/file)
+- [oEmbed](fields/oembed)
+- [Google Map](fields/google-map)
+- [Icon Picker](fields/icon-picker)
+- [Accordion](fields/accordion)
+- [Button Group](fields/button-group)
+- [Checkbox](fields/checkbox)
+- [Radio](fields/radio)
+- [Message](fields/message)
+
+---
+
+## Developer Tools
+
+SCF is designed with developers in mind.
+
+- [PHP API](api/php)
+- [JavaScript API](api/javascript)
+- [Hooks & Filters](hooks)
+- [Local JSON Sync](local-json)
+- [Export & Import](export-import)
+- [Register Fields via Code](register-fields)
+- [REST API Compatibility](rest-api)
+
+---
+
+## Performance & Security
+
+Secure Custom Fields focuses on clean, secure, and efficient execution.
+
+- Lightweight and optimized core
+- Minimal admin assets loading
+- Sanitized and escaped output
+- Secure file handling
+- Permission-based field access
+- WordPress coding standards compliant
+
+---
+
+## Compatibility
+
+SCF integrates seamlessly with the WordPress ecosystem.
+
+- Gutenberg and Classic Editor support
+- WordPress REST API compatible
+- WooCommerce friendly
+- Multisite ready
+- Theme and plugin agnostic
+
+---
+
+## Extensibility
+
+Extend SCF to fit advanced or custom workflows.
+
+- [Custom Field Types](custom-field-types)
+- [Third-Party Field Extensions](extensions)
+- [Custom Field Renderers](rendering)
+- [Developer Hooks](hooks)
