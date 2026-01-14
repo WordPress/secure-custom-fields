@@ -224,6 +224,11 @@
         "parent": "concepts",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/concepts/security.md"
     },
+    "contributing/contributors": {
+        "slug": "contributors",
+        "parent": "contributing",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/contributors.md"
+    },
     "contributing/documentation": {
         "slug": "documentation",
         "parent": "contributing",

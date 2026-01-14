@@ -377,7 +377,6 @@ class Contributor_Backfill {
 				'wporg_username'          => null,
 				'wporg_display_name'      => null,
 				'contribution_types'      => array( 'commit' ),
-				'contribution_counts'     => array( 'commit' => $data['commit_count'] ),
 				'first_contribution_date' => $first_commit_date,
 			);
 
@@ -601,15 +600,6 @@ GRAPHQL;
 				sort( $merged_types );
 				$contributors_map[ $key ]['contribution_types'] = $merged_types;
 
-				// Merge contribution counts.
-				$existing_counts = $contributors_map[ $key ]['contribution_counts'] ?? array();
-				$new_counts      = $contributor['contribution_counts'] ?? array();
-				foreach ( $new_counts as $type => $count ) {
-					$existing_counts[ $type ] = ( $existing_counts[ $type ] ?? 0 ) + $count;
-				}
-				ksort( $existing_counts );
-				$contributors_map[ $key ]['contribution_counts'] = $existing_counts;
-
 				// Keep earliest date.
 				if ( $contributor['first_contribution_date'] < $contributors_map[ $key ]['first_contribution_date'] ) {
 					$contributors_map[ $key ]['first_contribution_date'] = $contributor['first_contribution_date'];
@@ -820,7 +810,6 @@ GRAPHQL;
 				'wporg_username'          => $wporg_username,
 				'wporg_display_name'      => null,
 				'contribution_types'      => array( 'review' ), // Assume review since props-bot tracks PR activity.
-				'contribution_counts'     => array( 'review' => count( $prs ) ),
 				'first_contribution_date' => gmdate( 'Y-m-d' ),
 			);
 			$added[]        = $wporg_username;

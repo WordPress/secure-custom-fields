@@ -1,8 +1,8 @@
 {
     "metadata": {
         "last_processed_pr_cursor": "Y3Vyc29yOnYyOpHOu6ENBw==",
-        "last_processed_date": "2026-01-14T15:45:21+00:00",
-        "last_full_backfill": "2026-01-14T15:23:00+00:00"
+        "last_processed_date": "2026-01-14T15:57:15+00:00",
+        "last_full_backfill": "2026-01-14T15:55:49+00:00"
     },
     "contributors": [
         {
@@ -12,9 +12,6 @@
             "contribution_types": [
                 "review"
             ],
-            "contribution_counts": {
-                "review": 4
-            },
             "first_contribution_date": "2024-12-18"
         },
         {
@@ -26,11 +23,6 @@
                 "commit",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 78,
-                "commit": 171,
-                "review": 224
-            },
             "first_contribution_date": "2025-03-15"
         },
         {
@@ -40,9 +32,6 @@
             "contribution_types": [
                 "commit"
             ],
-            "contribution_counts": {
-                "commit": 3
-            },
             "first_contribution_date": "2025-02-20"
         },
         {
@@ -52,9 +41,6 @@
             "contribution_types": [
                 "commit"
             ],
-            "contribution_counts": {
-                "commit": 3
-            },
             "first_contribution_date": "2025-09-29"
         },
         {
@@ -64,9 +50,6 @@
             "contribution_types": [
                 "issue"
             ],
-            "contribution_counts": {
-                "issue": 2
-            },
             "first_contribution_date": "2024-11-26"
         },
         {
@@ -76,9 +59,6 @@
             "contribution_types": [
                 "issue"
             ],
-            "contribution_counts": {
-                "issue": 2
-            },
             "first_contribution_date": "2025-10-15"
         },
         {
@@ -89,10 +69,6 @@
                 "comment",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 14,
-                "review": 38
-            },
             "first_contribution_date": "2025-03-26"
         },
         {
@@ -103,10 +79,6 @@
                 "comment",
                 "commit"
             ],
-            "contribution_counts": {
-                "comment": 12,
-                "commit": 3
-            },
             "first_contribution_date": "2025-03-25"
         },
         {
@@ -117,10 +89,6 @@
                 "comment",
                 "issue"
             ],
-            "contribution_counts": {
-                "comment": 4,
-                "issue": 2
-            },
             "first_contribution_date": "2024-12-13"
         },
         {
@@ -130,9 +98,6 @@
             "contribution_types": [
                 "comment"
             ],
-            "contribution_counts": {
-                "comment": 2
-            },
             "first_contribution_date": "2025-12-29"
         },
         {
@@ -143,10 +108,6 @@
                 "commit",
                 "issue"
             ],
-            "contribution_counts": {
-                "commit": 3,
-                "issue": 2
-            },
             "first_contribution_date": "2025-12-16"
         },
         {
@@ -156,9 +117,6 @@
             "contribution_types": [
                 "issue"
             ],
-            "contribution_counts": {
-                "issue": 2
-            },
             "first_contribution_date": "2025-01-12"
         },
         {
@@ -171,12 +129,6 @@
                 "issue",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 36,
-                "commit": 132,
-                "issue": 20,
-                "review": 56
-            },
             "first_contribution_date": "2024-12-13"
         },
         {
@@ -188,11 +140,6 @@
                 "commit",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 2,
-                "commit": 3,
-                "review": 24
-            },
             "first_contribution_date": "2025-05-14"
         },
         {
@@ -203,10 +150,6 @@
                 "commit",
                 "review"
             ],
-            "contribution_counts": {
-                "commit": 3,
-                "review": 6
-            },
             "first_contribution_date": "2025-09-23"
         },
         {
@@ -218,11 +161,6 @@
                 "commit",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 10,
-                "commit": 6,
-                "review": 32
-            },
             "first_contribution_date": "2025-06-12"
         },
         {
@@ -235,12 +173,6 @@
                 "issue",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 24,
-                "commit": 39,
-                "issue": 2,
-                "review": 20
-            },
             "first_contribution_date": "2025-03-14"
         },
         {
@@ -253,12 +185,6 @@
                 "issue",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 54,
-                "commit": 321,
-                "issue": 12,
-                "review": 160
-            },
             "first_contribution_date": "2025-03-24"
         },
         {
@@ -271,12 +197,6 @@
                 "issue",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 2,
-                "commit": 6,
-                "issue": 2,
-                "review": 6
-            },
             "first_contribution_date": "2025-05-15"
         },
         {
@@ -286,9 +206,6 @@
             "contribution_types": [
                 "issue"
             ],
-            "contribution_counts": {
-                "issue": 2
-            },
             "first_contribution_date": "2024-12-13"
         },
         {
@@ -299,10 +216,6 @@
                 "comment",
                 "commit"
             ],
-            "contribution_counts": {
-                "comment": 2,
-                "commit": 3
-            },
             "first_contribution_date": "2025-12-29"
         },
         {
@@ -313,10 +226,6 @@
                 "commit",
                 "issue"
             ],
-            "contribution_counts": {
-                "commit": 9,
-                "issue": 4
-            },
             "first_contribution_date": "2025-05-05"
         },
         {
@@ -327,10 +236,6 @@
                 "comment",
                 "review"
             ],
-            "contribution_counts": {
-                "comment": 4,
-                "review": 28
-            },
             "first_contribution_date": "2025-05-14"
         }
     ]

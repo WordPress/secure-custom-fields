@@ -193,7 +193,6 @@ function write_contributors_with_metadata( array $contributors, array $metadata,
  * - wporg_username: string|null
  * - wporg_display_name: string|null
  * - contribution_types: array of valid contribution type strings
- * - contribution_counts: object mapping contribution type to count (optional)
  * - first_contribution_date: string in ISO 8601 format (YYYY-MM-DD)
  *
  * @param array $contributor The contributor data to validate.
@@ -224,21 +223,6 @@ function validate_contributor( array $contributor ) {
 		}
 	}
 
-	// Check contribution_counts is valid if present (optional field).
-	if ( isset( $contributor['contribution_counts'] ) ) {
-		if ( ! is_array( $contributor['contribution_counts'] ) ) {
-			return false;
-		}
-		foreach ( $contributor['contribution_counts'] as $type => $count ) {
-			if ( ! in_array( $type, CONTRIBUTION_TYPES, true ) ) {
-				return false;
-			}
-			if ( ! is_int( $count ) || $count < 0 ) {
-				return false;
-			}
-		}
-	}
-
 	// Check first_contribution_date is a valid date string.
 	if ( ! isset( $contributor['first_contribution_date'] ) || ! is_string( $contributor['first_contribution_date'] ) ) {
 		return false;
@@ -259,7 +243,6 @@ function validate_contributor( array $contributor ) {
  * When merging:
  * - Preserves the earliest first_contribution_date
  * - Merges contribution_types arrays (unique values)
- * - Sums contribution_counts for each type
  * - Updates wporg_username and wporg_display_name if new data has values
  *
  * @param array $existing_contributors Existing contributor data.
@@ -295,15 +278,6 @@ function merge_contributors( array $existing_contributors, array $new_contributo
 			);
 			sort( $merged_types );
 
-			// Merge contribution counts (sum values).
-			$existing_counts = $existing['contribution_counts'] ?? array();
-			$new_counts      = $new_contributor['contribution_counts'] ?? array();
-			$merged_counts   = $existing_counts;
-			foreach ( $new_counts as $type => $count ) {
-				$merged_counts[ $type ] = ( $merged_counts[ $type ] ?? 0 ) + $count;
-			}
-			ksort( $merged_counts );
-
 			// Keep earliest first_contribution_date.
 			$existing_date = $existing['first_contribution_date'] ?? '9999-99-99';
 			$new_date      = $new_contributor['first_contribution_date'] ?? '9999-99-99';
@@ -318,22 +292,15 @@ function merge_contributors( array $existing_contributors, array $new_contributo
 				'wporg_username'          => $wporg_username,
 				'wporg_display_name'      => $wporg_display_name,
 				'contribution_types'      => array_values( $merged_types ),
-				'contribution_counts'     => empty( $merged_counts ) ? null : $merged_counts,
 				'first_contribution_date' => $merged_date,
 			);
 		} else {
 			// Add new contributor.
-			$new_counts = $new_contributor['contribution_counts'] ?? array();
-			if ( ! empty( $new_counts ) ) {
-				ksort( $new_counts );
-			}
-
 			$contributors_map[ $key ] = array(
 				'github_username'         => $new_contributor['github_username'],
 				'wporg_username'          => $new_contributor['wporg_username'] ?? null,
 				'wporg_display_name'      => $new_contributor['wporg_display_name'] ?? null,
 				'contribution_types'      => $new_contributor['contribution_types'] ?? array(),
-				'contribution_counts'     => empty( $new_counts ) ? null : $new_counts,
 				'first_contribution_date' => $new_contributor['first_contribution_date'] ?? '',
 			);
 		}
@@ -1093,7 +1060,6 @@ function parse_rest_api_contributors( array $api_response, string $default_date 
 			'wporg_username'          => null,
 			'wporg_display_name'      => null,
 			'contribution_types'      => array( 'commit' ),
-			'contribution_counts'     => array( 'commit' => $contributor['contributions'] ?? 1 ),
 			'first_contribution_date' => $default_date,
 		);
 	}
@@ -1102,7 +1068,7 @@ function parse_rest_api_contributors( array $api_response, string $default_date 
 }
 
 /**
- * Add contributor to map with contribution type and count.
+ * Add contributor to map with contribution type.
  *
  * Helper function for building contributor maps from various sources.
  * Creates new entries or updates existing ones, merging contribution types
@@ -1112,9 +1078,8 @@ function parse_rest_api_contributors( array $api_response, string $default_date 
  * @param string $login GitHub username.
  * @param string $type  Contribution type (commit, review, comment, issue).
  * @param string $date  Contribution date (YYYY-MM-DD format).
- * @param int    $count Number of contributions (default 1).
  */
-function add_to_contributors_map( array &$map, string $login, string $type, string $date, int $count = 1 ) {
+function add_to_contributors_map( array &$map, string $login, string $type, string $date ) {
 	$key = strtolower( $login );
 
 	if ( ! isset( $map[ $key ] ) ) {
@@ -1123,7 +1088,6 @@ function add_to_contributors_map( array &$map, string $login, string $type, stri
 			'wporg_username'          => null,
 			'wporg_display_name'      => null,
 			'contribution_types'      => array(),
-			'contribution_counts'     => array(),
 			'first_contribution_date' => $date,
 		);
 	}
@@ -1131,9 +1095,6 @@ function add_to_contributors_map( array &$map, string $login, string $type, stri
 	if ( ! in_array( $type, $map[ $key ]['contribution_types'], true ) ) {
 		$map[ $key ]['contribution_types'][] = $type;
 	}
-
-	// Increment contribution count.
-	$map[ $key ]['contribution_counts'][ $type ] = ( $map[ $key ]['contribution_counts'][ $type ] ?? 0 ) + $count;
 
 	if ( $date < $map[ $key ]['first_contribution_date'] ) {
 		$map[ $key ]['first_contribution_date'] = $date;
