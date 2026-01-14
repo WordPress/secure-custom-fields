@@ -1,0 +1,337 @@
+{
+    "metadata": {
+        "last_processed_pr_cursor": "Y3Vyc29yOnYyOpHOu6ENBw==",
+        "last_processed_date": "2026-01-14T15:23:00+00:00",
+        "last_full_backfill": "2026-01-14T15:23:00+00:00"
+    },
+    "contributors": [
+        {
+            "github_username": "anomiex",
+            "wporg_username": "bjorsch",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "review"
+            ],
+            "contribution_counts": {
+                "review": 4
+            },
+            "first_contribution_date": "2024-12-18"
+        },
+        {
+            "github_username": "cbravobernal",
+            "wporg_username": "cbravobernal",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 78,
+                "commit": 114,
+                "review": 224
+            },
+            "first_contribution_date": "2025-03-15"
+        },
+        {
+            "github_username": "cyberwani",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "commit"
+            ],
+            "contribution_counts": {
+                "commit": 2
+            },
+            "first_contribution_date": "2025-02-20"
+        },
+        {
+            "github_username": "DAnn2012",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "commit"
+            ],
+            "contribution_counts": {
+                "commit": 2
+            },
+            "first_contribution_date": "2025-09-29"
+        },
+        {
+            "github_username": "duanestorey",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "issue"
+            ],
+            "contribution_counts": {
+                "issue": 2
+            },
+            "first_contribution_date": "2024-11-26"
+        },
+        {
+            "github_username": "gareins",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "issue"
+            ],
+            "contribution_counts": {
+                "issue": 2
+            },
+            "first_contribution_date": "2025-10-15"
+        },
+        {
+            "github_username": "gziolo",
+            "wporg_username": "gziolo",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 14,
+                "review": 38
+            },
+            "first_contribution_date": "2025-03-26"
+        },
+        {
+            "github_username": "haseebnawaz298",
+            "wporg_username": "haseebnawaz298",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit"
+            ],
+            "contribution_counts": {
+                "comment": 12,
+                "commit": 2
+            },
+            "first_contribution_date": "2025-03-25"
+        },
+        {
+            "github_username": "j-hoffmann",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "issue"
+            ],
+            "contribution_counts": {
+                "comment": 4,
+                "issue": 2
+            },
+            "first_contribution_date": "2024-12-13"
+        },
+        {
+            "github_username": "jacobodonnell",
+            "wporg_username": "jacobodonnell",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment"
+            ],
+            "contribution_counts": {
+                "comment": 2
+            },
+            "first_contribution_date": "2025-12-29"
+        },
+        {
+            "github_username": "jamieburchell",
+            "wporg_username": "jamieburchell",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "commit",
+                "issue"
+            ],
+            "contribution_counts": {
+                "commit": 2,
+                "issue": 2
+            },
+            "first_contribution_date": "2025-12-16"
+        },
+        {
+            "github_username": "justwhocares",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "issue"
+            ],
+            "contribution_counts": {
+                "issue": 2
+            },
+            "first_contribution_date": "2025-01-12"
+        },
+        {
+            "github_username": "kraftbj",
+            "wporg_username": "kraftbj",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "issue",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 36,
+                "commit": 88,
+                "issue": 20,
+                "review": 56
+            },
+            "first_contribution_date": "2024-12-13"
+        },
+        {
+            "github_username": "mcsf",
+            "wporg_username": "mcsf",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 2,
+                "commit": 2,
+                "review": 24
+            },
+            "first_contribution_date": "2025-05-14"
+        },
+        {
+            "github_username": "Mr2P",
+            "wporg_username": "mr2p",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "commit",
+                "review"
+            ],
+            "contribution_counts": {
+                "commit": 2,
+                "review": 6
+            },
+            "first_contribution_date": "2025-09-23"
+        },
+        {
+            "github_username": "ockham",
+            "wporg_username": "bernhard-reiter",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 10,
+                "commit": 4,
+                "review": 32
+            },
+            "first_contribution_date": "2025-06-12"
+        },
+        {
+            "github_username": "pkevan",
+            "wporg_username": "paulkevan",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "issue",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 24,
+                "commit": 26,
+                "issue": 2,
+                "review": 20
+            },
+            "first_contribution_date": "2025-03-14"
+        },
+        {
+            "github_username": "priethor",
+            "wporg_username": "priethor",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "issue",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 54,
+                "commit": 214,
+                "issue": 12,
+                "review": 160
+            },
+            "first_contribution_date": "2025-03-24"
+        },
+        {
+            "github_username": "racmanuel",
+            "wporg_username": "racmanuel",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit",
+                "issue",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 2,
+                "commit": 4,
+                "issue": 2,
+                "review": 6
+            },
+            "first_contribution_date": "2025-05-15"
+        },
+        {
+            "github_username": "robertdevore",
+            "wporg_username": null,
+            "wporg_display_name": null,
+            "contribution_types": [
+                "issue"
+            ],
+            "contribution_counts": {
+                "issue": 2
+            },
+            "first_contribution_date": "2024-12-13"
+        },
+        {
+            "github_username": "trajche",
+            "wporg_username": "trajche",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "commit"
+            ],
+            "contribution_counts": {
+                "comment": 2,
+                "commit": 2
+            },
+            "first_contribution_date": "2025-12-29"
+        },
+        {
+            "github_username": "YanMetelitsa",
+            "wporg_username": "yanmetelitsa",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "commit",
+                "issue"
+            ],
+            "contribution_counts": {
+                "commit": 6,
+                "issue": 4
+            },
+            "first_contribution_date": "2025-05-05"
+        },
+        {
+            "github_username": "youknowriad",
+            "wporg_username": "youknowriad",
+            "wporg_display_name": null,
+            "contribution_types": [
+                "comment",
+                "review"
+            ],
+            "contribution_counts": {
+                "comment": 4,
+                "review": 28
+            },
+            "first_contribution_date": "2025-05-14"
+        }
+    ]
+}
