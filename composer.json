@@ -66,6 +66,7 @@
 		"docs:lint": "npm run lint:md",
 		"docs:manifest": "php docs/bin/generate-manifest.php",
 		"docs:parse": "php docs/bin/generate-parsed-md.php --output=${DOCS_OUTPUT_DIR:-docs/code-reference}",
+		"changelog:generate": "php bin/generate-changelog.php"
 		"format": [
 			"@format:php",
 			"@format:packages"
