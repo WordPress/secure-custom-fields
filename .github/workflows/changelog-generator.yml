@@ -133,7 +133,7 @@ jobs:
       
       - name: Display changelog preview
         if: github.event. inputs.dry_run == 'true'
-        run:  |
+        run: |
           echo "# Changelog Preview (Dry Run)"
           echo ""
           cat changelog-entry.txt
