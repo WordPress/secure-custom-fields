@@ -117,7 +117,7 @@ jobs:
       - name: Commit changes
         if: github.event. inputs.dry_run != 'true'
         env:
-          MILESTONE_TITLE: ${{ steps. milestone.outputs.title }}
+          MILESTONE_TITLE: ${{ steps.milestone.outputs.title }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
