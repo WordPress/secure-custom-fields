@@ -109,7 +109,7 @@ jobs:
       - name: Update readme.txt
         if: github.event.inputs.dry_run != 'true'
         run: |
-          php bin/update-readme-changelog. php \
+          php bin/update-readme-changelog.php \
             --readme readme.txt \
             --changelog-entry changelog-entry.txt \
             --output readme.txt
