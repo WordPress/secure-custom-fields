@@ -77,7 +77,7 @@ jobs:
       - name:  Fetch PRs from milestone
         id: prs
         env:
-          GH_TOKEN: ${{ secrets. GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MILESTONE_NUMBER: ${{ steps.milestone.outputs.number }}
         run: |
           # Fetch all merged PRs in this milestone
@@ -115,7 +115,7 @@ jobs:
             --output readme.txt
       
       - name: Commit changes
-        if: github.event. inputs.dry_run != 'true'
+        if: github.event.inputs.dry_run != 'true'
         env:
           MILESTONE_TITLE: ${{ steps.milestone.outputs.title }}
         run: |
@@ -132,7 +132,7 @@ jobs:
           fi
       
       - name: Display changelog preview
-        if: github.event. inputs.dry_run == 'true'
+        if: github.event.inputs.dry_run == 'true'
         run: |
           echo "# Changelog Preview (Dry Run)"
           echo ""
