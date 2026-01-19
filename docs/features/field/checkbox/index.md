@@ -1,16 +1,16 @@
 # Checkbox Field
 
-The **Checkbox** field allows editors to select one or multiple predefined values from a list of options. It is ideal for storing flexible, multi-value data while keeping the editing experience simple and controlled.
+The **Checkbox** field allows users to select **one or multiple options** from a predefined list. It provides a flexible and intuitive way to assign multiple attributes to a piece of content, while maintaining structured and consistent data.
 
-Throughout this document, examples are based on a **movie website**, where editors manage metadata such as genres, features, and content flags for films.
+This documentation follows WordPress.org guidelines and is written for **both non-technical editors and developers**, using a **movie website** as a real-world example.
 
 ---
 
 ## What is it?
 
-The Checkbox field is a selectable input field that presents a list of choices, each with its own label and value. Editors can select **zero, one, or multiple options** depending on how the field is configured.
+The Checkbox field is a **multi-choice selection field**. Each option is displayed as an individual checkbox, allowing editors to select **any number of applicable values**, including none or all.
 
-Each selected option is stored as part of the field’s value and can be retrieved and used in templates, conditional logic, or integrations.
+Each selected option is stored as part of the field’s value and can later be retrieved and used in templates, conditional logic, or integrations.
 
 ---
 
@@ -18,50 +18,73 @@ Each selected option is stored as part of the field’s value and can be retriev
 
 When a Checkbox field is added to a field group:
 
-- SCF renders a list of checkboxes in the WordPress admin.
-- Each checkbox represents a predefined choice (label → value).
-- Editors can select multiple options simultaneously.
-- The selected values are stored as an **array** (or a structured format, depending on settings).
+1. SCF displays a list of checkboxes in the WordPress admin.
+2. Each checkbox represents a predefined option.
+3. Editors can select multiple options simultaneously.
+4. The selected values are saved when the post is updated.
+5. The values are returned in a structured format based on field settings.
 
-SCF automatically handles saving, sanitizing, and retrieving the selected values so developers can work with predictable data structures.
+SCF manages all data handling automatically, ensuring consistent behavior for both editors and developers.
 
 ---
 
 ## What is it for?
 
-Use the Checkbox field when:
+Use the Checkbox field when **multiple attributes can apply at the same time**.
 
-- Multiple attributes can apply at the same time.
-- You want to restrict values to a known set.
-- Content requires classification without using taxonomies.
-- Field values drive conditional behavior in templates or UI.
+### Movie website examples
 
-### Movie website use cases
+On a movie website, Checkbox fields are ideal for:
 
-On a movie website, Checkbox fields are commonly used for:
+- **Movie genres**  
+  Action, Drama, Comedy, Science Fiction, Thriller
 
-- **Movie genres** (Action, Drama, Comedy, Sci‑Fi)
-- **Content flags** (Featured, Recommended, Editors’ Pick)
-- **Audience suitability** (Kids Friendly, Violence, Mature Themes)
-- **Distribution formats** (Streaming, Blu‑ray, Cinema Release)
+- **Content flags**  
+  Featured, Award Winner, Editor’s Pick
+
+- **Audience notes**  
+  Family Friendly, Contains Violence, Mature Themes
+
+- **Availability options**  
+  Streaming Available, Cinema Release, Home Media
+
+These selections can later be used for filtering, labeling, or conditional display.
+
+---
+
+## Key Features
+
+- Allows multiple selections
+- Clear checkbox-based interface
+- Customizable option labels
+- Optional “Select All / Deselect All” toggle
+- Structured and predictable stored values
 
 ---
 
 ## Usage
 
-### Add a Checkbox field in the admin
+### Adding a Checkbox field (for editors)
 
 1. Go to **SCF → Field Groups**.
-2. Create or edit a field group assigned to the **Movie** post type.
+2. Create or edit a field group.
 3. Click **Add Field**.
 4. Select **Checkbox** as the field type.
 5. Define the available **Choices**.
 6. Configure layout and return options.
-7. Save the field group.
+7. Assign the field group to the desired location (for example, the Movie post type).
+8. Save the field group.
 
-### Example: Movie genres
+Editors will see a list of checkboxes when editing a movie.
 
-**Choices**
+---
+
+## Settings
+
+### Choices
+Defines the available options. Each choice consists of a stored value and a label.
+
+Example (Movie Genres):
 ```
 action   : Action
 drama    : Drama
@@ -70,45 +93,46 @@ scifi    : Science Fiction
 thriller : Thriller
 ```
 
-### Field settings
+### Default Value
+Specifies which options are preselected for new content.
 
-Key settings available for the Checkbox field:
+### Return Format
+Controls how the value is returned:
+- **Value** – returns stored values (recommended)
+- **Label** – returns human-readable labels
+- **Both** – returns both value and label
 
-- **Choices**  
-  Defines the available options (one per line or via array in code).
+### Layout
+Controls how checkboxes are displayed:
+- Vertical (recommended for readability)
+- Horizontal (best for short lists)
 
-- **Default Value**  
-  Automatically preselects options for new movies.
+### Toggle
+Adds a **Select All / Deselect All** control, useful for long option lists.
 
-- **Layout**  
-  Vertical (recommended for long lists) or horizontal.
+### Allow Custom
+Allows editors to add custom values not defined in the choices list.  
+Use with caution, as it reduces data consistency.
 
-- **Toggle**  
-  Adds a “Select All / Deselect All” control.
+---
 
-- **Return Format**  
-  - Value
-  - Label
-  - Both (array containing value and label)
+## Best practices for editors
 
-- **Allow Custom**  
-  Allows editors to add custom values beyond predefined choices.
-
-### Best practices for movie data
-
-- Use **stable values** (`action`, `drama`) and human-friendly labels.
-- Avoid enabling “Allow Custom” for genres to keep data consistent.
-- Keep the list concise; use taxonomies if the list becomes large or global.
-- Document how genres are used in filters or templates.
+- Select only options that truly apply to the movie.
+- Avoid using checkboxes as free-form notes.
+- Follow established editorial guidelines.
+- If unsure about an option, consult internal documentation.
 
 ---
 
 ## Next Steps
 
-- Combine Checkbox fields with conditional logic (e.g., show “Awards” section only if “Featured” is checked).
-- Create standardized Checkbox sets for all movie-related content.
-- Review existing movies when adding or removing options.
-- Migrate to taxonomies if querying by genre becomes complex.
+After implementing Checkbox fields:
+
+- Use selected values to filter or group movie listings.
+- Display visual badges based on selections.
+- Combine with Button Group fields for mixed configurations.
+- Review and clean up unused options periodically.
 
 ---
 
@@ -128,8 +152,8 @@ add_action( 'acf/init', function () {
 
 	acf_add_local_field_group(
 		array(
-			'key'    => 'group_movie_details',
-			'title'  => 'Movie Details',
+			'key'    => 'group_movie_genres',
+			'title'  => 'Movie Genres',
 			'fields' => array(
 				array(
 					'key'     => 'field_movie_genres',
@@ -162,9 +186,9 @@ add_action( 'acf/init', function () {
 } );
 ```
 
-### Rendering genres on a movie page
+---
 
-In a theme template (e.g., `single-movie.php`), you can display the selected genres like this:
+### Rendering Checkbox values in a movie template
 
 ```php
 <?php
@@ -184,16 +208,16 @@ if ( is_array( $genres ) && ! empty( $genres ) ) :
 endif;
 ```
 
-### Using genres for conditional logic
+---
 
-Checkbox values are well suited for conditional behavior:
+### Using Checkbox values in logic
 
 ```php
 <?php
 $genres = (array) get_field( 'movie_genres' );
 
 if ( in_array( 'scifi', $genres, true ) ) {
-	// Load sci‑fi specific visuals or effects.
+	// Apply science-fiction-specific visuals or effects.
 }
 
 if ( in_array( 'thriller', $genres, true ) ) {
@@ -201,12 +225,14 @@ if ( in_array( 'thriller', $genres, true ) ) {
 }
 ```
 
+---
+
 ### Data integrity tips
 
-- Treat checkbox values as **enumerated data**, not free text.
-- Do not change stored values after movies are published.
+- Treat checkbox values as **enumerated data**.
+- Avoid changing stored values after publication.
 - Use strict comparisons when checking values.
-- Keep values lowercase and immutable.
+- Prefer taxonomies if options need global reuse.
 
 ---
 
