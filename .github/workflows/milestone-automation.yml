@@ -77,19 +77,12 @@ jobs:
               return;
             }
 
-            // Case 3: PR has a closed milestone - update and comment
-            console.log(`PR #${prNumber} has closed milestone: ${currentMilestone.title}. Updating to ${targetMilestone.title}.`);
-
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              milestone: targetMilestone.number
-            });
+            // Case 3: PR has a closed milestone - notify but don't change
+            console.log(`PR #${prNumber} has closed milestone: ${currentMilestone.title}. Adding notification comment.`);
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: `This PR was merged with a closed milestone (\`${currentMilestone.title}\`). It has been automatically moved to \`${targetMilestone.title}\`.\n\nIf this was intentional (e.g., a backport), please manually update the milestone.`
+              body: `This PR was merged with a closed milestone (\`${currentMilestone.title}\`). Please verify this is intentional.\n\nIf not, the next open milestone is \`${targetMilestone.title}\`.`
             });
