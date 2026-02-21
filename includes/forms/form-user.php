@@ -28,6 +28,7 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 			// enqueue
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'login_form_register', array( $this, 'login_form_register' ) );
+			add_action( 'admin_head', array( $this, 'scf_user_form_layout_fix' ), 20 );
 
 			// render
 			add_action( 'show_user_profile', array( $this, 'render_edit' ) );
@@ -64,6 +65,82 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 			// enqueue
 			acf_enqueue_scripts();
 		}
+		/**
+		 * Fix SCF field layout on user profile/edit screens.
+		 *
+		 * SCF fields on user screens render inside WordPress `table.form-table` rows,
+		 * so we apply scoped CSS only on profile.php and user-edit.php screens.
+		 *
+		 * @see https://github.com/WordPress/secure-custom-fields/issues/349
+		 */
+		function scf_user_form_layout_fix()
+		{
+
+			// Only run in wp-admin, and only on profile/edit user screens.
+			if (!is_admin()) {
+				return;
+			}
+
+			$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+			if (!$screen || !in_array($screen->base, array('profile', 'user-edit'), true)) {
+				return;
+			}
+
+			?>
+		<style id="scf-user-form-layout-fix">
+			/* Labels: consistent width + alignment */
+			body.profile-php table.form-table tr.acf-field > td.acf-label,
+			body.user-edit-php table.form-table tr.acf-field > td.acf-label {
+				width: 200px;
+				vertical-align: top;
+				padding-top: 14px;
+			}
+
+			/* Inputs: align to top */
+			body.profile-php table.form-table tr.acf-field > td.acf-input,
+			body.user-edit-php table.form-table tr.acf-field > td.acf-input {
+				vertical-align: top;
+			}
+
+			/* Make text inputs and textareas usable width (WP-like) */
+			body.profile-php table.form-table tr.acf-field > td.acf-input .acf-input-wrap input,
+			body.profile-php table.form-table tr.acf-field > td.acf-input textarea,
+			body.user-edit-php table.form-table tr.acf-field > td.acf-input .acf-input-wrap input,
+			body.user-edit-php table.form-table tr.acf-field > td.acf-input textarea {
+				width: 100%;
+				max-width: 25em;
+			}
+
+			/* Select2: keep full width, not squeezed */
+			body.profile-php table.form-table tr.acf-field > td.acf-input .select2-container,
+			body.user-edit-php table.form-table tr.acf-field > td.acf-input .select2-container {
+				width: 100% !important;
+				max-width: 25em;
+			}
+
+			/* Mobile: stack label + field */
+			@media (max-width: 782px) {
+				body.profile-php table.form-table tr.acf-field > td.acf-label,
+				body.user-edit-php table.form-table tr.acf-field > td.acf-label,
+				body.profile-php table.form-table tr.acf-field > td.acf-input,
+				body.user-edit-php table.form-table tr.acf-field > td.acf-input {
+					display: block;
+					width: auto;
+				}
+
+				body.profile-php table.form-table tr.acf-field > td.acf-input .acf-input-wrap input,
+				body.profile-php table.form-table tr.acf-field > td.acf-input textarea,
+				body.user-edit-php table.form-table tr.acf-field > td.acf-input .acf-input-wrap input,
+				body.user-edit-php table.form-table tr.acf-field > td.acf-input textarea,
+				body.profile-php table.form-table tr.acf-field > td.acf-input .select2-container,
+				body.user-edit-php table.form-table tr.acf-field > td.acf-input .select2-container {
+					max-width: 100%;
+				}
+			}
+		</style>
+		<?php
+		}
+
 
 
 		/**
