@@ -44,4 +44,4 @@ To test Secure Custom Fields locally with WordPress:
 - Include screenshots for UI fixes when relevant
 - Reference related issue number (Fixes #xxx)
 
-Thank you for contributing ❤️
+Thank you for contributing 
