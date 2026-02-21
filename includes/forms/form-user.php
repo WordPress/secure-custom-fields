@@ -71,7 +71,7 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * SCF fields on user screens render inside WordPress `table.form-table` rows,
 		 * so we apply scoped CSS only on profile.php and user-edit.php screens.
 		 *
-		 * @see https://github.com/WordPress/secure-custom-fields/issues/349
+		 * @see  https://github.com/WordPress/secure-custom-fields/issues/349
 		 */
 		function scf_user_form_layout_fix()
 		{
