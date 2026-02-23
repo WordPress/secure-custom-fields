@@ -16,7 +16,8 @@
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch",
-		"wp-env": "wp-env"
+		"wp-env": "wp-env",
+		"wp-env-test": "wp-env --config .wp-env.test.json"
 	},
 	"dependencies": {
 		"@wordpress/icons": "^10.26.0",
@@ -31,7 +32,7 @@
 		"@testing-library/react": "^14.1.2",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.20.0",
 		"@wordpress/e2e-test-utils-playwright": "^1.20.0",
-		"@wordpress/env": "^10.39.0",
+		"@wordpress/env": "^11.0.0",
 		"@wordpress/icons": "^10.26.0",
 		"@wordpress/prettier-config": "^4.22.0",
 		"@wordpress/priority-queue": "^3.22.0",
