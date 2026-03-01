@@ -38,7 +38,7 @@ const registerPostTypeCommands = () => {
 	const postTypes = window.acf.data.customPostTypes;
 
 	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
-	const wpVersion = window.acf.data.wp_version;
+	const wpVersion = window.acf.data.wp_version || '0';
 	const isWp69Plus =
 		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
 

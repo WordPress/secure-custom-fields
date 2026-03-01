@@ -46,6 +46,7 @@ describe( 'Admin Commands', () => {
 		[ '6.9-beta1', 4 ],
 		[ '6.9.1', 4 ],
 		[ '7.0', 4 ],
+		[ undefined, 11 ],
 	] )( 'WP %s registers %i commands', async ( wpVersion, expectedCount ) => {
 		window.acf = {
 			data: {
