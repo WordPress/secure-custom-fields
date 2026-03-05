@@ -93,7 +93,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 			);
 
 			if ( acf_get_local_json_files( $this->post_type ) ) {
-				$columns['acf-json'] = __( 'Local JSON', 'secure-custom-fields' );
+				$columns['scf-json'] = __( 'Local JSON', 'secure-custom-fields' );
 			}
 
 			return $columns;
@@ -139,7 +139,7 @@ if ( ! class_exists( 'ACF_Admin_Field_Groups' ) ) :
 					break;
 
 					// Local JSON.
-				case 'acf-json':
+				case 'scf-json':
 					$this->render_admin_table_column_local_status( $post );
 					break;
 			}

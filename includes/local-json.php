@@ -27,8 +27,8 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		public function __construct() {
 
 			// Update settings.
-			acf_update_setting( 'save_json', get_stylesheet_directory() . '/acf-json' );
-			acf_append_setting( 'load_json', get_stylesheet_directory() . '/acf-json' );
+			acf_update_setting( 'save_json', get_stylesheet_directory() . '/scf-json' );
+			acf_append_setting( 'load_json', get_stylesheet_directory() . '/scf-json' );
 
 			// Add listeners.
 			add_action( 'acf/update_field_group', array( $this, 'update_field_group' ) );
