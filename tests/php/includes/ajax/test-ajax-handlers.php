@@ -330,9 +330,9 @@ class Test_Ajax_Handlers extends BaseTestCase {
 	}
 
 	/**
-	 * Test that get_args allows custom query parameter passthrough.
+	 * Test that get_args returns empty array when query parameter is provided.
 	 */
-	public function test_ajax_query_get_args_returns_query_param() {
+	public function test_ajax_query_get_args_returns_empty_array() {
 		$ajax = new ACF_Ajax_Query();
 
 		$custom_query = array(
@@ -342,18 +342,7 @@ class Test_Ajax_Handlers extends BaseTestCase {
 
 		$result = $ajax->get_args( array( 'query' => $custom_query ) );
 
-		$this->assertSame( $custom_query, $result, 'get_args should return the query parameter as-is' );
-	}
-
-	/**
-	 * Test that get_args returns empty array when no query param provided.
-	 */
-	public function test_ajax_query_get_args_returns_empty_by_default() {
-		$ajax = new ACF_Ajax_Query();
-
-		$result = $ajax->get_args( array() );
-
-		$this->assertSame( array(), $result );
+		$this->assertSame( array(), $result, 'get_args should return an empty array' );
 	}
 
 	/**
@@ -486,6 +475,25 @@ class Test_Ajax_Handlers extends BaseTestCase {
 		$this->assertTrue( $result, 'Admin with valid nonce should pass conditional_logic verification' );
 
 		unset( $_REQUEST['nonce'] );
+	}
+
+	/**
+	 * Test that get_args correctly returns number and paged.
+	 */
+	public function test_ajax_query_users_get_args_returns_number_and_paged() {
+		$ajax           = new ACF_Ajax_Query_Users();
+		$ajax->page     = 3;
+		$ajax->per_page = 10;
+
+		$result = $ajax->get_args( array() );
+
+		$this->assertSame(
+			array(
+				'number' => 10,
+				'paged'  => 3,
+			),
+			$result
+		);
 	}
 
 	/**
