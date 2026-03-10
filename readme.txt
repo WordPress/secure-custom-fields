@@ -55,7 +55,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 = 6.8.1 =
 *Release Date 11th March 2026*
 
-* Backports from 6.7.1*
+*Backports from 6.7.1*
 
 - Security - User field AJAX queries now enforce field-configured role restrictions and validate search permissions.
 - Security - Post Object, Relationship, and Page Link field AJAX queries now enforce field-configured restrictions for post status, post type, and taxonomy.
