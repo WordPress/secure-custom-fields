@@ -73,6 +73,22 @@ jobs:
                   PHP_COVERAGE_ENABLED: true
               run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
 
+            - name: Archive debug artifacts (screenshots, traces)
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: failures-artifacts--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  path: artifacts/test-results
+                  if-no-files-found: ignore
+
+            - name: Archive blob reports (HTML)
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: blob-reports--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  path: blob-report
+                  if-no-files-found: ignore
+
             - name: Generate E2E JS coverage report
               if: always()
               run: |
@@ -112,3 +128,58 @@ jobs:
             - name: Stop wp-env
               if: always()
               run: npm run wp-env stop
+
+    merge-artifacts:
+        name: Merge Artifacts
+        if: ${{ !cancelled() }}
+        needs: [test]
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Merge failures artifacts
+              uses: actions/upload-artifact/merge@v4
+              continue-on-error: true
+              with:
+                  name: failures-artifacts
+                  pattern: failures-artifacts--*
+                  delete-merged: true
+
+            - name: Merge blob reports
+              uses: actions/upload-artifact/merge@v4
+              continue-on-error: true
+              with:
+                  name: blob-reports-merged
+                  pattern: blob-reports--*
+                  delete-merged: true
+
+            - name: Download merged blob reports
+              uses: actions/download-artifact@v4
+              continue-on-error: true
+              with:
+                  name: blob-reports-merged
+                  path: all-blob-reports
+
+            - name: Merge blob reports into HTML report
+              run: npx playwright merge-reports --reporter html ./all-blob-reports
+              continue-on-error: true
+
+            - name: Upload merged HTML report
+              uses: actions/upload-artifact@v4
+              continue-on-error: true
+              with:
+                  name: html-report--attempt-${{ github.run_attempt }}
+                  path: playwright-report
+                  if-no-files-found: ignore
