@@ -499,20 +499,32 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			// select -> update_value()
 			$value = acf_get_field_type( 'select' )->update_value( $value, $post_id, $field );
 
-			// save_other_choice
-			if ( $field['save_custom'] ) {
+			// save_custom
+			if ( ! empty( $field['save_custom'] ) && is_array( $value ) ) {
 
 				// get raw $field (may have been changed via repeater field)
 				// if field is local, it won't have an ID
-				$selector = $field['ID'] ? $field['ID'] : $field['key'];
-				$field    = acf_get_field( $selector );
-				if ( ! $field ) {
-					return false;
+				$selector = '';
+				if ( ! empty( $field['ID'] ) ) {
+					$selector = $field['ID'];
+				} elseif ( ! empty( $field['key'] ) ) {
+					$selector = $field['key'];
 				}
 
-				// bail early if no ID (JSON only)
-				if ( ! $field['ID'] ) {
+				// bail early if we have no selector for lookup
+				if ( ! $selector ) {
 					return $value;
+				}
+
+				$field = acf_get_field( $selector );
+
+				// bail early if lookup failed or field is JSON only
+				if ( ! is_array( $field ) || empty( $field['ID'] ) ) {
+					return $value;
+				}
+
+				if ( ! isset( $field['choices'] ) || ! is_array( $field['choices'] ) ) {
+					$field['choices'] = array();
 				}
 
 				// loop

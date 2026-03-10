@@ -177,6 +177,55 @@ class Test_ACF_Field_Checkbox extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test save_custom does not trigger warnings for JSON-only fields.
+	 */
+	public function test_update_value_save_custom_handles_json_field_without_id() {
+		$field = $this->get_field(
+			array(
+				'save_custom' => 1,
+			)
+		);
+
+		set_error_handler(
+			static function ( $errno, $errstr ) {
+				throw new \RuntimeException( $errstr, $errno );
+			}
+		);
+
+		try {
+			$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+			$this->assertSame( array( 'custom_value' ), $result );
+		} finally {
+			restore_error_handler();
+		}
+	}
+
+	/**
+	 * Test save_custom bails early when field key and ID are both missing.
+	 */
+	public function test_update_value_save_custom_handles_missing_field_identifier() {
+		$field = $this->get_field(
+			array(
+				'save_custom' => 1,
+			)
+		);
+		unset( $field['key'] );
+
+		set_error_handler(
+			static function ( $errno, $errstr ) {
+				throw new \RuntimeException( $errstr, $errno );
+			}
+		);
+
+		try {
+			$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+			$this->assertSame( array( 'custom_value' ), $result );
+		} finally {
+			restore_error_handler();
+		}
+	}
+
+	/**
 	 * Test validate_value with valid selection.
 	 */
 	public function test_validate_value_valid() {
