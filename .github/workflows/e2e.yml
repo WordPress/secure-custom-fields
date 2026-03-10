@@ -31,14 +31,12 @@ jobs:
                 node: ['22', '24']
                 wp: ['6.2', 'latest', 'trunk']
                 exclude:
-                    # On PRs: only test Node 22 + WP latest for fast feedback
-                    # On trunk: full matrix with minimum and latest WP versions
+                    # On PRs: only test Node 22 + WP latest and trunk for fast feedback
+                    # On trunk: full matrix with node 24 and minimum WP version
                     - event: 'pull_request'
                       node: '24'
                     - event: 'pull_request'
                       wp: '6.2'
-                    - event: 'pull_request'
-                      wp: 'trunk'
 
         env:
             WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
