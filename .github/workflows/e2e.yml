@@ -42,7 +42,7 @@ jobs:
             WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -138,7 +138,7 @@ jobs:
             contents: read
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
