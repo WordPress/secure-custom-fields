@@ -149,6 +149,55 @@ class Test_ACF_Field_Radio extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test save_other_choice does not trigger warnings for JSON-only fields.
+	 */
+	public function test_update_value_save_other_choice_handles_json_field_without_id() {
+		$field = $this->get_field(
+			array(
+				'save_other_choice' => 1,
+			)
+		);
+
+		set_error_handler(
+			static function ( $errno, $errstr ) {
+				throw new \RuntimeException( $errstr, $errno );
+			}
+		);
+
+		try {
+			$result = $this->field_instance->update_value( 'custom_value', $this->post_id, $field );
+			$this->assertSame( 'custom_value', $result );
+		} finally {
+			restore_error_handler();
+		}
+	}
+
+	/**
+	 * Test save_other_choice bails early when field key and ID are both missing.
+	 */
+	public function test_update_value_save_other_choice_handles_missing_field_identifier() {
+		$field = $this->get_field(
+			array(
+				'save_other_choice' => 1,
+			)
+		);
+		unset( $field['key'] );
+
+		set_error_handler(
+			static function ( $errno, $errstr ) {
+				throw new \RuntimeException( $errstr, $errno );
+			}
+		);
+
+		try {
+			$result = $this->field_instance->update_value( 'custom_value', $this->post_id, $field );
+			$this->assertSame( 'custom_value', $result );
+		} finally {
+			restore_error_handler();
+		}
+	}
+
+	/**
 	 * Test get_rest_schema returns valid schema.
 	 */
 	public function test_get_rest_schema() {

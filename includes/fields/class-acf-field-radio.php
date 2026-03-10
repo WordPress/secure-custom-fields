@@ -321,8 +321,6 @@ if ( ! class_exists( 'acf_field_radio' ) ) :
 		 * @type    filter
 		 * @since   ACF 3.6
 		 * @date    23/01/13
-		 * @todo    Fix bug where $field was found via json and has no ID
-		 *
 		 * @param   $value - the value which will be saved in the database
 		 * @param   $post_id - the post_id of which the value will be saved
 		 * @param   $field - the field array holding all the field options
@@ -342,13 +340,23 @@ if ( ! class_exists( 'acf_field_radio' ) ) :
 				// value isn't in choices yet
 				if ( ! isset( $field['choices'][ $value ] ) ) {
 
-					// get raw $field (may have been changed via repeater field)
-					// if field is local, it won't have an ID
-					$selector = $field['ID'] ? $field['ID'] : $field['key'];
-					$field    = acf_get_field( $selector );
+					// get raw $field (may have been changed via repeater field).
+					$selector = '';
+					if ( ! empty( $field['ID'] ) ) {
+						$selector = $field['ID'];
+					} elseif ( ! empty( $field['key'] ) ) {
+						$selector = $field['key'];
+					}
 
-					// bail early if no ID (JSON only)
-					if ( ! $field['ID'] ) {
+					// Bail early when the provided field has no identifier.
+					if ( ! $selector ) {
+						return $value;
+					}
+
+					$field = acf_get_field( $selector );
+
+					// Bail early if field lookup fails or field is JSON-only.
+					if ( ! is_array( $field ) || empty( $field['ID'] ) ) {
 						return $value;
 					}
 
@@ -358,7 +366,11 @@ if ( ! class_exists( 'acf_field_radio' ) ) :
 					// sanitize (remove tags)
 					$value = sanitize_text_field( $value );
 
-					// update $field
+					// Update $field.
+					if ( ! isset( $field['choices'] ) || ! is_array( $field['choices'] ) ) {
+						$field['choices'] = array();
+					}
+
 					$field['choices'][ $value ] = $value;
 
 					// save
