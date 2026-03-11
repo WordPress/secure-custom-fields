@@ -1,6 +1,6 @@
 # Releasing a New Version
 
-Read the following guide to learn how to created and publish a new release of Secure Custom Fields.
+Read the following guide to learn how to create and publish a new release of Secure Custom Fields. (This is only relevant for project maintainers.)
 
 ## Prerequisites
 
