@@ -96,6 +96,14 @@ svn ci -m “Prepare release x.y.z”
 
 After committing, you will receive an email asking you to select the rollout strategy for the new version of the plugin. Follow the instructions in that email. You can choose between "Immediate (default)" and "Manual updates only (24 hours)". You might want to select the latter option, as it gives you some more time to ask others to manually download and test the plugin from https://wordpress.org/plugins/secure-custom-fields/.
 
+Find more information about phased plugin rollout at https://make.wordpress.org/plugins/2025/08/11/plugin-rollout-phased-releases/.
+
 ### Set stable tag
 
-Finally, don't forget to update the stable tag in `readme.txt`. You need to do so both in the git repository, and in SVN. In both cases, it's sufficient to commit the change to `trunk` only. For completeness' sake, you should also create an `x.y.z` tag in git (and have it point to the commit that bumped the stable tag).
+Don't forget to update the stable tag in `readme.txt`. You need to do so both in the git repository, and in SVN.
+
+In SVN, simply edit `readme.txt` in `trunk`, and commit the change.
+
+In git, push the commit to the previosly created `release/x.y.z` branch, and push it to GitHub. You can then use [GitHub's Releases UI](https://github.com/WordPress/secure-custom-fields/releases) to create a new `x.y.z` tag. Select the version bump commit on the `release/x.y.z` branch as the target. For the release notes, simply copy the changelog for the new version.
+
+Finally, merge the PR you created earlier for the `release/x.y.z` branch in order to update `trunk` with those changes.
