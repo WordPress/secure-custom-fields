@@ -229,6 +229,11 @@
         "parent": "contributing",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/documentation.md"
     },
+    "contributing/releases": {
+        "slug": "releases",
+        "parent": "contributing",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/releases.md"
+    },
     "features/field": {
         "slug": "field",
         "parent": "features",
