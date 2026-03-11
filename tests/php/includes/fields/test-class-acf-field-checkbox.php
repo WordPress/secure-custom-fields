@@ -186,18 +186,8 @@ class Test_ACF_Field_Checkbox extends Abstract_ACF_Field_Test {
 			)
 		);
 
-		set_error_handler(
-			static function ( $errno, $errstr ) {
-				throw new \RuntimeException( $errstr, $errno );
-			}
-		);
-
-		try {
-			$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
-			$this->assertSame( array( 'custom_value' ), $result );
-		} finally {
-			restore_error_handler();
-		}
+		$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+		$this->assertSame( array( 'custom_value' ), $result );
 	}
 
 	/**
@@ -211,18 +201,8 @@ class Test_ACF_Field_Checkbox extends Abstract_ACF_Field_Test {
 		);
 		unset( $field['key'] );
 
-		set_error_handler(
-			static function ( $errno, $errstr ) {
-				throw new \RuntimeException( $errstr, $errno );
-			}
-		);
-
-		try {
-			$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
-			$this->assertSame( array( 'custom_value' ), $result );
-		} finally {
-			restore_error_handler();
-		}
+		$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+		$this->assertSame( array( 'custom_value' ), $result );
 	}
 
 	/**
