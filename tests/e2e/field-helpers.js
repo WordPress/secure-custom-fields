@@ -156,29 +156,55 @@ async function uploadImageViaModal( page, imagePath ) {
 	const fileInput = page.locator( '.media-modal input[type="file"]' );
 	await fileInput.setInputFiles( imagePath );
 
-	// Wait for upload to complete and ensure an attachment is selected.
+	// Wait for upload to complete and ensure a finished attachment is selected.
 	try {
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 30000,
-		} );
+		await page.waitForSelector(
+			'.media-modal .attachment.selected:not(.uploading)',
+			{
+				state: 'visible',
+				timeout: 30000,
+			}
+		);
 	} catch {
-		await page.waitForSelector( '.media-modal .attachments .attachment', {
-			state: 'visible',
-			timeout: 30000,
-		} );
-		await page.locator( '.media-modal .attachments .attachment' ).first().click();
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		await page.waitForSelector(
+			'.media-modal .attachments .attachment:not(.uploading)',
+			{
+				state: 'visible',
+				timeout: 30000,
+			}
+		);
+		await page
+			.locator( '.media-modal .attachments .attachment:not(.uploading)' )
+			.first()
+			.click();
+		await page.waitForSelector(
+			'.media-modal .attachment.selected:not(.uploading)',
+			{
+				state: 'visible',
+				timeout: 10000,
+			}
+		);
 	}
 
-	// Click "Select" button
-	const selectButton = page.locator(
-		'.media-modal .media-toolbar-primary .media-button-select'
-	);
-	await selectButton.click();
+	// Wait for "Select" to be enabled before clicking.
+	const selectButtonSelector =
+		'.media-modal .media-toolbar-primary .media-button-select:not([disabled])';
+	try {
+		await page.waitForSelector( selectButtonSelector, {
+			state: 'visible',
+			timeout: 15000,
+		} );
+	} catch {
+		await page
+			.locator( '.media-modal .attachments .attachment:not(.uploading)' )
+			.first()
+			.click();
+		await page.waitForSelector( selectButtonSelector, {
+			state: 'visible',
+			timeout: 15000,
+		} );
+	}
+	await page.locator( selectButtonSelector ).click();
 
 	// Wait for modal to close
 	await page.waitForSelector( '.media-modal', { state: 'hidden' } );
