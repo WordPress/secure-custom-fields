@@ -79,7 +79,7 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 *
 		 * @return string
 		 */
-		function get_user_form_layout_css() {
+		public function get_user_form_layout_css() {
 			return <<<'CSS'
 table.form-table tr.acf-field > td.acf-label {
 	width: 200px;
