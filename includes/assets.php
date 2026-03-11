@@ -258,7 +258,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				$version,
 				array(
 					'in_footer' => true,
-					'strategy' => 'defer',
+					'strategy'  => 'defer',
 				)
 			);
 
@@ -269,7 +269,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				$version,
 				array(
 					'in_footer' => true,
-					'strategy' => 'defer',
+					'strategy'  => 'defer',
 				)
 			);
 
