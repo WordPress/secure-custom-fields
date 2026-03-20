@@ -103,20 +103,10 @@ function acf_get_locale() {
  */
 function acf_load_textdomain( $domain = 'secure-custom-fields' ) {
 
-	/**
-	 * Filters a plugin's locale.
-	 *
-	 * @date    8/1/19
-	 * @since   ACF 5.7.10
-	 *
-	 * @param   string $locale The plugin's current locale.
-	 * @param   string $domain Text domain. Unique identifier for retrieving translated strings.
-	 */
-	$locale = apply_filters( 'plugin_locale', acf_get_locale(), $domain );
-	$mofile = $domain . '-' . $locale . '.mo';
-
-	// Load from plugin lang folder.
-	return load_textdomain( $domain, acf_get_path( 'lang/' . $mofile ) );
+	// Use load_plugin_textdomain() for proper integration with WordPress 6.7+
+	// just-in-time translation loading, which prevents the
+	// _load_textdomain_just_in_time deprecation notice.
+	return load_plugin_textdomain( $domain, false, dirname( ACF_BASENAME ) . '/lang' );
 }
 
 /**
