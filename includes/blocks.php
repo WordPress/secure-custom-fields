@@ -1028,6 +1028,9 @@ function acf_ajax_fetch_block() {
 
 	$block       = $args['block'];
 	$query       = $args['query'];
+	$client_id   = $args['clientId'];
+	$raw_context = $args['context'];
+	$post_id     = $args['post_id'];
 
 	// Decode query if sent as a JSON string instead of an array.
 	// The block editor JS may serialize the query parameter as JSON,
@@ -1038,10 +1041,6 @@ function acf_ajax_fetch_block() {
 			$query = array();
 		}
 	}
-
-	$client_id   = $args['clientId'];
-	$raw_context = $args['context'];
-	$post_id     = $args['post_id'];
 
 	// Bail early if no block.
 	if ( ! $block ) {
