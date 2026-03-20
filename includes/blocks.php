@@ -914,6 +914,7 @@ function acf_enqueue_block_assets() {
 		array(
 			'blockTypes' => array_values( $block_types ),
 			'postType'   => get_post_type(),
+			'StrictMode' => true,
 		)
 	);
 
@@ -1027,6 +1028,17 @@ function acf_ajax_fetch_block() {
 
 	$block       = $args['block'];
 	$query       = $args['query'];
+
+	// Decode query if sent as a JSON string instead of an array.
+	// The block editor JS may serialize the query parameter as JSON,
+	// which causes a fatal TypeError on PHP 8.4 when accessing offsets.
+	if ( is_string( $query ) ) {
+		$query = json_decode( wp_unslash( $query ), true );
+		if ( ! is_array( $query ) ) {
+			$query = array();
+		}
+	}
+
 	$client_id   = $args['clientId'];
 	$raw_context = $args['context'];
 	$post_id     = $args['post_id'];
