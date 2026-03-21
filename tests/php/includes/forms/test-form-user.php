@@ -359,6 +359,31 @@ class Test_Form_User extends BaseTestCase {
 	}
 
 	/**
+	 * Test user form layout CSS includes expected rules.
+	 */
+	public function test_get_user_form_layout_css_contains_expected_rules() {
+		$form_user = new ACF_Form_User();
+		$css       = $form_user->get_user_form_layout_css();
+
+		$this->assertIsString( $css, 'CSS should be a string' );
+		$this->assertStringContainsString(
+			'table.form-table tr.acf-field > td.acf-label',
+			$css,
+			'CSS should target ACF labels in user form table rows'
+		);
+		$this->assertStringContainsString(
+			'input[type="text"]',
+			$css,
+			'CSS should target text-like input fields'
+		);
+		$this->assertStringContainsString(
+			'@media screen and (max-width: 782px)',
+			$css,
+			'CSS should include responsive rules for mobile viewports'
+		);
+	}
+
+	/**
 	 * Test render_edit renders nothing without field groups.
 	 */
 	public function test_render_edit_renders_nothing_without_field_groups() {

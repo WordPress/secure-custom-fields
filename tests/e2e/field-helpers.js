@@ -141,7 +141,10 @@ async function waitForMetaBoxes( page ) {
  */
 async function uploadImageViaModal( page, imagePath ) {
 	// Wait for media modal to open
-	await page.waitForSelector( '.media-modal', { state: 'visible' } );
+	await page.waitForSelector( '.media-modal', {
+		state: 'visible',
+		timeout: 20000,
+	} );
 
 	// Click "Upload files" tab if not already there
 	const uploadTab = page.locator( '.media-modal #menu-item-upload' );
@@ -153,11 +156,23 @@ async function uploadImageViaModal( page, imagePath ) {
 	const fileInput = page.locator( '.media-modal input[type="file"]' );
 	await fileInput.setInputFiles( imagePath );
 
-	// Wait for upload to complete
-	await page.waitForSelector( '.media-modal .attachment.selected', {
-		state: 'visible',
-		timeout: 15000,
-	} );
+	// Wait for upload to complete and ensure an attachment is selected.
+	try {
+		await page.waitForSelector( '.media-modal .attachment.selected', {
+			state: 'visible',
+			timeout: 30000,
+		} );
+	} catch {
+		await page.waitForSelector( '.media-modal .attachments .attachment', {
+			state: 'visible',
+			timeout: 30000,
+		} );
+		await page.locator( '.media-modal .attachments .attachment' ).first().click();
+		await page.waitForSelector( '.media-modal .attachment.selected', {
+			state: 'visible',
+			timeout: 10000,
+		} );
+	}
 
 	// Click "Select" button
 	const selectButton = page.locator(

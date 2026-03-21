@@ -63,6 +63,71 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 
 			// enqueue
 			acf_enqueue_scripts();
+
+			// Fix SCF field layout on user profile/edit screens.
+			if ( ! acf_is_screen( array( 'profile', 'user-edit', 'profile-network', 'user-edit-network' ) ) ) {
+				return;
+			}
+
+			wp_add_inline_style( 'acf-input', $this->get_user_form_layout_css() );
+		}
+
+		/**
+		 * Returns custom CSS to improve SCF field layout on user profile/edit screens.
+		 *
+		 * @since ACF 6.8.2
+		 *
+		 * @return string
+		 */
+		public function get_user_form_layout_css() {
+			return <<<'CSS'
+table.form-table tr.acf-field > td.acf-label {
+	width: 200px;
+	vertical-align: top;
+	padding-top: 14px;
+}
+
+table.form-table tr.acf-field > td.acf-input {
+	vertical-align: top;
+}
+
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="text"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="password"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="email"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="number"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="url"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="search"],
+table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="tel"],
+table.form-table tr.acf-field > td.acf-input textarea {
+	width: 100%;
+	max-width: 25em;
+}
+
+table.form-table tr.acf-field > td.acf-input .select2-container {
+	width: 100% !important;
+	max-width: 25em;
+}
+
+@media screen and (max-width: 782px) {
+	table.form-table tr.acf-field > td.acf-label,
+	table.form-table tr.acf-field > td.acf-input {
+		display: block;
+		width: auto;
+	}
+
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="text"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="password"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="email"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="number"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="url"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="search"],
+	table.form-table tr.acf-field > td.acf-input .acf-input-wrap input[type="tel"],
+	table.form-table tr.acf-field > td.acf-input textarea,
+	table.form-table tr.acf-field > td.acf-input .select2-container {
+		max-width: 100%;
+	}
+}
+CSS;
 		}
 
 
