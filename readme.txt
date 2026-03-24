@@ -52,6 +52,17 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.8.2 =
+*Release Date 24th March 2026*
+
+*Fixes*
+
+- AJAX Handlers: Prefix field-specific nonces to resolve an issue where third-party nonces could be treated as valid for AJAX calls.
+- Block Preview: Verify that user has access to post specified via block context.
+- Repeater Field: Verify that user has access to specified post.
+- REST API: Apply KSES sanitization to field content saved by users without `unfiltered_html` capabilities.
+- REST API: Respect `show_in_rest` setting for field groups in `/types` endpoint.
+
 = 6.8.1 =
 *Release Date 11th March 2026*
 
