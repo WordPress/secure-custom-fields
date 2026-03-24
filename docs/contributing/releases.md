@@ -17,13 +17,13 @@ You will need a local checkout of the `secure-custom-fields` plugin from the WP.
 svn co https://plugins.svn.wordpress.org/secure-custom-fields secure-custom-fields-svn
 ```
 
-Using SVN for WordPress.org plugin releases is covered in more detail in https://developer.wordpress.org/plugins/wordpress-org/how-to-use-subversion/.
+Using SVN for WordPress.org plugin releases is covered in more detail in <https://developer.wordpress.org/plugins/wordpress-org/how-to-use-subversion/>.
 
 ## Changelog
 
 Before running the `prepare-release` script (see below), ensure the changelog entry for the new version exists in `readme.txt`:
 
-```
+```md
 == Changelog ==
 
 = X.Y.Z =
@@ -43,12 +43,12 @@ composer prepare-release
 
 This will run an interactive script that will:
 
-* Build the assets required for the release
-* Generate documentation and update translations
-* Commit these changes to the current branch
-* Prompt the user for the new version number and update it accordingly in `secure-custom-fields.php`
-* Offer the user to update the stable tag in `readme.txt`
-* Offer the user to create a PR (so the changes can be merged back to `trunk`)
+- Build the assets required for the release
+- Generate documentation and update translations
+- Commit these changes to the current branch
+- Prompt the user for the new version number and update it accordingly in `secure-custom-fields.php`
+- Offer the user to update the stable tag in `readme.txt`
+- Offer the user to create a PR (so the changes can be merged back to `trunk`)
 
 Maintainers will typically opt to update the stable tag manually at a later time.
 
@@ -94,9 +94,9 @@ svn ci -m “Prepare release x.y.z”
 
 ### Set rollout strategy
 
-After committing, you will receive an email asking you to select the rollout strategy for the new version of the plugin. Follow the instructions in that email. You can choose between "Immediate (default)" and "Manual updates only (24 hours)". You might want to select the latter option, as it gives you some more time to ask others to manually download and test the plugin from https://wordpress.org/plugins/secure-custom-fields/.
+After committing, you will receive an email asking you to select the rollout strategy for the new version of the plugin. Follow the instructions in that email. You can choose between "Immediate (default)" and "Manual updates only (24 hours)". You might want to select the latter option, as it gives you some more time to ask others to manually download and test the plugin from <https://wordpress.org/plugins/secure-custom-fields/>.
 
-Find more information about phased plugin rollout at https://make.wordpress.org/plugins/2025/08/11/plugin-rollout-phased-releases/.
+Find more information about phased plugin rollout at <https://make.wordpress.org/plugins/2025/08/11/plugin-rollout-phased-releases/>.
 
 ### Set stable tag
 
