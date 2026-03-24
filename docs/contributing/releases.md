@@ -89,7 +89,7 @@ Run a final `svn status` to see a list of all changes scheduled for commit. It s
 Then, commit the files to the remote SVN repository by running
 
 ```sh
-svn ci -m “Prepare release x.y.z”
+svn ci -m "Prepare release x.y.z"
 ```
 
 ### Set rollout strategy
