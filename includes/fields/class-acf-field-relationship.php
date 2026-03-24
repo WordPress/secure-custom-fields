@@ -104,7 +104,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 				$key   = '';
 			}
 
-			if ( ! acf_verify_ajax( $nonce, $key ) ) {
+			if ( ! acf_verify_ajax( $nonce, $key, ! $conditional_logic ) ) {
 				die();
 			}
 
@@ -447,7 +447,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 				'data-paged'     => 1,
 				'data-post_type' => '',
 				'data-taxonomy'  => '',
-				'data-nonce'     => wp_create_nonce( $field['key'] ),
+				'data-nonce'     => wp_create_nonce( 'acf_field_' . $this->name . '_' . $field['key'] ),
 			);
 
 			?>

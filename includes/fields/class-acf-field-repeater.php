@@ -1094,6 +1094,11 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				wp_send_json_error( $error, 401 );
 			}
 
+			if ( ! acf_current_user_can_edit_post( (int) $args['post_id'] ) ) {
+				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
+				wp_send_json_error( $error, 404 );
+			}
+
 			if ( '' === $args['field_name'] || '' === $args['field_key'] ) {
 				$error = array( 'error' => __( 'Invalid field key or name.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 404 );
