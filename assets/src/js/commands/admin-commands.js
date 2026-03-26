@@ -12,7 +12,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import {
 	layout,
@@ -29,10 +29,11 @@ import {
  * Register admin commands for SCF
  */
 const registerAdminCommands = () => {
-	if ( ! dispatch( 'core/commands' ) || ! window.acf?.data ) {
+	if ( ! select( 'core/commands') || ! dispatch( 'core/commands' ) ) {
 		return;
 	}
 
+	const registeredCommands = select( 'core/commands' ).getCommands();
 	const commandStore = dispatch( 'core/commands' );
 
 	const viewCommands = [
@@ -166,13 +167,22 @@ const registerAdminCommands = () => {
 	};
 
 	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
-	const wpVersion = window.acf.data.wp_version;
-	const isWp69Plus =
-		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
+	// For older versions, we need to register them manually. The most reliable way to
+	// detect this is to check if the commands are already registered.
+	viewCommands.forEach( ( command ) => {
+		const commandUrl = addQueryArgs( command.url, command.urlArgs );
+		// WordPress stores destination URLs in the command *name*, appended to
+		// the menu slug (which is also a relative URL), resulting in somewhat
+		// peculiar naming, e.g.
+		// edit.php?post_type=acf-field-group-edit.php?post_type=acf-ui-options-page
+		if ( registeredCommands.some( ( cmd ) => cmd.name.endsWith( commandUrl ) ) ) {
+			return;
+		}
+		registerCommand( command );
+	} );
 
-	if ( ! isWp69Plus ) {
-		viewCommands.forEach( registerCommand );
-	}
+	// "Create New" commands are not automatically registered by WordPress,
+	// so we always register them.
 	createCommands.forEach( registerCommand );
 };
 
