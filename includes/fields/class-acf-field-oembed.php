@@ -123,7 +123,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 				)
 			);
 
-			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'] ) ) {
+			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) ) {
 				die();
 			}
 
@@ -182,7 +182,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 		public function render_field( $field ) {
 			$atts = array(
 				'class'      => 'acf-oembed',
-				'data-nonce' => wp_create_nonce( $field['key'] ),
+				'data-nonce' => wp_create_nonce( 'acf_field_' . $this->name . '_' . $field['key'] ),
 			);
 
 			if ( $field['value'] ) {

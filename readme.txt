@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 6.9.1
 Requires PHP: 7.4
-Stable tag: 6.8.1
+Stable tag: 6.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,17 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.8.2 =
+*Release Date 24th March 2026*
+
+*Fixes*
+
+- AJAX Handlers: Prefix field-specific nonces to resolve an issue where third-party nonces could be treated as valid for AJAX calls.
+- Block Preview: Verify that user has access to post specified via block context.
+- Repeater Field: Verify that user has access to specified post.
+- REST API: Apply KSES sanitization to field content saved by users without `unfiltered_html` capabilities.
+- REST API: Respect `show_in_rest` setting for field groups in `/types` endpoint.
 
 = 6.8.1 =
 *Release Date 11th March 2026*
