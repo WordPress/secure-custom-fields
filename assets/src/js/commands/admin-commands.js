@@ -12,8 +12,6 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { createElement } from '@wordpress/element';
-import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import {
@@ -154,7 +152,7 @@ const registerAdminCommands = () => {
 		commandStore.registerCommand( {
 			name: 'scf/' + command.name,
 			label: command.label,
-			icon: createElement( Icon, { icon: command.icon } ),
+			icon: command.icon,
 			context: 'admin',
 			keywords: command.keywords,
 			callback: ( { close } ) => {
