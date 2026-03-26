@@ -82,7 +82,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 				$key   = '';
 			}
 
-			if ( ! acf_verify_ajax( $nonce, $key ) ) {
+			if ( ! acf_verify_ajax( $nonce, $key, ! $conditional_logic ) ) {
 				die();
 			}
 
@@ -106,7 +106,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 
 			// paged
 			$args['posts_per_page'] = 20;
-			$args['paged']          = $options['paged'];
+			$args['paged']          = (int) $options['paged'];
 
 			// search
 			if ( $options['s'] !== '' ) {
@@ -132,10 +132,8 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 				$args['post_type'] = acf_get_post_types();
 			}
 
-			// post status
-			if ( ! empty( $options['post_status'] ) ) {
-				$args['post_status'] = acf_get_array( $options['post_status'] );
-			} elseif ( ! empty( $field['post_status'] ) ) {
+			// Post status - use field config only, don't accept from user input.
+			if ( ! empty( $field['post_status'] ) ) {
 				$args['post_status'] = acf_get_array( $field['post_status'] );
 			}
 
@@ -159,7 +157,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			}
 
 			if ( ! empty( $options['include'] ) ) {
-				$args['include'] = $options['include'];
+				$args['include'] = (int) $options['include'];
 			}
 
 			// filters
@@ -393,7 +391,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			$field['ui']      = 1;
 			$field['ajax']    = 1;
 			$field['choices'] = array();
-			$field['nonce']   = wp_create_nonce( $field['key'] );
+			$field['nonce']   = wp_create_nonce( 'acf_field_' . $this->name . '_' . $field['key'] );
 
 			// populate choices if value exists
 			if ( ! empty( $field['value'] ) ) {

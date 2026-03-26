@@ -14,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0  # Required for phpcs-changed to compare with base branch
         
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
       with:
         php-version: '8.4'
-        tools: composer:v2
+        tools: composer:v2, cs2pr
         
     - name: Install Dependencies
       run: composer install
@@ -37,7 +37,8 @@ jobs:
             --git-base="origin/$BASE_REF" \
             --phpcs-path=vendor/bin/phpcs \
             --standard=.phpcs.xml.dist \
-            $CHANGED_FILES
+            --report=checkstyle \
+            $CHANGED_FILES | cs2pr
         else
           echo "No PHP files changed"
         fi

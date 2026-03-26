@@ -24,6 +24,9 @@ if ( ! process.env.WP_BASE_URL ) {
 const config = defineConfig( {
 	...baseConfig,
 	testDir: './tests/e2e',
+	reporter: process.env.CI
+		? [ [ 'github' ], [ 'blob' ] ]
+		: [ [ 'list' ] ],
 	use: {
 		...baseConfig.use,
 		baseURL: process.env.WP_BASE_URL,
