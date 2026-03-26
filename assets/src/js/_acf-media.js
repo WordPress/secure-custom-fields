@@ -369,8 +369,23 @@
 		},
 
 		customizeFilters: function ( toolbar ) {
-			// vars
-			var filters = toolbar.get( 'filters' );
+			// Get the AttachmentFilters view from the toolbar.
+			// WP < 7.0: toolbar.get('filters') returns the AttachmentFilters view directly.
+			// WP 7.0+: toolbar.get('filters') returns a wrapper View; the
+			//          AttachmentFilters view is nested inside its subviews.
+			var filtersView = toolbar.get( 'filters' );
+			var filters = filtersView;
+
+			if ( filtersView && ! filtersView.filters ) {
+				// WP 7.0+: find the AttachmentFilters view in the container's subviews.
+				var subviews = filtersView.views ? filtersView.views.get() : [];
+				for ( var i = 0; i < subviews.length; i++ ) {
+					if ( subviews[ i ].filters ) {
+						filters = subviews[ i ];
+						break;
+					}
+				}
+			}
 
 			// image
 			if ( this.get( 'type' ) == 'image' ) {
