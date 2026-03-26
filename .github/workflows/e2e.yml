@@ -35,8 +35,6 @@ jobs:
                     # On trunk: full matrix with node 24 and minimum WP version
                     - event: 'pull_request'
                       node: '24'
-                    - event: 'pull_request'
-                      wp: '6.2'
 
         env:
             WP_ENV_CORE: ${{ matrix.wp == 'trunk' && 'WordPress/WordPress' || (matrix.wp != 'latest' && format('WordPress/WordPress#{0}', matrix.wp) || null) }}
