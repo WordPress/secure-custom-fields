@@ -36,7 +36,6 @@ const registerAdminCommands = () => {
 	}
 
 	const commandStore = dispatch( 'core/commands' );
-	const adminUrl = window.acf?.data?.admin_url || '';
 
 	const viewCommands = [
 		{
@@ -205,8 +204,8 @@ const registerAdminCommands = () => {
 			keywords: command.keywords,
 			callback: ( { close } ) => {
 				document.location = command.urlArgs
-					? addQueryArgs( adminUrl + command.url, command.urlArgs )
-					: adminUrl + command.url;
+					? addQueryArgs( command.url, command.urlArgs )
+					: command.url;
 				close();
 			},
 		} );
