@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-const { test, expect } = require( './fixtures' );
+const { test, expect, wpVersionAtLeast } = require( './fixtures' );
 
 test.describe( 'Command Palette', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
@@ -14,6 +14,10 @@ test.describe( 'Command Palette', () => {
 
 	test( 'should register SCF create commands', async ( { page, admin } ) => {
 		await admin.visitAdminPage( 'index.php' );
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'Command Palette requires WordPress 6.3+'
+		);
 
 		// Open the command palette via keyboard shortcut.
 		await page.keyboard.press( 'ControlOrMeta+k' );
@@ -35,6 +39,10 @@ test.describe( 'Command Palette', () => {
 		admin,
 	} ) => {
 		await admin.visitAdminPage( 'index.php' );
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'Command Palette requires WordPress 6.3+'
+		);
 
 		await page.keyboard.press( 'ControlOrMeta+k' );
 
@@ -59,6 +67,11 @@ test.describe( 'Command Palette', () => {
 		admin,
 	} ) => {
 		await admin.visitAdminPage( 'index.php' );
+		// Command Palette was introduced in WordPress 6.3
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'Command Palette requires WordPress 6.3+'
+		);
 
 		await page.keyboard.press( 'ControlOrMeta+k' );
 
