@@ -16,7 +16,7 @@ test.describe( 'Command Palette', () => {
 		await admin.visitAdminPage( 'index.php' );
 
 		// Open the command palette via keyboard shortcut.
-		await page.keyboard.press( 'Meta+k' );
+		await page.keyboard.press( 'ControlOrMeta+k' );
 
 		const input = page.getByRole( 'combobox', {
 			name: 'Search commands and settings',
@@ -36,7 +36,7 @@ test.describe( 'Command Palette', () => {
 	} ) => {
 		await admin.visitAdminPage( 'index.php' );
 
-		await page.keyboard.press( 'Meta+k' );
+		await page.keyboard.press( 'ControlOrMeta+k' );
 
 		const input = page.getByRole( 'combobox', {
 			name: 'Search commands and settings',
@@ -60,7 +60,7 @@ test.describe( 'Command Palette', () => {
 	} ) => {
 		await admin.visitAdminPage( 'index.php' );
 
-		await page.keyboard.press( 'Meta+k' );
+		await page.keyboard.press( 'ControlOrMeta+k' );
 
 		const input = page.getByRole( 'combobox', {
 			name: 'Search commands and settings',
