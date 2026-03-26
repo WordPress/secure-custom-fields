@@ -199,6 +199,10 @@ class SCF_Rest_Types_Endpoint {
 		$field_groups_data = array();
 
 		foreach ( $field_groups as $field_group ) {
+			if ( empty( $field_group['show_in_rest'] ) ) {
+				continue;
+			}
+
 			$fields       = acf_get_fields( $field_group );
 			$group_fields = array();
 

@@ -326,6 +326,10 @@ class ACF_Rest_Api {
 			// field search.
 			$field_key_map = acf_extract_var( $data, '_acf_field_key_map', array() );
 
+			if ( ! acf_allow_unfiltered_html() ) {
+				$data = wp_kses_post_deep( $data );
+			}
+
 			// Loop through the inbound data payload, find the field matching the incoming field name, and
 			// update the field.
 			foreach ( $data as $field_name => $value ) {

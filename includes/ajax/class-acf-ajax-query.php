@@ -105,23 +105,18 @@ if ( ! class_exists( 'ACF_Ajax_Query' ) ) :
 		}
 
 		/**
-		 * get_args
-		 *
 		 * Returns an array of args for this query.
 		 *
-		 * @date    31/7/18
-		 * @since   ACF 5.7.2
+		 * @since ACF 5.7.2
 		 *
-		 * @param   array $request The request args.
-		 * @return  array
+		 * @param array $request The request args.
+		 * @return array
 		 */
-		function get_args( $request ) {
-
-			// Allow for custom "query" arg.
-			if ( isset( $request['query'] ) ) {
-				return (array) $request['query'];
-			}
-
+		public function get_args( $request ) {
+			/**
+			 * We return an empty array here as subclasses should implement
+			 * their own allow list of parameters for security.
+			 */
 			return array();
 		}
 
