@@ -15,8 +15,6 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { createElement } from '@wordpress/element';
-import { Icon } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { page, plus, edit } from '@wordpress/icons';
@@ -57,7 +55,7 @@ const registerPostTypeCommands = () => {
 			commandStore.registerCommand( {
 				name: `scf/cpt-${ postType.name }`,
 				label: postType.all_items,
-				icon: createElement( Icon, { icon: page } ),
+				icon: page,
 				context: 'admin',
 				keywords: [
 					'post type',
@@ -78,7 +76,7 @@ const registerPostTypeCommands = () => {
 			commandStore.registerCommand( {
 				name: `scf/new-${ postType.name }`,
 				label: postType.add_new_item,
-				icon: createElement( Icon, { icon: plus } ),
+				icon: plus,
 				context: 'admin',
 				keywords: [
 					'add',
@@ -108,7 +106,7 @@ const registerPostTypeCommands = () => {
 				__( 'Edit post type: %s', 'secure-custom-fields' ),
 				postType.label
 			),
-			icon: createElement( Icon, { icon: edit } ),
+			icon: edit,
 			context: 'admin',
 			keywords: [
 				'edit',
