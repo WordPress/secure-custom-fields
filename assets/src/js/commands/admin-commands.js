@@ -158,9 +158,10 @@ const registerAdminCommands = () => {
 			context: 'admin',
 			keywords: command.keywords,
 			callback: ( { close } ) => {
-				document.location = command.urlArgs
-					? addQueryArgs( command.url, command.urlArgs )
-					: command.url;
+				document.location = addQueryArgs(
+					command.url,
+					command.urlArgs
+				);
 				close();
 			},
 		} );
