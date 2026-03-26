@@ -59,7 +59,6 @@ const registerPostTypeCommands = () => {
 				label: postType.all_items,
 				icon: createElement( Icon, { icon: page } ),
 				context: 'admin',
-				description: postType.all_items,
 				keywords: [
 					'post type',
 					'content',
@@ -81,7 +80,6 @@ const registerPostTypeCommands = () => {
 				label: postType.add_new_item,
 				icon: createElement( Icon, { icon: plus } ),
 				context: 'admin',
-				description: postType.add_new_item,
 				keywords: [
 					'add',
 					'new',
@@ -112,11 +110,6 @@ const registerPostTypeCommands = () => {
 			),
 			icon: createElement( Icon, { icon: edit } ),
 			context: 'admin',
-			description: sprintf(
-				/* translators: %s: post type label */
-				__( 'Edit the %s post type settings', 'secure-custom-fields' ),
-				postType.label
-			),
 			keywords: [
 				'edit',
 				'modify',
