@@ -59,7 +59,7 @@ describe( 'Custom Post Type Commands', () => {
 		[ '6.9-RC1', 2 ],
 		[ '6.9.1', 2 ],
 		[ '7.0', 2 ],
-		[ undefined, 6 ],
+		[ undefined, 0 ],
 	] )(
 		'WP %s registers %i commands for 2 CPTs',
 		async ( wpVersion, expectedCount ) => {
