@@ -34,7 +34,6 @@ const registerPostTypeCommands = () => {
 	}
 
 	const commandStore = dispatch( 'core/commands' );
-	const adminUrl = window.acf.data.admin_url || '';
 	const postTypes = window.acf.data.customPostTypes;
 
 	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
@@ -69,7 +68,7 @@ const registerPostTypeCommands = () => {
 					postType.label,
 				].filter( Boolean ),
 				callback: ( { close } ) => {
-					document.location = addQueryArgs( adminUrl + 'edit.php', {
+					document.location = addQueryArgs( 'edit.php', {
 						post_type: postType.name,
 					} );
 					close();
@@ -93,7 +92,7 @@ const registerPostTypeCommands = () => {
 				],
 				callback: ( { close } ) => {
 					document.location = addQueryArgs(
-						adminUrl + 'post-new.php',
+						'post-new.php',
 						{
 							post_type: postType.name,
 						}
@@ -128,7 +127,7 @@ const registerPostTypeCommands = () => {
 				postType.label,
 			],
 			callback: ( { close } ) => {
-				document.location = addQueryArgs( adminUrl + 'post.php', {
+				document.location = addQueryArgs( 'post.php', {
 					post: postType.id,
 					action: 'edit',
 				} );
