@@ -43,9 +43,10 @@ composer test:phpstan     # Static analysis only
 npm run test:unit         # Jest unit tests
 npm run test:unit:watch   # Jest in watch mode
 
-# E2E (requires wp-env)
-npm run test:e2e
-npm run test:e2e:debug    # Debug mode
+# End-to-end tests (Playwright, requires wp-env)
+# IMPORTANT: NEVER run `npx playwright test` directly — always use these npm scripts:
+npm run test:e2e                               # All E2E tests
+npm run test:e2e:debug                         # Debug mode
 npm run test:e2e -- --headed                   # Run with browser visible
 npm run test:e2e -- <path_to_test_file.spec.js>  # Specific test file
 
