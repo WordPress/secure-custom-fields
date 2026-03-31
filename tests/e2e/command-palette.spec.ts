@@ -14,20 +14,20 @@ test.describe( 'Command Palette', () => {
 
 	[ 'post-editor', 'wp-admin' ].forEach( ( context ) => {
 		test.describe( `opened in ${ context }`, () => {
-			test.beforeEach( async ( { admin } ) => {
+			test.beforeEach( async ( { admin, page } ) => {
 				if ( context === 'post-editor' ) {
 					await admin.createNewPost( { title: 'Command palette test' } );
-				} else {
+				} else if ( context === 'wp-admin' ) {
 					await admin.visitAdminPage( 'index.php' );
+
+					test.skip(
+						! ( await wpVersionAtLeast( page, 6, 9 ) ),
+						'Command Palette in wp-admin requires WordPress 6.9+'
+					);
 				}
 			} );
 
 			test( 'should register SCF create commands', async ( { page } ) => {
-				test.skip(
-					context === 'wp-admin' && ! ( await wpVersionAtLeast( page, 6, 9 ) ),
-					'Command Palette in wp-admin requires WordPress 6.9+'
-				);
-
 				// Open the command palette via keyboard shortcut.
 				await page.keyboard.press( 'ControlOrMeta+k' );
 
@@ -46,11 +46,6 @@ test.describe( 'Command Palette', () => {
 			test( 'should register SCF view commands without duplicates', async ( {
 				page
 			} ) => {
-				test.skip(
-					context === 'wp-admin' && ! ( await wpVersionAtLeast( page, 6, 9 ) ),
-					'Command Palette in wp-admin requires WordPress 6.9+'
-				);
-
 				await page.keyboard.press( 'ControlOrMeta+k' );
 
 				const input = page.getByRole( 'combobox', {
@@ -72,11 +67,6 @@ test.describe( 'Command Palette', () => {
 			test( 'should navigate to field groups via command palette', async ( {
 				page,
 			} ) => {
-				test.skip(
-					context === 'wp-admin' && ! ( await wpVersionAtLeast( page, 6, 9 ) ),
-					'Command Palette in wp-admin requires WordPress 6.9+'
-				);
-
 				await page.keyboard.press( 'ControlOrMeta+k' );
 
 				const input = page.getByRole( 'combobox', {
