@@ -5,9 +5,6 @@
  * This file generates navigation commands for each registered post type that
  * the current user has access to, creating "View All", "Add New", and "Edit" commands.
  *
- * Post type data is provided via acf.data.customPostTypes, which is populated
- * by the PHP side after capability checks ensure the user has appropriate access.
- *
  * @since SCF 6.5.0
  */
 
@@ -15,24 +12,24 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { dispatch } from '@wordpress/data';
+import { dispatch, resolveSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { page, plus, edit } from '@wordpress/icons';
 
 /**
  * Register custom post type commands
  */
-const registerPostTypeCommands = () => {
-	// Only proceed when WordPress commands API and there are custom post types accessible
-	if (
-		! dispatch( 'core/commands' ) ||
-		! window.acf?.data?.customPostTypes?.length
-	) {
+const registerPostTypeCommands = async () => {
+	if ( ! resolveSelect( 'core') || ! dispatch( 'core/commands' ) ) {
 		return;
 	}
 
+	const postTypes = await resolveSelect( 'core' ).getPostTypes( {
+		per_page: -1,
+		source: 'scf'
+	} );
+
 	const commandStore = dispatch( 'core/commands' );
-	const postTypes = window.acf.data.customPostTypes;
 
 	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
 	const wpVersion = window.acf.data.wp_version;
@@ -40,33 +37,24 @@ const registerPostTypeCommands = () => {
 		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
 
 	postTypes.forEach( ( postType ) => {
-		// Skip invalid post types or those missing required labels
-		if (
-			! postType?.name ||
-			! postType?.all_items ||
-			! postType?.add_new_item
-		) {
-			return;
-		}
-
 		// Navigation commands are already included in WP 6.9+.
 		if ( ! isWp69Plus ) {
 			// Register "View All" command for this post type
 			commandStore.registerCommand( {
-				name: `scf/cpt-${ postType.name }`,
-				label: postType.all_items,
+				name: `scf/cpt-${ postType.slug }`,
+				label: postType.labels.all_items,
 				icon: page,
 				context: 'admin',
 				keywords: [
 					'post type',
 					'content',
 					'cpt',
+					postType.slug,
 					postType.name,
-					postType.label,
 				].filter( Boolean ),
 				callback: ( { close } ) => {
 					document.location = addQueryArgs( 'edit.php', {
-						post_type: postType.name,
+						post_type: postType.slug,
 					} );
 					close();
 				},
@@ -74,8 +62,8 @@ const registerPostTypeCommands = () => {
 
 			// Register "Add New" command for this post type
 			commandStore.registerCommand( {
-				name: `scf/new-${ postType.name }`,
-				label: postType.add_new_item,
+				name: `scf/new-${ postType.slug }`,
+				label: postType.labels.add_new_item,
 				icon: plus,
 				context: 'admin',
 				keywords: [
@@ -83,16 +71,13 @@ const registerPostTypeCommands = () => {
 					'new',
 					'create',
 					'content',
+					postType.slug,
 					postType.name,
-					postType.label,
 				],
 				callback: ( { close } ) => {
-					document.location = addQueryArgs(
-						'post-new.php',
-						{
-							post_type: postType.name,
-						}
-					);
+					document.location = addQueryArgs( 'post-new.php', {
+						post_type: postType.slug,
+					} );
 					close();
 				},
 			} );
@@ -100,11 +85,11 @@ const registerPostTypeCommands = () => {
 
 		// Register "Edit Post Type" command
 		commandStore.registerCommand( {
-			name: `scf/edit-${ postType.name }`,
+			name: `scf/edit-${ postType.slug }`,
 			label: sprintf(
 				/* translators: %s: post type label */
 				__( 'Edit post type: %s', 'secure-custom-fields' ),
-				postType.label
+				postType.name
 			),
 			icon: edit,
 			context: 'admin',
@@ -114,8 +99,8 @@ const registerPostTypeCommands = () => {
 				'post type',
 				'cpt',
 				'settings',
+				postType.slug,
 				postType.name,
-				postType.label,
 			],
 			callback: ( { close } ) => {
 				document.location = addQueryArgs( 'post.php', {
