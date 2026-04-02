@@ -12,7 +12,7 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { dispatch, resolveSelect } from '@wordpress/data';
+import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { page, plus, edit } from '@wordpress/icons';
 
@@ -20,25 +20,32 @@ import { page, plus, edit } from '@wordpress/icons';
  * Register custom post type commands
  */
 const registerPostTypeCommands = async () => {
-	if ( ! resolveSelect( 'core') || ! dispatch( 'core/commands' ) ) {
+	if ( ! resolveSelect( 'core' ) || ! dispatch( 'core/commands' ) ) {
 		return;
 	}
 
 	const postTypes = await resolveSelect( 'core' ).getPostTypes( {
 		per_page: -1,
-		source: 'scf'
+		source: 'scf',
 	} );
 
 	const commandStore = dispatch( 'core/commands' );
-
-	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
-	const wpVersion = window.acf.data.wp_version;
-	const isWp69Plus =
-		wpVersion.localeCompare( '6.9', undefined, { numeric: true } ) >= 0;
+	const registeredCommands = select( 'core/commands' ).getCommands();
 
 	postTypes.forEach( ( postType ) => {
-		// Navigation commands are already included in WP 6.9+.
-		if ( ! isWp69Plus ) {
+		const viewAllCommandUrl = addQueryArgs( 'edit.php', {
+			post_type: postType.slug,
+		} );
+
+		// WordPress stores destination URLs in the command *name*, appended to
+		// the menu slug (which is also a relative URL), resulting in somewhat
+		// peculiar naming, e.g.
+		// edit.php?post_type=movie-post-new.php?post_type=movie
+		if (
+			! registeredCommands.some( ( cmd ) =>
+				cmd.name.endsWith( viewAllCommandUrl )
+			)
+		) {
 			// Register "View All" command for this post type
 			commandStore.registerCommand( {
 				name: `scf/cpt-${ postType.slug }`,
@@ -53,13 +60,21 @@ const registerPostTypeCommands = async () => {
 					postType.name,
 				].filter( Boolean ),
 				callback: ( { close } ) => {
-					document.location = addQueryArgs( 'edit.php', {
-						post_type: postType.slug,
-					} );
+					document.location = viewAllCommandUrl;
 					close();
 				},
 			} );
+		}
 
+		const addNewCommandUrl = addQueryArgs( 'post-new.php', {
+			post_type: postType.slug,
+		} );
+
+		if (
+			! registeredCommands.some( ( cmd ) =>
+				cmd.name.endsWith( addNewCommandUrl )
+			)
+		) {
 			// Register "Add New" command for this post type
 			commandStore.registerCommand( {
 				name: `scf/new-${ postType.slug }`,
@@ -75,9 +90,7 @@ const registerPostTypeCommands = async () => {
 					postType.name,
 				],
 				callback: ( { close } ) => {
-					document.location = addQueryArgs( 'post-new.php', {
-						post_type: postType.slug,
-					} );
+					document.location = addNewCommandUrl;
 					close();
 				},
 			} );
