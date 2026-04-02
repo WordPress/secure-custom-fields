@@ -84,6 +84,79 @@ test.describe( 'Command Palette', () => {
 					);
 				} );
 			} );
+
+			test.describe( 'Post type-specific commands', () => {
+				test.beforeAll( async ( { requestUtils } ) => {
+					await requestUtils.activatePlugin( 'scf-test-setup-post-types' );
+				} );
+
+				test.afterAll( async ( { requestUtils } ) => {
+					await requestUtils.deactivatePlugin( 'scf-test-setup-post-types' );
+				} );
+
+				test( 'should register "View All" command for SCF post type without duplicates', async ( {
+					page,
+				} ) => {
+					await page.keyboard.press( 'ControlOrMeta+k' );
+
+					const input = page.getByRole( 'combobox', {
+						name: 'Search commands and settings',
+					} );
+					await expect( input ).toBeVisible();
+
+					// The "View All" command uses the post type's `all_items` label.
+					await input.fill( 'All SCF E2E Test Types' );
+
+					const options = page.getByRole( 'option', {
+						name: /All SCF E2E Test Types/,
+					} );
+
+					// Should appear exactly once (no duplicate from WP's auto-registered
+					// admin menu commands).
+					await expect( options ).toHaveCount( 1 );
+				} );
+
+				test( 'should register "Add New" command for SCF post type without duplicates', async ( {
+					page,
+				} ) => {
+					await page.keyboard.press( 'ControlOrMeta+k' );
+
+					const input = page.getByRole( 'combobox', {
+						name: 'Search commands and settings',
+					} );
+					await expect( input ).toBeVisible();
+
+					await input.fill( 'Add New SCF E2E Test Item' );
+
+					const options = page.getByRole( 'option', {
+						name: /Add New SCF E2E Test Item/,
+					} );
+
+					// Should appear exactly once (no duplicate).
+					await expect( options ).toHaveCount( 1 );
+				} );
+
+				test( 'should register "Edit post type" command for SCF post type', async ( {
+					page,
+				} ) => {
+					await page.keyboard.press( 'ControlOrMeta+k' );
+
+					const input = page.getByRole( 'combobox', {
+						name: 'Search commands and settings',
+					} );
+					await expect( input ).toBeVisible();
+
+					// The edit command label uses the post type's `name` label.
+					await input.fill( 'Edit post type' );
+
+					await expect(
+						page.getByRole( 'option', {
+							name: /Edit post type: SCF E2E Test Types/,
+						} )
+					).toBeVisible();
+				} );
+
+			} );
 		} );
 	} );
 } );
