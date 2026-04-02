@@ -914,7 +914,7 @@ function acf_enqueue_block_assets() {
 		array(
 			'blockTypes' => array_values( $block_types ),
 			'postType'   => get_post_type(),
-			'StrictMode' => true,
+			'StrictMode' => version_compare( $GLOBALS['wp_version'], '6.9', '>=' ),
 		)
 	);
 
