@@ -117,7 +117,7 @@ const registerPostTypeCommands = async () => {
 			],
 			callback: ( { close } ) => {
 				document.location = addQueryArgs( 'post.php', {
-					post: postType.id,
+					post: postType.scf_post_id,
 					action: 'edit',
 				} );
 				close();
