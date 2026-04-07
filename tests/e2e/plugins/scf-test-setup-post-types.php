@@ -78,8 +78,7 @@ function scf_test_create_scf_post_type_entry() {
 		'supports'           => array( 'title', 'editor' ),
 		'labels'             => array(
 			'name'          => 'SCF E2E Test Type',
-			'singular_name' => 'SCF E2E Test Type Item',
-			'plural_name'   => 'SCF E2E Test Type Items',
+			'singular_name' => 'SCF E2E Test Type',
 			'add_new_item'  => 'Add New SCF E2E Test Type Item',
 			'all_items'     => 'All SCF E2E Test Type Items',
 		),
