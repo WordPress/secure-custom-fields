@@ -61,9 +61,10 @@ function scf_test_register_post_types() {
  * causing it to be categorized as an SCF post type.
  */
 function scf_test_create_scf_post_type_entry() {
-	// Check if we've already created this post type to avoid duplicates
+	// If the post type already exists (e.g. from a previous test run), delete it.
+	// This ensures that any changes to this file will be reflected it the tests.
 	if ( acf_get_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' ) ) {
-		return;
+		acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
 	}
 
 	// Define our post type configuration (similar to what you'd fill in the UI)
