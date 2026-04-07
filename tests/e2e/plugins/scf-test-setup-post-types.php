@@ -65,13 +65,13 @@ function scf_test_register_post_types() {
  * causing it to be categorized as an SCF post type.
  */
 function scf_test_create_scf_post_type_entry() {
-	// Check if we've already created this post type to avoid duplicates
-	if ( get_option( 'scf_test_post_type_created' ) ) {
+	// Make sure SCF is fully loaded
+	if ( ! function_exists( 'acf_update_internal_post_type' ) ) {
 		return;
 	}
 
-	// Make sure SCF is fully loaded
-	if ( ! function_exists( 'acf_update_internal_post_type' ) ) {
+	// Check if we've already created this post type to avoid duplicates
+	if ( acf_get_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' ) ) {
 		return;
 	}
 
@@ -97,26 +97,16 @@ function scf_test_create_scf_post_type_entry() {
 	);
 
 	// Create the post type entry in the database using SCF's internal API
-	$result = acf_update_internal_post_type( $post_type_config, 'acf-post-type' );
-
-	if ( is_array( $result ) && isset( $result['ID'] ) ) {
-		// Store the post ID so we can delete it later
-		update_option( 'scf_test_post_type_created', $result['ID'] );
-	}
+	acf_update_internal_post_type( $post_type_config, 'acf-post-type' );
 }
 
 /**
  * Clean up on plugin deactivation
  */
 function scf_test_cleanup() {
-	// Get the stored post ID and delete the post
-	$post_id = get_option( 'scf_test_post_type_created' );
-	if ( $post_id ) {
-		wp_delete_post( $post_id, true );
+	if ( function_exists( 'acf_delete_internal_post_type' ) ) {
+		acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
 	}
-
-	// Clean up the option
-	delete_option( 'scf_test_post_type_created' );
 }
 
 // Register hooks
