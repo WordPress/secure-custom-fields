@@ -32,7 +32,7 @@ const registerPostTypeCommands = async () => {
 	const commandStore = dispatch( 'core/commands' );
 	const registeredCommands = select( 'core/commands' ).getCommands();
 
-	postTypes.forEach( ( postType ) => {
+	postTypes.forEach( async ( postType ) => {
 		const viewAllCommandUrl = addQueryArgs( 'edit.php', {
 			post_type: postType.slug,
 		} );
@@ -44,7 +44,11 @@ const registerPostTypeCommands = async () => {
 		if (
 			! registeredCommands.some( ( cmd ) =>
 				cmd.name.endsWith( viewAllCommandUrl )
-			)
+			) &&
+			( await resolveSelect( 'core' ).canUser(
+				'read',
+				postType.rest_base
+			) )
 		) {
 			// Register "View All" command for this post type
 			commandStore.registerCommand( {
@@ -73,7 +77,11 @@ const registerPostTypeCommands = async () => {
 		if (
 			! registeredCommands.some( ( cmd ) =>
 				cmd.name.endsWith( addNewCommandUrl )
-			)
+			) &&
+			( await resolveSelect( 'core' ).canUser(
+				'create',
+				postType.rest_base
+			) )
 		) {
 			// Register "Add New" command for this post type
 			commandStore.registerCommand( {
