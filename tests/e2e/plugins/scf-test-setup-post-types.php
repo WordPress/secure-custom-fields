@@ -4,17 +4,9 @@
  * Description: Creates SCF post types for E2E testing
  * Version: 1.0.0
  * Author: SCF Testing
+ * Requires Plugins: secure-custom-fields
  *
  * @package wordpress/secure-custom-fields
- *
- * IMPORTANT NOTE:
- * This plugin uses a hacky approach to create a test post type that SCF will recognize as its own, don't replicate in production code:
- *
- * - We use SCF's internal APIs (acf_get_internal_post_type_instance) that aren't meant for public use
- *    and could change between versions without notice.
- *
- * - We're directly creating database entries that SCF normally manages through its UI,
- *    bypassing the normal workflow and validation that the UI might provide.
  */
 
 // Exit if accessed directly
@@ -62,31 +54,12 @@ function scf_test_register_post_types() {
 
 /**
  * Create an SCF post type entry in the database
- *
- * This function creates a post of type 'acf-post-type' in the database, which is how SCF
- * stores its post type definitions. When the REST API endpoint calls
- * acf_get_internal_post_type_posts('acf-post-type'), it will return our custom post type,
- * causing it to be categorized as an SCF post type.
- *
- * NOTE: This is a hacky approach that uses SCF's internal APIs and should not be used
- * in production. Ideally, SCF would provide a public API for registering post types
- * programmatically.
  */
 function scf_test_create_scf_post_type_entry() {
-	// Check if we've already created this post type to avoid duplicates
-	if ( get_option( 'scf_test_post_type_created' ) ) {
-		return;
-	}
-
-	// Make sure SCF is fully loaded
-	if ( ! function_exists( 'acf_get_internal_post_type_instance' ) ) {
-		return;
-	}
-
-	// Get the internal post type instance for managing acf-post-type entries
-	$instance = acf_get_internal_post_type_instance( 'acf-post-type' );
-	if ( ! $instance ) {
-		return;
+	// If the post type already exists (e.g. from a previous test run), delete it.
+	// This ensures that any changes to this file will be reflected it the tests.
+	if ( acf_get_post_type( 'scf_e2e_test_post_type' ) ) {
+		acf_delete_post_type( 'scf_e2e_test_post_type' );
 	}
 
 	// Define our post type configuration (similar to what you'd fill in the UI)
@@ -110,27 +83,15 @@ function scf_test_create_scf_post_type_entry() {
 		),
 	);
 
-	// Create the post type entry in the database using SCF's internal API
-	$result = $instance->update_post( $post_type_config );
-
-	if ( is_array( $result ) && isset( $result['ID'] ) ) {
-		// Store the post ID so we can delete it later
-		update_option( 'scf_test_post_type_created', $result['ID'] );
-	}
+	// Create the post type entry in the database using SCF's API
+	acf_update_post_type( $post_type_config );
 }
 
 /**
  * Clean up on plugin deactivation
  */
 function scf_test_cleanup() {
-	// Get the stored post ID and delete the post
-	$post_id = get_option( 'scf_test_post_type_created' );
-	if ( $post_id ) {
-		wp_delete_post( $post_id, true );
-	}
-
-	// Clean up the option
-	delete_option( 'scf_test_post_type_created' );
+	acf_delete_post_type( 'scf_e2e_test_post_type' );
 }
 
 // Register hooks
