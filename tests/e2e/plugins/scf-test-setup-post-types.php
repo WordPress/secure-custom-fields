@@ -54,17 +54,12 @@ function scf_test_register_post_types() {
 
 /**
  * Create an SCF post type entry in the database
- *
- * This function creates a post of type 'acf-post-type' in the database, which is how SCF
- * stores its post type definitions. When the REST API endpoint calls
- * acf_get_internal_post_type_posts('acf-post-type'), it will return our custom post type,
- * causing it to be categorized as an SCF post type.
  */
 function scf_test_create_scf_post_type_entry() {
 	// If the post type already exists (e.g. from a previous test run), delete it.
 	// This ensures that any changes to this file will be reflected it the tests.
-	if ( acf_get_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' ) ) {
-		acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
+	if ( acf_get_post_type( 'scf_e2e_test_post_type' ) ) {
+		acf_delete_post_type( 'scf_e2e_test_post_type' );
 	}
 
 	// Define our post type configuration (similar to what you'd fill in the UI)
@@ -88,15 +83,15 @@ function scf_test_create_scf_post_type_entry() {
 		),
 	);
 
-	// Create the post type entry in the database using SCF's internal API
-	acf_update_internal_post_type( $post_type_config, 'acf-post-type' );
+	// Create the post type entry in the database using SCF's API
+	acf_update_post_type( $post_type_config );
 }
 
 /**
  * Clean up on plugin deactivation
  */
 function scf_test_cleanup() {
-	acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
+	acf_delete_post_type( 'scf_e2e_test_post_type' );
 }
 
 // Register hooks
