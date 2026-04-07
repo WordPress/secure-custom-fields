@@ -105,10 +105,10 @@ test.describe( 'Command Palette', () => {
 					await expect( input ).toBeVisible();
 
 					// The "View All" command uses the post type's `all_items` label.
-					await input.fill( 'All SCF E2E Test Types' );
+					await input.fill( 'All SCF E2E Test Type Items' );
 
 					const options = page.getByRole( 'option', {
-						name: /All SCF E2E Test Types/,
+						name: /All SCF E2E Test Type Items/,
 					} );
 
 					// Should appear exactly once (no duplicate from WP's auto-registered
@@ -126,10 +126,10 @@ test.describe( 'Command Palette', () => {
 					} );
 					await expect( input ).toBeVisible();
 
-					await input.fill( 'Add New SCF E2E Test Item' );
+					await input.fill( 'Add New SCF E2E Test Type Item' );
 
 					const options = page.getByRole( 'option', {
-						name: /Add New SCF E2E Test Item/,
+						name: /Add New SCF E2E Test Type Item/,
 					} );
 
 					// Should appear exactly once (no duplicate).
@@ -151,7 +151,7 @@ test.describe( 'Command Palette', () => {
 
 					await expect(
 						page.getByRole( 'option', {
-							name: /Edit post type: SCF E2E Test Types/,
+							name: /Edit post type: SCF E2E Test Type/,
 						} )
 					).toBeVisible();
 				} );
