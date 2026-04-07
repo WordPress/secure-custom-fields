@@ -8,13 +8,9 @@
  * @package wordpress/secure-custom-fields
  *
  * IMPORTANT NOTE:
- * This plugin uses a hacky approach to create a test post type that SCF will recognize as its own, don't replicate in production code:
- *
- * - We use SCF's internal APIs (acf_get_internal_post_type_instance) that aren't meant for public use
- *    and could change between versions without notice.
- *
- * - We're directly creating database entries that SCF normally manages through its UI,
- *    bypassing the normal workflow and validation that the UI might provide.
+ * This plugin uses SCF's internal API (acf_update_internal_post_type) to create a test post type
+ * that SCF will recognize as its own. This API isn't meant for public use and could change
+ * between versions without notice.
  */
 
 // Exit if accessed directly
@@ -67,10 +63,6 @@ function scf_test_register_post_types() {
  * stores its post type definitions. When the REST API endpoint calls
  * acf_get_internal_post_type_posts('acf-post-type'), it will return our custom post type,
  * causing it to be categorized as an SCF post type.
- *
- * NOTE: This is a hacky approach that uses SCF's internal APIs and should not be used
- * in production. Ideally, SCF would provide a public API for registering post types
- * programmatically.
  */
 function scf_test_create_scf_post_type_entry() {
 	// Check if we've already created this post type to avoid duplicates
@@ -79,13 +71,7 @@ function scf_test_create_scf_post_type_entry() {
 	}
 
 	// Make sure SCF is fully loaded
-	if ( ! function_exists( 'acf_get_internal_post_type_instance' ) ) {
-		return;
-	}
-
-	// Get the internal post type instance for managing acf-post-type entries
-	$instance = acf_get_internal_post_type_instance( 'acf-post-type' );
-	if ( ! $instance ) {
+	if ( ! function_exists( 'acf_update_internal_post_type' ) ) {
 		return;
 	}
 
@@ -111,7 +97,7 @@ function scf_test_create_scf_post_type_entry() {
 	);
 
 	// Create the post type entry in the database using SCF's internal API
-	$result = $instance->update_post( $post_type_config );
+	$result = acf_update_internal_post_type( $post_type_config, 'acf-post-type' );
 
 	if ( is_array( $result ) && isset( $result['ID'] ) ) {
 		// Store the post ID so we can delete it later
