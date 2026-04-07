@@ -59,7 +59,6 @@ const registerPostTypeCommands = async () => {
 				name: `scf/cpt-${ postType.slug }`,
 				label: postType.labels.all_items,
 				icon: page,
-				context: 'admin',
 				keywords: [
 					'post type',
 					'content',
@@ -92,7 +91,6 @@ const registerPostTypeCommands = async () => {
 				name: `scf/new-${ postType.slug }`,
 				label: postType.labels.add_new_item,
 				icon: plus,
-				context: 'admin',
 				keywords: [
 					'add',
 					'new',
@@ -117,7 +115,6 @@ const registerPostTypeCommands = async () => {
 				postType.name
 			),
 			icon: edit,
-			context: 'admin',
 			keywords: [
 				'edit',
 				'modify',

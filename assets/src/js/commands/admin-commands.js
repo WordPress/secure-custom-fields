@@ -154,7 +154,6 @@ const registerAdminCommands = () => {
 			name: 'scf/' + command.name,
 			label: command.label,
 			icon: command.icon,
-			context: 'admin',
 			keywords: command.keywords,
 			callback: ( { close } ) => {
 				document.location = addQueryArgs(
