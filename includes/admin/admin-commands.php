@@ -33,14 +33,9 @@ function acf_commands_init() {
 
 	$custom_post_types = array();
 
-	$scf_post_types = acf_get_acf_post_types();
+	$scf_post_types = acf_get_acf_post_types( array( 'active' => true ) );
 
 	foreach ( $scf_post_types as $post_type ) {
-		// Skip if post type name is not set (defensive) or post type is inactive.
-		if ( empty( $post_type['post_type'] ) || ( isset( $post_type['active'] ) && ! $post_type['active'] ) ) {
-			continue;
-		}
-
 		$post_type_obj = get_post_type_object( $post_type['post_type'] );
 
 		// Three conditions must be met to include this post type in the commands:
