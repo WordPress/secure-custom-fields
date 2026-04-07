@@ -6,11 +6,6 @@
  * Author: SCF Testing
  *
  * @package wordpress/secure-custom-fields
- *
- * IMPORTANT NOTE:
- * This plugin uses SCF's internal API (acf_update_internal_post_type) to create a test post type
- * that SCF will recognize as its own. This API isn't meant for public use and could change
- * between versions without notice.
  */
 
 // Exit if accessed directly
