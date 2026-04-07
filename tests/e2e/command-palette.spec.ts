@@ -149,13 +149,13 @@ test.describe( 'Command Palette', () => {
 					// The edit command label uses the post type's `name` label.
 					await input.fill( 'Edit post type' );
 
+					await page.getByRole( 'option', {
+						name: /Edit post type: SCF E2E Test Type/,
+					} ).click();
 					await expect(
-						page.getByRole( 'option', {
-							name: /Edit post type: SCF E2E Test Type/,
-						} )
-					).toBeVisible();
+						page.getByRole( 'textbox', { name: /Plural Label/ } )
+					).toHaveValue( 'SCF E2E Test Type' );
 				} );
-
 			} );
 		} );
 	} );
