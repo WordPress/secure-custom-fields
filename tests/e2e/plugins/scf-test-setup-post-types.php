@@ -4,6 +4,7 @@
  * Description: Creates SCF post types for E2E testing
  * Version: 1.0.0
  * Author: SCF Testing
+ * Requires Plugins: secure-custom-fields
  *
  * @package wordpress/secure-custom-fields
  */
@@ -60,11 +61,6 @@ function scf_test_register_post_types() {
  * causing it to be categorized as an SCF post type.
  */
 function scf_test_create_scf_post_type_entry() {
-	// Make sure SCF is fully loaded
-	if ( ! function_exists( 'acf_update_internal_post_type' ) ) {
-		return;
-	}
-
 	// Check if we've already created this post type to avoid duplicates
 	if ( acf_get_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' ) ) {
 		return;
@@ -99,9 +95,7 @@ function scf_test_create_scf_post_type_entry() {
  * Clean up on plugin deactivation
  */
 function scf_test_cleanup() {
-	if ( function_exists( 'acf_delete_internal_post_type' ) ) {
-		acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
-	}
+	acf_delete_internal_post_type( 'scf_e2e_test_post_type', 'acf-post-type' );
 }
 
 // Register hooks
