@@ -33,6 +33,10 @@ const registerPostTypeCommands = async () => {
 	const registeredCommands = select( 'core/commands' ).getCommands();
 
 	postTypes.forEach( async ( postType ) => {
+		if ( ! postType?.visibility?.show_ui ) {
+			return;
+		}
+
 		const viewAllCommandUrl = addQueryArgs( 'edit.php', {
 			post_type: postType.slug,
 		} );
