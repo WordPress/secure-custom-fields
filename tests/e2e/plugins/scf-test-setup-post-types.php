@@ -56,10 +56,9 @@ function scf_test_register_post_types() {
  * Create an SCF post type entry in the database
  */
 function scf_test_create_scf_post_type_entry() {
-	// If the post type already exists (e.g. from a previous test run), delete it.
-	// This ensures that any changes to this file will be reflected it the tests.
+	// Check if we've already created this post type to avoid duplicates
 	if ( acf_get_post_type( 'scf_e2e_test_post_type' ) ) {
-		acf_delete_post_type( 'scf_e2e_test_post_type' );
+		return;
 	}
 
 	// Define our post type configuration (similar to what you'd fill in the UI)
@@ -79,7 +78,9 @@ function scf_test_create_scf_post_type_entry() {
 		'supports'           => array( 'title', 'editor' ),
 		'labels'             => array(
 			'name'          => 'SCF E2E Test Type',
-			'singular_name' => 'SCF E2E Test Item',
+			'singular_name' => 'SCF E2E Test Type',
+			'add_new_item'  => 'Add New SCF E2E Test Type Item',
+			'all_items'     => 'All SCF E2E Test Type Items',
 		),
 	);
 

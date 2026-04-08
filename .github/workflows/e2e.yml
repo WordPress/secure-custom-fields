@@ -29,7 +29,7 @@ jobs:
                 event: ['${{ github.event_name }}']
                 shard: [1, 2, 3, 4]
                 node: ['22', '24']
-                wp: ['6.2', 'latest', 'trunk']
+                wp: ['6.2', '6.8', 'latest', 'trunk']
                 exclude:
                     # On PRs: only test Node 22 + WP latest and trunk for fast feedback
                     # On trunk: full matrix with node 24 and minimum WP version

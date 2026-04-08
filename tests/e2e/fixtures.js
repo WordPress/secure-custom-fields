@@ -177,13 +177,13 @@ const test = wpTest.extend( {
 async function wpVersionAtLeast( page, major, minor ) {
 	return page.evaluate(
 		( [ maj, min ] ) => {
-			const branchClass = [ ...document.body.classList ].find( ( c ) =>
-				c.startsWith( 'branch-' )
+			const versionClass = [ ...document.body.classList ].find( ( c ) =>
+				c.startsWith( 'version-' )
 			);
-			if ( ! branchClass ) {
+			if ( ! versionClass ) {
 				return true;
 			}
-			const match = branchClass.match( /branch-(\d+)-(\d+)/ );
+			const match = versionClass.match( /version-(\d+)-(\d+)/ );
 			if ( ! match ) {
 				return true;
 			}
