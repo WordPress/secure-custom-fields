@@ -12,6 +12,15 @@ test.describe( 'Command Palette', () => {
 		await requestUtils.deactivatePlugin( 'secure-custom-fields' );
 	} );
 
+	test.beforeEach( async ( { admin, page } ) => {
+		await admin.visitAdminPage( 'index.php' );
+
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'Command Palette requires WordPress 6.3+'
+		);
+	} );
+
 	[ 'post-editor', 'wp-admin' ].forEach( ( context ) => {
 		test.describe( `opened in ${ context }`, () => {
 			test.beforeEach( async ( { admin, page } ) => {
@@ -32,9 +41,10 @@ test.describe( 'Command Palette', () => {
 					// Open the command palette via keyboard shortcut.
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 					await expect( input ).toBeVisible();
 
 					// Search for a create command — these are always registered by SCF.
@@ -49,9 +59,10 @@ test.describe( 'Command Palette', () => {
 				} ) => {
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 
 					// Search for a view command that exists in both WP's auto-registered
 					// admin menu commands and SCF's view commands list.
@@ -70,9 +81,10 @@ test.describe( 'Command Palette', () => {
 				} ) => {
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 
 					await input.fill( 'Field Groups' );
 					await page
@@ -99,9 +111,10 @@ test.describe( 'Command Palette', () => {
 				} ) => {
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 					await expect( input ).toBeVisible();
 
 					// The "View All" command uses the post type's `all_items` label.
@@ -121,9 +134,10 @@ test.describe( 'Command Palette', () => {
 				} ) => {
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 					await expect( input ).toBeVisible();
 
 					await input.fill( 'Add New SCF E2E Test Type Item' );
@@ -141,9 +155,10 @@ test.describe( 'Command Palette', () => {
 				} ) => {
 					await page.keyboard.press( 'ControlOrMeta+k' );
 
-					const input = page.getByRole( 'combobox', {
-						name: 'Search commands and settings',
+					const commandPalette = page.getByRole( 'dialog', {
+						name: 'Command palette',
 					} );
+					const input = commandPalette.getByRole( 'combobox' );
 					await expect( input ).toBeVisible();
 
 					// The edit command label uses the post type's `name` label.
