@@ -12,6 +12,15 @@ test.describe( 'Command Palette', () => {
 		await requestUtils.deactivatePlugin( 'secure-custom-fields' );
 	} );
 
+	test.beforeEach( async ( { admin, page } ) => {
+		await admin.visitAdminPage( 'index.php' );
+
+		test.skip(
+			! ( await wpVersionAtLeast( page, 6, 3 ) ),
+			'Command Palette requires WordPress 6.3+'
+		);
+	} );
+
 	[ 'post-editor', 'wp-admin' ].forEach( ( context ) => {
 		test.describe( `opened in ${ context }`, () => {
 			test.beforeEach( async ( { admin, page } ) => {
