@@ -18,7 +18,7 @@ permissions: {}
 
 jobs:
     test:
-        name: E2E - Node ${{ matrix.node }} / WP ${{ matrix.wp }} / Shard ${{ matrix.shard }}/4
+        name: E2E - WP ${{ matrix.wp }} / Shard ${{ matrix.shard }}/4
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -28,7 +28,6 @@ jobs:
             matrix:
                 event: ['${{ github.event_name }}']
                 shard: [1, 2, 3, 4]
-                node: ['22']
                 wp: ['6.2', '6.8', 'latest', 'trunk']
                 exclude:
                     # On PRs: Skip minimum supported WP version for faster feedback
@@ -44,8 +43,13 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
               with:
-                  node-version: ${{ matrix.node }}
+                  node-version-file: '.nvmrc'
                   cache: 'npm'
+
+            - name: Get Node.js version
+              id: node-version
+              run: |
+                  echo "NODE_VERSION=$(node -v)" >> "$GITHUB_OUTPUT"
 
             - name: Install dependencies
               run: |
@@ -74,7 +78,7 @@ jobs:
               uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
               if: ${{ !cancelled() }}
               with:
-                  name: failures-artifacts--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  name: failures-artifacts--node${{ steps.node-version.outputs.NODE_VERSION }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: artifacts/test-results
                   if-no-files-found: ignore
 
@@ -82,7 +86,7 @@ jobs:
               uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
               if: ${{ !cancelled() }}
               with:
-                  name: blob-reports--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  name: blob-reports--node${{ steps.node-version.outputs.NODE_VERSION }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: blob-report
                   if-no-files-found: ignore
 
@@ -140,7 +144,7 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
               with:
-                  node-version: '22'
+                  node-version-file: '.nvmrc'
                   cache: 'npm'
 
             - name: Install dependencies
