@@ -1080,18 +1080,25 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 		public function ajax_get_rows() {
 			$args = acf_request_args(
 				array(
-					'field_name'    => '',
-					'field_key'     => '',
-					'post_id'       => 0,
-					'rows_per_page' => 0,
-					'refresh'       => false,
-					'nonce'         => '',
+					'field_name'        => '',
+					'field_key'         => '',
+					'post_id'           => 0,
+					'rows_per_page'     => 0,
+					'refresh'           => false,
+					'nonce'             => '',
+					'options_page_slug' => '',
 				)
 			);
 
 			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) ) {
 				$error = array( 'error' => __( 'Invalid nonce.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 401 );
+			}
+
+			$post_id_info = acf_decode_post_id( acf_get_valid_post_id( $args['post_id'] ) );
+			if ( ! acf_current_user_can_edit_in_context( $post_id_info, sanitize_text_field( $args['options_page_slug'] ) ) ) {
+				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
+				wp_send_json_error( $error, 403 );
 			}
 
 			if ( ! acf_current_user_can_edit_post( (int) $args['post_id'] ) ) {
@@ -1115,6 +1122,11 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 
 			// Make sure we have a valid field.
 			$field = acf_validate_field( $field );
+
+			if ( empty( $field['pagination'] ) ) {
+				$error = array( 'error' => __( 'Pagination is not enabled for this field.', 'secure-custom-fields' ) );
+				wp_send_json_error( $error, 400 );
+			}
 
 			// Make sure that we only get a subset of the rows.
 			$this->is_rendering = true;
