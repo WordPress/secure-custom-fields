@@ -233,13 +233,17 @@ test.describe( 'All Field Types', () => {
 			const imageButton = page.locator(
 				'.acf-field[data-name="image_field"] .acf-image-uploader a[data-name="add"]'
 			);
-			await imageButton.click();
 			const imagePath = path.join(
 				__dirname,
 				'assets',
 				'test-image.png'
 			);
-			await uploadImageViaModal( page, imagePath, requestUtils );
+			await uploadImageViaModal(
+				page,
+				imagePath,
+				requestUtils,
+				imageButton
+			);
 		}
 
 		// === Relationship fields ===

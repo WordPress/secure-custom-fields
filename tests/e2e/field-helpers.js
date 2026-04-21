@@ -149,18 +149,30 @@ async function waitForMetaBoxes( page ) {
 }
 
 /**
- * Select an image in the media modal, uploading via REST API first.
+ * Upload an image via REST, open the media modal, and pick the new image.
  *
  * The in-browser plupload flow is flaky on some WP versions (upload stalls
  * on "uploading..." so the Select button never enables). Pre-uploading via
  * the REST API and picking from the Media Library tab avoids that path.
  *
- * @param {import('@playwright/test').Page} page         Playwright page object.
- * @param {string}                          imagePath    Path to the image file.
- * @param {Object}                          requestUtils RequestUtils from the test fixture, used to upload via REST.
+ * The REST upload runs *before* the open button is clicked so the media
+ * frame's initial query-attachments fetch includes the new image; otherwise
+ * the cached collection would miss it.
+ *
+ * @param {import('@playwright/test').Page}    page         Playwright page object.
+ * @param {string}                             imagePath    Path to the image file.
+ * @param {Object}                             requestUtils RequestUtils from the test fixture, used to upload via REST.
+ * @param {import('@playwright/test').Locator} openButton   Locator for the button that opens the media modal.
  */
-async function uploadImageViaModal( page, imagePath, requestUtils ) {
+async function uploadImageViaModal(
+	page,
+	imagePath,
+	requestUtils,
+	openButton
+) {
 	const media = await requestUtils.uploadMedia( imagePath );
+
+	await openButton.click();
 
 	await page.waitForSelector( '.media-modal', {
 		state: 'visible',
