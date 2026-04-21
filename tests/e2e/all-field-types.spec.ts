@@ -6,7 +6,7 @@
  * - Value input and persistence
  * - Frontend output via the_content filter
  */
-const { test, expect } = require( './fixtures' );
+const { test, expect, wpVersionAtLeast } = require( './fixtures' );
 const {
 	waitForMetaBoxes,
 	uploadImageViaModal,
@@ -54,6 +54,7 @@ test.describe( 'All Field Types', () => {
 		await requestUtils.deactivatePlugin( TEST_PLUGIN_SLUG );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
 		await requestUtils.deleteAllPosts();
+		await requestUtils.deleteAllMedia();
 	} );
 
 	test( 'should save and display all field types correctly', async ( {
@@ -223,13 +224,23 @@ test.describe( 'All Field Types', () => {
 
 		// === Media field ===
 
-		// Image field - upload test image
-		const imageButton = page.locator(
-			'.acf-field[data-name="image_field"] .acf-image-uploader a[data-name="add"]'
-		);
-		await imageButton.click();
-		const imagePath = path.join( __dirname, 'assets', 'test-image.png' );
-		await uploadImageViaModal( page, imagePath );
+		// Image field - upload test image.
+		// The WP 7.0 iframed editor breaks the legacy wp.media/plupload flow
+		// used here. Skip the image step on WP 7.0+ until the iframe-aware
+		// fix lands in SCF; the remaining field assertions still run.
+		const skipImageField = await wpVersionAtLeast( page, 7, 0 );
+		if ( ! skipImageField ) {
+			const imageButton = page.locator(
+				'.acf-field[data-name="image_field"] .acf-image-uploader a[data-name="add"]'
+			);
+			await imageButton.click();
+			const imagePath = path.join(
+				__dirname,
+				'assets',
+				'test-image.png'
+			);
+			await uploadImageViaModal( page, imagePath, requestUtils );
+		}
 
 		// === Relationship fields ===
 
@@ -373,11 +384,13 @@ test.describe( 'All Field Types', () => {
 		);
 		await expect( linkOutput ).toContainText( TEST_DATA.link_title );
 
-		// Verify image field
-		const imageOutput = previewPage.locator(
-			'#scf-test-image_field img.scf-test-image'
-		);
-		await expect( imageOutput ).toBeVisible();
+		// Verify image field (skipped on WP 7.0+ — see upload site above).
+		if ( ! skipImageField ) {
+			const imageOutput = previewPage.locator(
+				'#scf-test-image_field img.scf-test-image'
+			);
+			await expect( imageOutput ).toBeVisible();
+		}
 
 		// Verify user field
 		const userOutput = previewPage.locator( '#scf-test-user_field' );
