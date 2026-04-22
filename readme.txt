@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 6.9.1
 Requires PHP: 7.4
-Stable tag: 6.8.2
+Stable tag: 6.8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,19 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+
+= 6.8.3 =
+*Release Date 22th April 2026*
+
+*Fixes*
+
+- Fix command palette type error on wp-admin.
+- Plugins requiring ACF are also validated for SCF.
+- REST API calls now honor the user's `unfiltered_html` capability.
+- Block Preview rendering now verifies the user can edit the target post.
+- Paginated Repeater fields now verify the user can edit the target post.
+- Flexible Content layout title AJAX requests now validate a security nonce.
+- Clone field AJAX endpoints now enforce SCF admin permissions on field group listings.
 
 = 6.8.2 =
 *Release Date 24th March 2026*

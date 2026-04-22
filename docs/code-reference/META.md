@@ -306,6 +306,7 @@ This file tracks code elements that need documentation.
 - `acf/acf_get_posts/args`
 - `acf/acf_get_posts/results`
 - `acf/connect_attachment_to_post`
+- `acf/current_user_can_edit_in_context`
 - `acf/current_user_can_edit_post`
 - `acf/filesize`
 - `acf/get_image_sizes`
