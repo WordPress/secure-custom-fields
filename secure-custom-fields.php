@@ -840,6 +840,24 @@ if ( ! class_exists( 'ACF' ) ) {
 	acf();
 } // class_exists check
 
+if ( ! function_exists( 'scf_map_plugin_dependency_slug' ) ) {
+	/**
+	 * Maps ACF dependency slugs so SCF satisfies plugins requiring ACF.
+	 *
+	 * @param string $slug Plugin dependency slug.
+	 * @return string
+	 */
+	function scf_map_plugin_dependency_slug( $slug ) {
+		if ( 'advanced-custom-fields' === $slug ) {
+			return 'secure-custom-fields';
+		}
+
+		return $slug;
+	}
+
+	add_filter( 'wp_plugin_dependencies_slug', 'scf_map_plugin_dependency_slug' );
+}
+
 if ( ! function_exists( 'scf_deactivate_other_instances' ) ) {
 	/**
 	 * Checks if another version of ACF/ACF PRO is active and deactivates it.

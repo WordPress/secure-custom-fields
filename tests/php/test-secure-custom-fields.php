@@ -34,4 +34,23 @@ class Test_Secure_Custom_Fields extends BaseTestCase {
 		$acf = acf();
 		$this->assertNotEmpty( $acf->version, 'ACF version should be defined' );
 	}
+
+	/**
+	 * Plugins that require "advanced-custom-fields" should be satisfied by SCF.
+	 */
+	public function test_map_plugin_dependency_slug() {
+		$this->assertSame(
+			'secure-custom-fields',
+			scf_map_plugin_dependency_slug( 'advanced-custom-fields' )
+		);
+
+		$this->assertSame(
+			'some-other-plugin',
+			scf_map_plugin_dependency_slug( 'some-other-plugin' )
+		);
+
+		$this->assertNotFalse(
+			has_filter( 'wp_plugin_dependencies_slug', 'scf_map_plugin_dependency_slug' )
+		);
+	}
 }
