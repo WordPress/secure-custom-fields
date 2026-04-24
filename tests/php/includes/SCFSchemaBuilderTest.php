@@ -22,11 +22,80 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	private $builder;
 
 	/**
+	 * Temporary directory used by containment tests.
+	 *
+	 * Populated in tests that need a scratch $base_path and cleaned in tearDown().
+	 *
+	 * @var string|null
+	 */
+	private $temp_dir = null;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 		$this->builder = acf_get_instance( 'SCF_Schema_Builder' );
+	}
+
+	/**
+	 * Clean up any temp directories/symlinks created by a test.
+	 */
+	public function tearDown(): void {
+		if ( null !== $this->temp_dir && is_dir( $this->temp_dir ) ) {
+			$this->remove_tree( $this->temp_dir );
+			$this->temp_dir = null;
+		}
+		parent::tearDown();
+	}
+
+	/**
+	 * Recursively remove a directory, including symlinks.
+	 *
+	 * @param string $dir Directory to remove.
+	 */
+	private function remove_tree( string $dir ): void {
+		if ( is_link( $dir ) ) {
+			unlink( $dir );
+			return;
+		}
+		if ( ! is_dir( $dir ) ) {
+			if ( file_exists( $dir ) ) {
+				unlink( $dir );
+			}
+			return;
+		}
+		$entries = scandir( $dir );
+		if ( false === $entries ) {
+			return;
+		}
+		foreach ( $entries as $entry ) {
+			if ( '.' === $entry || '..' === $entry ) {
+				continue;
+			}
+			$path = $dir . DIRECTORY_SEPARATOR . $entry;
+			if ( is_link( $path ) ) {
+				unlink( $path );
+			} elseif ( is_dir( $path ) ) {
+				$this->remove_tree( $path );
+			} else {
+				unlink( $path );
+			}
+		}
+		rmdir( $dir );
+	}
+
+	/**
+	 * Create a unique temp directory under the system tmp and remember it.
+	 *
+	 * @return string Absolute path to the created temp dir.
+	 */
+	private function make_temp_dir(): string {
+		$base = rtrim( sys_get_temp_dir(), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR
+			. 'scf-schema-builder-test-' . uniqid( '', true );
+		mkdir( $base, 0700, true );
+		$this->temp_dir = $base;
+		return $base;
 	}
 
 	/**
@@ -318,5 +387,189 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 		// Should resolve the active definition.
 		$this->assertEquals( 'boolean', $result['type'] );
 		$this->assertArrayNotHasKey( '$ref', $result );
+	}
+
+	/**
+	 * Parent-traversal refs like "../evil.schema.json#/..." must be rejected.
+	 *
+	 * Containment is enforced by realpath() prefix check; the ref must stay
+	 * unresolved and no fatal error should be raised.
+	 */
+	public function test_resolve_refs_rejects_parent_traversal() {
+		$base_path = $this->make_temp_dir() . DIRECTORY_SEPARATOR . 'schemas' . DIRECTORY_SEPARATOR;
+		mkdir( $base_path, 0700, true );
+
+		// Place a real file outside $base_path that the traversal would reach, to prove
+		// the rejection comes from containment and not from the file being missing.
+		$outside_path = dirname( rtrim( $base_path, DIRECTORY_SEPARATOR ) ) . DIRECTORY_SEPARATOR . 'evil.schema.json';
+		file_put_contents(
+			$outside_path,
+			wp_json_encode(
+				array(
+					'definitions' => array(
+						'x' => array( 'type' => 'string' ),
+					),
+				)
+			)
+		);
+
+		$schema = array(
+			'$ref' => '../evil.schema.json#/definitions/x',
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema, $base_path );
+
+		// Ref must come back unchanged (unresolved).
+		$this->assertSame( $schema, $result );
+	}
+
+	/**
+	 * Absolute-path refs like "/etc/passwd#/..." must be rejected.
+	 *
+	 * Concatenating $base_path with an absolute ref produces a non-existent
+	 * nested path, and even if it did exist realpath() would fall outside
+	 * $base_path and be rejected.
+	 */
+	public function test_resolve_refs_rejects_absolute_path() {
+		$base_path = $this->make_temp_dir() . DIRECTORY_SEPARATOR . 'schemas' . DIRECTORY_SEPARATOR;
+		mkdir( $base_path, 0700, true );
+
+		$schema = array(
+			'$ref' => '/etc/passwd#/definitions/x',
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema, $base_path );
+
+		$this->assertSame( $schema, $result );
+	}
+
+	/**
+	 * Symlinks that resolve outside $base_path must be rejected.
+	 *
+	 * The real path containment check should reject a ref whose target, after
+	 * realpath(), lives outside the configured base directory even though the
+	 * lexical path (base + filename) looked safe.
+	 */
+	public function test_resolve_refs_rejects_symlink_escape() {
+		if ( DIRECTORY_SEPARATOR === '\\' ) {
+			$this->markTestSkipped( 'Symlink semantics differ on Windows.' );
+		}
+
+		$root      = $this->make_temp_dir();
+		$base_path = $root . DIRECTORY_SEPARATOR . 'schemas' . DIRECTORY_SEPARATOR;
+		mkdir( $base_path, 0700, true );
+
+		// Valid in-base schema to prove the builder works in this temp layout.
+		file_put_contents(
+			$base_path . 'inner.schema.json',
+			wp_json_encode(
+				array(
+					'definitions' => array(
+						'x' => array( 'type' => 'string' ),
+					),
+				)
+			)
+		);
+
+		// Real schema file OUTSIDE $base_path (sibling to schemas/ under $root).
+		$outside_file = $root . DIRECTORY_SEPARATOR . 'outside.schema.json';
+		file_put_contents(
+			$outside_file,
+			wp_json_encode(
+				array(
+					'definitions' => array(
+						'x' => array( 'type' => 'string' ),
+					),
+				)
+			)
+		);
+
+		// Symlink inside $base_path pointing at the outside real file.
+		$link = $base_path . 'escape.schema.json';
+		if ( ! symlink( $outside_file, $link ) ) {
+			$this->markTestSkipped( 'Unable to create symlink in this environment.' );
+		}
+
+		$schema = array(
+			'$ref' => 'escape.schema.json#/definitions/x',
+		);
+
+		$result = $this->builder->resolve_refs( $schema, $schema, $base_path );
+
+		// Symlink resolution escapes $base_path -> containment check must reject.
+		$this->assertSame( $schema, $result );
+	}
+
+	/**
+	 * A cycle between two external-file refs must halt via the visited-set guard.
+	 *
+	 * The two files reference each other; resolve_refs() must return in bounded
+	 * time and leave the cycle entry unresolved, without tripping the
+	 * MAX_REF_DEPTH structural cap or exhausting the PHP call stack.
+	 */
+	public function test_resolve_refs_halts_on_circular_ref() {
+		$base_path = $this->make_temp_dir() . DIRECTORY_SEPARATOR . 'schemas' . DIRECTORY_SEPARATOR;
+		mkdir( $base_path, 0700, true );
+
+		file_put_contents(
+			$base_path . 'a.schema.json',
+			wp_json_encode(
+				array(
+					'definitions' => array(
+						'x' => array( '$ref' => 'b.schema.json#/definitions/y' ),
+					),
+				)
+			)
+		);
+		file_put_contents(
+			$base_path . 'b.schema.json',
+			wp_json_encode(
+				array(
+					'definitions' => array(
+						'y' => array( '$ref' => 'a.schema.json#/definitions/x' ),
+					),
+				)
+			)
+		);
+
+		$schema = array(
+			'$ref' => 'a.schema.json#/definitions/x',
+		);
+
+		$start   = microtime( true );
+		$result  = $this->builder->resolve_refs( $schema, $schema, $base_path );
+		$elapsed = microtime( true ) - $start;
+
+		// Bounded time sanity fence — cycle must be cut short, not wait for depth cap.
+		$this->assertLessThan( 1.0, $elapsed, 'Cycle should halt quickly via visited-set guard.' );
+
+		// The returned schema must still carry an unresolved $ref somewhere on the
+		// chain (either the top-level entry or one of its descendants kept intact
+		// when the cycle was detected).
+		$this->assertTrue(
+			$this->contains_ref( $result ),
+			'Circular ref chain should leave a $ref in place rather than fully inlining.'
+		);
+	}
+
+	/**
+	 * Recursively check whether a schema array contains any $ref key.
+	 *
+	 * @param mixed $node Schema node to inspect.
+	 * @return bool True when a $ref key is present anywhere in the structure.
+	 */
+	private function contains_ref( $node ): bool {
+		if ( ! is_array( $node ) ) {
+			return false;
+		}
+		if ( isset( $node['$ref'] ) ) {
+			return true;
+		}
+		foreach ( $node as $value ) {
+			if ( $this->contains_ref( $value ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
