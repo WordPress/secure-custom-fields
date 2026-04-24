@@ -93,7 +93,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 					foreach ( explode( '/', $matches[1] ) as $part ) {
 						$resolved = $resolved[ $part ] ?? null;
 					}
-				} elseif ( preg_match( '~^([^#]+)#/definitions/(.+)$~', $ref, $matches ) ) {
+				} elseif ( preg_match( '~^([^#]+)#/definitions/(.+)$~', $ref, $matches ) && false === strpos( $matches[1], "\0" ) ) {
 					// Relative file ref: file.schema.json#/definitions/path/to/def.
 					// Contain the resolved path to $base_path to block traversal via ../ or absolute paths.
 					$candidate = $base_path . $matches[1];
