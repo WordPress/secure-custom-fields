@@ -2,6 +2,14 @@
 /**
  * Tests for SCF_Schema_Builder class.
  *
+ * Fixture setup for containment/cycle tests needs direct filesystem calls
+ * (symlink, temp-dir cycles) that WP_Filesystem cannot express.
+ *
+ * phpcs:disable WordPress.WP.AlternativeFunctions.unlink_unlink
+ * phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
+ * phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+ * phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+ *
  * @package wordpress/secure-custom-fields
  */
 
