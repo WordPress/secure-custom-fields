@@ -82,6 +82,7 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			$root_schema = $root_schema ?? $schema;
 			$definitions = $root_schema['definitions'] ?? array();
 			$base_path   = $base_path ?? acf_get_path( 'schemas/' );
+			$base_path   = rtrim( $base_path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
 			if ( isset( $schema['$ref'] ) ) {
 				$ref      = $schema['$ref'];
