@@ -66,15 +66,24 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 		 * - Internal refs: #/definitions/foo (resolved from root_schema)
 		 * - Relative file refs: file.schema.json#/definitions/foo (loaded from base_path)
 		 *
+		 * Cycle detection uses two guards:
+		 * - $visited tracks external-file ref strings on the current resolution chain
+		 *   so cycles (A -> B -> A) abort cleanly without exhausting the stack.
+		 * - $depth is a belt-and-suspenders upper bound, only incremented when
+		 *   recursing into a resolved external-file $ref (not on plain structural
+		 *   descent into properties, items, etc.), so deeply nested schemas don't
+		 *   trip the cycle guard prematurely.
+		 *
 		 * @since 6.8.0
 		 *
 		 * @param array       $schema      The schema to resolve.
 		 * @param array|null  $root_schema The root schema containing definitions. If null, uses $schema.
 		 * @param string|null $base_path   Base path for loading external schema files. Defaults to schemas/.
-		 * @param int         $depth       Internal recursion depth counter.
+		 * @param int         $depth       Internal external-ref recursion depth counter.
+		 * @param array       $visited     External-file ref strings seen on the current resolution chain.
 		 * @return array The resolved schema.
 		 */
-		public function resolve_refs( array $schema, ?array $root_schema = null, ?string $base_path = null, int $depth = 0 ): array {
+		public function resolve_refs( array $schema, ?array $root_schema = null, ?string $base_path = null, int $depth = 0, array $visited = array() ): array {
 			if ( $depth >= self::MAX_REF_DEPTH ) {
 				return $schema;
 			}
@@ -85,8 +94,9 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 			$base_path   = rtrim( $base_path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
 			if ( isset( $schema['$ref'] ) ) {
-				$ref      = $schema['$ref'];
-				$resolved = null;
+				$ref           = $schema['$ref'];
+				$resolved      = null;
+				$ref_signature = null;
 
 				// Internal ref: #/definitions/path/to/def
 				if ( preg_match( '~^#/definitions/(.+)$~', $ref, $matches ) ) {
@@ -107,6 +117,14 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 						&& 0 === strpos( $real_file, rtrim( $real_base, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR );
 
 					if ( $within_base && is_file( $real_file ) ) {
+						// Signature uses the resolved real file path so equivalent refs collapse to the same key.
+						$ref_signature = $real_file . '#/definitions/' . $def_path;
+
+						// Abort unresolved if this external ref is already on the current resolution chain.
+						if ( in_array( $ref_signature, $visited, true ) ) {
+							return $schema;
+						}
+
 						$external_content = file_get_contents( $real_file );
 						$external_schema  = json_decode( $external_content, true );
 
@@ -121,13 +139,23 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 
 				if ( is_array( $resolved ) ) {
 					unset( $schema['$ref'] );
-					return array_merge( $this->resolve_refs( $resolved, $root_schema, $base_path, $depth + 1 ), $schema );
+
+					// Only bump depth and extend visited on external-file refs — internal refs
+					// resolve against already-loaded definitions and don't open new files.
+					if ( null !== $ref_signature ) {
+						$next_visited   = $visited;
+						$next_visited[] = $ref_signature;
+						return array_merge( $this->resolve_refs( $resolved, $root_schema, $base_path, $depth + 1, $next_visited ), $schema );
+					}
+
+					return array_merge( $this->resolve_refs( $resolved, $root_schema, $base_path, $depth, $visited ), $schema );
 				}
 			}
 
 			foreach ( $schema as $key => $value ) {
 				if ( is_array( $value ) ) {
-					$schema[ $key ] = $this->resolve_refs( $value, $root_schema, $base_path, $depth + 1 );
+					// Structural descent: don't bump $depth, just thread the visited set through.
+					$schema[ $key ] = $this->resolve_refs( $value, $root_schema, $base_path, $depth, $visited );
 				}
 			}
 
