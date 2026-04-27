@@ -38,7 +38,6 @@ test.describe( 'Post Content Placeholders', () => {
 		await createPlaceholderFieldGroup( page, admin, {
 			groupTitle: FIELD_GROUPS.movieTitle,
 			fieldLabel: 'Movie Title',
-			fieldName: 'movie_title',
 			fieldType: 'text',
 			enableBindings: true,
 		} );
@@ -46,7 +45,6 @@ test.describe( 'Post Content Placeholders', () => {
 		await createPlaceholderFieldGroup( page, admin, {
 			groupTitle: FIELD_GROUPS.secretNote,
 			fieldLabel: 'Secret Note',
-			fieldName: 'secret_note',
 			fieldType: 'text',
 			enableBindings: false,
 		} );
@@ -54,7 +52,6 @@ test.describe( 'Post Content Placeholders', () => {
 		await createPlaceholderFieldGroup( page, admin, {
 			groupTitle: FIELD_GROUPS.bodyHtml,
 			fieldLabel: 'Body HTML',
-			fieldName: 'body_html',
 			fieldType: 'wysiwyg',
 			enableBindings: true,
 		} );
@@ -78,12 +75,18 @@ test.describe( 'Post Content Placeholders', () => {
 		await admin.editPost( post.id );
 		await waitForMetaBoxes( page );
 
-		await page
-			.locator( '.acf-field[data-name="movie_title"] input[type="text"]' )
-			.fill( 'The Matrix' );
-		await page
-			.locator( '.acf-field[data-name="secret_note"] input[type="text"]' )
-			.fill( 'Classified' );
+		const movieTitleField = page.locator(
+			'.acf-field[data-name="movie_title"] input[type="text"]'
+		);
+		const secretNoteField = page.locator(
+			'.acf-field[data-name="secret_note"] input[type="text"]'
+		);
+
+		await movieTitleField.waitFor( { state: 'visible', timeout: 30000 } );
+		await secretNoteField.waitFor( { state: 'visible', timeout: 30000 } );
+
+		await movieTitleField.fill( 'The Matrix' );
+		await secretNoteField.fill( 'Classified' );
 
 		const textTabButton = page.locator(
 			'.acf-field[data-name="body_html"] .wp-switch-editor.switch-html'
@@ -148,28 +151,28 @@ test.describe( 'Post Content Placeholders', () => {
  * @param {Object}                          options Field group options.
  */
 async function createPlaceholderFieldGroup( page, admin, options ) {
-	const {
-		groupTitle,
-		fieldLabel,
-		fieldName,
-		fieldType,
-		enableBindings,
-	} = options;
+	const { groupTitle, fieldLabel, fieldType, enableBindings } = options;
 
 	await admin.visitAdminPage( 'edit.php', 'post_type=acf-field-group' );
 	await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
 
 	await page.waitForSelector( '#title' );
 	await page.fill( '#title', groupTitle );
+
 	await page
-		.locator( 'input[id^="acf_fields-field_"][id$="-label"]' )
-		.fill( fieldLabel );
-	await page
-		.locator( 'input[id^="acf_fields-field_"][id$="-name"]' )
-		.fill( fieldName );
-	await page
-		.locator( 'select[id^="acf_fields-field_"][id$="-type"]' )
-		.selectOption( fieldType );
+		.locator( 'a.acf-btn-secondary.add-field' )
+		.filter( { hasText: 'Add Field' } )
+		.first()
+		.click();
+	await page.waitForTimeout( 500 );
+
+	const fieldObject = page.locator( '.acf-field-object' ).last();
+	const fieldLabelInput = fieldObject.locator( 'input.field-label' );
+	const fieldTypeSelect = fieldObject.locator( 'select.field-type' );
+
+	await fieldLabelInput.waitFor( { state: 'visible', timeout: 30000 } );
+	await fieldLabelInput.fill( fieldLabel );
+	await fieldTypeSelect.selectOption( fieldType );
 
 	if ( enableBindings ) {
 		await toggleFieldSetting( page, '.acf-field-setting-allow_in_bindings', true );
@@ -179,6 +182,9 @@ async function createPlaceholderFieldGroup( page, admin, options ) {
 		.locator( 'button.acf-btn.acf-publish[type="submit"]' )
 		.click();
 	await expect( page.locator( '.updated.notice' ) ).toBeVisible();
+
+	await admin.visitAdminPage( 'edit.php', 'post_type=acf-field-group' );
+	await expect( page.locator( `tr:has-text("${ groupTitle }")` ) ).toBeVisible();
 }
 
 /**

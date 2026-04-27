@@ -42,7 +42,43 @@ class Test_SCF_Post_Content_Placeholders extends BaseTestCase {
 		acf_reset_local();
 		acf_get_store( 'values' )->reset();
 
-		$this->service = new SCF_Post_Content_Placeholders();
+		$this->service = new class() extends SCF_Post_Content_Placeholders {
+			/**
+			 * The post ID to use for supported-context rendering.
+			 *
+			 * @var int
+			 */
+			private $supported_post_id = 0;
+
+			/**
+			 * Sets the post ID used for supported test rendering.
+			 *
+			 * @param int $post_id The post ID.
+			 * @return void
+			 */
+			public function set_supported_post_id( $post_id ) {
+				$this->supported_post_id = (int) $post_id;
+			}
+
+			/**
+			 * Returns the configured post ID only for supported block content.
+			 *
+			 * @param string $block_content The rendered block HTML.
+			 * @param array  $block         The parsed block data.
+			 * @return int
+			 */
+			protected function get_supported_post_id( $block_content, $block ) {
+				if ( ! is_array( $block ) || empty( $block['blockName'] ) || ! in_array( $block['blockName'], $this->get_supported_block_names(), true ) ) {
+					return 0;
+				}
+
+				if ( false === strpos( $block_content, '[[' ) ) {
+					return 0;
+				}
+
+				return $this->supported_post_id;
+			}
+		};
 		$this->post_id = wp_insert_post(
 			array(
 				'post_type'    => 'post',
@@ -108,6 +144,7 @@ class Test_SCF_Post_Content_Placeholders extends BaseTestCase {
 						'label'             => 'Body HTML',
 						'name'              => 'body_html',
 						'type'              => 'wysiwyg',
+						'media_upload'      => 0,
 						'allow_in_bindings' => 1,
 					),
 					array(
@@ -324,17 +361,9 @@ class Test_SCF_Post_Content_Placeholders extends BaseTestCase {
 			)
 		);
 
-		$this->go_to( get_permalink( $this->post_id ) );
-
-		$GLOBALS['post']           = get_post( $this->post_id );
-		$GLOBALS['wp_query']->post = $GLOBALS['post'];
-		$GLOBALS['wp_query']->in_the_loop = true;
-
-		setup_postdata( $GLOBALS['post'] );
+		$this->service->set_supported_post_id( $this->post_id );
 		$rendered = apply_filters( 'the_content', get_post_field( 'post_content', $this->post_id ) );
-		wp_reset_postdata();
-
-		$GLOBALS['wp_query']->in_the_loop = false;
+		$this->service->set_supported_post_id( 0 );
 
 		return $rendered;
 	}

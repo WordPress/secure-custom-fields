@@ -239,6 +239,11 @@
         "parent": "features",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/index.md"
     },
+    "features/post-content-placeholders": {
+        "slug": "post-content-placeholders",
+        "parent": "features",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/post-content-placeholders.md"
+    },
     "features/post-types": {
         "slug": "post-types",
         "parent": "features",
