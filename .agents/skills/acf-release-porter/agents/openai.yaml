@@ -1,0 +1,4 @@
+interface:
+  display_name: "ACF Release Porter"
+  short_description: "Port ACF releases into SCF"
+  default_prompt: "Use $acf-release-porter to port an Advanced Custom Fields release into Secure Custom Fields."

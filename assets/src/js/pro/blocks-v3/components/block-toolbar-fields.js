@@ -4,6 +4,8 @@
  * Allows quick access to edit specific fields from the block toolbar
  */
 
+/* global acf */
+
 import { useState, useRef } from '@wordpress/element';
 import { BlockControls } from '@wordpress/blockEditor';
 import { ToolbarGroup, ToolbarButton, Modal } from '@wordpress/components';
@@ -13,14 +15,15 @@ import { PopoverWrapper } from './popover-wrapper';
  * BlockToolbarFields component
  * Displays field editing buttons in the WordPress block toolbar
  *
- * @param {Object} props - Component props
- * @param {Array} props.blockToolbarFields - Array of field names or field config objects to show in toolbar
- * @param {Array} props.blockFieldInfo - Array of all field information
- * @param {Function} props.setCurrentBlockFormContainer - Setter for form container ref
- * @param {Document|HTMLIFrameElement} props.gutenbergIframeOrDocument - Document or iframe reference
- * @param {Function} props.setBlockFormModalOpen - Setter for block form modal state
- * @param {boolean} props.blockFormModalOpen - Whether block form modal is open
- * @returns {JSX.Element} - Rendered toolbar controls
+ * @param {Object}                     props                                - Component props
+ * @param {Array}                      props.blockToolbarFields             - Array of field names or field config objects to show in toolbar
+ * @param {Array}                      props.blockFieldInfo                 - Array of all field information
+ * @param {Function}                   props.setCurrentBlockFormContainer   - Setter for form container ref
+ * @param {Document|HTMLIFrameElement} props.gutenbergIframeOrDocument      - Document or iframe reference
+ * @param {Function}                   props.setBlockFormModalOpen          - Setter for block form modal state
+ * @param {boolean}                    props.blockFormModalOpen             - Whether block form modal is open
+ * @param {boolean}                    props.hideExpandedEditorBtnInToolbar - Whether to hide the expanded editor button in the toolbar
+ * @return {JSX.Element} - Rendered toolbar controls
  */
 export const BlockToolbarFields = ( {
 	blockToolbarFields,
@@ -29,6 +32,7 @@ export const BlockToolbarFields = ( {
 	gutenbergIframeOrDocument,
 	setBlockFormModalOpen,
 	blockFormModalOpen,
+	hideExpandedEditorBtnInToolbar,
 } ) => {
 	const [ selectedFieldKey, setSelectedFieldKey ] = useState( null );
 	const [ selectedFieldButtonRef, setSelectedFieldButtonRef ] = useState();
@@ -37,15 +41,23 @@ export const BlockToolbarFields = ( {
 
 	/**
 	 * Get field type class name from field name
+	 *
+	 * @param {string} fieldName Field name.
+	 * @return {string} Field type class name.
 	 */
 	const getFieldTypeClassName = ( fieldName ) => {
-		if ( ! fieldName || ! blockFieldInfo ) return '';
+		if ( ! fieldName || ! blockFieldInfo ) {
+			return '';
+		}
 		const field = blockFieldInfo.find( ( f ) => f.name === fieldName );
 		return field?.type ? field.type.replace( /_/g, '-' ) : '';
 	};
 
 	/**
 	 * Get field info object from field name
+	 *
+	 * @param {string} fieldName Field name.
+	 * @return {Object|null} Field info object.
 	 */
 	const getFieldInfo = ( fieldName ) => {
 		return fieldName && blockFieldInfo
@@ -55,9 +67,14 @@ export const BlockToolbarFields = ( {
 
 	/**
 	 * Get field label from field name
+	 *
+	 * @param {string} fieldName Field name.
+	 * @return {string} Field label.
 	 */
 	const getFieldLabel = ( fieldName ) => {
-		if ( ! fieldName || ! blockFieldInfo ) return fieldName || '';
+		if ( ! fieldName || ! blockFieldInfo ) {
+			return fieldName || '';
+		}
 		const field = blockFieldInfo.find( ( f ) => f.name === fieldName );
 		// Fallback to fieldName when label not found to ensure toolbar shows a title
 		return field?.label || fieldName || '';
@@ -65,17 +82,19 @@ export const BlockToolbarFields = ( {
 	return (
 		<BlockControls>
 			{ /* Edit Block button */ }
-			<ToolbarGroup>
-				<ToolbarButton
-					className="components-icon-button components-toolbar__control acf-edit-block-button"
-					label={ acf.__( 'Edit Block' ) }
-					icon="edit"
-					onClick={ () => {
-						setBlockFormModalOpen( true );
-					} }
-					isPressed={ blockFormModalOpen }
-				/>
-			</ToolbarGroup>
+			{ ! hideExpandedEditorBtnInToolbar && (
+				<ToolbarGroup>
+					<ToolbarButton
+						className="components-icon-button components-toolbar__control"
+						label={ acf.__( 'Edit Block' ) }
+						icon="edit"
+						onClick={ () => {
+							setBlockFormModalOpen( true );
+						} }
+						isPressed={ blockFormModalOpen }
+					/>
+				</ToolbarGroup>
+			) }
 
 			{ /* Field buttons */ }
 			{ blockToolbarFields.length > 0 && (

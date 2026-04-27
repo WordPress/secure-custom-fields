@@ -170,6 +170,8 @@ if ( ! class_exists( 'ACF' ) ) {
 				'enable_shortcode'        => true,
 				'enable_bidirection'      => true,
 				'enable_block_bindings'   => true,
+				'enable_acf_ai'           => false,
+				'enable_schema'           => false,
 				'pro'                     => true,
 			);
 
@@ -204,6 +206,14 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_new_instance( 'SCF\Meta\Term' );
 			acf_new_instance( 'SCF\Meta\User' );
 			acf_new_instance( 'SCF\Meta\Option' );
+
+			if ( class_exists( 'ACF\AI\AI' ) ) {
+				acf_new_instance( 'ACF\AI\AI' );
+			}
+
+			if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'ACF\CLI\CLI' ) ) {
+				acf_new_instance( 'ACF\CLI\CLI' );
+			}
 
 			acf_include( 'includes/acf-hook-functions.php' );
 			acf_include( 'includes/acf-field-functions.php' );
