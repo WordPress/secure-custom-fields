@@ -190,6 +190,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/class-acf-options-page.php' );
 			acf_include( 'includes/class-acf-site-health.php' );
 			acf_include( 'includes/class-scf-json-schema-validator.php' );
+			acf_include( 'includes/class-scf-post-content-placeholders.php' );
 			acf_include( 'includes/class-scf-schema-builder.php' );
 			acf_include( 'includes/abilities/class-scf-abilities-integration.php' );
 			acf_include( 'includes/fields/class-acf-field.php' );
@@ -472,6 +473,8 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
 				new ACF\Blocks\Bindings();
 			}
+
+			new SCF_Post_Content_Placeholders();
 
 			/**
 			 * Fires after ACF is completely "initialized".
