@@ -247,7 +247,7 @@ class Site_Health {
 	 * @return void
 	 */
 	public function maybe_log_first_registered_block( array $site_health, array &$updated ): void {
-		if ( ! acf_is_pro() || ! function_exists( 'acf_pro_get_registered_block_count' ) ) {
+		if ( ! acf_is_pro() ) {
 			return;
 		}
 
@@ -277,10 +277,21 @@ class Site_Health {
 		}
 
 		// Transition from 0 → positive: first time registering a block.
-		if ( acf_pro_get_registered_block_count() > 0 ) {
+		if ( $this->get_registered_block_count() > 0 ) {
 			$updated['event_first_registered_block'] = time();
 			$updated['has_had_blocks']               = true;
 		}
+	}
+
+	/**
+	 * Gets the number of registered SCF blocks.
+	 *
+	 * @since 6.8
+	 *
+	 * @return integer
+	 */
+	private function get_registered_block_count(): int {
+		return count( acf_get_block_types() );
 	}
 
 	/**
@@ -362,8 +373,8 @@ class Site_Health {
 		}
 
 		$debug_info['secure-custom-fields'] = array(
-			'label'       => __( 'ACF', 'secure-custom-fields' ),
-			'description' => __( 'This section contains debug information about your ACF configuration which can be useful to provide to support.', 'secure-custom-fields' ),
+			'label'       => __( 'SCF', 'secure-custom-fields' ),
+			'description' => __( 'This section contains debug information about your SCF configuration which can be useful to provide to support.', 'secure-custom-fields' ),
 			'fields'      => $data,
 		);
 
@@ -381,12 +392,10 @@ class Site_Health {
 		global $wpdb;
 
 		$fields         = array();
-		$is_pro         = acf_is_pro();
-		$license        = $is_pro ? acf_pro_get_license() : array();
-		$license_status = $is_pro ? acf_pro_get_license_status() : array();
-		$field_groups   = acf_get_field_groups();
-		$post_types     = acf_get_acf_post_types();
-		$taxonomies     = acf_get_acf_taxonomies();
+		$is_pro       = acf_is_pro();
+		$field_groups = acf_get_field_groups();
+		$post_types   = acf_get_acf_post_types();
+		$taxonomies   = acf_get_acf_taxonomies();
 
 		$yes      = __( 'Yes', 'secure-custom-fields' );
 		$no       = __( 'No', 'secure-custom-fields' );
@@ -400,46 +409,14 @@ class Site_Health {
 
 		$fields['plugin_type'] = array(
 			'label' => __( 'Plugin Type', 'secure-custom-fields' ),
-			'value' => $is_pro ? __( 'PRO', 'secure-custom-fields' ) : __( 'Free', 'secure-custom-fields' ),
-			'debug' => $is_pro ? 'PRO' : 'Free',
+			'value' => __( 'Secure Custom Fields', 'secure-custom-fields' ),
+			'debug' => 'Secure Custom Fields',
 		);
 
 		$fields['update_source'] = array(
 			'label' => __( 'Update Source', 'secure-custom-fields' ),
 			'value' => apply_filters( 'acf/site_health/update_source', __( 'wordpress.org', 'secure-custom-fields' ) ),
 		);
-
-		if ( $is_pro ) {
-			$fields['activated'] = array(
-				'label' => __( 'License Activated', 'secure-custom-fields' ),
-				'value' => ! empty( $license ) ? $yes : $no,
-				'debug' => ! empty( $license ),
-			);
-
-			$fields['activated_url'] = array(
-				'label' => __( 'Licensed URL', 'secure-custom-fields' ),
-				'value' => ! empty( $license['url'] ) ? $license['url'] : '',
-			);
-
-			$fields['license_type'] = array(
-				'label' => __( 'License Type', 'secure-custom-fields' ),
-				'value' => $license_status['name'],
-			);
-
-			$fields['license_status'] = array(
-				'label' => __( 'License Status', 'secure-custom-fields' ),
-				'value' => $license_status['status'],
-			);
-
-			$expiry = ! empty( $license_status['expiry'] ) ? $license_status['expiry'] : '';
-			$format = get_option( 'date_format', 'F j, Y' );
-
-			$fields['subscription_expires'] = array(
-				'label' => __( 'Subscription Expiry Date', 'secure-custom-fields' ),
-				'value' => is_numeric( $expiry ) ? date_i18n( $format, $expiry ) : '',
-				'debug' => $expiry,
-			);
-		}
 
 		$fields['wp_version'] = array(
 			'label' => __( 'WordPress Version', 'secure-custom-fields' ),
@@ -804,8 +781,8 @@ class Site_Health {
 
 		if ( $is_pro ) {
 			$fields['registered_acf_blocks'] = array(
-				'label' => __( 'Registered ACF Blocks', 'secure-custom-fields' ),
-				'value' => number_format_i18n( acf_pro_get_registered_block_count() ),
+				'label' => __( 'Registered SCF Blocks', 'secure-custom-fields' ),
+				'value' => number_format_i18n( $this->get_registered_block_count() ),
 			);
 
 			$blocks                           = acf_get_block_types();
@@ -845,7 +822,7 @@ class Site_Health {
 			);
 
 			$fields['blocks_per_acf_block_version'] = array(
-				'label' => __( 'Blocks Per ACF Block Version', 'secure-custom-fields' ),
+				'label' => __( 'Blocks Per SCF Block Version', 'secure-custom-fields' ),
 				'value' => $acf_block_versions,
 			);
 
@@ -901,7 +878,7 @@ class Site_Health {
 		);
 
 		$fields['registered_acf_forms'] = array(
-			'label' => __( 'Registered ACF Forms', 'secure-custom-fields' ),
+			'label' => __( 'Registered SCF Forms', 'secure-custom-fields' ),
 			'value' => number_format_i18n( count( acf_get_forms() ) ),
 		);
 
