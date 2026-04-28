@@ -6630,8 +6630,7 @@ h3.acf-sub-field-list-title:before,
   z-index: 801;
 }
 
-.acf-experimental-badge,
-.acf-admin-page span.acf-experimental-badge.acf-field {
+.acf-experimental-badge {
   display: inline-flex;
   align-items: center;
   background: #E6F0FB;
@@ -6641,8 +6640,7 @@ h3.acf-sub-field-list-title:before,
   border-radius: 9999px;
   padding: 1px 8px;
 }
-.acf-experimental-badge:before,
-.acf-admin-page span.acf-experimental-badge.acf-field:before {
+.acf-experimental-badge:before {
   content: "";
   -webkit-mask-image: url("../../images/icons/icon-experimental.svg");
   mask-image: url("../../images/icons/icon-experimental.svg");
