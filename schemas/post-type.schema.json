@@ -379,6 +379,16 @@
 					"default": true,
 					"description": "Whether to include the post type in the REST API"
 				},
+				"allow_ai_access": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "Whether to expose this post type to AI integrations"
+				},
+				"ai_description": {
+					"type": "string",
+					"default": "",
+					"description": "Description that helps AI integrations understand how to use this post type"
+				},
 				"rest_base": {
 					"type": "string",
 					"description": "To change the base URL of REST API route"
