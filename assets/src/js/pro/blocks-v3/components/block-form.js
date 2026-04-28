@@ -14,6 +14,7 @@ import { lockPostSaving, unlockPostSaving } from '../utils/post-locking';
  * @param {jQuery} props.$ - jQuery instance
  * @param {string} props.clientId - Block client ID
  * @param {string} props.blockFormHtml - HTML markup for the ACF form
+ * @param {Function} props.onMount - Callback when the form mounts
  * @param {Function} props.onChange - Callback when form data changes
  * @param {Array} props.validationErrors - Array of validation error objects
  * @param {boolean} props.showValidationErrors - Whether to display validation errors
@@ -26,6 +27,7 @@ export const BlockForm = ( {
 	$,
 	clientId,
 	blockFormHtml,
+	onMount,
 	onChange,
 	validationErrors,
 	showValidationErrors,
@@ -170,6 +172,7 @@ export const BlockForm = ( {
 		if ( ! hasRemounted ) {
 			acf.debug( 'Remounting ACF Form' );
 			acf.doAction( 'remount', $form );
+			onMount?.( $form );
 			setHasRemounted( true );
 		}
 
@@ -245,6 +248,15 @@ export const BlockForm = ( {
 			select.addEventListener( 'change', handleChange );
 		} );
 
+		if ( userHasInteractedWithForm ) {
+			clearTimeout( debounceTimer.current );
+			debounceTimer.current = setTimeout( () => {
+				if ( isActive ) {
+					setPendingChange( $form );
+				}
+			}, 300 );
+		}
+
 		// Cleanup function
 		return () => {
 			isActive = false;
@@ -267,7 +279,13 @@ export const BlockForm = ( {
 					} );
 			}
 		};
-	}, [ acfFormRef, attributes, formHtml ] );
+	}, [
+		acfFormRef,
+		attributes,
+		formHtml,
+		onMount,
+		userHasInteractedWithForm,
+	] );
 
 	return (
 		<div

@@ -61,10 +61,12 @@ const InspectorBlockFormContainer = ( {
 };
 
 const isBlockEditorInspectorSidebarOpen = () => {
+	const interfaceStore = wp.data.select( 'core/interface' );
+
 	return (
-		wp.data
-			.select( 'core/interface' )
-			.getActiveComplementaryArea( 'core' ) === 'edit-post/block'
+		typeof interfaceStore?.getActiveComplementaryArea === 'function' &&
+		interfaceStore.getActiveComplementaryArea( 'core' ) ===
+			'edit-post/block'
 	);
 };
 
@@ -74,6 +76,10 @@ const useBlockEditorInspectorSidebarOpen = () => {
 	);
 
 	useEffect( () => {
+		if ( typeof wp.data.subscribe !== 'function' ) {
+			return;
+		}
+
 		const unsubscribe = wp.data.subscribe( () => {
 			setIsOpen( isBlockEditorInspectorSidebarOpen() );
 		} );

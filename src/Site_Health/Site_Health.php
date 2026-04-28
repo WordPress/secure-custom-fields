@@ -39,8 +39,8 @@ class Site_Health {
 	public function __construct() {
 		$this->ai_usage = new AI_Usage( $this );
 
-		add_action( 'debug_information', array( $this, 'render_tab_content' ) );
-		add_action( 'acf_update_site_health_data', array( $this, 'update_site_health_data' ) );
+		add_filter( 'debug_information', array( $this, 'render_tab_content' ) );
+		add_action( 'acf_update_site_health_data', array( $this, 'update_site_health_data_event' ) );
 
 		$hook      = 'acf_update_site_health_data';
 		$timestamp = wp_next_scheduled( $hook );
@@ -53,8 +53,8 @@ class Site_Health {
 		}
 
 		// ACF events.
-		add_action( 'acf/first_activated', array( $this, 'add_activation_event' ) );
-		add_action( 'acf/activated_pro', array( $this, 'add_activation_event' ) );
+		add_action( 'acf/first_activated', array( $this, 'add_activation_event_action' ) );
+		add_action( 'acf/activated_pro', array( $this, 'add_activation_event_action' ) );
 		add_filter( 'acf/pre_update_field_group', array( $this, 'pre_update_acf_internal_cpt' ) );
 		add_filter( 'acf/pre_update_post_type', array( $this, 'pre_update_acf_internal_cpt' ) );
 		add_filter( 'acf/pre_update_taxonomy', array( $this, 'pre_update_acf_internal_cpt' ) );
@@ -88,6 +88,18 @@ class Site_Health {
 	 */
 	public function update_site_health( array $data = array() ): bool {
 		return update_option( $this->option_name, wp_json_encode( $data ), false );
+	}
+
+	/**
+	 * Updates the site health information for action callbacks.
+	 *
+	 * @since 6.8
+	 *
+	 * @param array $data Data to update with (optional).
+	 * @return void
+	 */
+	public function update_site_health_data_event( array $data = array() ): void {
+		$this->update_site_health_data( $data );
 	}
 
 	/**
@@ -229,6 +241,17 @@ class Site_Health {
 		}
 
 		return $this->add_site_health_event( $event_name );
+	}
+
+	/**
+	 * Logs activation events for action callbacks.
+	 *
+	 * @since 6.8
+	 *
+	 * @return void
+	 */
+	public function add_activation_event_action(): void {
+		$this->add_activation_event();
 	}
 
 	/**

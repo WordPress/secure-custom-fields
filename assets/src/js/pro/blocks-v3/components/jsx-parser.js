@@ -382,6 +382,10 @@ function parseNodeToJSX( node, depth = 0, callbacks = {} ) {
 	return element;
 }
 
+// Preserve the legacy parser for v1/v2 blocks, which pass the block version
+// as the second argument.
+const legacyParseJSX = acf.parseJSX;
+
 /**
  * Main parseJSX function exposed on the acf global object
  * Matches 6.7.0.2's implementation exactly
@@ -402,10 +406,18 @@ export function parseJSX(
 	blockFieldInfo = null,
 	$ = null
 ) {
+	if (
+		typeof onNewInlineEditingElementSelected === 'number' &&
+		typeof legacyParseJSX === 'function'
+	) {
+		return legacyParseJSX( htmlString, onNewInlineEditingElementSelected );
+	}
+
 	const isJQueryParser =
 		typeof onNewInlineEditingElementSelected === 'function' &&
-		onNewInlineEditingElementSelected.fn &&
-		onNewInlineEditingElementSelected.fn.jquery;
+		( arguments.length === 2 ||
+			( onNewInlineEditingElementSelected.fn &&
+				onNewInlineEditingElementSelected.fn.jquery ) );
 	const parser = isJQueryParser
 		? onNewInlineEditingElementSelected
 		: $ || jQuery;
@@ -436,18 +448,5 @@ export function parseJSX(
 	return parsedElement.props.children;
 }
 
-// Preserve the legacy parser for v1/v2 blocks, which pass the block version
-// as the second argument.
-const legacyParseJSX = acf.parseJSX;
-
 acf.parseJSXV3 = parseJSX;
-acf.parseJSX = ( htmlString, parserOrBlockVersion = jQuery, ...args ) => {
-	if (
-		typeof parserOrBlockVersion === 'number' &&
-		typeof legacyParseJSX === 'function'
-	) {
-		return legacyParseJSX( htmlString, parserOrBlockVersion );
-	}
-
-	return parseJSX( htmlString, parserOrBlockVersion, ...args );
-};
+acf.parseJSX = parseJSX;
