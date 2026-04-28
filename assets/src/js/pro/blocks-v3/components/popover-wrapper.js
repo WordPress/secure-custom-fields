@@ -7,7 +7,7 @@
  * - Hiding primary block toolbar when active
  */
 
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { Popover } from '@wordpress/components';
 
 /**
@@ -39,72 +39,52 @@ export const PopoverWrapper = ( {
 	gutenbergIframeOrDocument,
 	hidePrimaryBlockToolbar = false,
 } ) => {
+	const popoverRef = useRef();
+
 	useEffect( () => {
-		// Get the appropriate document (iframe or regular document)
 		const doc = gutenbergIframeOrDocument?.contentDocument
 			? gutenbergIframeOrDocument.contentDocument
 			: gutenbergIframeOrDocument || document;
 
-		/**
-		 * Handle escape key to close popover
-		 */
 		const handleEscapeKey = ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onClose?.( event );
 			}
 		};
 
-		/**
-		 * Handle click outside popover to close it
-		 */
 		const handleClickOutside = ( event ) => {
-			// Check if click is outside the popover
-			const popoverElement = event.target.closest(
-				'.' + className.split( ' ' ).join( '.' )
-			);
-			if ( ! popoverElement ) {
-				onClose?.( event );
+			if (
+				! anchor ||
+				event?.key ||
+				popoverRef?.current?.contains( event.target ) ||
+				event.target === anchor
+			) {
+				return;
+			}
+
+			if ( onClose?.( event ) ) {
+				doc.removeEventListener( 'mousedown', handleClickOutside );
+				document.removeEventListener( 'mousedown', handleClickOutside );
 			}
 		};
 
-		// Add event listeners
-		doc.addEventListener( 'keydown', handleEscapeKey, true );
-		doc.addEventListener( 'mousedown', handleClickOutside, true );
+		setTimeout( () => {
+			document.addEventListener( 'keydown', handleEscapeKey );
+			doc.addEventListener( 'mousedown', handleClickOutside );
+			document.addEventListener( 'mousedown', handleClickOutside );
+		} );
 
-		// Hide primary block toolbar if requested
-		if ( hidePrimaryBlockToolbar ) {
-			const toolbar = doc.querySelector(
-				'.block-editor-block-list__block.is-selected > .block-editor-block-contextual-toolbar'
-			);
-			if ( toolbar ) {
-				toolbar.style.display = 'none';
-			}
-		}
-
-		// Cleanup
 		return () => {
-			doc.removeEventListener( 'keydown', handleEscapeKey, true );
-			doc.removeEventListener( 'mousedown', handleClickOutside, true );
-
-			// Restore primary block toolbar
-			if ( hidePrimaryBlockToolbar ) {
-				const toolbar = doc.querySelector(
-					'.block-editor-block-list__block.is-selected > .block-editor-block-contextual-toolbar'
-				);
-				if ( toolbar ) {
-					toolbar.style.display = '';
-				}
-			}
+			document.removeEventListener( 'keydown', handleEscapeKey );
+			doc.removeEventListener( 'mousedown', handleClickOutside );
+			document.removeEventListener( 'mousedown', handleClickOutside );
 		};
-	}, [
-		gutenbergIframeOrDocument,
-		onClose,
-		className,
-		hidePrimaryBlockToolbar,
-	] );
+	}, [] );
 
 	return (
 		<Popover
+			ref={ popoverRef }
+			style={ { position: 'absolute', top: 200, zIndex: 59899 } }
 			focusOnMount={ focusOnMount }
 			variant={ variant }
 			anchor={ anchor }
