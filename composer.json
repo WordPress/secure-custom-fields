@@ -32,7 +32,6 @@
 			"SCF\\AI\\": "src/AI/",
 			"SCF\\Blocks\\": "includes/Blocks/",
 			"SCF\\CLI\\": "src/CLI/",
-			"SCF\\Pro\\AI\\": "src/Pro/AI/",
 			"SCF\\Site_Health\\": "src/Site_Health/",
 			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/",
 			"SCF\\Forms\\": "includes/forms/",

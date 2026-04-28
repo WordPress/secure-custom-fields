@@ -8,7 +8,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-require_once dirname( __DIR__ ) . '/pro/blocks-auto-inline-editing.php';
+require_once __DIR__ . '/blocks-auto-inline-editing.php';
 use function SCF\Blocks\AutoInlineEditing\apply_inline_editing_attributes_to_render_template;
 use function SCF\Blocks\AutoInlineEditing\apply_inline_editing_attributes_to_render_callback;
 
