@@ -565,7 +565,7 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 
 			// MediaObject or DataDownload format.
 			$file_object = array(
-				'@type'      => $output_format ?: 'MediaObject',
+				'@type'      => $output_format ? $output_format : 'MediaObject',
 				'contentUrl' => $url,
 			);
 
