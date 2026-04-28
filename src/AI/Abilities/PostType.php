@@ -37,11 +37,13 @@ class PostType extends AbstractAbilityGroup {
 		$this->register_ability(
 			'acf/custom-post-types',
 			array(
-				'label'               => __( 'ACF Custom Post Types', 'secure-custom-fields' ),
-				'description'         => __( 'Get all ACF registered custom post types', 'secure-custom-fields' ),
+				'label'               => __( 'SCF Custom Post Types', 'secure-custom-fields' ),
+				'description'         => __( 'Get all SCF registered custom post types', 'secure-custom-fields' ),
 				'category'            => 'acf-field-management',
 				'input_schema'        => array(
-					'type' => 'null',
+					'type'                 => array( 'object', 'null' ),
+					'properties'           => array(),
+					'additionalProperties' => false,
 				),
 				'output_schema'       => array(
 					'type'       => 'object',
@@ -601,8 +603,8 @@ class PostType extends AbstractAbilityGroup {
 			'custom_post_types' => $custom_post_types,
 			'count'             => $count,
 			'message'           => sprintf(
-				/* translators: %d: Number of ACF custom post types */
-				_n( 'Found %d ACF custom post type', 'Found %d ACF custom post types', $count, 'secure-custom-fields' ),
+				/* translators: %d: Number of SCF custom post types */
+				_n( 'Found %d SCF custom post type', 'Found %d SCF custom post types', $count, 'secure-custom-fields' ),
 				$count
 			),
 		);
@@ -747,7 +749,7 @@ class PostType extends AbstractAbilityGroup {
 		return array(
 			'success'   => true,
 			'post_type' => $result,
-			'message'   => __( 'ACF custom post type created successfully', 'secure-custom-fields' ),
+			'message'   => __( 'SCF custom post type created successfully', 'secure-custom-fields' ),
 		);
 	}
 }

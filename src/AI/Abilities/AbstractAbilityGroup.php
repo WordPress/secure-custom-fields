@@ -166,7 +166,7 @@ abstract class AbstractAbilityGroup {
 
 		$schema['properties']['acf'] = array(
 			'type'        => 'object',
-			'description' => 'ACF field values',
+			'description' => 'SCF field values',
 			'required'    => false,
 			'properties'  => array(),
 		);

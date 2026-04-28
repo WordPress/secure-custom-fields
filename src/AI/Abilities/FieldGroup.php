@@ -37,8 +37,8 @@ class FieldGroup extends AbstractAbilityGroup {
 		$this->register_ability(
 			'acf/field-groups',
 			array(
-				'label'               => __( 'List ACF Field Groups', 'secure-custom-fields' ),
-				'description'         => __( 'Get all ACF field groups that allow AI access.', 'secure-custom-fields' ),
+				'label'               => __( 'List SCF Field Groups', 'secure-custom-fields' ),
+				'description'         => __( 'Get all SCF field groups that allow AI access.', 'secure-custom-fields' ),
 				'category'            => 'acf-field-management',
 				'input_schema'        => array(
 					'type'                 => array( 'object', 'null' ),
@@ -80,8 +80,8 @@ class FieldGroup extends AbstractAbilityGroup {
 		$this->register_ability(
 			'acf/register-field-group',
 			array(
-				'label'               => __( 'Register ACF Field Group', 'secure-custom-fields' ),
-				'description'         => __( 'Register a new ACF field group schema with field definitions. This creates the field structure that will appear on content, not the field values themselves. Field values are set when creating or updating posts, terms, or other content.', 'secure-custom-fields' ),
+				'label'               => __( 'Register SCF Field Group', 'secure-custom-fields' ),
+				'description'         => __( 'Register a new SCF field group schema with field definitions. This creates the field structure that will appear on content, not the field values themselves. Field values are set when creating or updating posts, terms, or other content.', 'secure-custom-fields' ),
 				'category'            => 'acf-field-management',
 				'input_schema'        => array(
 					'type'                 => 'object',
@@ -338,7 +338,7 @@ class FieldGroup extends AbstractAbilityGroup {
 			'count'        => $count,
 			'message'      => sprintf(
 				/* translators: %d: Number of found field groups */
-				_n( 'Found %d ACF field group.', 'Found %d ACF field groups.', $count, 'secure-custom-fields' ),
+				_n( 'Found %d SCF field group.', 'Found %d SCF field groups.', $count, 'secure-custom-fields' ),
 				$count
 			),
 		);

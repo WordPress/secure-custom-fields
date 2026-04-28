@@ -37,11 +37,13 @@ class Taxonomy extends AbstractAbilityGroup {
 		$this->register_ability(
 			'acf/custom-taxonomies',
 			array(
-				'label'               => __( 'ACF Custom Taxonomies', 'secure-custom-fields' ),
-				'description'         => __( 'Get all ACF registered custom taxonomies', 'secure-custom-fields' ),
+				'label'               => __( 'SCF Custom Taxonomies', 'secure-custom-fields' ),
+				'description'         => __( 'Get all SCF registered custom taxonomies', 'secure-custom-fields' ),
 				'category'            => 'acf-field-management',
 				'input_schema'        => array(
-					'type' => 'null',
+					'type'                 => array( 'object', 'null' ),
+					'properties'           => array(),
+					'additionalProperties' => false,
 				),
 				'output_schema'       => array(
 					'type'       => 'object',
@@ -597,8 +599,8 @@ class Taxonomy extends AbstractAbilityGroup {
 			'custom_taxonomies' => $custom_taxonomies,
 			'count'             => $count,
 			'message'           => sprintf(
-				/* translators: %d: Number of ACF custom taxonomies */
-				_n( 'Found %d ACF custom taxonomy', 'Found %d ACF custom taxonomies', $count, 'secure-custom-fields' ),
+				/* translators: %d: Number of SCF custom taxonomies */
+				_n( 'Found %d SCF custom taxonomy', 'Found %d SCF custom taxonomies', $count, 'secure-custom-fields' ),
 				$count
 			),
 		);
@@ -692,7 +694,7 @@ class Taxonomy extends AbstractAbilityGroup {
 		return array(
 			'success'  => true,
 			'taxonomy' => $result,
-			'message'  => __( 'ACF custom taxonomy created successfully', 'secure-custom-fields' ),
+			'message'  => __( 'SCF custom taxonomy created successfully', 'secure-custom-fields' ),
 		);
 	}
 }

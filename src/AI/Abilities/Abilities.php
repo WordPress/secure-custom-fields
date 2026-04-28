@@ -114,7 +114,7 @@ class Abilities {
 		wp_register_ability_category(
 			'acf-field-management',
 			array(
-				'label'       => __( 'ACF Field Management', 'secure-custom-fields' ),
+				'label'       => __( 'SCF Field Management', 'secure-custom-fields' ),
 				'description' => __( 'Abilities for managing Secure Custom Fields field groups and field data.', 'secure-custom-fields' ),
 			)
 		);
