@@ -224,11 +224,6 @@
         "parent": "concepts",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/concepts/security.md"
     },
-    "contributing/acf-release-porting": {
-        "slug": "acf-release-porting",
-        "parent": "contributing",
-        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/acf-release-porting.md"
-    },
     "contributing/documentation": {
         "slug": "documentation",
         "parent": "contributing",

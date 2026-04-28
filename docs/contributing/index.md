@@ -15,7 +15,6 @@ Guide for contributing to Secure Custom Fields development.
    - Improving reference docs
    - Fixing errors
    - Adding examples
-   - Porting upstream ACF releases: [ACF release porting](acf-release-porting.md)
 
 3. **Testing**
    - Unit testing

@@ -14,6 +14,7 @@ import { lockPostSaving, unlockPostSaving } from '../utils/post-locking';
  * @param {jQuery} props.$ - jQuery instance
  * @param {string} props.clientId - Block client ID
  * @param {string} props.blockFormHtml - HTML markup for the ACF form
+ * @param {Function} props.onMount - Callback when form is mounted
  * @param {Function} props.onChange - Callback when form data changes
  * @param {Array} props.validationErrors - Array of validation error objects
  * @param {boolean} props.showValidationErrors - Whether to display validation errors
@@ -26,6 +27,7 @@ export const BlockForm = ( {
 	$,
 	clientId,
 	blockFormHtml,
+	onMount,
 	onChange,
 	validationErrors,
 	showValidationErrors,
@@ -38,21 +40,35 @@ export const BlockForm = ( {
 	const [ pendingChange, setPendingChange ] = useState( false );
 	const debounceTimer = useRef( null );
 	const [ userInteracted, setUserInteracted ] = useState( false );
-	const [ hasRemounted, setHasRemounted ] = useState( false );
+	const [ initialValuesCaptured, setInitialValuesCaptured ] =
+		useState( false );
+
+	// Call onMount when component first mounts
+	useEffect( () => {
+		onMount();
+	}, [] );
 
 	// Trigger onChange when there's a pending change
 	useEffect( () => {
-		if (
-			pendingChange &&
-			( userHasInteractedWithForm || userInteracted )
-		) {
-			onChange( pendingChange );
-			setPendingChange( false );
+		if ( pendingChange ) {
+			// For the first change, capture default values even without interaction
+			if (
+				! initialValuesCaptured ||
+				userHasInteractedWithForm ||
+				userInteracted
+			) {
+				onChange( pendingChange );
+				setPendingChange( false );
+				if ( ! initialValuesCaptured ) {
+					setInitialValuesCaptured( true );
+				}
+			}
 		}
 	}, [
 		pendingChange,
 		userHasInteractedWithForm,
 		userInteracted,
+		initialValuesCaptured,
 		setPendingChange,
 		onChange,
 	] );
@@ -167,10 +183,10 @@ export const BlockForm = ( {
 		const $form = $( formElement );
 		let isActive = true;
 
-		if ( ! hasRemounted ) {
-			acf.debug( 'Remounting ACF Form' );
-			acf.doAction( 'remount', $form );
-			setHasRemounted( true );
+		acf.doAction( 'remount', $form );
+		if ( ! initialValuesCaptured ) {
+			onChange( $form );
+			setInitialValuesCaptured( true );
 		}
 
 		const handleChange = () => {
@@ -186,8 +202,6 @@ export const BlockForm = ( {
 			inputs.forEach( ( input ) => {
 				input.removeEventListener( 'input', handleChange );
 				input.addEventListener( 'input', handleChange );
-				input.removeEventListener( 'change', handleChange );
-				input.addEventListener( 'change', handleChange );
 			} );
 
 			selects.forEach( ( select ) => {
@@ -238,7 +252,6 @@ export const BlockForm = ( {
 			.querySelectorAll( 'input, textarea' )
 			.forEach( ( input ) => {
 				input.addEventListener( 'input', handleChange );
-				input.addEventListener( 'change', handleChange );
 			} );
 
 		formElement.querySelectorAll( 'select' ).forEach( ( select ) => {
@@ -257,7 +270,6 @@ export const BlockForm = ( {
 					.querySelectorAll( 'input, textarea' )
 					.forEach( ( input ) => {
 						input.removeEventListener( 'input', handleChange );
-						input.removeEventListener( 'change', handleChange );
 					} );
 
 				formElement
