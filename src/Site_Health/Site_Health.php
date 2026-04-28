@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\Site_Health;
+namespace SCF\Site_Health;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;

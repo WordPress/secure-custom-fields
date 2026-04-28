@@ -642,8 +642,16 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 				}
 
 				// If this is a block preview, disable the layout.
-				if ( ( 'acf/ajax/fetch-block' === $args['action'] && ! empty( $args['query']['preview'] ) && ( $wp_block_type && isset( $wp_block_type->acf_block_version ) && $wp_block_type->acf_block_version <= 2 ) ) ||
-					acf_get_data( 'acf_doing_block_preview' ) ) {
+				if (
+					// Blocks v2 preview check
+					(
+						'acf/ajax/fetch-block' === $args['action'] &&
+						! empty( $args['query']['preview'] ) &&
+						( $wp_block_type && isset( $wp_block_type->acf_block_version ) && $wp_block_type->acf_block_version <= 2 )
+					) ||
+					// Blocks v3 preview check
+					acf_get_data( 'acf_doing_block_preview' )
+				) {
 					return true;
 				}
 

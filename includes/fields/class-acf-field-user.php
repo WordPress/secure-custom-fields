@@ -680,7 +680,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 			$output_format = $field['schema_output_format'] ?? '';
 			if ( empty( $output_format ) ) {
 				$property      = $field['schema_property'] ?? '';
-				$output_format = \ACF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
+				$output_format = \SCF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
 			}
 
 			// Default to Person if still empty.

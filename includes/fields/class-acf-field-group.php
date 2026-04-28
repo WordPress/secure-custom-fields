@@ -675,7 +675,7 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 			$output_format = $field['schema_output_format'] ?? '';
 			if ( empty( $output_format ) ) {
 				$property      = $field['schema_property'] ?? '';
-				$output_format = \ACF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
+				$output_format = \SCF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
 			}
 
 			// Build the JSON-LD object.
@@ -707,10 +707,10 @@ if ( ! class_exists( 'acf_field__group' ) ) :
 				}
 
 				// Parse qualified property (e.g., "Thing.name" -> "name") to strip type prefix.
-				$property_name = \ACF\AI\GEO\Schema::get_property_name( $schema_property );
+				$property_name = \SCF\AI\GEO\Schema::get_property_name( $schema_property );
 
 				// Format the sub field value for JSON-LD.
-				$formatted_value = \ACF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
+				$formatted_value = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
 
 				if ( null !== $formatted_value ) {
 					$result[ $property_name ] = $formatted_value;

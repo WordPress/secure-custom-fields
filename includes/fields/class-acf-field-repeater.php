@@ -1187,11 +1187,11 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$output_format = $field['schema_output_format'] ?? '';
 			if ( empty( $output_format ) ) {
 				$property      = $field['schema_property'] ?? '';
-				$output_format = \ACF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
+				$output_format = \SCF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
 			}
 
 			// Get all Schema.org types for type detection.
-			$all_types   = array_keys( \ACF\AI\GEO\SchemaData::get_type_hierarchy() );
+			$all_types   = array_keys( \SCF\AI\GEO\SchemaData::get_type_hierarchy() );
 			$all_types[] = 'Thing';
 
 			$items = array();
@@ -1236,10 +1236,10 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 					}
 
 					// Parse qualified property (e.g., "Thing.name" -> "name") to strip type prefix.
-					$property_name = \ACF\AI\GEO\Schema::get_property_name( $schema_property );
+					$property_name = \SCF\AI\GEO\Schema::get_property_name( $schema_property );
 
 					// Format the sub field value for JSON-LD.
-					$formatted_value = \ACF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
+					$formatted_value = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
 
 					if ( null !== $formatted_value ) {
 						$row_data[ $property_name ] = $formatted_value;

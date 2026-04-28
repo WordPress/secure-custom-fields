@@ -6,7 +6,7 @@
  * @package wordpress/secure-custom-fields
  */
 
-namespace ACF\Blocks;
+namespace SCF\Blocks;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;

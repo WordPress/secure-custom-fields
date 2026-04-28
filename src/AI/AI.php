@@ -7,10 +7,10 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI;
+namespace SCF\AI;
 
-use ACF\AI\Abilities\Abilities;
-use ACF\AI\GEO\GEO;
+use SCF\AI\Abilities\Abilities;
+use SCF\AI\GEO\GEO;
 
 /**
  * Initializes the SCF AI functionality if enabled.

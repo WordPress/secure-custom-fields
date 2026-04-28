@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\CLI;
+namespace SCF\CLI;
 
 use WP_CLI;
 use function WP_CLI\Utils\format_items;
@@ -65,7 +65,7 @@ class JsonCommand {
 	 * @param string $subcommand The sub-command name (e.g., 'status', 'sync', 'import', 'export').
 	 */
 	private function log_command( $subcommand ) {
-		$site_health = acf_get_instance( 'ACF\Site_Health\Site_Health' );
+		$site_health = acf_get_instance( 'SCF\Site_Health\Site_Health' );
 
 		if ( method_exists( $site_health, 'log_cli_command' ) ) {
 			$site_health->log_cli_command( 'acf json ' . $subcommand );

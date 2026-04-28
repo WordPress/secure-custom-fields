@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI\GEO;
+namespace SCF\AI\GEO;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -48,9 +48,7 @@ class GEO {
 
 		// JSON-LD Outputs.
 		new Outputs\Posts();
-		if ( class_exists( '\ACF\Pro\AI\GEO\Outputs\Blocks' ) ) {
-			new \ACF\Pro\AI\GEO\Outputs\Blocks();
-		}
+		// Note: Blocks output is initialized separately in secure-custom-fields.php.
 	}
 
 	/**

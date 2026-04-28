@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI\Abilities;
+namespace SCF\AI\Abilities;
 
 use WP_REST_Request;
 

@@ -190,7 +190,6 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/class-acf-data.php' );
 			acf_include( 'includes/class-acf-internal-post-type.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
-			acf_include( 'includes/class-acf-site-health.php' );
 			acf_include( 'includes/class-scf-json-schema-validator.php' );
 			acf_include( 'includes/class-scf-schema-builder.php' );
 			acf_include( 'includes/abilities/class-scf-abilities-integration.php' );
@@ -207,12 +206,16 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_new_instance( 'SCF\Meta\User' );
 			acf_new_instance( 'SCF\Meta\Option' );
 
-			if ( class_exists( 'ACF\AI\AI' ) ) {
-				acf_new_instance( 'ACF\AI\AI' );
+			if ( class_exists( 'SCF\Site_Health\Site_Health' ) ) {
+				acf_new_instance( 'SCF\Site_Health\Site_Health' );
 			}
 
-			if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'ACF\CLI\CLI' ) ) {
-				acf_new_instance( 'ACF\CLI\CLI' );
+			if ( class_exists( 'SCF\AI\AI' ) ) {
+				acf_new_instance( 'SCF\AI\AI' );
+			}
+
+			if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'SCF\CLI\CLI' ) ) {
+				acf_new_instance( 'SCF\CLI\CLI' );
 			}
 
 			acf_include( 'includes/acf-hook-functions.php' );
@@ -289,6 +292,11 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Include PRO.
 			acf_include( 'pro/acf-pro.php' );
+
+			// Initialize GEO Blocks output.
+			if ( class_exists( 'SCF\AI\GEO\Outputs\Blocks' ) ) {
+				new \SCF\AI\GEO\Outputs\Blocks();
+			}
 
 			// Add actions.
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );
@@ -480,7 +488,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			// If we're on WP 6.5 or newer, load block bindings. This will move to an autoloader in ACF 6.3.
 			if ( version_compare( get_bloginfo( 'version' ), '6.5-beta1', '>=' ) ) {
 				acf_include( 'includes/Blocks/Bindings.php' );
-				new ACF\Blocks\Bindings();
+				new SCF\Blocks\Bindings();
 			}
 
 			/**

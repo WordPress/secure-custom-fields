@@ -16,7 +16,7 @@
  * Generated: 2026-02-25
  * Source: https://schema.org/version/latest/schemaorg-current-https.jsonld
  *
- * @package ACF\AI\GEO
+ * @package SCF\AI\GEO
  */
 
 return array(

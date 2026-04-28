@@ -7,9 +7,9 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI\GEO\Outputs;
+namespace SCF\AI\GEO\Outputs;
 
-use ACF\AI\GEO\GEO;
+use SCF\AI\GEO\GEO;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;

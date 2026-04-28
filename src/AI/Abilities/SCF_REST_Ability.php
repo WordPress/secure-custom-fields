@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI\Abilities;
+namespace SCF\AI\Abilities;
 
 use WP_Ability;
 
@@ -15,13 +15,13 @@ use WP_Ability;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * ACF REST Ability
+ * SCF REST Ability
  *
  * Custom ability class that extends WP_Ability to skip output validation.
  * This is needed because REST API schemas don't always match Abilities API schemas exactly,
  * but we want to proxy directly to REST API endpoints.
  */
-class ACF_REST_Ability extends WP_Ability {
+class SCF_REST_Ability extends WP_Ability {
 
 	/**
 	 * Override validate_output to always return true.

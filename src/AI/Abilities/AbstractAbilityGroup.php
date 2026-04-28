@@ -7,7 +7,7 @@
 
 // phpcs:disable -- Upstream ACF 6.8.0 feature-port files are kept close to source.
 
-namespace ACF\AI\Abilities;
+namespace SCF\AI\Abilities;
 
 use WP_REST_Request;
 use WP_Error;
@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  */
 abstract class AbstractAbilityGroup {
 
-	const REST_ABILITY_CLASS = 'ACF\AI\Abilities\ACF_REST_Ability';
+	const REST_ABILITY_CLASS = 'SCF\AI\Abilities\SCF_REST_Ability';
 
 	/**
 	 * Register abilities for this ability group

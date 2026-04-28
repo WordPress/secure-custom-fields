@@ -544,7 +544,7 @@ if ( ! class_exists( 'acf_field_file' ) ) :
 			$output_format = $field['schema_output_format'] ?? '';
 			if ( empty( $output_format ) ) {
 				$property      = $field['schema_property'] ?? '';
-				$output_format = \ACF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
+				$output_format = \SCF\AI\GEO\Schema::get_default_output_format( $this->name, $property );
 			}
 
 			// Get attachment ID.
