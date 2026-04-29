@@ -38,9 +38,6 @@ export class ErrorBoundary extends Component {
 	}
 
 	componentDidCatch( error, errorInfo ) {
-		acf.debug( 'Block preview error caught:', error, errorInfo );
-
-		// Call optional onError callback
 		if ( this.props.onError ) {
 			this.props.onError( error, errorInfo );
 		}

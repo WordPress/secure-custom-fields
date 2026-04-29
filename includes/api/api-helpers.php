@@ -95,6 +95,17 @@ function acf_get_setting( $name, $value = null ) {
 }
 
 /**
+ * Returns whether the current plugin load is running with PRO features enabled.
+ *
+ * @since ACF 6.8
+ *
+ * @return bool
+ */
+function acf_is_pro() {
+	return true;
+}
+
+/**
  * Return an array of ACF's internal post type names
  *
  * @since ACF 6.1
