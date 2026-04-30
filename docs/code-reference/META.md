@@ -379,6 +379,7 @@ This file tracks code elements that need documentation.
 
 - `acf/blocks/default_block_version`
 - `acf/blocks/default_block_version`
+- `acf/blocks/default_expanded_editor_button_text`
 - `acf/blocks/fields_needing_wide_popover`
 - `acf/blocks/fields_to_open_in_expanded_editor`
 - `acf/blocks/no_fields_assigned_message`
@@ -389,6 +390,8 @@ This file tracks code elements that need documentation.
 - `acf/blocks/template_not_found_message`
 - `acf/blocks/top_toolbar_fields`
 - `acf/blocks/top_toolbar_fields`
+- `acf/blocks/top_toolbar_fields`
+- `acf/blocks/wrap_frontend_innerblocks`
 - `acf/blocks/wrap_frontend_innerblocks`
 - `acf/pre_save_block`
 - `acf/register_block_type_args`

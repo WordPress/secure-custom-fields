@@ -53,6 +53,13 @@ Alias of acf()->get_setting()
 * @param string $value An optional default value for the setting if it doesn't exist.
 * @return n/a
 
+## `acf_is_pro()`
+
+Returns whether the current plugin load is running with PRO features enabled.
+
+* @since ACF 6.8
+* @return bool
+
 ## `acf_get_internal_post_types()`
 
 Return an array of ACF's internal post type names

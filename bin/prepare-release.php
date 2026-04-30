@@ -49,6 +49,7 @@ class Release_Preparation {
 		$this->build_assets();
 		$this->run_tests();
 		$this->generate_docs();
+		$this->check_generated_schemas();
 		$this->update_translations();
 		$this->commit_changes();
 
@@ -177,7 +178,18 @@ class Release_Preparation {
 	}
 
 	/**
-	 * Commit any changes from build/tests/docs
+	 * Check generated schemas
+	 */
+	private function check_generated_schemas() {
+		echo "Checking generated schemas...\n";
+		passthru( 'php bin/generate-field-schema.php --check', $return );
+		if ( 0 !== $return ) {
+			exit( $return );
+		}
+	}
+
+	/**
+	 * Commit any changes from build/tests/docs/translations
 	 */
 	private function commit_changes() {
 		exec( 'git status --porcelain', $output );
