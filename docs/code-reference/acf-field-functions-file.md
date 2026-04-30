@@ -391,4 +391,12 @@ Allows parent fields to modify themselves and also return sub fields.
 * @param   array $field The field array.
 * @return array
 
+## `acf_get_field_json_schema()`
+
+Retrieves the JSON schema for a field.
+
+* @since 6.8.0
+* @param string $field_type The field to get the JSON schema for.
+* @return array
+
 ---

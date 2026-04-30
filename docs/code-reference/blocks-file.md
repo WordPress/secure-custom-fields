@@ -140,6 +140,29 @@ Returns the rendered block HTML.
 * @param boolean  $is_ajax_render Whether or not this is an ACF AJAX render.
 * @return string   The block HTML.
 
+## `acf_rendered_block_v3()`
+
+Returns the rendered block HTML for v3 blocks.
+
+* @date    21/1/26
+* @since ACF 6.8
+* @param   array    $attributes The block attributes.
+* @param string   $content    The block content.
+* @param boolean  $is_preview Whether or not the block is being rendered for editing preview.
+* @param integer  $post_id    The current post being edited or viewed.
+* @param WP_Block $wp_block   The block instance (since WP 5.5).
+* @param array    $context    The block context array.
+* @return string   The block HTML.
+
+## `acf_replace_inner_blocks_in_block_content()`
+
+Replaces InnerBlocks strings in a block with the inner block content.
+
+* @since ACF 6.8
+* @param string $content The block content.
+* @param string $html    The block html.
+* @return string
+
 ## `acf_render_block()`
 
 Renders the block HTML.
