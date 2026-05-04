@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for block query parameter decoding in acf_ajax_fetch_block().
+ * Tests for acf_decode_block_query_arg().
  *
  * @package wordpress/secure-custom-fields
  */
@@ -10,102 +10,126 @@ use WorDBless\BaseTestCase;
 /**
  * Class Test_Blocks_Query_Decoding
  *
- * Tests that the query parameter is correctly decoded from a JSON string
- * to an array in acf_ajax_fetch_block(), preventing fatal TypeError
- * on PHP 8.4 when accessing offsets on a string.
+ * Verifies acf_decode_block_query_arg() — the helper used by
+ * acf_ajax_fetch_block() to normalize the `query` ajax arg, which
+ * may arrive as either an array or a JSON-encoded string. Without
+ * this normalization PHP 8.4 raises a fatal TypeError when offsets
+ * are accessed on a string.
  *
  * @group blocks
  */
 class Test_Blocks_Query_Decoding extends BaseTestCase {
 
 	/**
-	 * Test that a JSON-encoded query string is decoded to an array.
+	 * A JSON object string is decoded to an array.
 	 */
-	public function test_json_string_query_is_decoded_to_array() {
-		$query = wp_slash( '{"post_type":"post","posts_per_page":3}' );
+	public function test_json_object_string_is_decoded_to_array() {
+		$result = acf_decode_block_query_arg( '{"post_type":"post","posts_per_page":3}' );
 
-		// Simulate the decoding logic from acf_ajax_fetch_block().
-		if ( is_string( $query ) ) {
-			$query = json_decode( wp_unslash( $query ), true );
-			if ( ! is_array( $query ) ) {
-				$query = array();
-			}
-		}
-
-		$this->assertIsArray( $query );
-		$this->assertSame( 'post', $query['post_type'] );
-		$this->assertSame( 3, $query['posts_per_page'] );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'post', $result['post_type'] );
+		$this->assertSame( 3, $result['posts_per_page'] );
 	}
 
 	/**
-	 * Test that an invalid JSON string falls back to an empty array.
+	 * A slashed JSON string (as it would arrive in $_REQUEST) is decoded.
 	 */
-	public function test_invalid_json_string_falls_back_to_empty_array() {
-		$query = 'not valid json {{{';
+	public function test_slashed_json_string_is_decoded() {
+		$result = acf_decode_block_query_arg( wp_slash( '{"preview":true,"form":false}' ) );
 
-		if ( is_string( $query ) ) {
-			$query = json_decode( wp_unslash( $query ), true );
-			if ( ! is_array( $query ) ) {
-				$query = array();
-			}
-		}
-
-		$this->assertIsArray( $query );
-		$this->assertEmpty( $query );
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['preview'] );
+		$this->assertFalse( $result['form'] );
 	}
 
 	/**
-	 * Test that an array query is left unchanged.
+	 * A nested JSON object matching real query keys decodes correctly.
 	 */
-	public function test_array_query_is_unchanged() {
+	public function test_nested_json_object_decodes() {
+		$json   = '{"preview":true,"form":true,"validate":false,"meta":{"foo":"bar"}}';
+		$result = acf_decode_block_query_arg( $json );
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['preview'] );
+		$this->assertSame( 'bar', $result['meta']['foo'] );
+	}
+
+	/**
+	 * An array is returned unchanged.
+	 */
+	public function test_array_is_returned_unchanged() {
 		$query = array(
 			'post_type'      => 'page',
 			'posts_per_page' => 5,
 		);
 
-		if ( is_string( $query ) ) {
-			$query = json_decode( wp_unslash( $query ), true );
-			if ( ! is_array( $query ) ) {
-				$query = array();
-			}
-		}
+		$result = acf_decode_block_query_arg( $query );
 
-		$this->assertIsArray( $query );
-		$this->assertSame( 'page', $query['post_type'] );
-		$this->assertSame( 5, $query['posts_per_page'] );
+		$this->assertSame( $query, $result );
 	}
 
 	/**
-	 * Test that a JSON string encoding a non-array value falls back to empty array.
+	 * Invalid JSON falls back to an empty array.
 	 */
-	public function test_json_non_array_value_falls_back_to_empty_array() {
-		$query = '"just a string"';
-
-		if ( is_string( $query ) ) {
-			$query = json_decode( wp_unslash( $query ), true );
-			if ( ! is_array( $query ) ) {
-				$query = array();
-			}
-		}
-
-		$this->assertIsArray( $query );
-		$this->assertEmpty( $query );
+	public function test_invalid_json_falls_back_to_empty_array() {
+		$this->assertSame( array(), acf_decode_block_query_arg( 'not valid json {{{' ) );
 	}
 
 	/**
-	 * Test that an empty string falls back to an empty array.
+	 * An empty string falls back to an empty array.
 	 */
 	public function test_empty_string_falls_back_to_empty_array() {
-		$query = '';
+		$this->assertSame( array(), acf_decode_block_query_arg( '' ) );
+	}
 
-		if ( is_string( $query ) ) {
-			$query = json_decode( wp_unslash( $query ), true );
-			if ( ! is_array( $query ) ) {
-				$query = array();
-			}
-		}
+	/**
+	 * A JSON string encoding a scalar (not an array/object) falls back to an empty array.
+	 *
+	 * @dataProvider provide_json_scalars
+	 *
+	 * @param string $json A JSON-encoded scalar.
+	 */
+	public function test_json_scalar_falls_back_to_empty_array( $json ) {
+		$this->assertSame( array(), acf_decode_block_query_arg( $json ) );
+	}
 
-		$this->assertIsArray( $query );
-		$this->assertEmpty( $query );
+	/**
+	 * Data provider for JSON scalars.
+	 *
+	 * @return array
+	 */
+	public function provide_json_scalars() {
+		return array(
+			'string' => array( '"just a string"' ),
+			'true'   => array( 'true' ),
+			'false'  => array( 'false' ),
+			'null'   => array( 'null' ),
+			'number' => array( '42' ),
+		);
+	}
+
+	/**
+	 * Non-string, non-array values fall back to an empty array.
+	 *
+	 * @dataProvider provide_non_string_non_array
+	 *
+	 * @param mixed $value Input value.
+	 */
+	public function test_non_string_non_array_falls_back_to_empty_array( $value ) {
+		$this->assertSame( array(), acf_decode_block_query_arg( $value ) );
+	}
+
+	/**
+	 * Data provider for non-string, non-array inputs.
+	 *
+	 * @return array
+	 */
+	public function provide_non_string_non_array() {
+		return array(
+			'null'    => array( null ),
+			'integer' => array( 42 ),
+			'bool'    => array( true ),
+			'object'  => array( new stdClass() ),
+		);
 	}
 }
