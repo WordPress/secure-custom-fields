@@ -32,6 +32,7 @@
 			"SCF\\AI\\": "src/AI/",
 			"SCF\\Blocks\\": "includes/Blocks/",
 			"SCF\\CLI\\": "src/CLI/",
+			"SCF\\Datastore\\": "includes/Datastore/",
 			"SCF\\Fields\\FlexibleContent\\": "includes/fields/FlexibleContent/",
 			"SCF\\Forms\\": "includes/forms/",
 			"SCF\\Meta\\": "includes/Meta/",
