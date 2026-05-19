@@ -52,6 +52,13 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 
+= 6.8.5 =
+*Release Date 19th May 2026*
+
+*Features*
+
+Backports 6.8.0 and 6.8.0.1 feature work into SCF.
+
 = 6.8.4 =
 *Release Date 30th April 2026*
 
