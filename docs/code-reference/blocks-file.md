@@ -25,6 +25,30 @@ Check if a block.json block is an SCF block.
 * @param array $metadata The raw block metadata array.
 * @return boolean
 
+## `acf_block_json_process_fields()`
+
+Recursively ensures every field in a set of block-inlined fields has a key,
+generating `field_{block_slug}_{parent_path}_{name}` for any that don't.
+
+* @since ACF 6.8.1
+* @param array  $fields      The fields to process.
+* @param string $block_slug  The sanitized block slug used to build keys.
+* @param string $block_name  The original block name (used for error messages).
+* @param string $parent_path Internal. Underscore-joined ancestor names for the current nesting level.
+* @return array The processed fields, with keys filled in and invalid entries removed.
+
+## `acf_register_block_field_group_from_fields()`
+
+Registers a local field group for a block from an inline fields array,
+as used by `acf.fields` in block.json and `fields` in acf_register_block_type().
+
+* @since ACF 6.8.1
+* @param string $block_name        The full block name (e.g. 'acf/my-block').
+* @param string $block_title       The block's display title, used in the default group title.
+* @param array  $fields            The fields defined inline on the block.
+* @param string $field_group_title Optional. Overrides the auto-generated "Block: {title}" group title.
+* @return boolean True if the field group was registered, false otherwise.
+
 ## `acf_register_block_type()`
 
 Registers a block type.

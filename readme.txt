@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 6.9.1
 Requires PHP: 7.4
-Stable tag: 6.8.4
+Stable tag: 6.8.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,7 +51,12 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.8.5 =
+*Release Date 19th May 2026*
 
+*Features*
+
+Backports 6.8.1 feature work into SCF.
 = 6.8.4 =
 *Release Date 30th April 2026*
 
