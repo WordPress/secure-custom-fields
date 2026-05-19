@@ -149,6 +149,22 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => true,
 				),
+				'acf-datastore'           => array(
+					'handle'     => 'acf-datastore',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-datastore' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-datastore' ) ),
+					'deps'       => array( 'acf-input', 'wp-data' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+				'acf-field-bindings'      => array(
+					'handle'     => 'acf-field-bindings',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-field-bindings' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-field-bindings' ) ),
+					'deps'       => array( 'acf-datastore', 'wp-blocks' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
 				'acf'                     => array(
 					'handle'     => 'acf',
 					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf' ) ),
@@ -536,7 +552,9 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				wp_enqueue_script( 'scf-bindings' );
+				if ( ! acf_is_using_datastore() ) {
+					wp_enqueue_script( 'scf-bindings' );
+				}
 				wp_enqueue_style( 'acf-pro-input' );
 
 				/**

@@ -35,7 +35,7 @@ class Bindings {
 			register_block_bindings_source(
 				'acf/field',
 				array(
-					'label'              => _x( 'SCF Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
+					'label'              => _x( 'Custom Fields', 'The core SCF block binding source name for fields on the current page', 'secure-custom-fields' ),
 					'get_value_callback' => array( $this, 'get_value' ),
 					'uses_context'       => array( 'postId', 'postType' ),
 				)

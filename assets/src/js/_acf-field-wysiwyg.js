@@ -19,6 +19,18 @@
 			return this.$( 'textarea' );
 		},
 
+		setValue: function ( val ) {
+			acf.val( this.$input(), val );
+
+			if ( this.getMode() === 'visual' ) {
+				const id = this.get( 'id' );
+				const editor = window.tinymce && tinymce.get( id );
+				if ( editor && ! editor.isHidden() ) {
+					editor.setContent( val || '' );
+				}
+			}
+		},
+
 		getMode: function () {
 			return this.$control().hasClass( 'tmce-active' )
 				? 'visual'

@@ -258,6 +258,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/upgrades.php' );
 			acf_include( 'includes/validation.php' );
 			acf_include( 'includes/rest-api.php' );
+			acf_include( 'includes/datastore.php' );
 			acf_include( 'includes/blocks.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
 
@@ -297,6 +298,15 @@ if ( ! class_exists( 'ACF' ) ) {
 			if ( class_exists( 'SCF\AI\GEO\Outputs\Blocks' ) ) {
 				new \SCF\AI\GEO\Outputs\Blocks();
 			}
+
+			// Datastore integration (self-gates on acf_is_using_datastore()).
+			acf_new_instance( 'SCF\Datastore\REST_Save' );
+			acf_new_instance( 'SCF\Datastore\Localization' );
+			acf_new_instance( 'SCF\Datastore\Revisions' );
+			acf_new_instance( 'SCF\Datastore\Check_Screen' );
+
+			// JS block bindings layer (self-gates on enable_block_bindings + datastore).
+			acf_new_instance( 'SCF\Blocks\Bindings_Editor' );
 
 			// Add actions.
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );

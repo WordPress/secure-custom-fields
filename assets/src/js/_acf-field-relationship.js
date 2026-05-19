@@ -26,9 +26,11 @@
 		},
 
 		$listItem: function ( list, id ) {
-			return this.$list( list ).find(
-				'.acf-rel-item[data-id="' + id + '"]'
-			);
+			return this.$list( list )
+				.find( '.acf-rel-item' )
+				.filter( function () {
+					return String( $( this ).data( 'id' ) ) === String( id );
+				} );
 		},
 
 		getValue: function () {
@@ -39,11 +41,36 @@
 			return val.length ? val : false;
 		},
 
+		setValue: function ( value ) {
+			if ( ! Array.isArray( value ) ) {
+				value = value ? [ value ] : [];
+			}
+
+			this.$list( 'values' ).html( '' );
+			this.$listItems( 'choices' ).removeClass( 'disabled' );
+
+			value.forEach( ( id ) => {
+				const $choice = this.$listItem( 'choices', id );
+				const text = $choice.length
+					? $choice.html()
+					: acf.strEscape( String( id ) );
+				$choice.addClass( 'disabled' );
+
+				const valueHtml = this.newValue( {
+					id,
+					text,
+				} );
+				this.$list( 'values' ).append( valueHtml );
+			} );
+
+			this.$input().trigger( 'change' );
+		},
+
 		newChoice: function ( props ) {
 			return [
 				'<li>',
 				'<span tabindex="0" data-id="' +
-					props.id +
+					acf.strEscape( String( props.id ) ) +
 					'" class="acf-rel-item">' +
 					props.text +
 					'</span>',
@@ -52,15 +79,16 @@
 		},
 
 		newValue: function ( props ) {
+			const id = acf.strEscape( String( props.id ) );
 			return [
 				'<li>',
 				'<input type="hidden" name="' +
 					this.getInputName() +
 					'[]" value="' +
-					props.id +
+					id +
 					'" />',
 				'<span tabindex="0" data-id="' +
-					props.id +
+					id +
 					'" class="acf-rel-item acf-rel-item-remove">' +
 					props.text,
 				'<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a>',

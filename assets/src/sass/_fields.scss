@@ -1834,6 +1834,12 @@ html[dir="rtl"] .pac-container .pac-item {
 	clear: both;
 	z-index: 1;
 	overflow: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.acf-tab-wrap::-webkit-scrollbar {
+	display: none;
 }
 
 // tab group

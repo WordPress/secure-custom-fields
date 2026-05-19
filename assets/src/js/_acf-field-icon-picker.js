@@ -51,6 +51,71 @@
 			return this.$( '.acf-icon-picker-media-library-button' );
 		},
 
+		$mediaLibraryPreviewImg() {
+			return this.$( '.acf-icon-picker-media-library-preview-img img' );
+		},
+
+		getValue() {
+			return {
+				type: this.$typeInput().val(),
+				value: this.$valueInput().val(),
+			};
+		},
+
+		setValue( val ) {
+			if ( ! val || typeof val !== 'object' ) {
+				val = { type: '', value: '' };
+			}
+
+			const type = val.type || '';
+			const value = val.value || '';
+			this.updateTypeAndValue( type, value );
+
+			if ( type ) {
+				this.$tabButton()
+					.filter( `[data-unique-tab-key="${ type }"]` )
+					.trigger( 'click' );
+
+				const $iconsList = this.$(
+					`.acf-icon-list[data-parent-tab="${ type }"]`
+				);
+				if ( $iconsList.length ) {
+					$iconsList
+						.find( '.acf-icon-picker-list-icon.active' )
+						.removeClass( 'active' );
+					$iconsList.find( 'input:checked' ).prop( 'checked', false );
+
+					const $icon = $iconsList.find(
+						`.acf-icon-picker-list-icon[data-icon="${ value }"]`
+					);
+					if ( $icon.length ) {
+						$icon.addClass( 'active' );
+						$icon.find( 'input' ).prop( 'checked', true );
+						this.set( 'selectedIcon', value );
+					}
+				}
+			}
+
+			if ( type === 'url' ) {
+				this.$( '.acf-icon_url' ).val( value );
+			}
+
+			if (
+				type === 'media_library' &&
+				value &&
+				window.wp?.media?.attachment
+			) {
+				const attachment = wp.media.attachment( value );
+				attachment.fetch().then( () => {
+					const url = attachment.get( 'url' );
+					if ( url ) {
+						this.set( 'mediaLibraryPreviewUrl', url );
+						this.$mediaLibraryPreviewImg().attr( 'src', url );
+					}
+				} );
+			}
+		},
+
 		initialize() {
 			// Set up actions hook callbacks.
 			this.addActions();
@@ -63,6 +128,13 @@
 
 			// Store the type and value object.
 			this.set( 'typeAndValue', typeAndValue );
+
+			if ( typeAndValue.type === 'media_library' ) {
+				const previewUrl = this.$mediaLibraryPreviewImg().attr( 'src' );
+				if ( previewUrl ) {
+					this.set( 'mediaLibraryPreviewUrl', previewUrl );
+				}
+			}
 
 			// Any time any acf tab is clicked, we will re-scroll to the selected icon.
 			$( '.acf-tab-button' ).on( 'click', () => {
@@ -84,10 +156,32 @@
 			acf.addAction(
 				this.get( 'name' ) + '/type_and_value_change',
 				( newTypeAndValue ) => {
-					// Align the visual state of each tab to the current value.
-					this.alignIconListTabsToCurrentValue( newTypeAndValue );
-					this.alignMediaLibraryTabToCurrentValue( newTypeAndValue );
-					this.alignUrlTabToCurrentValue( newTypeAndValue );
+					const currentType = this.$typeInput().val();
+					const currentValue = this.$valueInput().val();
+
+					if (
+						currentType === newTypeAndValue.type &&
+						currentValue === newTypeAndValue.value
+					) {
+						this.alignIconListTabsToCurrentValue( newTypeAndValue );
+						this.alignMediaLibraryTabToCurrentValue(
+							newTypeAndValue
+						);
+						this.alignUrlTabToCurrentValue( newTypeAndValue );
+					} else {
+						const currentTypeAndValue = this.get( 'typeAndValue' );
+						if ( currentTypeAndValue ) {
+							this.alignIconListTabsToCurrentValue(
+								currentTypeAndValue
+							);
+							this.alignMediaLibraryTabToCurrentValue(
+								currentTypeAndValue
+							);
+							this.alignUrlTabToCurrentValue(
+								currentTypeAndValue
+							);
+						}
+					}
 				}
 			);
 		},
@@ -102,14 +196,14 @@
 			acf.val( this.$typeInput(), type );
 			acf.val( this.$valueInput(), value );
 
+			// Set the state.
+			this.set( 'typeAndValue', typeAndValue );
+
 			// Fire an action to let each tab set itself according to the typeAndValue state.
 			acf.doAction(
 				this.get( 'name' ) + '/type_and_value_change',
 				typeAndValue
 			);
-
-			// Set the state.
-			this.set( 'typeAndValue', typeAndValue );
 		},
 
 		scrollToSelectedIcon() {
