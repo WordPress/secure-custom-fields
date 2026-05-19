@@ -115,6 +115,27 @@
 			acf.doAction( 'date_picker_init', $inputText, args, this );
 		},
 
+		setValue: function ( val ) {
+			acf.val( this.$input(), val );
+
+			const $inputText = this.$inputText();
+			if ( val && $inputText.length ) {
+				try {
+					const date = $.datepicker.parseDate( 'yymmdd', val );
+					const dateFormat =
+						this.get( 'date_format' ) ||
+						$inputText.datepicker( 'option', 'dateFormat' );
+					$inputText.val(
+						$.datepicker.formatDate( dateFormat, date )
+					);
+				} catch ( e ) {
+					$inputText.val( val );
+				}
+			} else {
+				$inputText.val( '' );
+			}
+		},
+
 		onBlur: function () {
 			if ( ! this.$inputText().val() ) {
 				acf.val( this.$input(), '' );

@@ -1091,11 +1091,11 @@ function BlockEditInner( props ) {
 								( blockType?.auto_inline_editing &&
 									blockType?.hide_fields_in_sidebar ===
 										undefined &&
-									inspectorControlsRef.current ===
-										currentFormContainer ) ||
+									currentFormContainer ===
+										inspectorControlsRef.current ) ||
 								( blockType?.hide_fields_in_sidebar &&
-									inspectorControlsRef.current ===
-										currentFormContainer )
+									currentFormContainer ===
+										inspectorControlsRef.current )
 							}
 						/>
 						{ freezeInlineToolbarDuringReRender && (

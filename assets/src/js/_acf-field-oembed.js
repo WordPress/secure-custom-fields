@@ -38,6 +38,13 @@
 			}
 
 			acf.val( this.$input(), val );
+			this.$search().val( val || '' );
+
+			if ( val ) {
+				this.maybeSearch();
+			} else {
+				this.$( '.canvas-media' ).html( '' );
+			}
 		},
 
 		showLoading: function ( show ) {
