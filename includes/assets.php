@@ -552,7 +552,9 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				wp_enqueue_script( 'scf-bindings' );
+				if ( ! acf_is_using_datastore() ) {
+					wp_enqueue_script( 'scf-bindings' );
+				}
 				wp_enqueue_style( 'acf-pro-input' );
 
 				/**
