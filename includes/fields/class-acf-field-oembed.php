@@ -49,7 +49,6 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 
 			// extra
 			add_action( 'wp_ajax_acf/fields/oembed/search', array( $this, 'ajax_query' ) );
-			add_action( 'wp_ajax_nopriv_acf/fields/oembed/search', array( $this, 'ajax_query' ) );
 		}
 
 
@@ -123,8 +122,8 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 				)
 			);
 
-			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) ) {
-				die();
+			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) || ! current_user_can( 'edit_posts' ) ) {
+				wp_send_json_error();
 			}
 
 			wp_send_json( $this->get_ajax_query( $_POST ) );
