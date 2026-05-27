@@ -269,14 +269,14 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			// cannot leak into acf_update_values() downstream, but only apply them to the post when the
 			// form was rendered with the corresponding option enabled (mirrors render_form()).
 			if ( isset( $_POST['acf']['_post_title'] ) ) {
-				$post_title = acf_extract_var( $_POST['acf'], '_post_title' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP when saved.
+				$post_title = acf_extract_var( $_POST['acf'], '_post_title' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized by WP when saved; wp_insert_post / wp_update_post expect slashed input.
 				if ( ! empty( $form['post_title'] ) ) {
 					$save['post_title'] = $post_title;
 				}
 			}
 
 			if ( isset( $_POST['acf']['_post_content'] ) ) {
-				$post_content = acf_extract_var( $_POST['acf'], '_post_content' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP when saved.
+				$post_content = acf_extract_var( $_POST['acf'], '_post_content' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized by WP when saved; wp_insert_post / wp_update_post expect slashed input.
 				if ( ! empty( $form['post_content'] ) ) {
 					$save['post_content'] = $post_content;
 				}
@@ -449,7 +449,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			$post_id      = $args['post_id'] ?? 0;
 
 			// Prevent ACF from loading values for "new_post".
-			if ( $post_id === 'new_post' ) {
+			if ( 'new_post' === $post_id ) {
 				$post_id = false;
 			}
 
@@ -484,7 +484,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 				}
 
 				// Load fields for the given "new_post" args.
-			} elseif ( ( $args['post_id'] ?? 0 ) === 'new_post' ) {
+			} elseif ( 'new_post' === ( $args['post_id'] ?? 0 ) ) {
 				$field_groups = acf_get_field_groups( $args['new_post'] ?? array() );
 
 				// Load fields for the given "post_id" arg.
@@ -535,7 +535,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			foreach ( $this->get_form_fields( $form ) as $field ) {
 				$prefix = $field['prefix'] ?? 'acf';
 
-				if ( $prefix === 'acf' ) {
+				if ( 'acf' === $prefix ) {
 					if ( ! empty( $field['key'] ) ) {
 						$keys[] = $field['key'];
 					}
@@ -600,7 +600,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			$post_id = $args['post_id'];
 
 			// Prevent ACF from loading values for "new_post".
-			if ( $post_id === 'new_post' ) {
+			if ( 'new_post' === $post_id ) {
 				$post_id = false;
 			}
 
@@ -616,9 +616,9 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 				if ( ! isset( $field['key'] ) ) {
 					continue;
 				}
-				if ( $field['key'] === '_post_title' ) {
+				if ( '_post_title' === $field['key'] ) {
 					$field['value'] = $post_id ? get_post_field( 'post_title', $post_id ) : '';
-				} elseif ( $field['key'] === '_post_content' ) {
+				} elseif ( '_post_content' === $field['key'] ) {
 					$field['value'] = $post_id ? get_post_field( 'post_content', $post_id ) : '';
 				}
 			}
