@@ -561,6 +561,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/form/allowed_field_keys`
 - `acf/pre_save_post`
 - `acf/pre_submit_form`
 - `acf/submit_form`
