@@ -578,7 +578,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 * @return false|void False if a registered form id was passed and no matching form exists;
 		 *                    otherwise outputs the form and returns no value.
 		 */
-		function render_form( $args = array() ) {
+		public function render_form( $args = array() ) {
 
 			// Vars.
 			$is_registered = false;

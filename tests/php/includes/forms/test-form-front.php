@@ -594,9 +594,12 @@ class Test_Form_Front extends BaseTestCase {
 	}
 
 	/**
-	 * pre_save_post() must NOT apply $_POST['acf']['_post_title'] when the form was
-	 * not rendered with `post_title` enabled. This blocks a submitter from injecting
-	 * a post_title value into a form that did not expose the post title field.
+	 * Rejects injected post_title when form disables post_title editing.
+	 *
+	 * Asserts pre_save_post() does NOT apply $_POST['acf']['_post_title'] when the
+	 * form was not rendered with `post_title` enabled. This blocks a submitter from
+	 * injecting a post_title value into a form that did not expose the post title
+	 * field.
 	 */
 	public function test_pre_save_post_ignores_post_title_when_form_disables_it() {
 		$form_front = new acf_form_front();
@@ -634,8 +637,10 @@ class Test_Form_Front extends BaseTestCase {
 	}
 
 	/**
-	 * pre_save_post() must apply $_POST['acf']['_post_title'] when the form was
-	 * rendered with `post_title` enabled. Regression check for legitimate use.
+	 * Applies post_title when form enables post_title editing.
+	 *
+	 * Asserts pre_save_post() applies $_POST['acf']['_post_title'] when the form
+	 * was rendered with `post_title` enabled. Regression check for legitimate use.
 	 */
 	public function test_pre_save_post_applies_post_title_when_form_enables_it() {
 		$form_front = new acf_form_front();
@@ -671,8 +676,11 @@ class Test_Form_Front extends BaseTestCase {
 	}
 
 	/**
-	 * pre_save_post() must NOT apply $_POST['acf']['_post_content'] when the form
-	 * was not rendered with `post_content` enabled. Mirrors the post_title check.
+	 * Rejects injected post_content when form disables post_content editing.
+	 *
+	 * Asserts pre_save_post() does NOT apply $_POST['acf']['_post_content'] when
+	 * the form was not rendered with `post_content` enabled. Mirrors the
+	 * post_title check.
 	 */
 	public function test_pre_save_post_ignores_post_content_when_form_disables_it() {
 		$form_front = new acf_form_front();
@@ -709,9 +717,11 @@ class Test_Form_Front extends BaseTestCase {
 	}
 
 	/**
-	 * get_allowed_field_keys() must return only the field keys the form actually
-	 * exposed through its `fields` configuration. Fields not in the configuration
-	 * must not be accepted on save.
+	 * Returns only the field keys the form exposed via `fields` configuration.
+	 *
+	 * Asserts get_allowed_field_keys() returns only the field keys the form
+	 * actually exposed through its `fields` configuration. Fields not in the
+	 * configuration must not be accepted on save.
 	 */
 	public function test_get_allowed_field_keys_limits_to_form_fields_configuration() {
 		$form_front = new acf_form_front();
