@@ -446,7 +446,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		protected function get_form_fields( array $args ): array {
 			$fields       = array();
 			$field_groups = array();
-			$post_id      = $args['post_id'] ?? 0;
+			$post_id      = $args['post_id'];
 
 			// Prevent ACF from loading values for "new_post".
 			if ( 'new_post' === $post_id ) {
@@ -460,17 +460,17 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			}
 
 			// Append post_title field.
-			if ( ! empty( $args['post_title'] ) ) {
+			if ( $args['post_title'] ) {
 				$fields[] = acf_get_field( '_post_title' );
 			}
 
 			// Append post_content field.
-			if ( ! empty( $args['post_content'] ) ) {
+			if ( $args['post_content'] ) {
 				$fields[] = acf_get_field( '_post_content' );
 			}
 
 			// Load specific fields.
-			if ( ! empty( $args['fields'] ) ) {
+			if ( $args['fields'] ) {
 
 				// Lookup fields using $strict = false for better compatibility with field names.
 				foreach ( $args['fields'] as $selector ) {
@@ -478,17 +478,17 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 				}
 
 				// Load specific field groups.
-			} elseif ( ! empty( $args['field_groups'] ) ) {
+			} elseif ( $args['field_groups'] ) {
 				foreach ( $args['field_groups'] as $selector ) {
 					$field_groups[] = acf_get_field_group( $selector );
 				}
 
 				// Load fields for the given "new_post" args.
-			} elseif ( 'new_post' === ( $args['post_id'] ?? 0 ) ) {
-				$field_groups = acf_get_field_groups( $args['new_post'] ?? array() );
+			} elseif ( 'new_post' === $args['post_id'] ) {
+				$field_groups = acf_get_field_groups( $args['new_post'] );
 
 				// Load fields for the given "post_id" arg.
-			} elseif ( ! empty( $args['post_id'] ) ) {
+			} else {
 				$field_groups = acf_get_field_groups(
 					array(
 						'post_id' => $args['post_id'],
@@ -509,7 +509,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			}
 
 			// Add honeypot field.
-			if ( ! empty( $args['honeypot'] ) ) {
+			if ( $args['honeypot'] ) {
 				$fields[] = acf_get_field( '_validate_email' );
 			}
 

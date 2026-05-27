@@ -497,9 +497,12 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id' => $post_id,
-			'return'  => '',
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '',
+			)
 		);
 
 		$form_front->submit_form( $form );
@@ -536,9 +539,12 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id' => $post_id,
-			'return'  => '', // Empty to avoid redirect.
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '', // Empty to avoid redirect.
+			)
 		);
 
 		$form_front->submit_form( $form );
@@ -567,11 +573,15 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id'     => $post_id,
-			'return'      => '',
-			'custom_data' => 'test_value',
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '',
+			)
 		);
+		// Preserve the test's custom marker after validation.
+		$form['custom_data'] = 'test_value';
 
 		$form_front->submit_form( $form );
 
