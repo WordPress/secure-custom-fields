@@ -49,6 +49,7 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 
 			// extra
 			add_action( 'wp_ajax_acf/fields/oembed/search', array( $this, 'ajax_query' ) );
+			add_action( 'wp_ajax_nopriv_acf/fields/oembed/search', array( $this, 'ajax_query' ) );
 		}
 
 
@@ -123,6 +124,13 @@ if ( ! class_exists( 'acf_field_oembed' ) ) :
 			);
 
 			if ( ! acf_verify_ajax( $args['nonce'], $args['field_key'], true ) || ! current_user_can( 'edit_posts' ) ) {
+				if ( ! is_user_logged_in() ) {
+					_doing_it_wrong(
+						__METHOD__,
+						esc_html__( 'The oEmbed AJAX search endpoint now requires an authenticated user with the edit_posts capability. Unauthenticated access via wp_ajax_nopriv_acf/fields/oembed/search is deprecated and will be removed in a future release.', 'secure-custom-fields' ),
+						'6.8.5'
+					);
+				}
 				wp_send_json_error();
 			}
 

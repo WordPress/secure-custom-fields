@@ -43,6 +43,14 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 	private $subscriber_user_id;
 
 	/**
+	 * Captured `_doing_it_wrong()` invocations during the current test.
+	 * Populated by `capture_doing_it_wrong()` and cleared in `tear_down()`.
+	 *
+	 * @var array<int, array{function: string, message: string, version: string}>
+	 */
+	private $doing_it_wrong_calls = array();
+
+	/**
 	 * Set up test fixtures.
 	 *
 	 * Creates one administrator and one subscriber user, registers a
@@ -89,6 +97,38 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 		$_REQUEST = array();
 		$_POST    = array();
 		$_GET     = array();
+
+		// Suppress the PHP notice that _doing_it_wrong() would emit under
+		// WP_DEBUG so PHPUnit does not convert it into a test failure.
+		// Tests that need to observe the deprecation call hook the
+		// `doing_it_wrong_run` action directly.
+		add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
+
+		$this->doing_it_wrong_calls = array();
+		add_action(
+			'doing_it_wrong_run',
+			array( $this, 'capture_doing_it_wrong' ),
+			10,
+			3
+		);
+	}
+
+	/**
+	 * Captures `_doing_it_wrong()` invocations triggered during a test so
+	 * tests can assert that the deprecation notice was (or was not)
+	 * emitted by the handler.
+	 *
+	 * @param string $function_name The function being called incorrectly.
+	 * @param string $message       The deprecation / incorrect-usage message.
+	 * @param string $version       The version the incorrect usage was first noted in.
+	 * @return void
+	 */
+	public function capture_doing_it_wrong( $function_name, $message, $version ) {
+		$this->doing_it_wrong_calls[] = array(
+			'function' => $function_name,
+			'message'  => $message,
+			'version'  => $version,
+		);
 	}
 
 	/**
@@ -119,20 +159,28 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 		// keeps tear_down defensive against cross-test contamination).
 		remove_all_filters( 'pre_http_request' );
 
+		// Remove the doing_it_wrong capture hooks installed in set_up().
+		remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
+		remove_action( 'doing_it_wrong_run', array( $this, 'capture_doing_it_wrong' ), 10 );
+		$this->doing_it_wrong_calls = array();
+
 		parent::tear_down();
 	}
 
 	/**
-	 * The unauthenticated AJAX action for the oEmbed search must not be
-	 * registered. Visitors without a session must have no entry point
-	 * into the handler at the WordPress action layer.
+	 * The unauthenticated AJAX action for the oEmbed search remains
+	 * registered during the deprecation window so callers receive a
+	 * predictable JSON error (and a `_doing_it_wrong` notice in dev
+	 * environments) instead of the silent `0` an unregistered action
+	 * would produce. The handler enforces the authorization check
+	 * regardless of which hook delivered the request.
 	 *
 	 * @return void
 	 */
-	public function test_nopriv_hook_is_not_registered() {
-		$this->assertFalse(
+	public function test_nopriv_hook_remains_registered_for_deprecation() {
+		$this->assertNotFalse(
 			has_action( 'wp_ajax_nopriv_acf/fields/oembed/search' ),
-			'The wp_ajax_nopriv_acf/fields/oembed/search action must not be registered.'
+			'The wp_ajax_nopriv_acf/fields/oembed/search action must remain registered so unauthenticated callers receive a documented rejection during the deprecation window.'
 		);
 	}
 
@@ -253,6 +301,17 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 		);
 		$this->assertArrayNotHasKey( 'url', (array) $payload, 'Rejection payload must not leak a url key.' );
 		$this->assertArrayNotHasKey( 'html', (array) $payload, 'Rejection payload must not leak an html key.' );
+
+		// Anonymous callers must also receive the deprecation notice
+		// indicating the nopriv entry point is going away.
+		$this->assertCount(
+			1,
+			$this->doing_it_wrong_calls,
+			'Anonymous calls must trigger exactly one _doing_it_wrong() notice.'
+		);
+		$this->assertStringContainsString( 'ajax_query', $this->doing_it_wrong_calls[0]['function'] );
+		$this->assertSame( '6.8.5', $this->doing_it_wrong_calls[0]['version'] );
+		$this->assertStringContainsString( 'wp_ajax_nopriv_acf/fields/oembed/search', $this->doing_it_wrong_calls[0]['message'] );
 	}
 
 	/**
@@ -285,6 +344,15 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 			array( 'success' => false ),
 			$payload,
 			'Subscribers lacking edit_posts must receive the wp_send_json_error() rejection envelope even with a valid nonce.'
+		);
+
+		// Logged-in callers (even under-privileged ones) must not trigger
+		// the nopriv-deprecation notice — the deprecation only applies to
+		// requests that arrived through the unauthenticated entry point.
+		$this->assertSame(
+			array(),
+			$this->doing_it_wrong_calls,
+			'Authenticated callers must not trigger the nopriv-deprecation _doing_it_wrong() notice.'
 		);
 	}
 
