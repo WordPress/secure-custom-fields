@@ -211,6 +211,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 * @return void
 		 */
 		public function register_categories() {
+			if ( ! $this->instance() ) {
+				return;
+			}
+
 			wp_register_ability_category(
 				$this->ability_category(),
 				array(
@@ -234,6 +238,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 * @return void
 		 */
 		public function register_abilities() {
+			if ( ! $this->instance() ) {
+				return;
+			}
+
 			$this->register_list_ability();
 			$this->register_get_ability();
 			$this->register_create_ability();
