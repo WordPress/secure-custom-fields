@@ -802,6 +802,39 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	}
 
 	/**
+	 * Test registration skips cleanly when the internal post type instance is unavailable.
+	 *
+	 * Reproduces the issue's crash path: when the internal post type instance lookup
+	 * resolves to false (e.g. the post type is not registered yet), the abilities and
+	 * categories registration must not attempt to dereference the missing instance.
+	 * Asserts that nothing is registered and that no warning, notice, deprecation, or
+	 * fatal TypeError is emitted (the suite promotes such emissions to test failures).
+	 */
+	public function test_registration_skips_cleanly_when_instance_unavailable() {
+		global $mock_registered_abilities, $mock_registered_ability_categories;
+		$mock_registered_abilities          = array();
+		$mock_registered_ability_categories = array();
+
+		// Force the instance-unavailable state by injecting literal false.
+		$reflection = new ReflectionClass( SCF_Internal_Post_Type_Abilities::class );
+		$property   = $reflection->getProperty( 'instance' );
+		$property->setAccessible( true );
+		$property->setValue( $this->abilities, false );
+
+		$this->abilities->register_categories();
+		$this->abilities->register_abilities();
+
+		$this->assertEmpty(
+			$mock_registered_ability_categories,
+			'No categories should be registered when the instance is unavailable'
+		);
+		$this->assertEmpty(
+			$mock_registered_abilities,
+			'No abilities should be registered when the instance is unavailable'
+		);
+	}
+
+	/**
 	 * Test instance() method caches result
 	 */
 	public function test_instance_caches_result() {
