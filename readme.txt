@@ -51,6 +51,13 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= Next =
+*Release Date TBD*
+
+*Fixes*
+
+- SCF's Abilities API integration for its internal post types no longer triggers PHP warnings, notices, or a fatal error (500) on block editor and REST API requests when another active plugin builds the WordPress abilities registry earlier in the request; registration is skipped cleanly in that case and normal abilities behavior is otherwise unchanged.
+
 = 6.8.6 =
 *Release Date 27th May 2026*
 
