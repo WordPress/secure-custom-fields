@@ -199,7 +199,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		private function get_entity_with_internal_fields_schema() {
 			$schema               = $this->get_entity_schema();
 			$internal             = $this->get_internal_fields_schema();
-			$schema['properties'] = array_merge( $schema['properties'], $internal['properties'] );
+			$schema['properties'] = array_merge(
+				$schema['properties'] ?? array(),
+				$internal['properties'] ?? array()
+			);
 			return $schema;
 		}
 
