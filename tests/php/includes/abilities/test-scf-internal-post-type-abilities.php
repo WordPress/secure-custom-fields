@@ -815,23 +815,39 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 		$mock_registered_abilities          = array();
 		$mock_registered_ability_categories = array();
 
-		// Force the instance-unavailable state by injecting literal false.
+		$store             = acf_get_store( 'internal-post-types' );
+		$original_instance = $store ? $store->get( 'acf-taxonomy' ) : null;
+
 		$reflection = new ReflectionClass( SCF_Internal_Post_Type_Abilities::class );
 		$property   = $reflection->getProperty( 'instance' );
 		$property->setAccessible( true );
-		$property->setValue( $this->abilities, false );
+		$property->setValue( $this->abilities, null );
 
-		$this->abilities->register_categories();
-		$this->abilities->register_abilities();
+		if ( $store ) {
+			$store->remove( 'acf-taxonomy' );
+		}
 
-		$this->assertEmpty(
-			$mock_registered_ability_categories,
-			'No categories should be registered when the instance is unavailable'
-		);
-		$this->assertEmpty(
-			$mock_registered_abilities,
-			'No abilities should be registered when the instance is unavailable'
-		);
+		try {
+			$this->abilities->register_categories();
+			$this->abilities->register_abilities();
+
+			$this->assertEmpty(
+				$mock_registered_ability_categories,
+				'No categories should be registered when the instance is unavailable'
+			);
+			$this->assertEmpty(
+				$mock_registered_abilities,
+				'No abilities should be registered when the instance is unavailable'
+			);
+			$this->assertNull(
+				$property->getValue( $this->abilities ),
+				'Unavailable instances should not be cached so later registration attempts can retry'
+			);
+		} finally {
+			if ( $store && $original_instance ) {
+				$store->set( 'acf-taxonomy', $original_instance );
+			}
+		}
 	}
 
 	/**

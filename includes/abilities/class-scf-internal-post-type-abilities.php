@@ -78,12 +78,19 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		/**
 		 * Gets the internal post type instance.
 		 *
-		 * @return ACF_Internal_Post_Type
+		 * @return ACF_Internal_Post_Type|false
 		 */
 		private function instance() {
-			if ( null === $this->instance ) {
-				$this->instance = acf_get_internal_post_type_instance( $this->internal_post_type );
+			if ( ! $this->instance ) {
+				$instance = acf_get_internal_post_type_instance( $this->internal_post_type );
+
+				if ( $instance ) {
+					$this->instance = $instance;
+				}
+
+				return $instance;
 			}
+
 			return $this->instance;
 		}
 
