@@ -71,7 +71,7 @@ jobs:
 
     steps:
       - name: Gather a list of contributors
-        uses: WordPress/props-bot-action@635b2c5330167e194cd7b2c8a909991592a5022d # pinned 2026-04-24, no releases upstream
+        uses: WordPress/props-bot-action@496473a3d11a263c17653aa9a00a98b8ed1479f8 # pinned 2026-04-24, no releases upstream
         with:
           format: 'svn'
 
