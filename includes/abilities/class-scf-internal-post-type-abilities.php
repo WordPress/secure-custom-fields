@@ -78,12 +78,19 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		/**
 		 * Gets the internal post type instance.
 		 *
-		 * @return ACF_Internal_Post_Type
+		 * @return ACF_Internal_Post_Type|false
 		 */
 		private function instance() {
-			if ( null === $this->instance ) {
-				$this->instance = acf_get_internal_post_type_instance( $this->internal_post_type );
+			if ( ! $this->instance ) {
+				$instance = acf_get_internal_post_type_instance( $this->internal_post_type );
+
+				if ( $instance ) {
+					$this->instance = $instance;
+				}
+
+				return $instance;
 			}
+
 			return $this->instance;
 		}
 
@@ -199,7 +206,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		private function get_entity_with_internal_fields_schema() {
 			$schema               = $this->get_entity_schema();
 			$internal             = $this->get_internal_fields_schema();
-			$schema['properties'] = array_merge( $schema['properties'], $internal['properties'] );
+			$schema['properties'] = array_merge(
+				$schema['properties'] ?? array(),
+				$internal['properties'] ?? array()
+			);
 			return $schema;
 		}
 
@@ -211,6 +221,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 * @return void
 		 */
 		public function register_categories() {
+			if ( ! $this->instance() ) {
+				return;
+			}
+
 			wp_register_ability_category(
 				$this->ability_category(),
 				array(
@@ -234,6 +248,10 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 		 * @return void
 		 */
 		public function register_abilities() {
+			if ( ! $this->instance() ) {
+				return;
+			}
+
 			$this->register_list_ability();
 			$this->register_get_ability();
 			$this->register_create_ability();
