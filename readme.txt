@@ -56,7 +56,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 *Security*
 
-- Hardened authorization on the oEmbed field's AJAX search endpoint. The endpoint now requires an authenticated user with content-authoring capability; the legacy unauthenticated entry point is deprecated and will be removed in a future release.
+- Hardened the oEmbed field's AJAX preview handling by restricting provider discovery for visitors and users without content-authoring capability while preserving previews from WordPress's registered oEmbed providers.
 - Hardened front-end `acf_form()` submission processing so the `post_title` and `post_content` form options are respected on save, and the save pipeline only accepts values for fields the rendered form exposed. A new `acf/form/allowed_field_keys` filter is available for sites that legitimately extend a form at runtime.
 
 = 6.8.5 =

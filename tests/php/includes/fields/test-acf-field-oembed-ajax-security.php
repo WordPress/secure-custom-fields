@@ -1,9 +1,6 @@
 <?php
 /**
- * Tests for the oEmbed field type AJAX authorization surface.
- *
- * Covers the registration of the oEmbed search AJAX hooks and (in later
- * additions) the capability-gated rejection behaviour of the handler.
+ * Tests for the oEmbed field type AJAX preview surface.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -18,9 +15,9 @@ acf_include( 'includes/fields/class-acf-field-oembed.php' );
 /**
  * Class Test_ACF_Field_Oembed_Ajax_Security
  *
- * Verifies that the oEmbed search AJAX action is registered only for
- * authenticated requests, and that the handler enforces a capability
- * check for any anonymous or low-privilege caller.
+ * Verifies that the oEmbed search AJAX action remains available for valid
+ * field-nonce callers while restricting URL discovery for users who cannot
+ * author content.
  *
  * @group fields
  * @group ajax
@@ -43,27 +40,27 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 	private $subscriber_user_id;
 
 	/**
-	 * Captured `_doing_it_wrong()` invocations during the current test.
-	 * Populated by `capture_doing_it_wrong()` and cleared in `tear_down()`.
+	 * The last URL observed by the oEmbed stub.
 	 *
-	 * @var array<int, array{function: string, message: string, version: string}>
+	 * @var string
 	 */
-	private $doing_it_wrong_calls = array();
+	private $last_oembed_url = '';
+
+	/**
+	 * The last argument array observed by the oEmbed stub.
+	 *
+	 * @var array
+	 */
+	private $last_oembed_args = array();
 
 	/**
 	 * Set up test fixtures.
-	 *
-	 * Creates one administrator and one subscriber user, registers a
-	 * minimal local oEmbed field used by the handler-level tests, and
-	 * resets the request superglobals so each test starts from a known
-	 * empty request state.
 	 *
 	 * @return void
 	 */
 	public function set_up(): void {
 		parent::set_up();
 
-		// Create an admin user.
 		$this->admin_user_id = wp_insert_user(
 			array(
 				'user_login' => 'admin_user',
@@ -73,7 +70,6 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 			)
 		);
 
-		// Create a subscriber user.
 		$this->subscriber_user_id = wp_insert_user(
 			array(
 				'user_login' => 'subscriber_user',
@@ -83,8 +79,6 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 			)
 		);
 
-		// Register the shared test oEmbed field so handler tests have a
-		// stable field key to reference.
 		acf_add_local_field(
 			array(
 				'key'  => 'field_test_oembed',
@@ -93,101 +87,52 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 			)
 		);
 
-		// Clear any existing request data.
 		$_REQUEST = array();
 		$_POST    = array();
 		$_GET     = array();
 
-		// Suppress the PHP notice that _doing_it_wrong() would emit under
-		// WP_DEBUG so PHPUnit does not convert it into a test failure.
-		// Tests that need to observe the deprecation call hook the
-		// `doing_it_wrong_run` action directly.
-		add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
-
-		$this->doing_it_wrong_calls = array();
-		add_action(
-			'doing_it_wrong_run',
-			array( $this, 'capture_doing_it_wrong' ),
-			10,
-			3
-		);
-	}
-
-	/**
-	 * Captures `_doing_it_wrong()` invocations triggered during a test so
-	 * tests can assert that the deprecation notice was (or was not)
-	 * emitted by the handler.
-	 *
-	 * @param string $function_name The function being called incorrectly.
-	 * @param string $message       The deprecation / incorrect-usage message.
-	 * @param string $version       The version the incorrect usage was first noted in.
-	 * @return void
-	 */
-	public function capture_doing_it_wrong( $function_name, $message, $version ) {
-		$this->doing_it_wrong_calls[] = array(
-			'function' => $function_name,
-			'message'  => $message,
-			'version'  => $version,
-		);
+		$this->last_oembed_url  = '';
+		$this->last_oembed_args = array();
 	}
 
 	/**
 	 * Tear down test fixtures.
 	 *
-	 * Resets the current user, clears request superglobals, removes the
-	 * locally registered test field, and removes any one-shot
-	 * `pre_http_request` filter a handler test may have installed so
-	 * subsequent tests start from a clean global state.
-	 *
 	 * @return void
 	 */
 	public function tear_down(): void {
-		// Clear user.
 		wp_set_current_user( 0 );
 
-		// Clear request globals.
 		$_REQUEST = array();
 		$_POST    = array();
 		$_GET     = array();
 
-		// De-register the shared test field so the local-field registry
-		// is shaped the same after each test as before it.
 		acf_remove_local_field( 'field_test_oembed' );
+		remove_filter( 'acf/fields/oembed/allow_discovery', '__return_true' );
 
-		// Remove any one-shot pre_http_request filter a handler test may
-		// have installed (handler tests are added in a later task; this
-		// keeps tear_down defensive against cross-test contamination).
-		remove_all_filters( 'pre_http_request' );
-
-		// Remove the doing_it_wrong capture hooks installed in set_up().
-		remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
-		remove_action( 'doing_it_wrong_run', array( $this, 'capture_doing_it_wrong' ), 10 );
-		$this->doing_it_wrong_calls = array();
+		$this->last_oembed_url  = '';
+		$this->last_oembed_args = array();
 
 		parent::tear_down();
 	}
 
 	/**
-	 * The unauthenticated AJAX action for the oEmbed search remains
-	 * registered during the deprecation window so callers receive a
-	 * predictable JSON error (and a `_doing_it_wrong` notice in dev
-	 * environments) instead of the silent `0` an unregistered action
-	 * would produce. The handler enforces the authorization check
-	 * regardless of which hook delivered the request.
+	 * The unauthenticated AJAX action for the oEmbed search remains registered
+	 * so front-end forms can continue to request previews with a valid field
+	 * nonce.
 	 *
 	 * @return void
 	 */
-	public function test_nopriv_hook_remains_registered_for_deprecation() {
+	public function test_nopriv_hook_remains_registered() {
 		$this->assertNotFalse(
 			has_action( 'wp_ajax_nopriv_acf/fields/oembed/search' ),
-			'The wp_ajax_nopriv_acf/fields/oembed/search action must remain registered so unauthenticated callers receive a documented rejection during the deprecation window.'
+			'The wp_ajax_nopriv_acf/fields/oembed/search action must remain registered.'
 		);
 	}
 
 	/**
-	 * The authenticated AJAX action for the oEmbed search must remain
-	 * registered so legitimate logged-in editors continue to receive
-	 * embed previews.
+	 * The authenticated AJAX action for the oEmbed search must remain registered
+	 * so legitimate logged-in editors continue to receive embed previews.
 	 *
 	 * @return void
 	 */
@@ -199,39 +144,33 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 	}
 
 	/**
-	 * Invokes the oEmbed field-type ajax_query() handler under output
-	 * buffering and returns the JSON-decoded response payload.
+	 * Installs a deterministic oEmbed stub and records the URL/args passed to
+	 * WordPress's oEmbed layer.
 	 *
-	 * The handler is reached via the singleton already registered by the
-	 * plugin (`acf_get_field_type( 'oembed' )`); instantiating the class
-	 * directly would re-run `initialize()` and pollute the global hook
-	 * table that the registration tests in this class assert against.
+	 * @param string $html The HTML to return from the oEmbed request.
+	 * @return callable
+	 */
+	private function install_oembed_stub( $html = '<div class="oembed-stub"></div>' ) {
+		$stub = function ( $result, $url, $args ) use ( $html ) {
+			$this->last_oembed_url  = $url;
+			$this->last_oembed_args = $args;
+
+			return $html;
+		};
+
+		add_filter( 'pre_oembed_result', $stub, 10, 3 );
+
+		return $stub;
+	}
+
+	/**
+	 * Invokes the oEmbed field-type ajax_query() handler under output buffering
+	 * and returns the JSON-decoded response payload.
 	 *
-	 * Two filters are installed for the duration of the call:
+	 * @return mixed The JSON-decoded response payload.
 	 *
-	 * - `wp_doing_ajax` is forced to true so `wp_send_json()` and
-	 *   `wp_send_json_error()` route their terminal exit through
-	 *   `wp_die()` (writing JSON) instead of bare `die` (which would
-	 *   terminate PHPUnit itself).
-	 * - `wp_die_ajax_handler` and `wp_die_json_handler` are replaced
-	 *   with a handler that throws a sentinel-tagged \RuntimeException.
-	 *   WorDBless installs its own handler that merely sets
-	 *   `exit => false` and returns, which leaves the calling handler
-	 *   free to keep running past its intended termination point and
-	 *   emit a second JSON payload (corrupting the captured buffer).
-	 *   Throwing models the real "exits here" semantics of production
-	 *   WP without terminating the test process; the caught exception
-	 *   is identified by message so unrelated runtime exceptions still
-	 *   surface as failures.
-	 *
-	 * @return mixed The JSON-decoded response payload (associative array
-	 *               on success/rejection) or null if the captured buffer
-	 *               did not contain valid JSON.
-	 *
-	 * @throws \RuntimeException Re-thrown when an unrelated runtime
-	 *                           exception bubbles out of the handler;
-	 *                           the sentinel-tagged halt exception is
-	 *                           consumed internally.
+	 * @throws \RuntimeException Re-thrown when an unrelated runtime exception
+	 *                           bubbles out of the handler.
 	 */
 	private function invoke_ajax_query() {
 		$halt_marker  = 'acf_oembed_ajax_halt';
@@ -273,145 +212,126 @@ class Test_ACF_Field_Oembed_Ajax_Security extends BaseTestCase {
 	}
 
 	/**
-	 * An anonymous request to the oEmbed search handler must be rejected
-	 * with the wp_send_json_error() JSON envelope. The capability clause
-	 * of the combined guard short-circuits before any oEmbed work runs,
-	 * so no outbound HTTP path is reachable and no stub is required.
+	 * Sets the request payload expected by ajax_query().
+	 *
+	 * @param string $nonce The field nonce.
+	 * @return void
+	 */
+	private function set_ajax_request( $nonce ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals to drive the handler under test.
+		$_POST = array(
+			's'         => 'https://example.invalid/test',
+			'field_key' => 'field_test_oembed',
+			'nonce'     => $nonce,
+		);
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Mirror of $_POST for handlers that read from $_REQUEST.
+		$_REQUEST = $_POST;
+	}
+
+	/**
+	 * Anonymous callers with a valid field nonce can request a preview, but URL
+	 * discovery is disabled.
 	 *
 	 * @return void
 	 */
-	public function test_ajax_query_rejects_unauthenticated_user() {
+	public function test_ajax_query_allows_anonymous_valid_nonce_with_discovery_disabled() {
 		wp_set_current_user( 0 );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals to drive acf_request_args(); the handler under test is the one that performs nonce verification.
-		$_POST = array(
-			's'         => 'https://example.invalid/test',
-			'field_key' => 'field_test_oembed',
-			'nonce'     => 'irrelevant',
-		);
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Mirror of $_POST for handlers that read from $_REQUEST; the handler under test is the one that performs nonce verification.
-		$_REQUEST = $_POST;
-
-		$payload = $this->invoke_ajax_query();
-
-		$this->assertSame(
-			array( 'success' => false ),
-			$payload,
-			'Anonymous callers must receive the wp_send_json_error() rejection envelope.'
-		);
-		$this->assertArrayNotHasKey( 'url', (array) $payload, 'Rejection payload must not leak a url key.' );
-		$this->assertArrayNotHasKey( 'html', (array) $payload, 'Rejection payload must not leak an html key.' );
-
-		// Anonymous callers must also receive the deprecation notice
-		// indicating the nopriv entry point is going away.
-		$this->assertCount(
-			1,
-			$this->doing_it_wrong_calls,
-			'Anonymous calls must trigger exactly one _doing_it_wrong() notice.'
-		);
-		$this->assertStringContainsString( 'ajax_query', $this->doing_it_wrong_calls[0]['function'] );
-		$this->assertSame( '6.8.5', $this->doing_it_wrong_calls[0]['version'] );
-		$this->assertStringContainsString( 'wp_ajax_nopriv_acf/fields/oembed/search', $this->doing_it_wrong_calls[0]['message'] );
-	}
-
-	/**
-	 * An authenticated subscriber (who lacks `edit_posts`) submitting a
-	 * genuinely valid nonce must still be rejected. The valid nonce is
-	 * load-bearing: it forces the `acf_verify_ajax()` clause of the
-	 * combined guard to evaluate true so the rejection must originate
-	 * from the capability clause, proving the capability check is the
-	 * gate and not the nonce check.
-	 *
-	 * @return void
-	 */
-	public function test_ajax_query_rejects_subscriber() {
-		wp_set_current_user( $this->subscriber_user_id );
-
 		$nonce = wp_create_nonce( 'acf_field_oembed_field_test_oembed' );
+		$this->set_ajax_request( $nonce );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals to drive acf_request_args(); the handler under test is the one that performs nonce verification.
-		$_POST = array(
-			's'         => 'https://example.invalid/test',
-			'field_key' => 'field_test_oembed',
-			'nonce'     => $nonce,
-		);
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Mirror of $_POST for handlers that read from $_REQUEST; the handler under test is the one that performs nonce verification.
-		$_REQUEST = $_POST;
-
-		$payload = $this->invoke_ajax_query();
-
-		$this->assertSame(
-			array( 'success' => false ),
-			$payload,
-			'Subscribers lacking edit_posts must receive the wp_send_json_error() rejection envelope even with a valid nonce.'
-		);
-
-		// Logged-in callers (even under-privileged ones) must not trigger
-		// the nopriv-deprecation notice — the deprecation only applies to
-		// requests that arrived through the unauthenticated entry point.
-		$this->assertSame(
-			array(),
-			$this->doing_it_wrong_calls,
-			'Authenticated callers must not trigger the nopriv-deprecation _doing_it_wrong() notice.'
-		);
-	}
-
-	/**
-	 * An administrator submitting a valid nonce reaches the oEmbed
-	 * lookup and receives the success contract (`url` and `html` keys).
-	 * A one-shot `pre_http_request` filter stubs the underlying HTTP
-	 * call so the test is deterministic and performs no real outbound
-	 * traffic; the filter is removed before assertions so it cannot
-	 * leak to other tests, and `tear_down()` defensively clears all
-	 * `pre_http_request` filters as a safety net.
-	 *
-	 * @return void
-	 */
-	public function test_ajax_query_succeeds_for_admin() {
-		wp_set_current_user( $this->admin_user_id );
-
-		$nonce = wp_create_nonce( 'acf_field_oembed_field_test_oembed' );
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals to drive acf_request_args(); the handler under test is the one that performs nonce verification.
-		$_POST = array(
-			's'         => 'https://example.invalid/test',
-			'field_key' => 'field_test_oembed',
-			'nonce'     => $nonce,
-		);
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Mirror of $_POST for handlers that read from $_REQUEST; the handler under test is the one that performs nonce verification.
-		$_REQUEST = $_POST;
-
-		// One-shot stub for the only HTTP path the handler can reach.
-		$stub = static function () {
-			return array(
-				'response' => array(
-					'code'    => 200,
-					'message' => 'OK',
-				),
-				'body'     => '',
-				'headers'  => array(),
-				'cookies'  => array(),
-				'filename' => null,
-			);
-		};
-		add_filter( 'pre_http_request', $stub );
+		$stub = $this->install_oembed_stub();
 
 		try {
 			$payload = $this->invoke_ajax_query();
 		} finally {
-			remove_filter( 'pre_http_request', $stub );
+			remove_filter( 'pre_oembed_result', $stub, 10 );
 		}
 
-		$this->assertIsArray( $payload, 'Success response must decode to an associative array.' );
-		$this->assertArrayHasKey( 'url', $payload, 'Success response must include a url key.' );
-		$this->assertArrayHasKey( 'html', $payload, 'Success response must include an html key.' );
+		$this->assertSame( 'https://example.invalid/test', $payload['url'] );
+		$this->assertSame( '<div class="oembed-stub"></div>', $payload['html'] );
+		$this->assertSame( 'https://example.invalid/test', $this->last_oembed_url );
+		$this->assertArrayHasKey( 'discover', $this->last_oembed_args );
+		$this->assertFalse( $this->last_oembed_args['discover'], 'Anonymous preview requests must not enable oEmbed discovery.' );
+	}
 
-		// After removal, no pre_http_request filter callback should
-		// remain so subsequent tests in this class and other test
-		// classes cannot inherit the stub.
-		$this->assertFalse(
-			has_filter( 'pre_http_request', $stub ),
-			'The pre_http_request stub must be removed before the test exits.'
-		);
+	/**
+	 * Authenticated subscribers with a valid field nonce can request a preview,
+	 * but URL discovery is disabled because they cannot author content.
+	 *
+	 * @return void
+	 */
+	public function test_ajax_query_allows_subscriber_valid_nonce_with_discovery_disabled() {
+		wp_set_current_user( $this->subscriber_user_id );
+
+		$nonce = wp_create_nonce( 'acf_field_oembed_field_test_oembed' );
+		$this->set_ajax_request( $nonce );
+
+		$stub = $this->install_oembed_stub();
+
+		try {
+			$payload = $this->invoke_ajax_query();
+		} finally {
+			remove_filter( 'pre_oembed_result', $stub, 10 );
+		}
+
+		$this->assertSame( 'https://example.invalid/test', $payload['url'] );
+		$this->assertSame( '<div class="oembed-stub"></div>', $payload['html'] );
+		$this->assertArrayHasKey( 'discover', $this->last_oembed_args );
+		$this->assertFalse( $this->last_oembed_args['discover'], 'Subscriber preview requests must not enable oEmbed discovery.' );
+	}
+
+	/**
+	 * Administrators with a valid field nonce can request a preview with URL
+	 * discovery enabled.
+	 *
+	 * @return void
+	 */
+	public function test_ajax_query_allows_admin_valid_nonce_with_discovery_enabled() {
+		wp_set_current_user( $this->admin_user_id );
+
+		$nonce = wp_create_nonce( 'acf_field_oembed_field_test_oembed' );
+		$this->set_ajax_request( $nonce );
+
+		$stub = $this->install_oembed_stub();
+
+		try {
+			$payload = $this->invoke_ajax_query();
+		} finally {
+			remove_filter( 'pre_oembed_result', $stub, 10 );
+		}
+
+		$this->assertSame( 'https://example.invalid/test', $payload['url'] );
+		$this->assertSame( '<div class="oembed-stub"></div>', $payload['html'] );
+		$this->assertArrayHasKey( 'discover', $this->last_oembed_args );
+		$this->assertTrue( $this->last_oembed_args['discover'], 'Administrator preview requests should enable oEmbed discovery.' );
+	}
+
+	/**
+	 * The allow_discovery filter can opt a site into discovery for a lower
+	 * privilege caller when that site accepts the tradeoff.
+	 *
+	 * @return void
+	 */
+	public function test_allow_discovery_filter_can_enable_discovery_for_subscriber() {
+		wp_set_current_user( $this->subscriber_user_id );
+
+		add_filter( 'acf/fields/oembed/allow_discovery', '__return_true' );
+
+		$nonce = wp_create_nonce( 'acf_field_oembed_field_test_oembed' );
+		$this->set_ajax_request( $nonce );
+
+		$stub = $this->install_oembed_stub();
+
+		try {
+			$payload = $this->invoke_ajax_query();
+		} finally {
+			remove_filter( 'pre_oembed_result', $stub, 10 );
+			remove_filter( 'acf/fields/oembed/allow_discovery', '__return_true' );
+		}
+
+		$this->assertSame( 'https://example.invalid/test', $payload['url'] );
+		$this->assertArrayHasKey( 'discover', $this->last_oembed_args );
+		$this->assertTrue( $this->last_oembed_args['discover'], 'The allow_discovery filter should be able to enable discovery.' );
 	}
 }
