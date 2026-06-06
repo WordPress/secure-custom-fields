@@ -51,8 +51,8 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
-= Next =
-*Release Date TBD*
+= 6.8.7 =
+*Release Date 8th June 2026*
 
 *Fixes*
 
