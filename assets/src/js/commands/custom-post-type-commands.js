@@ -106,7 +106,13 @@ const registerPostTypeCommands = async () => {
 			} );
 		}
 
-		// Register "Edit Post Type" command
+		// Register "Edit Post Type" command. The scf_post_id field is only
+		// exposed to users who can edit the post type definition, so its
+		// absence means the command must not be offered.
+		if ( ! postType.scf_post_id ) {
+			return;
+		}
+
 		commandStore.registerCommand( {
 			name: `scf/edit-${ postType.slug }`,
 			label: sprintf(
