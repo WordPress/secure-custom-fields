@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 6.9.1
 Requires PHP: 7.4
-Stable tag: 6.8.2
+Stable tag: 6.8.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,80 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.8.7 =
+*Release Date 8th June 2026*
+
+*Fixes*
+
+- SCF's Abilities API integration for its internal post types no longer triggers PHP warnings, notices, or a fatal error (500) on block editor and REST API requests when another active plugin builds the WordPress abilities registry earlier in the request; registration is skipped cleanly in that case and normal abilities behavior is otherwise unchanged.
+
+= 6.8.6 =
+*Release Date 27th May 2026*
+
+*Security*
+
+- Hardened the oEmbed field's AJAX preview handling by restricting provider discovery for visitors and users without content-authoring capability while preserving previews from WordPress's registered oEmbed providers.
+- Hardened front-end `acf_form()` submission processing so the `post_title` and `post_content` form options are respected on save, and the save pipeline only accepts values for fields the rendered form exposed. A new `acf/form/allowed_field_keys` filter is available for sites that legitimately extend a form at runtime.
+
+= 6.8.5 =
+*Release Date 19th May 2026*
+
+*Features*
+
+Backports 6.8.1 feature work into SCF.
+= 6.8.4 =
+*Release Date 30th April 2026*
+
+*Features*
+
+- Backports 6.8.0 and 6.8.0.1 feature work into SCF.
+- AI integration: SCF now integrates with the WordPress Abilities API, allowing external consumers, including AI tools, to manage field groups, post types, and taxonomies when explicitly enabled via the `enable_acf_ai` feature flag.
+- Structured data: SCF can now generate JSON-LD structured data fields when explicitly enabled via the `enable_schema` feature flag.
+- WP-CLI: Added `wp scf json` and backward-compatible `wp acf json` commands for importing, exporting, syncing, and checking the status of SCF JSON files.
+- Post types: SCF custom post types now support the WordPress 6.9+ Notes editor feature via a new Notes checkbox in the Supports settings.
+- JSON Schemas: Added v1 schemas for supported field types and updated field group, post type, and taxonomy schemas.
+
+*Enhancements*
+
+- Blocks V3: The Open in Expanded Editor button text can now be customized via a new `acf.expandedEditorButtonText` block.json property.
+- Blocks V3: Added an `acf/blocks/default_expanded_editor_button_text` PHP filter to customize the default Open in Expanded Editor button text.
+- Blocks V3: The edit and Open in Expanded Editor buttons can now be hidden via a new `acf.expandedEditorButtons` block.json property.
+- Blocks V3: Added a `blocks/expanded_editor_overlay_class` JavaScript filter for customizing the Expanded Editor modal overlay class.
+- Blocks V3: The block form HTML is now preloaded alongside the preview, eliminating an extra AJAX call on mount.
+- Blocks V3: Expanded Editor buttons are now hidden for V3 blocks that have no fields assigned.
+- SCF inline script tags now use `wp_print_inline_script_tag()` for Content Security Policy (CSP) compliance and nonce support.
+
+*Fixes*
+
+- V3 blocks with WYSIWYG fields no longer enqueue TinyMCE editor assets on the frontend.
+- V3 blocks with identical attributes and different InnerBlocks content no longer return cached output from the first block on the frontend.
+- Flexible Content fields now properly clean up nested postmeta when a parent layout containing nested Flexible Content fields is deleted.
+- The Expanded Editor Done button now stays disabled until the AJAX save completes, preventing data loss.
+- Pressing Escape while the Expanded Editor is saving will no longer close the modal, preventing data loss.
+- InnerBlocks content containing backslashes or dollar signs now renders correctly.
+- Auto Inline Editing now only applies to SCF Blocks V3, resolving incorrect hover/focus borders appearing on V2 blocks.
+- Auto Inline Editing blocks now receive block context variables in render templates.
+- Auto Inline Editing now works with blocks using `renderCallback`.
+- Validation errors in the V3 Expanded Editor no longer cause a dead-end state.
+- Icon Picker selections in Repeater fields no longer disappear.
+- Range field number input now syncs to the slider and correctly updates V3 block previews.
+- Message field Name and Instructions settings are no longer shown in the field group editor.
+- Image field no longer crashes in WordPress 7.0 release candidates.
+- V3 blocks registered via PHP now correctly show the Open in Expanded Editor button.
+- Flexible Content disabled layouts now work correctly in Blocks V3.
+
+= 6.8.3 =
+*Release Date 22th April 2026*
+
+*Fixes*
+
+- Fix command palette type error on wp-admin.
+- Plugins requiring ACF are also validated for SCF.
+- REST API calls now honor the user's `unfiltered_html` capability.
+- Block Preview rendering now verifies the user can edit the target post.
+- Paginated Repeater fields now verify the user can edit the target post.
+- Flexible Content layout title AJAX requests now validate a security nonce.
+- Clone field AJAX endpoints now enforce SCF admin permissions on field group listings.
 
 = 6.8.2 =
 *Release Date 24th March 2026*

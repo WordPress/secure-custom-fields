@@ -53,6 +53,13 @@ Alias of acf()->get_setting()
 * @param string $value An optional default value for the setting if it doesn't exist.
 * @return n/a
 
+## `acf_is_pro()`
+
+Returns whether the current plugin load is running with PRO features enabled.
+
+* @since ACF 6.8
+* @return bool
+
 ## `acf_get_internal_post_types()`
 
 Return an array of ACF's internal post type names
@@ -694,6 +701,16 @@ Wrapper function for current_user_can( 'edit_post', $post_id ).
 
 * @since ACF 6.3.4
 * @param integer $post_id The post ID to check.
+* @return boolean
+
+## `acf_current_user_can_edit_in_context()`
+
+Checks if the current user can edit a given ACF context.
+
+* Handles post, user, term, comment, woo_order, block, and option contexts returned by acf_decode_post_id().
+* @since 6.7.2
+* @param array  $post_id_info      The result of acf_decode_post_id(), containing 'type' and 'id'.
+* @param string $options_page_slug Optional. The options page menu slug, used to look up the page's capability.
 * @return boolean
 
 ## `acf_get_filesize()`

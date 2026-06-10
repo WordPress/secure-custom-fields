@@ -815,6 +815,7 @@
 				i: $layout.index(),
 				layout: $layout.data( 'layout' ),
 				value: acf.serialize( $layout, prefix ),
+				nonce: this.get( 'nonce' ),
 			};
 
 			// ajax

@@ -6607,3 +6607,74 @@ h3.acf-sub-field-list-title:before,
   gap: 4px;
   cursor: pointer;
 }
+
+.acf-admin-page .acf-field-setting-schema_property .acf-experimental-badge,
+.acf-admin-page .acf-field-setting-schema_output_format .acf-experimental-badge {
+  min-height: 0;
+  font-weight: normal;
+  padding: 0 6px;
+  vertical-align: middle;
+  margin: 0 4px;
+  line-height: 1.4;
+}
+.acf-admin-page .acf-field-setting-schema_property .acf-experimental-badge:before,
+.acf-admin-page .acf-field-setting-schema_output_format .acf-experimental-badge:before {
+  margin-right: 4px;
+}
+.acf-admin-page .acf-field-setting-schema_property .acf-input .select2-selection__clear,
+.acf-admin-page .acf-field-setting-schema_output_format .acf-input .select2-selection__clear {
+  order: 1;
+  margin-top: 4px !important;
+  margin-left: auto;
+  margin-right: 20px;
+  z-index: 801;
+}
+
+.acf-experimental-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #E6F0FB;
+  border: 1px solid #AACEF1;
+  color: #0059B2;
+  min-height: 24px;
+  border-radius: 9999px;
+  padding: 1px 8px;
+}
+.acf-experimental-badge:before {
+  content: "";
+  -webkit-mask-image: url("../../images/icons/icon-experimental.svg");
+  mask-image: url("../../images/icons/icon-experimental.svg");
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  background-color: #2A84DD;
+  border: none;
+  border-radius: 0;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.acf-admin-page .acf-field-setting-schema_output_format .select2-container--disabled.select2-container--focus {
+  outline: none;
+  border-color: #D0D5DD;
+}
+.acf-admin-page .acf-field-setting-schema_output_format .select2-container--disabled.select2-container--focus .select2-selection__rendered {
+  border-color: #D0D5DD !important;
+}
+.acf-admin-page .acf-field-setting-schema_output_format .select2-container--disabled .select2-selection__rendered {
+  background-color: #F9FAFB !important;
+  color: rgb(128.2255319149, 137.7574468085, 157.7744680851);
+}
+
+.acf-field-schema-type .acf-label {
+  display: block !important;
+}
+.acf-field-schema-type .acf-label label {
+  display: inline-block;
+  width: auto;
+}

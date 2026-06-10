@@ -55,10 +55,15 @@ async function emptyTrash( page, admin ) {
 		await emptyTrashButton.click();
 		// Wait for either the success notice or page to reload
 		// The notice selector may vary between WordPress versions
-		const successNotice = page.locator( '.notice.updated, .updated.notice' );
-		await successNotice.first().waitFor( { state: 'visible', timeout: 5000 } ).catch( () => {
-			// If no notice appears, the page might have redirected, which is also valid
-		} );
+		const successNotice = page.locator(
+			'.notice.updated, .updated.notice'
+		);
+		await successNotice
+			.first()
+			.waitFor( { state: 'visible', timeout: 5000 } )
+			.catch( () => {
+				// If no notice appears, the page might have redirected, which is also valid
+			} );
 	}
 }
 
@@ -131,41 +136,73 @@ async function waitForMetaBoxes( page ) {
 		await metaBoxPanel.focus();
 		await metaBoxPanel.press( 'Enter' );
 	}
+
+	// Ensure SCF field instances are initialized so delegated event handlers
+	// (e.g. clicks on "Add Image") are wired up before tests interact.
+	// Note: the runtime namespace is still `window.acf` for backward compat.
+	await page.waitForFunction(
+		() =>
+			typeof window.acf !== 'undefined' &&
+			typeof window.acf.getFields === 'function' &&
+			window.acf.getFields().length > 0
+	);
 }
 
 /**
- * Upload an image to the media library via the media modal.
+ * Upload an image via REST, open the media modal, and pick the new image.
  *
- * @param {import('@playwright/test').Page} page      Playwright page object.
- * @param {string}                          imagePath Path to the image file.
+ * The in-browser plupload flow is flaky on some WP versions (upload stalls
+ * on "uploading..." so the Select button never enables). Pre-uploading via
+ * the REST API and picking from the Media Library tab avoids that path.
+ *
+ * The REST upload runs *before* the open button is clicked so the media
+ * frame's initial query-attachments fetch includes the new image; otherwise
+ * the cached collection would miss it.
+ *
+ * @param {import('@playwright/test').Page}    page         Playwright page object.
+ * @param {string}                             imagePath    Path to the image file.
+ * @param {Object}                             requestUtils RequestUtils from the test fixture, used to upload via REST.
+ * @param {import('@playwright/test').Locator} openButton   Locator for the button that opens the media modal.
  */
-async function uploadImageViaModal( page, imagePath ) {
-	// Wait for media modal to open
-	await page.waitForSelector( '.media-modal', { state: 'visible' } );
+async function uploadImageViaModal(
+	page,
+	imagePath,
+	requestUtils,
+	openButton
+) {
+	const media = await requestUtils.uploadMedia( imagePath );
 
-	// Click "Upload files" tab if not already there
-	const uploadTab = page.locator( '.media-modal #menu-item-upload' );
-	if ( await uploadTab.isVisible() ) {
-		await uploadTab.click();
-	}
+	await openButton.click();
 
-	// Upload the file
-	const fileInput = page.locator( '.media-modal input[type="file"]' );
-	await fileInput.setInputFiles( imagePath );
-
-	// Wait for upload to complete
-	await page.waitForSelector( '.media-modal .attachment.selected', {
+	await page.waitForSelector( '.media-modal', {
 		state: 'visible',
-		timeout: 15000,
+		timeout: 20000,
 	} );
 
-	// Click "Select" button
-	const selectButton = page.locator(
-		'.media-modal .media-toolbar-primary .media-button-select'
-	);
-	await selectButton.click();
+	const libraryTab = page.locator( '.media-modal #menu-item-browse' );
+	if ( await libraryTab.isVisible() ) {
+		await libraryTab.click();
+	}
 
-	// Wait for modal to close
+	const attachment = page.locator(
+		`.media-modal .attachments .attachment[data-id="${ media.id }"]`
+	);
+	await attachment.waitFor( { state: 'visible', timeout: 30000 } );
+	await attachment.click();
+
+	await page.waitForSelector(
+		`.media-modal .attachment.selected[data-id="${ media.id }"]`,
+		{ state: 'visible', timeout: 15000 }
+	);
+
+	const selectButtonSelector =
+		'.media-modal .media-toolbar-primary .media-button-select:not([disabled])';
+	await page.waitForSelector( selectButtonSelector, {
+		state: 'visible',
+		timeout: 30000,
+	} );
+	await page.locator( selectButtonSelector ).click();
+
 	await page.waitForSelector( '.media-modal', { state: 'hidden' } );
 }
 
@@ -263,7 +300,9 @@ async function toggleFieldSetting( page, selector, checked = true ) {
 	const settingContainer = page.locator( selector );
 
 	// First, wait for the setting container to be attached (it might be loading after field type change)
-	await settingContainer.waitFor( { state: 'attached', timeout: 5000 } ).catch( () => {} );
+	await settingContainer
+		.waitFor( { state: 'attached', timeout: 5000 } )
+		.catch( () => {} );
 
 	// Check if the setting container is visible (not just attached)
 	let isVisible = await settingContainer.isVisible().catch( () => false );
@@ -279,15 +318,17 @@ async function toggleFieldSetting( page, selector, checked = true ) {
 		];
 		for ( const tabName of tabs ) {
 			// Use more specific selector that matches the exact tab link text
-			const tab = page.locator(
-				`.acf-field-object .acf-tab-wrap a.acf-tab-button`
-			).filter( { hasText: tabName } );
+			const tab = page
+				.locator( `.acf-field-object .acf-tab-wrap a.acf-tab-button` )
+				.filter( { hasText: tabName } );
 			if ( ( await tab.count() ) > 0 && ( await tab.isVisible() ) ) {
 				await tab.click();
 				await page.waitForTimeout( 150 );
 
 				// Check if the setting is now visible
-				isVisible = await settingContainer.isVisible().catch( () => false );
+				isVisible = await settingContainer
+					.isVisible()
+					.catch( () => false );
 				if ( isVisible ) {
 					break;
 				}
@@ -348,7 +389,12 @@ async function scrollIntoViewWithOffset( page, element ) {
  * @param {string}                             searchText    Text to search for.
  * @param {string}                             optionText    Text of the option to select.
  */
-async function selectSelect2Option( page, containerSelector, searchText, optionText ) {
+async function selectSelect2Option(
+	page,
+	containerSelector,
+	searchText,
+	optionText
+) {
 	const container = page.locator( containerSelector );
 	const select2 = container.locator( '.select2-container' );
 	await select2.click();

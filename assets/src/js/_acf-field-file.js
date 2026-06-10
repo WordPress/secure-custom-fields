@@ -76,6 +76,29 @@
 			}
 		},
 
+		setValue: function ( val ) {
+			val = val ? String( val ) : '';
+
+			if ( acf.val( this.$input(), val, true ) === false ) {
+				return;
+			}
+
+			if ( val ) {
+				if ( window.wp && wp.media && wp.media.attachment ) {
+					const attachment = wp.media.attachment( val );
+					attachment.fetch().then(
+						$.proxy( function () {
+							this.render( attachment );
+						}, this )
+					);
+				} else {
+					this.$control().addClass( 'has-value' );
+				}
+			} else {
+				this.render( false );
+			}
+		},
+
 		selectAttachment: function () {
 			// vars
 			const parent = this.parent();

@@ -10,6 +10,17 @@ This file tracks code elements that need documentation.
 - `acf/bindings/field_not_supported_message`
 - `acf/blocks/binding_value`
 
+## Datastore/Localization.php
+
+### Hooks
+
+- `acf/prepare_field`
+- `acf/prepare_field`
+- `acf/prepare_field`
+- `acf/prepare_field`
+- `acf/prepare_field`
+- `acf/prepare_field`
+
 ## abilities/class-scf-field-abilities.php
 
 ### Hooks
@@ -279,6 +290,12 @@ This file tracks code elements that need documentation.
 
 - `acf/admin/toolbar`
 
+## ajax/class-acf-ajax-check-screen.php
+
+### Hooks
+
+- `acf/ajax/check_screen/response`
+
 ## ajax/class-acf-ajax-query-users.php
 
 ### Hooks
@@ -306,6 +323,7 @@ This file tracks code elements that need documentation.
 - `acf/acf_get_posts/args`
 - `acf/acf_get_posts/results`
 - `acf/connect_attachment_to_post`
+- `acf/current_user_can_edit_in_context`
 - `acf/current_user_can_edit_post`
 - `acf/filesize`
 - `acf/get_image_sizes`
@@ -378,6 +396,7 @@ This file tracks code elements that need documentation.
 
 - `acf/blocks/default_block_version`
 - `acf/blocks/default_block_version`
+- `acf/blocks/default_expanded_editor_button_text`
 - `acf/blocks/fields_needing_wide_popover`
 - `acf/blocks/fields_to_open_in_expanded_editor`
 - `acf/blocks/no_fields_assigned_message`
@@ -388,6 +407,8 @@ This file tracks code elements that need documentation.
 - `acf/blocks/template_not_found_message`
 - `acf/blocks/top_toolbar_fields`
 - `acf/blocks/top_toolbar_fields`
+- `acf/blocks/top_toolbar_fields`
+- `acf/blocks/wrap_frontend_innerblocks`
 - `acf/blocks/wrap_frontend_innerblocks`
 - `acf/pre_save_block`
 - `acf/register_block_type_args`
@@ -407,6 +428,12 @@ This file tracks code elements that need documentation.
 
 - `acf/field_group/disable_field_settings_tabs`
 - `acf/field_group/enable_field_browser`
+
+## datastore.php
+
+### Hooks
+
+- `acf/settings/enable_datastore`
 
 ## fields.php
 
@@ -534,6 +561,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/form/allowed_field_keys`
 - `acf/pre_save_post`
 - `acf/pre_submit_form`
 - `acf/submit_form`
@@ -543,6 +571,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/form-post/skip_save`
 - `acf/input/meta_box_priority`
 
 ## l10n.php
@@ -649,6 +678,13 @@ This file tracks code elements that need documentation.
 ### Methods
 
 - `initialize`
+
+## revisions.php
+
+### Hooks
+
+- `acf/revisions/skip_legacy_metabox_handling`
+- `acf/revisions/skip_legacy_metabox_handling`
 
 ## upgrades.php
 

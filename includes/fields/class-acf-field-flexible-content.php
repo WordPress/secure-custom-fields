@@ -625,12 +625,33 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 					array(
 						'action' => '',
 						'query'  => '',
+						'block'  => null,
 					)
 				);
 
+				$wp_block_type = null;
+
+				// If we are dealing with a flexible content field inside a block.
+				if ( ! empty( $args['block'] ) ) {
+					$block_data = json_decode( wp_unslash( $args['block'] ), true );
+
+					if ( JSON_ERROR_NONE === json_last_error() && is_array( $block_data ) && isset( $block_data['name'] ) ) {
+						$registry      = WP_Block_Type_Registry::get_instance();
+						$wp_block_type = $registry->get_registered( $block_data['name'] );
+					}
+				}
+
 				// If this is a block preview, disable the layout.
-				if ( ( 'acf/ajax/fetch-block' === $args['action'] && ! empty( $args['query']['preview'] ) ) ||
-					acf_get_data( 'acf_doing_block_preview' ) ) {
+				if (
+					// Blocks v2 preview check
+					(
+						'acf/ajax/fetch-block' === $args['action'] &&
+						! empty( $args['query']['preview'] ) &&
+						( $wp_block_type && isset( $wp_block_type->acf_block_version ) && $wp_block_type->acf_block_version <= 2 )
+					) ||
+					// Blocks v3 preview check
+					acf_get_data( 'acf_doing_block_preview' )
+				) {
 					return true;
 				}
 
@@ -1174,8 +1195,16 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		 */
 		public function delete_value( $post_id, $key, $field ) {
 
+			// Delete layout meta (disabled and renamed layouts).
+			acf_delete_metadata_by_field(
+				$post_id,
+				array(
+					'name' => '_' . $field['name'] . '_layout_meta',
+				)
+			);
+
 			// vars
-			$old_value = acf_get_metadata_by_field( $post_id, $field['name'] );
+			$old_value = acf_get_metadata_by_field( $post_id, $field );
 			$old_value = is_array( $old_value ) ? $old_value : array();
 
 			// bail early if no rows or no sub fields
@@ -1294,7 +1323,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		public function ajax_layout_title() {
 
 			$options = acf_parse_args(
-				$_POST, // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
+				$_POST, // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below via acf_verify_ajax.
 				array(
 					'post_id'   => 0,
 					'i'         => 0,
@@ -1304,6 +1333,10 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 					'value'     => array(),
 				)
 			);
+
+			if ( ! acf_verify_ajax( $options['nonce'], $options['field_key'], true ) ) {
+				die();
+			}
 
 			// load field
 			$field = acf_get_field( $options['field_key'] );

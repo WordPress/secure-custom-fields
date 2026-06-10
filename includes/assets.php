@@ -149,6 +149,22 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => true,
 				),
+				'acf-datastore'           => array(
+					'handle'     => 'acf-datastore',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-datastore' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-datastore' ) ),
+					'deps'       => array( 'acf-input', 'wp-data' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
+				'acf-field-bindings'      => array(
+					'handle'     => 'acf-field-bindings',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['pro'], 'acf-field-bindings' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['pro'], 'acf-field-bindings' ) ),
+					'deps'       => array( 'acf-datastore', 'wp-blocks' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
 				'acf'                     => array(
 					'handle'     => 'acf',
 					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf' ) ),
@@ -258,7 +274,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				$version,
 				array(
 					'in_footer' => true,
-					'defer'     => true,
+					'strategy'  => 'defer',
 				)
 			);
 
@@ -269,7 +285,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				$version,
 				array(
 					'in_footer' => true,
-					'defer'     => true,
+					'strategy'  => 'defer',
 				)
 			);
 
@@ -536,7 +552,9 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				wp_enqueue_script( 'scf-bindings' );
+				if ( ! acf_is_using_datastore() ) {
+					wp_enqueue_script( 'scf-bindings' );
+				}
 				wp_enqueue_style( 'acf-pro-input' );
 
 				/**
@@ -629,12 +647,13 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				'editor'      => acf_is_block_editor() ? 'block' : 'classic',
 				'is_pro'      => true,
 				'debug'       => acf_is_beta() || ( defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ),
+				'StrictMode'  => defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG && version_compare( $wp_version, '6.6', '>=' ),
 			);
 
 			acf_localize_data( $data_to_localize );
 
 			// Print inline script.
-			printf( "<script>\n%s\n</script>\n", 'acf.data = ' . wp_json_encode( $this->data ) . ';' );
+			wp_print_inline_script_tag( 'acf.data = ' . wp_json_encode( $this->data ) . ';' );
 
 			if ( wp_script_is( 'acf-input' ) ) {
 
@@ -647,7 +666,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				 */
 				$compat_l10n = apply_filters( 'acf/input/admin_l10n', array() );
 				if ( $compat_l10n ) {
-					printf( "<script>\n%s\n</script>\n", 'acf.l10n = ' . wp_json_encode( $compat_l10n ) . ';' );
+					wp_print_inline_script_tag( 'acf.l10n = ' . wp_json_encode( $compat_l10n ) . ';' );
 				}
 
 				/**
@@ -668,7 +687,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			do_action( 'acf/admin_print_footer_scripts' );
 
 			// Once all data is localized, trigger acf.prepare() to execute functionality before DOM ready.
-			printf( "<script>\n%s\n</script>\n", "acf.doAction( 'prepare' );" );
+			wp_print_inline_script_tag( "acf.doAction( 'prepare' );" );
 		}
 
 		/**

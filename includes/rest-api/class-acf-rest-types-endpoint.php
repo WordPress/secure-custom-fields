@@ -183,6 +183,20 @@ class SCF_Rest_Types_Endpoint {
 				'schema'       => $this->get_field_schema(),
 			)
 		);
+
+		register_rest_field(
+			'type',
+			'scf_post_id',
+			array(
+				'get_callback' => array( $this, 'get_scf_post_id' ),
+				'schema'       => array(
+					'description' => __( 'The SCF internal post ID that defines this post type, or null if not managed by SCF.', 'secure-custom-fields' ),
+					'type'        => array( 'integer', 'null' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+			)
+		);
 	}
 
 	/**
@@ -223,6 +237,27 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		return $field_groups_data;
+	}
+
+	/**
+	 * Get the SCF internal post ID for a post type.
+	 *
+	 * @since SCF 6.8.3
+	 *
+	 * @param array $post_type_object The post type object.
+	 * @return int|null The post ID if managed by SCF, null otherwise.
+	 */
+	public function get_scf_post_id( $post_type_object ) {
+		$slug           = $post_type_object['slug'];
+		$scf_post_types = acf_get_acf_post_types();
+
+		foreach ( $scf_post_types as $scf_post_type ) {
+			if ( $scf_post_type['post_type'] === $slug ) {
+				return (int) $scf_post_type['ID'];
+			}
+		}
+
+		return null;
 	}
 
 	/**

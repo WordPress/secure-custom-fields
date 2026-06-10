@@ -18,7 +18,7 @@ permissions: {}
 
 jobs:
     test:
-        name: E2E - Node ${{ matrix.node }} / WP ${{ matrix.wp }} / Shard ${{ matrix.shard }}/4
+        name: E2E - WP ${{ matrix.wp }} / Shard ${{ matrix.shard }}/4
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -28,13 +28,9 @@ jobs:
             matrix:
                 event: ['${{ github.event_name }}']
                 shard: [1, 2, 3, 4]
-                node: ['22', '24']
-                wp: ['6.2', 'latest', 'trunk']
+                wp: ['6.2', '6.8', 'latest', 'trunk']
                 exclude:
-                    # On PRs: only test Node 22 + WP latest and trunk for fast feedback
-                    # On trunk: full matrix with node 24 and minimum WP version
-                    - event: 'pull_request'
-                      node: '24'
+                    # On PRs: Skip minimum supported WP version for faster feedback
                     - event: 'pull_request'
                       wp: '6.2'
 
@@ -45,10 +41,15 @@ jobs:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
             - name: Setup Node.js
-              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
               with:
-                  node-version: ${{ matrix.node }}
+                  node-version-file: '.nvmrc'
                   cache: 'npm'
+
+            - name: Get Node.js version
+              id: node-version
+              run: |
+                  echo "NODE_VERSION=$(node -v)" >> "$GITHUB_OUTPUT"
 
             - name: Install dependencies
               run: |
@@ -74,18 +75,18 @@ jobs:
               run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
 
             - name: Archive debug artifacts (screenshots, traces)
-              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               if: ${{ !cancelled() }}
               with:
-                  name: failures-artifacts--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  name: failures-artifacts--node${{ steps.node-version.outputs.NODE_VERSION }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: artifacts/test-results
                   if-no-files-found: ignore
 
             - name: Archive blob reports (HTML)
-              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               if: ${{ !cancelled() }}
               with:
-                  name: blob-reports--node${{ matrix.node }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
+                  name: blob-reports--node${{ steps.node-version.outputs.NODE_VERSION }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: blob-report
                   if-no-files-found: ignore
 
@@ -105,7 +106,7 @@ jobs:
 
             - name: Upload E2E JS Coverage to Codecov
               if: always() && hashFiles('./coverage/e2e/lcov.info') != ''
-              uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+              uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   files: ./coverage/e2e/lcov.info
@@ -116,7 +117,7 @@ jobs:
 
             - name: Upload E2E PHP Coverage to Codecov
               if: always() && hashFiles('./coverage/php-e2e/lcov.info') != ''
-              uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+              uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   files: ./coverage/php-e2e/lcov.info
@@ -141,16 +142,16 @@ jobs:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
             - name: Setup Node.js
-              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
               with:
-                  node-version: '22'
+                  node-version-file: '.nvmrc'
                   cache: 'npm'
 
             - name: Install dependencies
               run: npm ci
 
             - name: Merge failures artifacts
-              uses: actions/upload-artifact/merge@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+              uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               continue-on-error: true
               with:
                   name: failures-artifacts
@@ -158,7 +159,7 @@ jobs:
                   delete-merged: true
 
             - name: Merge blob reports
-              uses: actions/upload-artifact/merge@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+              uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               continue-on-error: true
               with:
                   name: blob-reports-merged
@@ -177,7 +178,7 @@ jobs:
               continue-on-error: true
 
             - name: Upload merged HTML report
-              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               continue-on-error: true
               with:
                   name: html-report--attempt-${{ github.run_attempt }}

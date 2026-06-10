@@ -44,7 +44,7 @@ composer prepare-release
 This will run an interactive script that will:
 
 - Build the assets required for the release
-- Generate documentation and update translations
+- Generate documentation, verify generated schemas, and update translations
 - Commit these changes to the current branch
 - Prompt the user for the new version number and update it accordingly in `secure-custom-fields.php`
 - Offer the user to update the stable tag in `readme.txt`
@@ -60,7 +60,7 @@ From the `release/x.y.z` branch, run:
 ./bin/create-release-zip.sh
 ```
 
-This script runs a few checks to verify that all required files and directories are present, and that there are no untracked files. It then installs production dependencies and creates and verifies `release/secure-custom-fields.zip`.
+This script runs a few checks to verify that all required files and directories are present, and that there are no untracked files in release source directories. It then installs production dependencies and creates and verifies `release/secure-custom-fields.zip`.
 
 ## Deploy to WordPress.org
 

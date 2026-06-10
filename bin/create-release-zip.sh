@@ -49,6 +49,7 @@ REQUIRED_DIRS=(
     "lang"
     "pro"
     "schemas"
+    "src"
 )
 
 for dir in "${REQUIRED_DIRS[@]}"; do
@@ -74,10 +75,20 @@ for item in "${DISALLOWED_ITEMS[@]}"; do
     fi
 done
 
-# Verify no untracked files exist in source directories
-if [[ -n $(git ls-files --others --exclude-standard includes/ pro/ | head -1) ]]; then
-    echo "Error: Untracked files found in includes/ or pro/ directories"
-    echo "Run 'git status' to see untracked files"
+# Verify no untracked files exist in release source directories
+SOURCE_DIRS=(
+    "includes"
+    "pro"
+    "src"
+    "schemas"
+    "assets"
+    "lang"
+)
+
+UNTRACKED_SOURCE_FILES=$(git ls-files --others --exclude-standard "${SOURCE_DIRS[@]}")
+if [[ -n "$UNTRACKED_SOURCE_FILES" ]]; then
+    echo "Error: Untracked files found in release source directories:"
+    printf '%s\n' "$UNTRACKED_SOURCE_FILES"
     exit 1
 fi
 

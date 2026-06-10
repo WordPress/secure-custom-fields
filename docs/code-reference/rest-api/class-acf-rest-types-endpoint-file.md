@@ -67,6 +67,14 @@ Get SCF fields for a post type.
 * @param array $post_type_object The post type object.
 * @return array Array of field data.
 
+### `get_scf_post_id`
+
+Get the SCF internal post ID for a post type.
+
+* @since SCF 6.8.3
+* @param array $post_type_object The post type object.
+* @return int|null The post ID if managed by SCF, null otherwise.
+
 ### `get_field_schema`
 
 Get the schema for the SCF fields.

@@ -17,6 +17,14 @@
 			return this.$( '.acf-switch' );
 		},
 
+		setValue: function ( val ) {
+			if ( val && val !== '0' ) {
+				this.switchOn();
+			} else {
+				this.switchOff();
+			}
+		},
+
 		getValue: function () {
 			return this.$input().prop( 'checked' ) ? 1 : 0;
 		},
