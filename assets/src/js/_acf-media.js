@@ -387,6 +387,13 @@
 				}
 			}
 
+			// Bail if the AttachmentFilters view couldn't be resolved (e.g. core
+			// moves the view again), so the modal degrades to the default filters
+			// instead of crashing.
+			if ( ! filters || ! filters.filters ) {
+				return;
+			}
+
 			// image
 			if ( this.get( 'type' ) == 'image' ) {
 				// update all
