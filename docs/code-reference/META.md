@@ -486,6 +486,12 @@ This file tracks code elements that need documentation.
 
 - `wp_nav_menu_container_allowed_tags`
 
+## fields/class-acf-field-oembed.php
+
+### Hooks
+
+- `acf/fields/oembed/allow_discovery`
+
 ## fields/class-acf-field-page_link.php
 
 ### Hooks
@@ -562,6 +568,7 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/form/allowed_field_keys`
+- `acf/form/meta_ttl`
 - `acf/pre_save_post`
 - `acf/pre_submit_form`
 - `acf/submit_form`

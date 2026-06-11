@@ -394,7 +394,7 @@ that need to be saved to post meta.
 
 ## `acf_inline_toolbar_editing_attrs()`
 
-Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
+Helper function that returns the HTML attributes required for toolbar inline editing as a string or array.
 
 * Required. A list of the fields, each of which will be displayed in the popup toolbar.
 Each field can be passed as one of the following.
@@ -407,10 +407,15 @@ An associative array with specific keys:
 * @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
 * @param array $fields List of fields.
 * @param array $args   Additional options controlling toolbar display and behavior.
-* @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
-* @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
-* @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
-* @return string A string containing the attributes.
+* @type string  $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string  $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+* @type string  $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+* @type boolean $return_array  Optional. If true, returns an array of attributes suitable for wp_get_attachment_image(). Default false.
+* @return string|array When $args['return_array'] is false (default): Returns a string of escaped HTML attributes ready for output.
+When $args['return_array'] is true: Returns an associative array of attribute names and escaped values.
+When using the array return value with wp_get_attachment_image(), no element will be rendered if
+the image field is empty. If users need an inline editing target for selecting an image, render a fallback element
+with the attributes returned by this function.
 
 ## `acf_inline_text_editing_attrs()`
 

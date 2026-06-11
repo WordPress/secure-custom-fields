@@ -284,9 +284,10 @@ Returns true if the current AJAX request is valid.
 It's action will also allow WPML to set the lang and avoid AJAX get_posts issues
 
 * @since   ACF 5.2.3
-* @param string $nonce  The nonce to check.
-* @param string $action The action of the nonce.
-* @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
+* @param string $nonce               The nonce to check.
+* @param string $action              The action of the nonce.
+* @param bool   $action_is_field     Whether the action is a field key or not. Defaults to false.
+* @param string $expected_field_type Optional field type the resolved field must be when $action_is_field is true. Prevents a nonce minted for one field type from being accepted by an AJAX handler that expects a different one. Defaults to empty (no type validation).
 * @return boolean
 
 ## `acf_get_image_sizes()`
@@ -956,13 +957,12 @@ acf_encrypt
 
 ## `acf_decrypt()`
 
-acf_decrypt
-
-* This function will decrypt an encrypted string using PHP
+Decrypts an encrypted string using PHP.
 <https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/>
+
 * @since   ACF 5.5.8
-* @param   $data (string)
-* @return (string)
+* @param string $data The string to decrypt.
+* @return string|false Decrypted string, or false if the payload is malformed or decryption fails.
 
 ## `acf_parse_markdown()`
 
