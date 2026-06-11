@@ -203,6 +203,37 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test save_options does not trigger warnings for JSON-only fields.
+	 */
+	public function test_update_value_save_options_handles_json_field_without_id() {
+		$field = $this->get_field(
+			array(
+				'save_options' => 1,
+				'multiple'     => 1,
+			)
+		);
+
+		$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+		$this->assertSame( array( 'custom_value' ), $result );
+	}
+
+	/**
+	 * Test save_options bails early when field key and ID are both missing.
+	 */
+	public function test_update_value_save_options_handles_missing_field_identifier() {
+		$field = $this->get_field(
+			array(
+				'save_options' => 1,
+				'multiple'     => 1,
+			)
+		);
+		unset( $field['key'] );
+
+		$result = $this->field_instance->update_value( array( 'custom_value' ), $this->post_id, $field );
+		$this->assertSame( array( 'custom_value' ), $result );
+	}
+
+	/**
 	 * Test get_rest_schema returns valid schema.
 	 */
 	public function test_get_rest_schema() {

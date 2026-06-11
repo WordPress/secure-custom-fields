@@ -582,12 +582,27 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			// Save custom options back to the field definition if configured.
 			if ( ! empty( $field['save_options'] ) && is_array( $value ) ) {
 				// Get the raw field, using the ID if present or the key otherwise (i.e. when using JSON).
-				$selector = $field['ID'] ? $field['ID'] : $field['key'];
-				$field    = acf_get_field( $selector );
+				$selector = '';
+				if ( ! empty( $field['ID'] ) ) {
+					$selector = $field['ID'];
+				} elseif ( ! empty( $field['key'] ) ) {
+					$selector = $field['key'];
+				}
+
+				// Bail when field lookup can't be attempted.
+				if ( ! $selector ) {
+					return $value;
+				}
+
+				$field = acf_get_field( $selector );
 
 				// Bail if we don't have a valid field or field ID (JSON only).
-				if ( empty( $field['ID'] ) ) {
+				if ( ! is_array( $field ) || empty( $field['ID'] ) ) {
 					return $value;
+				}
+
+				if ( ! isset( $field['choices'] ) || ! is_array( $field['choices'] ) ) {
+					$field['choices'] = array();
 				}
 
 				foreach ( $value as $v ) {
