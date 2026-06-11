@@ -3813,12 +3813,12 @@ function acf_encrypt( $data = '' ) {
 function acf_decrypt( $data = '' ) {
 	// bail early if no decrypt function
 	if ( ! function_exists( 'openssl_decrypt' ) ) {
-		return base64_decode( (string) $data );
+		return base64_decode( (string) $data ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
 	}
 
 	// Treat malformed input as a decrypt failure: list() destructuring below would
 	// otherwise warn on PHP 8 when the payload isn't the "base64(data::iv)" shape.
-	$raw = base64_decode( (string) $data, true );
+	$raw = base64_decode( (string) $data, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
 	if ( false === $raw || strpos( $raw, '::' ) === false ) {
 		return false;
 	}
