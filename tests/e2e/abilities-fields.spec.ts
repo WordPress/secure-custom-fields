@@ -195,6 +195,15 @@ test.describe( 'Field Abilities', () => {
 			'Abilities API not available in this WordPress version'
 		);
 
+		// Purge any field groups/fields left behind by other specs or
+		// aborted runs: list-fields validates every stored field against
+		// its output schema, so a single stray field fails the listing.
+		await requestUtils.activatePlugin( 'scf-test-utilities' );
+		await requestUtils.rest( {
+			method: 'POST',
+			path: '/scf-test/v1/purge-fields',
+		} );
+
 		// Create parent field group
 		await fieldGroupApi.cleanup( requestUtils, TEST_FIELD_GROUP.key );
 		const fieldGroup = await fieldGroupApi.create( requestUtils );
