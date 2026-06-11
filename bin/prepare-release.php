@@ -350,7 +350,7 @@ class Release_Preparation {
 		}
 
 		echo "Pushing branch {$branch} to remote...\n";
-		passthru( "git push origin {$branch}", $return );
+		passthru( 'git push origin ' . escapeshellarg( $branch ), $return );
 		if ( 0 !== $return ) {
 			echo "Error: Failed to push branch to remote\n";
 			return;
@@ -359,7 +359,17 @@ class Release_Preparation {
 		$title = "Prepare {$version} Release";
 		$body  = $changelog ? $changelog : "Changelog entry pending for {$version}";
 
-		passthru( "gh pr create --title \"{$title}\" --body \"{$body}\"" );
+		// Pass the body via a file so shell metacharacters in the changelog
+		// (backticks, quotes, redirections) are not interpreted by the shell.
+		$body_file = tempnam( sys_get_temp_dir(), 'scf-pr-body-' );
+		if ( false === $body_file || false === file_put_contents( $body_file, $body ) ) {
+			echo "Error: Could not write PR body to a temporary file\n";
+			return;
+		}
+
+		passthru( 'gh pr create --title ' . escapeshellarg( $title ) . ' --body-file ' . escapeshellarg( $body_file ) );
+
+		unlink( $body_file );
 	}
 
 	/**
