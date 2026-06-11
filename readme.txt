@@ -51,6 +51,25 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.8.8 =
+*Release Date 11th June 2026*
+
+*Security*
+
+- AJAX field handlers now validate that the request nonce was created for the expected field type, so a nonce minted for one field type can no longer be replayed against another field type's AJAX handler. The gallery field was also aligned with the typed nonce scheme used by all other AJAX fields.
+- `acf_decrypt()` now treats malformed payloads as a decrypt failure and returns `false` instead of emitting PHP 8 warnings.
+
+*Enhancements*
+
+- `acf_inline_toolbar_editing_attrs()` now accepts a `return_array` argument that returns the attributes as an escaped array suitable for use with `wp_get_attachment_image()`.
+
+*Fixes*
+
+- `acf_form()` with `'post_id' => 'new_post'` and a `fields` list of field names no longer fatal errors when `acf_form_head()` runs before WordPress's main query is built.
+- Multiple `acf_form()` calls wrapped inside a single outer form tag with one submit button no longer silently drop field values, `post_title`, or `post_content` from the non-last forms. A new `acf/form/meta_ttl` filter controls how long per-form metadata remains valid.
+- Duplicating a V3 block with identical attributes no longer displays corrupted preview content in the duplicate.
+- Switching between tabs containing WYSIWYG fields no longer leaves the admin menu pinned against a shorter page, which could lock page scroll.
+
 = 6.8.7 =
 *Release Date 8th June 2026*
 
