@@ -56,23 +56,17 @@ jobs:
                   npm ci
                   composer install --prefer-dist --no-progress
 
-            - name: Npm build with coverage instrumentation
-              env:
-                  COVERAGE_ENABLED: true
+            - name: Build plugin assets
               run: npm run build
 
-            - name: Start wp-env and install PCOV
-              env:
-                  PHP_COVERAGE_ENABLED: true
+            - name: Start wp-env
               run: npm run wp-env start
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
 
-            - name: Run e2e tests with coverage
-              env:
-                  PHP_COVERAGE_ENABLED: true
-              run: npm run test:e2e:coverage -- --shard=${{ matrix.shard }}/4
+            - name: Run E2E tests
+              run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
 
             - name: Archive debug artifacts (screenshots, traces)
               uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -89,42 +83,6 @@ jobs:
                   name: blob-reports--node${{ steps.node-version.outputs.NODE_VERSION }}-wp${{ matrix.wp }}-shard${{ matrix.shard }}
                   path: blob-report
                   if-no-files-found: ignore
-
-            - name: Generate E2E JS coverage report
-              if: always()
-              run: |
-                  if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output 2>/dev/null)" ]; then
-                    echo "Generating JS coverage report"
-                    npm run test:e2e:coverage:report
-                  else
-                    echo "No JS coverage data found"
-                  fi
-
-            - name: Generate E2E PHP coverage report
-              if: always()
-              run: npm run test:e2e:php-coverage:report
-
-            - name: Upload E2E JS Coverage to Codecov
-              if: always() && hashFiles('./coverage/e2e/lcov.info') != ''
-              uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
-              with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  files: ./coverage/e2e/lcov.info
-                  flags: e2e-js
-                  slug: WordPress/secure-custom-fields
-                  name: e2e-js-shard${{ matrix.shard }}
-                  disable_search: true
-
-            - name: Upload E2E PHP Coverage to Codecov
-              if: always() && hashFiles('./coverage/php-e2e/lcov.info') != ''
-              uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
-              with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  files: ./coverage/php-e2e/lcov.info
-                  flags: e2e-php
-                  slug: WordPress/secure-custom-fields
-                  name: e2e-php-shard${{ matrix.shard }}
-                  disable_search: true
 
             - name: Stop wp-env
               if: always()
