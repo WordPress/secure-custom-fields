@@ -9,7 +9,7 @@
  * Output formats:
  * - JSON (for further processing)
  * - HTML (human-readable report)
- * - LCOV (for Codecov/CI integration)
+ * - LCOV (for CI integration)
  *
  * Usage:
  *   node scripts/merge-php-coverage.js [--format=json|html|lcov|all] [--output=dir]
@@ -315,7 +315,7 @@ function calculateStats( mergedCoverage ) {
 }
 
 /**
- * Convert container path to relative path for Codecov compatibility.
+ * Convert container path to relative path for LCOV output.
  *
  * @param {string} containerPath - Full path from Docker container.
  * @return {string} Relative path from project root.
