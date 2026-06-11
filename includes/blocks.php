@@ -1975,7 +1975,7 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
 
 
 /**
- * Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
+ * Helper function that returns the HTML attributes required for toolbar inline editing as a string or array.
  *
  * Required. A list of the fields, each of which will be displayed in the popup toolbar.
  * Each field can be passed as one of the following.
@@ -1992,36 +1992,45 @@ function acf_get_block_meta_values_to_save( $content = '' ) {
  * @param array $fields List of fields.
  * @param array $args   Additional options controlling toolbar display and behavior.
  *
- * @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
- * @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
- * @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+ * @type string  $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+ * @type string  $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+ * @type string  $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+ * @type boolean $return_array  Optional. If true, returns an array of attributes suitable for wp_get_attachment_image(). Default false.
  *
- * @return string A string containing the attributes.
+ * @return string|array When $args['return_array'] is false (default): Returns a string of escaped HTML attributes ready for output.
+ *                      When $args['return_array'] is true: Returns an associative array of attribute names and escaped values.
+ *                      When using the array return value with wp_get_attachment_image(), no element will be rendered if
+ *                      the image field is empty. If users need an inline editing target for selecting an image, render a fallback element
+ *                      with the attributes returned by this function.
  */
-function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
-
-	if ( empty( $fields ) ) {
-		return '';
-	}
+function acf_inline_toolbar_editing_attrs( $fields, $args = array() ) {
 
 	$default_args = array(
 		'toolbar_icon'  => null,
 		'toolbar_title' => null,
 		'uid'           => null,
+		'return_array'  => false,
 	);
 
 	$args = wp_parse_args( $args, $default_args );
 
+	// Helper for consistent early returns based on return format
+	$empty_return = $args['return_array'] ? array() : '';
+
+	if ( empty( $fields ) ) {
+		return $empty_return;
+	}
+
 	$acf_block_version = acf_get_data( 'acf_current_block_version' );
 
 	if ( ! $acf_block_version || $acf_block_version <= 2 ) {
-		return '';
+		return $empty_return;
 	}
 
 	$render = acf_get_data( 'acf_doing_block_preview' );
 
 	if ( ! $render ) {
-		return '';
+		return $empty_return;
 	}
 
 	// Get the block id.
@@ -2029,7 +2038,7 @@ function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
 	$block_id      = $meta_instance->post_id;
 
 	if ( empty( $block_id ) || strpos( $block_id, 'block_' ) !== 0 ) {
-		return '';
+		return $empty_return;
 	}
 
 	// Prefix the generated uid with the blockid.
@@ -2112,15 +2121,33 @@ function acf_inline_toolbar_editing_attrs( $fields, $args = array() ): string {
 		$args['uid'] = $generated_uid;
 	}
 
+	// Build the attributes array.
+	$attributes = array(
+		'data-acf-inline-fields-uid' => $args['uid'],
+		'data-acf-inline-fields'     => wp_json_encode( $fields_processed ),
+		'role'                       => 'button',
+		'tabindex'                   => '0',
+	);
+
 	if ( ! empty( $args['toolbar_icon'] ) ) {
-		$args['toolbar_icon'] = 'data-acf-toolbar-icon="' . esc_attr( $args['toolbar_icon'] ) . '" ';
+		$attributes['data-acf-toolbar-icon'] = $args['toolbar_icon'];
 	}
 
 	if ( ! empty( $args['toolbar_title'] ) ) {
-		$args['toolbar_title'] = 'data-acf-toolbar-title="' . esc_attr( $args['toolbar_title'] ) . '" ';
+		$attributes['data-acf-toolbar-title'] = $args['toolbar_title'];
 	}
 
-	return 'data-acf-inline-fields-uid="' . esc_attr( $args['uid'] ) . '" data-acf-inline-fields="' . esc_attr( wp_json_encode( $fields_processed ) ) . '" ' . $args['toolbar_icon'] . $args['toolbar_title'] . 'role="button" tabindex="0"';
+	// Return as array if requested.
+	if ( $args['return_array'] ) {
+		return array_map( 'esc_attr', $attributes );
+	}
+
+	// Build and return as string (default behavior).
+	$output = '';
+	foreach ( $attributes as $key => $value ) {
+		$output .= $key . '="' . esc_attr( $value ) . '" ';
+	}
+	return rtrim( $output );
 }
 
 /**
