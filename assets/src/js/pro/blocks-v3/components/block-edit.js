@@ -353,26 +353,52 @@ export const BlockEdit = ( props ) => {
 			return false;
 		}
 
-		const preloadedBlocks = acf.get( 'preloadedBlocks' );
-		if ( ! preloadedBlocks || ! preloadedBlocks[ hash ] ) {
+		const data = getPreloadedBlockData(
+			hash,
+			clientId,
+			acf.get( 'preloadedBlocks' )
+		);
+
+		if ( ! data ) {
 			acf.debug( 'Preload failed: not preloaded.' );
 			return false;
 		}
 
-		const data = preloadedBlocks[ hash ];
+		acf.debug( 'Preload successful', data );
+		return data;
+	}
+
+	/**
+	 * Returns a copy of a preloaded block entry with the placeholder hash
+	 * replaced by the actual client ID.
+	 *
+	 * Works on a deep clone so the shared preloaded entry is never mutated —
+	 * duplicating a block with identical attributes reuses the same hash, and
+	 * an in-place replacement would corrupt the entry for the duplicate.
+	 *
+	 * @param {string} hash            - Attributes hash
+	 * @param {string} blockClientId   - Block client ID
+	 * @param {Object} preloadedBlocks - The preloaded blocks store
+	 * @return {Object|boolean} - Preloaded data or false
+	 */
+	function getPreloadedBlockData( hash, blockClientId, preloadedBlocks ) {
+		if ( ! preloadedBlocks || ! preloadedBlocks[ hash ] ) {
+			return false;
+		}
+
+		const data = JSON.parse( JSON.stringify( preloadedBlocks[ hash ] ) );
 
 		// Replace placeholder client ID with actual client ID
-		data.html = data.html.replaceAll( hash, clientId );
-		data.form = data.form.replaceAll( hash, clientId );
+		data.html = data.html.replaceAll( hash, blockClientId );
+		data.form = data.form.replaceAll( hash, blockClientId );
 
-		if ( data?.validation && data?.validation.errors ) {
+		if ( data?.validation?.errors ) {
 			data.validation.errors = data.validation.errors.map( ( error ) => {
-				error.input = error.input.replaceAll( hash, clientId );
+				error.input = error.input.replaceAll( hash, blockClientId );
 				return error;
 			} );
 		}
 
-		acf.debug( 'Preload successful', data );
 		return data;
 	}
 
