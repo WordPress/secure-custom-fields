@@ -39,7 +39,7 @@ ignore:
     - '*.min.css'
     - '*.min.js'
     - '.wp-env'
-    - 'bin/' # CLI/infrastructure scripts - integration code with external APIs
+    - 'bin' # CLI/infrastructure scripts - integration code with external APIs
     - 'build'
     - 'dist'
     - 'docs'
