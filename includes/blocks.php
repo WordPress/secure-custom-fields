@@ -1529,6 +1529,11 @@ function acf_get_empty_block_form_html( $block_name ) {
  */
 function acf_parse_save_blocks( $text = '' ) {
 
+	// Bail early if no ACF block types are registered.
+	if ( ! acf_get_block_types() ) {
+		return $text;
+	}
+
 	// Search text for dynamic blocks and modify attrs.
 	return addslashes(
 		preg_replace_callback(
@@ -1910,6 +1915,11 @@ function acf_add_block_meta_values( $block, $post_id ) {
  * @return void
  */
 function acf_save_block_meta_values( $post_id, $post ) {
+	// Bail early if no ACF block types are registered.
+	if ( ! acf_get_block_types() ) {
+		return;
+	}
+
 	$meta_values = acf_get_block_meta_values_to_save( $post->post_content );
 
 	if ( empty( $meta_values ) ) {

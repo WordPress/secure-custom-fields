@@ -162,12 +162,78 @@ function acf_get_field_post( $id = 0 ) {
 
 		// Check $post_id and return the post when possible.
 		if ( $post_id ) {
-			return get_post( $post_id );
+			$post = get_post( $post_id );
+
+			// Prime sibling field lookups to avoid one query per field.
+			if ( $post && $post->post_parent ) {
+				_acf_prime_sibling_field_posts( $post );
+			}
+
+			return $post;
 		}
 	}
 
 	// Return false by default.
 	return false;
+}
+
+/**
+ * Primes the field key lookup cache for all sibling fields of the given field post.
+ *
+ * Resolving a field key normally runs one query per field. When a field belongs
+ * to a field group, all fields of that group are loaded in a single (cached)
+ * query instead, so subsequent sibling key lookups avoid further queries.
+ *
+ * @since SCF 6.8.9
+ *
+ * @param WP_Post $post The field post object.
+ * @return void
+ */
+function _acf_prime_sibling_field_posts( $post ) {
+	static $primed = array();
+
+	// Bail early if this parent was already primed during this request.
+	if ( isset( $primed[ $post->post_parent ] ) ) {
+		return;
+	}
+
+	/**
+	 * Filters whether sibling field lookups are primed when a field is loaded by key or name.
+	 *
+	 * Priming bypasses the per-key query (and any filters applied to it), so
+	 * plugins which filter field queries per language/context can opt out.
+	 *
+	 * @since SCF 6.8.9
+	 *
+	 * @param boolean $prime True to prime sibling field lookups. Default true.
+	 */
+	if ( ! apply_filters( 'acf/prime_field_group_fields', true ) ) {
+		return;
+	}
+
+	// Only prime when the parent is a field group.
+	$parent = get_post( $post->post_parent );
+	if ( ! $parent || 'acf-field-group' !== $parent->post_type ) {
+		return;
+	}
+
+	$primed[ $post->post_parent ] = true;
+
+	// Load all fields of the group in a single (cached) query.
+	$raw_fields = acf_get_raw_fields( $parent->ID );
+	foreach ( $raw_fields as $raw_field ) {
+		$field_post = get_post( $raw_field['ID'] );
+
+		// Only prime published fields; a per-key query would not match other statuses.
+		if ( ! $field_post || 'publish' !== $field_post->post_status ) {
+			continue;
+		}
+
+		$cache_key = acf_cache_key( "acf_get_field_post:key:{$raw_field['key']}" );
+		if ( false === wp_cache_get( $cache_key, 'secure-custom-fields' ) ) {
+			wp_cache_set( $cache_key, $field_post->ID, 'secure-custom-fields' );
+		}
+	}
 }
 
 /**

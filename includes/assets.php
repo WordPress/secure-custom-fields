@@ -43,6 +43,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'register_scripts' ) );
+			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		}
 
 		/**
@@ -115,7 +116,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				'base' => 'assets/build/js/%s' . $suffix . '.js',
 			);
 			$css_path_patterns   = array(
-				'pro'  => 'assets/build/css/pro/%s.css',
+				'pro'  => 'assets/build/css/pro/%s' . $suffix . '.css',
 				'base' => 'assets/build/css/%s' . $suffix . '.css',
 			);
 			$asset_path_patterns = array(
@@ -494,6 +495,24 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
+		 * Enqueues scripts that should only load in the block editor.
+		 *
+		 * The JS block bindings layer relies on block editor APIs and pulls in
+		 * the block editor script stack, so it must not load on classic admin
+		 * screens or front-end forms.
+		 *
+		 * @since SCF 6.8.9
+		 *
+		 * @return void
+		 */
+		public function enqueue_block_editor_assets() {
+			// When the datastore is enabled, the bindings layer is handled by SCF\Blocks\Bindings_Editor instead.
+			if ( ! acf_is_using_datastore() ) {
+				wp_enqueue_script( 'scf-bindings' );
+			}
+		}
+
+		/**
 		 * Enqueues and localizes scripts.
 		 *
 		 * @since   ACF 5.9.0
@@ -551,9 +570,8 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
-				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				if ( ! acf_is_using_datastore() ) {
-					wp_enqueue_script( 'scf-bindings' );
+				if ( is_admin() ) {
+					wp_enqueue_script( 'acf-pro-ui-options-page' );
 				}
 				wp_enqueue_style( 'acf-pro-input' );
 

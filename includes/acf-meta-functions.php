@@ -1,4 +1,12 @@
 <?php
+/**
+ * SCF meta functions.
+ *
+ * @package wordpress/secure-custom-fields
+ */
+
+// Register store for caching option meta queries. Options are site-specific.
+acf_register_store( 'option-meta' )->prop( 'multisite', true );
 
 /**
  * Returns an array of "ACF only" meta for the given post_id.
@@ -56,6 +64,12 @@ function acf_get_option_meta( $prefix = '' ) {
 	// Globals.
 	global $wpdb;
 
+	// Check store. Invalidated by _acf_flush_option_meta_cache() on option writes.
+	$store = acf_get_store( 'option-meta' );
+	if ( $store->has( $prefix ) ) {
+		return $store->get( $prefix );
+	}
+
 	// Vars.
 	$meta    = array();
 	$search  = "{$prefix}_%";
@@ -84,9 +98,36 @@ function acf_get_option_meta( $prefix = '' ) {
 		$meta[ substr( $row['option_name'], $len ) ][] = $row['option_value'];
 	}
 
+	// Cache results for repeat calls during this request.
+	$store->set( $prefix, $meta );
+
 	// Return results.
 	return $meta;
 }
+
+/**
+ * Flushes the cached option meta for any prefix matching the written option.
+ *
+ * Option values are written via update_option()/delete_option() from several
+ * code paths, so the core option actions are used to invalidate the cache.
+ *
+ * @since SCF 6.8.9
+ *
+ * @param string $option The name of the option being added, updated or deleted.
+ * @return void
+ */
+function _acf_flush_option_meta_cache( $option ) {
+	$store = acf_get_store( 'option-meta' );
+
+	foreach ( array_keys( $store->get_data() ) as $prefix ) {
+		if ( 0 === strpos( $option, "{$prefix}_" ) || 0 === strpos( $option, "_{$prefix}_" ) ) {
+			$store->remove( $prefix );
+		}
+	}
+}
+add_action( 'added_option', '_acf_flush_option_meta_cache' );
+add_action( 'updated_option', '_acf_flush_option_meta_cache' );
+add_action( 'deleted_option', '_acf_flush_option_meta_cache' );
 
 /**
  * Retrieves specific metadata from the database.
