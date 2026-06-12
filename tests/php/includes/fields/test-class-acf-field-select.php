@@ -203,6 +203,31 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test update_value handles a nested-array value without emitting
+	 * an "Array to string conversion" warning.
+	 *
+	 * A crafted POST such as acf[field_key][0][]=x produces a value where an
+	 * element is itself an array. update_value stringifies submitted values, and
+	 * array_map( 'strval', ... ) on such input triggers a PHP warning. The field
+	 * should handle this gracefully rather than emit the diagnostic.
+	 *
+	 * PHPUnit is configured with convertWarningsToExceptions, so an
+	 * "Array to string conversion" warning would surface as a test failure.
+	 */
+	public function test_update_value_nested_array() {
+		$field = $this->get_field( array( 'multiple' => 1 ) );
+
+		$result = $this->field_instance->update_value( array( array( 'x' ) ), $this->post_id, $field );
+
+		$this->assertIsArray( $result );
+
+		// Every stored value must be a scalar string; nested arrays must not leak through.
+		foreach ( $result as $stored ) {
+			$this->assertIsString( $stored );
+		}
+	}
+
+	/**
 	 * Test get_rest_schema returns valid schema.
 	 */
 	public function test_get_rest_schema() {

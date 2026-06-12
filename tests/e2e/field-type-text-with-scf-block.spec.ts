@@ -5,6 +5,7 @@ const { test, expect } = require( './fixtures' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-get-field-movie-title-block';
+const BLOCK_NAME = 'scf/movie-title-block';
 const FIELD_GROUP_LABEL = 'Movie Details';
 const FIELD_LABEL = 'Movie Title';
 
@@ -63,7 +64,7 @@ test.describe( 'Field Type > Text', () => {
 		);
 		await page.selectOption(
 			'select[id^="acf_field_group-location-group_0-rule_0-value"]',
-			'scf/movie-title-block'
+			BLOCK_NAME
 		);
 
 		// Submit form.
@@ -92,9 +93,14 @@ test.describe( 'Field Type > Text', () => {
 
 		await admin.editPost( post.id );
 
+		await page.waitForFunction(
+			( blockName ) => window.wp?.blocks?.getBlockType( blockName ),
+			BLOCK_NAME
+		);
+
 		await editor.insertBlock( {
-			name: 'scf/movie-title-block',
-		} ); 
+			name: BLOCK_NAME,
+		} );
 
 		await page.waitForSelector(
 			'.acf-field[data-name="movie_title"] input'
@@ -104,10 +110,10 @@ test.describe( 'Field Type > Text', () => {
 			'Awesome movie'
 		);
 		// Add a blur event to trigger the field's onchange handlers.
-		await page.click('body', { position: { x: 0, y: 0 } });
-		
+		await page.click( 'body', { position: { x: 0, y: 0 } } );
+
 		// Let's also make sure we give the editor a moment to save the field data.
-		await page.waitForTimeout(500);
+		await page.waitForTimeout( 500 );
 
 		const previewPage = await editor.openPreviewPage();
 
@@ -121,6 +127,9 @@ test.describe( 'Field Type > Text', () => {
 
 /**
  * Helper function to delete the field group
+ *
+ * @param {import('@playwright/test').Page} page  Playwright page object.
+ * @param {Object}                          admin WordPress admin helper.
  */
 async function deleteFieldGroups( page, admin ) {
 	await admin.visitAdminPage( 'edit.php', 'post_type=acf-field-group' );
@@ -143,9 +152,11 @@ async function deleteFieldGroups( page, admin ) {
 	}
 }
 
-
 /**
  * Helper function to empty trash
+ *
+ * @param {import('@playwright/test').Page} page  Playwright page object.
+ * @param {Object}                          admin WordPress admin helper.
  */
 async function emptyTrash( page, admin ) {
 	await admin.visitAdminPage(
