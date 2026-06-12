@@ -143,16 +143,24 @@ class Test_ACF_User_Functions extends BaseTestCase {
 		// NOTE: documents current behavior — possible bug: acf_get_users() reads
 		// $args['include'] without isset() (includes/acf-user-functions.php:20),
 		// so any call without an 'include' arg that finds users raises an
-		// "Undefined array key" PHP warning.
-		$warning = null;
+		// "Undefined array key" warning on PHP 8+ (notice on PHP 7.4).
+		$message = null;
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- capturing the documented diagnostic in a test.
+		set_error_handler(
+			function ( $errno, $errstr ) use ( &$message ) {
+				$message = $errstr;
+				return true;
+			},
+			E_WARNING | E_NOTICE
+		);
 		try {
 			acf_get_users( array() );
-		} catch ( \Throwable $e ) {
-			$warning = $e;
+		} finally {
+			restore_error_handler();
 		}
 
-		$this->assertNotNull( $warning, 'Calling acf_get_users() without include should raise a warning' );
-		$this->assertStringContainsString( 'include', $warning->getMessage() );
+		$this->assertNotNull( $message, 'Calling acf_get_users() without include should raise a warning or notice' );
+		$this->assertStringContainsString( 'include', $message );
 	}
 
 	/**
