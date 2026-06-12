@@ -342,13 +342,9 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 			global $wpdb;
 
 			// vars
-			$search  = $taxonomy . '_' . $term . '_%';
-			$_search = '_' . $search;
-
-			// escape '_'
-			// http://stackoverflow.com/questions/2300285/how-do-i-escape-in-sql-server
-			$search  = str_replace( '_', '\_', $search );
-			$_search = str_replace( '_', '\_', $_search );
+			// esc_like() escapes %, _ and \ for the LIKE clause; append the trailing wildcard.
+			$search  = $wpdb->esc_like( "{$taxonomy}_{$term}_" ) . '%';
+			$_search = $wpdb->esc_like( "_{$taxonomy}_{$term}_" ) . '%';
 
 			// delete
 			$result = $wpdb->query(
