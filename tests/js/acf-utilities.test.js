@@ -50,6 +50,7 @@ describe( 'SCF Core Utilities', () => {
 		it( 'should return null for falsy stored values', () => {
 			// NOTE: documents current behavior — acf.get() uses `|| null`,
 			// so stored falsy values (0, '', false) are unreadable.
+			// Tracked in #461.
 			acf.set( 'zero', 0 );
 
 			expect( acf.get( 'zero' ) ).toBeNull();
@@ -233,6 +234,7 @@ describe( 'SCF Core Utilities', () => {
 			expect( acf.isObject( 'a' ) ).toBe( false );
 			// NOTE: documents current behavior — possible bug:
 			// typeof null === 'object', so isObject( null ) returns true.
+			// Tracked in #461.
 			expect( acf.isObject( null ) ).toBe( true );
 		} );
 

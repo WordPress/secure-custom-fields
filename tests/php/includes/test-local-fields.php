@@ -470,7 +470,7 @@ class Test_Local_Fields extends BaseTestCase {
 	 *
 	 * NOTE: documents current behavior — possible bug: acf_remove_local_field_group()
 	 * only removes the group from the local store, leaving its (now orphaned) fields
-	 * registered in the local-fields store.
+	 * registered in the local-fields store. Tracked in #458.
 	 */
 	public function test_remove_local_field_group_leaves_fields_registered() {
 		acf_add_local_field_group(
@@ -511,6 +511,9 @@ class Test_Local_Fields extends BaseTestCase {
 
 	/**
 	 * Test the acf/settings/local filter disables the local layer.
+	 *
+	 * While disabled, registrations land in the shared writable 'local-empty'
+	 * dummy store; that foot-gun is tracked in #459.
 	 */
 	public function test_local_setting_filter_disables_local() {
 		add_filter( 'acf/settings/local', '__return_false' );

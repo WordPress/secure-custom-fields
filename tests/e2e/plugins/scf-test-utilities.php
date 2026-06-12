@@ -5,7 +5,8 @@
  * Author: SCF Team
  *
  * Provides REST helpers for E2E test isolation, such as purging all
- * SCF internal posts (field groups and fields) regardless of status.
+ * SCF internal posts (field groups, fields, post types, taxonomies, and
+ * options pages) regardless of status.
  *
  * @package scf-test-plugins
  */
@@ -15,7 +16,7 @@ add_action(
 	function () {
 		register_rest_route(
 			'scf-test/v1',
-			'/purge-fields',
+			'/purge-internal-posts',
 			array(
 				'methods'             => 'POST',
 				'permission_callback' => function () {

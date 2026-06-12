@@ -230,7 +230,8 @@ class Test_Local_Meta extends BaseTestCase {
 
 		// NOTE: documents current behavior — while local meta is active for a
 		// post id, any meta name not present in the local set returns null,
-		// shadowing real database values.
+		// shadowing real database values. Harmful interplay with leaked
+		// setup_meta state is tracked in #455.
 		$this->assertNull( acf_get_metadata( $post_id, 'other_meta' ), 'Names missing from local meta should resolve to null' );
 
 		acf_reset_meta( $post_id );

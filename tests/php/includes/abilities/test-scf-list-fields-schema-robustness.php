@@ -11,7 +11,7 @@
  * validation.
  *
  * NOTE: documents current behavior — possible bug: one invalid field makes the
- * entire listing unusable.
+ * entire listing unusable. Tracked in #453.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -301,7 +301,7 @@ class Test_SCF_List_Fields_Schema_Robustness extends BaseTestCase {
 	 * the entire listing unusable. A consumer validating scf/list-fields output
 	 * against its registered output_schema (as the WordPress Abilities API does
 	 * for ability results) receives a validation error instead of the valid
-	 * fields.
+	 * fields. Tracked in #453.
 	 */
 	public function test_single_drifted_field_invalidates_entire_list_output() {
 		$schema        = $this->get_list_fields_output_schema();
@@ -351,6 +351,7 @@ class Test_SCF_List_Fields_Schema_Robustness extends BaseTestCase {
 	 * NOTE: documents current behavior - possible bug: any site registering
 	 * fields in code (acf_add_local_field_group / local JSON) produces
 	 * scf/list-fields output that fails its own output_schema validation.
+	 * Tracked in #453.
 	 */
 	public function test_local_text_field_fails_output_schema_due_to_id_zero() {
 		$schema = $this->get_list_fields_output_schema();
