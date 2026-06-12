@@ -20,25 +20,36 @@
 		},
 
 		setValue: function ( val ) {
-			this.$( '.selected' ).removeClass( 'selected' );
-			this.$( 'input[type="radio"]' ).prop( 'checked', false );
+			const el = this.$el[ 0 ];
+
+			el.querySelectorAll( '.selected' ).forEach( function ( node ) {
+				node.classList.remove( 'selected' );
+			} );
+			el.querySelectorAll( 'input[type="radio"]' ).forEach(
+				function ( radio ) {
+					radio.checked = false;
+				}
+			);
 
 			if ( val !== false && val !== null && val !== '' ) {
-				const $input = this.$( 'input[type="radio"]' ).filter(
-					function () {
-						return $( this ).val() === val;
-					}
-				);
+				const input = Array.from(
+					el.querySelectorAll( 'input[type="radio"]' )
+				).find( function ( radio ) {
+					return radio.value === val;
+				} );
 
-				if ( $input.length ) {
-					$input.prop( 'checked', true );
-					$input.parent( 'label' ).addClass( 'selected' );
+				if ( input ) {
+					input.checked = true;
+					const label = input.closest( 'label' );
+					if ( label ) {
+						label.classList.add( 'selected' );
+					}
 
 					if ( this.get( 'other_choice' ) ) {
 						if ( val === 'other' ) {
-							this.$inputText().prop( 'disabled', false );
+							this.$inputText()[ 0 ].disabled = false;
 						} else {
-							this.$inputText().prop( 'disabled', true );
+							this.$inputText()[ 0 ].disabled = true;
 						}
 					}
 				}
@@ -46,29 +57,40 @@
 		},
 
 		getValue: function () {
-			var val = this.$input().val();
+			var input = this.$input()[ 0 ];
+			var val = input ? input.value : undefined;
 			if ( val === 'other' && this.get( 'other_choice' ) ) {
-				val = this.$inputText().val();
+				val = this.$inputText()[ 0 ].value;
 			}
 			return val;
 		},
 
 		onClick: function ( e, $el ) {
 			// vars
-			var $label = $el.parent( 'label' );
-			var selected = $label.hasClass( 'selected' );
-			var val = $el.val();
+			var input = $el[ 0 ];
+			var label = input.closest( 'label' );
+			var selected = label && label.classList.contains( 'selected' );
+			var val = input.value;
 
 			// remove previous selected
-			this.$( '.selected' ).removeClass( 'selected' );
+			this.$el[ 0 ]
+				.querySelectorAll( '.selected' )
+				.forEach( function ( node ) {
+					node.classList.remove( 'selected' );
+				} );
 
 			// add active class
-			$label.addClass( 'selected' );
+			if ( label ) {
+				label.classList.add( 'selected' );
+			}
 
 			// allow null
 			if ( this.get( 'allow_null' ) && selected ) {
-				$label.removeClass( 'selected' );
-				$el.prop( 'checked', false ).trigger( 'change' );
+				if ( label ) {
+					label.classList.remove( 'selected' );
+				}
+				input.checked = false;
+				input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 				val = false;
 			}
 
@@ -76,18 +98,21 @@
 			if ( this.get( 'other_choice' ) ) {
 				// enable
 				if ( val === 'other' ) {
-					this.$inputText().prop( 'disabled', false );
+					this.$inputText()[ 0 ].disabled = false;
 
 					// disable
 				} else {
-					this.$inputText().prop( 'disabled', true );
+					this.$inputText()[ 0 ].disabled = true;
 				}
 			}
 		},
-		onKeyDownInput: function ( event, input ) {
+		onKeyDownInput: function ( event, $input ) {
 			if ( event.which === 13 ) {
 				event.preventDefault();
-				input.prop( 'checked', true ).trigger( 'change' );
+				$input[ 0 ].checked = true;
+				$input[ 0 ].dispatchEvent(
+					new Event( 'change', { bubbles: true } )
+				);
 			}
 		},
 	} );

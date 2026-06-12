@@ -184,14 +184,12 @@ describe( 'URL Field', () => {
 	} );
 
 	describe( 'render()', () => {
-		let mockControl;
+		let controlEl;
 
 		beforeEach( () => {
-			mockControl = {
-				addClass: jest.fn().mockReturnThis(),
-				removeClass: jest.fn().mockReturnThis(),
-			};
-			mockField.$control = jest.fn().mockReturnValue( mockControl );
+			controlEl = document.createElement( 'div' );
+			controlEl.className = 'acf-input-wrap';
+			mockField.$control = jest.fn().mockReturnValue( [ controlEl ] );
 		} );
 
 		it( 'should add -valid class when URL is valid', () => {
@@ -199,15 +197,16 @@ describe( 'URL Field', () => {
 
 			fieldDefinition.render.call( mockField );
 
-			expect( mockControl.addClass ).toHaveBeenCalledWith( '-valid' );
+			expect( controlEl.classList.contains( '-valid' ) ).toBe( true );
 		} );
 
 		it( 'should remove -valid class when URL is invalid', () => {
+			controlEl.classList.add( '-valid' );
 			mockField.isValid = jest.fn().mockReturnValue( false );
 
 			fieldDefinition.render.call( mockField );
 
-			expect( mockControl.removeClass ).toHaveBeenCalledWith( '-valid' );
+			expect( controlEl.classList.contains( '-valid' ) ).toBe( false );
 		} );
 	} );
 
@@ -224,28 +223,24 @@ describe( 'URL Field', () => {
 
 	describe( 'Integration scenarios', () => {
 		it( 'should update validation state as user types', () => {
-			const mockControl = {
-				addClass: jest.fn().mockReturnThis(),
-				removeClass: jest.fn().mockReturnThis(),
-			};
-			mockField.$control = jest.fn().mockReturnValue( mockControl );
+			const controlEl = document.createElement( 'div' );
+			controlEl.className = 'acf-input-wrap';
+			mockField.$control = jest.fn().mockReturnValue( [ controlEl ] );
 
 			// Initially empty - invalid
 			mockField.val = jest.fn().mockReturnValue( '' );
 			fieldDefinition.render.call( mockField );
-			expect( mockControl.removeClass ).toHaveBeenCalledWith( '-valid' );
+			expect( controlEl.classList.contains( '-valid' ) ).toBe( false );
 
 			// User types partial URL - still invalid
-			mockField.val = jest.fn().mockReturnValue( 'https://' );
+			mockField.val = jest.fn().mockReturnValue( 'https:/' );
 			fieldDefinition.render.call( mockField );
-			expect( mockControl.removeClass ).toHaveBeenLastCalledWith(
-				'-valid'
-			);
+			expect( controlEl.classList.contains( '-valid' ) ).toBe( false );
 
 			// User completes URL - valid
 			mockField.val = jest.fn().mockReturnValue( 'https://example.com' );
 			fieldDefinition.render.call( mockField );
-			expect( mockControl.addClass ).toHaveBeenCalledWith( '-valid' );
+			expect( controlEl.classList.contains( '-valid' ) ).toBe( true );
 		} );
 	} );
 } );

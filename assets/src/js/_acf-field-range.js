@@ -23,14 +23,14 @@
 
 			// Update alt input (without change).
 			// Read in input value to inherit min/max validation.
-			acf.val( this.$inputAlt(), this.$input().val(), true );
+			acf.val( this.$inputAlt(), this.$input()[ 0 ].value, true );
 
 			this.busy = false;
 		},
 
 		onChange: function ( e, $el ) {
 			if ( ! this.busy ) {
-				this.setValue( $el.val() );
+				this.setValue( $el[ 0 ].value );
 			}
 		},
 	} );

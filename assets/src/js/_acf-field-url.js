@@ -42,11 +42,19 @@
 		},
 
 		render: function () {
+			// vars
+			var control = this.$control()[ 0 ];
+
+			// bail early if no control
+			if ( ! control ) {
+				return;
+			}
+
 			// add class
 			if ( this.isValid() ) {
-				this.$control().addClass( '-valid' );
+				control.classList.add( '-valid' );
 			} else {
-				this.$control().removeClass( '-valid' );
+				control.classList.remove( '-valid' );
 			}
 		},
 

@@ -22,28 +22,29 @@
 		},
 
 		getValue: function () {
-			return this.$input().val();
+			return this.$input()[ 0 ].value;
 		},
 
 		getSearchVal: function () {
-			return this.$search().val();
+			return this.$search()[ 0 ].value;
 		},
 
 		setValue: function ( val ) {
 			// class
+			var control = this.$control()[ 0 ];
 			if ( val ) {
-				this.$control().addClass( 'has-value' );
+				control.classList.add( 'has-value' );
 			} else {
-				this.$control().removeClass( 'has-value' );
+				control.classList.remove( 'has-value' );
 			}
 
 			acf.val( this.$input(), val );
-			this.$search().val( val || '' );
+			this.$search()[ 0 ].value = val || '';
 
 			if ( val ) {
 				this.maybeSearch();
 			} else {
-				this.$( '.canvas-media' ).html( '' );
+				this.$el[ 0 ].querySelector( '.canvas-media' ).innerHTML = '';
 			}
 		},
 
@@ -80,7 +81,7 @@
 			}
 
 			// set new timeout
-			var callback = $.proxy( this.search, this, url );
+			var callback = this.search.bind( this, url );
 			this.set( 'timeout', setTimeout( callback, 300 ) );
 		},
 
@@ -119,6 +120,9 @@
 
 					// update vars
 					this.val( json.url );
+
+					// jQuery .html() is kept: oEmbed provider markup may
+					// contain <script> tags, which innerHTML would not run.
 					this.$( '.canvas-media' ).html( json.html );
 				},
 				complete: function () {
@@ -131,8 +135,8 @@
 
 		clear: function () {
 			this.val( '' );
-			this.$search().val( '' );
-			this.$( '.canvas-media' ).html( '' );
+			this.$search()[ 0 ].value = '';
+			this.$el[ 0 ].querySelector( '.canvas-media' ).innerHTML = '';
 		},
 
 		onClickClear: function ( e, $el ) {
@@ -147,7 +151,7 @@
 		},
 
 		onKeyupSearch: function ( e, $el ) {
-			if ( $el.val() ) {
+			if ( $el[ 0 ].value ) {
 				this.maybeSearch();
 			}
 		},

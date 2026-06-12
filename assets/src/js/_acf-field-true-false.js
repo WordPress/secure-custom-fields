@@ -26,7 +26,8 @@
 		},
 
 		getValue: function () {
-			return this.$input().prop( 'checked' ) ? 1 : 0;
+			var input = this.$input()[ 0 ];
+			return input && input.checked ? 1 : 0;
 		},
 
 		initialize: function () {
@@ -41,6 +42,8 @@
 			if ( ! $switch.length ) return;
 
 			// vars
+			// jQuery .width() is kept: it returns the content-box width
+			// regardless of box-sizing, which has no native one-liner.
 			var $on = $switch.children( '.acf-switch-on' );
 			var $off = $switch.children( '.acf-switch-off' );
 			var width = Math.max( $on.width(), $off.width() );
@@ -49,22 +52,28 @@
 			if ( ! width ) return;
 
 			// set widths
-			$on.css( 'min-width', width );
-			$off.css( 'min-width', width );
+			$on[ 0 ].style.minWidth = width + 'px';
+			$off[ 0 ].style.minWidth = width + 'px';
 		},
 
 		switchOn: function () {
-			this.$input().prop( 'checked', true );
-			this.$switch().addClass( '-on' );
+			this.$input()[ 0 ].checked = true;
+			var switchEl = this.$switch()[ 0 ];
+			if ( switchEl ) {
+				switchEl.classList.add( '-on' );
+			}
 		},
 
 		switchOff: function () {
-			this.$input().prop( 'checked', false );
-			this.$switch().removeClass( '-on' );
+			this.$input()[ 0 ].checked = false;
+			var switchEl = this.$switch()[ 0 ];
+			if ( switchEl ) {
+				switchEl.classList.remove( '-on' );
+			}
 		},
 
 		onChange: function ( e, $el ) {
-			if ( $el.prop( 'checked' ) ) {
+			if ( $el[ 0 ].checked ) {
 				this.switchOn();
 			} else {
 				this.switchOff();
@@ -72,11 +81,17 @@
 		},
 
 		onFocus: function ( e, $el ) {
-			this.$switch().addClass( '-focus' );
+			var switchEl = this.$switch()[ 0 ];
+			if ( switchEl ) {
+				switchEl.classList.add( '-focus' );
+			}
 		},
 
 		onBlur: function ( e, $el ) {
-			this.$switch().removeClass( '-focus' );
+			var switchEl = this.$switch()[ 0 ];
+			if ( switchEl ) {
+				switchEl.classList.remove( '-focus' );
+			}
 		},
 
 		onKeypress: function ( e, $el ) {

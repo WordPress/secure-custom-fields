@@ -33,56 +33,65 @@
 				val = val ? [ val ] : [];
 			}
 
-			this.$inputs().each( function () {
-				const $input = $( this );
-				const checked = val.includes( $input.val() );
-				$input.prop( 'checked', checked );
+			const inputs = Array.from( this.$inputs() );
+			inputs.forEach( function ( input ) {
+				const checked = val.includes( input.value );
+				input.checked = checked;
+
+				const label = input.closest( 'label' );
+				if ( ! label ) {
+					return;
+				}
 
 				if ( checked ) {
-					$input.parent( 'label' ).addClass( 'selected' );
+					label.classList.add( 'selected' );
 				} else {
-					$input.parent( 'label' ).removeClass( 'selected' );
+					label.classList.remove( 'selected' );
 				}
 			} );
 
-			const $toggle = this.$toggle();
-			if ( $toggle.length ) {
-				const checked = this.$inputs().not( ':checked' ).length === 0;
-				$toggle.prop( 'checked', checked );
+			const toggle = this.$toggle()[ 0 ];
+			if ( toggle ) {
+				toggle.checked = inputs.every( function ( input ) {
+					return input.checked;
+				} );
 			}
 		},
 
 		getValue: function () {
 			var val = [];
-			this.$( ':checked' ).each( function () {
-				val.push( $( this ).val() );
-			} );
+			this.$el[ 0 ]
+				.querySelectorAll( ':checked' )
+				.forEach( function ( input ) {
+					val.push( input.value );
+				} );
 			return val.length ? val : false;
 		},
 
 		onChange: function ( e, $el ) {
 			// Vars.
-			var checked = $el.prop( 'checked' );
-			var $label = $el.parent( 'label' );
-			var $toggle = this.$toggle();
+			var input = $el[ 0 ];
+			var checked = input.checked;
+			var label = input.closest( 'label' );
+			var toggle = this.$toggle()[ 0 ];
 
 			// Add or remove "selected" class.
-			if ( checked ) {
-				$label.addClass( 'selected' );
-			} else {
-				$label.removeClass( 'selected' );
+			if ( label ) {
+				if ( checked ) {
+					label.classList.add( 'selected' );
+				} else {
+					label.classList.remove( 'selected' );
+				}
 			}
 
 			// Update toggle state if all inputs are checked.
-			if ( $toggle.length ) {
-				var $inputs = this.$inputs();
+			if ( toggle ) {
+				var inputs = Array.from( this.$inputs() );
 
 				// all checked
-				if ( $inputs.not( ':checked' ).length == 0 ) {
-					$toggle.prop( 'checked', true );
-				} else {
-					$toggle.prop( 'checked', false );
-				}
+				toggle.checked = inputs.every( function ( item ) {
+					return item.checked;
+				} );
 			}
 		},
 
@@ -91,35 +100,49 @@
 				'<li><input class="acf-checkbox-custom" type="checkbox" checked="checked" /><input type="text" name="' +
 				this.getInputName() +
 				'[]" /></li>';
-			$el.parent( 'li' ).before( html );
-			$el.parent( 'li' )
-				.parent()
-				.find( 'input[type="text"]' )
-				.last()
-				.trigger( 'focus' );
+			var li = $el[ 0 ].closest( 'li' );
+			li.insertAdjacentHTML( 'beforebegin', html );
+			var texts =
+				li.parentElement.querySelectorAll( 'input[type="text"]' );
+			if ( texts.length ) {
+				texts[ texts.length - 1 ].focus();
+			}
 		},
 
 		onClickToggle: function ( e, $el ) {
-			var $inputs = this.$inputs();
-			var checked = $el.prop( 'checked' );
-			$inputs.prop( 'checked', checked ).trigger( 'change' );
+			var inputs = Array.from( this.$inputs() );
+			var checked = $el[ 0 ].checked;
+
+			// Set all states first so listeners never observe a partial state.
+			inputs.forEach( function ( input ) {
+				input.checked = checked;
+			} );
+			inputs.forEach( function ( input ) {
+				input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			} );
 		},
 
 		onClickCustom: function ( e, $el ) {
-			var checked = $el.prop( 'checked' );
-			var $text = $el.next( 'input[type="text"]' );
+			var input = $el[ 0 ];
+			var checked = input.checked;
+			var text = input.nextElementSibling;
+
+			// bail early if no adjacent text input
+			if ( ! text || ! text.matches( 'input[type="text"]' ) ) {
+				return;
+			}
 
 			// checked
 			if ( checked ) {
-				$text.prop( 'disabled', false );
+				text.disabled = false;
 
 				// not checked
 			} else {
-				$text.prop( 'disabled', true );
+				text.disabled = true;
 
 				// remove
-				if ( $text.val() == '' ) {
-					$el.parent( 'li' ).remove();
+				if ( text.value == '' ) {
+					input.closest( 'li' ).remove();
 				}
 			}
 		},
@@ -130,12 +153,12 @@
 				e.preventDefault();
 
 				// Toggle the checkbox state and trigger change event
-				$el.prop( 'checked', ! $el.prop( 'checked' ) ).trigger(
-					'change'
-				);
+				var input = $el[ 0 ];
+				input.checked = ! input.checked;
+				input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 
 				// If this is the "Select All" toggle checkbox, run the toggle logic
-				if ( $el.is( '.acf-checkbox-toggle' ) ) {
+				if ( input.classList.contains( 'acf-checkbox-toggle' ) ) {
 					this.onClickToggle( e, $el );
 				}
 			}

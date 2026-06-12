@@ -13,7 +13,11 @@ const { createJQueryStub } = require( './mocks/acf-jquery' );
 
 describe( 'SCF Unload Warning', () => {
 	let acf;
-	let $window;
+	let addListenerSpy;
+	let removeListenerSpy;
+
+	const beforeUnloadCalls = ( spy ) =>
+		spy.mock.calls.filter( ( call ) => call[ 0 ] === 'beforeunload' );
 
 	beforeEach( () => {
 		global.jQuery = createJQueryStub();
@@ -28,15 +32,16 @@ describe( 'SCF Unload Warning', () => {
 		} );
 
 		acf = window.acf;
-		$window = global.jQuery( window );
 
 		// The model waits for the 'load' action before initializing.
 		acf.doAction( 'load' );
-		$window.on.mockClear();
-		$window.off.mockClear();
+		addListenerSpy = jest.spyOn( window, 'addEventListener' );
+		removeListenerSpy = jest.spyOn( window, 'removeEventListener' );
 	} );
 
 	afterEach( () => {
+		window.removeEventListener( 'beforeunload', acf.unload.onUnload );
+		jest.restoreAllMocks();
 		delete window.acf;
 		delete window.acfL10n;
 	} );
@@ -66,6 +71,8 @@ describe( 'SCF Unload Warning', () => {
 		lateAcf.doAction( 'validation_failure' );
 
 		expect( lateAcf.unload.changed ).toBe( true );
+
+		window.removeEventListener( 'beforeunload', lateAcf.unload.onUnload );
 	} );
 
 	describe( 'startListening()', () => {
@@ -73,7 +80,7 @@ describe( 'SCF Unload Warning', () => {
 			acf.unload.startListening();
 
 			expect( acf.unload.changed ).toBe( true );
-			expect( $window.on ).toHaveBeenCalledWith(
+			expect( addListenerSpy ).toHaveBeenCalledWith(
 				'beforeunload',
 				acf.unload.onUnload
 			);
@@ -83,7 +90,7 @@ describe( 'SCF Unload Warning', () => {
 			acf.unload.startListening();
 			acf.unload.startListening();
 
-			expect( $window.on ).toHaveBeenCalledTimes( 1 );
+			expect( beforeUnloadCalls( addListenerSpy ) ).toHaveLength( 1 );
 		} );
 
 		it( 'should do nothing while disabled', () => {
@@ -91,7 +98,7 @@ describe( 'SCF Unload Warning', () => {
 			acf.unload.startListening();
 
 			expect( acf.unload.changed ).toBe( false );
-			expect( $window.on ).not.toHaveBeenCalled();
+			expect( beforeUnloadCalls( addListenerSpy ) ).toHaveLength( 0 );
 
 			acf.unload.enable();
 			acf.unload.startListening();
@@ -106,7 +113,7 @@ describe( 'SCF Unload Warning', () => {
 			acf.unload.stopListening();
 
 			expect( acf.unload.changed ).toBe( false );
-			expect( $window.off ).toHaveBeenCalledWith(
+			expect( removeListenerSpy ).toHaveBeenCalledWith(
 				'beforeunload',
 				acf.unload.onUnload
 			);
@@ -117,7 +124,7 @@ describe( 'SCF Unload Warning', () => {
 			acf.unload.reset();
 
 			expect( acf.unload.changed ).toBe( false );
-			expect( $window.off ).toHaveBeenCalled();
+			expect( beforeUnloadCalls( removeListenerSpy ) ).toHaveLength( 1 );
 		} );
 	} );
 
