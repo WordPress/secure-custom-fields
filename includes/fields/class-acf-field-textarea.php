@@ -214,8 +214,8 @@ if ( ! class_exists( 'acf_field_textarea' ) ) :
 		 */
 		function validate_value( $valid, $value, $field, $input ) {
 
-			// Check maxlength.
-			if ( $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
+			// Check maxlength. A non-scalar value (e.g. an array from a crafted submission) is not valid text, so skip the string length check.
+			if ( $field['maxlength'] && is_scalar( $value ) && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
 				/* translators: %d: the maximum number of characters */
 				return sprintf( __( 'Value must not exceed %d characters', 'secure-custom-fields' ), $field['maxlength'] );
 			}

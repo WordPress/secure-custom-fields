@@ -138,6 +138,35 @@ class Test_ACF_Field_Url extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test validate_value does not crash on a non-scalar value.
+	 *
+	 * A crafted form submission can deliver an array (e.g. acf[field_key][])
+	 * as the value. The field should treat it as invalid rather than raising
+	 * a TypeError from strpos().
+	 */
+	public function test_validate_value_non_scalar() {
+		$field = $this->get_field( array( 'required' => 1 ) );
+
+		$valid = $this->field_instance->validate_value( true, array( 'a' => 'b' ), $field, 'acf[field_url_test]' );
+
+		$this->assertEquals( __( 'Value must be a valid URL', 'secure-custom-fields' ), $valid );
+	}
+
+	/**
+	 * Test format_value does not crash on a non-scalar value when escaping.
+	 *
+	 * Calling esc_url() on an array would raise a TypeError. The field should
+	 * return an empty string, matching how it treats an empty value.
+	 */
+	public function test_format_value_non_scalar_escaped() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->format_value( array( 'a' => 'b' ), $this->post_id, $field, true );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
 	 * Test get_rest_schema returns valid schema.
 	 */
 	public function test_get_rest_schema() {

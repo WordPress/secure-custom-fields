@@ -575,8 +575,14 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// Format array of values.
 			// - Parse each value as string for SQL LIKE queries.
+			// - Guard against nested arrays (e.g. crafted POST input) by stringifying scalars only.
 			if ( is_array( $value ) ) {
-				$value = array_map( 'strval', $value );
+				$value = array_map(
+					static function ( $v ) {
+						return is_scalar( $v ) ? strval( $v ) : '';
+					},
+					$value
+				);
 			}
 
 			// Save custom options back to the field definition if configured.
