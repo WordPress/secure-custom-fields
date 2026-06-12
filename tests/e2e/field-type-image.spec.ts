@@ -4,7 +4,7 @@
  * Tests the Image field which allows users to upload and select
  * images from the WordPress media library.
  */
-const { test, expect, wpVersionAtLeast } = require( './fixtures' );
+const { test, expect } = require( './fixtures' );
 const {
 	PLUGIN_SLUG,
 	deleteFieldGroups,
@@ -32,14 +32,6 @@ test.describe( 'Field Type > Image', () => {
 
 	test.beforeEach( async ( { page, admin } ) => {
 		await deleteFieldGroups( page, admin );
-
-		// The WP 7.0 iframed editor breaks the legacy wp.media/plupload flow
-		// the Image field relies on. Skip until the iframe-aware media fix
-		// lands in SCF.
-		test.skip(
-			await wpVersionAtLeast( page, 7, 0 ),
-			'Image field media modal is broken by the WP 7.0 iframed editor; tracked upstream.'
-		);
 	} );
 
 	test( 'should create an image field and upload an image', async ( {

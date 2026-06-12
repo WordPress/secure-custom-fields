@@ -4,6 +4,7 @@
 module.exports = {
 	...require( '@wordpress/scripts/config/jest-unit.config' ),
 	testMatch: [ '**/tests/js/**/*.test.js', '**/tests/js/**/*.test.jsx' ],
+	testPathIgnorePatterns: [ '/node_modules/', '/.claude/' ],
 	setupFilesAfterEnv: [ '<rootDir>/tests/js/setup-tests.js' ],
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
