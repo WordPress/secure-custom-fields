@@ -53,7 +53,9 @@ const commonConfig = {
 					loader: 'babel-loader',
 					options: {
 						presets: [
-							[ '@babel/preset-react', { runtime: 'automatic' } ],
+							// Keep JSX output compatible with older supported WordPress versions
+							// that do not register the react-jsx-runtime script handle.
+							[ '@babel/preset-react', { runtime: 'classic' } ],
 						],
 						plugins: process.env.COVERAGE_ENABLED
 							? [ 'istanbul' ]
