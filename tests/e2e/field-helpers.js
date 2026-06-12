@@ -8,6 +8,24 @@
 const PLUGIN_SLUG = 'secure-custom-fields';
 
 /**
+ * Purge SCF internal posts via the scf-test-utilities REST endpoint.
+ *
+ * Requires the `scf-test-utilities` plugin to be active. Deletes all posts
+ * of the given SCF internal post types regardless of status.
+ *
+ * @param {Object}   requestUtils Playwright request utilities.
+ * @param {string[]} [types]      SCF internal post types to purge. Defaults
+ *                                to field groups and fields server-side.
+ */
+async function purgeScfInternalPosts( requestUtils, types ) {
+	await requestUtils.rest( {
+		method: 'POST',
+		path: '/scf-test/v1/purge-internal-posts',
+		data: types ? { types } : {},
+	} );
+}
+
+/**
  * Delete all field groups and empty trash.
  *
  * @param {import('@playwright/test').Page} page  Playwright page object.
@@ -70,13 +88,13 @@ async function emptyTrash( page, admin ) {
 /**
  * Create a new field group with a single field.
  *
- * @param {import('@playwright/test').Page} page            Playwright page object.
- * @param {Object}                          admin           Admin utilities.
- * @param {Object}                          options         Field options.
- * @param {string}                          options.groupTitle   Field group title.
- * @param {string}                          options.fieldLabel   Field label.
- * @param {string}                          options.fieldType    Field type (e.g., 'text', 'image').
- * @param {Function}                        [options.configure]  Optional callback for field configuration.
+ * @param {import('@playwright/test').Page} page                Playwright page object.
+ * @param {Object}                          admin               Admin utilities.
+ * @param {Object}                          options             Field options.
+ * @param {string}                          options.groupTitle  Field group title.
+ * @param {string}                          options.fieldLabel  Field label.
+ * @param {string}                          options.fieldType   Field type (e.g., 'text', 'image').
+ * @param {Function}                        [options.configure] Optional callback for field configuration.
  */
 async function createFieldGroup( page, admin, options ) {
 	const { groupTitle, fieldLabel, fieldType, configure } = options;
@@ -222,8 +240,8 @@ async function addFieldChoices( page, choices ) {
 /**
  * Add a subfield to a repeater, group, or flexible content field.
  *
- * @param {import('@playwright/test').Page} page       Playwright page object.
- * @param {Object}                          options    Subfield options.
+ * @param {import('@playwright/test').Page} page              Playwright page object.
+ * @param {Object}                          options           Subfield options.
  * @param {string}                          options.label     Subfield label.
  * @param {string}                          options.type      Subfield type.
  * @param {boolean}                         [options.isFirst] Whether this is the first subfield.
@@ -265,8 +283,8 @@ async function addSubfield( page, options ) {
 /**
  * Add a layout to a flexible content field.
  *
- * @param {import('@playwright/test').Page} page    Playwright page object.
- * @param {Object}                          options Layout options.
+ * @param {import('@playwright/test').Page} page          Playwright page object.
+ * @param {Object}                          options       Layout options.
  * @param {string}                          options.label Layout label.
  */
 async function addFlexibleContentLayout( page, options ) {
@@ -384,10 +402,10 @@ async function scrollIntoViewWithOffset( page, element ) {
 /**
  * Select an option in a Select2 AJAX dropdown.
  *
- * @param {import('@playwright/test').Page}    page          Playwright page object.
+ * @param {import('@playwright/test').Page}    page              Playwright page object.
  * @param {import('@playwright/test').Locator} containerSelector Selector for the Select2 container parent.
- * @param {string}                             searchText    Text to search for.
- * @param {string}                             optionText    Text of the option to select.
+ * @param {string}                             searchText        Text to search for.
+ * @param {string}                             optionText        Text of the option to select.
  */
 async function selectSelect2Option(
 	page,
@@ -426,6 +444,7 @@ async function expandFCLayout( layout ) {
 
 module.exports = {
 	PLUGIN_SLUG,
+	purgeScfInternalPosts,
 	deleteFieldGroups,
 	emptyTrash,
 	createFieldGroup,
