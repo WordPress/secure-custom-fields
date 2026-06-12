@@ -103,6 +103,31 @@ class Test_Like_Escaping_Parity extends BaseTestCase {
 	}
 
 	/**
+	 * Ensures acf_upgrade_550_taxonomy() also escapes a backslash.
+	 */
+	public function test_upgrade_550_taxonomy_escapes_backslash() {
+		global $wpdb;
+
+		// The taxonomy is the three characters a \ b.
+		acf_upgrade_550_taxonomy( 'a\\b' );
+
+		$query = $this->last_query();
+		$this->assertNotEmpty( $query, 'The upgrade SELECT should have been captured.' );
+		$this->assertStringContainsString(
+			$this->expected_fragment( 'a\\b_' ),
+			$query,
+			'A backslash should be escaped via esc_like().'
+		);
+
+		$bad = $wpdb->prepare( '%s', str_replace( '_', '\_', 'a\\b_%' ) );
+		$this->assertStringNotContainsString(
+			$bad,
+			$query,
+			'The pattern with an unescaped backslash must not be generated.'
+		);
+	}
+
+	/**
 	 * Ensures acf_form_taxonomy::delete_term() escapes the taxonomy and term
 	 * in its legacy (no-termmeta) DELETE.
 	 */

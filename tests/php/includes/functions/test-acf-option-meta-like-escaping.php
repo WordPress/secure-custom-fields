@@ -119,6 +119,32 @@ class Test_ACF_Option_Meta_Like_Escaping extends BaseTestCase {
 	}
 
 	/**
+	 * A prefix containing a backslash must be escaped.
+	 */
+	public function test_backslash_prefix_is_escaped() {
+		global $wpdb;
+
+		// The prefix is the three characters a \ b.
+		acf_get_option_meta( 'a\\b' );
+
+		$good = $this->expected_like_fragment( 'a\\b_' );
+		$this->assertStringContainsString(
+			$good,
+			$this->captured_sql,
+			'A backslash in the prefix should be escaped via esc_like().'
+		);
+
+		// The previous str_replace() approach escaped only `_`, leaving the
+		// backslash unescaped. That exact fragment must not appear.
+		$bad = $wpdb->prepare( '%s', str_replace( '_', '\_', 'a\\b_%' ) );
+		$this->assertStringNotContainsString(
+			$bad,
+			$this->captured_sql,
+			'The pattern with an unescaped backslash must not be generated.'
+		);
+	}
+
+	/**
 	 * A benign prefix still produces the expected (unchanged) pattern.
 	 */
 	public function test_benign_prefix_unchanged() {
