@@ -352,7 +352,7 @@ class Test_ACF_Site_Health extends BaseTestCase {
 		// NOTE: documents current behavior — possible bug: acf_add_local_field_group()
 		// registers groups with 'local' => 'php' (lowercase), but the count filter in
 		// includes/class-acf-site-health.php compares against 'PHP' (uppercase), so
-		// PHP-registered field groups are never counted.
+		// PHP-registered field groups are never counted. Tracked in #456.
 		$this->assertSame( '0', $values['php_field_groups']['value'] );
 	}
 

@@ -144,6 +144,7 @@ class Test_ACF_User_Functions extends BaseTestCase {
 		// $args['include'] without isset() (includes/acf-user-functions.php:20),
 		// so any call without an 'include' arg that finds users raises an
 		// "Undefined array key" warning on PHP 8+ (notice on PHP 7.4).
+		// Tracked in #457.
 		$message = null;
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- capturing the documented diagnostic in a test.
 		set_error_handler(

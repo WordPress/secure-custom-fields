@@ -114,214 +114,186 @@ test.describe( 'Post Type Creation', () => {
 		// Clean up any leftover entities from previous test runs
 		await cleanupIntegrationTestEntities( page, admin );
 
-		// SECTION 1: Create a hierarchical taxonomy
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_TAXONOMY_SLUG }`
-		);
-		await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
+		await test.step( 'Create a hierarchical taxonomy', async () => {
+			await admin.visitAdminPage(
+				'edit.php',
+				`post_type=${ SCF_TAXONOMY_SLUG }`
+			);
+			await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
 
-		await page.fill(
-			'#acf_taxonomy-labels-name',
-			INTEGRATION_TAXONOMY_NAME
-		);
-		await page.fill(
-			'#acf_taxonomy-labels-singular_name',
-			INTEGRATION_TAXONOMY_SINGULAR
-		);
-		await page.fill( '#acf_taxonomy-taxonomy', INTEGRATION_TAXONOMY_KEY );
+			await page.fill(
+				'#acf_taxonomy-labels-name',
+				INTEGRATION_TAXONOMY_NAME
+			);
+			await page.fill(
+				'#acf_taxonomy-labels-singular_name',
+				INTEGRATION_TAXONOMY_SINGULAR
+			);
+			await page.fill(
+				'#acf_taxonomy-taxonomy',
+				INTEGRATION_TAXONOMY_KEY
+			);
 
-		await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
-		await expectSuccessNotice( page, 'taxonomy created' );
+			await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
+			await expectSuccessNotice( page, 'taxonomy created' );
+		} );
 
-		// SECTION 2: Create hierarchical post type linked to the taxonomy
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_POST_TYPE_SLUG }`
-		);
-		await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
+		await test.step( 'Create hierarchical post type linked to the taxonomy', async () => {
+			await admin.visitAdminPage(
+				'edit.php',
+				`post_type=${ SCF_POST_TYPE_SLUG }`
+			);
+			await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
 
-		await page.fill(
-			'#acf_post_type-labels-name',
-			INTEGRATION_POST_TYPE_NAME
-		);
-		await page.fill(
-			'#acf_post_type-labels-singular_name',
-			INTEGRATION_POST_TYPE_SINGULAR
-		);
-		await page.fill(
-			'#acf_post_type-post_type',
-			INTEGRATION_POST_TYPE_KEY
-		);
+			await page.fill(
+				'#acf_post_type-labels-name',
+				INTEGRATION_POST_TYPE_NAME
+			);
+			await page.fill(
+				'#acf_post_type-labels-singular_name',
+				INTEGRATION_POST_TYPE_SINGULAR
+			);
+			await page.fill(
+				'#acf_post_type-post_type',
+				INTEGRATION_POST_TYPE_KEY
+			);
 
-		// Enable hierarchical (like pages)
-		const hierarchicalToggle = page.locator(
-			'.acf-field[data-name="hierarchical"] .acf-switch'
-		);
-		await hierarchicalToggle.click();
+			// Enable hierarchical (like pages)
+			const hierarchicalToggle = page.locator(
+				'.acf-field[data-name="hierarchical"] .acf-switch'
+			);
+			await hierarchicalToggle.click();
 
-		// Verify hierarchical toggle is now active
-		await expect( hierarchicalToggle ).toHaveClass( /acf-switch-on|-on/ );
+			// Verify hierarchical toggle is now active
+			await expect( hierarchicalToggle ).toHaveClass(
+				/acf-switch-on|-on/
+			);
 
-		// Link to our taxonomy
-		const taxonomiesField = page.locator(
-			'.acf-field[data-name="taxonomies"]'
-		);
-		await taxonomiesField.locator( '.select2-selection' ).click();
-		await page
-			.locator(
-				`.select2-results__option:has-text("${ INTEGRATION_TAXONOMY_SINGULAR }")`
-			)
-			.click();
+			// Link to our taxonomy
+			const taxonomiesField = page.locator(
+				'.acf-field[data-name="taxonomies"]'
+			);
+			await taxonomiesField.locator( '.select2-selection' ).click();
+			await page
+				.locator(
+					`.select2-results__option:has-text("${ INTEGRATION_TAXONOMY_SINGULAR }")`
+				)
+				.click();
 
-		await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
-		await expectSuccessNotice( page, 'post type created' );
+			await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
+			await expectSuccessNotice( page, 'post type created' );
 
-		// Verify taxonomy link persisted by checking select2 shows it
-		await expect(
-			taxonomiesField.locator(
-				`.select2-selection__choice:has-text("${ INTEGRATION_TAXONOMY_SINGULAR }")`
-			)
-		).toBeVisible();
+			// Verify taxonomy link persisted by checking select2 shows it
+			await expect(
+				taxonomiesField.locator(
+					`.select2-selection__choice:has-text("${ INTEGRATION_TAXONOMY_SINGULAR }")`
+				)
+			).toBeVisible();
 
-		// Verify hierarchical setting persisted
-		await expect( hierarchicalToggle ).toHaveClass( /acf-switch-on|-on/ );
+			// Verify hierarchical setting persisted
+			await expect( hierarchicalToggle ).toHaveClass(
+				/acf-switch-on|-on/
+			);
+		} );
 
-		// SECTION 3: Verify post type-taxonomy integration on actual post type screen
-		// First navigate to dashboard to trigger fresh WordPress init (registers post type)
-		await admin.visitAdminPage( 'index.php', '' );
+		await test.step( 'Verify post type-taxonomy integration on the post type screen', async () => {
+			// Navigate to the custom post type's "Add New" screen via the
+			// admin menu (a dashboard visit triggers fresh WordPress init
+			// so the post type is registered).
+			await visitPostTypeAddNewScreen( page, admin );
 
-		// Verify custom post type appears in admin menu (proves it's registered)
-		const customPostTypeMenu = page
-			.locator( '#adminmenu' )
-			.getByRole( 'link', {
-				name: INTEGRATION_POST_TYPE_NAME,
-				exact: true,
+			// Verify the taxonomy panel appears in the sidebar (block
+			// editor displays taxonomies in sidebar). The panel uses the
+			// taxonomy's plural label (INTEGRATION_TAXONOMY_NAME).
+			const taxonomyPanel = page.getByRole( 'button', {
+				name: INTEGRATION_TAXONOMY_NAME,
 			} );
-		await expect( customPostTypeMenu ).toBeVisible( {
-			timeout: DEFAULT_TIMEOUT,
+			await expect( taxonomyPanel ).toBeVisible( {
+				timeout: DEFAULT_TIMEOUT,
+			} );
 		} );
 
-		// Navigate to the custom post type's "Add New" screen via menu click
-		await customPostTypeMenu.click();
+		await test.step( 'Create field group with location rule for the custom post type', async () => {
+			// Fresh page load ensures post type cache is updated
+			await admin.visitAdminPage(
+				'edit.php',
+				`post_type=${ SCF_FIELD_GROUP_SLUG }`
+			);
+			await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
 
-		// Click "Add E2E Project" button (WordPress uses singular label)
-		await page
-			.locator(
-				`.wrap a:has-text("Add ${ INTEGRATION_POST_TYPE_SINGULAR }")`
-			)
-			.click();
+			await page.fill( '#title', INTEGRATION_FIELD_GROUP_NAME );
 
-		// Wait for block editor to load
-		await page.waitForTimeout( 1000 );
-		await closeEditorModal( page );
+			// Add a text field
+			const fieldLabelInput = page.locator(
+				'input[id^="acf_fields-field_"][id$="-label"]'
+			);
+			await fieldLabelInput.fill( INTEGRATION_FIELD_LABEL );
 
-		// Verify the taxonomy panel appears in the sidebar (block editor displays taxonomies in sidebar)
-		// The panel uses the taxonomy's plural label (INTEGRATION_TAXONOMY_NAME)
-		const taxonomyPanel = page.getByRole( 'button', {
-			name: INTEGRATION_TAXONOMY_NAME,
-		} );
-		await expect( taxonomyPanel ).toBeVisible( {
-			timeout: DEFAULT_TIMEOUT,
-		} );
+			// Set location rule: Post Type == our custom post type
+			const paramSelect = page.locator(
+				'select[id^="acf_field_group-location-group_0-rule_0-param"]'
+			);
+			await paramSelect.scrollIntoViewIfNeeded();
+			await paramSelect.selectOption( 'post_type' );
 
-		// SECTION 4: Create field group with location rule for our custom post type
-		// Fresh page load ensures post type cache is updated
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_FIELD_GROUP_SLUG }`
-		);
-		await page.locator( 'a.acf-btn:has-text("Add New")' ).click();
+			// Wait for our custom post type to appear in the dropdown
+			// (by label text)
+			const valueSelect = page.locator(
+				'select[id^="acf_field_group-location-group_0-rule_0-value"]'
+			);
+			await expect(
+				valueSelect.locator(
+					`option:has-text("${ INTEGRATION_POST_TYPE_SINGULAR }")`
+				)
+			).toBeAttached( { timeout: DEFAULT_TIMEOUT } );
 
-		await page.fill( '#title', INTEGRATION_FIELD_GROUP_NAME );
+			// Select by label text since the value may be auto-generated
+			await valueSelect.selectOption( {
+				label: INTEGRATION_POST_TYPE_SINGULAR,
+			} );
 
-		// Add a text field
-		const fieldLabelInput = page.locator(
-			'input[id^="acf_fields-field_"][id$="-label"]'
-		);
-		await fieldLabelInput.fill( INTEGRATION_FIELD_LABEL );
-
-		// Set location rule: Post Type == our custom post type
-		const paramSelect = page.locator(
-			'select[id^="acf_field_group-location-group_0-rule_0-param"]'
-		);
-		await paramSelect.scrollIntoViewIfNeeded();
-		await paramSelect.selectOption( 'post_type' );
-
-		// Wait for our custom post type to appear in the dropdown (by label text)
-		const valueSelect = page.locator(
-			'select[id^="acf_field_group-location-group_0-rule_0-value"]'
-		);
-		await expect(
-			valueSelect.locator(
-				`option:has-text("${ INTEGRATION_POST_TYPE_SINGULAR }")`
-			)
-		).toBeAttached( { timeout: DEFAULT_TIMEOUT } );
-
-		// Select by label text since the value may be auto-generated
-		await valueSelect.selectOption( {
-			label: INTEGRATION_POST_TYPE_SINGULAR,
+			await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
+			await expectSuccessNotice( page, 'Field group published' );
 		} );
 
-		await page.click( 'button.acf-btn.acf-publish[type="submit"]' );
-		await expectSuccessNotice( page, 'Field group published' );
+		await test.step( 'Verify field group appears on the custom post type edit screen', async () => {
+			// Navigate via menu to ensure post type is fully registered
+			await visitPostTypeAddNewScreen( page, admin, {
+				prepareEditor: false,
+			} );
 
-		// SECTION 5: Verify field group appears on custom post type edit screen
-		// Navigate via menu to ensure post type is fully registered
-		await admin.visitAdminPage( 'index.php', '' );
-		await page
-			.locator( '#adminmenu' )
-			.getByRole( 'link', {
-				name: INTEGRATION_POST_TYPE_NAME,
-				exact: true,
-			} )
-			.click();
-		await page
-			.locator(
-				`.wrap a:has-text("Add ${ INTEGRATION_POST_TYPE_SINGULAR }")`
-			)
-			.click();
+			await prepareBlockEditorForMetabox( page );
+			await verifyFieldInMetabox(
+				page,
+				INTEGRATION_FIELD_GROUP_NAME,
+				INTEGRATION_FIELD_LABEL
+			);
+		} );
 
-		await prepareBlockEditorForMetabox( page );
-		await verifyFieldInMetabox(
-			page,
-			INTEGRATION_FIELD_GROUP_NAME,
-			INTEGRATION_FIELD_LABEL
-		);
+		await test.step( 'Verify all entities appear in their admin lists', async () => {
+			await expectEntityInAdminList(
+				page,
+				admin,
+				SCF_POST_TYPE_SLUG,
+				INTEGRATION_POST_TYPE_NAME
+			);
+			await expectEntityInAdminList(
+				page,
+				admin,
+				SCF_TAXONOMY_SLUG,
+				INTEGRATION_TAXONOMY_NAME
+			);
+			await expectEntityInAdminList(
+				page,
+				admin,
+				SCF_FIELD_GROUP_SLUG,
+				INTEGRATION_FIELD_GROUP_NAME
+			);
+		} );
 
-		// SECTION 6: Verify all entities appear in their admin lists
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_POST_TYPE_SLUG }`
-		);
-		await expect(
-			page.locator(
-				`#the-list a:has-text("${ INTEGRATION_POST_TYPE_NAME }")`
-			)
-		).toBeVisible();
-
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_TAXONOMY_SLUG }`
-		);
-		await expect(
-			page.locator(
-				`#the-list a:has-text("${ INTEGRATION_TAXONOMY_NAME }")`
-			)
-		).toBeVisible();
-
-		await admin.visitAdminPage(
-			'edit.php',
-			`post_type=${ SCF_FIELD_GROUP_SLUG }`
-		);
-		await expect(
-			page.locator(
-				`#the-list a:has-text("${ INTEGRATION_FIELD_GROUP_NAME }")`
-			)
-		).toBeVisible();
-
-		// SECTION 7: Clean up
-		await cleanupIntegrationTestEntities( page, admin );
+		await test.step( 'Clean up integration entities', async () => {
+			await cleanupIntegrationTestEntities( page, admin );
+		} );
 	} );
 } );
 
@@ -625,6 +597,61 @@ async function cleanupIntegrationTestEntities( page, admin ) {
 		INTEGRATION_TAXONOMY_NAME
 	);
 	await emptyTrashForPostType( page, admin, SCF_TAXONOMY_SLUG );
+}
+
+/**
+ * Helper to navigate to the integration post type's "Add New" screen via the
+ * admin menu. Visiting the dashboard first triggers fresh WordPress init so
+ * the custom post type is registered, and the visible menu link proves it.
+ * @param page
+ * @param admin
+ * @param options
+ * @param options.prepareEditor Whether to wait for the block editor and close
+ *                              any blocking modal after navigating.
+ */
+async function visitPostTypeAddNewScreen(
+	page,
+	admin,
+	{ prepareEditor = true } = {}
+) {
+	await admin.visitAdminPage( 'index.php', '' );
+
+	// Verify custom post type appears in admin menu (proves it's registered)
+	const customPostTypeMenu = page.locator( '#adminmenu' ).getByRole( 'link', {
+		name: INTEGRATION_POST_TYPE_NAME,
+		exact: true,
+	} );
+	await expect( customPostTypeMenu ).toBeVisible( {
+		timeout: DEFAULT_TIMEOUT,
+	} );
+	await customPostTypeMenu.click();
+
+	// Click "Add E2E Project" button (WordPress uses singular label)
+	await page
+		.locator(
+			`.wrap a:has-text("Add ${ INTEGRATION_POST_TYPE_SINGULAR }")`
+		)
+		.click();
+
+	if ( prepareEditor ) {
+		// Wait for block editor to load
+		await page.waitForTimeout( 1000 );
+		await closeEditorModal( page );
+	}
+}
+
+/**
+ * Helper to assert an entity appears in its admin list table.
+ * @param page
+ * @param admin
+ * @param postType
+ * @param entityName
+ */
+async function expectEntityInAdminList( page, admin, postType, entityName ) {
+	await admin.visitAdminPage( 'edit.php', `post_type=${ postType }` );
+	await expect(
+		page.locator( `#the-list a:has-text("${ entityName }")` )
+	).toBeVisible();
 }
 
 /**

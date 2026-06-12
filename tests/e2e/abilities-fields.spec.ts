@@ -5,6 +5,7 @@
  * Fields require a parent field group, so we create/cleanup field groups in beforeAll/afterAll.
  */
 const { test, expect } = require( './fixtures' );
+const { purgeScfInternalPosts } = require( './field-helpers' );
 
 const PLUGIN_SLUG = 'secure-custom-fields';
 const ABILITIES_BASE = '/wp-abilities/v1/abilities';
@@ -199,10 +200,7 @@ test.describe( 'Field Abilities', () => {
 		// aborted runs: list-fields validates every stored field against
 		// its output schema, so a single stray field fails the listing.
 		await requestUtils.activatePlugin( 'scf-test-utilities' );
-		await requestUtils.rest( {
-			method: 'POST',
-			path: '/scf-test/v1/purge-fields',
-		} );
+		await purgeScfInternalPosts( requestUtils );
 
 		// Create parent field group
 		await fieldGroupApi.cleanup( requestUtils, TEST_FIELD_GROUP.key );
@@ -239,12 +237,14 @@ test.describe( 'Field Abilities', () => {
 		} );
 
 		test( 'should support filter by type', async ( { requestUtils } ) => {
-			const result = await fieldApi.list( requestUtils, { type: 'text' } );
+			const result = await fieldApi.list( requestUtils, {
+				type: 'text',
+			} );
 
 			expect( Array.isArray( result ) ).toBe( true );
-			expect(
-				result.every( ( item ) => item.type === 'text' )
-			).toBe( true );
+			expect( result.every( ( item ) => item.type === 'text' ) ).toBe(
+				true
+			);
 		} );
 
 		test( 'should support filter by parent', async ( { requestUtils } ) => {
@@ -308,7 +308,10 @@ test.describe( 'Field Abilities', () => {
 		} );
 
 		test( 'should export a field as JSON', async ( { requestUtils } ) => {
-			const result = await fieldApi.export( requestUtils, TEST_FIELD.key );
+			const result = await fieldApi.export(
+				requestUtils,
+				TEST_FIELD.key
+			);
 
 			expect( result ).toHaveProperty( 'key', TEST_FIELD.key );
 			expect( result ).toHaveProperty( 'label', TEST_FIELD.label );
@@ -424,11 +427,16 @@ test.describe( 'Field Abilities', () => {
 		} );
 
 		test( 'should delete an existing field', async ( { requestUtils } ) => {
-			const result = await fieldApi.delete( requestUtils, TEST_FIELD.key );
+			const result = await fieldApi.delete(
+				requestUtils,
+				TEST_FIELD.key
+			);
 			expect( result ).toBe( true );
 
 			// Verify it's actually deleted
-			await expectNotFound( fieldApi.get( requestUtils, TEST_FIELD.key ) );
+			await expectNotFound(
+				fieldApi.get( requestUtils, TEST_FIELD.key )
+			);
 		} );
 
 		test( 'should return error for non-existent field', async ( {

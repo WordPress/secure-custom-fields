@@ -122,6 +122,7 @@ class Test_Blocks_Render extends BaseTestCase {
 		// acf_setup_meta() for validation after rendering without a matching
 		// acf_reset_meta(), leaving block-scoped local meta active after the
 		// function returns. Reset it to avoid leaking into other tests.
+		// Tracked in #455.
 		foreach ( $this->meta_block_ids as $block_id ) {
 			acf_reset_meta( $block_id );
 		}

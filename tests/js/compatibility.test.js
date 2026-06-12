@@ -45,6 +45,7 @@ describe( 'SCF Compatibility Layer', () => {
 		// on `arguments` aliasing its named parameters. babel-jest compiles
 		// required modules to strict mode which breaks both, so evaluate
 		// the raw source instead to match production semantics.
+		// The strict-mode fragility is tracked in #460.
 		// eslint-disable-next-line no-eval
 		( 0, eval )( compatibilitySource );
 
@@ -139,7 +140,7 @@ describe( 'SCF Compatibility Layer', () => {
 			// NOTE: documents current behavior — possible bug: when k1 is
 			// unknown, _e() indexes into the empty string, so a k2 naming a
 			// String.prototype method (e.g. 'sub') returns that function
-			// instead of ''.
+			// instead of ''. Tracked in #461.
 			expect( typeof acf._e( 'missing', 'sub' ) ).toBe( 'function' );
 		} );
 	} );

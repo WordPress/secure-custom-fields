@@ -7,10 +7,11 @@
  * value back via the scf-test get_field() user plugin on the frontend.
  */
 const { test, expect } = require( './fixtures' );
-const { PLUGIN_SLUG } = require( './field-helpers' );
+const { PLUGIN_SLUG, purgeScfInternalPosts } = require( './field-helpers' );
 
 const UTILITIES_PLUGIN_SLUG = 'scf-test-utilities';
-// Renders `get_field( 'user_title', 'user_1' )` on the frontend via the_content.
+// Renders `get_field( 'user_title', 'user_<ID>' )` on the frontend via
+// the_content. The target user is passed via the `scf_test_user_id` query arg.
 const GET_FIELD_PLUGIN_SLUG = 'scf-test-plugin-get-field-user-title';
 
 const FIELD_GROUP_TITLE = 'E2E User Profile Fields';
@@ -21,20 +22,6 @@ const PROFILE_VALUE = 'E2E Own Profile Value';
 const OTHER_USER_VALUE = 'E2E Other User Value';
 
 const DEFAULT_TIMEOUT = 5000;
-
-/**
- * Purge SCF internal posts via the scf-test-utilities REST endpoint.
- *
- * @param {Object}   requestUtils Playwright request utilities.
- * @param {string[]} types        SCF internal post types to purge.
- */
-async function purgeScfPosts( requestUtils, types ) {
-	await requestUtils.rest( {
-		method: 'POST',
-		path: '/scf-test/v1/purge-fields',
-		data: { types },
-	} );
-}
 
 /**
  * Create a field group with a text field located on user forms.
@@ -85,7 +72,10 @@ test.describe( 'User Profile Fields', () => {
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
-		await purgeScfPosts( requestUtils, [ 'acf-field-group', 'acf-field' ] );
+		await purgeScfInternalPosts( requestUtils, [
+			'acf-field-group',
+			'acf-field',
+		] );
 		await requestUtils.deleteAllPosts();
 		await requestUtils.deleteAllUsers();
 		await requestUtils.deactivatePlugin( GET_FIELD_PLUGIN_SLUG );
@@ -94,7 +84,10 @@ test.describe( 'User Profile Fields', () => {
 	} );
 
 	test.beforeEach( async ( { requestUtils } ) => {
-		await purgeScfPosts( requestUtils, [ 'acf-field-group', 'acf-field' ] );
+		await purgeScfInternalPosts( requestUtils, [
+			'acf-field-group',
+			'acf-field',
+		] );
 	} );
 
 	test( 'should render, save, and persist a field on the own profile screen', async ( {
@@ -130,13 +123,20 @@ test.describe( 'User Profile Fields', () => {
 		).toHaveValue( PROFILE_VALUE );
 
 		// SECTION 4: Verify the value is readable via get_field() on the
-		// frontend (the test plugin appends the user_1 field value to
-		// post content on the author archive).
+		// frontend (the test plugin appends the target user's field value
+		// to post content on the author archive). Derive the admin's actual
+		// user ID instead of assuming user 1, and pass it to the plugin via
+		// the scf_test_user_id query arg.
+		const adminUser = await requestUtils.rest( {
+			path: '/wp/v2/users/me',
+		} );
 		await requestUtils.createPost( {
 			title: 'User Field Frontend Check',
 			status: 'publish',
 		} );
-		await page.goto( '/?author=1' );
+		await page.goto(
+			`/?author=${ adminUser.id }&scf_test_user_id=${ adminUser.id }`
+		);
 		const frontendValue = page.locator( '#scf-test-user-title' ).first();
 		await expect( frontendValue ).toBeVisible( {
 			timeout: DEFAULT_TIMEOUT,
