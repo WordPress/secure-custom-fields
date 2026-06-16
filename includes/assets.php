@@ -501,7 +501,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		 * the block editor script stack, so it must not load on classic admin
 		 * screens or front-end forms.
 		 *
-		 * @since SCF 6.8.9
+		 * @since SCF 6.9.0
 		 *
 		 * @return void
 		 */

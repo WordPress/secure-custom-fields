@@ -156,7 +156,7 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		/**
 		 * Checks if the escaped unsafe HTML notice should be rendered.
 		 *
-		 * @since SCF 6.8.9
+		 * @since SCF 6.9.0
 		 *
 		 * @return boolean
 		 */

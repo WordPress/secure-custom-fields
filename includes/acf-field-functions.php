@@ -190,7 +190,7 @@ function acf_get_field_post( $id = 0 ) {
  * (e.g. WPML, Polylang) still run against it and resolve the same posts they
  * would have for the individual lookups.
  *
- * @since SCF 6.8.9
+ * @since SCF 6.9.0
  *
  * @param WP_Post $post The field post object.
  * @return void
@@ -209,7 +209,7 @@ function _acf_prime_sibling_field_posts( $post ) {
 	 * Priming collapses the per-field key lookups into a single query; it does
 	 * not bypass query filters, but can be disabled here if needed.
 	 *
-	 * @since SCF 6.8.9
+	 * @since SCF 6.9.0
 	 *
 	 * @param boolean $prime True to prime sibling field lookups. Default true.
 	 */

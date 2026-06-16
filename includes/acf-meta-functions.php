@@ -112,7 +112,7 @@ function acf_get_option_meta( $prefix = '' ) {
  * Option values are written via update_option()/delete_option() from several
  * code paths, so the core option actions are used to invalidate the cache.
  *
- * @since SCF 6.8.9
+ * @since SCF 6.9.0
  *
  * @param string $option The name of the option being added, updated or deleted.
  * @return void

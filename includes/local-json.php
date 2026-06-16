@@ -70,7 +70,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * request. The cache is keyed on path, modified time and size so changed
 		 * files are decoded again.
 		 *
-		 * @since SCF 6.8.9
+		 * @since SCF 6.9.0
 		 *
 		 * @param string $file The JSON file path.
 		 * @return mixed The decoded JSON, or null on failure.
