@@ -793,7 +793,7 @@ foreach ( acf_get_combined_post_type_settings_tabs() as $tab_key => $tab_label )
 					'prefix'       => 'acf_post_type',
 					'value'        => $acf_post_type['menu_position'],
 					'label'        => __( 'Menu Position', 'secure-custom-fields' ),
-					'instructions' => __( 'The position in the sidebar menu in the admin dashboard.', 'secure-custom-fields' ),
+					'instructions' => __( 'The position in the admin sidebar menu. WordPress reserves several positions (e.g. 2 Dashboard, 4 separator, 5 Posts, 10 Media, 20 Pages, 25 Comments); if the chosen position is already taken, the item is moved down to the next free slot. To keep multiple post types grouped and in order, use spaced values that avoid those slots, such as 21–24 or 26 and above.', 'secure-custom-fields' ),
 					'conditions'   => array(
 						'field'    => 'show_in_menu',
 						'operator' => '==',
