@@ -181,8 +181,14 @@ function acf_get_field_post( $id = 0 ) {
  * Primes the field key lookup cache for all sibling fields of the given field post.
  *
  * Resolving a field key normally runs one query per field. When a field belongs
- * to a field group, all fields of that group are loaded in a single (cached)
- * query instead, so subsequent sibling key lookups avoid further queries.
+ * to a field group, all of the group's fields are fetched in a single query and
+ * their key lookups are cached, so subsequent sibling key lookups avoid further
+ * queries.
+ *
+ * The priming query runs with `suppress_filters => false`, matching the per-key
+ * lookup it replaces, so plugins that filter field queries per language/context
+ * (e.g. WPML, Polylang) still run against it and resolve the same posts they
+ * would have for the individual lookups.
  *
  * @since SCF 6.8.9
  *
@@ -200,8 +206,8 @@ function _acf_prime_sibling_field_posts( $post ) {
 	/**
 	 * Filters whether sibling field lookups are primed when a field is loaded by key or name.
 	 *
-	 * Priming bypasses the per-key query (and any filters applied to it), so
-	 * plugins which filter field queries per language/context can opt out.
+	 * Priming collapses the per-field key lookups into a single query; it does
+	 * not bypass query filters, but can be disabled here if needed.
 	 *
 	 * @since SCF 6.8.9
 	 *
@@ -219,17 +225,27 @@ function _acf_prime_sibling_field_posts( $post ) {
 
 	$primed[ $post->post_parent ] = true;
 
-	// Load all fields of the group in a single (cached) query.
-	$raw_fields = acf_get_raw_fields( $parent->ID );
-	foreach ( $raw_fields as $raw_field ) {
-		$field_post = get_post( $raw_field['ID'] );
+	// Fetch all of the group's published fields in a single query, keeping
+	// suppress_filters => false so third-party query filters still run (matching
+	// the per-key lookup in acf_get_field_post() that this primes).
+	$field_posts = get_posts(
+		array(
+			'posts_per_page'         => -1,
+			'post_type'              => 'acf-field',
+			'post_parent'            => $parent->ID,
+			'post_status'            => 'publish',
+			'orderby'                => 'menu_order title',
+			'order'                  => 'ASC',
+			'suppress_filters'       => false,
+			'cache_results'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		)
+	);
 
-		// Only prime published fields; a per-key query would not match other statuses.
-		if ( ! $field_post || 'publish' !== $field_post->post_status ) {
-			continue;
-		}
-
-		$cache_key = acf_cache_key( "acf_get_field_post:key:{$raw_field['key']}" );
+	foreach ( $field_posts as $field_post ) {
+		// The field key is stored as the post_name.
+		$cache_key = acf_cache_key( "acf_get_field_post:key:{$field_post->post_name}" );
 		if ( false === wp_cache_get( $cache_key, 'secure-custom-fields' ) ) {
 			wp_cache_set( $cache_key, $field_post->ID, 'secure-custom-fields' );
 		}
