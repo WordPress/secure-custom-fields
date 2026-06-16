@@ -63,6 +63,31 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		}
 
 		/**
+		 * Decodes the JSON in the given file, caching the result for the current request.
+		 *
+		 * Local JSON files are scanned once per internal post type and decoded again
+		 * when included, so without caching each file is decoded multiple times per
+		 * request. The cache is keyed on path, modified time and size so changed
+		 * files are decoded again.
+		 *
+		 * @since SCF 6.9.0
+		 *
+		 * @param string $file The JSON file path.
+		 * @return mixed The decoded JSON, or null on failure.
+		 */
+		private function decode_json_file( $file ) {
+			static $cache = array();
+
+			$key = $file . ':' . filemtime( $file ) . ':' . filesize( $file );
+
+			if ( ! array_key_exists( $key, $cache ) ) {
+				$cache[ $key ] = json_decode( file_get_contents( $file ), true );
+			}
+
+			return $cache[ $key ];
+		}
+
+		/**
 		 * Returns true if this component is enabled.
 		 *
 		 * @date    14/4/20
@@ -297,7 +322,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			// Get load paths.
 			$files = $this->scan_files( 'acf-field-group' );
 			foreach ( $files as $key => $file ) {
-				$json               = json_decode( file_get_contents( $file ), true );
+				$json               = $this->decode_json_file( $file );
 				$json['local']      = 'json';
 				$json['local_file'] = $file;
 				acf_add_local_field_group( $json );
@@ -318,7 +343,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			// Get load paths.
 			$files = $this->scan_files( 'acf-post-type' );
 			foreach ( $files as $key => $file ) {
-				$json               = json_decode( file_get_contents( $file ), true );
+				$json               = $this->decode_json_file( $file );
 				$json['local']      = 'json';
 				$json['local_file'] = $file;
 				acf_add_local_internal_post_type( $json, 'acf-post-type' );
@@ -339,7 +364,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			// Get load paths.
 			$files = $this->scan_files( 'acf-taxonomy' );
 			foreach ( $files as $key => $file ) {
-				$json               = json_decode( file_get_contents( $file ), true );
+				$json               = $this->decode_json_file( $file );
 				$json['local']      = 'json';
 				$json['local_file'] = $file;
 				acf_add_local_internal_post_type( $json, 'acf-taxonomy' );
@@ -394,7 +419,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 							}
 
 							// Read JSON data.
-							$json = json_decode( file_get_contents( $file ), true );
+							$json = $this->decode_json_file( $file );
 							if ( ! is_array( $json ) || ! isset( $json['key'] ) ) {
 								continue;
 							}
@@ -430,7 +455,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 					$files[ $key ] = $path;
 				} elseif ( 'acf-field-group' === $post_type ) {
 					// If we can't figure out the ACF post type, make an educated guess that it's a field group.
-					$json = json_decode( file_get_contents( $path ), true );
+					$json = $this->decode_json_file( $path );
 					if ( ! is_array( $json ) ) {
 						continue;
 					}

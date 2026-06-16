@@ -98,7 +98,6 @@ const unminifiedConfig = {
 			filename: '[name].css', // Output CSS as .css
 		} ),
 		new DependencyExtractionWebpackPlugin( {
-			injectPolyfill: true,
 			useCombinedAssetFile: true,
 		} ),
 	],
@@ -132,7 +131,6 @@ const minifiedConfig = {
 			filename: '[name].min.css', // Changed to output .min.css files
 		} ),
 		new DependencyExtractionWebpackPlugin( {
-			injectPolyfill: true,
 			useCombinedAssetFile: true,
 		} ),
 	],

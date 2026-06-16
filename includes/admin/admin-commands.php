@@ -26,8 +26,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since SCF 6.5.0
  */
 function acf_commands_init() {
-	// Ensure we only load our commands where the WordPress commands API is available.
-	if ( ! wp_script_is( 'wp-commands', 'registered' ) ) {
+	// Ensure we only load our commands on screens where the command palette itself loads.
+	// Core enqueues 'wp-commands' in the block/site editors (and on all admin screens
+	// since WP 6.9 via wp_enqueue_command_palette_assets()); elsewhere there is no palette.
+	if ( ! wp_script_is( 'wp-commands', 'enqueued' ) ) {
 		return;
 	}
 
@@ -42,4 +44,5 @@ function acf_commands_init() {
 	}
 }
 
-add_action( 'admin_enqueue_scripts', 'acf_commands_init' );
+// Priority 20 ensures this runs after core has enqueued the command palette assets (priority 10).
+add_action( 'admin_enqueue_scripts', 'acf_commands_init', 20 );
