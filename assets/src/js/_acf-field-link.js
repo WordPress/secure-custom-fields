@@ -19,18 +19,18 @@
 
 		getValue: function () {
 			// vars
-			var $node = this.$node();
+			var node = this.$node()[ 0 ];
 
 			// return false if empty
-			if ( ! $node.attr( 'href' ) ) {
+			if ( ! node || ! node.getAttribute( 'href' ) ) {
 				return false;
 			}
 
 			// return
 			return {
-				title: $node.html(),
-				url: $node.attr( 'href' ),
-				target: $node.attr( 'target' ),
+				title: node.innerHTML,
+				url: node.getAttribute( 'href' ),
+				target: node.getAttribute( 'target' ) || '',
 			};
 		},
 
@@ -43,29 +43,34 @@
 			} );
 
 			// vars
-			var $div = this.$control();
-			var $node = this.$node();
+			var el = this.$el[ 0 ];
+			var div = this.$control()[ 0 ];
+			var node = this.$node()[ 0 ];
 
 			// remove class
-			$div.removeClass( '-value -external' );
+			div.classList.remove( '-value', '-external' );
 
 			// add class
-			if ( val.url ) $div.addClass( '-value' );
-			if ( val.target === '_blank' ) $div.addClass( '-external' );
+			if ( val.url ) div.classList.add( '-value' );
+			if ( val.target === '_blank' ) div.classList.add( '-external' );
 
 			// update text
-			this.$( '.link-title' ).html( val.title );
-			this.$( '.link-url' ).attr( 'href', val.url ).text( val.url );
+			el.querySelector( '.link-title' ).innerHTML = val.title;
+			var linkUrl = el.querySelector( '.link-url' );
+			linkUrl.setAttribute( 'href', val.url );
+			linkUrl.textContent = val.url;
 
 			// update node
-			$node.html( val.title );
-			$node.attr( 'href', val.url );
-			$node.attr( 'target', val.target );
+			node.innerHTML = val.title;
+			node.setAttribute( 'href', val.url );
+			node.setAttribute( 'target', val.target );
 
 			// update inputs
-			this.$( '.input-title' ).val( val.title );
-			this.$( '.input-target' ).val( val.target );
-			this.$( '.input-url' ).val( val.url ).trigger( 'change' );
+			el.querySelector( '.input-title' ).value = val.title;
+			el.querySelector( '.input-target' ).value = val.target;
+			var inputUrl = el.querySelector( '.input-url' );
+			inputUrl.value = val.url;
+			inputUrl.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 		},
 
 		onClickEdit: function ( e, $el ) {

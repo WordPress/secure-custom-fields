@@ -71,14 +71,20 @@ describe( 'Range Field', () => {
 	} );
 
 	describe( 'setValue()', () => {
-		let mockRangeInput;
-		let mockNumberInput;
+		let rangeInput;
+		let $rangeInput;
+		let $numberInput;
 
 		beforeEach( () => {
-			mockRangeInput = { val: jest.fn().mockReturnValue( '50' ) };
-			mockNumberInput = { val: jest.fn() };
-			mockField.$input = jest.fn().mockReturnValue( mockRangeInput );
-			mockField.$inputAlt = jest.fn().mockReturnValue( mockNumberInput );
+			rangeInput = document.createElement( 'input' );
+			rangeInput.type = 'range';
+			rangeInput.value = '50';
+			const numberInput = document.createElement( 'input' );
+			numberInput.type = 'number';
+			$rangeInput = [ rangeInput ];
+			$numberInput = [ numberInput ];
+			mockField.$input = jest.fn().mockReturnValue( $rangeInput );
+			mockField.$inputAlt = jest.fn().mockReturnValue( $numberInput );
 		} );
 
 		it( 'should set busy flag during value update', () => {
@@ -91,7 +97,7 @@ describe( 'Range Field', () => {
 		it( 'should update range input with change event', () => {
 			fieldDefinition.setValue.call( mockField, 75 );
 
-			expect( global.acf.val ).toHaveBeenCalledWith( mockRangeInput, 75 );
+			expect( global.acf.val ).toHaveBeenCalledWith( $rangeInput, 75 );
 		} );
 
 		it( 'should update alt input without change event', () => {
@@ -99,20 +105,20 @@ describe( 'Range Field', () => {
 
 			// Second call should be for alt input with silent flag
 			expect( global.acf.val ).toHaveBeenCalledWith(
-				mockNumberInput,
+				$numberInput,
 				'50',
 				true
 			);
 		} );
 
 		it( 'should read validated value from range input', () => {
-			mockRangeInput.val.mockReturnValue( '100' ); // Validated by browser
+			rangeInput.value = '100'; // Validated by browser
 
 			fieldDefinition.setValue.call( mockField, 150 ); // Above max
 
 			// Should use the validated value from the range input
 			expect( global.acf.val ).toHaveBeenCalledWith(
-				mockNumberInput,
+				$numberInput,
 				'100',
 				true
 			);
@@ -120,14 +126,23 @@ describe( 'Range Field', () => {
 	} );
 
 	describe( 'onChange()', () => {
+		const createRangeInput = ( value ) => {
+			const input = document.createElement( 'input' );
+			input.type = 'range';
+			input.value = value;
+			return [ input ];
+		};
+
 		it( 'should call setValue with input value when not busy', () => {
 			const setValueSpy = jest.fn();
 			mockField.setValue = setValueSpy;
 			mockField.busy = false;
 
-			const mockEl = { val: jest.fn().mockReturnValue( '42' ) };
-
-			fieldDefinition.onChange.call( mockField, {}, mockEl );
+			fieldDefinition.onChange.call(
+				mockField,
+				{},
+				createRangeInput( '42' )
+			);
 
 			expect( setValueSpy ).toHaveBeenCalledWith( '42' );
 		} );
@@ -137,9 +152,11 @@ describe( 'Range Field', () => {
 			mockField.setValue = setValueSpy;
 			mockField.busy = true;
 
-			const mockEl = { val: jest.fn().mockReturnValue( '42' ) };
-
-			fieldDefinition.onChange.call( mockField, {}, mockEl );
+			fieldDefinition.onChange.call(
+				mockField,
+				{},
+				createRangeInput( '42' )
+			);
 
 			expect( setValueSpy ).not.toHaveBeenCalled();
 		} );
@@ -147,22 +164,27 @@ describe( 'Range Field', () => {
 
 	describe( 'Integration scenarios', () => {
 		it( 'should synchronize range and number inputs', () => {
-			const mockRangeInput = { val: jest.fn().mockReturnValue( '75' ) };
-			const mockNumberInput = { val: jest.fn() };
-			mockField.$input = jest.fn().mockReturnValue( mockRangeInput );
-			mockField.$inputAlt = jest.fn().mockReturnValue( mockNumberInput );
+			const rangeInput = document.createElement( 'input' );
+			rangeInput.type = 'range';
+			rangeInput.value = '75';
+			const numberInput = document.createElement( 'input' );
+			numberInput.type = 'number';
+			const $rangeInput = [ rangeInput ];
+			const $numberInput = [ numberInput ];
+			mockField.$input = jest.fn().mockReturnValue( $rangeInput );
+			mockField.$inputAlt = jest.fn().mockReturnValue( $numberInput );
 
 			// Simulate user dragging range slider
 			fieldDefinition.setValue.call( mockField, '75' );
 
 			expect( global.acf.val ).toHaveBeenNthCalledWith(
 				1,
-				mockRangeInput,
+				$rangeInput,
 				'75'
 			);
 			expect( global.acf.val ).toHaveBeenNthCalledWith(
 				2,
-				mockNumberInput,
+				$numberInput,
 				'75',
 				true
 			);

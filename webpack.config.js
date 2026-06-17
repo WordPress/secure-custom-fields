@@ -136,5 +136,74 @@ const minifiedConfig = {
 	],
 };
 
-// Export both configurations
-module.exports = [ unminifiedConfig, minifiedConfig ];
+// Script-module build (Interactivity API view bundles). Modules are built in
+// a separate webpack config because they require ESM output
+// (`experiments.outputModule`), which cannot be mixed with the classic
+// script entries above. @wordpress/interactivity is externalized to a module
+// import by DependencyExtractionWebpackPlugin and listed in the generated
+// .asset.php file for wp_register_script_module().
+const moduleCommonConfig = {
+	entry: {
+		'js/frontend/scf-form-view': './assets/src/js/frontend/scf-form-view.js',
+	},
+	output: {
+		path: path.resolve( __dirname, 'assets/build/' ),
+		module: true,
+		chunkFormat: 'module',
+		library: { type: 'module' },
+		environment: { module: true },
+	},
+	experiments: {
+		outputModule: true,
+	},
+	module: {
+		rules: [ commonConfig.module.rules[ 0 ] ],
+	},
+};
+
+// Unminified module build
+const moduleUnminifiedConfig = {
+	...moduleCommonConfig,
+	mode: 'development',
+	output: {
+		...moduleCommonConfig.output,
+		filename: '[name].js',
+	},
+	devtool: 'source-map',
+	optimization: {
+		minimize: false,
+	},
+	plugins: [ new DependencyExtractionWebpackPlugin() ],
+};
+
+// Minified module build
+const moduleMinifiedConfig = {
+	...moduleCommonConfig,
+	mode: 'production',
+	output: {
+		...moduleCommonConfig.output,
+		filename: '[name].min.js',
+	},
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin( {
+				terserOptions: {
+					format: {
+						comments: false, // Remove comments
+					},
+				},
+				extractComments: false,
+			} ),
+		],
+	},
+	plugins: [ new DependencyExtractionWebpackPlugin() ],
+};
+
+// Export all configurations
+module.exports = [
+	unminifiedConfig,
+	minifiedConfig,
+	moduleUnminifiedConfig,
+	moduleMinifiedConfig,
+];

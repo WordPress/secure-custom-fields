@@ -71,19 +71,33 @@ describe( 'True/False Field', () => {
 	} );
 
 	describe( 'getValue()', () => {
+		/**
+		 * Creates a real checkbox input.
+		 *
+		 * @param {boolean} checked Whether the input is checked.
+		 * @return {HTMLElement} The checkbox input.
+		 */
+		const createCheckbox = ( checked ) => {
+			const input = document.createElement( 'input' );
+			input.type = 'checkbox';
+			input.checked = checked;
+			return input;
+		};
+
 		it( 'should return 1 when checked', () => {
-			const mockInput = { prop: jest.fn().mockReturnValue( true ) };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
+			mockField.$input = jest
+				.fn()
+				.mockReturnValue( [ createCheckbox( true ) ] );
 
 			const result = fieldDefinition.getValue.call( mockField );
 
-			expect( mockInput.prop ).toHaveBeenCalledWith( 'checked' );
 			expect( result ).toBe( 1 );
 		} );
 
 		it( 'should return 0 when unchecked', () => {
-			const mockInput = { prop: jest.fn().mockReturnValue( false ) };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
+			mockField.$input = jest
+				.fn()
+				.mockReturnValue( [ createCheckbox( false ) ] );
 
 			const result = fieldDefinition.getValue.call( mockField );
 
@@ -106,16 +120,18 @@ describe( 'True/False Field', () => {
 		let mockSwitch;
 		let mockOn;
 		let mockOff;
+		let onEl;
+		let offEl;
 
 		beforeEach( () => {
-			mockOn = {
-				width: jest.fn().mockReturnValue( 50 ),
-				css: jest.fn(),
-			};
-			mockOff = {
-				width: jest.fn().mockReturnValue( 40 ),
-				css: jest.fn(),
-			};
+			// jQuery .width() is still used for measurement, so the on/off
+			// wrappers mock it; style updates land on the real elements.
+			onEl = document.createElement( 'span' );
+			offEl = document.createElement( 'span' );
+			mockOn = [ onEl ];
+			mockOn.width = jest.fn().mockReturnValue( 50 );
+			mockOff = [ offEl ];
+			mockOff.width = jest.fn().mockReturnValue( 40 );
 			mockSwitch = {
 				length: 1,
 				children: jest.fn( ( selector ) => {
@@ -125,7 +141,7 @@ describe( 'True/False Field', () => {
 					if ( selector === '.acf-switch-off' ) {
 						return mockOff;
 					}
-					return { width: jest.fn(), css: jest.fn() };
+					return { width: jest.fn() };
 				} ),
 			};
 			mockField.$switch = jest.fn().mockReturnValue( mockSwitch );
@@ -135,8 +151,8 @@ describe( 'True/False Field', () => {
 			fieldDefinition.render.call( mockField );
 
 			// Max width is 50 (from mockOn)
-			expect( mockOn.css ).toHaveBeenCalledWith( 'min-width', 50 );
-			expect( mockOff.css ).toHaveBeenCalledWith( 'min-width', 50 );
+			expect( onEl.style.minWidth ).toBe( '50px' );
+			expect( offEl.style.minWidth ).toBe( '50px' );
 		} );
 
 		it( 'should bail early if no switch element', () => {
@@ -154,48 +170,59 @@ describe( 'True/False Field', () => {
 
 			fieldDefinition.render.call( mockField );
 
-			expect( mockOn.css ).not.toHaveBeenCalled();
-			expect( mockOff.css ).not.toHaveBeenCalled();
+			expect( onEl.style.minWidth ).toBe( '' );
+			expect( offEl.style.minWidth ).toBe( '' );
 		} );
 	} );
 
 	describe( 'switchOn()', () => {
 		it( 'should check the input and add -on class', () => {
-			const mockInput = { prop: jest.fn() };
-			const mockSwitch = { addClass: jest.fn() };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
-			mockField.$switch = jest.fn().mockReturnValue( mockSwitch );
+			const input = document.createElement( 'input' );
+			input.type = 'checkbox';
+			const switchEl = document.createElement( 'div' );
+			mockField.$input = jest.fn().mockReturnValue( [ input ] );
+			mockField.$switch = jest.fn().mockReturnValue( [ switchEl ] );
 
 			fieldDefinition.switchOn.call( mockField );
 
-			expect( mockInput.prop ).toHaveBeenCalledWith( 'checked', true );
-			expect( mockSwitch.addClass ).toHaveBeenCalledWith( '-on' );
+			expect( input.checked ).toBe( true );
+			expect( switchEl.classList.contains( '-on' ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'switchOff()', () => {
 		it( 'should uncheck the input and remove -on class', () => {
-			const mockInput = { prop: jest.fn() };
-			const mockSwitch = { removeClass: jest.fn() };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
-			mockField.$switch = jest.fn().mockReturnValue( mockSwitch );
+			const input = document.createElement( 'input' );
+			input.type = 'checkbox';
+			input.checked = true;
+			const switchEl = document.createElement( 'div' );
+			switchEl.className = '-on';
+			mockField.$input = jest.fn().mockReturnValue( [ input ] );
+			mockField.$switch = jest.fn().mockReturnValue( [ switchEl ] );
 
 			fieldDefinition.switchOff.call( mockField );
 
-			expect( mockInput.prop ).toHaveBeenCalledWith( 'checked', false );
-			expect( mockSwitch.removeClass ).toHaveBeenCalledWith( '-on' );
+			expect( input.checked ).toBe( false );
+			expect( switchEl.classList.contains( '-on' ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'onChange()', () => {
+		const createCheckbox = ( checked ) => {
+			const input = document.createElement( 'input' );
+			input.type = 'checkbox';
+			input.checked = checked;
+			return input;
+		};
+
 		it( 'should call switchOn when input is checked', () => {
 			const switchOnSpy = jest.fn();
 			mockField.switchOn = switchOnSpy;
 			mockField.switchOff = jest.fn();
 
-			const mockEl = { prop: jest.fn().mockReturnValue( true ) };
-
-			fieldDefinition.onChange.call( mockField, {}, mockEl );
+			fieldDefinition.onChange.call( mockField, {}, [
+				createCheckbox( true ),
+			] );
 
 			expect( switchOnSpy ).toHaveBeenCalled();
 		} );
@@ -205,9 +232,9 @@ describe( 'True/False Field', () => {
 			mockField.switchOn = jest.fn();
 			mockField.switchOff = switchOffSpy;
 
-			const mockEl = { prop: jest.fn().mockReturnValue( false ) };
-
-			fieldDefinition.onChange.call( mockField, {}, mockEl );
+			fieldDefinition.onChange.call( mockField, {}, [
+				createCheckbox( false ),
+			] );
 
 			expect( switchOffSpy ).toHaveBeenCalled();
 		} );
@@ -215,23 +242,24 @@ describe( 'True/False Field', () => {
 
 	describe( 'onFocus()', () => {
 		it( 'should add -focus class to switch', () => {
-			const mockSwitch = { addClass: jest.fn() };
-			mockField.$switch = jest.fn().mockReturnValue( mockSwitch );
+			const switchEl = document.createElement( 'div' );
+			mockField.$switch = jest.fn().mockReturnValue( [ switchEl ] );
 
 			fieldDefinition.onFocus.call( mockField, {}, {} );
 
-			expect( mockSwitch.addClass ).toHaveBeenCalledWith( '-focus' );
+			expect( switchEl.classList.contains( '-focus' ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'onBlur()', () => {
 		it( 'should remove -focus class from switch', () => {
-			const mockSwitch = { removeClass: jest.fn() };
-			mockField.$switch = jest.fn().mockReturnValue( mockSwitch );
+			const switchEl = document.createElement( 'div' );
+			switchEl.className = '-focus';
+			mockField.$switch = jest.fn().mockReturnValue( [ switchEl ] );
 
 			fieldDefinition.onBlur.call( mockField, {}, {} );
 
-			expect( mockSwitch.removeClass ).toHaveBeenCalledWith( '-focus' );
+			expect( switchEl.classList.contains( '-focus' ) ).toBe( false );
 		} );
 	} );
 

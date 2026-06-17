@@ -327,6 +327,15 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			// check
 			$this->check_submit_form();
 
+			// SCF: when the opt-in Interactivity API view bundle is active, the
+			// script decision is deferred to render_form(), where the field list
+			// is known. Styles are shared by both bundles, so enqueue them now to
+			// print in the document head.
+			if ( function_exists( 'scf_frontend_form_interactivity_enabled' ) && scf_frontend_form_interactivity_enabled() ) {
+				wp_enqueue_style( 'acf-input' );
+				return;
+			}
+
 			// load acf scripts
 			acf_enqueue_scripts();
 		}
@@ -762,6 +771,18 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 
 			// Discover the fields this form will expose.
 			$fields = $this->get_form_fields( $args );
+
+			// SCF: opt-in Interactivity API view bundle. Decided at render time
+			// because the field list is only known here; complex fields (or a
+			// page already running the classic stack) fall back to it instead.
+			if ( function_exists( 'scf_frontend_form_interactivity_enabled' ) && scf_frontend_form_interactivity_enabled() ) {
+				if ( $args['form'] && ! wp_script_is( 'acf-input', 'enqueued' ) && scf_frontend_form_fields_are_view_compatible( $fields ) ) {
+					scf_enqueue_frontend_form_view();
+					$args['form_attributes'] = scf_frontend_form_view_attributes( $args['form_attributes'] );
+				} else {
+					acf_enqueue_scripts();
+				}
+			}
 
 			// Load values for the special _post_title / _post_content fields so they
 			// render pre-populated with the current post's data.

@@ -38,45 +38,51 @@ describe( 'Checkbox Field', () => {
 	} );
 
 	describe( 'onClickToggle', () => {
+		/**
+		 * Creates real checkbox inputs plus a toggle, with change listeners.
+		 *
+		 * @param {boolean} toggleChecked Whether the toggle is checked.
+		 * @return {Object} The inputs, toggle and change spy.
+		 */
+		const createCheckboxes = ( toggleChecked ) => {
+			const onChange = jest.fn();
+			const inputs = [ 'a', 'b' ].map( ( value ) => {
+				const input = document.createElement( 'input' );
+				input.type = 'checkbox';
+				input.value = value;
+				input.checked = ! toggleChecked;
+				input.addEventListener( 'change', onChange );
+				return input;
+			} );
+			const toggle = document.createElement( 'input' );
+			toggle.type = 'checkbox';
+			toggle.checked = toggleChecked;
+			return { inputs, toggle, onChange };
+		};
+
 		it( 'should check all inputs when toggle is checked', () => {
-			// Mock $inputs with chainable jQuery methods
-			const mockInputs = {
-				prop: jest.fn().mockReturnThis(),
-				trigger: jest.fn().mockReturnThis(),
-			};
+			const { inputs, toggle, onChange } = createCheckboxes( true );
 
-			// Mock $el (the toggle checkbox) as checked
-			const mockToggle = {
-				prop: jest.fn().mockReturnValue( true ),
-			};
-
-			// Mock this.$inputs() to return our mock
-			mockField.$inputs = jest.fn().mockReturnValue( mockInputs );
+			// Mock this.$inputs() to return the real inputs
+			mockField.$inputs = jest.fn().mockReturnValue( inputs );
 
 			// Call the method
-			fieldDefinition.onClickToggle.call( mockField, {}, mockToggle );
+			fieldDefinition.onClickToggle.call( mockField, {}, [ toggle ] );
 
-			// Verify all inputs were checked
-			expect( mockInputs.prop ).toHaveBeenCalledWith( 'checked', true );
-			expect( mockInputs.trigger ).toHaveBeenCalledWith( 'change' );
+			// Verify all inputs were checked and notified
+			expect( inputs.every( ( input ) => input.checked ) ).toBe( true );
+			expect( onChange ).toHaveBeenCalledTimes( inputs.length );
 		} );
 
 		it( 'should uncheck all inputs when toggle is unchecked', () => {
-			const mockInputs = {
-				prop: jest.fn().mockReturnThis(),
-				trigger: jest.fn().mockReturnThis(),
-			};
+			const { inputs, toggle, onChange } = createCheckboxes( false );
 
-			const mockToggle = {
-				prop: jest.fn().mockReturnValue( false ),
-			};
+			mockField.$inputs = jest.fn().mockReturnValue( inputs );
 
-			mockField.$inputs = jest.fn().mockReturnValue( mockInputs );
+			fieldDefinition.onClickToggle.call( mockField, {}, [ toggle ] );
 
-			fieldDefinition.onClickToggle.call( mockField, {}, mockToggle );
-
-			expect( mockInputs.prop ).toHaveBeenCalledWith( 'checked', false );
-			expect( mockInputs.trigger ).toHaveBeenCalledWith( 'change' );
+			expect( inputs.every( ( input ) => input.checked ) ).toBe( false );
+			expect( onChange ).toHaveBeenCalledTimes( inputs.length );
 		} );
 	} );
 } );

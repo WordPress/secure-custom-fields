@@ -76,9 +76,23 @@ describe( 'Radio Field', () => {
 	} );
 
 	describe( 'getValue()', () => {
+		/**
+		 * Creates a real radio input with the given value.
+		 *
+		 * @param {string} value The input value.
+		 * @return {HTMLElement} The radio input.
+		 */
+		const createRadio = ( value ) => {
+			const input = document.createElement( 'input' );
+			input.type = 'radio';
+			input.value = value;
+			return input;
+		};
+
 		it( 'should return checked input value', () => {
-			const mockInput = { val: jest.fn().mockReturnValue( 'option1' ) };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
+			mockField.$input = jest
+				.fn()
+				.mockReturnValue( [ createRadio( 'option1' ) ] );
 			mockField.get = jest.fn().mockReturnValue( false );
 
 			const result = fieldDefinition.getValue.call( mockField );
@@ -87,12 +101,13 @@ describe( 'Radio Field', () => {
 		} );
 
 		it( 'should return text input value when other_choice is enabled and other is selected', () => {
-			const mockInput = { val: jest.fn().mockReturnValue( 'other' ) };
-			const mockTextInput = {
-				val: jest.fn().mockReturnValue( 'custom value' ),
-			};
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
-			mockField.$inputText = jest.fn().mockReturnValue( mockTextInput );
+			const textInput = document.createElement( 'input' );
+			textInput.type = 'text';
+			textInput.value = 'custom value';
+			mockField.$input = jest
+				.fn()
+				.mockReturnValue( [ createRadio( 'other' ) ] );
+			mockField.$inputText = jest.fn().mockReturnValue( [ textInput ] );
 			mockField.get = jest.fn( ( key ) =>
 				key === 'other_choice' ? true : false
 			);
@@ -103,8 +118,9 @@ describe( 'Radio Field', () => {
 		} );
 
 		it( 'should return radio value when other_choice is disabled', () => {
-			const mockInput = { val: jest.fn().mockReturnValue( 'other' ) };
-			mockField.$input = jest.fn().mockReturnValue( mockInput );
+			mockField.$input = jest
+				.fn()
+				.mockReturnValue( [ createRadio( 'other' ) ] );
 			mockField.get = jest.fn().mockReturnValue( false );
 
 			const result = fieldDefinition.getValue.call( mockField );
@@ -114,116 +130,120 @@ describe( 'Radio Field', () => {
 	} );
 
 	describe( 'onClick()', () => {
-		let mockEl;
-		let mockLabel;
+		let container;
+		let input;
+		let label;
+		let otherLabel;
+		let textInput;
+		let onChange;
 
 		beforeEach( () => {
-			mockLabel = {
-				hasClass: jest.fn().mockReturnValue( false ),
-				addClass: jest.fn().mockReturnThis(),
-				removeClass: jest.fn().mockReturnThis(),
-			};
-			mockEl = {
-				parent: jest.fn().mockReturnValue( mockLabel ),
-				val: jest.fn().mockReturnValue( 'option1' ),
-				prop: jest.fn().mockReturnThis(),
-				trigger: jest.fn().mockReturnThis(),
-			};
-			mockField.$ = jest.fn().mockReturnValue( {
-				removeClass: jest.fn().mockReturnThis(),
-			} );
-			mockField.$inputText = jest.fn().mockReturnValue( {
-				prop: jest.fn().mockReturnThis(),
-			} );
+			// Build a real radio list with two options.
+			container = document.createElement( 'div' );
+
+			label = document.createElement( 'label' );
+			input = document.createElement( 'input' );
+			input.type = 'radio';
+			input.value = 'option1';
+			label.appendChild( input );
+			container.appendChild( label );
+
+			otherLabel = document.createElement( 'label' );
+			otherLabel.className = 'selected';
+			const otherInput = document.createElement( 'input' );
+			otherInput.type = 'radio';
+			otherInput.value = 'option2';
+			otherInput.checked = true;
+			otherLabel.appendChild( otherInput );
+			container.appendChild( otherLabel );
+
+			textInput = document.createElement( 'input' );
+			textInput.type = 'text';
+
+			onChange = jest.fn();
+			input.addEventListener( 'change', onChange );
+
+			mockField.$el = [ container ];
+			mockField.$inputText = jest.fn().mockReturnValue( [ textInput ] );
 		} );
 
 		it( 'should remove selected class from all labels', () => {
-			const mockSelected = { removeClass: jest.fn() };
-			mockField.$ = jest.fn().mockReturnValue( mockSelected );
 			mockField.get = jest.fn().mockReturnValue( false );
 
-			fieldDefinition.onClick.call( mockField, {}, mockEl );
+			fieldDefinition.onClick.call( mockField, {}, [ input ] );
 
-			expect( mockField.$ ).toHaveBeenCalledWith( '.selected' );
-			expect( mockSelected.removeClass ).toHaveBeenCalledWith(
-				'selected'
-			);
+			expect( otherLabel.classList.contains( 'selected' ) ).toBe( false );
 		} );
 
 		it( 'should add selected class to clicked label', () => {
 			mockField.get = jest.fn().mockReturnValue( false );
 
-			fieldDefinition.onClick.call( mockField, {}, mockEl );
+			fieldDefinition.onClick.call( mockField, {}, [ input ] );
 
-			expect( mockLabel.addClass ).toHaveBeenCalledWith( 'selected' );
+			expect( label.classList.contains( 'selected' ) ).toBe( true );
 		} );
 
 		it( 'should deselect when allow_null is true and already selected', () => {
-			mockLabel.hasClass.mockReturnValue( true );
+			label.classList.add( 'selected' );
+			input.checked = true;
 			mockField.get = jest.fn( ( key ) =>
 				key === 'allow_null' ? true : false
 			);
 
-			fieldDefinition.onClick.call( mockField, {}, mockEl );
+			fieldDefinition.onClick.call( mockField, {}, [ input ] );
 
-			expect( mockLabel.removeClass ).toHaveBeenCalledWith( 'selected' );
-			expect( mockEl.prop ).toHaveBeenCalledWith( 'checked', false );
-			expect( mockEl.trigger ).toHaveBeenCalledWith( 'change' );
+			expect( label.classList.contains( 'selected' ) ).toBe( false );
+			expect( input.checked ).toBe( false );
+			expect( onChange ).toHaveBeenCalled();
 		} );
 
 		it( 'should enable text input when other is selected', () => {
-			const mockTextInput = { prop: jest.fn().mockReturnThis() };
-			mockField.$inputText = jest.fn().mockReturnValue( mockTextInput );
-			mockEl.val.mockReturnValue( 'other' );
+			input.value = 'other';
+			textInput.disabled = true;
 			mockField.get = jest.fn( ( key ) =>
 				key === 'other_choice' ? true : false
 			);
 
-			fieldDefinition.onClick.call( mockField, {}, mockEl );
+			fieldDefinition.onClick.call( mockField, {}, [ input ] );
 
-			expect( mockTextInput.prop ).toHaveBeenCalledWith(
-				'disabled',
-				false
-			);
+			expect( textInput.disabled ).toBe( false );
 		} );
 
 		it( 'should disable text input when other is not selected', () => {
-			const mockTextInput = { prop: jest.fn().mockReturnThis() };
-			mockField.$inputText = jest.fn().mockReturnValue( mockTextInput );
-			mockEl.val.mockReturnValue( 'option1' );
 			mockField.get = jest.fn( ( key ) =>
 				key === 'other_choice' ? true : false
 			);
 
-			fieldDefinition.onClick.call( mockField, {}, mockEl );
+			fieldDefinition.onClick.call( mockField, {}, [ input ] );
 
-			expect( mockTextInput.prop ).toHaveBeenCalledWith(
-				'disabled',
-				true
-			);
+			expect( textInput.disabled ).toBe( true );
 		} );
 	} );
 
 	describe( 'onKeyDownInput()', () => {
+		let input;
+		let onChange;
+
+		beforeEach( () => {
+			input = document.createElement( 'input' );
+			input.type = 'radio';
+			onChange = jest.fn();
+			input.addEventListener( 'change', onChange );
+		} );
+
 		it( 'should check input and trigger change on Enter key', () => {
 			const mockEvent = {
 				which: 13,
 				preventDefault: jest.fn(),
 			};
-			const mockInput = {
-				prop: jest.fn().mockReturnThis(),
-				trigger: jest.fn().mockReturnThis(),
-			};
 
-			fieldDefinition.onKeyDownInput.call(
-				mockField,
-				mockEvent,
-				mockInput
-			);
+			fieldDefinition.onKeyDownInput.call( mockField, mockEvent, [
+				input,
+			] );
 
 			expect( mockEvent.preventDefault ).toHaveBeenCalled();
-			expect( mockInput.prop ).toHaveBeenCalledWith( 'checked', true );
-			expect( mockInput.trigger ).toHaveBeenCalledWith( 'change' );
+			expect( input.checked ).toBe( true );
+			expect( onChange ).toHaveBeenCalled();
 		} );
 
 		it( 'should not react to other keys', () => {
@@ -231,19 +251,14 @@ describe( 'Radio Field', () => {
 				which: 65, // 'A' key
 				preventDefault: jest.fn(),
 			};
-			const mockInput = {
-				prop: jest.fn().mockReturnThis(),
-				trigger: jest.fn().mockReturnThis(),
-			};
 
-			fieldDefinition.onKeyDownInput.call(
-				mockField,
-				mockEvent,
-				mockInput
-			);
+			fieldDefinition.onKeyDownInput.call( mockField, mockEvent, [
+				input,
+			] );
 
 			expect( mockEvent.preventDefault ).not.toHaveBeenCalled();
-			expect( mockInput.prop ).not.toHaveBeenCalled();
+			expect( input.checked ).toBe( false );
+			expect( onChange ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
