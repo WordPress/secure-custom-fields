@@ -17,7 +17,7 @@ function acf_get_users( $args = array() ) {
 	$users = get_users( $args );
 
 	// Maintain order.
-	if ( $users && $args['include'] ) {
+	if ( $users && ! empty( $args['include'] ) ) {
 
 		// Generate order array.
 		$order = array();
