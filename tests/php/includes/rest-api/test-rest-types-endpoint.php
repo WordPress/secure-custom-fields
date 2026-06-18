@@ -69,7 +69,89 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 			unregister_post_type( $this->test_post_type );
 		}
 
+		// Clean up any SCF post type definitions created by tests.
+		$posts = get_posts(
+			array(
+				'post_type'   => 'acf-post-type',
+				'numberposts' => -1,
+				'post_status' => 'any',
+			)
+		);
+		foreach ( $posts as $post ) {
+			wp_delete_post( $post->ID, true );
+		}
+
+		if ( $this->load_post_types_filter ) {
+			remove_filter( 'acf/load_post_types', $this->load_post_types_filter );
+			$this->load_post_types_filter = null;
+		}
+
+		wp_set_current_user( 0 );
+
 		parent::tear_down();
+	}
+
+	/**
+	 * Filter callback injecting the test post type definition.
+	 *
+	 * @var callable|null
+	 */
+	private $load_post_types_filter;
+
+	/**
+	 * Create an SCF-managed post type definition for testing.
+	 *
+	 * WorDBless cannot query posts by post type, so the definition is also
+	 * injected via the acf/load_post_types filter to make it visible to
+	 * acf_get_acf_post_types(). The underlying post is real, so capability
+	 * checks against it behave as in production.
+	 *
+	 * @return int The internal acf-post-type post ID.
+	 */
+	private function create_scf_post_type() {
+		// Ensure ACF internal post type instances are initialized.
+		// WorDBless fires plugins_loaded and init BEFORE our plugin is loaded,
+		// so we need to fire them again to run our plugin's callbacks.
+		if ( ! acf_get_internal_post_type_instance( 'acf-post-type' ) ) {
+			do_action( 'plugins_loaded' );
+			do_action( 'init' );
+		}
+
+		$post_type = acf_update_post_type(
+			array(
+				'key'       => 'post_type_' . uniqid(),
+				'title'     => 'Test Post Type',
+				'post_type' => 'test_cpt',
+				'active'    => true,
+			)
+		);
+
+		$this->load_post_types_filter = function ( $post_types ) use ( $post_type ) {
+			$post_types[] = $post_type;
+			return $post_types;
+		};
+		add_filter( 'acf/load_post_types', $this->load_post_types_filter );
+
+		return (int) $post_type['ID'];
+	}
+
+	/**
+	 * Create a user with the given role and set it as the current user.
+	 *
+	 * @param string $role The role for the new user.
+	 * @return int The user ID.
+	 */
+	private function login_as( $role ) {
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_' . $role . '_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => $role,
+			)
+		);
+		wp_set_current_user( $user_id );
+
+		return $user_id;
 	}
 
 	/**
@@ -405,6 +487,55 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 		$fields = $this->endpoint->get_scf_fields( $post_type_object );
 
 		$this->assertIsArray( $fields );
+	}
+
+	/**
+	 * Test that get_scf_post_id returns the internal post ID for users who
+	 * can edit the post type definition.
+	 */
+	public function test_get_scf_post_id_visible_to_privileged_user() {
+		$scf_post_id = $this->create_scf_post_type();
+		$this->login_as( 'administrator' );
+
+		$result = $this->endpoint->get_scf_post_id( array( 'slug' => 'test_cpt' ) );
+
+		$this->assertSame( $scf_post_id, $result );
+	}
+
+	/**
+	 * Test that get_scf_post_id returns null for users who cannot edit the
+	 * post type definition.
+	 */
+	public function test_get_scf_post_id_hidden_from_unprivileged_user() {
+		$this->create_scf_post_type();
+		$this->login_as( 'subscriber' );
+
+		$result = $this->endpoint->get_scf_post_id( array( 'slug' => 'test_cpt' ) );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test that get_scf_post_id returns null for logged-out users.
+	 */
+	public function test_get_scf_post_id_hidden_from_logged_out_user() {
+		$this->create_scf_post_type();
+		wp_set_current_user( 0 );
+
+		$result = $this->endpoint->get_scf_post_id( array( 'slug' => 'test_cpt' ) );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test that get_scf_post_id returns null for post types not managed by SCF.
+	 */
+	public function test_get_scf_post_id_null_for_unmanaged_post_type() {
+		$this->login_as( 'administrator' );
+
+		$result = $this->endpoint->get_scf_post_id( array( 'slug' => 'post' ) );
+
+		$this->assertNull( $result );
 	}
 
 	/**

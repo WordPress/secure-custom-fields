@@ -190,7 +190,7 @@ class SCF_Rest_Types_Endpoint {
 			array(
 				'get_callback' => array( $this, 'get_scf_post_id' ),
 				'schema'       => array(
-					'description' => __( 'The SCF internal post ID that defines this post type, or null if not managed by SCF.', 'secure-custom-fields' ),
+					'description' => __( 'The SCF internal post ID that defines this post type. Null if not managed by SCF or if the current user cannot edit the post type definition.', 'secure-custom-fields' ),
 					'type'        => array( 'integer', 'null' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
@@ -242,10 +242,14 @@ class SCF_Rest_Types_Endpoint {
 	/**
 	 * Get the SCF internal post ID for a post type.
 	 *
+	 * Only exposed to users who can edit the post type definition, so that
+	 * consumers (e.g. Command Palette commands) can rely on its presence as
+	 * a capability check.
+	 *
 	 * @since SCF 6.8.3
 	 *
 	 * @param array $post_type_object The post type object.
-	 * @return int|null The post ID if managed by SCF, null otherwise.
+	 * @return int|null The post ID if managed by SCF and editable by the current user, null otherwise.
 	 */
 	public function get_scf_post_id( $post_type_object ) {
 		$slug           = $post_type_object['slug'];
@@ -253,7 +257,13 @@ class SCF_Rest_Types_Endpoint {
 
 		foreach ( $scf_post_types as $scf_post_type ) {
 			if ( $scf_post_type['post_type'] === $slug ) {
-				return (int) $scf_post_type['ID'];
+				$scf_post_id = isset( $scf_post_type['ID'] ) ? (int) $scf_post_type['ID'] : 0;
+
+				if ( ! $scf_post_id || ! current_user_can( 'edit_post', $scf_post_id ) ) {
+					return null;
+				}
+
+				return $scf_post_id;
 			}
 		}
 
