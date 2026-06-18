@@ -257,11 +257,13 @@ class SCF_Rest_Types_Endpoint {
 
 		foreach ( $scf_post_types as $scf_post_type ) {
 			if ( $scf_post_type['post_type'] === $slug ) {
-				if ( ! current_user_can( 'edit_post', (int) $scf_post_type['ID'] ) ) {
+				$scf_post_id = isset( $scf_post_type['ID'] ) ? (int) $scf_post_type['ID'] : 0;
+
+				if ( ! $scf_post_id || ! current_user_can( 'edit_post', $scf_post_id ) ) {
 					return null;
 				}
 
-				return (int) $scf_post_type['ID'];
+				return $scf_post_id;
 			}
 		}
 
