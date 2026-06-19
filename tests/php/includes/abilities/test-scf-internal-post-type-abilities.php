@@ -62,7 +62,46 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->ensure_taxonomy_instance_registered();
 		$this->abilities = acf_get_instance( 'SCF_Taxonomy_Abilities' );
+		$this->reset_cached_instance();
+	}
+
+	/**
+	 * Clean up singleton state changed by mocked callback tests.
+	 */
+	public function tearDown(): void {
+		$this->ensure_taxonomy_instance_registered();
+		$this->reset_cached_instance();
+		wp_set_current_user( 0 );
+
+		parent::tearDown();
+	}
+
+	/**
+	 * Ensures the taxonomy internal post type can be resolved after tests that
+	 * temporarily remove it from the global store.
+	 */
+	private function ensure_taxonomy_instance_registered() {
+		$store = acf_get_store( 'internal-post-types' );
+
+		if ( ! $store ) {
+			$store = acf_register_store( 'internal-post-types' );
+		}
+
+		$store->set( 'acf-taxonomy', ACF_Taxonomy::class );
+	}
+
+	/**
+	 * Resets the cached internal post type instance on the singleton abilities
+	 * object so one test's mock cannot leak into another test.
+	 */
+	private function reset_cached_instance() {
+		$reflection = new ReflectionClass( SCF_Internal_Post_Type_Abilities::class );
+		$property   = $reflection->getProperty( 'instance' );
+		$property->setAccessible( true );
+		$property->setValue( $this->abilities, null );
 	}
 
 	/**
@@ -72,8 +111,9 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 	 * @return \PHPUnit\Framework\MockObject\MockObject The mock instance.
 	 */
 	private function inject_mock_instance( array $method_returns ) {
-		$mock_instance            = $this->createMock( ACF_Taxonomy::class );
-		$mock_instance->hook_name = 'acf_taxonomy';
+		$mock_instance                   = $this->createMock( ACF_Taxonomy::class );
+		$mock_instance->hook_name        = 'taxonomy';
+		$mock_instance->hook_name_plural = 'taxonomies';
 
 		foreach ( $method_returns as $method => $return_value ) {
 			$mock_instance->method( $method )->willReturn( $return_value );
@@ -166,7 +206,8 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 		global $acf_instances;
 
 		// Store original validator.
-		$original_validator = $acf_instances['SCF_JSON_Schema_Validator'] ?? null;
+		$has_original_validator = array_key_exists( 'SCF_JSON_Schema_Validator', $acf_instances );
+		$original_validator     = $has_original_validator ? $acf_instances['SCF_JSON_Schema_Validator'] : null;
 
 		// Create mock validator that returns false.
 		$mock_validator                             = new class() {
@@ -181,18 +222,21 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 		};
 		$acf_instances['SCF_JSON_Schema_Validator'] = $mock_validator;
 
-		// Create a fresh instance (bypassing acf_get_instance cache for this class).
-		$test_instance = new SCF_Taxonomy_Abilities();
+		try {
+			// Create a fresh instance (bypassing acf_get_instance cache for this class).
+			$test_instance = new SCF_Taxonomy_Abilities();
 
-		// Verify NO hooks were registered for this instance.
-		$this->assertFalse(
-			has_action( 'wp_abilities_api_categories_init', array( $test_instance, 'register_categories' ) ),
-			'Should NOT register hooks when schema validation fails'
-		);
-
-		// Restore original validator.
-		if ( $original_validator ) {
-			$acf_instances['SCF_JSON_Schema_Validator'] = $original_validator;
+			// Verify NO hooks were registered for this instance.
+			$this->assertFalse(
+				has_action( 'wp_abilities_api_categories_init', array( $test_instance, 'register_categories' ) ),
+				'Should NOT register hooks when schema validation fails'
+			);
+		} finally {
+			if ( $has_original_validator ) {
+				$acf_instances['SCF_JSON_Schema_Validator'] = $original_validator;
+			} else {
+				unset( $acf_instances['SCF_JSON_Schema_Validator'] );
+			}
 		}
 	}
 
@@ -844,9 +888,10 @@ class Test_SCF_Internal_Post_Type_Abilities extends BaseTestCase {
 				'Unavailable instances should not be cached so later registration attempts can retry'
 			);
 		} finally {
-			if ( $store && $original_instance ) {
-				$store->set( 'acf-taxonomy', $original_instance );
+			if ( $store ) {
+				$store->set( 'acf-taxonomy', $original_instance ? $original_instance : ACF_Taxonomy::class );
 			}
+			$property->setValue( $this->abilities, null );
 		}
 	}
 

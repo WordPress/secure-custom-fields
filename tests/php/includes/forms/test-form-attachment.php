@@ -16,6 +16,41 @@ acf_include( 'includes/forms/form-attachment.php' );
 class Test_Form_Attachment extends BaseTestCase {
 
 	/**
+	 * The removable field groups filter used by tests.
+	 *
+	 * @var callable|null
+	 */
+	private $field_groups_filter = null;
+
+	/**
+	 * Clean up global state changed by attachment form tests.
+	 */
+	public function tearDown(): void {
+		if ( $this->field_groups_filter ) {
+			remove_filter( 'acf/load_field_groups', $this->field_groups_filter );
+			$this->field_groups_filter = null;
+		}
+
+		global $current_screen, $typenow, $taxnow;
+		$current_screen = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
+		$typenow        = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
+		$taxnow         = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
+
+		parent::tearDown();
+	}
+
+	/**
+	 * Adds a field group filter that can be removed in tearDown().
+	 */
+	private function add_empty_field_groups_filter() {
+		$this->field_groups_filter = function () {
+			return array();
+		};
+
+		add_filter( 'acf/load_field_groups', $this->field_groups_filter );
+	}
+
+	/**
 	 * Test if the acf_form_attachment class exists.
 	 */
 	public function test_form_attachment_class_exists() {
@@ -73,12 +108,7 @@ class Test_Form_Attachment extends BaseTestCase {
 		);
 
 		// Ensure no field groups match.
-		add_filter(
-			'acf/get_field_groups',
-			function () {
-				return array();
-			}
-		);
+		$this->add_empty_field_groups_filter();
 
 		$result = $form_attachment->edit_attachment( $form_fields, $post );
 

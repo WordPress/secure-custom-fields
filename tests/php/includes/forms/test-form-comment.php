@@ -9,6 +9,7 @@ use WorDBless\BaseTestCase;
 
 // Load the acf_form_comment class.
 acf_include( 'includes/forms/form-comment.php' );
+acf_include( 'includes/locations/class-acf-location-comment.php' );
 
 /**
  * Class Test_Form_Comment
@@ -16,10 +17,31 @@ acf_include( 'includes/forms/form-comment.php' );
 class Test_Form_Comment extends BaseTestCase {
 
 	/**
+	 * The removable field groups filter used by tests.
+	 *
+	 * @var callable|null
+	 */
+	private $field_groups_filter = null;
+
+	/**
+	 * Set up each test with a clean form store.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		acf_get_store( 'form' )->reset();
+	}
+
+	/**
 	 * Clean up after each test to prevent global state pollution.
 	 */
 	public function tearDown(): void {
-		parent::tearDown();
+		if ( $this->field_groups_filter ) {
+			remove_filter( 'acf/load_field_groups', $this->field_groups_filter );
+			$this->field_groups_filter = null;
+		}
+
+		acf_get_store( 'form' )->reset();
 
 		// Reset globals to prevent polluting other tests.
 		global $pagenow, $post;
@@ -27,6 +49,19 @@ class Test_Form_Comment extends BaseTestCase {
 		$pagenow = null;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
 		$post = null;
+
+		parent::tearDown();
+	}
+
+	/**
+	 * Adds a field group filter that can be removed in tearDown().
+	 */
+	private function add_empty_field_groups_filter() {
+		$this->field_groups_filter = function () {
+			return array();
+		};
+
+		add_filter( 'acf/load_field_groups', $this->field_groups_filter );
 	}
 
 	/**
@@ -167,12 +202,7 @@ class Test_Form_Comment extends BaseTestCase {
 		$html = '<textarea name="comment">Original comment field</textarea>';
 
 		// Ensure no field groups match.
-		add_filter(
-			'acf/get_field_groups',
-			function () {
-				return array();
-			}
-		);
+		$this->add_empty_field_groups_filter();
 
 		$result = $form_comment->comment_form_field_comment( $html );
 
@@ -256,12 +286,7 @@ class Test_Form_Comment extends BaseTestCase {
 		$comment->comment_post_ID = 1;
 
 		// Ensure no field groups match to avoid rendering.
-		add_filter(
-			'acf/get_field_groups',
-			function () {
-				return array();
-			}
-		);
+		$this->add_empty_field_groups_filter();
 
 		ob_start();
 		$form_comment->edit_comment( $comment );
@@ -278,42 +303,56 @@ class Test_Form_Comment extends BaseTestCase {
 	 * post_id formatted as "comment_{comment_ID}".
 	 */
 	public function test_edit_comment_uses_correct_post_id_format() {
-		$form_comment = new acf_form_comment();
+		$form_comment   = new acf_form_comment();
+		$parent_post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Comment parent',
+				'post_type'   => 'post',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Create a mock comment object.
 		$comment                  = new stdClass();
 		$comment->comment_ID      = 456;
-		$comment->comment_post_ID = 1;
+		$comment->comment_post_ID = $parent_post_id;
 
-		// Register a real field group to trigger the rendering path.
-		$field_group = acf_update_field_group(
-			array(
-				'key'                   => 'group_comment_test',
-				'title'                 => 'Comment Test Group',
-				'location'              => array(
+		// Return a field group directly to trigger the rendering path without
+		// relying on field group persistence or location-rule state.
+		$field_group               = array(
+			'ID'                    => 0,
+			'key'                   => 'group_comment_test_' . uniqid(),
+			'title'                 => 'Comment Test Group',
+			'active'                => true,
+			'location'              => array(
+				array(
 					array(
-						array(
-							'param'    => 'comment',
-							'operator' => '==',
-							'value'    => 'all',
-						),
+						'param'    => 'comment',
+						'operator' => '==',
+						'value'    => 'all',
 					),
 				),
-				'instruction_placement' => 'label',
-			)
+			),
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
 		);
+		$this->field_groups_filter = function () use ( $field_group ) {
+			return array( $field_group );
+		};
+		add_filter( 'acf/load_field_groups', $this->field_groups_filter );
 
-		// Capture output to prevent it from polluting test output.
-		ob_start();
-		$form_comment->edit_comment( $comment );
-		ob_get_clean();
+		try {
+			// Capture output to prevent it from polluting test output.
+			ob_start();
+			$form_comment->edit_comment( $comment );
+			ob_get_clean();
 
-		// Verify form data was stored with correct post_id format.
-		$form_data = acf_get_form_data( 'post_id' );
-		$this->assertEquals( 'comment_456', $form_data, 'post_id should be formatted as comment_{id}' );
-
-		// Cleanup: delete the field group.
-		acf_delete_field_group( $field_group['ID'] );
+			// Verify form data was stored with correct post_id format.
+			$form_data = acf_get_form_data( 'post_id' );
+			$this->assertEquals( 'comment_456', $form_data, 'post_id should be formatted as comment_{id}' );
+		} finally {
+			wp_delete_post( $parent_post_id, true );
+		}
 	}
 
 	/**

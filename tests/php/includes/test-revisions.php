@@ -41,6 +41,34 @@ class Test_ACF_Revisions extends BaseTestCase {
 	private $field;
 
 	/**
+	 * Local field key for the current test.
+	 *
+	 * @var string
+	 */
+	private $field_key;
+
+	/**
+	 * Local field name for the current test.
+	 *
+	 * @var string
+	 */
+	private $field_name;
+
+	/**
+	 * Removable post meta shim callback.
+	 *
+	 * @var callable|null
+	 */
+	private $post_metadata_filter = null;
+
+	/**
+	 * Removable revision query shim callback.
+	 *
+	 * @var callable|null
+	 */
+	private $posts_pre_query_filter = null;
+
+	/**
 	 * Set up test fixtures.
 	 */
 	public function setUp(): void {
@@ -48,30 +76,20 @@ class Test_ACF_Revisions extends BaseTestCase {
 
 		$this->install_wordbless_shims();
 
-		acf_add_local_field_group(
+		$this->field_key  = 'field_revision_text_' . uniqid();
+		$this->field_name = 'revision_text_' . uniqid();
+		acf_get_store( 'fields' )->reset();
+
+		acf_add_local_field(
 			array(
-				'key'      => 'group_revision_test',
-				'title'    => 'Revision Test Group',
-				'fields'   => array(
-					array(
-						'key'   => 'field_revision_text',
-						'label' => 'Revision Text',
-						'name'  => 'revision_text',
-						'type'  => 'text',
-					),
-				),
-				'location' => array(
-					array(
-						array(
-							'param'    => 'post_type',
-							'operator' => '==',
-							'value'    => 'post',
-						),
-					),
-				),
+				'key'    => $this->field_key,
+				'label'  => 'Revision Text',
+				'name'   => $this->field_name,
+				'type'   => 'text',
+				'parent' => 0,
 			)
 		);
-		$this->field = acf_get_field( 'field_revision_text' );
+		$this->field = acf_get_field( $this->field_key );
 
 		$this->post_id = wp_insert_post(
 			array(
@@ -90,7 +108,27 @@ class Test_ACF_Revisions extends BaseTestCase {
 	 */
 	public function tearDown(): void {
 		unset( $_POST['_acf_changed'], $_POST['action'], $_GET['preview'], $_GET['preview_id'] );
+		remove_filter( 'wp_doing_ajax', '__return_true' );
+		if ( $this->field_name ) {
+			remove_filter( "_wp_post_revision_field_{$this->field_name}", array( acf()->revisions, 'wp_post_revision_field' ), 10 );
+		}
+
+		if ( $this->post_metadata_filter ) {
+			remove_filter( 'get_post_metadata', $this->post_metadata_filter, 20 );
+			$this->post_metadata_filter = null;
+		}
+
+		if ( $this->posts_pre_query_filter ) {
+			remove_filter( 'posts_pre_query', $this->posts_pre_query_filter, 10 );
+			$this->posts_pre_query_filter = null;
+		}
+
+		if ( $this->field_key ) {
+			acf_remove_local_field( $this->field_key );
+		}
+
 		acf_get_store( 'values' )->reset();
+		acf_get_store( 'fields' )->reset();
 		acf()->revisions->cache = array();
 		unregister_meta_key( 'post', '_acf' );
 		parent::tearDown();
@@ -103,40 +141,35 @@ class Test_ACF_Revisions extends BaseTestCase {
 	 * @return void
 	 */
 	private function install_wordbless_shims() {
-		add_filter(
-			'get_post_metadata',
-			function ( $check, $object_id, $meta_key ) {
-				if ( '' !== $meta_key ) {
-					return $check;
-				}
+		$this->post_metadata_filter = function ( $check, $object_id, $meta_key ) {
+			if ( '' !== $meta_key ) {
+				return $check;
+			}
 
 				$store = \WorDBless\PostMeta::init();
 				$all   = array();
-				if ( isset( $store->meta[ $object_id ] ) ) {
-					foreach ( $store->meta[ $object_id ] as $row ) {
-						$all[ $row['meta_key'] ][] = $row['meta_value'];
-					}
+			if ( isset( $store->meta[ $object_id ] ) ) {
+				foreach ( $store->meta[ $object_id ] as $row ) {
+					$all[ $row['meta_key'] ][] = $row['meta_value'];
 				}
+			}
 				return $all;
-			},
-			20,
-			3
-		);
+		};
 
-		add_filter(
-			'posts_pre_query',
-			function ( $posts, $query ) {
-				if ( 'revision' !== $query->get( 'post_type' ) ) {
-					return $posts;
-				}
+		add_filter( 'get_post_metadata', $this->post_metadata_filter, 20, 3 );
+
+		$this->posts_pre_query_filter = function ( $posts, $query ) {
+			if ( 'revision' !== $query->get( 'post_type' ) ) {
+				return $posts;
+			}
 
 				$parent = (int) $query->get( 'post_parent' );
 				$found  = array();
-				foreach ( \WorDBless\Posts::init()->posts as $post ) {
-					if ( 'revision' === $post->post_type && (int) $post->post_parent === $parent && 'inherit' === $post->post_status ) {
-						$found[] = new WP_Post( $post );
-					}
+			foreach ( \WorDBless\Posts::init()->posts as $post ) {
+				if ( 'revision' === $post->post_type && (int) $post->post_parent === $parent && 'inherit' === $post->post_status ) {
+					$found[] = new WP_Post( $post );
 				}
+			}
 				usort(
 					$found,
 					function ( $a, $b ) {
@@ -144,10 +177,9 @@ class Test_ACF_Revisions extends BaseTestCase {
 					}
 				);
 				return $found;
-			},
-			10,
-			2
-		);
+		};
+
+		add_filter( 'posts_pre_query', $this->posts_pre_query_filter, 10, 2 );
 	}
 
 	/**
@@ -204,12 +236,12 @@ class Test_ACF_Revisions extends BaseTestCase {
 		$this->assertIsInt( $rev_id );
 
 		// The freshly created revision has no SCF meta yet.
-		$this->assertSame( '', get_post_meta( $rev_id, 'revision_text', true ) );
+		$this->assertSame( '', get_post_meta( $rev_id, $this->field_name, true ) );
 
 		acf_save_post_revision( $this->post_id );
 
-		$this->assertSame( 'first value', get_post_meta( $rev_id, 'revision_text', true ) );
-		$this->assertSame( 'field_revision_text', get_post_meta( $rev_id, '_revision_text', true ) );
+		$this->assertSame( 'first value', get_post_meta( $rev_id, $this->field_name, true ) );
+		$this->assertSame( $this->field_key, get_post_meta( $rev_id, '_' . $this->field_name, true ) );
 	}
 
 	/**
@@ -241,7 +273,7 @@ class Test_ACF_Revisions extends BaseTestCase {
 		// Now change the value and corrupt the reference on the parent post.
 		acf_get_store( 'values' )->reset();
 		acf_update_value( 'second value', $this->post_id, $this->field );
-		update_post_meta( $this->post_id, '_revision_text', 'field_something_else' );
+		update_post_meta( $this->post_id, '_' . $this->field_name, 'field_something_else' );
 
 		// Restore the original revision through the real WP API. This fires
 		// the wp_restore_post_revision action handled by acf_revisions.
@@ -249,8 +281,8 @@ class Test_ACF_Revisions extends BaseTestCase {
 		$this->assertEquals( $this->post_id, $restored );
 
 		// Raw meta restored.
-		$this->assertSame( 'first value', get_post_meta( $this->post_id, 'revision_text', true ) );
-		$this->assertSame( 'field_revision_text', get_post_meta( $this->post_id, '_revision_text', true ) );
+		$this->assertSame( 'first value', get_post_meta( $this->post_id, $this->field_name, true ) );
+		$this->assertSame( $this->field_key, get_post_meta( $this->post_id, '_' . $this->field_name, true ) );
 
 		// And the value loads through the SCF API.
 		acf_get_store( 'values' )->reset();
@@ -279,16 +311,16 @@ class Test_ACF_Revisions extends BaseTestCase {
 
 		$latest = acf_get_post_latest_revision( $this->post_id );
 		$this->assertNotEquals( $rev1, $latest->ID );
-		$this->assertSame( 'second value', get_post_meta( $latest->ID, 'revision_text', true ) );
+		$this->assertSame( 'second value', get_post_meta( $latest->ID, $this->field_name, true ) );
 
 		// Restore revision 1 directly via the SCF handler.
 		acf()->revisions->wp_restore_post_revision( $this->post_id, $rev1 );
 
 		// Parent post and the latest revision both carry the restored value.
-		$this->assertSame( 'first value', get_post_meta( $this->post_id, 'revision_text', true ) );
+		$this->assertSame( 'first value', get_post_meta( $this->post_id, $this->field_name, true ) );
 		$latest = acf_get_post_latest_revision( $this->post_id );
-		$this->assertSame( 'first value', get_post_meta( $latest->ID, 'revision_text', true ) );
-		$this->assertSame( 'field_revision_text', get_post_meta( $latest->ID, '_revision_text', true ) );
+		$this->assertSame( 'first value', get_post_meta( $latest->ID, $this->field_name, true ) );
+		$this->assertSame( $this->field_key, get_post_meta( $latest->ID, '_' . $this->field_name, true ) );
 	}
 
 	// =========================================================================
@@ -359,8 +391,8 @@ class Test_ACF_Revisions extends BaseTestCase {
 
 		acf()->revisions->maybe_save_revision( $rev_id, $this->post_id );
 
-		$this->assertSame( 'saved value', get_post_meta( $rev_id, 'revision_text', true ) );
-		$this->assertSame( 'field_revision_text', get_post_meta( $rev_id, '_revision_text', true ) );
+		$this->assertSame( 'saved value', get_post_meta( $rev_id, $this->field_name, true ) );
+		$this->assertSame( $this->field_key, get_post_meta( $rev_id, '_' . $this->field_name, true ) );
 	}
 
 	// =========================================================================
@@ -381,11 +413,11 @@ class Test_ACF_Revisions extends BaseTestCase {
 		);
 
 		$this->assertArrayHasKey( 'post_title', $fields );
-		$this->assertArrayHasKey( 'revision_text', $fields );
-		$this->assertSame( 'Revision Text (revision_text)', $fields['revision_text'] );
+		$this->assertArrayHasKey( $this->field_name, $fields );
+		$this->assertSame( "Revision Text ({$this->field_name})", $fields[ $this->field_name ] );
 
 		// A render filter is attached for the field.
-		$this->assertNotFalse( has_filter( '_wp_post_revision_field_revision_text' ) );
+		$this->assertNotFalse( has_filter( "_wp_post_revision_field_{$this->field_name}" ) );
 	}
 
 	/**
@@ -422,14 +454,14 @@ class Test_ACF_Revisions extends BaseTestCase {
 		$post = get_post( $this->post_id );
 
 		// Empty values render as an empty string.
-		$this->assertSame( '', acf()->revisions->wp_post_revision_field( '', 'revision_text', $post ) );
+		$this->assertSame( '', acf()->revisions->wp_post_revision_field( '', $this->field_name, $post ) );
 
 		// Plain strings pass through.
-		$this->assertSame( 'hello', acf()->revisions->wp_post_revision_field( 'hello', 'revision_text', $post ) );
+		$this->assertSame( 'hello', acf()->revisions->wp_post_revision_field( 'hello', $this->field_name, $post ) );
 
 		// Serialized arrays are unserialized and imploded for display.
 		$serialized = serialize( array( 'one', 'two' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- raw meta is stored serialized.
-		$this->assertSame( 'one, two', acf()->revisions->wp_post_revision_field( $serialized, 'revision_text', $post ) );
+		$this->assertSame( 'one, two', acf()->revisions->wp_post_revision_field( $serialized, $this->field_name, $post ) );
 	}
 
 	// =========================================================================
