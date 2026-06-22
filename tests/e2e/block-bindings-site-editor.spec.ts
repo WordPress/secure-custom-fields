@@ -101,7 +101,8 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		const contentBlock = frameLocator
 			.locator( '[data-type="core/post-content"]' )
 			.first();
-		await contentBlock.click();
+		// Force click to bypass editor overlays in older WordPress versions.
+		await contentBlock.click( { force: true } );
 
 		// Press Enter to add a new paragraph block
 		await page.keyboard.press( 'Enter' );
