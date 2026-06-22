@@ -78,22 +78,23 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await expect( successNotice ).toBeVisible();
 		await expect( successNotice ).toContainText( 'Field group published' );
 
-		const themes = await requestUtils.rest( { path: '/wp/v2/themes' } );
-		const activeTheme = themes.find(
-			( { status } ) => status === 'active'
+		const templates = await requestUtils.rest( {
+			path: '/wp/v2/templates',
+		} );
+		const singleTemplate = templates.find(
+			( { slug } ) => slug === 'single'
 		);
-		const activeThemeSlug =
-			activeTheme?.stylesheet ||
-			activeTheme?.template ||
-			activeTheme?.slug;
+
+		if ( ! singleTemplate?.id ) {
+			throw new Error( 'Could not find the single template.' );
+		}
 
 		// Navigate to site editor
-		await admin.visitAdminPage(
-			'site-editor.php',
-			`p=${ encodeURIComponent(
-				`/wp_template/${ activeThemeSlug }//single`
-			) }&canvas=edit`
-		);
+		await admin.visitSiteEditor( {
+			postType: 'wp_template',
+			postId: singleTemplate.wp_id || singleTemplate.id,
+			canvas: 'edit',
+		} );
 
 		// Wait for the site editor to load - wait for the iframe or editor container
 		await page.waitForSelector( 'iframe[name="editor-canvas"]', {
