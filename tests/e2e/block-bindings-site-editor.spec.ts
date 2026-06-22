@@ -78,11 +78,14 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await expect( successNotice ).toBeVisible();
 		await expect( successNotice ).toContainText( 'Field group published' );
 
-		const [ activeTheme ] = await requestUtils.rest( {
-			path: '/wp/v2/themes?status=active',
-		} );
+		const themes = await requestUtils.rest( { path: '/wp/v2/themes' } );
+		const activeTheme = themes.find(
+			( { status } ) => status === 'active'
+		);
 		const activeThemeSlug =
-			activeTheme?.stylesheet || activeTheme?.template;
+			activeTheme?.stylesheet ||
+			activeTheme?.template ||
+			activeTheme?.slug;
 
 		// Navigate to site editor
 		await admin.visitAdminPage(
