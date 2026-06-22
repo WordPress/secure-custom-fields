@@ -1,5 +1,5 @@
 {
   "$schema": "https://schemas.wp.org/trunk/wp-env.json",
-	"testsEnvironment": false,
+  "testsEnvironment": false,
   "plugins": ["."]
 }

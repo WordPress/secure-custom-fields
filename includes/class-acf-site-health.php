@@ -541,10 +541,11 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 				'debug' => $rest_api_format,
 			);
 
-			$blocks                 = acf_get_block_types();
-			$block_api_versions     = array();
-			$acf_block_versions     = array();
-			$blocks_using_post_meta = 0;
+			$blocks                           = acf_get_block_types();
+			$block_api_versions               = array();
+			$acf_block_versions               = array();
+			$blocks_using_post_meta           = 0;
+			$blocks_using_auto_inline_editing = 0;
 
 			foreach ( $blocks as $block ) {
 				if ( ! isset( $block_api_versions[ 'v' . $block['api_version'] ] ) ) {
@@ -557,6 +558,10 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 
 				if ( ! empty( $block['use_post_meta'] ) ) {
 					++$blocks_using_post_meta;
+				}
+
+				if ( ! empty( $block['auto_inline_editing'] ) ) {
+					++$blocks_using_auto_inline_editing;
 				}
 
 				++$block_api_versions[ 'v' . $block['api_version'] ];
@@ -576,6 +581,11 @@ if ( ! class_exists( 'ACF_Site_Health' ) ) {
 			$fields['blocks_using_post_meta'] = array(
 				'label' => __( 'Blocks Using Post Meta', 'secure-custom-fields' ),
 				'value' => number_format_i18n( $blocks_using_post_meta ),
+			);
+
+			$fields['blocks_using_auto_inline_editing'] = array(
+				'label' => __( 'Blocks Using Auto Inline Editing', 'secure-custom-fields' ),
+				'value' => number_format_i18n( $blocks_using_auto_inline_editing ),
 			);
 
 			$preload_blocks = acf_get_setting( 'preload_blocks' );

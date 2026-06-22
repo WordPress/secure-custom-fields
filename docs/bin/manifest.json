@@ -134,6 +134,11 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/compatibility-file.md"
     },
+    "code-reference/datastore-file": {
+        "slug": "datastore-file",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/datastore-file.md"
+    },
     "code-reference/deprecated-file": {
         "slug": "deprecated-file",
         "parent": "code-reference",
@@ -228,6 +233,11 @@
         "slug": "documentation",
         "parent": "contributing",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/documentation.md"
+    },
+    "contributing/releases": {
+        "slug": "releases",
+        "parent": "contributing",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/releases.md"
     },
     "features/field": {
         "slug": "field",

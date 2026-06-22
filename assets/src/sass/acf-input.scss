@@ -1696,6 +1696,11 @@ html[dir=rtl] .acf-relationship .selection .values .acf-icon {
   clear: both;
   z-index: 1;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.acf-tab-wrap::-webkit-scrollbar {
+  display: none;
 }
 
 .acf-tab-group {

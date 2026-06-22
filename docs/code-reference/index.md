@@ -21,6 +21,7 @@
 - [Assets](assets-file)
 - [Blocks](blocks-file)
 - [Compatibility](compatibility-file)
+- [Datastore](datastore-file)
 - [Deprecated](deprecated-file)
 - [Fields](fields-file)
 - [L10n](l10n-file)

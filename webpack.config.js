@@ -20,6 +20,9 @@ const commonConfig = {
 			'./assets/src/js/commands/custom-post-type-commands.js',
 		'js/acf': './assets/src/js/acf.js',
 		'js/pro/acf-pro-blocks': './assets/src/js/pro/acf-pro-blocks.js',
+		'js/pro/acf-datastore': './assets/src/js/pro/acf-datastore.js',
+		'js/pro/acf-field-bindings':
+			'./assets/src/js/pro/acf-field-bindings.js',
 		'js/pro/acf-pro-field-group':
 			'./assets/src/js/pro/acf-pro-field-group.js',
 		'js/pro/acf-pro-input': './assets/src/js/pro/acf-pro-input.js',
@@ -49,7 +52,11 @@ const commonConfig = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ [ '@babel/preset-react', { runtime: 'automatic' } ] ],
+						presets: [
+							// Keep JSX output compatible with older supported WordPress versions
+							// that do not register the react-jsx-runtime script handle.
+							[ '@babel/preset-react', { runtime: 'classic' } ],
+						],
 						plugins: process.env.COVERAGE_ENABLED
 							? [ 'istanbul' ]
 							: [],

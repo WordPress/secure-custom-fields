@@ -444,11 +444,11 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 */
 		public function filter_posts( $posts, $args = array() ) {
 			if ( isset( $args['active'] ) ) {
-				$active_filter = $args['active'];
+				$active_filter = (bool) $args['active'];
 				$posts         = array_filter(
 					$posts,
 					function ( $post ) use ( $active_filter ) {
-						return $post['active'] === $active_filter;
+						return (bool) $post['active'] === $active_filter;
 					}
 				);
 			}

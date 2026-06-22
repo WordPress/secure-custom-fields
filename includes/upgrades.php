@@ -463,13 +463,9 @@ function acf_upgrade_550_taxonomy( $taxonomy ) {
 	global $wpdb;
 
 	// vars
-	$search  = $taxonomy . '_%';
-	$_search = '_' . $search;
-
-	// escape '_'
-	// http://stackoverflow.com/questions/2300285/how-do-i-escape-in-sql-server
-	$search  = str_replace( '_', '\_', $search );
-	$_search = str_replace( '_', '\_', $_search );
+	// esc_like() escapes %, _ and \ for the LIKE clause; append the trailing wildcard.
+	$search  = $wpdb->esc_like( "{$taxonomy}_" ) . '%';
+	$_search = $wpdb->esc_like( "_{$taxonomy}_" ) . '%';
 
 	// search
 	// results show faster query times using 2 LIKE vs 2 wildcards

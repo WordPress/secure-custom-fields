@@ -6,6 +6,35 @@
 			return this.$( '.acf-time-picker' );
 		},
 
+		setValue: function ( val ) {
+			acf.val( this.$input(), val );
+
+			const $inputText = this.$inputText();
+			if ( val && $inputText.length ) {
+				try {
+					const timeFormat =
+						this.get( 'time_format' ) ||
+						$inputText.timepicker( 'option', 'timeFormat' );
+					const matches = val.match( /^(\d{2}):(\d{2}):(\d{2})$/ );
+
+					if ( matches && $.datepicker && $.datepicker.formatTime ) {
+						const timeText = $.datepicker.formatTime( timeFormat, {
+							hour: parseInt( matches[ 1 ], 10 ),
+							minute: parseInt( matches[ 2 ], 10 ),
+							second: parseInt( matches[ 3 ], 10 ),
+						} );
+						$inputText.val( timeText );
+					} else {
+						$inputText.val( val );
+					}
+				} catch ( e ) {
+					$inputText.val( val );
+				}
+			} else {
+				$inputText.val( '' );
+			}
+		},
+
 		initialize: function () {
 			// vars
 			var $input = this.$input();

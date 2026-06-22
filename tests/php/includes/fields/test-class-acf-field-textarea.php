@@ -135,4 +135,36 @@ class Test_ACF_Field_Textarea extends Abstract_ACF_Field_Test {
 		$this->assertIsArray( $schema );
 		$this->assertContains( 'string', $schema['type'] );
 	}
+
+	/**
+	 * Test validate_value with a non-scalar value and maxlength set.
+	 *
+	 * A crafted submission (e.g. `acf[field_key][]=x`) can deliver an array to a
+	 * textarea field. The maxlength check must not run a string operation on it,
+	 * which would emit an "Array to string conversion" warning.
+	 */
+	public function test_validate_value_array_with_maxlength_does_not_convert() {
+		$field = $this->get_field( array( 'maxlength' => 10 ) );
+
+		$caught = null;
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Capturing the conversion notice deterministically for this regression test.
+		set_error_handler(
+			static function ( $errno, $errstr ) use ( &$caught ) {
+				if ( false !== strpos( $errstr, 'Array to string conversion' ) ) {
+					$caught = $errstr;
+				}
+				return true;
+			}
+		);
+
+		try {
+			$valid = $this->field_instance->validate_value( true, array( 'x' ), $field, 'acf[field_textarea_test]' );
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertNull( $caught, 'maxlength check must not trigger an array-to-string conversion' );
+		// A non-scalar value is not valid text, so the passed $valid state is preserved.
+		$this->assertTrue( $valid );
+	}
 }

@@ -46,7 +46,9 @@ async function saveCoverage( coverage ) {
  */
 function generateCoverageId( testInfo ) {
 	const testFile = path.basename( testInfo.file, '.spec.ts' );
-	const testName = testInfo.title.replace( /[^a-zA-Z0-9]/g, '_' ).slice( 0, 50 );
+	const testName = testInfo.title
+		.replace( /[^a-zA-Z0-9]/g, '_' )
+		.slice( 0, 50 );
 	return `${ testFile }-${ testName }-${ Date.now() }`;
 }
 
@@ -177,15 +179,17 @@ const test = wpTest.extend( {
 async function wpVersionAtLeast( page, major, minor ) {
 	return page.evaluate(
 		( [ maj, min ] ) => {
-			const branchClass = [ ...document.body.classList ].find( ( c ) =>
-				c.startsWith( 'branch-' )
+			const versionClass = [ ...document.body.classList ].find( ( c ) =>
+				/^(version|branch)-\d+-\d+/.test( c )
 			);
-			if ( ! branchClass ) {
-				return true;
+			if ( ! versionClass ) {
+				return false;
 			}
-			const match = branchClass.match( /branch-(\d+)-(\d+)/ );
+			const match = versionClass.match(
+				/^(?:version|branch)-(\d+)-(\d+)/
+			);
 			if ( ! match ) {
-				return true;
+				return false;
 			}
 			const [ , wpMajor, wpMinor ] = match.map( Number );
 			return wpMajor > maj || ( wpMajor === maj && wpMinor >= min );
