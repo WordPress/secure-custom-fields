@@ -81,7 +81,7 @@ describe( 'BlockPreview Component', () => {
 			'data-block',
 			'acf/test-block'
 		);
-		expect( previewElement ).toHaveStyle( { backgroundColor: 'red' } );
+		expect( previewElement.style.backgroundColor ).toBe( 'red' );
 	} );
 
 	test( 'renders text content correctly', () => {
