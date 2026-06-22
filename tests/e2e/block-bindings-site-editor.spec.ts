@@ -60,11 +60,12 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		admin,
 		requestUtils,
 	} ) => {
-		// Block Bindings API was introduced in WordPress 6.5
+		// SCF's bindings editor UI uses stable block bindings JS APIs from
+		// WordPress 6.7+.
 		await page.goto( '/wp-admin/' );
 		test.skip(
-			! ( await wpVersionAtLeast( page, 6, 5 ) ),
-			'Block Bindings API requires WordPress 6.5+'
+			! ( await wpVersionAtLeast( page, 6, 7 ) ),
+			'SCF block bindings editor UI requires WordPress 6.7+'
 		);
 
 		// Navigate to Field Groups and create new.

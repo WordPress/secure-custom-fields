@@ -145,6 +145,22 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
+		 * Returns whether the legacy SCF block bindings editor script can run.
+		 *
+		 * The script depends on the stable WordPress block bindings JavaScript
+		 * APIs, which are only available in WordPress 6.7+.
+		 *
+		 * @since SCF 6.8.10
+		 *
+		 * @return bool
+		 */
+		private function supports_block_bindings_editor_script() {
+			global $wp_version;
+
+			return version_compare( $wp_version, '6.7', '>=' );
+		}
+
+		/**
 		 * Registers the ACF scripts and styles.
 		 *
 		 * @date    10/4/18
@@ -624,7 +640,10 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				if ( ! acf_is_using_datastore() ) {
+				if (
+					! acf_is_using_datastore() &&
+					$this->supports_block_bindings_editor_script()
+				) {
 					wp_enqueue_script( 'scf-bindings' );
 				}
 				wp_enqueue_style( 'acf-pro-input' );
