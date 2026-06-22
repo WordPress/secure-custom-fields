@@ -100,9 +100,9 @@ class DocGenerator {
 		$this->parser    = $parser_factory->create( ParserFactory::PREFER_PHP7 );
 		$this->traverser = new NodeTraverser();
 		$this->traverser->addVisitor( new NameResolver() );
-		$this->output_dir = rtrim( $output_dir, '/' );
+		$this->output_dir = $this->validate_output_dir( $output_dir );
 
-		// Clean up existing documentation
+		// Clean up existing documentation.
 		if ( is_dir( $this->output_dir ) ) {
 			$this->cleanup_directory( $this->output_dir );
 		}
@@ -110,6 +110,28 @@ class DocGenerator {
 		if ( ! is_dir( $this->output_dir ) ) {
 			mkdir( $this->output_dir, 0755, true );
 		}
+	}
+
+	/**
+	 * Validate and normalize the output directory path.
+	 *
+	 * @param string $output_dir Directory where documentation will be generated.
+	 * @return string Normalized output directory path.
+	 *
+	 * @throws \InvalidArgumentException If the output path is empty or not local.
+	 */
+	private function validate_output_dir( $output_dir ) {
+		$output_dir = trim( (string) $output_dir );
+
+		if ( '' === $output_dir ) {
+			throw new \InvalidArgumentException( 'Output directory must be a non-empty local filesystem path.' );
+		}
+
+		if ( preg_match( '#^[a-z][a-z0-9+.-]*://#i', $output_dir ) ) {
+			throw new \InvalidArgumentException( 'Output directory must be a local filesystem path.' );
+		}
+
+		return rtrim( $output_dir, '/' );
 	}
 
 	/**
@@ -743,8 +765,18 @@ class DocGenerator {
 	}
 }
 
-// Parse command line arguments
-$options    = getopt( '', array( 'output::' ) );
-$output_dir = isset( $options['output'] ) ? $options['output'] : __DIR__ . '/../code-reference';
-$generator  = new DocGenerator( $output_dir );
-$generator->generate();
+$is_cli_script = PHP_SAPI === 'cli' && isset( $argv[0] ) && __FILE__ === realpath( $argv[0] );
+
+if ( $is_cli_script ) {
+	// Parse command line arguments.
+	$options    = getopt( '', array( 'output::' ) );
+	$output_dir = isset( $options['output'] ) ? $options['output'] : __DIR__ . '/../code-reference';
+
+	try {
+		$generator = new DocGenerator( $output_dir );
+		$generator->generate();
+	} catch ( \InvalidArgumentException $e ) {
+		fwrite( STDERR, $e->getMessage() . PHP_EOL );
+		exit( 1 );
+	}
+}
