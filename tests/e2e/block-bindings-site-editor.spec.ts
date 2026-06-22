@@ -9,6 +9,40 @@ const TEST_PLUGIN_SLUG = 'scf-test-setup-post-types';
 const FIELD_GROUP_LABEL = 'Product Details';
 const TEXT_FIELD_LABEL = 'Product Name';
 
+const openSiteEditorBlockInspector = async ( page ) => {
+	const sidebar = page.locator( '.interface-complementary-area' ).first();
+
+	await page.evaluate( () => {
+		const interfaceDispatch = window.wp?.data?.dispatch( 'core/interface' );
+
+		interfaceDispatch?.enableComplementaryArea?.(
+			'core',
+			'edit-site/block-inspector'
+		);
+	} );
+
+	try {
+		await sidebar.waitFor( { state: 'visible', timeout: 1000 } );
+		return;
+	} catch ( error ) {
+		// Fall through to the toolbar button when the data store helper is
+		// unavailable or has not opened the sidebar in this WordPress version.
+	}
+
+	const settingsButton = page
+		.locator( 'button[aria-controls="edit-site:block-inspector"]' )
+		.first();
+
+	if (
+		( await settingsButton.count() ) &&
+		( await settingsButton.getAttribute( 'aria-expanded' ) ) !== 'true'
+	) {
+		await settingsButton.click();
+	}
+
+	await sidebar.waitFor( { state: 'visible', timeout: 10000 } );
+};
+
 test.describe( 'Block Bindings in Site Editor', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
@@ -133,10 +167,12 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		// Force click to bypass WP 7.0's side-inserter popover overlay.
 		await emptyParagraph.click( { force: true } );
 
+		await openSiteEditorBlockInspector( page );
+
 		// Wait for the "Connect to a field" panel to appear in the block inspector
 		await page.waitForSelector(
 			'input[id^="components-form-token-input-combobox-control-"]',
-			{ timeout: 5000 }
+			{ timeout: 10000 }
 		);
 
 		// Click on the combobox input to open suggestions
