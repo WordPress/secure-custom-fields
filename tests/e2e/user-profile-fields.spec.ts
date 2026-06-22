@@ -124,18 +124,18 @@ test.describe( 'User Profile Fields', () => {
 
 		// SECTION 4: Verify the value is readable via get_field() on the
 		// frontend (the test plugin appends the target user's field value
-		// to post content on the author archive). Derive the admin's actual
+		// to single post content). Derive the admin's actual
 		// user ID instead of assuming user 1, and pass it to the plugin via
 		// the scf_test_user_id query arg.
 		const adminUser = await requestUtils.rest( {
 			path: '/wp/v2/users/me',
 		} );
-		await requestUtils.createPost( {
+		const post = await requestUtils.createPost( {
 			title: 'User Field Frontend Check',
 			status: 'publish',
 		} );
 		await page.goto(
-			`/?author=${ adminUser.id }&scf_test_user_id=${ adminUser.id }`
+			`/?p=${ post.id }&scf_test_user_id=${ adminUser.id }`
 		);
 		const frontendValue = page.locator( '#scf-test-user-title' ).first();
 		await expect( frontendValue ).toBeVisible( {
