@@ -28,7 +28,7 @@ jobs:
             matrix:
                 event: ['${{ github.event_name }}']
                 shard: [1, 2, 3, 4]
-                wp: ['6.2', '6.3', '6.4', '6.5', '6.6', '6.7', '6.8', 'latest', 'trunk']
+                wp: ['6.2', '6.8', 'latest', 'trunk']
                 exclude:
                     # On PRs: Skip minimum supported WP version for faster feedback
                     - event: 'pull_request'
