@@ -133,20 +133,24 @@ const test = wpTest.extend( {
 					} )();
 				},
 			},
-			// WP 6.2 has "Preview" button, WP 6.3+ has "View" button.
+			// Older WordPress versions expose "Preview"; newer versions expose "View".
 			openPreviewPage: {
 				value: async () => {
-					const isWP62 = await page.evaluate( () =>
-						document.body.classList.contains( 'branch-6-2' )
-					);
-
-					if ( ! isWP62 ) {
-						return editor.openPreviewPage();
-					}
-
 					const editorTopBar = page.locator(
 						'role=region[name="Editor top bar"i]'
 					);
+
+					const viewButton = editorTopBar.locator(
+						'role=button[name="View"i]'
+					);
+
+					if (
+						( await viewButton.count() ) > 0 &&
+						( await viewButton.first().isVisible() )
+					) {
+						return editor.openPreviewPage();
+					}
+
 					await editorTopBar
 						.locator( 'role=button[name="Preview"i]' )
 						.click();
@@ -154,7 +158,7 @@ const test = wpTest.extend( {
 					const [ previewPage ] = await Promise.all( [
 						context.waitForEvent( 'page' ),
 						page.click(
-							'role=menuitem[name="Preview in new tab"i]'
+							'role=menuitem[name=/Preview in new tab/i]'
 						),
 					] );
 

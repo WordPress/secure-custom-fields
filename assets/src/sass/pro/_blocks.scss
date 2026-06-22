@@ -257,6 +257,12 @@
     font-size: 15px !important;
 }
 
+.acf-block-form-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 16px 0;
+}
+
 html[dir=rtl] .acf-block-form-modal .components-modal__header .components-button {
     left: 0;
     right: auto;

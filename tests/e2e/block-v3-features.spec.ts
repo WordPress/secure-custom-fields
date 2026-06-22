@@ -12,6 +12,89 @@ const PLUGIN_SLUG = 'secure-custom-fields';
 const TEST_PLUGIN_SLUG = 'scf-test-plugin-v3-block';
 const BLOCK_NAME = 'scf/v3-block';
 
+const getVisibleBlockField = ( page, name ) =>
+	page.locator( `.acf-field[data-name="${ name }"]:visible` ).first();
+
+const getEditorCanvas = async ( page, editor ) => {
+	if ( await page.locator( 'iframe[name="editor-canvas"]' ).count() ) {
+		return editor.canvas;
+	}
+
+	return page;
+};
+
+const openBlockFields = async ( page ) => {
+	const modal = page.locator( '.acf-block-form-modal' );
+	const blockFields = page.locator( '.acf-block-fields:visible' ).first();
+
+	if ( ( await modal.isVisible() ) && ( await blockFields.isVisible() ) ) {
+		return true;
+	}
+
+	if ( await blockFields.isVisible() ) {
+		return false;
+	}
+
+	await page.evaluate( () => {
+		const editPostDispatch = window.wp?.data?.dispatch( 'core/edit-post' );
+		const interfaceDispatch = window.wp?.data?.dispatch( 'core/interface' );
+
+		if ( editPostDispatch?.openGeneralSidebar ) {
+			editPostDispatch.openGeneralSidebar( 'edit-post/block' );
+		} else if ( interfaceDispatch?.enableComplementaryArea ) {
+			interfaceDispatch.enableComplementaryArea(
+				'core/edit-post',
+				'edit-post/block'
+			);
+		}
+	} );
+
+	const expandedEditorButton = page
+		.locator( '.acf-blocks-open-expanded-editor-btn:visible' )
+		.first();
+
+	await expandedEditorButton.waitFor( {
+		state: 'visible',
+		timeout: 10000,
+	} );
+	await expandedEditorButton.click();
+	await page
+		.locator( '.acf-block-form-modal .acf-block-fields:visible' )
+		.waitFor( { state: 'visible', timeout: 10000 } );
+
+	return true;
+};
+
+const closeBlockFields = async ( page, isExpandedEditorOpen ) => {
+	if ( ! isExpandedEditorOpen ) {
+		return;
+	}
+
+	const modal = page.locator( '.acf-block-form-modal' );
+
+	if ( ! ( await modal.isVisible() ) ) {
+		return;
+	}
+
+	const fallbackDoneButton = modal
+		.locator( '.acf-block-form-modal__done-button:visible' )
+		.first();
+
+	try {
+		await fallbackDoneButton.click( { timeout: 1000 } );
+	} catch {
+		if ( ! ( await modal.isVisible() ) ) {
+			return;
+		}
+
+		await modal
+			.getByRole( 'button', { name: 'Done' } )
+			.click( { timeout: 5000 } );
+	}
+
+	await expect( modal ).toHaveCount( 0 );
+};
+
 test.describe( 'SCF Block V3 Features', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
@@ -51,11 +134,8 @@ test.describe( 'SCF Block V3 Features', () => {
 		// Add the v3 block
 		await editor.insertBlock( { name: BLOCK_NAME } );
 
-		// Wait for the block fields to appear in the sidebar
-		await page.waitForSelector( '.acf-block-fields', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		const isExpandedEditorOpen = await openBlockFields( page );
+		await closeBlockFields( page, isExpandedEditorOpen );
 
 		// Verify that there is NO edit/preview mode toggle button
 		// V3 blocks should always be in preview mode
@@ -65,7 +145,7 @@ test.describe( 'SCF Block V3 Features', () => {
 		await expect( modeToggle ).toHaveCount( 0 );
 
 		// Verify the block preview is visible in the canvas
-		const canvas = await editor.canvas;
+		const canvas = await getEditorCanvas( page, editor );
 		const blockPreview = canvas.locator(
 			'[data-type="scf/v3-block"] .v3-block'
 		);
@@ -96,18 +176,14 @@ test.describe( 'SCF Block V3 Features', () => {
 		// Add the v3 block
 		await editor.insertBlock( { name: BLOCK_NAME } );
 
-		// Wait for the block fields to appear in the sidebar
-		await page.waitForSelector( '.acf-block-fields', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		let isExpandedEditorOpen = await openBlockFields( page );
 
 		// Get the editor canvas
-		const canvas = await editor.canvas;
+		const canvas = await getEditorCanvas( page, editor );
 
 		// Fill in the title field
-		const titleField = page.locator(
-			'.acf-field[data-name="title"] input[type="text"]'
+		const titleField = getVisibleBlockField( page, 'title' ).locator(
+			'input[type="text"]'
 		);
 		await titleField.fill( 'Featured Product' );
 		await titleField.blur();
@@ -118,10 +194,13 @@ test.describe( 'SCF Block V3 Features', () => {
 		);
 		await expect( blockTitle ).toContainText( 'Featured Product' );
 
+		isExpandedEditorOpen = await openBlockFields( page );
+
 		// Fill in the description field
-		const descriptionField = page.locator(
-			'.acf-field[data-name="description"] textarea'
-		);
+		const descriptionField = getVisibleBlockField(
+			page,
+			'description'
+		).locator( 'textarea' );
 		await descriptionField.fill(
 			'This is an amazing product description.'
 		);
@@ -135,11 +214,15 @@ test.describe( 'SCF Block V3 Features', () => {
 			'This is an amazing product description.'
 		);
 
+		isExpandedEditorOpen = await openBlockFields( page );
+
 		// Toggle the show_badge field
-		const badgeSwitch = page.locator(
-			'.acf-field[data-name="show_badge"] .acf-switch'
+		const badgeSwitch = getVisibleBlockField( page, 'show_badge' ).locator(
+			'.acf-switch'
 		);
 		await badgeSwitch.click();
+
+		await closeBlockFields( page, isExpandedEditorOpen );
 
 		// Verify badge appears in preview
 		const blockBadge = canvas.locator(
@@ -176,18 +259,15 @@ test.describe( 'SCF Block V3 Features', () => {
 		// Add the v3 block
 		await editor.insertBlock( { name: BLOCK_NAME } );
 
-		// Wait for the block fields to appear in the sidebar
-		await page.waitForSelector( '.acf-block-fields', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		const isExpandedEditorOpen = await openBlockFields( page );
 
 		// Clear the title field to ensure it's empty (title is required)
-		const titleField = page.locator(
-			'.acf-field[data-name="title"] input[type="text"]'
+		const titleField = getVisibleBlockField( page, 'title' ).locator(
+			'input[type="text"]'
 		);
 		await titleField.clear();
 		await titleField.blur();
+		await closeBlockFields( page, isExpandedEditorOpen );
 
 		// Try to publish to trigger full validation
 		const publishToggle = page.locator(
@@ -227,18 +307,14 @@ test.describe( 'SCF Block V3 Features', () => {
 		// Add the v3 block
 		await editor.insertBlock( { name: BLOCK_NAME } );
 
-		// Wait for the block fields to appear in the sidebar
-		await page.waitForSelector( '.acf-block-fields', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		let isExpandedEditorOpen = await openBlockFields( page );
 
 		// Get the editor canvas
-		const canvas = await editor.canvas;
+		const canvas = await getEditorCanvas( page, editor );
 
 		// Fill in all fields with blur to commit changes
-		const titleField = page.locator(
-			'.acf-field[data-name="title"] input[type="text"]'
+		const titleField = getVisibleBlockField( page, 'title' ).locator(
+			'input[type="text"]'
 		);
 		await titleField.fill( 'Saved Title' );
 		await titleField.blur();
@@ -251,9 +327,12 @@ test.describe( 'SCF Block V3 Features', () => {
 			timeout: 5000,
 		} );
 
-		const descriptionField = page.locator(
-			'.acf-field[data-name="description"] textarea'
-		);
+		isExpandedEditorOpen = await openBlockFields( page );
+
+		const descriptionField = getVisibleBlockField(
+			page,
+			'description'
+		).locator( 'textarea' );
 		await descriptionField.fill( 'Saved description text.' );
 		await descriptionField.blur();
 
@@ -266,10 +345,14 @@ test.describe( 'SCF Block V3 Features', () => {
 			{ timeout: 5000 }
 		);
 
-		const badgeSwitch = page.locator(
-			'.acf-field[data-name="show_badge"] .acf-switch'
+		isExpandedEditorOpen = await openBlockFields( page );
+
+		const badgeSwitch = getVisibleBlockField( page, 'show_badge' ).locator(
+			'.acf-switch'
 		);
 		await badgeSwitch.click();
+
+		await closeBlockFields( page, isExpandedEditorOpen );
 
 		// Wait for badge to appear in preview
 		const blockBadge = canvas.locator(
@@ -293,36 +376,35 @@ test.describe( 'SCF Block V3 Features', () => {
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Get the editor canvas and select the block
-		const canvasAfterReload = await editor.canvas;
+		const canvasAfterReload = await getEditorCanvas( page, editor );
 		const blockAfterReload = canvasAfterReload.locator(
 			'[data-type="scf/v3-block"]'
 		);
 		await blockAfterReload.waitFor( { state: 'visible', timeout: 10000 } );
 		await blockAfterReload.click();
 
-		// Wait for block fields to load again
-		await page.waitForSelector( '.acf-block-fields', {
-			state: 'visible',
-			timeout: 10000,
-		} );
+		await openBlockFields( page );
 
 		// Verify the fields retained their values
-		const titleFieldAfterReload = page.locator(
-			'.acf-field[data-name="title"] input[type="text"]'
-		);
+		const titleFieldAfterReload = getVisibleBlockField(
+			page,
+			'title'
+		).locator( 'input[type="text"]' );
 		await expect( titleFieldAfterReload ).toHaveValue( 'Saved Title' );
 
-		const descriptionFieldAfterReload = page.locator(
-			'.acf-field[data-name="description"] textarea'
-		);
+		const descriptionFieldAfterReload = getVisibleBlockField(
+			page,
+			'description'
+		).locator( 'textarea' );
 		await expect( descriptionFieldAfterReload ).toHaveValue(
 			'Saved description text.'
 		);
 
 		// Verify the badge switch is on
-		const badgeSwitchAfterReload = page.locator(
-			'.acf-field[data-name="show_badge"] .acf-switch'
-		);
+		const badgeSwitchAfterReload = getVisibleBlockField(
+			page,
+			'show_badge'
+		).locator( '.acf-switch' );
 		const badgeClass = await badgeSwitchAfterReload.getAttribute( 'class' );
 		expect( badgeClass ).toContain( '-on' );
 	} );
