@@ -24,6 +24,7 @@ test.describe( 'Block Bindings in Site Editor', () => {
 	test( 'should bind text field to paragraph block in site editor', async ( {
 		page,
 		admin,
+		requestUtils,
 	} ) => {
 		// Block Bindings API was introduced in WordPress 6.5
 		await page.goto( '/wp-admin/' );
@@ -77,9 +78,18 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await expect( successNotice ).toBeVisible();
 		await expect( successNotice ).toContainText( 'Field group published' );
 
+		const [ activeTheme ] = await requestUtils.rest( {
+			path: '/wp/v2/themes?status=active',
+		} );
+		const activeThemeSlug =
+			activeTheme?.stylesheet || activeTheme?.template;
+
 		// Navigate to site editor
 		await admin.visitAdminPage(
-			'site-editor.php?p=%2Fwp_template%2Ftwentytwentyfive%2F%2Fsingle&canvas=edit'
+			'site-editor.php',
+			`p=${ encodeURIComponent(
+				`/wp_template/${ activeThemeSlug }//single`
+			) }&canvas=edit`
 		);
 
 		// Wait for the site editor to load - wait for the iframe or editor container
