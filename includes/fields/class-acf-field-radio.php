@@ -337,7 +337,7 @@ if ( ! class_exists( 'acf_field_radio' ) ) :
 			}
 
 			// save_other_choice
-			if ( $field['save_other_choice'] ) {
+			if ( $field['save_other_choice'] && scf_current_user_has_capability() ) {
 
 				// value isn't in choices yet
 				if ( ! isset( $field['choices'][ $value ] ) ) {

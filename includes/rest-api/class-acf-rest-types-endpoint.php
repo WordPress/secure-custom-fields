@@ -55,6 +55,25 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
+	 * Checks whether the matched REST route permits the request.
+	 *
+	 * @since SCF 6.8.0
+	 *
+	 * @param array           $handler The matched REST route handler.
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool True when the route permission callback allows the request.
+	 */
+	private function request_has_permission( $handler, $request ) {
+		if ( empty( $handler['permission_callback'] ) || ! is_callable( $handler['permission_callback'] ) ) {
+			return true;
+		}
+
+		$permission = call_user_func( $handler['permission_callback'], $request );
+
+		return ! is_wp_error( $permission ) && false !== $permission && null !== $permission;
+	}
+
+	/**
 	 * Filter post types requests for individual post type requests.
 	 *
 	 * @since SCF 6.5.0
@@ -76,6 +95,10 @@ class SCF_Rest_Types_Endpoint {
 
 		// Only proceed if source parameter is provided and valid
 		if ( ! $source || ! $this->is_valid_source( $source ) ) {
+			return $response;
+		}
+
+		if ( ! $this->request_has_permission( $handler, $request ) ) {
 			return $response;
 		}
 
@@ -175,6 +198,10 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
+		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
+			return;
+		}
+
 		register_rest_field(
 			'type',
 			'scf_field_groups',
@@ -208,6 +235,10 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
+		if ( ! scf_current_user_has_capability() ) {
+			return array();
+		}
+
 		$post_type         = $post_type_object['slug'];
 		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
@@ -311,7 +342,7 @@ class SCF_Rest_Types_Endpoint {
 					),
 				),
 			),
-			'context'     => array( 'view', 'edit', 'embed' ),
+			'context'     => array( 'edit' ),
 		);
 	}
 

@@ -993,6 +993,41 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 		}
 
 		/**
+		 * Deletes any ACF row meta that belongs to the provided flexible content row.
+		 *
+		 * @since ACF 6.5
+		 *
+		 * @param integer $i       The index of the row to delete.
+		 * @param array   $field   The field array containing all settings.
+		 * @param mixed   $post_id The post ID where the value is saved.
+		 * @return boolean
+		 */
+		private function delete_row_meta_by_prefix( $i, $field, $post_id ) {
+			if ( empty( $field['name'] ) ) {
+				return false;
+			}
+
+			$meta = acf_get_meta( $post_id );
+			if ( empty( $meta ) || ! is_array( $meta ) ) {
+				return false;
+			}
+
+			$deleted = false;
+			$prefix  = "{$field['name']}_{$i}_";
+
+			foreach ( array_keys( $meta ) as $meta_name ) {
+				if ( 0 !== strpos( $meta_name, $prefix ) ) {
+					continue;
+				}
+
+				acf_delete_value( $post_id, array( 'name' => $meta_name ) );
+				$deleted = true;
+			}
+
+			return $deleted;
+		}
+
+		/**
 		 * This function will delete a value row
 		 *
 		 * @since   ACF 5.5.8
@@ -1017,7 +1052,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
 			// bail early if no layout
 			if ( ! $layout || empty( $layout['sub_fields'] ) ) {
-				return false;
+				return $this->delete_row_meta_by_prefix( $i, $field, $post_id );
 			}
 
 			// loop
@@ -1029,6 +1064,8 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 				// delete value
 				acf_delete_value( $post_id, $sub_field );
 			}
+
+			$this->delete_row_meta_by_prefix( $i, $field, $post_id );
 
 			// return
 			return true;
@@ -1134,7 +1171,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 					unset( $row['acf_fc_layout_disabled'] );
 
 					if ( ! empty( $row['acf_fc_layout_custom_label'] ) ) {
-						$renamed_layouts[ $i ] = $row['acf_fc_layout_custom_label'];
+						$renamed_layouts[ $i ] = sanitize_text_field( $row['acf_fc_layout_custom_label'] );
 					}
 					unset( $row['acf_fc_layout_custom_label'] );
 

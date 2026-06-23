@@ -128,6 +128,106 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		}
 
 		/**
+		 * Gets all known field schema properties.
+		 *
+		 * The field schema may be either a direct object schema or a oneOf of
+		 * field type variants. Update inputs are partial, so they need the union
+		 * of known properties without requiring a complete field object.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @return array
+		 */
+		private function get_field_schema_properties() {
+			$field_schema = $this->get_field_schema();
+
+			if ( isset( $field_schema['definitions']['field'] ) ) {
+				$field_schema = $field_schema['definitions']['field'];
+			}
+
+			if ( isset( $field_schema['properties'] ) && is_array( $field_schema['properties'] ) ) {
+				return $field_schema['properties'];
+			}
+
+			$field_properties = array();
+			foreach ( $field_schema['oneOf'] ?? array() as $variant ) {
+				if ( isset( $variant['properties'] ) && is_array( $variant['properties'] ) ) {
+					$field_properties = $this->merge_field_schema_properties( $field_properties, $variant['properties'] );
+				}
+			}
+
+			return $field_properties;
+		}
+
+		/**
+		 * Merges field property schema maps while preserving enum/type variants.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @param array $properties Existing property schema map.
+		 * @param array $next_properties Property schema map to merge in.
+		 * @return array
+		 */
+		private function merge_field_schema_properties( array $properties, array $next_properties ) {
+			foreach ( $next_properties as $property_name => $property_schema ) {
+				if ( ! isset( $properties[ $property_name ] ) || ! is_array( $properties[ $property_name ] ) || ! is_array( $property_schema ) ) {
+					$properties[ $property_name ] = $property_schema;
+					continue;
+				}
+
+				$properties[ $property_name ] = $this->merge_field_schema_property(
+					$properties[ $property_name ],
+					$property_schema
+				);
+			}
+
+			return $properties;
+		}
+
+		/**
+		 * Merges two schemas for the same field property.
+		 *
+		 * @since 6.8.0
+		 *
+		 * @param array $property_schema Existing property schema.
+		 * @param array $next_property_schema Property schema to merge in.
+		 * @return array
+		 */
+		private function merge_field_schema_property( array $property_schema, array $next_property_schema ) {
+			$merged = array_merge( $property_schema, $next_property_schema );
+
+			if ( isset( $property_schema['type'], $next_property_schema['type'] ) ) {
+				$merged['type'] = array_values(
+					array_unique(
+						array_merge(
+							(array) $property_schema['type'],
+							(array) $next_property_schema['type']
+						),
+						SORT_REGULAR
+					)
+				);
+			}
+
+			if ( isset( $property_schema['enum'], $next_property_schema['enum'] ) && is_array( $property_schema['enum'] ) && is_array( $next_property_schema['enum'] ) ) {
+				$merged['enum'] = array_values(
+					array_unique(
+						array_merge( $property_schema['enum'], $next_property_schema['enum'] ),
+						SORT_REGULAR
+					)
+				);
+			}
+
+			if ( isset( $property_schema['properties'], $next_property_schema['properties'] ) && is_array( $property_schema['properties'] ) && is_array( $next_property_schema['properties'] ) ) {
+				$merged['properties'] = $this->merge_field_schema_properties(
+					$property_schema['properties'],
+					$next_property_schema['properties']
+				);
+			}
+
+			return $merged;
+		}
+
+		/**
 		 * Gets the SCF identifier schema.
 		 *
 		 * @since 6.8.0
@@ -352,12 +452,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 		 * @since 6.8.0
 		 */
 		private function register_update_ability() {
-			// Get field properties from field schema.
-			$field_schema     = $this->get_field_schema();
-			$field_properties = array();
-			if ( isset( $field_schema['definitions']['field']['properties'] ) ) {
-				$field_properties = $field_schema['definitions']['field']['properties'];
-			}
+			$field_properties = $this->get_field_schema_properties();
 
 			wp_register_ability(
 				$this->ability_name( 'update' ),
@@ -377,9 +472,9 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 						),
 					),
 					'input_schema'        => array(
-						'type'       => 'object',
-						'required'   => array( 'ID' ),
-						'properties' => array_merge(
+						'type'                 => 'object',
+						'required'             => array( 'ID' ),
+						'properties'           => array_merge(
 							array(
 								'ID' => array(
 									'type'        => 'integer',
@@ -388,6 +483,7 @@ if ( ! class_exists( 'SCF_Field_Abilities' ) ) :
 							),
 							$field_properties
 						),
+						'additionalProperties' => false,
 					),
 					'output_schema'       => $this->get_field_with_internal_fields_schema(),
 				)

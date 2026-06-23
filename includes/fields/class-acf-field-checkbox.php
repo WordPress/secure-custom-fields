@@ -500,7 +500,7 @@ if ( ! class_exists( 'acf_field_checkbox' ) ) :
 			$value = acf_get_field_type( 'select' )->update_value( $value, $post_id, $field );
 
 			// save_other_choice
-			if ( $field['save_custom'] ) {
+			if ( $field['save_custom'] && scf_current_user_has_capability() ) {
 
 				// get raw $field (may have been changed via repeater field)
 				// if field is local, it won't have an ID

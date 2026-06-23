@@ -1,10 +1,18 @@
 <?php
+/**
+ * ACF internal post type base class.
+ *
+ * @package wordpress/secure-custom-fields
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
+	/**
+	 * Base class for ACF-backed internal post types.
+	 */
 	abstract class ACF_Internal_Post_Type {
 
 
@@ -155,7 +163,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			$raw_post['title']      = $post->post_title;
 			$raw_post['key']        = $post->post_name;
 			$raw_post['menu_order'] = $post->menu_order;
-			$raw_post['active']     = in_array( $post->post_status, array( 'publish', 'auto-draft' ) );
+			$raw_post['active']     = in_array( $post->post_status, array( 'publish', 'auto-draft' ), true );
 
 			return $raw_post;
 		}
@@ -184,7 +192,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 				$cache_key = $this->cache_key . $id;
 				$post_id   = wp_cache_get( $cache_key, 'secure-custom-fields' );
 
-				if ( $post_id === false ) {
+				if ( false === $post_id ) {
 					$query_key = 'acf_' . $this->post_key_prefix . 'key';
 
 					// Query posts.
@@ -394,7 +402,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			$cache_key = acf_cache_key( $this->cache_key_plural );
 			$post_ids  = wp_cache_get( $cache_key, 'secure-custom-fields' ); // TODO: Do we need to change the group at all?
 
-			if ( $post_ids === false ) {
+			if ( false === $post_ids ) {
 
 				// Query posts.
 				$posts = get_posts(
@@ -718,6 +726,20 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			// Disable filters to ensure ACF loads data from DB.
 			acf_disable_filters();
 
+			$new_post_id = (int) $new_post_id;
+
+			if ( 0 > $new_post_id ) {
+				return false;
+			}
+
+			if ( $new_post_id ) {
+				$target = get_post( $new_post_id );
+
+				if ( ! $target || $target->post_type !== $this->post_type ) {
+					return false;
+				}
+			}
+
 			$post = $this->get_post( $id );
 			if ( ! $post || ! $post['ID'] ) {
 				return false;
@@ -843,6 +865,8 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 		 * @return string
 		 */
 		public function export_post_as_php( $post = array() ) {
+			unset( $post );
+
 			return '';
 		}
 

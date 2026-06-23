@@ -586,7 +586,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			}
 
 			// Save custom options back to the field definition if configured.
-			if ( ! empty( $field['save_options'] ) && is_array( $value ) ) {
+			if ( ! empty( $field['save_options'] ) && is_array( $value ) && scf_current_user_has_capability() ) {
 				// Get the raw field, using the ID if present or the key otherwise (i.e. when using JSON).
 				$selector = $field['ID'] ? $field['ID'] : $field['key'];
 				$field    = acf_get_field( $selector );
