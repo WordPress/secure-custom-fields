@@ -64,7 +64,7 @@ The script verifies that all required files are present, installs production-onl
 
 ### How releases reach WordPress.org
 
-Releases are **not** deployed automatically — there is no GitHub Action that pushes builds to the WordPress.org plugin directory. A maintainer prepares the release on GitHub and then manually commits the distribution build to the WordPress.org SVN repository. The full process is documented in [Releasing a New Version](releases.md).
+Releases are **not** deployed automatically — there is no GitHub Action that pushes builds to the WordPress.org plugin directory. A maintainer prepares the release on GitHub and then manually commits the distribution build to the WordPress.org SVN repository. The full process is documented in [Releasing a New Version](releases).
 
 ## Contribution Guidelines
 
