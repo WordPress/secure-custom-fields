@@ -3182,6 +3182,10 @@ function acf_translate( $string ) {
 		return $string;
 	}
 
+	if ( acf_get_setting( 'l10n_var_export' ) ) {
+		return "!!__(!!'{$string}!!', !!'{$textdomain}!!')!!";
+	}
+
 	// translate
 	return __( $string, $textdomain );
 }

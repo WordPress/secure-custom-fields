@@ -735,19 +735,54 @@ if ( ! class_exists( 'SCF_Internal_Post_Type_Abilities' ) ) :
 				return $this->not_found_error();
 			}
 
-			$new_post_id = isset( $input['new_post_id'] ) ? $input['new_post_id'] : 0;
+			$new_post_id = isset( $input['new_post_id'] ) ? (int) $input['new_post_id'] : 0;
 
-			// Validate that new_post_id references an existing WordPress post.
-			if ( $new_post_id && ! get_post( $new_post_id ) ) {
-				return new WP_Error(
-					'invalid_new_post_id',
-					sprintf(
-						/* translators: %d: Invalid post ID */
-						__( 'Invalid new_post_id: %d does not exist.', 'secure-custom-fields' ),
-						$new_post_id
-					),
-					array( 'status' => 400 )
-				);
+			if ( $new_post_id ) {
+				if ( 0 > $new_post_id ) {
+					return new WP_Error(
+						'invalid_new_post_id',
+						__( 'Invalid new_post_id: ID must be a positive integer.', 'secure-custom-fields' ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$target = get_post( $new_post_id );
+
+				if ( ! $target ) {
+					return new WP_Error(
+						'invalid_new_post_id',
+						sprintf(
+							/* translators: %d: Invalid post ID */
+							__( 'Invalid new_post_id: %d does not exist.', 'secure-custom-fields' ),
+							$new_post_id
+						),
+						array( 'status' => 400 )
+					);
+				}
+
+				if ( $target->post_type !== $this->internal_post_type ) {
+					return new WP_Error(
+						'invalid_new_post_id',
+						sprintf(
+							/* translators: %s: Entity type */
+							__( 'Invalid new_post_id: target must be an existing SCF %s.', 'secure-custom-fields' ),
+							$this->entity_name()
+						),
+						array( 'status' => 400 )
+					);
+				}
+
+				if ( ! current_user_can( 'edit_post', $new_post_id ) ) {
+					return new WP_Error(
+						'forbidden',
+						sprintf(
+							/* translators: %s: Entity type */
+							__( 'Insufficient permissions to overwrite this SCF %s.', 'secure-custom-fields' ),
+							$this->entity_name()
+						),
+						array( 'status' => 403 )
+					);
+				}
 			}
 
 			$duplicated = $this->instance()->duplicate_post( $input['identifier'], $new_post_id );

@@ -255,6 +255,21 @@ class WC_Order {
 		if ( ! $this->is_hpos_enabled() ) {
 			return;
 		}
+
+		if (
+			! is_admin()
+			|| ! current_user_can( 'edit_shop_orders' ) // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce capability.
+			|| ! acf_verify_nonce( 'post' )
+		) {
+			return;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified above with acf_verify_nonce().
+		if ( empty( $_POST['acf'] ) ) {
+			return;
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 		// Remove the action to prevent an infinite loop via $order->save().
 		remove_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10 );
 		acf_save_post( 'woo_order_' . $order_id );

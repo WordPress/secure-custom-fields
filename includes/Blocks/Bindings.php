@@ -79,27 +79,38 @@ class Bindings {
 				}
 			}
 
+			$field_value = $field['value'];
+
 			switch ( $attribute_name ) {
 				case 'id':
 				case 'alt':
 				case 'title':
 					// The value is in the field of the same name.
-					$value = $field['value'][ $attribute_name ] ?? '';
+					$value = is_array( $field_value ) ? $field_value[ $attribute_name ] ?? '' : '';
 					break;
 				case 'url':
-					// The URL is the field value.
-					$value = $field['value']['url'] ?? $field['value'] ?? '';
+					if ( is_array( $field_value ) ) {
+						// The URL is in the array returned by media-like fields.
+						$value = $field_value['url'] ?? '';
+					} elseif ( is_scalar( $field_value ) || null === $field_value ) {
+						// Scalar URL-like fields use the field value directly.
+						$value = $field_value ?? '';
+					} else {
+						$value = '';
+					}
 					break;
 				case 'rel':
 					// Handle checkbox field for rel attribute by joining array values.
-					if ( is_array( $field['value'] ) ) {
-						$value = implode( ' ', $field['value'] );
+					if ( is_array( $field_value ) ) {
+						$value = implode( ' ', $field_value );
+					} elseif ( is_scalar( $field_value ) || null === $field_value ) {
+						$value = $field_value ?? '';
 					} else {
-						$value = $field['value'] ?? '';
+						$value = '';
 					}
 					break;
 				default:
-					$value = $field['value'];
+					$value = $field_value;
 
 					if ( is_array( $value ) ) {
 						$value = wp_json_encode( $value );
