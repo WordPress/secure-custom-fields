@@ -9,6 +9,40 @@ const TEST_PLUGIN_SLUG = 'scf-test-setup-post-types';
 const FIELD_GROUP_LABEL = 'Product Details';
 const TEXT_FIELD_LABEL = 'Product Name';
 
+const openSiteEditorBlockInspector = async ( page ) => {
+	const sidebar = page.locator( '.interface-complementary-area' ).first();
+
+	await page.evaluate( () => {
+		const interfaceDispatch = window.wp?.data?.dispatch( 'core/interface' );
+
+		interfaceDispatch?.enableComplementaryArea?.(
+			'core',
+			'edit-site/block-inspector'
+		);
+	} );
+
+	try {
+		await sidebar.waitFor( { state: 'visible', timeout: 1000 } );
+		return;
+	} catch ( error ) {
+		// Fall through to the toolbar button when the data store helper is
+		// unavailable or has not opened the sidebar in this WordPress version.
+	}
+
+	const settingsButton = page
+		.locator( 'button[aria-controls="edit-site:block-inspector"]' )
+		.first();
+
+	if (
+		( await settingsButton.count() ) &&
+		( await settingsButton.getAttribute( 'aria-expanded' ) ) !== 'true'
+	) {
+		await settingsButton.click();
+	}
+
+	await sidebar.waitFor( { state: 'visible', timeout: 10000 } );
+};
+
 test.describe( 'Block Bindings in Site Editor', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( PLUGIN_SLUG );
@@ -24,12 +58,14 @@ test.describe( 'Block Bindings in Site Editor', () => {
 	test( 'should bind text field to paragraph block in site editor', async ( {
 		page,
 		admin,
+		requestUtils,
 	} ) => {
-		// Block Bindings API was introduced in WordPress 6.5
+		// SCF's bindings editor UI uses stable block bindings JS APIs from
+		// WordPress 6.7+.
 		await page.goto( '/wp-admin/' );
 		test.skip(
-			! ( await wpVersionAtLeast( page, 6, 5 ) ),
-			'Block Bindings API requires WordPress 6.5+'
+			! ( await wpVersionAtLeast( page, 6, 7 ) ),
+			'SCF block bindings editor UI requires WordPress 6.7+'
 		);
 
 		// Navigate to Field Groups and create new.
@@ -77,10 +113,23 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		await expect( successNotice ).toBeVisible();
 		await expect( successNotice ).toContainText( 'Field group published' );
 
-		// Navigate to site editor
-		await admin.visitAdminPage(
-			'site-editor.php?p=%2Fwp_template%2Ftwentytwentyfive%2F%2Fsingle&canvas=edit'
+		const templates = await requestUtils.rest( {
+			path: '/wp/v2/templates',
+		} );
+		const singleTemplate = templates.find(
+			( { slug } ) => slug === 'single'
 		);
+
+		if ( ! singleTemplate?.id ) {
+			throw new Error( 'Could not find the single template.' );
+		}
+
+		// Navigate to site editor
+		await admin.visitSiteEditor( {
+			postType: 'wp_template',
+			postId: singleTemplate.wp_id || singleTemplate.id,
+			canvas: 'edit',
+		} );
 
 		// Wait for the site editor to load - wait for the iframe or editor container
 		await page.waitForSelector( 'iframe[name="editor-canvas"]', {
@@ -101,7 +150,8 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		const contentBlock = frameLocator
 			.locator( '[data-type="core/post-content"]' )
 			.first();
-		await contentBlock.click();
+		// Force click to bypass editor overlays in older WordPress versions.
+		await contentBlock.click( { force: true } );
 
 		// Press Enter to add a new paragraph block
 		await page.keyboard.press( 'Enter' );
@@ -118,10 +168,12 @@ test.describe( 'Block Bindings in Site Editor', () => {
 		// Force click to bypass WP 7.0's side-inserter popover overlay.
 		await emptyParagraph.click( { force: true } );
 
+		await openSiteEditorBlockInspector( page );
+
 		// Wait for the "Connect to a field" panel to appear in the block inspector
 		await page.waitForSelector(
 			'input[id^="components-form-token-input-combobox-control-"]',
-			{ timeout: 5000 }
+			{ timeout: 10000 }
 		);
 
 		// Click on the combobox input to open suggestions

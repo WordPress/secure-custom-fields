@@ -11,6 +11,7 @@ import {
 	useRef,
 	createPortal,
 	useMemo,
+	useCallback,
 } from '@wordpress/element';
 
 import {
@@ -719,8 +720,24 @@ function BlockEditInner( props ) {
 	const modalFormContainerRef = useRef();
 	const [ currentFormContainer, setCurrentFormContainer ] = useState();
 	const [ canRenderForm, setCanRenderForm ] = useState( false );
+	const [ shouldShowModalDoneFallback, setShouldShowModalDoneFallback ] =
+		useState( false );
 	const [ invisibleBlockFormContainer, setInvisibleBlockFormContainer ] =
 		useState();
+	const closeBlockFormModal = useCallback( () => {
+		setCurrentFormContainer( null );
+		setBlockFormModalOpen( false );
+	}, [] );
+	const setModalFormContainer = useCallback(
+		( container ) => {
+			modalFormContainerRef.current = container;
+
+			if ( container && blockFormModalOpen ) {
+				setCurrentFormContainer( container );
+			}
+		},
+		[ blockFormModalOpen ]
+	);
 
 	// Render counter for debugging
 	const renderCount = useRef( 0 );
@@ -768,8 +785,7 @@ function BlockEditInner( props ) {
 	}, [ blockEditorInspectorSidebarOpen ] );
 
 	useEffect( () => {
-		if ( blockFormModalOpen && modalFormContainerRef?.current ) {
-			setCurrentFormContainer( modalFormContainerRef.current );
+		if ( blockFormModalOpen ) {
 			return;
 		}
 
@@ -778,13 +794,63 @@ function BlockEditInner( props ) {
 				? inspectorControlsRef.current
 				: invisibleBlockFormContainer
 		);
-	}, [ blockFormModalOpen, modalFormContainerRef ] );
+	}, [
+		blockEditorInspectorSidebarOpen,
+		invisibleBlockFormContainer,
+		blockFormModalOpen,
+	] );
 
 	useEffect( () => {
-		if ( blockEditorInspectorSidebarOpen ) {
-			if ( ! blockFormModalOpen ) {
-				setCurrentFormContainer( inspectorControlsRef.current );
+		if ( ! blockFormModalOpen ) {
+			return;
+		}
+
+		const setModalContainer = () => {
+			if ( modalFormContainerRef?.current ) {
+				setCurrentFormContainer( modalFormContainerRef.current );
 			}
+		};
+
+		setModalContainer();
+		const timeout = setTimeout( setModalContainer, 0 );
+
+		return () => {
+			clearTimeout( timeout );
+		};
+	}, [ blockFormModalOpen ] );
+
+	useEffect( () => {
+		if ( ! blockFormModalOpen ) {
+			setShouldShowModalDoneFallback( false );
+			return;
+		}
+
+		const updateFallbackVisibility = () => {
+			const modal = modalFormContainerRef?.current?.closest(
+				'.acf-block-form-modal'
+			);
+			const hasHeaderActions = modal?.querySelector(
+				'.components-modal__header .components-button'
+			);
+
+			setShouldShowModalDoneFallback( ! hasHeaderActions );
+		};
+
+		updateFallbackVisibility();
+		const timeout = setTimeout( updateFallbackVisibility, 0 );
+
+		return () => {
+			clearTimeout( timeout );
+		};
+	}, [ blockFormModalOpen ] );
+
+	useEffect( () => {
+		if ( blockFormModalOpen ) {
+			return;
+		}
+
+		if ( blockEditorInspectorSidebarOpen ) {
+			setCurrentFormContainer( inspectorControlsRef.current );
 			return;
 		}
 
@@ -1160,18 +1226,30 @@ function BlockEditInner( props ) {
 									isFetchingBlock && ! validationErrors
 								}
 								isBusy={ isFetchingBlock }
-								onClick={ () => {
-									setCurrentFormContainer( null );
-									setBlockFormModalOpen( false );
-								} }
+								onClick={ closeBlockFormModal }
 							>
 								{ acf.__( 'Done' ) }
 							</Button>,
 						] }
 					>
+						{ shouldShowModalDoneFallback && (
+							<div className="acf-block-form-modal__actions">
+								<Button
+									className="acf-block-form-modal__done-button"
+									variant="primary"
+									disabled={
+										isFetchingBlock && ! validationErrors
+									}
+									isBusy={ isFetchingBlock }
+									onClick={ closeBlockFormModal }
+								>
+									{ acf.__( 'Done' ) }
+								</Button>
+							</div>
+						) }
 						<div
 							className="acf-modal-block-form-container"
-							ref={ modalFormContainerRef }
+							ref={ setModalFormContainer }
 						/>
 					</Modal>
 				) }

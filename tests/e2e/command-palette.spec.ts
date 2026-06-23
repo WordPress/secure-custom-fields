@@ -3,6 +3,16 @@
  */
 const { test, expect, wpVersionAtLeast } = require( './fixtures' );
 
+const getCommandPaletteInput = ( page ) =>
+	page.locator( '.commands-command-menu input[cmdk-input]' ).first();
+
+const openCommandPalette = async ( page ) => {
+	await page.evaluate( () =>
+		window.wp.data.dispatch( 'core/commands' ).open()
+	);
+	await getCommandPaletteInput( page ).waitFor( { state: 'visible' } );
+};
+
 test.describe( 'Command Palette', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( 'secure-custom-fields' );
@@ -25,7 +35,9 @@ test.describe( 'Command Palette', () => {
 		test.describe( `opened in ${ context }`, () => {
 			test.beforeEach( async ( { admin, page } ) => {
 				if ( context === 'post-editor' ) {
-					await admin.createNewPost( { title: 'Command palette test' } );
+					await admin.createNewPost( {
+						title: 'Command palette test',
+					} );
 				} else if ( context === 'wp-admin' ) {
 					await admin.visitAdminPage( 'index.php' );
 
@@ -37,32 +49,28 @@ test.describe( 'Command Palette', () => {
 			} );
 
 			test.describe( 'Admin-level commands', () => {
-				test( 'should register SCF create commands', async ( { page } ) => {
-					// Open the command palette via keyboard shortcut.
-					await page.keyboard.press( 'ControlOrMeta+k' );
+				test( 'should register SCF create commands', async ( {
+					page,
+				} ) => {
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
-					await expect( input ).toBeVisible();
+					const input = getCommandPaletteInput( page );
 
 					// Search for a create command — these are always registered by SCF.
 					await input.fill( 'Create New Field Group' );
 					await expect(
-						page.getByRole( 'option', { name: /Create New Field Group/ } )
+						page.getByRole( 'option', {
+							name: /Create New Field Group/,
+						} )
 					).toBeVisible();
 				} );
 
 				test( 'should register SCF view commands without duplicates', async ( {
-					page
+					page,
 				} ) => {
-					await page.keyboard.press( 'ControlOrMeta+k' );
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
+					const input = getCommandPaletteInput( page );
 
 					// Search for a view command that exists in both WP's auto-registered
 					// admin menu commands and SCF's view commands list.
@@ -79,12 +87,9 @@ test.describe( 'Command Palette', () => {
 				test( 'should navigate to field groups via command palette', async ( {
 					page,
 				} ) => {
-					await page.keyboard.press( 'ControlOrMeta+k' );
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
+					const input = getCommandPaletteInput( page );
 
 					await input.fill( 'Field Groups' );
 					await page
@@ -99,23 +104,23 @@ test.describe( 'Command Palette', () => {
 
 			test.describe( 'Post type-specific commands', () => {
 				test.beforeAll( async ( { requestUtils } ) => {
-					await requestUtils.activatePlugin( 'scf-test-setup-post-types' );
+					await requestUtils.activatePlugin(
+						'scf-test-setup-post-types'
+					);
 				} );
 
 				test.afterAll( async ( { requestUtils } ) => {
-					await requestUtils.deactivatePlugin( 'scf-test-setup-post-types' );
+					await requestUtils.deactivatePlugin(
+						'scf-test-setup-post-types'
+					);
 				} );
 
 				test( 'should register "View All" command for SCF post type without duplicates', async ( {
 					page,
 				} ) => {
-					await page.keyboard.press( 'ControlOrMeta+k' );
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
-					await expect( input ).toBeVisible();
+					const input = getCommandPaletteInput( page );
 
 					// The "View All" command uses the post type's `all_items` label.
 					await input.fill( 'All SCF E2E Test Type Items' );
@@ -132,13 +137,9 @@ test.describe( 'Command Palette', () => {
 				test( 'should register "Add New" command for SCF post type without duplicates', async ( {
 					page,
 				} ) => {
-					await page.keyboard.press( 'ControlOrMeta+k' );
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
-					await expect( input ).toBeVisible();
+					const input = getCommandPaletteInput( page );
 
 					await input.fill( 'Add New SCF E2E Test Type Item' );
 
@@ -153,20 +154,18 @@ test.describe( 'Command Palette', () => {
 				test( 'should register "Edit post type" command for SCF post type', async ( {
 					page,
 				} ) => {
-					await page.keyboard.press( 'ControlOrMeta+k' );
+					await openCommandPalette( page );
 
-					const commandPalette = page.getByRole( 'dialog', {
-						name: 'Command palette',
-					} );
-					const input = commandPalette.getByRole( 'combobox' );
-					await expect( input ).toBeVisible();
+					const input = getCommandPaletteInput( page );
 
 					// The edit command label uses the post type's `name` label.
 					await input.fill( 'Edit post type' );
 
-					await page.getByRole( 'option', {
-						name: /Edit post type: SCF E2E Test Type/,
-					} ).click();
+					await page
+						.getByRole( 'option', {
+							name: /Edit post type: SCF E2E Test Type/,
+						} )
+						.click();
 					await expect(
 						page.getByRole( 'textbox', { name: /Plural Label/ } )
 					).toHaveValue( 'SCF E2E Test Type' );

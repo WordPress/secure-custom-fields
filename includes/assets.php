@@ -97,6 +97,70 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
+		 * Returns generated asset file data for a script.
+		 *
+		 * @since SCF 6.8.10
+		 *
+		 * @param string $asset_file The generated asset file path.
+		 * @param string $version    The fallback version.
+		 * @return array
+		 */
+		private function get_asset_file_data( $asset_file, $version ) {
+			$asset = file_exists( $asset_file ) ? require $asset_file : array();
+
+			return array(
+				'dependencies' => isset( $asset['dependencies'] ) ? $asset['dependencies'] : array(),
+				'version'      => isset( $asset['version'] ) ? $asset['version'] : $version,
+			);
+		}
+
+		/**
+		 * Registers a fallback for the React JSX runtime script handle.
+		 *
+		 * WordPress 6.6+ registers this handle in core. Older supported versions
+		 * do not, but bundled WordPress packages may still depend on the global.
+		 *
+		 * @since SCF 6.8.10
+		 *
+		 * @param string $version The script version.
+		 * @return void
+		 */
+		private function register_react_jsx_runtime_polyfill( $version ) {
+			if ( wp_script_is( 'react-jsx-runtime', 'registered' ) ) {
+				return;
+			}
+
+			wp_register_script(
+				'react-jsx-runtime',
+				false,
+				array( 'wp-element' ),
+				$version,
+				true
+			);
+
+			wp_add_inline_script(
+				'react-jsx-runtime',
+				'(function(){if(window.ReactJSXRuntime||!window.wp||!window.wp.element){return;}var element=window.wp.element;function jsx(type,props,key){if(key!==undefined){var nextProps={};props=props||{};for(var prop in props){if(Object.prototype.hasOwnProperty.call(props,prop)){nextProps[prop]=props[prop];}}nextProps.key=key;props=nextProps;}return element.createElement(type,props);}window.ReactJSXRuntime={Fragment:element.Fragment,jsx:jsx,jsxs:jsx};})();'
+			);
+		}
+
+		/**
+		 * Returns whether the legacy SCF block bindings editor script can run.
+		 *
+		 * The script depends on the stable WordPress block bindings JavaScript
+		 * APIs, which are only available in WordPress 6.7+.
+		 *
+		 * @since SCF 6.8.10
+		 *
+		 * @return bool
+		 */
+		private function supports_block_bindings_editor_script() {
+			global $wp_version;
+
+			return version_compare( $wp_version, '6.7', '>=' );
+		}
+
+		/**
 		 * Registers the ACF scripts and styles.
 		 *
 		 * @date    10/4/18
@@ -108,6 +172,8 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			// Extract vars.
 			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
 			$version = acf_get_setting( 'version' );
+
+			$this->register_react_jsx_runtime_polyfill( $version );
 
 			// Define path patterns.
 			$js_path_patterns    = array(
@@ -252,11 +318,11 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			// Register scripts.
 			foreach ( $scripts as $script ) {
 				// Load asset file if it exists.
-				$asset = file_exists( $script['asset_file'] ) ? require $script['asset_file'] : null;
+				$asset = $this->get_asset_file_data( $script['asset_file'], $script['version'] );
 
 				// Merge dependencies if asset file exists.
-				$deps = $asset ? array_merge( $asset['dependencies'], $script['deps'] ) : $script['deps'];
-				$ver  = $asset ? $asset['version'] : $script['version'];
+				$deps = array_values( array_unique( array_merge( $asset['dependencies'], $script['deps'] ) ) );
+				$ver  = $asset['version'];
 
 				wp_register_script(
 					$script['handle'],
@@ -267,22 +333,44 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				);
 			}
 
+			$admin_commands_asset_file = acf_get_path( 'assets/build/js/commands/scf-admin.asset.php' );
+			$admin_commands_asset      = $this->get_asset_file_data( $admin_commands_asset_file, $version );
+			$admin_commands_deps       = array_values(
+				array_unique(
+					array_merge(
+						$admin_commands_asset['dependencies'],
+						array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' )
+					)
+				)
+			);
+
 			wp_register_script(
 				'scf-commands-admin',
 				acf_get_url( 'assets/build/js/commands/scf-admin' . $suffix . '.js' ),
-				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
-				$version,
+				$admin_commands_deps,
+				$admin_commands_asset['version'],
 				array(
 					'in_footer' => true,
 					'strategy'  => 'defer',
 				)
 			);
 
+			$custom_post_type_commands_asset_file = acf_get_path( 'assets/build/js/commands/scf-custom-post-types.asset.php' );
+			$custom_post_type_commands_asset      = $this->get_asset_file_data( $custom_post_type_commands_asset_file, $version );
+			$custom_post_type_commands_deps       = array_values(
+				array_unique(
+					array_merge(
+						$custom_post_type_commands_asset['dependencies'],
+						array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' )
+					)
+				)
+			);
+
 			wp_register_script(
 				'scf-commands-custom-post-types',
 				acf_get_url( 'assets/build/js/commands/scf-custom-post-types' . $suffix . '.js' ),
-				array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' ),
-				$version,
+				$custom_post_type_commands_deps,
+				$custom_post_type_commands_asset['version'],
 				array(
 					'in_footer' => true,
 					'strategy'  => 'defer',
@@ -552,7 +640,10 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				// @todo integrate into the above. Previously, they were simply hooked into the hook below.
 				wp_enqueue_script( 'acf-pro-input' );
 				wp_enqueue_script( 'acf-pro-ui-options-page' );
-				if ( ! acf_is_using_datastore() ) {
+				if (
+					! acf_is_using_datastore() &&
+					$this->supports_block_bindings_editor_script()
+				) {
 					wp_enqueue_script( 'scf-bindings' );
 				}
 				wp_enqueue_style( 'acf-pro-input' );
