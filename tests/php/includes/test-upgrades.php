@@ -32,11 +32,60 @@ class Test_ACF_Upgrades extends BaseTestCase {
 	private $captured_termmeta = array();
 
 	/**
+	 * Removable query result filters registered by tests.
+	 *
+	 * @var array
+	 */
+	private $query_results_filters = array();
+
+	/**
+	 * Removable insert filters registered by tests.
+	 *
+	 * @var array
+	 */
+	private $insert_filters = array();
+
+	/**
+	 * Removable posts_pre_query filters registered by tests.
+	 *
+	 * @var array
+	 */
+	private $posts_pre_query_filters = array();
+
+	/**
 	 * Set up test fixtures.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 		$this->captured_termmeta = array();
+		delete_option( 'acf_version' );
+		delete_option( 'db_version' );
+	}
+
+	/**
+	 * Remove filters installed by tests so random ordering cannot leak closures
+	 * bound to prior PHPUnit instances.
+	 */
+	public function tearDown(): void {
+		foreach ( $this->query_results_filters as $filter ) {
+			remove_filter( 'wordbless_wpdb_query_results', $filter, 10 );
+		}
+
+		foreach ( $this->insert_filters as $filter ) {
+			remove_filter( 'wordbless_wpdb_insert', $filter, 10 );
+		}
+
+		foreach ( $this->posts_pre_query_filters as $filter ) {
+			remove_filter( 'posts_pre_query', $filter, 10 );
+		}
+
+		$this->query_results_filters   = array();
+		$this->insert_filters          = array();
+		$this->posts_pre_query_filters = array();
+		delete_option( 'acf_version' );
+		delete_option( 'db_version' );
+
+		parent::tearDown();
 	}
 
 	/**
@@ -104,32 +153,30 @@ class Test_ACF_Upgrades extends BaseTestCase {
 	 * @return void
 	 */
 	private function seed_legacy_fields( $ofg_id, $fields ) {
-		add_filter(
-			'wordbless_wpdb_query_results',
-			function ( $results, $query ) use ( $ofg_id, $fields ) {
+		$filter = function ( $results, $query ) use ( $ofg_id, $fields ) {
 				global $wpdb;
 
-				if ( false === strpos( $query, $wpdb->postmeta ) || false === strpos( $query, "post_id = {$ofg_id}" ) ) {
-					return $results;
-				}
+			if ( false === strpos( $query, $wpdb->postmeta ) || false === strpos( $query, "post_id = {$ofg_id}" ) ) {
+				return $results;
+			}
 
 				$rows    = array();
 				$meta_id = 9000;
-				foreach ( $fields as $meta_key => $field ) {
-					// phpcs:disable WordPress.DB.SlowDBQuery -- mimicking raw postmeta rows, not building a query.
-					$rows[] = (object) array(
-						'meta_id'    => $meta_id++, // phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found -- simple counter.
-						'post_id'    => $ofg_id,
-						'meta_key'   => $meta_key,
-						'meta_value' => serialize( $field ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- seeding legacy ACF4 data format.
-					);
-					// phpcs:enable WordPress.DB.SlowDBQuery
-				}
+			foreach ( $fields as $meta_key => $field ) {
+				// phpcs:disable WordPress.DB.SlowDBQuery -- mimicking raw postmeta rows, not building a query.
+				$rows[] = (object) array(
+					'meta_id'    => $meta_id++, // phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found -- simple counter.
+					'post_id'    => $ofg_id,
+					'meta_key'   => $meta_key,
+					'meta_value' => serialize( $field ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- seeding legacy ACF4 data format.
+				);
+				// phpcs:enable WordPress.DB.SlowDBQuery
+			}
 				return $rows;
-			},
-			10,
-			2
-		);
+		};
+
+		$this->query_results_filters[] = $filter;
+		add_filter( 'wordbless_wpdb_query_results', $filter, 10, 2 );
 	}
 
 	/**
@@ -142,44 +189,40 @@ class Test_ACF_Upgrades extends BaseTestCase {
 	 * @return void
 	 */
 	private function seed_legacy_termmeta( $option_rows ) {
-		add_filter(
-			'wordbless_wpdb_query_results',
-			function ( $results, $query ) use ( $option_rows ) {
+		$query_filter = function ( $results, $query ) use ( $option_rows ) {
 				global $wpdb;
 
 				// Only intercept the options query for the 'category' taxonomy.
-				if ( false === strpos( $query, $wpdb->options ) || false === strpos( $query, 'category' ) ) {
-					return $results;
-				}
+			if ( false === strpos( $query, $wpdb->options ) || false === strpos( $query, 'category' ) ) {
+				return $results;
+			}
 
 				$rows      = array();
 				$option_id = 1;
-				foreach ( $option_rows as $name => $value ) {
-					$rows[] = (object) array(
-						'option_id'    => $option_id++, // phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found -- simple counter.
-						'option_name'  => $name,
-						'option_value' => $value,
-					);
-				}
+			foreach ( $option_rows as $name => $value ) {
+				$rows[] = (object) array(
+					'option_id'    => $option_id++, // phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found -- simple counter.
+					'option_name'  => $name,
+					'option_value' => $value,
+				);
+			}
 				return $rows;
-			},
-			10,
-			2
-		);
+		};
 
-		add_filter(
-			'wordbless_wpdb_insert',
-			function ( $result, $table, $data ) {
+		$this->query_results_filters[] = $query_filter;
+		add_filter( 'wordbless_wpdb_query_results', $query_filter, 10, 2 );
+
+		$insert_filter = function ( $result, $table, $data ) {
 				global $wpdb;
 
-				if ( $table === $wpdb->termmeta ) {
-					$this->captured_termmeta[] = $data;
-				}
+			if ( $table === $wpdb->termmeta ) {
+				$this->captured_termmeta[] = $data;
+			}
 				return $result;
-			},
-			10,
-			3
-		);
+		};
+
+		$this->insert_filters[] = $insert_filter;
+		add_filter( 'wordbless_wpdb_insert', $insert_filter, 10, 3 );
 	}
 
 	// =========================================================================
@@ -665,24 +708,22 @@ class Test_ACF_Upgrades extends BaseTestCase {
 	 * @return void
 	 */
 	private function shim_legacy_field_group_query() {
-		add_filter(
-			'posts_pre_query',
-			function ( $posts, $query ) {
-				if ( 'acf' !== $query->get( 'post_type' ) ) {
-					return $posts;
-				}
+		$filter = function ( $posts, $query ) {
+			if ( 'acf' !== $query->get( 'post_type' ) ) {
+				return $posts;
+			}
 
 				$found = array();
-				foreach ( \WorDBless\Posts::init()->posts as $post ) {
-					if ( 'acf' === $post->post_type ) {
-						$found[] = new WP_Post( $post );
-					}
+			foreach ( \WorDBless\Posts::init()->posts as $post ) {
+				if ( 'acf' === $post->post_type ) {
+					$found[] = new WP_Post( $post );
 				}
+			}
 				return $found;
-			},
-			10,
-			2
-		);
+		};
+
+		$this->posts_pre_query_filters[] = $filter;
+		add_filter( 'posts_pre_query', $filter, 10, 2 );
 	}
 
 	/**

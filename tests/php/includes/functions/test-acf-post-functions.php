@@ -26,6 +26,7 @@ class Test_ACF_Post_Functions extends BaseTestCase {
 
 		// Reset the post_templates cache between tests.
 		acf_set_data( 'post_templates', null );
+		$this->reset_current_screen();
 	}
 
 	/**
@@ -33,8 +34,21 @@ class Test_ACF_Post_Functions extends BaseTestCase {
 	 */
 	public function tear_down(): void {
 		acf_set_data( 'post_templates', null );
+		$this->reset_current_screen();
 
 		parent::tear_down();
+	}
+
+	/**
+	 * Reset WordPress' current screen so title formatting is tested outside
+	 * admin context unless a test explicitly sets a screen.
+	 */
+	private function reset_current_screen() {
+		global $current_screen, $typenow, $taxnow;
+
+		$current_screen = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in tests.
+		$typenow        = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in tests.
+		$taxnow         = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in tests.
 	}
 
 	// =========================================================================

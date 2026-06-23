@@ -20,11 +20,13 @@ class Test_Form_WC_Order extends BaseTestCase {
 	 * Tear down after each test.
 	 */
 	public function tear_down() {
-		parent::tear_down();
+		acf_get_store( 'form' )->reset();
 
 		// Clean up any filters/actions we added.
 		remove_all_filters( 'acf/input/meta_box_priority' );
 		remove_all_actions( 'acf/add_meta_boxes' );
+
+		parent::tear_down();
 	}
 
 	/**
