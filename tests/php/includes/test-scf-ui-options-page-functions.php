@@ -645,8 +645,16 @@ class Test_SCF_UI_Options_Page_Functions extends BaseTestCase {
 	public function test_duplicate_ui_options_page_skips_copy_suffix_with_new_post_id() {
 		$original       = acf_get_ui_options_page( $this->options_page_id );
 		$original_title = $original['title'];
+		$target_post_id = wp_insert_post(
+			array(
+				'post_type'   => 'acf-ui-options-page',
+				'post_title'  => 'Target Options Page',
+				'post_status' => 'publish',
+				'post_name'   => 'ui_options_page_target_' . uniqid(),
+			)
+		);
 
-		$result = acf_duplicate_ui_options_page( $this->options_page_id, 999 );
+		$result = acf_duplicate_ui_options_page( $this->options_page_id, $target_post_id );
 
 		$this->assertIsArray( $result, 'Should return an array' );
 		$this->assertEquals(
