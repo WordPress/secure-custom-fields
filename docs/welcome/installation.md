@@ -6,7 +6,7 @@ This guide walks you through installing Secure Custom Fields (SCF) on your WordP
 
 Before installing, ensure your site meets these requirements:
 
-- WordPress 6.0 or later
+- WordPress 6.2 or later
 - PHP 7.4 or later
 - WordPress memory limit of 40MB or greater (64MB recommended)
 
