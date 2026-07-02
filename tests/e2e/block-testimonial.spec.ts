@@ -11,6 +11,17 @@ const getVisibleBlockField = ( page, name ) =>
 	page.locator( `.acf-field[data-name="${ name }"]:visible` ).first();
 
 const getEditorCanvas = async ( page, editor ) => {
+	// The editor mounts asynchronously, so right after a navigation the
+	// iframed canvas may not exist yet and a bare count() check would wrongly
+	// fall back to the top document. Wait for either the iframed canvas or
+	// the non-iframed block list to appear before deciding which root to use.
+	await page
+		.locator(
+			'iframe[name="editor-canvas"], .block-editor-block-list__layout'
+		)
+		.first()
+		.waitFor( { timeout: 15000 } );
+
 	if ( await page.locator( 'iframe[name="editor-canvas"]' ).count() ) {
 		return editor.canvas;
 	}
@@ -129,6 +140,11 @@ test.describe( 'SCF Block > Testimonial', () => {
 		// Navigate to edit post page
 		await admin.editPost( post.id );
 
+		// Wait for the editor canvas to mount before inserting. On newer
+		// WordPress versions the editor boots asynchronously and an early
+		// insert can be wiped by editor setup.
+		await getEditorCanvas( page, editor );
+
 		// Add the testimonial block
 		await editor.insertBlock( { name: BLOCK_NAME } );
 
@@ -222,6 +238,11 @@ test.describe( 'SCF Block > Testimonial', () => {
 
 		// Navigate to edit post page
 		await admin.editPost( post.id );
+
+		// Wait for the editor canvas to mount before inserting. On newer
+		// WordPress versions the editor boots asynchronously and an early
+		// insert can be wiped by editor setup.
+		await getEditorCanvas( page, editor );
 
 		// Add the testimonial block
 		await editor.insertBlock( { name: BLOCK_NAME } );
