@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.9.0
+Stable tag: 6.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,18 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.1 =
+*Release Date 2nd July 2026*
+
+*Security*
+
+- Capped the number of user-contributed choices that can be persisted to checkbox, radio, and select field definitions at 1000 by default, with a new `acf/fields/max_appended_choices` filter for customization.
+- The WooCommerce order fields save handler is now only registered on order edit screens.
+
+*Fixes*
+
+- Fixed PHP 8.5 deprecation notices when numeric post ID values contain floats that cannot be represented as integers.
+
 = 6.9.0 =
 *Release Date 23rd June 2026*
 
