@@ -73,9 +73,9 @@ class Test_Form_WC_Order extends BaseTestCase {
 			'Should register initialize action for base WC orders page'
 		);
 
-		$this->assertNotFalse(
+		$this->assertFalse(
 			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
-			'Should register save_order action'
+			'Should not register save_order until an order edit screen loads'
 		);
 
 		$this->assertNotFalse(
@@ -262,7 +262,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 	}
 
 	/**
-	 * Test initialize method adds correct action.
+	 * Test initialize method adds correct actions.
 	 */
 	public function test_initialize_adds_meta_boxes_action() {
 		$wc_order = new WC_Order();
@@ -278,6 +278,14 @@ class Test_Form_WC_Order extends BaseTestCase {
 			has_action( 'add_meta_boxes', array( $wc_order, 'add_meta_boxes' ) ),
 			'initialize should add add_meta_boxes action'
 		);
+
+		// Check that the save handler is attached on the order edit screen.
+		$this->assertNotFalse(
+			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
+			'initialize should add save_order action'
+		);
+
+		remove_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ), 10 );
 	}
 
 	/**
