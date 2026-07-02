@@ -296,4 +296,113 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 
 		$this->assertSame( '', $result );
 	}
+
+	/**
+	 * Get a persisted select field for append_user_choices_to_field tests.
+	 *
+	 * @param array $overrides Optional field configuration overrides.
+	 * @return array The field array with a real acf-field post ID.
+	 */
+	protected function get_persisted_field( $overrides = array() ) {
+		$field       = $this->get_field( $overrides );
+		$field['ID'] = wp_insert_post(
+			array(
+				'post_title'  => $field['label'],
+				'post_name'   => $field['key'],
+				'post_type'   => 'acf-field',
+				'post_status' => 'publish',
+			)
+		);
+
+		return $field;
+	}
+
+	/**
+	 * Capture the field passed to acf_update_field via the acf/update_field filter.
+	 *
+	 * @param array|null $captured Set by reference to the saved field array.
+	 * @return void
+	 */
+	protected function capture_updated_field( &$captured ) {
+		add_filter(
+			'acf/update_field',
+			function ( $field ) use ( &$captured ) {
+				$captured = $field;
+				return $field;
+			}
+		);
+	}
+
+	/**
+	 * Test append_user_choices_to_field appends new sanitized choices and saves the field.
+	 */
+	public function test_append_user_choices_appends_and_saves() {
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple', '<script>alert(1)</script>orange' ), $this->post_id, $field );
+
+		$this->assertIsArray( $captured, 'acf_update_field should be called when a choice is appended' );
+		$this->assertArrayHasKey( 'purple', $captured['choices'] );
+		$this->assertArrayHasKey( 'orange', $captured['choices'], 'Appended choices should be sanitized with sanitize_text_field' );
+		$this->assertArrayNotHasKey( '<script>alert(1)</script>orange', $captured['choices'] );
+	}
+
+	/**
+	 * Test append_user_choices_to_field does not save when all values are duplicates or empty.
+	 */
+	public function test_append_user_choices_skips_duplicates_and_empty() {
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'red', '', '<b></b>' ), $this->post_id, $field );
+
+		$this->assertNull( $captured, 'acf_update_field should not be called when nothing new is appended' );
+	}
+
+	/**
+	 * Test the acf/fields/max_appended_choices cap stops appending new choices.
+	 */
+	public function test_append_user_choices_respects_max_appended_choices() {
+		// The base field already has 3 choices; cap at 4 so only one more fits.
+		add_filter(
+			'acf/fields/max_appended_choices',
+			function () {
+				return 4;
+			}
+		);
+
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple', 'orange' ), $this->post_id, $field );
+
+		$this->assertIsArray( $captured );
+		$this->assertArrayHasKey( 'purple', $captured['choices'] );
+		$this->assertArrayNotHasKey( 'orange', $captured['choices'], 'Choices beyond the max_appended_choices cap should not be appended' );
+		$this->assertCount( 4, $captured['choices'] );
+	}
+
+	/**
+	 * Test no choices are appended when the field is already at the cap.
+	 */
+	public function test_append_user_choices_at_cap_does_not_save() {
+		add_filter(
+			'acf/fields/max_appended_choices',
+			function () {
+				return 3;
+			}
+		);
+
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple' ), $this->post_id, $field );
+
+		$this->assertNull( $captured, 'acf_update_field should not be called when the cap is already reached' );
+	}
 }
