@@ -158,18 +158,18 @@ function acf_get_field_post( $id = 0 ) {
 
 			// Update cache.
 			wp_cache_set( $cache_key, $post_id, 'secure-custom-fields' );
+
+			// A cache miss means sibling field lookups are likely cold too:
+			// prime them in bulk to avoid one query per field. Cache hits skip
+			// this so warm requests stay query-free.
+			if ( $posts && $posts[0]->post_parent ) {
+				_scf_prime_sibling_field_posts( $posts[0] );
+			}
 		}
 
 		// Check $post_id and return the post when possible.
 		if ( $post_id ) {
-			$post = get_post( $post_id );
-
-			// Prime sibling field lookups to avoid one query per field.
-			if ( $post && $post->post_parent ) {
-				_acf_prime_sibling_field_posts( $post );
-			}
-
-			return $post;
+			return get_post( $post_id );
 		}
 	}
 
@@ -181,39 +181,45 @@ function acf_get_field_post( $id = 0 ) {
  * Primes the field key lookup cache for all sibling fields of the given field post.
  *
  * Resolving a field key normally runs one query per field. When a field belongs
- * to a field group, all of the group's fields are fetched in a single query and
- * their key lookups are cached, so subsequent sibling key lookups avoid further
- * queries.
+ * to a field group, the keys of all the group's fields are resolved with a single
+ * query and cached, so subsequent sibling key lookups avoid further queries.
  *
- * The priming query runs with `suppress_filters => false`, matching the per-key
- * lookup it replaces, so plugins that filter field queries per language/context
- * (e.g. WPML, Polylang) still run against it and resolve the same posts they
- * would have for the individual lookups.
+ * The priming query keeps the semantics of the per-key lookup in
+ * acf_get_field_post(): it is not scoped to the field group, so a key that
+ * exists in more than one group resolves to the same post either way; it runs
+ * with `suppress_filters => false`, so plugins that filter field queries per
+ * language/context (e.g. WPML, Polylang) still apply; and cache keys are built
+ * per sibling with acf_cache_key(), so language-scoped cache keys behave as
+ * they do for individual lookups.
  *
- * @since SCF 6.9.0
+ * @since SCF 6.9.2
  *
  * @param WP_Post $post The field post object.
  * @return void
  */
-function _acf_prime_sibling_field_posts( $post ) {
+function _scf_prime_sibling_field_posts( $post ) {
 	static $primed = array();
 
-	// Bail early if this parent was already primed during this request.
+	// Bail early if this parent was already handled during this request. Marking
+	// it up front also memoizes non-group parents (e.g. repeater sub-fields), so
+	// their repeated lookups skip the checks below.
 	if ( isset( $primed[ $post->post_parent ] ) ) {
 		return;
 	}
+	$primed[ $post->post_parent ] = true;
 
 	/**
 	 * Filters whether sibling field lookups are primed when a field is loaded by key or name.
 	 *
 	 * Priming collapses the per-field key lookups into a single query; it does
-	 * not bypass query filters, but can be disabled here if needed.
+	 * not bypass query filters, but can be disabled here if needed. Runs once
+	 * per field parent per request.
 	 *
-	 * @since SCF 6.9.0
+	 * @since SCF 6.9.2
 	 *
 	 * @param boolean $prime True to prime sibling field lookups. Default true.
 	 */
-	if ( ! apply_filters( 'acf/prime_field_group_fields', true ) ) {
+	if ( ! apply_filters( 'scf/prime_field_group_fields', true ) ) {
 		return;
 	}
 
@@ -223,17 +229,32 @@ function _acf_prime_sibling_field_posts( $post ) {
 		return;
 	}
 
-	$primed[ $post->post_parent ] = true;
+	// Collect the sibling field keys from the group's raw fields. This reuses
+	// (and warms) the same cached bulk fetch used when the group is rendered,
+	// rather than running a second group-scoped query.
+	$keys = array();
+	foreach ( acf_get_raw_fields( $parent->ID ) as $raw_field ) {
+		if ( ! empty( $raw_field['key'] ) ) {
+			$keys[] = $raw_field['key'];
+		}
+	}
 
-	// Fetch all of the group's published fields in a single query, keeping
-	// suppress_filters => false so third-party query filters still run (matching
-	// the per-key lookup in acf_get_field_post() that this primes).
+	// Cap the primed keys so pathologically large groups don't hydrate
+	// thousands of posts at once; the rest fall back to per-key lookups.
+	$keys = array_slice( array_unique( $keys ), 0, 100 );
+	if ( ! $keys ) {
+		return;
+	}
+
+	// Resolve all keys in one query with the same semantics as the per-key
+	// lookup in acf_get_field_post(): global (not group-scoped), same ordering,
+	// and suppress_filters => false so third-party query filters still run.
+	// The post_name__in clause bounds the result set.
 	$field_posts = get_posts(
 		array(
 			'posts_per_page'         => -1,
 			'post_type'              => 'acf-field',
-			'post_parent'            => $parent->ID,
-			'post_status'            => 'publish',
+			'post_name__in'          => $keys,
 			'orderby'                => 'menu_order title',
 			'order'                  => 'ASC',
 			'suppress_filters'       => false,
@@ -244,11 +265,12 @@ function _acf_prime_sibling_field_posts( $post ) {
 	);
 
 	foreach ( $field_posts as $field_post ) {
-		// The field key is stored as the post_name.
+		// The field key is stored as the post_name. The first post per key in
+		// the ordered result matches what the per-key query would select, and
+		// wp_cache_add() keeps it without overwriting later duplicates or
+		// entries cached by earlier lookups.
 		$cache_key = acf_cache_key( "acf_get_field_post:key:{$field_post->post_name}" );
-		if ( false === wp_cache_get( $cache_key, 'secure-custom-fields' ) ) {
-			wp_cache_set( $cache_key, $field_post->ID, 'secure-custom-fields' );
-		}
+		wp_cache_add( $cache_key, $field_post->ID, 'secure-custom-fields' );
 	}
 }
 
