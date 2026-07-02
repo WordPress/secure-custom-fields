@@ -506,6 +506,12 @@ This file tracks code elements that need documentation.
 - `acf/fields/post_object/query`
 - `acf/fields/post_object/result`
 
+## fields/class-acf-field-radio.php
+
+### Hooks
+
+- `acf/fields/max_appended_choices`
+
 ## fields/class-acf-field-relationship.php
 
 ### Hooks
@@ -517,6 +523,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/fields/max_appended_choices`
 - `acf/fields/select/query`
 
 ## fields/class-acf-field-taxonomy.php

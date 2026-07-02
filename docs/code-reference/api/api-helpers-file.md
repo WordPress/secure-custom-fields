@@ -696,6 +696,16 @@ Checks if the current user has the SCF capability for programmatic access, witho
 * @since 6.6.0
 * @return bool True if the user has the ACF capability.
 
+## `scf_numeric_to_int()`
+
+Casts a numeric value to an integer, returning 0 for floats that cannot
+be represented as an integer (NAN or outside the integer range). Casting
+such floats directly raises a deprecation notice on PHP 8.5+.
+
+* @since 6.9.1
+* @param mixed $value A numeric value (int, float, or numeric string).
+* @return integer
+
 ## `acf_current_user_can_edit_post()`
 
 Wrapper function for current_user_can( 'edit_post', $post_id ).
