@@ -55,22 +55,6 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 */
 		public function admin_enqueue_scripts() {
 			wp_enqueue_style( 'acf-global' );
-
-			// Only load the escaped HTML notice assets when the notice will render.
-			if ( ! $this->should_show_escaped_html_notice() ) {
-				return;
-			}
-
-			wp_enqueue_script( 'acf-escaped-html-notice' );
-
-			wp_localize_script(
-				'acf-escaped-html-notice',
-				'acf_escaped_html_notice',
-				array(
-					'show_details' => __( 'Show&nbsp;details', 'secure-custom-fields' ),
-					'hide_details' => __( 'Hide&nbsp;details', 'secure-custom-fields' ),
-				)
-			);
 		}
 
 		/**
@@ -148,15 +132,31 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 */
 		public function maybe_show_escaped_html_notice() {
 			// Notice for when HTML has already been escaped.
-			if ( $this->should_show_escaped_html_notice() ) {
-				acf_get_view( 'escaped-html-notice', array( 'acf_escaped' => _acf_get_escaped_html_log() ) );
+			if ( ! $this->should_show_escaped_html_notice() ) {
+				return;
 			}
+
+			// The script is footer-loaded, so enqueueing at render time keeps
+			// the notice and its assets paired on the one request that shows
+			// it, and skips them everywhere else.
+			wp_enqueue_script( 'acf-escaped-html-notice' );
+
+			wp_localize_script(
+				'acf-escaped-html-notice',
+				'acf_escaped_html_notice',
+				array(
+					'show_details' => __( 'Show&nbsp;details', 'secure-custom-fields' ),
+					'hide_details' => __( 'Hide&nbsp;details', 'secure-custom-fields' ),
+				)
+			);
+
+			acf_get_view( 'escaped-html-notice', array( 'acf_escaped' => _acf_get_escaped_html_log() ) );
 		}
 
 		/**
 		 * Checks if the escaped unsafe HTML notice should be rendered.
 		 *
-		 * @since SCF 6.9.0
+		 * @since SCF 6.9.2
 		 *
 		 * @return boolean
 		 */

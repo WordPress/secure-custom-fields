@@ -64,7 +64,7 @@ function acf_get_option_meta( $prefix = '' ) {
 	// Globals.
 	global $wpdb;
 
-	// Check store. Invalidated by _acf_flush_option_meta_cache() on option writes.
+	// Check store. Invalidated by _scf_flush_option_meta_cache() on option writes.
 	$store = acf_get_store( 'option-meta' );
 	if ( $store->has( $prefix ) ) {
 		return $store->get( $prefix );
@@ -112,12 +112,12 @@ function acf_get_option_meta( $prefix = '' ) {
  * Option values are written via update_option()/delete_option() from several
  * code paths, so the core option actions are used to invalidate the cache.
  *
- * @since SCF 6.9.0
+ * @since SCF 6.9.2
  *
  * @param string $option The name of the option being added, updated or deleted.
  * @return void
  */
-function _acf_flush_option_meta_cache( $option ) {
+function _scf_flush_option_meta_cache( $option ) {
 	$store = acf_get_store( 'option-meta' );
 
 	foreach ( array_keys( $store->get_data() ) as $prefix ) {
@@ -126,9 +126,9 @@ function _acf_flush_option_meta_cache( $option ) {
 		}
 	}
 }
-add_action( 'added_option', '_acf_flush_option_meta_cache' );
-add_action( 'updated_option', '_acf_flush_option_meta_cache' );
-add_action( 'deleted_option', '_acf_flush_option_meta_cache' );
+add_action( 'added_option', '_scf_flush_option_meta_cache' );
+add_action( 'updated_option', '_scf_flush_option_meta_cache' );
+add_action( 'deleted_option', '_scf_flush_option_meta_cache' );
 
 /**
  * Retrieves specific metadata from the database.

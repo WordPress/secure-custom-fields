@@ -314,6 +314,12 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'deps'    => array( 'acf-input' ),
 					'version' => $version,
 				),
+				'acf-dark'            => array(
+					'handle'  => 'acf-dark',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['base'], 'acf-dark' ) ),
+					'deps'    => array(),
+					'version' => $version,
+				),
 			);
 
 			// Register scripts.

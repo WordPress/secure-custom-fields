@@ -1044,8 +1044,9 @@ function acf_decode_taxonomy_term( $value ) {
 			$term = get_term( $data['term'], $data['taxonomy'] );
 		}
 
-		// bail early if no term
-		if ( ! $term ) {
+		// bail early if no term (get_term() returns a truthy WP_Error for
+		// ambiguous shared term IDs or unregistered taxonomies)
+		if ( ! $term || is_wp_error( $term ) ) {
 			return false;
 		}
 

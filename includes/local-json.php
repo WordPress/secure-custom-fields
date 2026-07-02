@@ -4,6 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+// Register store for decoded Local JSON files.
+acf_register_store( 'local-json' );
+
 if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 
 	class ACF_Local_JSON {
@@ -70,21 +73,24 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * request. The cache is keyed on path, modified time and size so changed
 		 * files are decoded again.
 		 *
-		 * @since SCF 6.9.0
+		 * @since SCF 6.9.2
 		 *
 		 * @param string $file The JSON file path.
 		 * @return mixed The decoded JSON, or null on failure.
 		 */
 		private function decode_json_file( $file ) {
-			static $cache = array();
-
-			$key = $file . ':' . filemtime( $file ) . ':' . filesize( $file );
-
-			if ( ! array_key_exists( $key, $cache ) ) {
-				$cache[ $key ] = json_decode( file_get_contents( $file ), true );
+			if ( ! is_file( $file ) ) {
+				return null;
 			}
 
-			return $cache[ $key ];
+			$store = acf_get_store( 'local-json' );
+			$key   = $file . ':' . filemtime( $file ) . ':' . filesize( $file );
+
+			if ( ! $store->has( $key ) ) {
+				$store->set( $key, json_decode( file_get_contents( $file ), true ) );
+			}
+
+			return $store->get( $key );
 		}
 
 		/**
@@ -584,6 +590,11 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			$post   = acf_prepare_internal_post_type_for_export( $post, $post_type );
 			$result = file_put_contents( $file, acf_json_encode( $post ) . apply_filters( 'acf/json/eof_newline', PHP_EOL ) ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- potentially could run outside of admin.
 
+			// A same-request re-read must see the new contents: the decode cache
+			// keys on mtime/size served from PHP's stat cache, which is not
+			// invalidated by writes on all PHP versions.
+			clearstatcache( true, $file );
+
 			if ( ! is_int( $result ) && $has_existing_file ) {
 				$this->record_save_file_failure();
 			}
@@ -615,6 +626,7 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 
 				if ( is_writable( $file ) ) { //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- non-compatible function for this purpose.
 					wp_delete_file( $file );
+					clearstatcache( true, $file );
 				}
 			}
 

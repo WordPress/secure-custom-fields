@@ -20,17 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return boolean
  */
 function acf_is_using_datastore() {
-	// The WordPress version cannot change during a request, so compare it once.
-	// The filter below is intentionally not memoized as callbacks may be added
-	// or removed at runtime.
-	static $wp_supports_datastore = null;
-
-	if ( null === $wp_supports_datastore ) {
-		$wp_supports_datastore = version_compare( get_bloginfo( 'version' ), '6.7', '>=' );
-	}
-
 	// Bail if not on WordPress 6.7+.
-	if ( ! $wp_supports_datastore ) {
+	if ( ! version_compare( get_bloginfo( 'version' ), '6.7', '>=' ) ) {
 		return false;
 	}
 

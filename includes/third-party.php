@@ -143,8 +143,9 @@ if ( ! class_exists( 'acf_third_party' ) ) :
 		 * @since   ACF 5.7.3
 		 */
 		public function doing_dark_mode() {
-			$min = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
-			wp_enqueue_style( 'acf-dark', acf_get_url( 'assets/build/css/acf-dark' . $min . '.css' ), array(), ACF_VERSION );
+			// Registered centrally in ACF_Assets::register_scripts() so the
+			// path follows the shared build patterns.
+			wp_enqueue_style( 'acf-dark' );
 		}
 	}
 
