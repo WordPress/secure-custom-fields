@@ -2286,7 +2286,7 @@ function acf_get_post_id_info( $post_id = 0 ) {
 	// if( acf_isset_cache($cache_key) ) return acf_get_cache($cache_key);
 	// numeric
 	if ( is_numeric( $post_id ) ) {
-		$info['id'] = (int) $post_id;
+		$info['id'] = scf_numeric_to_int( $post_id );
 
 		// string
 	} elseif ( is_string( $post_id ) ) {
@@ -2767,6 +2767,23 @@ function acf_current_user_can_admin() {
  */
 function scf_current_user_has_capability() {
 	return current_user_can( acf_get_setting( 'capability' ) );
+}
+
+/**
+ * Casts a numeric value to an integer, returning 0 for floats that cannot
+ * be represented as an integer (NAN or outside the integer range). Casting
+ * such floats directly raises a deprecation notice on PHP 8.5+.
+ *
+ * @since 6.9.1
+ *
+ * @param mixed $value A numeric value (int, float, or numeric string).
+ * @return integer
+ */
+function scf_numeric_to_int( $value ) {
+	if ( is_float( $value ) && ( is_nan( $value ) || $value < (float) PHP_INT_MIN || $value >= (float) PHP_INT_MAX ) ) {
+		return 0;
+	}
+	return (int) $value;
 }
 
 /**

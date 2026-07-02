@@ -14,7 +14,7 @@
  * @package SCF
  */
 
-$check_mode = in_array( '--check', $argv, true );
+$check_mode = isset( $argv ) && in_array( '--check', $argv, true );
 
 // Bootstrap minimal SCF environment.
 define( 'ABSPATH', dirname( __DIR__ ) . '/' );
