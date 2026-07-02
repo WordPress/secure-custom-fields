@@ -126,7 +126,7 @@ function acf_decode_post_id( $post_id = 0 ) {
 	// Interpret numeric value (123).
 	if ( is_numeric( $post_id ) ) {
 		$type = 'post';
-		$id   = $post_id;
+		$id   = scf_numeric_to_int( $post_id );
 
 		// Interpret string value ("user_123" or "option").
 	} elseif ( is_string( $post_id ) ) {
