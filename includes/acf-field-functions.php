@@ -133,8 +133,11 @@ function acf_get_field_post( $id = 0 ) {
 		// Determine id type.
 		$type = acf_is_field_key( $id ) ? 'key' : 'name';
 
-		// Try cache.
-		$cache_key = acf_cache_key( "acf_get_field_post:$type:$id" );
+		// Try cache. The lookup string is lowercased to match both the
+		// case-insensitive post_name/post_excerpt comparison in the query
+		// below and the stored (sanitized, lowercase) slug that priming and
+		// acf_flush_field_cache() key by.
+		$cache_key = acf_cache_key( "acf_get_field_post:$type:" . strtolower( $id ) );
 		$post_id   = wp_cache_get( $cache_key, 'secure-custom-fields' );
 		if ( $post_id === false ) {
 
@@ -269,7 +272,7 @@ function _scf_prime_sibling_field_posts( $post ) {
 		// the ordered result matches what the per-key query would select, and
 		// wp_cache_add() keeps it without overwriting later duplicates or
 		// entries cached by earlier lookups.
-		$cache_key = acf_cache_key( "acf_get_field_post:key:{$field_post->post_name}" );
+		$cache_key = acf_cache_key( 'acf_get_field_post:key:' . strtolower( $field_post->post_name ) );
 		wp_cache_add( $cache_key, $field_post->ID, 'secure-custom-fields' );
 	}
 }
@@ -1236,9 +1239,10 @@ function acf_flush_field_cache( $field ) {
 	// Delete stored data.
 	acf_get_store( 'fields' )->remove( $field['key'] );
 
-	// Flush cached post_id for this field's name and key.
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:name:{$field['name']}" ), 'secure-custom-fields' );
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:key:{$field['key']}" ), 'secure-custom-fields' );
+	// Flush cached post_id for this field's name and key, lowercased to match
+	// how acf_get_field_post() keys its cache.
+	wp_cache_delete( acf_cache_key( 'acf_get_field_post:name:' . strtolower( $field['name'] ) ), 'secure-custom-fields' );
+	wp_cache_delete( acf_cache_key( 'acf_get_field_post:key:' . strtolower( $field['key'] ) ), 'secure-custom-fields' );
 
 	// Flush cached array of post_ids for this field's parent.
 	wp_cache_delete( acf_cache_key( "acf_get_field_posts:{$field['parent']}" ), 'secure-custom-fields' );
