@@ -815,6 +815,7 @@
 				i: $layout.index(),
 				layout: $layout.data( 'layout' ),
 				value: acf.serialize( $layout, prefix ),
+				nonce: this.get( 'nonce' ),
 			};
 
 			// ajax
@@ -1032,9 +1033,7 @@
 					) }</label>
                 </div>
                 <div class="acf-input">
-                  <input id="acf-new-layout-label" type="text" name="acf_new_layout_label" value="${ this.get(
-						'currentName'
-					) }">
+                  <input id="acf-new-layout-label" type="text" name="acf_new_layout_label" value="">
                 </div>
               </div>
               <div class="acf-actions">
@@ -1056,6 +1055,7 @@
 			acf.models.PopupConfirm.prototype.render.apply( this, arguments );
 			setTimeout( () => {
 				const $input = this.$el.find( 'input#acf-new-layout-label' );
+				$input.val( this.get( 'currentName' ) );
 				const textLength = $input.val().length;
 				$input.trigger( 'focus' );
 				$input[ 0 ].setSelectionRange( textLength, textLength );

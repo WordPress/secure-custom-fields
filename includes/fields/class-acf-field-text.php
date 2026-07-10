@@ -178,8 +178,8 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 		 */
 		function validate_value( $valid, $value, $field, $input ) {
 
-			// Check maxlength
-			if ( isset( $field['maxlength'] ) && $field['maxlength'] && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
+			// Check maxlength. A non-scalar value (e.g. an array from a crafted submission) is not valid text, so skip the string length check.
+			if ( isset( $field['maxlength'] ) && $field['maxlength'] && is_scalar( $value ) && ( acf_strlen( $value ) > $field['maxlength'] ) ) {
 				/* translators: %d: the maximum number of characters */
 				return sprintf( __( 'Value must not exceed %d characters', 'secure-custom-fields' ), $field['maxlength'] );
 			}
@@ -202,6 +202,17 @@ if ( ! class_exists( 'acf_field_text' ) ) :
 			}
 
 			return $schema;
+		}
+
+		/**
+		 * Returns an array of JSON-LD Property output types that are supported by this field type.
+		 *
+		 * @since 6.8
+		 *
+		 * @return string[]
+		 */
+		public function get_jsonld_output_types(): array {
+			return array( 'Text', 'URL' );
 		}
 	}
 

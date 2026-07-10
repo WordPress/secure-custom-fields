@@ -134,6 +134,11 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/compatibility-file.md"
     },
+    "code-reference/datastore-file": {
+        "slug": "datastore-file",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/datastore-file.md"
+    },
     "code-reference/deprecated-file": {
         "slug": "deprecated-file",
         "parent": "code-reference",

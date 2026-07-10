@@ -85,6 +85,7 @@ class Render {
 			'data-min'          => $this->field['min'],
 			'data-max'          => $this->field['max'],
 			'data-button-label' => esc_attr( $this->field['button_label'] ),
+			'data-nonce'        => wp_create_nonce( 'acf_field_' . $this->field['type'] . '_' . $this->field['key'] ),
 		);
 
 		if ( empty( $this->field['value'] ) ) {

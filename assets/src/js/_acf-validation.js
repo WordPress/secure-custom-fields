@@ -1083,6 +1083,10 @@
 				var _args = arguments;
 				// Perform validation within a Promise.
 				return new Promise( function ( resolve, reject ) {
+					if ( typeof acf.gutenbergEditPost === 'function' ) {
+						acf.gutenbergEditPost();
+					}
+
 					// Bail early if is autosave or preview.
 					if ( options.isAutosave || options.isPreview ) {
 						return resolve( 'Validation ignored (autosave).' );

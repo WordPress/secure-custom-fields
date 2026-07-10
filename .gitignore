@@ -65,10 +65,11 @@ assets/build/**/*.php
 /.php-coverage/
 
 # Claude settings
-**/.claude/settings.local.json
+**/.claude/
 
 # Serena MCP
 /.serena/
 
 # Release folder
 release/
+

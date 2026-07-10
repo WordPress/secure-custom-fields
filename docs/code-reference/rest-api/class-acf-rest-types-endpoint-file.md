@@ -22,6 +22,15 @@ Validate source parameter.
 * @param string $source The source value to validate.
 * @return bool True if valid, false otherwise.
 
+### `request_has_permission`
+
+Checks whether the matched REST route permits the request.
+
+* @since SCF 6.8.0
+* @param array           $handler The matched REST route handler.
+* @param WP_REST_Request $request The request object.
+* @return bool True when the route permission callback allows the request.
+
 ### `filter_types_request`
 
 Filter post types requests for individual post type requests.
@@ -66,6 +75,17 @@ Get SCF fields for a post type.
 * @since SCF 6.5.0
 * @param array $post_type_object The post type object.
 * @return array Array of field data.
+
+### `get_scf_post_id`
+
+Get the SCF internal post ID for a post type.
+
+* Only exposed to users who can edit the post type definition, so that
+consumers (e.g. Command Palette commands) can rely on its presence as
+a capability check.
+* @since SCF 6.8.3
+* @param array $post_type_object The post type object.
+* @return int|null The post ID if managed by SCF and editable by the current user, null otherwise.
 
 ### `get_field_schema`
 

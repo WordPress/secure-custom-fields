@@ -22,7 +22,6 @@ class WC_Order {
 	 */
 	public function __construct() {
 		add_action( 'load-woocommerce_page_wc-orders', array( $this, 'initialize' ) );
-		add_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10, 1 );
 		// Defer registering other order type hooks to after all order types are registered
 		add_action( 'wp_loaded', array( $this, 'register_order_type_hooks' ) );
 	}
@@ -38,6 +37,8 @@ class WC_Order {
 	public function initialize() {
 		acf_enqueue_scripts( array( 'uploader' => true ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
+		// Only attach the save handler on order edit screens.
+		add_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10, 1 );
 	}
 
 	/**
@@ -255,6 +256,21 @@ class WC_Order {
 		if ( ! $this->is_hpos_enabled() ) {
 			return;
 		}
+
+		if (
+			! is_admin()
+			|| ! current_user_can( 'edit_shop_orders' ) // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce capability.
+			|| ! acf_verify_nonce( 'post' )
+		) {
+			return;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified above with acf_verify_nonce().
+		if ( empty( $_POST['acf'] ) ) {
+			return;
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 		// Remove the action to prevent an infinite loop via $order->save().
 		remove_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10 );
 		acf_save_post( 'woo_order_' . $order_id );

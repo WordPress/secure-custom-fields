@@ -95,6 +95,17 @@ function acf_get_setting( $name, $value = null ) {
 }
 
 /**
+ * Returns whether the current plugin load is running with PRO features enabled.
+ *
+ * @since ACF 6.8
+ *
+ * @return bool
+ */
+function acf_is_pro() {
+	return true;
+}
+
+/**
  * Return an array of ACF's internal post type names
  *
  * @since ACF 6.1
@@ -687,12 +698,13 @@ function acf_verify_nonce( $value ) {
  *
  * @since   ACF 5.2.3
  *
- * @param string $nonce  The nonce to check.
- * @param string $action The action of the nonce.
- * @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
+ * @param string $nonce               The nonce to check.
+ * @param string $action              The action of the nonce.
+ * @param bool   $action_is_field     Whether the action is a field key or not. Defaults to false.
+ * @param string $expected_field_type Optional field type the resolved field must be when $action_is_field is true. Prevents a nonce minted for one field type from being accepted by an AJAX handler that expects a different one. Defaults to empty (no type validation).
  * @return boolean
  */
-function acf_verify_ajax( $nonce = '', $action = '', $action_is_field = false ) {
+function acf_verify_ajax( $nonce = '', $action = '', $action_is_field = false, $expected_field_type = '' ) {
 
 	// Bail early if we don't have a nonce to check.
 	if ( empty( $nonce ) && empty( $_REQUEST['nonce'] ) ) {
@@ -708,6 +720,10 @@ function acf_verify_ajax( $nonce = '', $action = '', $action_is_field = false ) 
 		$field = acf_get_field( $action );
 
 		if ( empty( $field['type'] ) ) {
+			return false;
+		}
+
+		if ( ! empty( $expected_field_type ) && $field['type'] !== $expected_field_type ) {
 			return false;
 		}
 
@@ -2270,7 +2286,7 @@ function acf_get_post_id_info( $post_id = 0 ) {
 	// if( acf_isset_cache($cache_key) ) return acf_get_cache($cache_key);
 	// numeric
 	if ( is_numeric( $post_id ) ) {
-		$info['id'] = (int) $post_id;
+		$info['id'] = scf_numeric_to_int( $post_id );
 
 		// string
 	} elseif ( is_string( $post_id ) ) {
@@ -2754,6 +2770,23 @@ function scf_current_user_has_capability() {
 }
 
 /**
+ * Casts a numeric value to an integer, returning 0 for floats that cannot
+ * be represented as an integer (NAN or outside the integer range). Casting
+ * such floats directly raises a deprecation notice on PHP 8.5+.
+ *
+ * @since 6.9.1
+ *
+ * @param mixed $value A numeric value (int, float, or numeric string).
+ * @return integer
+ */
+function scf_numeric_to_int( $value ) {
+	if ( is_float( $value ) && ( is_nan( $value ) || $value < (float) PHP_INT_MIN || $value >= (float) PHP_INT_MAX ) ) {
+		return 0;
+	}
+	return (int) $value;
+}
+
+/**
  * Wrapper function for current_user_can( 'edit_post', $post_id ).
  *
  * @since ACF 6.3.4
@@ -2776,6 +2809,62 @@ function acf_current_user_can_edit_post( int $post_id ): bool {
 	$user_can_edit = current_user_can( 'edit_post', $post_id );
 
 	return (bool) apply_filters( 'acf/current_user_can_edit_post', $user_can_edit, $post_id );
+}
+
+
+/**
+ * Checks if the current user can edit a given ACF context.
+ *
+ * Handles post, user, term, comment, woo_order, block, and option contexts returned by acf_decode_post_id().
+ *
+ * @since 6.7.2
+ *
+ * @param array  $post_id_info      The result of acf_decode_post_id(), containing 'type' and 'id'.
+ * @param string $options_page_slug Optional. The options page menu slug, used to look up the page's capability.
+ * @return boolean
+ */
+function acf_current_user_can_edit_in_context( array $post_id_info, string $options_page_slug = '' ): bool {
+	$type = $post_id_info['type'] ?? '';
+	$id   = $post_id_info['id'] ?? 0;
+
+	switch ( $type ) {
+		case 'post':
+			return acf_current_user_can_edit_post( (int) $id );
+
+		case 'user':
+			return current_user_can( 'edit_user', (int) $id );
+
+		case 'term':
+			return current_user_can( 'edit_term', (int) $id );
+
+		case 'comment':
+			return current_user_can( 'edit_comment', (int) $id );
+
+		case 'woo_order':
+			return current_user_can( 'edit_shop_orders' ); // phpcs:ignore
+
+		case 'block':
+			return current_user_can( 'edit_posts' );
+
+		case 'option':
+			if ( ! empty( $options_page_slug ) && function_exists( 'acf_get_options_page' ) ) {
+				$page = acf_get_options_page( $options_page_slug );
+
+				if ( ! empty( $page['capability'] ) && ! empty( $page['post_id'] ) ) {
+					// Ensure the page's post_id matches the requested post_id.
+					if ( acf_get_valid_post_id( $page['post_id'] ) !== $id ) {
+						return false;
+					}
+
+					return current_user_can( $page['capability'] );
+				}
+			}
+
+			return current_user_can( 'manage_options' );
+
+		default:
+			return (bool) apply_filters( 'acf/current_user_can_edit_in_context', false, $post_id_info );
+	}
 }
 
 /**
@@ -3108,6 +3197,10 @@ function acf_translate( $string ) {
 	// bail early if empty
 	if ( '' === $string ) {
 		return $string;
+	}
+
+	if ( acf_get_setting( 'l10n_var_export' ) ) {
+		return "!!__(!!'{$string}!!', !!'{$textdomain}!!')!!";
 	}
 
 	// translate
@@ -3730,28 +3823,32 @@ function acf_encrypt( $data = '' ) {
 }
 
 /**
- * acf_decrypt
- *
- * This function will decrypt an encrypted string using PHP
+ * Decrypts an encrypted string using PHP.
  * https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/
  *
  * @since   ACF 5.5.8
  *
- * @param   $data (string)
- * @return  (string)
+ * @param string $data The string to decrypt.
+ * @return string|false Decrypted string, or false if the payload is malformed or decryption fails.
  */
 function acf_decrypt( $data = '' ) {
-
 	// bail early if no decrypt function
 	if ( ! function_exists( 'openssl_decrypt' ) ) {
-		return base64_decode( $data );
+		return base64_decode( (string) $data ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
+	}
+
+	// Treat malformed input as a decrypt failure: list() destructuring below would
+	// otherwise warn on PHP 8 when the payload isn't the "base64(data::iv)" shape.
+	$raw = base64_decode( (string) $data, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own encrypted payload.
+	if ( false === $raw || strpos( $raw, '::' ) === false ) {
+		return false;
 	}
 
 	// generate a key
 	$key = wp_hash( 'acf_encrypt' );
 
 	// To decrypt, split the encrypted data from our IV - our unique separator used was "::"
-	list($encrypted_data, $iv) = explode( '::', base64_decode( $data ), 2 );
+	list( $encrypted_data, $iv ) = explode( '::', $raw, 2 );
 
 	// decrypt
 	return openssl_decrypt( $encrypted_data, 'aes-256-cbc', $key, 0, $iv );

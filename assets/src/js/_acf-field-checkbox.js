@@ -28,6 +28,30 @@
 			);
 		},
 
+		setValue: function ( val ) {
+			if ( ! Array.isArray( val ) ) {
+				val = val ? [ val ] : [];
+			}
+
+			this.$inputs().each( function () {
+				const $input = $( this );
+				const checked = val.includes( $input.val() );
+				$input.prop( 'checked', checked );
+
+				if ( checked ) {
+					$input.parent( 'label' ).addClass( 'selected' );
+				} else {
+					$input.parent( 'label' ).removeClass( 'selected' );
+				}
+			} );
+
+			const $toggle = this.$toggle();
+			if ( $toggle.length ) {
+				const checked = this.$inputs().not( ':checked' ).length === 0;
+				$toggle.prop( 'checked', checked );
+			}
+		},
+
 		getValue: function () {
 			var val = [];
 			this.$( ':checked' ).each( function () {

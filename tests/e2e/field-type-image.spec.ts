@@ -27,6 +27,7 @@ test.describe( 'Field Type > Image', () => {
 		await requestUtils.deactivatePlugin( TEST_PLUGIN_SLUG );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
 		await requestUtils.deleteAllPosts();
+		await requestUtils.deleteAllMedia();
 	} );
 
 	test.beforeEach( async ( { page, admin } ) => {
@@ -77,12 +78,16 @@ test.describe( 'Field Type > Image', () => {
 		await admin.editPost( post.id );
 		await waitForMetaBoxes( page );
 
-		// Click "Add Image" button
+		// "Add Image" button
 		const addImageButton = page.locator(
 			'.acf-field[data-name="test_image"] .acf-image-uploader[data-uploader="wp"] .acf-button-edit, .acf-field[data-name="test_image"] .acf-image-uploader a[data-name="add"]'
 		);
-		await addImageButton.click();
-		await uploadImageViaModal( page, TEST_IMAGE_PATH );
+		await uploadImageViaModal(
+			page,
+			TEST_IMAGE_PATH,
+			requestUtils,
+			addImageButton
+		);
 
 		// Verify image is displayed in the field
 		const imagePreview = page.locator(
@@ -147,8 +152,12 @@ test.describe( 'Field Type > Image', () => {
 		const addImageButton = page.locator(
 			'.acf-field[data-name="removable_image"] .acf-image-uploader a[data-name="add"]'
 		);
-		await addImageButton.click();
-		await uploadImageViaModal( page, TEST_IMAGE_PATH );
+		await uploadImageViaModal(
+			page,
+			TEST_IMAGE_PATH,
+			requestUtils,
+			addImageButton
+		);
 
 		// Verify image is there
 		const imagePreview = page.locator(

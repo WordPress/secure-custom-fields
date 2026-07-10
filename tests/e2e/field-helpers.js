@@ -8,6 +8,24 @@
 const PLUGIN_SLUG = 'secure-custom-fields';
 
 /**
+ * Purge SCF internal posts via the scf-test-utilities REST endpoint.
+ *
+ * Requires the `scf-test-utilities` plugin to be active. Deletes all posts
+ * of the given SCF internal post types regardless of status.
+ *
+ * @param {Object}   requestUtils Playwright request utilities.
+ * @param {string[]} [types]      SCF internal post types to purge. Defaults
+ *                                to field groups and fields server-side.
+ */
+async function purgeScfInternalPosts( requestUtils, types ) {
+	await requestUtils.rest( {
+		method: 'POST',
+		path: '/scf-test/v1/purge-internal-posts',
+		data: types ? { types } : {},
+	} );
+}
+
+/**
  * Delete all field groups and empty trash.
  *
  * @param {import('@playwright/test').Page} page  Playwright page object.
@@ -55,23 +73,28 @@ async function emptyTrash( page, admin ) {
 		await emptyTrashButton.click();
 		// Wait for either the success notice or page to reload
 		// The notice selector may vary between WordPress versions
-		const successNotice = page.locator( '.notice.updated, .updated.notice' );
-		await successNotice.first().waitFor( { state: 'visible', timeout: 5000 } ).catch( () => {
-			// If no notice appears, the page might have redirected, which is also valid
-		} );
+		const successNotice = page.locator(
+			'.notice.updated, .updated.notice'
+		);
+		await successNotice
+			.first()
+			.waitFor( { state: 'visible', timeout: 5000 } )
+			.catch( () => {
+				// If no notice appears, the page might have redirected, which is also valid
+			} );
 	}
 }
 
 /**
  * Create a new field group with a single field.
  *
- * @param {import('@playwright/test').Page} page            Playwright page object.
- * @param {Object}                          admin           Admin utilities.
- * @param {Object}                          options         Field options.
- * @param {string}                          options.groupTitle   Field group title.
- * @param {string}                          options.fieldLabel   Field label.
- * @param {string}                          options.fieldType    Field type (e.g., 'text', 'image').
- * @param {Function}                        [options.configure]  Optional callback for field configuration.
+ * @param {import('@playwright/test').Page} page                Playwright page object.
+ * @param {Object}                          admin               Admin utilities.
+ * @param {Object}                          options             Field options.
+ * @param {string}                          options.groupTitle  Field group title.
+ * @param {string}                          options.fieldLabel  Field label.
+ * @param {string}                          options.fieldType   Field type (e.g., 'text', 'image').
+ * @param {Function}                        [options.configure] Optional callback for field configuration.
  */
 async function createFieldGroup( page, admin, options ) {
 	const { groupTitle, fieldLabel, fieldType, configure } = options;
@@ -131,67 +154,73 @@ async function waitForMetaBoxes( page ) {
 		await metaBoxPanel.focus();
 		await metaBoxPanel.press( 'Enter' );
 	}
+
+	// Ensure SCF field instances are initialized so delegated event handlers
+	// (e.g. clicks on "Add Image") are wired up before tests interact.
+	// Note: the runtime namespace is still `window.acf` for backward compat.
+	await page.waitForFunction(
+		() =>
+			typeof window.acf !== 'undefined' &&
+			typeof window.acf.getFields === 'function' &&
+			window.acf.getFields().length > 0
+	);
 }
 
 /**
- * Upload an image to the media library via the media modal.
+ * Upload an image via REST, open the media modal, and pick the new image.
  *
- * @param {import('@playwright/test').Page} page      Playwright page object.
- * @param {string}                          imagePath Path to the image file.
+ * The in-browser plupload flow is flaky on some WP versions (upload stalls
+ * on "uploading..." so the Select button never enables). Pre-uploading via
+ * the REST API and picking from the Media Library tab avoids that path.
+ *
+ * The REST upload runs *before* the open button is clicked so the media
+ * frame's initial query-attachments fetch includes the new image; otherwise
+ * the cached collection would miss it.
+ *
+ * @param {import('@playwright/test').Page}    page         Playwright page object.
+ * @param {string}                             imagePath    Path to the image file.
+ * @param {Object}                             requestUtils RequestUtils from the test fixture, used to upload via REST.
+ * @param {import('@playwright/test').Locator} openButton   Locator for the button that opens the media modal.
  */
-async function uploadImageViaModal( page, imagePath ) {
-	// Wait for media modal to open
+async function uploadImageViaModal(
+	page,
+	imagePath,
+	requestUtils,
+	openButton
+) {
+	const media = await requestUtils.uploadMedia( imagePath );
+
+	await openButton.click();
+
 	await page.waitForSelector( '.media-modal', {
 		state: 'visible',
 		timeout: 20000,
 	} );
 
-	// Click "Upload files" tab if not already there
-	const uploadTab = page.locator( '.media-modal #menu-item-upload' );
-	if ( await uploadTab.isVisible() ) {
-		await uploadTab.click();
+	const libraryTab = page.locator( '.media-modal #menu-item-browse' );
+	if ( await libraryTab.isVisible() ) {
+		await libraryTab.click();
 	}
 
-	// Upload the file
-	const fileInput = page.locator( '.media-modal input[type="file"]' );
-	await fileInput.setInputFiles( imagePath );
+	const attachment = page.locator(
+		`.media-modal .attachments .attachment[data-id="${ media.id }"]`
+	);
+	await attachment.waitFor( { state: 'visible', timeout: 30000 } );
+	await attachment.click();
 
-	// Wait for upload to complete and ensure an attachment is selected.
-	try {
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 60000,
-		} );
-	} catch {
-		await page.waitForSelector( '.media-modal .attachments .attachment', {
-			state: 'visible',
-			timeout: 60000,
-		} );
-		await page.locator( '.media-modal .attachments .attachment' ).first().click();
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 15000,
-		} );
-	}
+	await page.waitForSelector(
+		`.media-modal .attachment.selected[data-id="${ media.id }"]`,
+		{ state: 'visible', timeout: 15000 }
+	);
 
-	// Wait for "Select" to be enabled before clicking.
 	const selectButtonSelector =
 		'.media-modal .media-toolbar-primary .media-button-select:not([disabled])';
-	try {
-		await page.waitForSelector( selectButtonSelector, {
-			state: 'visible',
-			timeout: 60000,
-		} );
-	} catch {
-		await page.locator( '.media-modal .attachments .attachment' ).first().click();
-		await page.waitForSelector( selectButtonSelector, {
-			state: 'visible',
-			timeout: 30000,
-		} );
-	}
+	await page.waitForSelector( selectButtonSelector, {
+		state: 'visible',
+		timeout: 30000,
+	} );
 	await page.locator( selectButtonSelector ).click();
 
-	// Wait for modal to close
 	await page.waitForSelector( '.media-modal', { state: 'hidden' } );
 }
 
@@ -211,8 +240,8 @@ async function addFieldChoices( page, choices ) {
 /**
  * Add a subfield to a repeater, group, or flexible content field.
  *
- * @param {import('@playwright/test').Page} page       Playwright page object.
- * @param {Object}                          options    Subfield options.
+ * @param {import('@playwright/test').Page} page              Playwright page object.
+ * @param {Object}                          options           Subfield options.
  * @param {string}                          options.label     Subfield label.
  * @param {string}                          options.type      Subfield type.
  * @param {boolean}                         [options.isFirst] Whether this is the first subfield.
@@ -254,8 +283,8 @@ async function addSubfield( page, options ) {
 /**
  * Add a layout to a flexible content field.
  *
- * @param {import('@playwright/test').Page} page    Playwright page object.
- * @param {Object}                          options Layout options.
+ * @param {import('@playwright/test').Page} page          Playwright page object.
+ * @param {Object}                          options       Layout options.
  * @param {string}                          options.label Layout label.
  */
 async function addFlexibleContentLayout( page, options ) {
@@ -289,7 +318,9 @@ async function toggleFieldSetting( page, selector, checked = true ) {
 	const settingContainer = page.locator( selector );
 
 	// First, wait for the setting container to be attached (it might be loading after field type change)
-	await settingContainer.waitFor( { state: 'attached', timeout: 5000 } ).catch( () => {} );
+	await settingContainer
+		.waitFor( { state: 'attached', timeout: 5000 } )
+		.catch( () => {} );
 
 	// Check if the setting container is visible (not just attached)
 	let isVisible = await settingContainer.isVisible().catch( () => false );
@@ -305,15 +336,17 @@ async function toggleFieldSetting( page, selector, checked = true ) {
 		];
 		for ( const tabName of tabs ) {
 			// Use more specific selector that matches the exact tab link text
-			const tab = page.locator(
-				`.acf-field-object .acf-tab-wrap a.acf-tab-button`
-			).filter( { hasText: tabName } );
+			const tab = page
+				.locator( `.acf-field-object .acf-tab-wrap a.acf-tab-button` )
+				.filter( { hasText: tabName } );
 			if ( ( await tab.count() ) > 0 && ( await tab.isVisible() ) ) {
 				await tab.click();
 				await page.waitForTimeout( 150 );
 
 				// Check if the setting is now visible
-				isVisible = await settingContainer.isVisible().catch( () => false );
+				isVisible = await settingContainer
+					.isVisible()
+					.catch( () => false );
 				if ( isVisible ) {
 					break;
 				}
@@ -369,12 +402,17 @@ async function scrollIntoViewWithOffset( page, element ) {
 /**
  * Select an option in a Select2 AJAX dropdown.
  *
- * @param {import('@playwright/test').Page}    page          Playwright page object.
+ * @param {import('@playwright/test').Page}    page              Playwright page object.
  * @param {import('@playwright/test').Locator} containerSelector Selector for the Select2 container parent.
- * @param {string}                             searchText    Text to search for.
- * @param {string}                             optionText    Text of the option to select.
+ * @param {string}                             searchText        Text to search for.
+ * @param {string}                             optionText        Text of the option to select.
  */
-async function selectSelect2Option( page, containerSelector, searchText, optionText ) {
+async function selectSelect2Option(
+	page,
+	containerSelector,
+	searchText,
+	optionText
+) {
 	const container = page.locator( containerSelector );
 	const select2 = container.locator( '.select2-container' );
 	await select2.click();
@@ -406,6 +444,7 @@ async function expandFCLayout( layout ) {
 
 module.exports = {
 	PLUGIN_SLUG,
+	purgeScfInternalPosts,
 	deleteFieldGroups,
 	emptyTrash,
 	createFieldGroup,

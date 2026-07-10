@@ -344,6 +344,16 @@
 					"default": true,
 					"description": "Whether to include the taxonomy in the REST API"
 				},
+				"allow_ai_access": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "Whether to expose this taxonomy to AI integrations"
+				},
+				"ai_description": {
+					"type": "string",
+					"default": "",
+					"description": "Description that helps AI integrations understand how to use this taxonomy"
+				},
 				"rest_base": {
 					"type": "string",
 					"description": "To change the base URL of REST API route"
