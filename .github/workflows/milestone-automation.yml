@@ -1,0 +1,117 @@
+name: Milestone Automation
+
+on:
+    pull_request_target:
+        branches:
+            - trunk
+        types:
+            - closed
+
+# Disable permissions for all available scopes by default.
+# Any needed permissions should be configured at the job level.
+permissions: {}
+
+jobs:
+    assign-milestone:
+        name: Assign milestone to merged PR
+        runs-on: ubuntu-24.04
+        permissions:
+            issues: write
+        timeout-minutes: 5
+        if: github.event.pull_request.merged == true
+
+        steps:
+            # This workflow does not check out or execute code from the pull request.
+            - name: Assign milestone
+              uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+              env:
+                  NEXT_MILESTONE: ${{ vars.NEXT_MILESTONE }}
+              with:
+                  retries: 2
+                  script: |
+                      const { owner, repo } = context.repo;
+                      const issueNumber = context.payload.pull_request.number;
+
+                      // Read the current state instead of relying on the event payload. This
+                      // avoids overwriting a milestone assigned while the job was queued.
+                      const { data: pullRequest } = await github.rest.issues.get({
+                        owner,
+                        repo,
+                        issue_number: issueNumber
+                      });
+
+                      if (pullRequest.milestone) {
+                        if (pullRequest.milestone.state === 'open') {
+                          console.log(
+                            `PR #${issueNumber} already has open milestone: ${pullRequest.milestone.title}. Keeping it.`
+                          );
+                          return;
+                        }
+
+                        const warningMarker = '<!-- scf-closed-milestone-warning -->';
+                        const comments = await github.paginate(
+                          github.rest.issues.listComments,
+                          {
+                            owner,
+                            repo,
+                            issue_number: issueNumber,
+                            per_page: 100
+                          }
+                        );
+
+                        if (comments.some(({ body }) => body?.includes(warningMarker))) {
+                          console.log(`PR #${issueNumber} already has a closed milestone warning.`);
+                          return;
+                        }
+
+                        console.log(
+                          `PR #${issueNumber} has closed milestone: ${pullRequest.milestone.title}. Adding notification comment.`
+                        );
+
+                        await github.rest.issues.createComment({
+                          owner,
+                          repo,
+                          issue_number: issueNumber,
+                          body: `${warningMarker}\nThis PR was merged with a closed milestone (\`${pullRequest.milestone.title}\`). Please verify this is intentional.`
+                        });
+                        return;
+                      }
+
+                      const targetTitle = process.env.NEXT_MILESTONE?.trim();
+                      if (!targetTitle) {
+                        core.setFailed(
+                          'The NEXT_MILESTONE repository variable is not configured. Set it to the exact title of the next open release milestone.'
+                        );
+                        return;
+                      }
+
+                      const milestones = await github.paginate(
+                        github.rest.issues.listMilestones,
+                        {
+                          owner,
+                          repo,
+                          state: 'open',
+                          per_page: 100
+                        }
+                      );
+                      const targetMilestone = milestones.find(
+                        ({ title }) => title === targetTitle
+                      );
+
+                      if (!targetMilestone) {
+                        core.setFailed(
+                          `Could not find an open milestone named "${targetTitle}". Update NEXT_MILESTONE or create the milestone.`
+                        );
+                        return;
+                      }
+
+                      console.log(
+                        `Assigning PR #${issueNumber} to ${targetMilestone.title} (#${targetMilestone.number}).`
+                      );
+
+                      await github.rest.issues.update({
+                        owner,
+                        repo,
+                        issue_number: issueNumber,
+                        milestone: targetMilestone.number
+                      });

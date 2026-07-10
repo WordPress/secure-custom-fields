@@ -31,6 +31,18 @@ Before running the `prepare-release` script (see below), ensure the changelog en
 * Fix: Description of bug fix
 ```
 
+## Configure the Next Milestone
+
+Merged pull requests targeting `trunk` are automatically assigned to the milestone named by the `NEXT_MILESTONE` GitHub Actions repository variable. Pull requests that already have a milestone keep it.
+
+Once the next release version is known, create its milestone and update the variable to its exact title:
+
+```sh
+gh variable set NEXT_MILESTONE --body "X.Y.Z"
+```
+
+The milestone must be open before merging unmilestoned pull requests. The workflow fails visibly instead of guessing when the variable is missing or does not name an open milestone.
+
 ## Prepare the Release
 
 Create a new branch from `trunk` and run the release preparation script:
