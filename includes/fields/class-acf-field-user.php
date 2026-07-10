@@ -114,7 +114,7 @@ if ( ! class_exists( 'ACF_Field_User' ) ) :
 				$field,
 				array(
 					'label'        => __( 'Select Multiple', 'secure-custom-fields' ),
-					'instructions' => 'Allow content editors to select multiple values',
+					'instructions' => __( 'Allow content editors to select multiple values', 'secure-custom-fields' ),
 					'name'         => 'multiple',
 					'type'         => 'true_false',
 					'ui'           => 1,
