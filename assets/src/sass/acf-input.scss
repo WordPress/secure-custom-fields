@@ -709,7 +709,8 @@ html[dir=rtl] input.acf-is-prepended.acf-is-appended {
 *-----------------------------------------------------------------------------*/
 .acf-url i {
   position: absolute;
-  top: 5px;
+  top: 50%;
+  transform: translateY(-50%);
   left: 5px;
   opacity: 0.5;
   color: #7e8993;
