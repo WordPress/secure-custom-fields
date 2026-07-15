@@ -82,8 +82,8 @@ if ( ! class_exists( 'ACF_Location_Post_Type' ) ) :
 		 * @return  string|array
 		 */
 		public function get_object_subtype( $rule ) {
-			if ( $rule['operator'] === '==' ) {
-				return $rule['value'];
+			if ( ( $rule['operator'] ?? '' ) === '==' ) {
+				return $rule['value'] ?? '';
 			}
 			return '';
 		}

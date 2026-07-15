@@ -746,13 +746,20 @@
 	 *
 	 * @date	20/10/2021
 	 * @since	ACF 5.11.0
+	 *
+	 * @param {jQuery} [$form] - Optional form element to scope the input search to. If omitted, searches the entire document.
 	 */
-	var ensureInvalidFieldVisibility = function () {
-		// Load each ACF input field and check it's browser validation state.
-		var $inputs = $( '.acf-field input' );
+	const ensureInvalidFieldVisibility = function ( $form ) {
+		// Load each ACF input field and check its browser validation state.
+		// Scope to the given form if provided, otherwise search the entire document.
+		const $inputs = $form
+			? $form.find( '.acf-field input' )
+			: $( '.acf-field input' );
 		$inputs.each( function () {
-			if ( ! this.checkValidity() ) {
-				// Field is invalid, so we need to make sure it's metabox is visible.
+			// Use validity.valid (a property) instead of checkValidity() (a method) to avoid
+			// dispatching the native 'invalid' event, which can trigger ACF validation prematurely.
+			if ( ! this.validity.valid ) {
+				// Field is invalid, so we need to make sure its metabox is visible.
 				ensureFieldPostBoxIsVisible( $( this ) );
 			}
 		} );
@@ -924,19 +931,37 @@
 		 *
 		 *  Callback when clicking submit.
 		 *
+		 *  Only acts on submit buttons that are associated with a form containing ACF fields.
+		 *  This prevents submit buttons in unrelated UI (e.g. the WP link inserter modal) from
+		 *  triggering premature validation of ACF fields on the page behind the modal.
+		 *
+		 *  Uses the native HTMLButtonElement.form property to resolve the associated form,
+		 *  which correctly handles both DOM-ancestor forms and the HTML form="id" attribute.
+		 *
 		 *  @date	4/9/18
 		 *  @since	ACF 5.7.5
 		 *
 		 *  @param	object e The event object.
-		 *  @param	jQuery $el The input element.
+		 *  @param	jQuery $el The submit button element.
 		 *  @return	void
 		 */
 		onClickSubmit: function ( e, $el ) {
-			// Some browsers (safari) force their browser validation before our AJAX validation,
-			// so we need to make sure fields are visible earlier than showErrors()
-			ensureInvalidFieldVisibility();
+			const form = $el.length ? $el[ 0 ].form : null;
 
-			// store the "click event" for later use in this.onSubmit()
+			if ( ! form ) {
+				return;
+			}
+
+			const $form = $( form );
+
+			if ( ! $form.find( '.acf-field' ).length ) {
+				return;
+			}
+
+			// Some browsers (safari) force their browser validation before our AJAX validation,
+			// so we need to make sure fields are visible earlier than showErrors().
+			ensureInvalidFieldVisibility( $form );
+
 			this.set( 'originalEvent', e );
 		},
 
