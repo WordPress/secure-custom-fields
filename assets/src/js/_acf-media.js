@@ -369,30 +369,8 @@
 		},
 
 		customizeFilters: function ( toolbar ) {
-			// Get the AttachmentFilters view from the toolbar.
-			// WP < 7.0: toolbar.get('filters') returns the AttachmentFilters view directly.
-			// WP 7.0+: toolbar.get('filters') returns a wrapper View; the
-			//          AttachmentFilters view is nested inside its subviews.
-			var filtersView = toolbar.get( 'filters' );
-			var filters = filtersView;
-
-			if ( filtersView && ! filtersView.filters ) {
-				// WP 7.0+: find the AttachmentFilters view in the container's subviews.
-				var subviews = filtersView.views ? filtersView.views.get() : [];
-				for ( var i = 0; i < subviews.length; i++ ) {
-					if ( subviews[ i ].filters ) {
-						filters = subviews[ i ];
-						break;
-					}
-				}
-			}
-
-			// Bail if the AttachmentFilters view couldn't be resolved (e.g. core
-			// moves the view again), so the modal degrades to the default filters
-			// instead of crashing.
-			if ( ! filters || ! filters.filters ) {
-				return;
-			}
+			// vars
+			var filters = toolbar.get( 'filters' );
 
 			// image
 			if ( this.get( 'type' ) == 'image' ) {
