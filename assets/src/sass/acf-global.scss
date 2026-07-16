@@ -11,8 +11,8 @@
 @use "field-type-icons" as *;
 @use "tools" as *;
 @use "updates" as *;
-// SCF: ACF's "pro-upgrade" module is not used — it is entirely
-// commercial upsell UI.
+// SCF: ACF's "pro-upgrade" module (_pro-upgrade.scss) is intentionally
+// absent — it is entirely commercial upsell UI.
 @use "post-types-taxonomies" as *;
 @use "field-picker" as *;
 @use "acf-icon-picker" as *;
