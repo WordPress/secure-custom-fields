@@ -703,8 +703,11 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 .acf-url {
 	i {
 		position: absolute;
-		top: 5px;
+		// SCF: vertically center the globe icon (SCF #500; upstream adopted
+		// the same change in ACF 6.8.6).
+		top: 50%;
 		left: 5px;
+		transform: translateY(-50%);
 		opacity: 0.5;
 		color: #7e8993;
 	}
