@@ -377,9 +377,10 @@ h3.acf-sub-field-list-title:before,
 *
 *---------------------------------------------------------------------------------------------*/
 .post-type-acf-field-group {
+	// SCF: removed #acf-license-information from this selector group — SCF
+	// has no commercial licensing UI.
 	#acf-admin-tool-export,
 	#acf-admin-tool-import,
-	#acf-license-information,
 	#acf-update-information {
 		h2,
 		h3 {
@@ -411,9 +412,9 @@ h3.acf-sub-field-list-title:before,
 	}
 
 	&.rtl {
+		// SCF: removed #acf-license-information from this selector group.
 		#acf-admin-tool-export,
 		#acf-admin-tool-import,
-		#acf-license-information,
 		#acf-update-information {
 			h2,
 			h3 {
@@ -440,11 +441,8 @@ h3.acf-sub-field-list-title:before,
 	mask-image: url("../../images/icons/icon-import.svg");
 }
 
-// License information icon
-.post-type-acf-field-group #acf-license-information h3:before {
-	-webkit-mask-image: url("../../images/icons/icon-key.svg");
-	mask-image: url("../../images/icons/icon-key.svg");
-}
+// SCF: removed upstream's "License information icon" rule — SCF has no
+// commercial licensing UI.
 
 // Update information icon
 .post-type-acf-field-group #acf-update-information h3:before {
