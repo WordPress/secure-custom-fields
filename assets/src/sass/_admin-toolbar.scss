@@ -67,9 +67,8 @@
 			display: block;
 		}
 
-		&.pro img {
-			height: 46px;
-		}
+		// SCF: removed ACF's PRO logo variant (&.pro img) — SCF has no PRO
+		// tier.
 	}
 
 	h2 {
@@ -204,23 +203,9 @@
 						background-color: $gray-400 !important;
 					}
 
-					.acf-requires-pro {
-						justify-content: center;
-						align-items: center;
-						color: white;
-						background: $gradient-pro;
-						border-radius: 100px;
-						font-size: 11px;
-						position: absolute;
-						right: 16px;
-						padding: {
-							right: 6px;
-							left: 6px;
-						}
-					}
-
-					// SCF: removed ACF's img.acf-wp-engine-pro and
-					// .acf-wp-engine-upsell-pill upsell blocks here.
+					// SCF: removed ACF's .acf-requires-pro pill,
+					// img.acf-wp-engine-pro, and .acf-wp-engine-upsell-pill
+					// upsell blocks here.
 				}
 				
 				// First list item

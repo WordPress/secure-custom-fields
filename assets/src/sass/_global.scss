@@ -2416,21 +2416,8 @@ html[dir="rtl"] .acf-table > tbody > tr > td.order + td {
 	}
 }
 
-/*--------------------------------------------------------------------------------------------
-*
-*  ACF PRO label
-*
-*--------------------------------------------------------------------------------------------*/
-.acf-pro-label {
-	display: inline-flex;
-	align-items: center;
-	min-height: 22px;
-	border: none;
-	font-size: 11px;
-	text-transform: uppercase;
-	text-decoration: none;
-	color: #fff;
-}
+// SCF: removed ACF's "ACF PRO label" (.acf-pro-label) block — SCF has no
+// PRO tier.
 
 /*--------------------------------------------------------------------------------------------
 *

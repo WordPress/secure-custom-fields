@@ -145,29 +145,8 @@
 					}
 				}
 
-				.field-type-requires-pro {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					position: absolute;
-					top: -10px;
-					right: -10px;
-					color: white;
-					font-size: 11px;
-					padding: {
-						right: 6px;
-						left: 6px;
-					}
-					background-image: url("../../images/pro-chip.svg");
-					background-repeat: no-repeat;
-					height: 24px;
-					width: 28px;
-
-					&.not-pro {
-						background-image: url("../../images/pro-chip-locked.svg");
-						width: 43px;
-					}
-				}
+				// SCF: removed ACF's .field-type-requires-pro chip — all
+				// field types are available in SCF.
 			}
 		}
 
@@ -186,8 +165,9 @@
 			margin: 0;
 			border: none;
 
-			.acf-select-field,
-			.acf-btn-pro {
+			// SCF: removed .acf-btn-pro from this selector group — SCF has
+			// no upgrade button.
+			.acf-select-field {
 				min-width: 160px;
 				justify-content: center;
 			}
@@ -258,33 +238,8 @@
 				}
 			}
 
-			.field-type-upgrade-to-unlock {
-				display: inline-flex;
-				justify-items: center;
-				align-items: center;
-				min-height: 24px;
-				margin: {
-					bottom: 12px;
-				}
-				padding: {
-					right: 10px;
-					left: 10px;
-				}
-				background: $gradient-pro;
-				border-radius: 100px;
-				color: white;
-				text-decoration: none;
-				font-size: 10px;
-				text-transform: uppercase;
-
-				i.acf-icon {
-					width: 14px;
-					height: 14px;
-					margin: {
-						right: 4px;
-					}
-				}
-			}
+			// SCF: removed ACF's .field-type-upgrade-to-unlock upsell
+			// button — all field types are available in SCF.
 		}
 
 		.field-type-links {
