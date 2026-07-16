@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *	Icon base styling
@@ -95,7 +97,7 @@
 		-webkit-mask-image: url("../../images/icons/icon-trash.svg");
 		mask-image: url("../../images/icons/icon-trash.svg");
 	}
-
+	
 	i.acf-icon-extended-menu, button.acf-icon-extended-menu {
 		-webkit-mask-image: url("../../images/icons/icon-extended-menu.svg");
 		mask-image: url("../../images/icons/icon-extended-menu.svg");
@@ -154,12 +156,12 @@
 		-webkit-mask-image: url("../../images/field-type-icons/icon-field-image.svg");
 		mask-image: url("../../images/field-type-icons/icon-field-image.svg");
 	}
-
+	
 	i.acf-icon-warning {
 		-webkit-mask-image: url("../../images/icons/icon-warning-alt.svg");
 		mask-image: url("../../images/icons/icon-warning-alt.svg");
 	}
-
+	
 	i.acf-icon-warning-red {
 		-webkit-mask-image: url("../../images/icons/icon-warning-alt-red.svg");
 		mask-image: url("../../images/icons/icon-warning-alt-red.svg");
@@ -174,7 +176,7 @@
 		-webkit-mask-image: url("../../images/icons/icon-play.svg");
 		mask-image: url("../../images/icons/icon-play.svg");
 	}
-
+	
 	i.acf-icon-lock {
 		-webkit-mask-image: url("../../images/icons/icon-lock.svg");
 		mask-image: url("../../images/icons/icon-lock.svg");
@@ -327,14 +329,14 @@ h3.acf-sub-field-list-title:before,
 *	Postbox expand / collapse icon
 *
 *--------------------------------------------------------------------------------------------*/
-.post-type-acf-field-group,
+.post-type-acf-field-group, 
 .post-type-acf-field-group #acf-field-group-fields,
 .post-type-acf-field-group #acf-field-group-options,
 .post-type-acf-field-group .postbox,
 .acf-admin-single-post-type #acf-advanced-settings,
 .acf-admin-single-taxonomy #acf-advanced-settings,
 .acf-admin-single-options-page #acf-advanced-settings{
-
+	
 	.postbox-header .handle-actions {
 		display: flex;
 
@@ -377,6 +379,7 @@ h3.acf-sub-field-list-title:before,
 .post-type-acf-field-group {
 	#acf-admin-tool-export,
 	#acf-admin-tool-import,
+	#acf-license-information,
 	#acf-update-information {
 		h2,
 		h3 {
@@ -410,6 +413,7 @@ h3.acf-sub-field-list-title:before,
 	&.rtl {
 		#acf-admin-tool-export,
 		#acf-admin-tool-import,
+		#acf-license-information,
 		#acf-update-information {
 			h2,
 			h3 {
@@ -434,6 +438,12 @@ h3.acf-sub-field-list-title:before,
 .post-type-acf-field-group #acf-admin-tool-import h2:before {
 	-webkit-mask-image: url("../../images/icons/icon-import.svg");
 	mask-image: url("../../images/icons/icon-import.svg");
+}
+
+// License information icon
+.post-type-acf-field-group #acf-license-information h3:before {
+	-webkit-mask-image: url("../../images/icons/icon-key.svg");
+	mask-image: url("../../images/icons/icon-key.svg");
 }
 
 // Update information icon

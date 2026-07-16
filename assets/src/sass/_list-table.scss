@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Field Groups
@@ -149,6 +153,100 @@
 
 		.column-acf-key {
 			white-space: nowrap;
+			.copyable:not(.input-copyable, .copy-unsupported) {
+				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+	
+				&:hover:after {
+					content: '';
+					padding-left: 5px;
+					$icon-size: 12px;
+					display: inline-flex;
+					width: $icon-size;
+					height: $icon-size;
+					background-color: $gray-500;
+					border: none;
+					border-radius: 0;
+					-webkit-mask-size: contain;
+					mask-size: contain;
+					-webkit-mask-repeat: no-repeat;
+					mask-repeat: no-repeat;
+					-webkit-mask-position: center;
+					mask-position: center;
+					text-indent: 500%;
+					white-space: nowrap;
+					overflow: hidden;
+					-webkit-mask-image: url('../../images/icons/icon-copy.svg');
+					mask-image: url('../../images/icons/icon-copy.svg');
+					background-size: cover;
+				}
+	
+				&.sub-label {
+					padding-right: 22px;
+	
+					&:hover {
+						padding-right: 0;
+	
+						&:after {
+							$icon-size: 14px;
+							width: $icon-size;
+							height: $icon-size;
+							padding-left: 8px;
+						}
+					}
+				}
+	
+				&.copied:hover:after {
+					-webkit-mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					background-color: $acf_success;
+				}
+			}
+	
+			.copyable.input-copyable:not(.copy-unsupported) {
+				cursor: pointer;
+				display: block;
+				position: relative;
+				align-items: center;
+	
+				input {
+					padding-right: 40px;
+				}
+	
+				.acf-input-wrap:after {
+					content: '';
+					padding-left: 5px;
+					$icon-size: 16px;
+					right: 12px;
+					top: 12px;
+					position: absolute;
+					width: $icon-size;
+					height: $icon-size;
+					background-color: $gray-400;
+					border: none;
+					border-radius: 0;
+					-webkit-mask-size: contain;
+					mask-size: contain;
+					-webkit-mask-repeat: no-repeat;
+					mask-repeat: no-repeat;
+					-webkit-mask-position: center;
+					mask-position: center;
+					text-indent: 500%;
+					white-space: nowrap;
+					overflow: hidden;
+					-webkit-mask-image: url('../../images/icons/icon-copy.svg');
+					mask-image: url('../../images/icons/icon-copy.svg');
+					background-size: cover;
+				}
+	
+				&.copied .acf-input-wrap:after {
+					-webkit-mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					background-color: $acf_success;
+				}
+			}
+	
 		}
 
 		// SVG icons
@@ -271,7 +369,7 @@
 		@extend .p6;
 
 		a:hover {
-			color: darken($color-primary-hover, 10%);
+			color: color.adjust($color-primary-hover, $lightness: -10%);
 		}
 
 		.trash a {
@@ -300,7 +398,7 @@
 
 	#the-list tr:hover td,
 	#the-list tr:hover th {
-		background-color: lighten($blue-50, 3%);
+		background-color: color.adjust($blue-50, $lightness: 3%);
 	}
 
 }
@@ -782,6 +880,12 @@
 		vertical-align: middle;
 	}
 
+	.acf_options_preview_wrap {
+		img {
+			max-height: 88px;
+		}
+	}
+
 }
 
 /*---------------------------------------------------------------------------------------------
@@ -841,4 +945,76 @@
 
 	}
 
+}
+
+/*---------------------------------------------------------------------------------------------
+*
+*  Invalid license states
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-internal-post-type {
+	&.acf-pro-inactive-license {
+		&.acf-admin-options-pages {
+			.row-title {
+				color: $gray-500;
+				pointer-events: none;
+				display: inline-flex;
+				vertical-align: middle;
+				gap: 6px;
+
+				&:before {
+					content: "";
+					width: 16px;
+					height: 16px;
+					background-color: $gray-500;
+					display: inline-block;
+					align-self: center;
+					-webkit-mask-image: url("../../images/icons/icon-lock.svg");
+					mask-image: url("../../images/icons/icon-lock.svg");
+				}
+			}
+
+			.row-actions {
+				display: none;
+			}
+
+			.column-title .acf-js-tooltip {
+				display: inline-block;
+			}
+		}
+
+		tr.acf-has-block-location {
+			.row-title {
+				color: $gray-500;
+				pointer-events: none;
+				display: inline-flex;
+				vertical-align: middle;
+				gap: 6px;
+
+				&:before {
+					content: "";
+					width: 16px;
+					height: 16px;
+					background-color: $gray-500;
+					display: inline-block;
+					align-self: center;
+					-webkit-mask-image: url("../../images/icons/icon-lock.svg");
+					mask-image: url("../../images/icons/icon-lock.svg");
+				}
+			}
+
+			.acf-count a {
+				color: $gray-500;
+				pointer-events: none;
+			}
+
+			.row-actions {
+				display: none;
+			}
+
+			.column-title .acf-js-tooltip {
+				display: inline-block;
+			}
+		}
+	}
 }

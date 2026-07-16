@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Admin Navigation
@@ -39,6 +42,24 @@
 				}
 			}
 
+		}
+		
+		.acf-nav-upgrade-wrap {
+			display: flex;
+			align-items: center;
+		}
+
+		.acf-nav-wpengine-logo {
+			display: inline-flex;
+			margin-left: 24px;
+
+			img {
+				height: 20px;
+			}
+
+			@media screen and (max-width: 1000px) {
+				display: none;
+			}
 		}
 	}
 
@@ -122,7 +143,7 @@
 				color: $gray-50;
 			}
 		}
-
+		
 		ul {
 			display: none;
 			position: absolute;
@@ -140,6 +161,23 @@
 			padding: 0;
 			border-radius: $radius-lg;
 			box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 8px 23px rgba(0, 0, 0, 0.12);
+			
+			.acf-wp-engine {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				min-height: 48px;
+				border-top: 1px solid rgba(0, 0, 0, 0.08);
+				background: #ECFBFC;
+				
+				a {
+					display: flex;
+					width: 100%;
+					justify-content: space-between;
+					border-top: none;
+				}
+				
+			}
 
 			li {
 				margin: 0;
@@ -167,7 +205,7 @@
 						}
 					}
 				}
-
+				
 				// Links
 				a {
 					margin: 0;
@@ -179,13 +217,13 @@
 						style: solid;
 						color: $gray-100;
 					};
-
+					
 					&:hover,
 					&.acf-tab.is-active {
 						background-color: unset;
 						color: $blue-500;
 					}
-
+					
 					i.acf-icon {
 						display: none !important;
 						$icon-size: 16px;
@@ -210,17 +248,40 @@
 							left: 6px;
 						}
 					}
-				}
 
+					img.acf-wp-engine-pro {
+						display: block;
+						height: 16px;
+						width: auto;
+					}
+
+					.acf-wp-engine-upsell-pill {
+						display: inline-flex;
+						justify-content: center;
+						align-items: center;
+						min-height: 22px;
+						border-radius: 100px;
+						font-size: 11px;
+						padding: {
+							right: 8px;
+							left: 8px;
+						}
+						background: #0ECAD4;
+						color: #FFFFFF;
+						text-shadow: 0px 1px 0 rgba(0, 0, 0, 0.12);
+						text-transform: uppercase;
+					}
+				}
+				
 				// First list item
 				&:first-child {
 					a {
 						border-bottom: none;
-					}
+					}	
 				}
-
+				
 			}
-
+			
 			&:hover,
 			&:focus {
 				display: block;
@@ -289,7 +350,7 @@
 				right: 8px;
 				left: -2px;
 			}
-
+			
 			&.acf-icon-dropdown {
 				-webkit-mask-image: url("../../images/icons/icon-chevron-down.svg");
 				mask-image: url("../../images/icons/icon-chevron-down.svg");
@@ -303,7 +364,7 @@
 					left: 6px;
 				};
 			}
-
+			
 		}
 
 		// Only show icons for specified nav items, stops third party plugin items with no icon appearing broken
@@ -379,7 +440,7 @@
 			mask-image: $icon-url;
 		}
 	}
-
+	
 	// More tab
 	.acf-header-tab-acf-more {
 		i.acf-icon-more {

@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Field picker modal
@@ -139,6 +142,30 @@
 						margin-top: 12px;
 
 						@extend .p5;
+					}
+				}
+
+				.field-type-requires-pro {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					position: absolute;
+					top: -10px;
+					right: -10px;
+					color: white;
+					font-size: 11px;
+					padding: {
+						right: 6px;
+						left: 6px;
+					}
+					background-image: url("../../images/pro-chip.svg");
+					background-repeat: no-repeat;
+					height: 24px;
+					width: 28px;
+
+					&.not-pro {
+						background-image: url("../../images/pro-chip-locked.svg");
+						width: 43px;
 					}
 				}
 			}
