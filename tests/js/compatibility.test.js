@@ -137,11 +137,7 @@ describe( 'SCF Compatibility Layer', () => {
 		it( 'should return an empty string for unknown keys', () => {
 			expect( acf._e( 'missing' ) ).toBe( '' );
 			expect( acf._e( 'missing', 'nope' ) ).toBe( '' );
-			// NOTE: documents current behavior — possible bug: when k1 is
-			// unknown, _e() indexes into the empty string, so a k2 naming a
-			// String.prototype method (e.g. 'sub') returns that function
-			// instead of ''. Tracked in #461.
-			expect( typeof acf._e( 'missing', 'sub' ) ).toBe( 'function' );
+			expect( acf._e( 'missing', 'sub' ) ).toBe( '' );
 		} );
 	} );
 

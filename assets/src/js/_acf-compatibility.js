@@ -108,8 +108,9 @@
 		// try k1
 		var string = this.l10n[ k1 ] || '';
 
-		// try k2
-		if ( k2 ) {
+		// try k2 (only when k1 resolved to a nested object, otherwise a
+		// string value would be indexed and leak String.prototype methods).
+		if ( k2 && this.isObject( string ) ) {
 			string = string[ k2 ] || '';
 		}
 

@@ -47,14 +47,16 @@ describe( 'SCF Core Utilities', () => {
 			expect( acf.get( 'unknown' ) ).toBeNull();
 		} );
 
-		it( 'should return null for falsy stored values', () => {
-			// NOTE: documents current behavior — acf.get() uses `|| null`,
-			// so stored falsy values (0, '', false) are unreadable.
-			// Tracked in #461.
+		it( 'should return stored falsy values', () => {
 			acf.set( 'zero', 0 );
+			acf.set( 'empty', '' );
+			acf.set( 'flag', false );
 
-			expect( acf.get( 'zero' ) ).toBeNull();
-			expect( acf.has( 'zero' ) ).toBe( false );
+			expect( acf.get( 'zero' ) ).toBe( 0 );
+			expect( acf.get( 'empty' ) ).toBe( '' );
+			expect( acf.get( 'flag' ) ).toBe( false );
+			expect( acf.has( 'zero' ) ).toBe( true );
+			expect( acf.has( 'flag' ) ).toBe( true );
 		} );
 
 		it( 'should support chaining on set()', () => {
@@ -232,10 +234,7 @@ describe( 'SCF Core Utilities', () => {
 			expect( acf.isObject( {} ) ).toBe( true );
 			expect( acf.isObject( [] ) ).toBe( true );
 			expect( acf.isObject( 'a' ) ).toBe( false );
-			// NOTE: documents current behavior — possible bug:
-			// typeof null === 'object', so isObject( null ) returns true.
-			// Tracked in #461.
-			expect( acf.isObject( null ) ).toBe( true );
+			expect( acf.isObject( null ) ).toBe( false );
 		} );
 
 		it( 'isNumeric() should detect numbers and numeric strings', () => {
