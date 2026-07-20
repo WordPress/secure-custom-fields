@@ -21,6 +21,7 @@ Guide for contributing to Secure Custom Fields development.
    - Integration testing
    - Bug reporting
    - Feature validation
+   - For PRs that change admin screen rendering, see [Performance Testing for Admin Screens](admin-performance-testing.md)
 
 ## Development Setup
 
