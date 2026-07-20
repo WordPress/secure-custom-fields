@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Sub-fields layout
@@ -10,7 +14,7 @@
 	border: {
 		width: 1px;
 		style: solid;
-		color: darken($gray-200, 5%);
+		color: color.adjust($gray-200, $lightness: -5%);
 	};
 	box-shadow: $elevation-01;
 
@@ -67,7 +71,7 @@
 }
 
 .post-type-acf-field-group #acf-field-group-fields .acf-field-list-wrap .acf-input-sub .acf-field-object.open {
-	border-top-color: darken($gray-200, 5%);
+	border-top-color: color.adjust($gray-200, $lightness: -5%);
 }
 
 /*---------------------------------------------------------------------------------------------
@@ -112,15 +116,6 @@
 	}
 	
 	.acf-field-setting-fc_layout {
-		.acf-field-layout-settings.open {
-			background-color: #ffffff;
-			border-top: {
-				width: 1px;
-				style: solid;
-				color: $gray-200;
-			};
-		}
-
 		width: calc(100% - 144px);
 		margin: {
 			right: 72px;
@@ -133,10 +128,19 @@
 		border: {
 			width: 1px;
 			style: solid;
-			color: darken($gray-200, 5%);
+			color: color.adjust($gray-200, $lightness: -5%);
 		};
 		border-radius: $radius-lg;
 		box-shadow: $elevation-01;
+		
+		.acf-field-layout-settings.open {
+			background-color: #ffffff;
+			border-top: {
+				width: 1px;
+				style: solid;
+				color: $gray-200;
+			};
+		}
 
 		@media screen and (max-width: 768px) {
 			width: calc(100% - 16px);
@@ -335,9 +339,9 @@
 	// Second level
 	$nested-color: #BF7DD7;
 	// Row hover color 
-	.acf-field-object .handle { background-color: transparent; &:hover { background-color: lighten($nested-color, 30%); } }
+	.acf-field-object .handle { background-color: transparent; &:hover { background-color: color.adjust($nested-color, $lightness: 30%); } }
 	// Active row color 
-	.acf-field-object.open .handle { background-color: lighten($nested-color, 28%); }
+	.acf-field-object.open .handle { background-color: color.adjust($nested-color, $lightness: 28%); }
 	// Active border color 
 	.acf-field-object .settings { border-left: { color: $nested-color; }; }
 	
@@ -345,9 +349,9 @@
 	.acf-input-sub {
 		$nested-color: #7CCDB9;
 		// Row hover color 
-		.acf-field-object .handle { background-color: transparent; &:hover { background-color: lighten($nested-color, 30%); } }
+		.acf-field-object .handle { background-color: transparent; &:hover { background-color: color.adjust($nested-color, $lightness: 30%); } }
 		// Active row color 
-		.acf-field-object.open .handle { background-color: lighten($nested-color, 28%); }
+		.acf-field-object.open .handle { background-color: color.adjust($nested-color, $lightness: 28%); }
 		// Active border color 
 		.acf-field-object .settings { border-left: { color: $nested-color; }; }
 		
@@ -355,9 +359,9 @@
 		.acf-input-sub {
 			$nested-color: #E29473;
 			// Row hover color 
-			.acf-field-object .handle { background-color: transparent; &:hover { background-color: lighten($nested-color, 30%); } }
+			.acf-field-object .handle { background-color: transparent; &:hover { background-color: color.adjust($nested-color, $lightness: 30%); } }
 			// Active row color 
-			.acf-field-object.open .handle { background-color: lighten($nested-color, 28%); }
+			.acf-field-object.open .handle { background-color: color.adjust($nested-color, $lightness: 28%); }
 			// Active border color 
 			.acf-field-object .settings { border-left: { color: $nested-color; }; }
 			
@@ -365,9 +369,9 @@
 			.acf-input-sub {
 				$nested-color: #A3B1B9;
 				// Row hover color 
-				.acf-field-object .handle { background-color: transparent; &:hover { background-color: lighten($nested-color, 30%); } }
+				.acf-field-object .handle { background-color: transparent; &:hover { background-color: color.adjust($nested-color, $lightness: 30%); } }
 				// Active row color 
-				.acf-field-object.open .handle { background-color: lighten($nested-color, 28%); }
+				.acf-field-object.open .handle { background-color: color.adjust($nested-color, $lightness: 28%); }
 				// Active border color 
 				.acf-field-object .settings { border-left: { color: $nested-color; }; }
 			}

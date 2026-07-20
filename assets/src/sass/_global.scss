@@ -1,4 +1,8 @@
 @use "sass:math";
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'typography' as *;
 /*--------------------------------------------------------------------------------------------
 *
 *  Global
@@ -454,6 +458,31 @@
 	}
 }
 
+.acf-icon.-plus-alt {
+	-webkit-mask-image: url("../../images/icons/icon-add-alt.svg");
+	mask-image: url("../../images/icons/icon-add-alt.svg");
+}
+
+.acf-icon.-duplicate-alt {
+	-webkit-mask-image: url("../../images/icons/icon-duplicate.svg");
+	mask-image: url("../../images/icons/icon-duplicate.svg");
+}
+
+.acf-icon.-trash-alt {
+	-webkit-mask-image: url("../../images/icons/icon-trash-alt.svg");
+	mask-image: url("../../images/icons/icon-trash-alt.svg");
+}
+
+.acf-icon.-more-actions {
+	-webkit-mask-image: url("../../images/icons/icon-more-vertical.svg");
+	mask-image: url("../../images/icons/icon-more-vertical.svg");
+}
+
+.acf-icon.-close {
+	-webkit-mask-image: url("../../images/icons/icon-close.svg");
+	mask-image: url("../../images/icons/icon-close.svg");
+}
+
 .acf-icon.-trash {
 	position: relative;
 	&:before,
@@ -564,12 +593,15 @@ a.acf-icon.dark {
 	background: #b4b9be;
 	color: #fff !important;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		background: #00a0d2;
 		color: #fff;
 	}
 	&.-minus:hover,
-	&.-cancel:hover {
+	&.-minus:focus,
+	&.-cancel:hover,
+	&.-cancel:focus {
 		background: #32373c;
 	}
 }
@@ -685,7 +717,7 @@ a.acf-icon.dark {
 	margin: 5px 0 15px;
 	padding: 3px 12px;
 	background: $acf_notice;
-	border-left: darken($acf_notice, 10%) solid 3px;
+	border-left: color.adjust($acf_notice, $lightness: -10%) solid 3px;
 
 	p {
 		font-size: 13px;
@@ -708,6 +740,8 @@ a.acf-icon.dark {
 		}
 	}
 
+
+
 	// dismiss
 	&.-dismiss {
 		padding-right: 40px;
@@ -716,21 +750,85 @@ a.acf-icon.dark {
 	// error
 	&.-error {
 		background: $acf_error;
-		border-color: darken($acf_error, 10%);
+		border-color: color.adjust($acf_error, $lightness: -10%);
 	}
 
 	// success
 	&.-success {
 		background: $acf_success;
-		border-color: darken($acf_success, 10%);
+		border-color: color.adjust($acf_success, $lightness: -10%);
 	}
 
 	// warning
 	&.-warning {
 		background: $acf_warning;
-		border-color: darken($acf_warning, 10%);
+		border-color: color.adjust($acf_warning, $lightness: -10%);
 	}
 }
+
+.acf-admin-single-taxonomy,
+.acf-admin-single-post-type,
+.acf-admin-single-options-page {
+	.notice-success {
+		.acf-item-saved-links {
+			display: flex;
+			gap: 12px;
+
+			a {
+				text-decoration: none;
+				opacity: 1;
+
+				&:after {
+					content: "";
+					width: 1px;
+					height: 13px;
+					display: inline-flex;
+					position: relative;
+					top: 2px;
+					left: 6px;
+					background-color: $gray-600;
+					opacity: 0.3;
+				}
+
+				&:last-child {
+					&:after {
+						content: none;
+					}
+				}
+			}
+		}
+	}
+}
+
+.rtl.acf-field-group,
+.rtl.acf-internal-post-type {
+	.notice {
+		padding-right: 50px !important;
+
+		.notice-dismiss {
+			left: 8px;
+			right: unset;
+		}
+
+		&:before {
+			left: unset;
+			right: 10px;
+		}
+
+	}
+
+	&.acf-admin-single-taxonomy,
+	&.acf-admin-single-post-type,
+	&.acf-admin-single-options-page {
+		.notice-success .acf-item-saved-links a {
+			&:after {
+				left: unset;
+				right: 6px;
+			}
+		}
+	}
+}
+
 
 /*--------------------------------------------------------------------------------------------
 *
@@ -1019,6 +1117,90 @@ a.acf-icon.dark {
 	}
 }
 
+#acf-popup .acf-confirm-popup {
+	border-radius: 8px;
+
+	.title {
+		padding: 30px;
+		border-bottom: none;
+		display: flex;
+		align-content: center;
+		justify-content: space-between;
+
+		h3 {
+			color: $gray-900;
+			font-size: 20px;
+			font-weight: 500;
+			line-height: 24px;
+		}
+
+		a:focus {
+			border-radius: 50%;
+		}
+
+		.acf-icon.-close {
+			width: 24px;
+			height: 24px;
+			mask-size: contain;
+			background: $gray-900;
+			position: relative;
+			top: auto;
+			right: auto;
+		}
+	}
+
+	.inner {
+		margin: 0;
+		padding: 0 30px 30px 30px;
+
+		p {
+			margin-top: 0;
+		}
+
+		.acf-actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: 5px;
+
+			.acf-btn-secondary {
+				border: none;
+
+				&:hover {
+					background: none;
+					text-decoration: underline;
+				}
+			}
+
+			.acf-btn {
+				border-radius: 2px;
+				border: none;
+				min-height: 40px;
+
+				&.acf-confirm {
+					background-color: #DD1243;
+
+					&:hover {
+						background-color: darken(#DD1243, 10%);
+					}
+				}
+			}
+		}
+	}
+
+	@media only screen and (max-width: 782px) {
+		width: auto !important;
+	}
+}
+
+body:not(.block-editor-page) #acf-popup .acf-confirm-popup {
+	.inner {
+		.acf-btn {
+			min-height: 30px;
+			border-radius: 3px;
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------------------------
 *
 *	upgrade notice
@@ -1026,49 +1208,38 @@ a.acf-icon.dark {
 *--------------------------------------------------------------------------------------------*/
 
 #acf-upgrade-notice {
-	position: relative;
-	background: #fff;
-	padding: 20px;
-	@include clearfix();
-
-	.col-content {
-		float: left;
-		width: 55%;
-		padding-left: 90px;
-	}
-
 	.notice-container {
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-start;
+		align-items: center;
 		align-content: flex-start;
+		padding: 10px 0;
+	}
+
+	.col-content {
+		float: left;
+		width: 58%;
+		padding-left: 66px;
 	}
 
 	.col-actions {
 		float: right;
 		text-align: center;
+		margin-right: 5px;
 	}
 
 	img {
 		float: left;
-		width: 64px;
-		height: 64px;
-		margin: 0 0 0 -90px;
+		width: 48px;
+		height: 48px;
+		margin: 10px 4px 0 -62px; // Adjusted negative margin to keep icon in bounds
+		vertical-align: top; // Align image to top
 	}
 
 	h2 {
-		display: inline-block;
-		font-size: 16px;
-		margin: 2px 0 6.5px;
-	}
-
-	p {
-		padding: 0;
-		margin: 0;
-	}
-
-	.button:before {
-		margin-top: 11px;
+		font-size: 1em;
+		font-weight: 500;
+		margin: 0 0 0.3em 0; // Reduced spacing between heading and text
 	}
 
 	// mobile
@@ -1076,22 +1247,11 @@ a.acf-icon.dark {
 		.col-content,
 		.col-actions {
 			float: none;
-			padding-left: 90px;
+			padding-left: 66px;
 			width: auto;
 			text-align: left;
 		}
 	}
-}
-
-// Hide icons for upgade notice.
-#acf-upgrade-notice:has(.notice-container)::before,
-#acf-upgrade-notice:has(.notice-container)::after {
-	display: none;
-}
-
-// Match padding of other non-icon notices.
-#acf-upgrade-notice:has(.notice-container) {
-	padding-left: 20px !important;
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -1313,12 +1473,13 @@ html[dir="rtl"] .acf-table > tbody > tr > td.order + td {
 *---------------------------------------------------------------------------------------------*/
 
 .acf-postbox-columns {
-	@include clearfix();
 	position: relative;
 	margin-top: -11px;
 	margin-bottom: -12px;
 	margin-left: -12px;
 	margin-right: (280px - 12px);
+
+	@include clearfix();
 
 	.acf-postbox-main,
 	.acf-postbox-side {
@@ -2255,328 +2416,19 @@ html[dir="rtl"] .acf-table > tbody > tr > td.order + td {
 	}
 }
 
+// SCF: removed ACF's "ACF PRO label" (.acf-pro-label) block — SCF has no
+// PRO tier.
+
 /*--------------------------------------------------------------------------------------------
 *
 *  Notices
 *
 *--------------------------------------------------------------------------------------------*/
 .acf-admin-page {
-	.acf-notice,
-	.notice,
-	#lost-connection-notice {
-		position: relative;
-		box-sizing: border-box;
-		min-height: 48px;
-		margin: {
-			top: 0 !important;
-			right: 0 !important;
-			bottom: 16px !important;
-			left: 0 !important;
-		}
-		padding: {
-			top: 13px !important;
-			right: 16px;
-			bottom: 12px !important;
-			left: 50px !important;
-		}
-		background-color: #e7eff9;
-		border: {
-			width: 1px;
-			style: solid;
-			color: #9dbaee;
-		}
-		border-radius: $radius-lg;
-		box-shadow: $elevation-01;
-		color: $gray-700;
-
-		&.update-nag {
-			display: block;
-			position: relative;
-			width: calc(100% - 44px);
-			margin: {
-				top: 48px !important;
-				right: 44px !important;
-				bottom: -32px !important;
-				left: 12px !important;
-			}
-		}
-
-		.button {
-			height: auto;
-			margin: {
-				left: 8px;
-			}
-			padding: 0;
-			border: none;
-			@extend .p5;
-		}
-
-		> div {
-			margin: {
-				top: 0;
-				bottom: 0;
-			}
-		}
-
-		p {
-			flex: 1 0 auto;
-			max-width: 100%;
-			line-height: 18px;
-			margin: 0;
-			padding: 0;
-
-			&.help {
-				margin: {
-					top: 0;
-				}
-				padding: {
-					top: 0;
-				}
-				@extend .p7;
-				color: rgba($gray-700, 0.7);
-			}
-		}
-
-		// Dismiss button
-		.acf-notice-dismiss,
-		.notice-dismiss {
-			position: absolute;
-			top: 4px;
-			right: 8px;
-			padding: 9px;
-			border: none;
-
-			&:before {
-				content: "";
-				$icon-size: 20px;
-				display: block;
-				position: relative;
-				z-index: 600;
-				width: $icon-size;
-				height: $icon-size;
-				background-color: $gray-500;
-				border: none;
-				border-radius: 0;
-				-webkit-mask-size: contain;
-				mask-size: contain;
-				-webkit-mask-repeat: no-repeat;
-				mask-repeat: no-repeat;
-				-webkit-mask-position: center;
-				mask-position: center;
-				-webkit-mask-image: url("../../images/icons/icon-close.svg");
-				mask-image: url("../../images/icons/icon-close.svg");
-			}
-
-			&:hover::before {
-				background-color: $gray-700;
-			}
-		}
-
-		a.acf-notice-dismiss {
-			position: absolute;
-			top: 5px;
-			right: 24px;
-
-			&:before {
-				background-color: $gray-600;
-			}
-		}
-
-		// Icon base styling
-		&:before {
-			content: "";
-			$icon-size: 16px;
-			display: block;
-			position: absolute;
-			top: 15px;
-			left: 18px;
-			z-index: 600;
-			width: $icon-size;
-			height: $icon-size;
-			margin: {
-				right: 8px;
-			}
-			background-color: #fff;
-			border: none;
-			border-radius: 0;
-			-webkit-mask-size: contain;
-			mask-size: contain;
-			-webkit-mask-repeat: no-repeat;
-			mask-repeat: no-repeat;
-			-webkit-mask-position: center;
-			mask-position: center;
-			-webkit-mask-image: url("../../images/icons/icon-info-solid.svg");
-			mask-image: url("../../images/icons/icon-info-solid.svg");
-		}
-
-		&:after {
-			content: "";
-			display: block;
-			position: absolute;
-			top: 9px;
-			left: 12px;
-			z-index: 500;
-			width: 28px;
-			height: 28px;
-			background-color: $color-info;
-			border-radius: $radius-md;
-			box-shadow: $elevation-01;
-		}
-
-		.local-restore {
-			align-items: center;
-			margin: {
-				top: -6px;
-				bottom: 0;
-			}
-		}
-	}
-
 	// Persisted notices should be hidden by default as they will be shown by JS if required.
 	.notice[data-persisted="true"] {
 		display: none;
 	}
-
-	.notice.is-dismissible {
-		padding: {
-			right: 56px;
-		}
-	}
-
-	// Success notice
-	.notice.notice-success {
-		background-color: #edf7ef;
-		border-color: #b6deb9;
-
-		&:before {
-			-webkit-mask-image: url("../../images/icons/icon-check-circle-solid.svg");
-			mask-image: url("../../images/icons/icon-check-circle-solid.svg");
-		}
-
-		&:after {
-			background-color: $color-success;
-		}
-	}
-
-	// Error notice
-	.acf-notice.acf-error-message,
-	.notice.notice-error,
-	#lost-connection-notice {
-		background-color: #f7eeeb;
-		border-color: #f1b6b3;
-
-		&:before {
-			-webkit-mask-image: url("../../images/icons/icon-warning.svg");
-			mask-image: url("../../images/icons/icon-warning.svg");
-		}
-
-		&:after {
-			background-color: $color-danger;
-		}
-	}
-	
-	.notice.notice-warning {
-		&:before {
-			-webkit-mask-image: url("../../images/icons/icon-alert-triangle.svg");
-			mask-image: url("../../images/icons/icon-alert-triangle.svg");
-			background: #f56e28;
-		}
-
-		&:after {
-			content: none;
-		}
-
-		background: linear-gradient(0deg, rgba(247, 144, 9, 0.08), rgba(247, 144, 9, 0.08)), #FFFFFF;
-		border: 1px solid rgba(247, 144, 9, 0.32);
-		color: $gray-700;
-	}
-}
-
-.acf-admin-single-taxonomy,
-.acf-admin-single-post-type,
-.acf-admin-single-options-page {
-	.notice-success {
-		.acf-item-saved-text {
-			font-weight: 600;
-		}
-
-		.acf-item-saved-links {
-			display: flex;
-			gap: 12px;
-
-			a {
-				text-decoration: none;
-				opacity: 1;
-
-				&:after {
-					content: "";
-					width: 1px;
-					height: 13px;
-					display: inline-flex;
-					position: relative;
-					top: 2px;
-					left: 6px;
-					background-color: $gray-600;
-					opacity: 0.3;
-				}
-
-				&:last-child {
-					&:after {
-						content: none;
-					}
-				}
-			}
-		}
-	}
-}
-
-.rtl.acf-field-group,
-.rtl.acf-internal-post-type {
-	.notice {
-		padding-right: 50px !important;
-
-		.notice-dismiss {
-			left: 8px;
-			right: unset;
-		}
-
-		&:before {
-			left: unset;
-			right: 10px;
-		}
-
-		&:after {
-			left: unset;
-			right: 12px;
-		}
-	}
-
-	&.acf-admin-single-taxonomy,
-	&.acf-admin-single-post-type,
-	&.acf-admin-single-options-page {
-		.notice-success .acf-item-saved-links a {
-			&:after {
-				left: unset;
-				right: 6px;
-			}
-		}
-	}
-}
-
-/*--------------------------------------------------------------------------------------------
-*
-*  ACF PRO label
-*
-*--------------------------------------------------------------------------------------------*/
-.acf-pro-label {
-	display: inline-flex;
-	align-items: center;
-	min-height: 22px;
-	border: none;
-	font-size: 11px;
-	text-transform: uppercase;
-	text-decoration: none;
-	color: #fff;
 }
 
 /*--------------------------------------------------------------------------------------------

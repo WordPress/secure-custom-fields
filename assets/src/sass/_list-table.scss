@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Field Groups
@@ -149,6 +153,100 @@
 
 		.column-acf-key {
 			white-space: nowrap;
+			.copyable:not(.input-copyable, .copy-unsupported) {
+				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+	
+				&:hover:after {
+					content: '';
+					padding-left: 5px;
+					$icon-size: 12px;
+					display: inline-flex;
+					width: $icon-size;
+					height: $icon-size;
+					background-color: $gray-500;
+					border: none;
+					border-radius: 0;
+					-webkit-mask-size: contain;
+					mask-size: contain;
+					-webkit-mask-repeat: no-repeat;
+					mask-repeat: no-repeat;
+					-webkit-mask-position: center;
+					mask-position: center;
+					text-indent: 500%;
+					white-space: nowrap;
+					overflow: hidden;
+					-webkit-mask-image: url('../../images/icons/icon-copy.svg');
+					mask-image: url('../../images/icons/icon-copy.svg');
+					background-size: cover;
+				}
+	
+				&.sub-label {
+					padding-right: 22px;
+	
+					&:hover {
+						padding-right: 0;
+	
+						&:after {
+							$icon-size: 14px;
+							width: $icon-size;
+							height: $icon-size;
+							padding-left: 8px;
+						}
+					}
+				}
+	
+				&.copied:hover:after {
+					-webkit-mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					background-color: $acf_success;
+				}
+			}
+	
+			.copyable.input-copyable:not(.copy-unsupported) {
+				cursor: pointer;
+				display: block;
+				position: relative;
+				align-items: center;
+	
+				input {
+					padding-right: 40px;
+				}
+	
+				.acf-input-wrap:after {
+					content: '';
+					padding-left: 5px;
+					$icon-size: 16px;
+					right: 12px;
+					top: 12px;
+					position: absolute;
+					width: $icon-size;
+					height: $icon-size;
+					background-color: $gray-400;
+					border: none;
+					border-radius: 0;
+					-webkit-mask-size: contain;
+					mask-size: contain;
+					-webkit-mask-repeat: no-repeat;
+					mask-repeat: no-repeat;
+					-webkit-mask-position: center;
+					mask-position: center;
+					text-indent: 500%;
+					white-space: nowrap;
+					overflow: hidden;
+					-webkit-mask-image: url('../../images/icons/icon-copy.svg');
+					mask-image: url('../../images/icons/icon-copy.svg');
+					background-size: cover;
+				}
+	
+				&.copied .acf-input-wrap:after {
+					-webkit-mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					mask-image: url('../../images/icons/icon-check-circle-solid.svg');
+					background-color: $acf_success;
+				}
+			}
+	
 		}
 
 		// SVG icons
@@ -271,7 +369,7 @@
 		@extend .p6;
 
 		a:hover {
-			color: darken($color-primary-hover, 10%);
+			color: color.adjust($color-primary-hover, $lightness: -10%);
 		}
 
 		.trash a {
@@ -300,7 +398,7 @@
 
 	#the-list tr:hover td,
 	#the-list tr:hover th {
-		background-color: lighten($blue-50, 3%);
+		background-color: color.adjust($blue-50, $lightness: 3%);
 	}
 
 }
@@ -731,55 +829,14 @@
 		cursor: default !important;
 	}
 
-	.acf-options-pages-preview-upgrade-button {
-		height: 48px;
-		padding: 8px 48px 8px 48px !important;
-		border: none !important;
-		gap: 6px;
-		display: inline-flex;
-		align-items: center;
-		align-self: stretch;
-		background: $gradient-pro;
-		border-radius: $radius-md;
-		text-decoration: none;
+	// SCF: removed ACF's .acf-options-pages-preview-upgrade-button,
+	// .acf-ui-options-page-pro-features-actions, and .acf-pro-label upsell
+	// rules — options pages are available in SCF.
 
-		&:focus {
-			border: none;
-			outline: none;
-			box-shadow: none;
+	.acf_options_preview_wrap {
+		img {
+			max-height: 88px;
 		}
-
-		p {
-			margin: 0;
-			padding: {
-				top: 8px;
-				bottom: 8px;
-			}
-			@extend .p4;
-			font-weight: normal;
-			text-transform: none;
-			color: #fff;
-		}
-
-		.acf-icon {
-			$icon-size: 20px;
-			width: $icon-size;
-			height: $icon-size;
-			margin: {
-				right: 6px;
-				left: -2px;
-			};
-			background-color: $gray-50;
-		}
-	}
-
-	.acf-ui-options-page-pro-features-actions a.acf-btn i {
-		margin-right: -2px !important;
-		margin-left: 0px !important;
-	}
-
-	.acf-pro-label {
-		vertical-align: middle;
 	}
 
 }
@@ -842,3 +899,7 @@
 	}
 
 }
+
+// SCF: removed ACF's "Invalid license states"
+// (.acf-internal-post-type.acf-pro-inactive-license) block here — SCF has no
+// commercial licensing.

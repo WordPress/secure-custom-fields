@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Admin Navigation
@@ -40,6 +43,9 @@
 			}
 
 		}
+		
+		// SCF: removed ACF's .acf-nav-upgrade-wrap and
+		// .acf-nav-wpengine-logo upsell/branding blocks here.
 	}
 
 	@media screen and (max-width: $md) {
@@ -61,9 +67,8 @@
 			display: block;
 		}
 
-		&.pro img {
-			height: 46px;
-		}
+		// SCF: removed ACF's PRO logo variant (&.pro img) — SCF has no PRO
+		// tier.
 	}
 
 	h2 {
@@ -122,7 +127,7 @@
 				color: $gray-50;
 			}
 		}
-
+		
 		ul {
 			display: none;
 			position: absolute;
@@ -140,6 +145,8 @@
 			padding: 0;
 			border-radius: $radius-lg;
 			box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 8px 23px rgba(0, 0, 0, 0.12);
+			
+			// SCF: removed ACF's .acf-wp-engine upsell block here.
 
 			li {
 				margin: 0;
@@ -167,7 +174,7 @@
 						}
 					}
 				}
-
+				
 				// Links
 				a {
 					margin: 0;
@@ -179,13 +186,13 @@
 						style: solid;
 						color: $gray-100;
 					};
-
+					
 					&:hover,
 					&.acf-tab.is-active {
 						background-color: unset;
 						color: $blue-500;
 					}
-
+					
 					i.acf-icon {
 						display: none !important;
 						$icon-size: 16px;
@@ -196,31 +203,20 @@
 						background-color: $gray-400 !important;
 					}
 
-					.acf-requires-pro {
-						justify-content: center;
-						align-items: center;
-						color: white;
-						background: $gradient-pro;
-						border-radius: 100px;
-						font-size: 11px;
-						position: absolute;
-						right: 16px;
-						padding: {
-							right: 6px;
-							left: 6px;
-						}
-					}
+					// SCF: removed ACF's .acf-requires-pro pill,
+					// img.acf-wp-engine-pro, and .acf-wp-engine-upsell-pill
+					// upsell blocks here.
 				}
-
+				
 				// First list item
 				&:first-child {
 					a {
 						border-bottom: none;
-					}
+					}	
 				}
-
+				
 			}
-
+			
 			&:hover,
 			&:focus {
 				display: block;
@@ -289,7 +285,7 @@
 				right: 8px;
 				left: -2px;
 			}
-
+			
 			&.acf-icon-dropdown {
 				-webkit-mask-image: url("../../images/icons/icon-chevron-down.svg");
 				mask-image: url("../../images/icons/icon-chevron-down.svg");
@@ -303,7 +299,7 @@
 					left: 6px;
 				};
 			}
-
+			
 		}
 
 		// Only show icons for specified nav items, stops third party plugin items with no icon appearing broken
@@ -379,7 +375,7 @@
 			mask-image: $icon-url;
 		}
 	}
-
+	
 	// More tab
 	.acf-header-tab-acf-more {
 		i.acf-icon-more {

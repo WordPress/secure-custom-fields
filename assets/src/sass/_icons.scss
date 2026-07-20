@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *	Icon base styling
@@ -95,7 +97,7 @@
 		-webkit-mask-image: url("../../images/icons/icon-trash.svg");
 		mask-image: url("../../images/icons/icon-trash.svg");
 	}
-
+	
 	i.acf-icon-extended-menu, button.acf-icon-extended-menu {
 		-webkit-mask-image: url("../../images/icons/icon-extended-menu.svg");
 		mask-image: url("../../images/icons/icon-extended-menu.svg");
@@ -154,12 +156,12 @@
 		-webkit-mask-image: url("../../images/field-type-icons/icon-field-image.svg");
 		mask-image: url("../../images/field-type-icons/icon-field-image.svg");
 	}
-
+	
 	i.acf-icon-warning {
 		-webkit-mask-image: url("../../images/icons/icon-warning-alt.svg");
 		mask-image: url("../../images/icons/icon-warning-alt.svg");
 	}
-
+	
 	i.acf-icon-warning-red {
 		-webkit-mask-image: url("../../images/icons/icon-warning-alt-red.svg");
 		mask-image: url("../../images/icons/icon-warning-alt-red.svg");
@@ -174,7 +176,7 @@
 		-webkit-mask-image: url("../../images/icons/icon-play.svg");
 		mask-image: url("../../images/icons/icon-play.svg");
 	}
-
+	
 	i.acf-icon-lock {
 		-webkit-mask-image: url("../../images/icons/icon-lock.svg");
 		mask-image: url("../../images/icons/icon-lock.svg");
@@ -327,14 +329,14 @@ h3.acf-sub-field-list-title:before,
 *	Postbox expand / collapse icon
 *
 *--------------------------------------------------------------------------------------------*/
-.post-type-acf-field-group,
+.post-type-acf-field-group, 
 .post-type-acf-field-group #acf-field-group-fields,
 .post-type-acf-field-group #acf-field-group-options,
 .post-type-acf-field-group .postbox,
 .acf-admin-single-post-type #acf-advanced-settings,
 .acf-admin-single-taxonomy #acf-advanced-settings,
 .acf-admin-single-options-page #acf-advanced-settings{
-
+	
 	.postbox-header .handle-actions {
 		display: flex;
 
@@ -375,6 +377,8 @@ h3.acf-sub-field-list-title:before,
 *
 *---------------------------------------------------------------------------------------------*/
 .post-type-acf-field-group {
+	// SCF: removed #acf-license-information from this selector group — SCF
+	// has no commercial licensing UI.
 	#acf-admin-tool-export,
 	#acf-admin-tool-import,
 	#acf-update-information {
@@ -408,6 +412,7 @@ h3.acf-sub-field-list-title:before,
 	}
 
 	&.rtl {
+		// SCF: removed #acf-license-information from this selector group.
 		#acf-admin-tool-export,
 		#acf-admin-tool-import,
 		#acf-update-information {
@@ -435,6 +440,9 @@ h3.acf-sub-field-list-title:before,
 	-webkit-mask-image: url("../../images/icons/icon-import.svg");
 	mask-image: url("../../images/icons/icon-import.svg");
 }
+
+// SCF: removed ACF's "License information icon" rule — SCF has no
+// commercial licensing UI.
 
 // Update information icon
 .post-type-acf-field-group #acf-update-information h3:before {

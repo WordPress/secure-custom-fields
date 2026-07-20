@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *  Dark mode
@@ -62,7 +66,7 @@ $input_border: 			#191f25;
 	background: $body_background;
 }
 @mixin darker-background() {
-	background: darken($body_background, 5%);
+	background: color.adjust($body_background, $lightness: -5%);
 }
 @mixin dark-postbox() {
 	background-color: $postbox_background;

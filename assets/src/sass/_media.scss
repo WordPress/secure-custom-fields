@@ -1,10 +1,12 @@
+@use 'variables' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Media Model
 *
 *---------------------------------------------------------------------------------------------*/
 
-/* WP sets tables to act as divs. SCF uses tables, so these muct be reset */
+/* WP sets tables to act as divs. ACF uses tables, so these muct be reset */
 .media-modal .compat-attachment-fields td.acf-input {
 	
 	table {

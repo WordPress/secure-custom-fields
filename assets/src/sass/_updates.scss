@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Updates layout
@@ -12,8 +15,6 @@
 	align-items: flex-start;
 }
 
-.custom-fields_page_acf-settings-updates .acf-admin-notice,
-.custom-fields_page_acf-settings-updates .acf-upgrade-notice,
 .custom-fields_page_acf-settings-updates .notice {
 	flex: 1 1 100%;
 }
@@ -57,7 +58,7 @@
 *---------------------------------------------------------------------------------------------*/
 .acf-settings-wrap.acf-updates {
 
-	.acf-admin-notice {
+	.notice {
 		flex: 1 1 100%;
 		margin: {
 			top: 16px;
@@ -67,6 +68,9 @@
 	}
 
 }
+
+// SCF: removed ACF's "License information" (#acf-license-information)
+// block here — SCF has no commercial licensing UI.
 
 /*---------------------------------------------------------------------------------------------
 *

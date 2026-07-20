@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*----------------------------------------------------------------------------
 *
 *  Container sizes
@@ -168,7 +172,7 @@
 		}
 
 		&:hover {
-			background-color: lighten($blue-50, 3%);
+			background-color: color.adjust($blue-50, $lightness: 3%);
 		}
 
 		&.open {
@@ -266,7 +270,7 @@
 			bottom: 8px;
 			left: 24px;
 		}
-		background-color: #fff;
+		background-color: $gray-50;
 		border-top: {
 			width: 1px;
 			style: solid;
@@ -423,6 +427,17 @@
 	}
 }
 
+.acf-field-object-message {
+	.acf-field-settings-main-presentation {
+		padding-top: 0;
+		margin-top: 0;
+		.acf-field-number {
+			border-top-style: none;
+			padding-top: 0;
+		}
+	}
+}
+
 /*----------------------------------------------------------------------------
 *
 *  Informational Notes for specific fields
@@ -483,6 +498,7 @@
 	min-height: 72px;
 	box-sizing: border-box;
 	width: 100%;
+	gap: 8px;
 	margin: {
 		top: 0;
 		right: 0;
@@ -578,10 +594,6 @@
 			padding: 0;
 
 			a {
-				&:focus-visible {
-					border: 1px solid #5897fb;
-				}
-
 				box-sizing: border-box;
 				display: inline-flex;
 				align-items: center;
@@ -604,6 +616,10 @@
 				color: $gray-500;
 				@extend .p5;
 				font-weight: normal;
+
+				&:focus-visible {
+					border: 1px solid #5897fb;
+				}
 
 				&:hover {
 					color: $gray-800;
@@ -726,8 +742,10 @@
 		}
 	}
 
-	// Description field
-	.acf-field[data-name="description"] {
+	// Description and Display Title fields
+	.acf-field[data-name="description"],
+	.acf-field[data-name="display_title"],
+	.acf-field[data-name="ai_description"] {
 		max-width: 600px;
 	}
 
