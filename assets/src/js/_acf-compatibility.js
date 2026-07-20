@@ -207,7 +207,7 @@
 		}
 
 		// get keys
-		keys = String( key ).split( '.' );
+		var keys = String( key ).split( '.' );
 
 		// acf.isget
 		for ( var i = 0; i < keys.length; i++ ) {
@@ -262,8 +262,7 @@
 		var length = actions.length;
 		if ( length > 1 ) {
 			for ( var i = 0; i < length; i++ ) {
-				action = actions[ i ];
-				_acf.add_action.apply( this, arguments );
+				_acf.add_action( actions[ i ], callback, priority, context );
 			}
 			return this;
 		}
