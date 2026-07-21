@@ -116,6 +116,9 @@ for dir in "${REQUIRED_DIRS[@]}"; do
     cp -r "$dir" "$PLUGIN_DIR/"
 done
 
+# Remove uncompiled sources (JS partials and Sass); only assets/build is used at runtime
+rm -rf "$PLUGIN_DIR/assets/src"
+
 # Install production dependencies
 echo "Installing production dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
@@ -127,6 +130,10 @@ cp -r vendor "$PLUGIN_DIR/"
 if [[ -d "$PLUGIN_DIR/vendor/bin" && -z "$(ls -A "$PLUGIN_DIR/vendor/bin")" ]]; then
     rm -rf "$PLUGIN_DIR/vendor/bin"
 fi
+
+# Remove macOS Finder metadata anywhere in the tree; gitignored, so the
+# untracked-files check above doesn't catch it, but cp -r copies it along
+find "$PLUGIN_DIR" -name '.DS_Store' -type f -delete
 
 # Create the zip file
 cd "$TEMP_DIR"
