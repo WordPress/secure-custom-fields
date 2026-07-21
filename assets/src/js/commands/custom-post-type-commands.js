@@ -12,9 +12,89 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { dispatch, resolveSelect, select, useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { page, plus, edit } from '@wordpress/icons';
+
+/**
+ * Maximum number of posts a search loader surfaces per post type.
+ */
+const SEARCH_RESULTS_LIMIT = 10;
+
+/**
+ * Creates a command-loader hook bound to a single post type.
+ *
+ * The hook is reused by the command palette, which calls it on every search
+ * change, so it must follow the rules of hooks (no async). Posts are fetched
+ * through the core-data store, which also resolves read capabilities
+ * server-side.
+ *
+ * @param {Object} postType Post type object from the REST types endpoint.
+ *
+ * @return {Function} Loader hook accepting `{ search }` and returning commands.
+ */
+const createPostSearchLoaderHook = ( postType ) =>
+	function usePostSearchLoader( { search } ) {
+		const { records, isLoading } = useSelect(
+			( selectStore ) => {
+				const { getEntityRecords, hasFinishedResolution } =
+					selectStore( 'core' );
+				const query = {
+					search: search ? search : undefined,
+					per_page: SEARCH_RESULTS_LIMIT,
+					orderby: search ? 'relevance' : 'date',
+				};
+				return {
+					records: getEntityRecords(
+						'postType',
+						postType.slug,
+						query
+					),
+					isLoading: ! hasFinishedResolution( 'getEntityRecords', [
+						'postType',
+						postType.slug,
+						query,
+					] ),
+				};
+			},
+			[ search ]
+		);
+
+		const commands = useMemo( () => {
+			return ( records ?? [] )
+				.slice( 0, SEARCH_RESULTS_LIMIT )
+				.map( ( record ) => {
+					const editPostUrl = addQueryArgs( 'post.php', {
+						post: record.id,
+						action: 'edit',
+					} );
+					return {
+						name: `scf/edit-post-${ postType.slug }-${ record.id }`,
+						label:
+							record.title?.rendered ||
+							__( '(no title)', 'secure-custom-fields' ),
+						icon: edit,
+						category: 'edit',
+						keywords: [
+							'edit',
+							'modify',
+							postType.slug,
+							postType.name,
+						],
+						callback: ( { close } ) => {
+							document.location = editPostUrl;
+							close();
+						},
+					};
+				} );
+		}, [ records ] );
+
+		return {
+			commands,
+			isLoading,
+		};
+	};
 
 /**
  * Register custom post type commands
@@ -32,10 +112,29 @@ const registerPostTypeCommands = async () => {
 	const commandStore = dispatch( 'core/commands' );
 	const registeredCommands = select( 'core/commands' ).getCommands();
 
-	postTypes.forEach( async ( postType ) => {
+	postTypes.forEach( ( postType ) => {
 		if ( ! postType?.visibility?.show_ui ) {
 			return;
 		}
+
+		// WordPress core does NOT expose `visibility.show_in_rest` on the
+		// /wp/v2/types response. The canonical "REST is on" signal is a
+		// non-empty `rest_base`. A non-empty `rest_namespace` confirms the
+		// post type is registered against a real REST namespace (e.g. wp/v2).
+		// Check both — a CPT with `rest_base` set but no namespace is
+		// malformed and would 404 on every request.
+		const hasRestSupport =
+			!! postType.rest_base && !! postType.rest_namespace;
+
+		// eslint-disable-next-line no-console
+		console.debug( '[SCF commands] registering for', postType.slug, {
+			show_in_rest: hasRestSupport,
+			rest_base: postType.rest_base,
+		} );
+
+		// Wrap each CPT registration so one failure doesn't kill the rest and
+		// so we can see which post type silently fails to register.
+		const registerOne = async () => {
 
 		const viewAllCommandUrl = addQueryArgs( 'edit.php', {
 			post_type: postType.slug,
@@ -108,35 +207,54 @@ const registerPostTypeCommands = async () => {
 
 		// Register "Edit Post Type" command. The scf_post_id field is only
 		// exposed to users who can edit the post type definition, so its
-		// absence means the command must not be offered.
-		if ( ! postType.scf_post_id ) {
-			return;
+		// presence gates the command.
+		if ( postType.scf_post_id ) {
+			commandStore.registerCommand( {
+				name: `scf/edit-${ postType.slug }`,
+				label: sprintf(
+					/* translators: %s: post type label */
+					__( 'Edit post type: %s', 'secure-custom-fields' ),
+					postType.name
+				),
+				icon: edit,
+				keywords: [
+					'edit',
+					'modify',
+					'post type',
+					'cpt',
+					'settings',
+					postType.slug,
+					postType.name,
+				],
+				callback: ( { close } ) => {
+					document.location = addQueryArgs( 'post.php', {
+						post: postType.scf_post_id,
+						action: 'edit',
+					} );
+					close();
+				},
+			} );
 		}
 
-		commandStore.registerCommand( {
-			name: `scf/edit-${ postType.slug }`,
-			label: sprintf(
-				/* translators: %s: post type label */
-				__( 'Edit post type: %s', 'secure-custom-fields' ),
-				postType.name
-			),
-			icon: edit,
-			keywords: [
-				'edit',
-				'modify',
-				'post type',
-				'cpt',
-				'settings',
+		// Register a loader that searches this post type's posts as the user
+		// types, letting them pick an existing instance to edit. The core
+		// /wp/v2/types response uses a non-empty `rest_base` as the canonical
+		// "show in REST" signal — there is no `visibility.show_in_rest` key.
+		if ( hasRestSupport ) {
+			commandStore.registerCommandLoader( {
+				name: `scf/edit-posts-${ postType.slug }`,
+				hook: createPostSearchLoaderHook( postType ),
+			} );
+		}
+		};
+
+		registerOne().catch( ( err ) => {
+			// eslint-disable-next-line no-console
+			console.error(
+				'[SCF commands] failed to register for',
 				postType.slug,
-				postType.name,
-			],
-			callback: ( { close } ) => {
-				document.location = addQueryArgs( 'post.php', {
-					post: postType.scf_post_id,
-					action: 'edit',
-				} );
-				close();
-			},
+				err
+			);
 		} );
 	} );
 };
