@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.9.1
+Stable tag: 6.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,19 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.2 =
+*Release Date 21st July 2026*
+
+*Fixes*
+
+- Fixed Google Maps field values being double-encoded when saved inside a block.
+- Inserting a Link field value in the Classic Editor no longer triggers validation for other required fields before the post is saved.
+- Auto Inline Editing blocks no longer return truthy placeholder strings for empty field values fetched from a different post inside the block render template.
+- V2 and V3 blocks no longer crash when rendering an oEmbed field whose title begins with `[` or `{`.
+- Field group location rules without a location value no longer cause PHP warnings on page load.
+- Improved the appearance of the URL, Number, and Select fields on WordPress 7.0+.
+- Fields now save on WooCommerce orders when using HPOS in compatibility mode.
+
 = 6.9.1 =
 *Release Date 2nd July 2026*
 
