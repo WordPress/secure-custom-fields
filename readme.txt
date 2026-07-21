@@ -51,6 +51,23 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.2 =
+*Release Date 21st July 2026*
+
+*Fixes*
+
+- Fixed Google Maps field values being double-encoded when saved inside a block.
+- Inserting a Link field value in the Classic Editor no longer triggers validation for other required fields before the post is saved.
+- Auto Inline Editing blocks no longer return placeholder strings for empty field values fetched from a different post inside the block render template.
+- Blocks no longer crash when rendering an oEmbed field whose title begins with `[` or `{`.
+- Field group location rules without a location value no longer cause PHP warnings on page load.
+- Improved the appearance of the URL, Number, and Select fields on WordPress 7.0+, and vertically centered the URL field's globe icon.
+- Fields now save on WooCommerce orders when using HPOS in compatibility mode.
+- Restored missing styles for Google Map field toolbar buttons and block editor field notices, and removed unused upgrade-promotion styles.
+- Made additional user-facing strings translatable.
+- Removed an obsolete workaround for a pre-release WordPress 7.0 media modal change that WordPress reverted before the final release.
+- Updated the bundled DOMPurify library to version 3.4.11.
+
 = 6.9.1 =
 *Release Date 2nd July 2026*
 
