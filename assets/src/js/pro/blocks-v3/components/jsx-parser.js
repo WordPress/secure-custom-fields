@@ -137,9 +137,13 @@ function parseAttribute( attribute ) {
 			}
 
 			attrName = getJSXNameReplacement( attrName );
+			// Ignore values that merely start with a JSON-like character but
+			// aren't valid JSON (e.g. an oEmbed title beginning with "[" or "{").
 			const firstChar = attrValue.charAt( 0 );
 			if ( firstChar === '[' || firstChar === '{' ) {
-				attrValue = JSON.parse( attrValue );
+				try {
+					attrValue = JSON.parse( attrValue );
+				} catch ( err ) {}
 			}
 			if ( attrValue === 'true' || attrValue === 'false' ) {
 				attrValue = attrValue === 'true';

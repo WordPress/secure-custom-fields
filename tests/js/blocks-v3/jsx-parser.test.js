@@ -139,16 +139,18 @@ describe( 'parseJSX', () => {
 			expect( result.props.config ).toEqual( { key: 'value' } );
 		} );
 
-		test( 'throws SyntaxError on invalid JSON array attribute', () => {
-			expect( () => {
-				parseJSX( '<div items="[invalid json">Content</div>' );
-			} ).toThrow( SyntaxError );
+		test( 'keeps invalid JSON array attribute as a string', () => {
+			const result = parseJSX(
+				'<div items="[invalid json">Content</div>'
+			);
+			expect( result.props.items ).toBe( '[invalid json' );
 		} );
 
-		test( 'throws SyntaxError on invalid JSON object attribute', () => {
-			expect( () => {
-				parseJSX( '<div config="{not: valid}">Content</div>' );
-			} ).toThrow( SyntaxError );
+		test( 'keeps invalid JSON object attribute as a string', () => {
+			const result = parseJSX(
+				'<div config="{not: valid}">Content</div>'
+			);
+			expect( result.props.config ).toBe( '{not: valid}' );
 		} );
 	} );
 

@@ -46,7 +46,7 @@ if ( ! class_exists( 'ACF_Location_Post_Taxonomy' ) ) :
 			}
 
 			// Get WP_Term from rule value.
-			$term = acf_get_term( $rule['value'] );
+			$term = acf_get_term( $rule['value'] ?? '' );
 			if ( ! $term || is_wp_error( $term ) ) {
 				return false;
 			}
@@ -67,7 +67,7 @@ if ( ! class_exists( 'ACF_Location_Post_Taxonomy' ) ) :
 			$result = ( in_array( $term->term_id, $post_terms ) || in_array( $term->slug, $post_terms ) );
 
 			// Reverse result for "!=" operator.
-			if ( $rule['operator'] === '!=' ) {
+			if ( ( $rule['operator'] ?? '' ) === '!=' ) {
 				return ! $result;
 			}
 			return $result;
@@ -96,8 +96,8 @@ if ( ! class_exists( 'ACF_Location_Post_Taxonomy' ) ) :
 		 * @return  string|array
 		 */
 		public function get_object_subtype( $rule ) {
-			if ( $rule['operator'] === '==' ) {
-				$term = acf_decode_term( $rule['value'] );
+			if ( ( $rule['operator'] ?? '' ) === '==' ) {
+				$term = acf_decode_term( $rule['value'] ?? '' );
 				if ( $term ) {
 					$taxonomy = get_taxonomy( $term['taxonomy'] );
 					if ( $taxonomy ) {

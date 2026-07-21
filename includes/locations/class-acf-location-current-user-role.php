@@ -42,16 +42,17 @@ if ( ! class_exists( 'ACF_Location_Current_User_Role' ) ) :
 			}
 
 			// Check super_admin value.
-			if ( $rule['value'] == 'super_admin' ) {
+			$rule_value = $rule['value'] ?? '';
+			if ( 'super_admin' === $rule_value ) {
 				$result = is_super_admin( $user->ID );
 
 				// Check role.
 			} else {
-				$result = in_array( $rule['value'], $user->roles );
+				$result = in_array( $rule_value, $user->roles, true );
 			}
 
 			// Reverse result for "!=" operator.
-			if ( $rule['operator'] === '!=' ) {
+			if ( ( $rule['operator'] ?? '' ) === '!=' ) {
 				return ! $result;
 			}
 			return $result;

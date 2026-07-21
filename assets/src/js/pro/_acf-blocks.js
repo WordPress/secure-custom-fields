@@ -740,10 +740,14 @@ const md5 = require( 'md5' );
 				// Replace names for JSX counterparts.
 				name = getJSXName( name );
 
-				// Convert JSON values.
+				// Convert JSON values. Ignore values that merely start with a
+				// JSON-like character but aren't valid JSON (e.g. an oEmbed
+				// title beginning with "[" or "{").
 				const c1 = value.charAt( 0 );
 				if ( c1 === '[' || c1 === '{' ) {
-					value = JSON.parse( value );
+					try {
+						value = JSON.parse( value );
+					} catch ( err ) {}
 				}
 
 				// Convert bool values.
