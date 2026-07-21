@@ -135,117 +135,116 @@ const registerPostTypeCommands = async () => {
 		// Wrap each CPT registration so one failure doesn't kill the rest and
 		// so we can see which post type silently fails to register.
 		const registerOne = async () => {
-
-		const viewAllCommandUrl = addQueryArgs( 'edit.php', {
-			post_type: postType.slug,
-		} );
-
-		// WordPress stores destination URLs in the command *name*, appended to
-		// the menu slug (which is also a relative URL), resulting in somewhat
-		// peculiar naming, e.g.
-		// edit.php?post_type=movie-post-new.php?post_type=movie
-		if (
-			! registeredCommands.some( ( cmd ) =>
-				cmd.name.endsWith( viewAllCommandUrl )
-			) &&
-			( await resolveSelect( 'core' ).canUser(
-				'read',
-				postType.rest_base
-			) )
-		) {
-			// Register "View All" command for this post type
-			commandStore.registerCommand( {
-				name: `scf/cpt-${ postType.slug }`,
-				label: postType.labels.all_items,
-				icon: page,
-				keywords: [
-					'post type',
-					'content',
-					'cpt',
-					postType.slug,
-					postType.name,
-				].filter( Boolean ),
-				callback: ( { close } ) => {
-					document.location = viewAllCommandUrl;
-					close();
-				},
+			const viewAllCommandUrl = addQueryArgs( 'edit.php', {
+				post_type: postType.slug,
 			} );
-		}
 
-		const addNewCommandUrl = addQueryArgs( 'post-new.php', {
-			post_type: postType.slug,
-		} );
+			// WordPress stores destination URLs in the command *name*, appended to
+			// the menu slug (which is also a relative URL), resulting in somewhat
+			// peculiar naming, e.g.
+			// edit.php?post_type=movie-post-new.php?post_type=movie
+			if (
+				! registeredCommands.some( ( cmd ) =>
+					cmd.name.endsWith( viewAllCommandUrl )
+				) &&
+				( await resolveSelect( 'core' ).canUser(
+					'read',
+					postType.rest_base
+				) )
+			) {
+				// Register "View All" command for this post type
+				commandStore.registerCommand( {
+					name: `scf/cpt-${ postType.slug }`,
+					label: postType.labels.all_items,
+					icon: page,
+					keywords: [
+						'post type',
+						'content',
+						'cpt',
+						postType.slug,
+						postType.name,
+					].filter( Boolean ),
+					callback: ( { close } ) => {
+						document.location = viewAllCommandUrl;
+						close();
+					},
+				} );
+			}
 
-		if (
-			! registeredCommands.some( ( cmd ) =>
-				cmd.name.endsWith( addNewCommandUrl )
-			) &&
-			( await resolveSelect( 'core' ).canUser(
-				'create',
-				postType.rest_base
-			) )
-		) {
-			// Register "Add New" command for this post type
-			commandStore.registerCommand( {
-				name: `scf/new-${ postType.slug }`,
-				label: postType.labels.add_new_item,
-				icon: plus,
-				keywords: [
-					'add',
-					'new',
+			const addNewCommandUrl = addQueryArgs( 'post-new.php', {
+				post_type: postType.slug,
+			} );
+
+			if (
+				! registeredCommands.some( ( cmd ) =>
+					cmd.name.endsWith( addNewCommandUrl )
+				) &&
+				( await resolveSelect( 'core' ).canUser(
 					'create',
-					'content',
-					postType.slug,
-					postType.name,
-				],
-				callback: ( { close } ) => {
-					document.location = addNewCommandUrl;
-					close();
-				},
-			} );
-		}
+					postType.rest_base
+				) )
+			) {
+				// Register "Add New" command for this post type
+				commandStore.registerCommand( {
+					name: `scf/new-${ postType.slug }`,
+					label: postType.labels.add_new_item,
+					icon: plus,
+					keywords: [
+						'add',
+						'new',
+						'create',
+						'content',
+						postType.slug,
+						postType.name,
+					],
+					callback: ( { close } ) => {
+						document.location = addNewCommandUrl;
+						close();
+					},
+				} );
+			}
 
-		// Register "Edit Post Type" command. The scf_post_id field is only
-		// exposed to users who can edit the post type definition, so its
-		// presence gates the command.
-		if ( postType.scf_post_id ) {
-			commandStore.registerCommand( {
-				name: `scf/edit-${ postType.slug }`,
-				label: sprintf(
-					/* translators: %s: post type label */
-					__( 'Edit post type: %s', 'secure-custom-fields' ),
-					postType.name
-				),
-				icon: edit,
-				keywords: [
-					'edit',
-					'modify',
-					'post type',
-					'cpt',
-					'settings',
-					postType.slug,
-					postType.name,
-				],
-				callback: ( { close } ) => {
-					document.location = addQueryArgs( 'post.php', {
-						post: postType.scf_post_id,
-						action: 'edit',
-					} );
-					close();
-				},
-			} );
-		}
+			// Register "Edit Post Type" command. The scf_post_id field is only
+			// exposed to users who can edit the post type definition, so its
+			// presence gates the command.
+			if ( postType.scf_post_id ) {
+				commandStore.registerCommand( {
+					name: `scf/edit-${ postType.slug }`,
+					label: sprintf(
+						/* translators: %s: post type label */
+						__( 'Edit post type: %s', 'secure-custom-fields' ),
+						postType.name
+					),
+					icon: edit,
+					keywords: [
+						'edit',
+						'modify',
+						'post type',
+						'cpt',
+						'settings',
+						postType.slug,
+						postType.name,
+					],
+					callback: ( { close } ) => {
+						document.location = addQueryArgs( 'post.php', {
+							post: postType.scf_post_id,
+							action: 'edit',
+						} );
+						close();
+					},
+				} );
+			}
 
-		// Register a loader that searches this post type's posts as the user
-		// types, letting them pick an existing instance to edit. The core
-		// /wp/v2/types response uses a non-empty `rest_base` as the canonical
-		// "show in REST" signal — there is no `visibility.show_in_rest` key.
-		if ( hasRestSupport ) {
-			commandStore.registerCommandLoader( {
-				name: `scf/edit-posts-${ postType.slug }`,
-				hook: createPostSearchLoaderHook( postType ),
-			} );
-		}
+			// Register a loader that searches this post type's posts as the user
+			// types, letting them pick an existing instance to edit. The core
+			// /wp/v2/types response uses a non-empty `rest_base` as the canonical
+			// "show in REST" signal — there is no `visibility.show_in_rest` key.
+			if ( hasRestSupport ) {
+				commandStore.registerCommandLoader( {
+					name: `scf/edit-posts-${ postType.slug }`,
+					hook: createPostSearchLoaderHook( postType ),
+				} );
+			}
 		};
 
 		registerOne().catch( ( err ) => {
@@ -259,8 +258,103 @@ const registerPostTypeCommands = async () => {
 	} );
 };
 
+/**
+ * Register taxonomy commands for SCF-managed taxonomies.
+ */
+const registerTaxonomyCommands = async () => {
+	if ( ! resolveSelect( 'core' ) || ! dispatch( 'core/commands' ) ) {
+		return;
+	}
+
+	const taxonomies = await resolveSelect( 'core' ).getTaxonomies( {
+		per_page: -1,
+	} );
+
+	const commandStore = dispatch( 'core/commands' );
+	const registeredCommands = select( 'core/commands' ).getCommands();
+
+	taxonomies.forEach( ( taxonomy ) => {
+		// Skip taxonomies not managed by SCF.
+		if ( ! taxonomy.scf_taxonomy_id ) {
+			return;
+		}
+
+		// Wrap registration so we can await capability checks.
+		const registerOne = async () => {
+			const viewTermsUrl = addQueryArgs( 'edit-tags.php', {
+				taxonomy: taxonomy.slug,
+			} );
+
+			if (
+				! registeredCommands.some( ( cmd ) =>
+					cmd.name.endsWith( viewTermsUrl )
+				) &&
+				( await resolveSelect( 'core' ).canUser(
+					'edit',
+					'taxonomy',
+					taxonomy.slug
+				) )
+			) {
+				commandStore.registerCommand( {
+					name: `scf/tax-${ taxonomy.slug }`,
+					label: taxonomy.name,
+					icon: page,
+					keywords: [
+						'taxonomy',
+						'terms',
+						'tags',
+						'categories',
+						taxonomy.slug,
+					].filter( Boolean ),
+					callback: ( { close } ) => {
+						document.location = viewTermsUrl;
+						close();
+					},
+				} );
+			}
+
+			// Register "Edit Taxonomy" definition command.
+			commandStore.registerCommand( {
+				name: `scf/edit-tax-${ taxonomy.slug }`,
+				label: sprintf(
+					/* translators: %s: taxonomy label */
+					__( 'Edit taxonomy: %s', 'secure-custom-fields' ),
+					taxonomy.name
+				),
+				icon: edit,
+				keywords: [
+					'edit',
+					'modify',
+					'taxonomy',
+					'settings',
+					taxonomy.slug,
+					taxonomy.name,
+				],
+				callback: ( { close } ) => {
+					document.location = addQueryArgs( 'post.php', {
+						post: taxonomy.scf_taxonomy_id,
+						action: 'edit',
+					} );
+					close();
+				},
+			} );
+		};
+
+		registerOne().catch( ( err ) => {
+			// eslint-disable-next-line no-console
+			console.error(
+				'[SCF commands] failed to register taxonomy for',
+				taxonomy.slug,
+				err
+			);
+		} );
+	} );
+};
+
 if ( 'requestIdleCallback' in window ) {
 	window.requestIdleCallback( registerPostTypeCommands, { timeout: 500 } );
+	window.requestIdleCallback( registerTaxonomyCommands, { timeout: 500 } );
 } else {
 	setTimeout( registerPostTypeCommands, 500 );
+	setTimeout( registerTaxonomyCommands, 500 );
 }
