@@ -138,8 +138,7 @@ class Test_Assets extends BaseTestCase {
 
 		$assets = acf_get_instance( 'ACF_Assets' );
 		$assets->register_scripts();
-		$assets->enqueue();
-		$assets->enqueue_scripts();
+		$assets->enqueue_block_editor_assets();
 
 		$this->assertFalse( wp_script_is( 'scf-bindings', 'enqueued' ) );
 	}
@@ -152,9 +151,24 @@ class Test_Assets extends BaseTestCase {
 
 		$assets = acf_get_instance( 'ACF_Assets' );
 		$assets->register_scripts();
-		$assets->enqueue();
-		$assets->enqueue_scripts();
+		$assets->enqueue_block_editor_assets();
 
 		$this->assertTrue( wp_script_is( 'scf-bindings', 'enqueued' ) );
+	}
+
+	/**
+	 * Test the legacy bindings editor script is not enqueued when bindings are disabled.
+	 */
+	public function test_block_editor_assets_skip_bindings_script_when_setting_disabled() {
+		$this->set_wordpress_version( '6.7' );
+		acf_update_setting( 'enable_block_bindings', false );
+
+		$assets = acf_get_instance( 'ACF_Assets' );
+		$assets->register_scripts();
+		$assets->enqueue_block_editor_assets();
+
+		acf_update_setting( 'enable_block_bindings', true );
+
+		$this->assertFalse( wp_script_is( 'scf-bindings', 'enqueued' ) );
 	}
 }

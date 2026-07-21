@@ -116,6 +116,17 @@ for dir in "${REQUIRED_DIRS[@]}"; do
     cp -r "$dir" "$PLUGIN_DIR/"
 done
 
+# Remove development-only assets from the staged copy:
+# - assets/src: uncompiled sources, never loaded at runtime
+# - *.map files under assets/build: source maps for debugging only
+# Note: unminified (non-.min) build files are kept on purpose — they are
+# loaded at runtime when SCF_DEVELOPMENT_MODE is enabled.
+# Note: assets/inc/select2/3 is kept on purpose — the legacy 'select2_version'
+# setting can still select version 3 at runtime.
+echo "Removing development-only asset files..."
+rm -rf "$PLUGIN_DIR/assets/src"
+find "$PLUGIN_DIR/assets/build" -type f -name "*.map" -delete
+
 # Install production dependencies
 echo "Installing production dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist

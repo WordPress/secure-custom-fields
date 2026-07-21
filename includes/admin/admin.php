@@ -55,16 +55,6 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 */
 		public function admin_enqueue_scripts() {
 			wp_enqueue_style( 'acf-global' );
-			wp_enqueue_script( 'acf-escaped-html-notice' );
-
-			wp_localize_script(
-				'acf-escaped-html-notice',
-				'acf_escaped_html_notice',
-				array(
-					'show_details' => __( 'Show&nbsp;details', 'secure-custom-fields' ),
-					'hide_details' => __( 'Hide&nbsp;details', 'secure-custom-fields' ),
-				)
-			);
 		}
 
 		/**
@@ -145,26 +135,53 @@ if ( ! class_exists( 'ACF_Admin' ) ) :
 		 * @since ACF 6.2.5
 		 */
 		public function maybe_show_escaped_html_notice() {
+			// Notice for when HTML has already been escaped.
+			if ( ! $this->should_show_escaped_html_notice() ) {
+				return;
+			}
+
+			// The script is footer-loaded, so enqueueing at render time keeps
+			// the notice and its assets paired on the one request that shows
+			// it, and skips them everywhere else.
+			wp_enqueue_script( 'acf-escaped-html-notice' );
+
+			wp_localize_script(
+				'acf-escaped-html-notice',
+				'acf_escaped_html_notice',
+				array(
+					'show_details' => __( 'Show&nbsp;details', 'secure-custom-fields' ),
+					'hide_details' => __( 'Hide&nbsp;details', 'secure-custom-fields' ),
+				)
+			);
+
+			acf_get_view( 'escaped-html-notice', array( 'acf_escaped' => _acf_get_escaped_html_log() ) );
+		}
+
+		/**
+		 * Checks if the escaped unsafe HTML notice should be rendered.
+		 *
+		 * @since SCF 6.9.2
+		 *
+		 * @return boolean
+		 */
+		private function should_show_escaped_html_notice() {
 			// Only show to editors and above.
 			if ( ! current_user_can( 'edit_others_posts' ) ) {
-				return;
+				return false;
 			}
 
 			// Allow opting-out of the notice.
 			if ( apply_filters( 'acf/admin/prevent_escaped_html_notice', false ) ) {
-				return;
+				return false;
 			}
 
 			if ( get_option( 'acf_escaped_html_notice_dismissed' ) ) {
-				return;
+				return false;
 			}
 
 			$escaped = _acf_get_escaped_html_log();
 
-			// Notice for when HTML has already been escaped.
-			if ( ! empty( $escaped ) ) {
-				acf_get_view( 'escaped-html-notice', array( 'acf_escaped' => $escaped ) );
-			}
+			return ! empty( $escaped );
 		}
 
 		/**

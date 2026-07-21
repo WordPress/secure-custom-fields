@@ -1028,12 +1028,12 @@ function acf_decode_taxonomy_term( $value ) {
 	// allow for term_id (Used by ACF v4)
 	if ( is_numeric( $data['term'] ) ) {
 
-		// global
-		global $wpdb;
-
-		// find taxonomy
+		// find taxonomy (uses the term cache instead of a direct query)
 		if ( ! $data['taxonomy'] ) {
-			$data['taxonomy'] = $wpdb->get_var( $wpdb->prepare( "SELECT taxonomy FROM $wpdb->term_taxonomy WHERE term_id = %d LIMIT 1", $data['term'] ) );
+			$term_object = get_term( (int) $data['term'] );
+			if ( $term_object instanceof WP_Term ) {
+				$data['taxonomy'] = $term_object->taxonomy;
+			}
 		}
 
 		// find term (may have numeric slug '123')
@@ -1044,8 +1044,9 @@ function acf_decode_taxonomy_term( $value ) {
 			$term = get_term( $data['term'], $data['taxonomy'] );
 		}
 
-		// bail early if no term
-		if ( ! $term ) {
+		// bail early if no term (get_term() returns a truthy WP_Error for
+		// ambiguous shared term IDs or unregistered taxonomies)
+		if ( ! $term || is_wp_error( $term ) ) {
 			return false;
 		}
 
