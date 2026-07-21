@@ -171,6 +171,56 @@ test.describe( 'Command Palette', () => {
 					).toHaveValue( 'SCF E2E Test Type' );
 				} );
 			} );
+
+			test.describe( 'Options page-specific commands', () => {
+				test.beforeAll( async ( { requestUtils } ) => {
+					await requestUtils.activatePlugin(
+						'scf-test-setup-options-page'
+					);
+				} );
+
+				test.afterAll( async ( { requestUtils } ) => {
+					await requestUtils.deactivatePlugin(
+						'scf-test-setup-options-page'
+					);
+				} );
+
+				test( 'should register a command for the registered options page', async ( {
+					page,
+				} ) => {
+					await openCommandPalette( page );
+
+					const input = getCommandPaletteInput( page );
+
+					await input.fill( 'SCF E2E Test Options' );
+
+					const option = page.getByRole( 'option', {
+						name: /SCF E2E Test Options/,
+					} );
+
+					await expect( option ).toHaveCount( 1 );
+				} );
+
+				test( 'should navigate to the options page via command palette', async ( {
+					page,
+				} ) => {
+					await openCommandPalette( page );
+
+					const input = getCommandPaletteInput( page );
+
+					await input.fill( 'SCF E2E Test Options' );
+
+					await page
+						.getByRole( 'option', {
+							name: /SCF E2E Test Options/,
+						} )
+						.click();
+
+					await expect( page ).toHaveURL(
+						/admin\.php\?page=scf-e2e-test-options/
+					);
+				} );
+			} );
 		} );
 	} );
 } );

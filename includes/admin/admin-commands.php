@@ -39,6 +39,31 @@ function acf_commands_init() {
 	// Only load admin commands if user has SCF admin capabilities.
 	if ( current_user_can( acf_get_setting( 'capability' ) ) ) {
 		wp_enqueue_script( 'scf-commands-admin' );
+
+		// Localize registered options pages so the JS can register a palette
+		// command per page. Filtered by capability so users only see pages
+		// they can access.
+		$pages = acf_get_options_pages();
+		if ( ! empty( $pages ) ) {
+			$localized = array();
+			foreach ( $pages as $page ) {
+				if ( ! current_user_can( $page['capability'] ) ) {
+					continue;
+				}
+				$localized[] = array(
+					'menu_slug'  => $page['menu_slug'],
+					'menu_title' => $page['menu_title'],
+					'page_title' => $page['page_title'],
+				);
+			}
+			if ( ! empty( $localized ) ) {
+				wp_localize_script(
+					'scf-commands-admin',
+					'scfOptionsPages',
+					$localized
+				);
+			}
+		}
 	}
 }
 
