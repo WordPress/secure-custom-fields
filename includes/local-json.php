@@ -17,6 +17,14 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		private $files = array();
 
 		/**
+		 * Unified CPT+fields definition files detected during scan.
+		 *
+		 * @since SCF 6.9.3
+		 * @var array
+		 */
+		private $unified_files = array();
+
+		/**
 		 * Whether an expected Local JSON write failed during the current request.
 		 *
 		 * @var boolean
@@ -55,6 +63,11 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			add_action( 'acf/include_fields', array( $this, 'include_fields' ) );
 			add_action( 'acf/include_post_types', array( $this, 'include_post_types' ) );
 			add_action( 'acf/include_taxonomies', array( $this, 'include_taxonomies' ) );
+
+			// Unified CPT+fields definitions. Run before the per-type includes
+			// (priority 5 vs default 10) so locally registered field groups exist
+			// before register_post_types() runs on `acf/init` priority 6.
+			add_action( 'acf/init', array( $this, 'include_unified_definitions' ), 5 );
 
 			if ( is_admin() ) {
 				add_filter( 'redirect_post_location', array( $this, 'redirect_post_location' ) );
@@ -399,6 +412,14 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 								continue;
 							}
 
+							if ( self::is_unified_definition( $json ) ) {
+								// Unified files are dispatched separately by
+								// include_unified_definitions(); skip them here to
+								// avoid double registration via the per-type includes.
+								$this->unified_files[ $json['key'] ] = $file;
+								continue;
+							}
+
 							// Append data.
 							$json_files[ $json['key'] ] = $file;
 						}
@@ -442,6 +463,176 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 			}
 
 			return $files;
+		}
+
+		/**
+		 * Returns an array of unified CPT+fields definition files detected during scan.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @return array
+		 */
+		public function get_unified_files() {
+			return $this->unified_files;
+		}
+
+		/**
+		 * Detects whether a decoded JSON payload is a unified CPT+fields definition.
+		 *
+		 * A unified file declares a post type (`post_type` key) together with
+		 * either an explicit `field_groups` array or a top-level `fields` array.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param mixed $json Decoded JSON payload.
+		 * @return bool
+		 */
+		public static function is_unified_definition( $json ) {
+			if ( ! is_array( $json ) ) {
+				return false;
+			}
+
+			if ( empty( $json['key'] ) || ! is_string( $json['key'] ) ) {
+				return false;
+			}
+
+			if ( empty( $json['post_type'] ) || ! is_string( $json['post_type'] ) ) {
+				return false;
+			}
+
+			if ( empty( $json['field_groups'] ) && empty( $json['fields'] ) ) {
+				return false;
+			}
+
+			if ( ! empty( $json['field_groups'] ) && ! is_array( $json['field_groups'] ) ) {
+				return false;
+			}
+
+			if ( ! empty( $json['fields'] ) && ! is_array( $json['fields'] ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Loads unified CPT+fields definition files into the local stores.
+		 *
+		 * A unified file declares a post type together with the field groups
+		 * attached to it. Each field group gets an injected post_type location
+		 * rule so SCF routes its render through the standard location matcher.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @return void
+		 */
+		public function include_unified_definitions() {
+			if ( ! $this->is_enabled() ) {
+				return;
+			}
+
+			// Make sure the directory has been scanned. scan_files() populates
+			// both $this->files and $this->unified_files. Re-scan every call
+			// so stale entries from a previous request do not point at
+			// deleted files.
+			$this->files         = array();
+			$this->unified_files = array();
+			$this->scan_files( 'acf-post-type' );
+
+			foreach ( $this->unified_files as $key => $file ) {
+				$json = json_decode( file_get_contents( $file ), true );
+				if ( ! self::is_unified_definition( $json ) ) {
+					continue;
+				}
+
+				$cpt_slug = $json['post_type'];
+
+				// Split: everything except field_groups/fields becomes the CPT.
+				$cpt = $json;
+				unset( $cpt['field_groups'], $cpt['fields'] );
+				$cpt['local']      = 'json';
+				$cpt['local_file'] = $file;
+
+				acf_add_local_internal_post_type( $cpt, 'acf-post-type' );
+
+				$groups = array();
+				if ( ! empty( $json['field_groups'] ) ) {
+					foreach ( $json['field_groups'] as $group ) {
+						if ( ! is_array( $group ) ) {
+							continue;
+						}
+						$groups[] = $this->prepare_unified_field_group( $group, $cpt_slug, $file );
+					}
+				} elseif ( ! empty( $json['fields'] ) ) {
+					// Auto-wrap loose fields into a single synthetic group.
+					$groups[] = $this->prepare_unified_field_group(
+						array(
+							'key'    => 'group_' . $cpt_slug . '_fields',
+							'title'  => ! empty( $cpt['title'] ) ? $cpt['title'] . ' Fields' : __( 'Fields', 'secure-custom-fields' ),
+							'fields' => $json['fields'],
+						),
+						$cpt_slug,
+						$file
+					);
+				}
+
+				foreach ( $groups as $group ) {
+					acf_add_local_field_group( $group );
+				}
+			}
+		}
+
+		/**
+		 * Builds a field group array guaranteed to be attached to a given CPT.
+		 *
+		 * Injects a post_type location rule targeting the CPT slug so the group
+		 * is visible on the CPT edit screen. Existing user-supplied location
+		 * rules are preserved alongside the injected one.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param array  $group     Raw field group payload from a unified file.
+		 * @param string $cpt_slug  The CPT slug the group should attach to.
+		 * @param string $file      Source JSON file path (recorded for traceability).
+		 * @return array
+		 */
+		private function prepare_unified_field_group( $group, $cpt_slug, $file = '' ) {
+			$injected_rule = array(
+				'param'    => 'post_type',
+				'operator' => '==',
+				'value'    => $cpt_slug,
+			);
+
+			$location = array();
+			if ( isset( $group['location'] ) && is_array( $group['location'] ) ) {
+				$location = $group['location'];
+			}
+
+			$has_match = false;
+			foreach ( $location as $or_group ) {
+				if ( ! is_array( $or_group ) ) {
+					continue;
+				}
+				foreach ( $or_group as $rule ) {
+					if ( ! is_array( $rule ) ) {
+						continue;
+					}
+					if ( isset( $rule['param'], $rule['value'] ) && 'post_type' === $rule['param'] && $cpt_slug === $rule['value'] ) {
+						$has_match = true;
+						break 2;
+					}
+				}
+			}
+
+			if ( ! $has_match ) {
+				$location[] = array( $injected_rule );
+			}
+
+			$group['location']   = $location;
+			$group['local']      = 'json';
+			$group['local_file'] = ! empty( $group['local_file'] ) ? $group['local_file'] : $file;
+
+			return $group;
 		}
 
 		/**
