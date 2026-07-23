@@ -308,6 +308,13 @@ if ( ! class_exists( 'ACF' ) ) {
 			// JS block bindings layer (self-gates on enable_block_bindings + datastore).
 			acf_new_instance( 'SCF\Blocks\Bindings_Editor' );
 
+			// Inline tokens ("Bits") - boots registry, walker, and editor enqueue.
+			new \SCF\Bits\Walker();
+			new \SCF\Bits\Editor();
+			if ( class_exists( '\SCF\Bits\Registry' ) ) {
+				add_action( 'init', array( \SCF\Bits\Registry::instance(), 'boot' ), 11 );
+			}
+
 			// Add actions.
 			add_action( 'init', array( $this, 'register_post_status' ), 4 );
 			add_action( 'init', array( $this, 'init' ), 5 );
