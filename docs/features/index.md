@@ -6,6 +6,7 @@ This section details all features available in Secure Custom Fields.
 
 - [Post Types](post-types) - Create and manage custom post types
 - [Fields](fields) - Available field types and their usage
+- [Post Content Placeholders](post-content-placeholders) - Reuse supported field values inside Gutenberg paragraph and heading blocks
 - [API](api) - Programmatic access and integration
 
 ## Feature Categories
