@@ -63,7 +63,7 @@ acf_add_filter_variations( 'acf/rest/get_field_links', array( 'type', 'name', 'k
  * @param        $value
  * @param        $post_id
  * @param        $field
- * @param string  $format 'light' for normal REST API formatting or 'standard' to apply ACF's normal field formatting.
+ * @param string $format 'light' for normal REST API formatting or 'standard' to apply ACF's normal field formatting.
  * @return mixed
  */
 function acf_format_value_for_rest( $value, $post_id, $field, $format = 'light' ) {

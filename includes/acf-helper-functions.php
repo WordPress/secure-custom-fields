@@ -111,7 +111,7 @@ function acf_cache_key( $key = '' ) {
  */
 function acf_request_args( $args = array() ) {
 	foreach ( $args as $k => $v ) {
-		$args[ $k ] = isset( $_REQUEST[ $k ] ) ? acf_sanitize_request_args( $_REQUEST[ $k ] ) : $args[ $k ]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified elsewhere.
+		$args[ $k ] = isset( $_REQUEST[ $k ] ) ? acf_sanitize_request_args( wp_unslash( $_REQUEST[ $k ] ) ) : $args[ $k ]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified elsewhere.
 	}
 	return $args;
 }
@@ -127,7 +127,7 @@ function acf_request_args( $args = array() ) {
  * @return  mixed
  */
 function acf_request_arg( $name = '', $default = null ) {
-	return isset( $_REQUEST[ $name ] ) ? acf_sanitize_request_args( $_REQUEST[ $name ] ) : $default; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	return isset( $_REQUEST[ $name ] ) ? acf_sanitize_request_args( wp_unslash( $_REQUEST[ $name ] ) ) : $default; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 }
 
 // Register store.
@@ -484,7 +484,7 @@ function acf_doing_action( $action ) {
 function acf_get_current_url() {
 	// Ensure props exist to avoid PHP Notice during CLI commands.
 	if ( isset( $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'] ) ) {
-		return ( is_ssl() ? 'https' : 'http' ) . '://' . filter_var( $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL );
+		return ( is_ssl() ? 'https' : 'http' ) . '://' . filter_var( wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_URL );
 	}
 	return '';
 }
