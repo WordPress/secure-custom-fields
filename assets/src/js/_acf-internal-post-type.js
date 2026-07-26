@@ -1,5 +1,146 @@
 ( function ( $, undefined ) {
 	/**
+	 * Select2 hooks for the GEO Schema.org fields.
+	 *
+	 * Ported from ACF 6.8.5 assets/src/js/_acf-internal-post-type.js so the
+	 * schema_property and schema_output_format selects render with the styled
+	 * "field-type-picker" dropdown instead of generic select2. CSS for the
+	 * dropdown classes ships via _admin-inputs.scss (see #506).
+	 *
+	 * @since 6.8.5
+	 */
+	/**
+	 * Minimal select2 template for Schema.org dropdowns.
+	 *
+	 * @param {Object} selection select2 selection object.
+	 */
+	const schemaSelect2Template = function ( selection ) {
+		const $selection = $( '<span></span>' ).text( selection.text );
+		$selection.data( 'element', selection.element );
+		return $selection;
+	};
+
+	acf.addFilter( 'select2_args', function ( args, $select ) {
+		const name = $select.attr( 'name' ) || '';
+		const schemaFields = [
+			'schema_type',
+			'schema_property',
+			'schema_output_format',
+		];
+		const schemaField = schemaFields.find( ( f ) => name.includes( f ) );
+		if ( ! schemaField ) {
+			return args;
+		}
+
+		args.dropdownCssClass =
+			schemaField.replaceAll( '_', '-' ) + '-select-results';
+		args.templateResult = schemaSelect2Template;
+		args.templateSelection = schemaSelect2Template;
+
+		if ( schemaField === 'schema_type' ) {
+			args.allowReorder = false;
+		}
+
+		// Disable the output format dropdown if there is only one option.
+		// Uses lock/unlock + prop directly because acf.enable respects all
+		// locks and won't enable if the conditions system still holds a lock.
+		if ( schemaField === 'schema_output_format' ) {
+			const optionCount = $select.find( 'option' ).length;
+			if ( optionCount <= 1 ) {
+				acf.lock( $select, 'disabled', 'schema_single_option' );
+				$select.prop( 'disabled', true );
+			} else {
+				acf.unlock( $select, 'disabled', 'schema_single_option' );
+				// Only clear `disabled` if no other ACF lock still holds,
+				// so conditionals and other lock-holders keep control.
+				if ( ! acf.isLocked( $select, 'disabled' ) ) {
+					$select.prop( 'disabled', false );
+				}
+			}
+		}
+
+		// Check for a full modern version of select2 like the one provided by ACF.
+		try {
+			$.fn.select2.amd.require( 'select2/compat/dropdownCss' );
+		} catch {
+			delete args.dropdownCssClass;
+		}
+
+		// Add optgroup-aware matcher for schema property.
+		if ( schemaField === 'schema_property' ) {
+			args.matcher = function ( params, data ) {
+				if ( ! params.term || params.term.trim() === '' ) {
+					return data;
+				}
+
+				// Handle optgroups.
+				if ( data.children && data.children.length > 0 ) {
+					if (
+						data.text
+							.toLowerCase()
+							.includes( params.term.toLowerCase() )
+					) {
+						return data; // Group matches, return all children.
+					}
+					return $.fn.select2.defaults.defaults.matcher(
+						params,
+						data
+					);
+				}
+
+				const searchTerm = params.term.toLowerCase();
+				const optionText = data.text.toLowerCase();
+
+				if ( optionText.includes( searchTerm ) ) {
+					return data;
+				}
+
+				if ( data.element?.parentElement ) {
+					const optgroup = data.element.parentElement;
+					if ( optgroup.tagName === 'OPTGROUP' && optgroup.label ) {
+						if (
+							optgroup.label.toLowerCase().includes( searchTerm )
+						) {
+							return data;
+						}
+					}
+				}
+
+				return null;
+			};
+		}
+
+		return args;
+	} );
+
+	acf.addAction( 'select2_init', function ( $select ) {
+		const name = $select.attr( 'name' ) || '';
+		if (
+			! name.includes( 'schema_property' ) &&
+			! name.includes( 'schema_output_format' )
+		) {
+			return;
+		}
+
+		$select.on( 'select2:open', function () {
+			const dropdownClass = name.includes( 'schema_property' )
+				? 'schema-property-select-results'
+				: 'schema-output-format-select-results';
+			// Prefer class lookup; fall back to any open select2 container
+			// when the `dropdownCssClass` was dropped by the compat check.
+			const $searchInput = $(
+				'.' + dropdownClass + ' input.select2-search__field'
+			).first();
+			const $fallback = $searchInput.length
+				? $searchInput
+				: $(
+						'.select2-container--open input.select2-search__field'
+				  ).first();
+			$fallback.attr( 'placeholder', acf.__( 'Type to search…' ) );
+		} );
+	} );
+
+	/**
 	 *  internalPostTypeSettingsManager
 	 *
 	 *  Model for handling events in the settings metaboxes of internal post types
