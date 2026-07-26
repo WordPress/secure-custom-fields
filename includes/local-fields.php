@@ -272,7 +272,9 @@ function register_field_group( $field_group ) {
 /**
  * acf_remove_local_field_group
  *
- * Removes a field group for the given key.
+ * Removes a field group for the given key. Also cascades to remove all fields
+ * registered under the group so they do not remain as orphans in the
+ * local-fields store (issue #458).
  *
  * @date    22/1/19
  * @since   ACF 5.7.10
@@ -281,7 +283,38 @@ function register_field_group( $field_group ) {
  * @return  boolean
  */
 function acf_remove_local_field_group( $key = '' ) {
+	_acf_cascade_remove_local_fields( $key );
 	return acf_remove_local_internal_post_type( $key, 'acf-field-group' );
+}
+
+/**
+ * _acf_cascade_remove_local_fields
+ *
+ * Recursively removes all local fields whose parent matches the given key.
+ * Used by acf_remove_local_field_group() to clean up fields left orphaned
+ * after their group is removed (issue #458).
+ *
+ * @since 6.9.3
+ *
+ * @param string $parent_key The parent field or field group key.
+ * @return void
+ */
+function _acf_cascade_remove_local_fields( $parent_key = '' ) {
+	$store = acf_get_local_store( 'fields' );
+	if ( ! $store || '' === $parent_key ) {
+		return;
+	}
+
+	foreach ( $store->query( array( 'parent' => $parent_key ) ) as $field ) {
+		if ( ! empty( $field['key'] ) ) {
+			_acf_cascade_remove_local_fields( $field['key'] );
+			$store->remove( $field['key'] );
+			unset( $store->aliases[ $field['key'] ] );
+			if ( ! empty( $field['name'] ) ) {
+				unset( $store->aliases[ $field['name'] ] );
+			}
+		}
+	}
 }
 
 /**
