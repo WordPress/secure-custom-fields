@@ -204,7 +204,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			}
 
 			// get posts grouped by post type
-			$groups = acf_get_grouped_posts( $args );
+			$groups = acf_get_grouped_posts( $args, true );
 
 			// loop
 			if ( ! empty( $groups ) ) {
