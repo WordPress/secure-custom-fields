@@ -782,10 +782,14 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 
 		$block = acf_prepare_block( $attributes );
 		$block = acf_add_block_meta_values( $block, $post_id );
-		acf_setup_meta( $block['data'], $block['id'], true );
+		try {
+			acf_setup_meta( $block['data'], $block['id'], true );
 
-		if ( ! empty( $block['validate'] ) ) {
-			$validation = acf_get_block_validation_state( $block, false, false, true );
+			if ( ! empty( $block['validate'] ) ) {
+				$validation = acf_get_block_validation_state( $block, false, false, true );
+			}
+		} finally {
+			acf_reset_meta( $block['id'] );
 		}
 
 		$fields = acf_get_block_fields( $block );
@@ -816,9 +820,13 @@ function acf_rendered_block( $attributes, $content = '', $is_preview = false, $p
 			$block_toolbar_fields = acf_process_block_toolbar_fields( apply_filters( 'acf/blocks/top_toolbar_fields', array(), $block, $content, $is_preview, $post_id, $wp_block, $context ) );
 			$fields               = acf_get_block_fields( $block );
 
-			acf_setup_meta( $block['data'], $block['id'], true );
-			if ( ! empty( $block['validate'] ) ) {
-				$validation = acf_get_block_validation_state( $block, false, false, true );
+			try {
+				acf_setup_meta( $block['data'], $block['id'], true );
+				if ( ! empty( $block['validate'] ) ) {
+					$validation = acf_get_block_validation_state( $block, false, false, true );
+				}
+			} finally {
+				acf_reset_meta( $block['id'] );
 			}
 		}
 	}
@@ -920,37 +928,41 @@ function acf_rendered_block_v3( $attributes, $content = '', $is_preview = false,
 
 	$block = acf_prepare_block( $attributes );
 	$block = acf_add_block_meta_values( $block, $post_id );
-	acf_setup_meta( $block['data'], $block['id'], true );
+	try {
+		acf_setup_meta( $block['data'], $block['id'], true );
 
-	// Only render the block form in the admin/preview context to avoid
-	// enqueueing editor assets (e.g. wp_editor) on the front end.
-	if ( $is_preview ) {
-		// Load the block form since we're in edit mode.
-		// Set flag for post REST cleanup of media enqueue count during preloads.
-		acf_set_data( 'acf_did_render_block_form', true );
+		// Only render the block form in the admin/preview context to avoid
+		// enqueueing editor assets (e.g. wp_editor) on the front end.
+		if ( $is_preview ) {
+			// Load the block form since we're in edit mode.
+			// Set flag for post REST cleanup of media enqueue count during preloads.
+			acf_set_data( 'acf_did_render_block_form', true );
 
-		if ( ! empty( $block['validate'] ) ) {
-			$validation = acf_get_block_validation_state( $block, false, false, true );
+			if ( ! empty( $block['validate'] ) ) {
+				$validation = acf_get_block_validation_state( $block, false, false, true );
+			}
+
+			$fields = acf_get_block_fields( $block );
+			if ( $fields ) {
+				acf_prefix_fields( $fields, "acf-{$block['id']}" );
+
+				ob_start();
+				echo '<div class="acf-block-fields acf-fields" data-block-id="' . esc_attr( $block['id'] ) . '">';
+				acf_render_fields( $fields, acf_ensure_block_id_prefix( $block['id'] ), 'div', 'field' );
+				echo '</div>';
+				$form = ob_get_clean();
+			} else {
+				ob_start();
+				echo acf_get_empty_block_form_html( $attributes['name'] ); //phpcs:ignore -- Output of acf_get_empty_block_form_html() is already escaped via acc_esc_html() for use as text within this HTML container.
+				$form = ob_get_clean();
+			}
+
+			// Now that the form has been rendered, reset field values as they may need to be
+			// different depending on if acf_doing_block_preview is true or false.
+			acf_get_store( 'values' )->reset();
 		}
-
-		$fields = acf_get_block_fields( $block );
-		if ( $fields ) {
-			acf_prefix_fields( $fields, "acf-{$block['id']}" );
-
-			ob_start();
-			echo '<div class="acf-block-fields acf-fields" data-block-id="' . esc_attr( $block['id'] ) . '">';
-			acf_render_fields( $fields, acf_ensure_block_id_prefix( $block['id'] ), 'div', 'field' );
-			echo '</div>';
-			$form = ob_get_clean();
-		} else {
-			ob_start();
-			echo acf_get_empty_block_form_html( $attributes['name'] ); //phpcs:ignore -- Output of acf_get_empty_block_form_html() is already escaped via acf_esc_html() for use as text within this HTML container.
-			$form = ob_get_clean();
-		}
-
-		// Now that the form has been rendered, reset field values as they may need to be
-		// different depending on if acf_doing_block_preview is true or false.
-		acf_get_store( 'values' )->reset();
+	} finally {
+		acf_reset_meta( $block['id'] );
 	}
 
 	// Capture block render output.

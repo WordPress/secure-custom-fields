@@ -53,13 +53,6 @@ class Test_Blocks_Auto_Inline_Editing extends BaseTestCase {
 	private $temp_files = array();
 
 	/**
-	 * Block IDs that had local meta set up during a test.
-	 *
-	 * @var array
-	 */
-	private $meta_block_ids = array();
-
-	/**
 	 * Set up test fixtures.
 	 */
 	public function set_up() {
@@ -106,11 +99,6 @@ class Test_Blocks_Auto_Inline_Editing extends BaseTestCase {
 			}
 		}
 		$this->temp_files = array();
-
-		foreach ( $this->meta_block_ids as $block_id ) {
-			acf_reset_meta( $block_id );
-		}
-		$this->meta_block_ids = array();
 
 		acf_set_data( 'acf_current_block_version', null );
 		acf_set_data( 'acf_doing_block_preview', false );
@@ -403,8 +391,7 @@ class Test_Blocks_Auto_Inline_Editing extends BaseTestCase {
 			'mode' => 'preview',
 		);
 
-		$html                   = acf_rendered_block( $attributes, '', true, 0 );
-		$this->meta_block_ids[] = 'block_aiepreview';
+		$html = acf_rendered_block( $attributes, '', true, 0 );
 
 		$this->assertStringContainsString( 'Editable Headline', $html );
 		$this->assertStringContainsString( 'data-acf-inline-contenteditable-field-slug="auto_inline_text"', $html );
