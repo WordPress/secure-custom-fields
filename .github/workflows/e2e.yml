@@ -88,6 +88,30 @@ jobs:
               if: always()
               run: npm run wp-env stop
 
+    local-json-multisite:
+        name: Local JSON Multisite Integration
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+
+        steps:
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: |
+                  npm ci
+                  composer install --prefer-dist --no-progress
+
+            - name: Run Local JSON multisite integration
+              run: npm run test:integration:local-json-multisite
+
     merge-artifacts:
         name: Merge Artifacts
         if: ${{ !cancelled() }}

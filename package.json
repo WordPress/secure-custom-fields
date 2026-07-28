@@ -13,6 +13,7 @@
 		"test:e2e:debug": "wp-scripts test-playwright --debug --ui",
 		"test:e2e:php-coverage": "rm -rf .php-coverage && PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:php-coverage:report": "node scripts/merge-php-coverage.js",
+		"test:integration:local-json-multisite": "bash tests/integration/local-json-multisite.sh",
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch",
