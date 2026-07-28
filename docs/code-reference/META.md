@@ -606,6 +606,7 @@ This file tracks code elements that need documentation.
 - `acf/json/save_file_name`
 - `acf/json/save_paths`
 - `acf/pre_save_json_file`
+- `wp_delete_file`
 
 ## locations.php
 

@@ -200,6 +200,14 @@ Renders the block HTML.
 * @param array    $context    The block context array.
 * @return void|string
 
+## `scf_path_has_stream_wrapper()`
+
+Checks if a path uses a PHP stream wrapper, such as `phar://` or `php://`.
+
+* @since 6.9.3
+* @param string $path The path to check.
+* @return boolean True if the path begins with a stream wrapper.
+
 ## `acf_block_render_template()`
 
 Locate and include an ACF block's template.
