@@ -197,7 +197,7 @@ test.describe( 'Options Page Admin', () => {
 				timeout: DEFAULT_TIMEOUT,
 			} );
 			await optionsPageRow
-				.locator( 'th.check-column input[type="checkbox"]' )
+				.locator( '.check-column input[type="checkbox"]' )
 				.check();
 			await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 			await page.click( '#doaction2' );
