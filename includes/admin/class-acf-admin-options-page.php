@@ -94,6 +94,13 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			// verify and remove nonce
 			if ( acf_verify_nonce( 'options' ) ) {
 
+				// Restrict submitted values to fields assigned to the current options page.
+				// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified above.
+				if ( isset( $_POST['acf'] ) && is_array( $_POST['acf'] ) ) {
+					$_POST['acf'] = $this->filter_options_page_field_values( $_POST['acf'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized downstream; save pipeline expects slashed input.
+				}
+				// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 				// save data
 				if ( acf_validate_save_post( true ) ) {
 
@@ -150,6 +157,69 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			wp_enqueue_script( 'post' );
 		}
 
+		/**
+		 * Returns the field groups assigned to the current options page.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @return array
+		 */
+		protected function get_options_page_field_groups() {
+			return acf_get_field_groups(
+				array(
+					'options_page' => $this->page['menu_slug'],
+				)
+			);
+		}
+
+		/**
+		 * Returns the top-level submitted field keys accepted by the current options page.
+		 *
+		 * Seamless clone subfields are submitted below the clone field's key, which is
+		 * extracted from their input prefix.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @return array
+		 */
+		protected function get_options_page_allowed_field_keys() {
+			$keys = array();
+
+			foreach ( $this->get_options_page_field_groups() as $field_group ) {
+				$fields = acf_get_fields( $field_group );
+
+				if ( ! $fields ) {
+					continue;
+				}
+
+				foreach ( $fields as $field ) {
+					$prefix = $field['prefix'] ?? 'acf';
+
+					if ( 'acf' === $prefix ) {
+						if ( ! empty( $field['key'] ) ) {
+							$keys[] = $field['key'];
+						}
+					} elseif ( is_string( $prefix ) && preg_match( '/^acf\[([^]]+)]$/', $prefix, $matches ) ) {
+						$keys[] = $matches[1];
+					}
+				}
+			}
+
+			return array_values( array_unique( array_filter( $keys ) ) );
+		}
+
+		/**
+		 * Filters submitted ACF values to the roots accepted by the current options page.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param array $values Submitted ACF values.
+		 * @return array
+		 */
+		protected function filter_options_page_field_values( array $values ): array {
+			return array_intersect_key( $values, array_flip( $this->get_options_page_allowed_field_keys() ) );
+		}
+
 
 		/**
 		 * This action will find and add field groups to the current edit page
@@ -160,11 +230,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		public function admin_head() {
 
 			// get field groups
-			$field_groups = acf_get_field_groups(
-				array(
-					'options_page' => $this->page['menu_slug'],
-				)
-			);
+			$field_groups = $this->get_options_page_field_groups();
 
 			// notices
 			if ( ! empty( $_GET['message'] ) && '1' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to display a notice.

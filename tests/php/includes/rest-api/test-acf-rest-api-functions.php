@@ -69,6 +69,18 @@ class Test_ACF_Rest_Api_Functions extends BaseTestCase {
 		if ( ! class_exists( 'acf_field_radio' ) ) {
 			acf_include( 'includes/fields/class-acf-field-radio.php' );
 		}
+		if ( ! class_exists( 'acf_field__group' ) ) {
+			acf_include( 'includes/fields/class-acf-field-group.php' );
+		}
+		if ( ! class_exists( 'acf_field_user' ) ) {
+			acf_include( 'includes/fields/class-acf-field-user.php' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=group' ) ) {
+			acf_register_field_type( 'acf_field__group' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=user' ) ) {
+			acf_register_field_type( 'acf_field_user' );
+		}
 
 		// Create a test post.
 		$this->test_post_id = wp_insert_post(
@@ -359,6 +371,267 @@ class Test_ACF_Rest_Api_Functions extends BaseTestCase {
 		$result = acf_format_value_for_rest( 'test value', $this->test_post_id, $field, 'standard' );
 
 		$this->assertEquals( 'test value', $result );
+	}
+
+	/**
+	 * Test standard REST formatting uses REST-safe output for nested User fields.
+	 */
+	public function test_format_value_for_rest_standard_format_uses_safe_nested_user_format() {
+		$user_login = uniqid( 'rest_safe_nested_user_', false );
+		$user_email = "{$user_login}@example.invalid";
+
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => $user_login,
+				'user_pass'  => 'password',
+				'user_email' => $user_email,
+			)
+		);
+
+		global $wpdb;
+		$activation_key = "{$user_login}-activation-key";
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test fixture needs a controlled activation key marker.
+		$wpdb->update(
+			$wpdb->users,
+			array( 'user_activation_key' => $activation_key ),
+			array( 'ID' => $user_id )
+		);
+		clean_user_cache( $user_id );
+
+		$user_field = acf_validate_field(
+			array(
+				'key'           => 'field_test_nested_user',
+				'name'          => 'nested_user',
+				'type'          => 'user',
+				'required'      => 0,
+				'multiple'      => 0,
+				'return_format' => 'array',
+				'role'          => array(),
+				'allow_null'    => 0,
+			)
+		);
+
+		$metadata_field = acf_validate_field(
+			array(
+				'key'  => 'field_test_nested_metadata',
+				'name' => 'metadata',
+				'type' => 'text',
+			)
+		);
+
+		$field = acf_validate_field(
+			array(
+				'key'        => 'field_test_group_with_user',
+				'name'       => 'test_group_with_user',
+				'type'       => 'group',
+				'sub_fields' => array( $user_field, $metadata_field ),
+			)
+		);
+
+		$metadata = array(
+			'ID'              => 777,
+			'user_email'      => 'public-metadata@example.invalid',
+			'user_nicename'   => 'public-metadata',
+			'user_registered' => '2026-07-24 00:00:00',
+			'user_avatar'     => 'avatar',
+			'description'     => 'Keep this sibling value intact.',
+		);
+		$value    = array(
+			$user_field['key']     => $user_id,
+			$metadata_field['key'] => $metadata,
+		);
+
+		$shim_user_query = static function ( $results, $query ) use ( $user_id ) {
+			$query->total_users = 1;
+			return array( $user_id );
+		};
+		add_filter( 'users_pre_query', $shim_user_query, 10, 2 );
+
+		$remove_user_avatar = static function ( $formatted_value ) {
+			if ( is_array( $formatted_value ) ) {
+				unset( $formatted_value['user_avatar'] );
+			}
+			return $formatted_value;
+		};
+		add_filter( 'acf/format_value/type=user', $remove_user_avatar, 20 );
+
+		$results = array();
+		foreach ( array( 'array', 'object' ) as $return_format ) {
+			$field['sub_fields'][0]['return_format'] = $return_format;
+			acf_get_store( 'values' )->reset();
+
+			$results[ $return_format ] = acf_format_value_for_rest( $value, $this->test_post_id, $field, 'standard' );
+		}
+
+		remove_filter( 'acf/format_value/type=user', $remove_user_avatar, 20 );
+		remove_filter( 'users_pre_query', $shim_user_query, 10 );
+		wp_delete_user( $user_id );
+
+		foreach ( $results as $result ) {
+			$json = wp_json_encode( $result );
+
+			$this->assertArrayHasKey( 'nested_user', $result );
+			$this->assertSame( $user_id, $result['nested_user'] );
+			$this->assertSame( $metadata, $result['metadata'] );
+			$this->assertStringNotContainsString( $user_email, $json );
+			$this->assertStringNotContainsString( 'user_pass', $json );
+			$this->assertStringNotContainsString( $activation_key, $json );
+			$this->assertStringNotContainsString( 'user_activation_key', $json );
+		}
+	}
+
+	/**
+	 * Test nested User sanitization follows field definitions across layout field types.
+	 */
+	public function test_rest_user_sanitization_follows_nested_field_definitions() {
+		$user_id               = 321;
+		$second_user_id        = 654;
+		$formatted_user        = array(
+			'ID'              => $user_id,
+			'user_email'      => 'private-user@example.invalid',
+			'user_nicename'   => 'private-user',
+			'user_registered' => '2026-07-24 00:00:00',
+		);
+		$formatted_second_user = array(
+			'ID'              => $second_user_id,
+			'user_email'      => 'second-private-user@example.invalid',
+			'user_nicename'   => 'second-private-user',
+			'user_registered' => '2026-07-24 00:00:00',
+		);
+		$formatted_lookalike   = array(
+			'ID'              => 777,
+			'user_email'      => 'public-metadata@example.invalid',
+			'user_nicename'   => 'public-metadata',
+			'user_registered' => '2026-07-24 00:00:00',
+			'user_avatar'     => 'avatar',
+		);
+		$user_field            = array(
+			'key'      => 'field_nested_user',
+			'name'     => 'nested_user',
+			'_name'    => 'nested_user',
+			'__name'   => 'cloned_user',
+			'type'     => 'user',
+			'multiple' => 0,
+		);
+
+		$cases = array(
+			'group'            => array(
+				'field'     => array(
+					'type'       => 'group',
+					'sub_fields' => array( $user_field ),
+				),
+				'formatted' => array( 'nested_user' => $formatted_user ),
+				'raw'       => array( 'field_nested_user' => $user_id ),
+				'expected'  => array( 'nested_user' => $user_id ),
+			),
+			'clone'            => array(
+				'field'     => array(
+					'type'       => 'clone',
+					'sub_fields' => array( $user_field ),
+				),
+				'formatted' => array( 'cloned_user' => $formatted_user ),
+				'raw'       => array( 'field_nested_user' => $user_id ),
+				'expected'  => array( 'cloned_user' => $user_id ),
+			),
+			'repeater'         => array(
+				'field'     => array(
+					'type'       => 'repeater',
+					'sub_fields' => array( $user_field ),
+				),
+				'formatted' => array(
+					array(
+						'nested_user' => $formatted_second_user,
+						'label'       => 'Second row',
+					),
+					array(
+						'nested_user' => $formatted_user,
+						'label'       => 'First row',
+					),
+				),
+				'raw'       => array(
+					array(
+						'field_nested_user' => $user_id,
+						'field_label'       => 'First row',
+					),
+					array(
+						'field_nested_user' => $second_user_id,
+						'field_label'       => 'Second row',
+					),
+				),
+				'expected'  => array(
+					array(
+						'nested_user' => $second_user_id,
+						'label'       => 'Second row',
+					),
+					array(
+						'nested_user' => $user_id,
+						'label'       => 'First row',
+					),
+				),
+			),
+			'flexible_content' => array(
+				'field'     => array(
+					'type'    => 'flexible_content',
+					'layouts' => array(
+						array(
+							'name'       => 'user_layout',
+							'sub_fields' => array( $user_field ),
+						),
+						array(
+							'name'       => 'metadata_layout',
+							'sub_fields' => array(
+								array(
+									'key'   => 'field_nested_metadata',
+									'name'  => 'nested_user',
+									'_name' => 'nested_user',
+									'type'  => 'text',
+								),
+							),
+						),
+					),
+				),
+				'formatted' => array(
+					2 => array(
+						'acf_fc_layout' => 'metadata_layout',
+						'nested_user'   => $formatted_lookalike,
+					),
+					7 => array(
+						'acf_fc_layout' => 'user_layout',
+						'nested_user'   => $formatted_user,
+					),
+				),
+				'raw'       => array(
+					2 => array(
+						'acf_fc_layout'     => 'user_layout',
+						'field_nested_user' => $user_id,
+					),
+					7 => array(
+						'acf_fc_layout'         => 'metadata_layout',
+						'field_nested_metadata' => $formatted_lookalike,
+					),
+				),
+				'expected'  => array(
+					2 => array(
+						'acf_fc_layout' => 'metadata_layout',
+						'nested_user'   => $formatted_lookalike,
+					),
+					7 => array(
+						'acf_fc_layout' => 'user_layout',
+						'nested_user'   => $user_id,
+					),
+				),
+			),
+		);
+
+		foreach ( $cases as $field_type => $case ) {
+			$result = scf_rest_sanitize_user_data(
+				$case['formatted'],
+				$case['raw'],
+				$case['field']
+			);
+
+			$this->assertSame( $case['expected'], $result, "Failed sanitizing {$field_type} field values." );
+		}
 	}
 
 	/**

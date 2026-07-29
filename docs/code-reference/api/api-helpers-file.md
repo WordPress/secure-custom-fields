@@ -416,8 +416,9 @@ acf_get_grouped_posts
 * This function will return all posts grouped by post_type
 This is handy for select settings
 * @since   ACF 5.0.0
-* @param   $args (array)
-* @return (array)
+* @param array $args                     The query arguments.
+* @param bool  $enforce_read_permissions Whether to exclude posts the current user cannot read.
+* @return array
 
 ## `_acf_orderby_post_type()`
 

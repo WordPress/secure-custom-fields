@@ -200,6 +200,151 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		}
 
 		/**
+		 * Returns whether Local JSON writes must be restricted for this request.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @return boolean
+		 */
+		protected function should_restrict_multisite_writes() {
+			return is_multisite() && ! is_super_admin();
+		}
+
+		/**
+		 * Gets the directories the current request may write to in multisite.
+		 *
+		 * Single-site requests and multisite super admins retain unrestricted
+		 * Local JSON writes. All other multisite requests may only write to
+		 * existing save path directories that canonically reside inside the
+		 * current site's uploads directory — the only location WordPress
+		 * isolates per site. The "sites" subdirectory of the uploads directory
+		 * is always excluded: on the main site it holds the other sites'
+		 * files. Sites that need restricted Local JSON writes can point the
+		 * save_json setting or the acf/json/save_paths filter at a directory
+		 * inside their uploads directory.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param array $paths The configured save path candidates.
+		 * @return array|null An array of canonical allowed directories, or null when unrestricted.
+		 */
+		private function get_multisite_allowed_write_paths( $paths ) {
+			if ( ! $this->should_restrict_multisite_writes() ) {
+				return null;
+			}
+
+			$uploads  = wp_get_upload_dir();
+			$base_dir = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? realpath( $uploads['basedir'] ) : false;
+
+			if ( false === $base_dir ) {
+				return array();
+			}
+
+			$base_dir      = wp_normalize_path( $base_dir );
+			$sites_dir     = trailingslashit( $base_dir ) . 'sites';
+			$allowed_paths = array();
+
+			foreach ( (array) $paths as $path ) {
+				if ( ! is_string( $path ) || '' === $path ) {
+					continue;
+				}
+
+				$real_path = realpath( $path );
+
+				if ( false === $real_path || ! is_dir( $real_path ) ) {
+					continue;
+				}
+
+				$real_path = wp_normalize_path( $real_path );
+
+				if ( $real_path !== $base_dir && 0 !== strpos( $real_path, trailingslashit( $base_dir ) ) ) {
+					continue;
+				}
+
+				if ( $real_path === $sites_dir || 0 === strpos( $real_path, trailingslashit( $sites_dir ) ) ) {
+					continue;
+				}
+
+				$allowed_paths[] = $real_path;
+			}
+
+			return array_values( array_unique( $allowed_paths ) );
+		}
+
+		/**
+		 * Returns whether a Local JSON file target is within an allowed directory.
+		 *
+		 * Saves resolve existing files so symlinks cannot redirect writes outside
+		 * an allowed directory. Deletes resolve the lexical file's parent because
+		 * unlinking a symlink mutates that directory, not the symlink target. New
+		 * targets also resolve their parent directory. Broken or otherwise
+		 * unresolvable symlinks are never authorized. Targets match allowed
+		 * directories by exact canonical path.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param string     $file          The target file path.
+		 * @param array|null $allowed_paths Canonical allowed directories, or null when unrestricted.
+		 * @param string     $operation     The filesystem operation, either "save" or "delete".
+		 * @return boolean
+		 */
+		private function is_write_path_allowed( $file, $allowed_paths, $operation ) {
+			if ( null === $allowed_paths ) {
+				return true;
+			}
+
+			if ( array() === $allowed_paths ) {
+				return false;
+			}
+
+			if ( is_link( $file ) && false === realpath( $file ) ) {
+				return false;
+			}
+
+			if ( 'save' === $operation && ( file_exists( $file ) || is_link( $file ) ) ) {
+				$real_file = realpath( $file );
+
+				if ( false === $real_file ) {
+					return false;
+				}
+
+				$directory = dirname( $real_file );
+			} else {
+				$directory = realpath( dirname( $file ) );
+
+				if ( false === $directory ) {
+					return false;
+				}
+			}
+
+			return in_array( wp_normalize_path( $directory ), $allowed_paths, true );
+		}
+
+		/**
+		 * Deletes a Local JSON file after checking WordPress's final filtered path.
+		 *
+		 * @since SCF 6.9.3
+		 *
+		 * @param string     $file          The target file path.
+		 * @param array|null $allowed_paths Canonical allowed directories, or null when unrestricted.
+		 * @return void
+		 */
+		private function delete_allowed_file( $file, $allowed_paths ) {
+			if ( null === $allowed_paths ) {
+				wp_delete_file( $file );
+				return;
+			}
+
+			$delete_file = apply_filters( 'wp_delete_file', $file );
+
+			if ( ! is_string( $delete_file ) || empty( $delete_file ) || ! $this->is_write_path_allowed( $delete_file, $allowed_paths, 'delete' ) ) {
+				return;
+			}
+
+			@unlink( $delete_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- Mirrors wp_delete_file() after authorizing its filtered path.
+		}
+
+		/**
 		 * Writes field group data to JSON file.
 		 *
 		 * @date    14/4/20
@@ -496,11 +641,15 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * @return boolean
 		 */
 		public function save_file( $key, $post ) {
-			$paths             = $this->get_save_paths( $key, $post );
-			$filename          = $this->get_filename( $key, $post );
-			$file              = false;
-			$first_writable    = false;
-			$has_existing_file = is_array( $this->files ) && isset( $this->files[ $key ] );
+			$paths          = $this->get_save_paths( $key, $post );
+			$filename       = $this->get_filename( $key, $post );
+			$allowed_paths  = $this->get_multisite_allowed_write_paths( $paths );
+			$file           = false;
+			$first_writable = false;
+
+			// When writes are restricted, skip the existing-file heuristic so an
+			// authorization denial is not later recorded as a filesystem write failure.
+			$has_existing_file = null === $allowed_paths && is_array( $this->files ) && isset( $this->files[ $key ] );
 
 			if ( ! $filename ) {
 				return false;
@@ -512,6 +661,10 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 				}
 
 				$file_to_check = trailingslashit( $path ) . $filename;
+
+				if ( ! $this->is_write_path_allowed( $file_to_check, $allowed_paths, 'save' ) ) {
+					continue;
+				}
 
 				if ( is_file( $file_to_check ) ) {
 					$has_existing_file = true;
@@ -578,18 +731,27 @@ if ( ! class_exists( 'ACF_Local_JSON' ) ) :
 		 * @return boolean
 		 */
 		public function delete_file( $key, $post = array() ) {
-			$paths    = $this->get_save_paths( $key, $post );
-			$filename = $this->get_filename( $key, $post );
+			$paths         = $this->get_save_paths( $key, $post );
+			$filename      = $this->get_filename( $key, $post );
+			$allowed_paths = $this->get_multisite_allowed_write_paths( $paths );
 
 			if ( ! $filename ) {
 				return false;
 			}
 
 			foreach ( $paths as $path_to_check ) {
+				if ( ! is_string( $path_to_check ) || '' === $path_to_check ) {
+					continue;
+				}
+
 				$file = untrailingslashit( $path_to_check ) . '/' . $filename;
 
+				if ( ! $this->is_write_path_allowed( $file, $allowed_paths, 'delete' ) ) {
+					continue;
+				}
+
 				if ( is_writable( $file ) ) { //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- non-compatible function for this purpose.
-					wp_delete_file( $file );
+					$this->delete_allowed_file( $file, $allowed_paths );
 				}
 			}
 

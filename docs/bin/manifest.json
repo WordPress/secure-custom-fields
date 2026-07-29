@@ -244,6 +244,11 @@
         "parent": "features",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/field/index.md"
     },
+    "features/local-json": {
+        "slug": "local-json",
+        "parent": "features",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/local-json.md"
+    },
     "features/post-types": {
         "slug": "post-types",
         "parent": "features",

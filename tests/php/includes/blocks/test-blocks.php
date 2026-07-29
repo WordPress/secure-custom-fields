@@ -440,6 +440,7 @@ class Test_Blocks extends BaseTestCase {
 				'name'            => 'prepare-block',
 				'title'           => 'Prepare Block',
 				'render_template' => 'real-template.php',
+				'path'            => '/trusted/block/path',
 			)
 		);
 
@@ -448,6 +449,7 @@ class Test_Blocks extends BaseTestCase {
 				'name'            => 'acf/prepare-block',
 				'id'              => 'abc123',
 				'render_template' => 'evil-template.php',
+				'path'            => 'phar:///tmp/attacker.phar',
 				'align'           => 'wide',
 			)
 		);
@@ -457,11 +459,30 @@ class Test_Blocks extends BaseTestCase {
 
 		// Protected attributes cannot be overridden by block attributes.
 		$this->assertSame( 'real-template.php', $prepared['render_template'] );
+		$this->assertSame( '/trusted/block/path', $prepared['path'] );
 
 		// Attribute defaults are merged in, with provided values winning.
 		$this->assertSame( 'wide', $prepared['align'] );
 		$this->assertSame( array(), $prepared['data'] );
 		$this->assertSame( 'Prepare Block', $prepared['title'] );
+
+		$this->register_block(
+			array(
+				'name'            => 'prepare-block-without-path',
+				'title'           => 'Prepare Block Without Path',
+				'render_template' => 'theme-template.php',
+			)
+		);
+
+		$prepared_without_path = acf_prepare_block(
+			array(
+				'name' => 'acf/prepare-block-without-path',
+				'id'   => 'without-path',
+				'path' => 'phar:///tmp/attacker.phar',
+			)
+		);
+
+		$this->assertArrayNotHasKey( 'path', $prepared_without_path );
 	}
 
 	/**
@@ -847,6 +868,11 @@ class Test_Blocks extends BaseTestCase {
 		);
 		file_put_contents( $dir . '/render.php', '<?php echo "VAL[" . get_field( "jsonfile_text" ) . "]"; ?>' );
 
+		$attacker_dir = sys_get_temp_dir() . '/scf-block-json-attacker-' . uniqid();
+		mkdir( $attacker_dir );
+		$this->temp_paths[] = $attacker_dir;
+		file_put_contents( $attacker_dir . '/render.php', '<?php echo "ATTACKER_TEMPLATE"; ?>' );
+
 		$wp_block_type       = register_block_type( $dir );
 		$this->block_names[] = 'acf/jsonfile-block';
 		$this->track_group( 'group_acf_jsonfile_block', array( 'field_acf_jsonfile_block_jsonfile_text' ) );
@@ -866,8 +892,114 @@ class Test_Blocks extends BaseTestCase {
 		$this->assertTrue( acf_is_local_field_group( 'group_acf_jsonfile_block' ) );
 
 		// Render the block through the real WordPress pipeline.
-		$html = do_blocks( '<!-- wp:acf/jsonfile-block {"name":"acf/jsonfile-block","data":{"jsonfile_text":"FromJson","_jsonfile_text":"field_acf_jsonfile_block_jsonfile_text"}} /-->' );
+		$attributes = array(
+			'name' => 'acf/jsonfile-block',
+			'path' => $attacker_dir,
+			'data' => array(
+				'jsonfile_text'  => 'FromJson',
+				'_jsonfile_text' => 'field_acf_jsonfile_block_jsonfile_text',
+			),
+		);
+		$html       = do_blocks( sprintf( '<!-- wp:acf/jsonfile-block %s /-->', wp_json_encode( $attributes ) ) );
 		$this->assertStringContainsString( 'VAL[FromJson]', $html );
+		$this->assertStringNotContainsString( 'ATTACKER_TEMPLATE', $html );
+	}
+
+	/**
+	 * Test that the template path is resolved from the registered block type
+	 * and never from the passed block array.
+	 */
+	public function test_block_render_template_ignores_path_in_block_array() {
+		$trusted_dir = sys_get_temp_dir() . '/scf-block-trusted-' . uniqid();
+		mkdir( $trusted_dir );
+		$this->temp_paths[] = $trusted_dir;
+		file_put_contents( $trusted_dir . '/render.php', '<?php echo "TRUSTED_TEMPLATE"; ?>' );
+
+		$attacker_dir = sys_get_temp_dir() . '/scf-block-attacker-' . uniqid();
+		mkdir( $attacker_dir );
+		$this->temp_paths[] = $attacker_dir;
+		file_put_contents( $attacker_dir . '/render.php', '<?php echo "ATTACKER_TEMPLATE"; ?>' );
+
+		$this->register_block(
+			array(
+				'name'            => 'render-template-block',
+				'title'           => 'Render Template Block',
+				'render_template' => 'render.php',
+				'path'            => $trusted_dir,
+			)
+		);
+
+		ob_start();
+		acf_block_render_template(
+			array(
+				'name'            => 'acf/render-template-block',
+				'render_template' => 'render.php',
+				'path'            => $attacker_dir,
+			),
+			'',
+			false,
+			0,
+			null,
+			array()
+		);
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( 'TRUSTED_TEMPLATE', $html );
+		$this->assertStringNotContainsString( 'ATTACKER_TEMPLATE', $html );
+	}
+
+	/**
+	 * Test that a render template using a stream wrapper is never included.
+	 */
+	public function test_block_render_template_rejects_stream_wrappers() {
+		$attacker_dir = sys_get_temp_dir() . '/scf-block-wrapper-' . uniqid();
+		mkdir( $attacker_dir );
+		$this->temp_paths[] = $attacker_dir;
+		file_put_contents( $attacker_dir . '/render.php', '<?php echo "ATTACKER_TEMPLATE"; ?>' );
+
+		$this->register_block(
+			array(
+				'name'            => 'wrapper-template-block',
+				'title'           => 'Wrapper Template Block',
+				'render_template' => 'render.php',
+			)
+		);
+
+		// The file:// wrapper resolves to a real, includable file, so this would
+		// render if the stream wrapper check was missing.
+		ob_start();
+		acf_block_render_template(
+			array(
+				'name'            => 'acf/wrapper-template-block',
+				'render_template' => 'file://' . $attacker_dir . '/render.php',
+			),
+			'',
+			false,
+			0,
+			null,
+			array()
+		);
+		$html = ob_get_clean();
+
+		$this->assertStringNotContainsString( 'ATTACKER_TEMPLATE', $html );
+	}
+
+	/**
+	 * Test stream wrapper detection.
+	 */
+	public function test_path_has_stream_wrapper() {
+		$this->assertTrue( scf_path_has_stream_wrapper( 'phar:///tmp/attacker.phar' ) );
+		$this->assertTrue( scf_path_has_stream_wrapper( 'php://input' ) );
+		$this->assertTrue( scf_path_has_stream_wrapper( 'data://text/plain;base64,AAAA' ) );
+		$this->assertTrue( scf_path_has_stream_wrapper( 'compress.zlib://file.gz' ) );
+		$this->assertTrue( scf_path_has_stream_wrapper( 'HTTPS://example.com/x.php' ) );
+
+		$this->assertFalse( scf_path_has_stream_wrapper( '/var/www/theme/render.php' ) );
+		$this->assertFalse( scf_path_has_stream_wrapper( 'render.php' ) );
+		$this->assertFalse( scf_path_has_stream_wrapper( 'blocks/testimonial/render.php' ) );
+		$this->assertFalse( scf_path_has_stream_wrapper( '' ) );
+		// A wrapper that is not at the start of the path is just a directory name.
+		$this->assertFalse( scf_path_has_stream_wrapper( '/var/www/phar://render.php' ) );
 	}
 
 	/**

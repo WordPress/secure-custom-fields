@@ -1279,10 +1279,11 @@ function _acf_query_remove_post_type( $sql ) {
  *
  * @since   ACF 5.0.0
  *
- * @param   $args (array)
- * @return  (array)
+ * @param array $args                     The query arguments.
+ * @param bool  $enforce_read_permissions Whether to exclude posts the current user cannot read.
+ * @return array
  */
-function acf_get_grouped_posts( $args ) {
+function acf_get_grouped_posts( $args, $enforce_read_permissions = false ) {
 
 	// vars
 	$data = array();
@@ -1301,6 +1302,49 @@ function acf_get_grouped_posts( $args ) {
 			'update_post_meta_cache' => false,
 		)
 	);
+
+	// Restrict unauthenticated queries before pagination to avoid non-public posts occupying result pages.
+	if ( $enforce_read_permissions && ! is_user_logged_in() ) {
+		$post_types = acf_get_array( $args['post_type'] );
+
+		if ( in_array( 'any', $post_types, true ) ) {
+			$post_types = get_post_types();
+		}
+
+		$post_types = array_values( array_filter( $post_types, 'is_post_type_viewable' ) );
+
+		if ( empty( $post_types ) ) {
+			return $data;
+		}
+
+		$post_statuses        = acf_get_array( $args['post_status'] );
+		$public_post_statuses = array_values( array_filter( get_post_stati(), 'is_post_status_viewable' ) );
+
+		if ( empty( $post_statuses ) ) {
+			return $data;
+		}
+
+		if ( in_array( 'any', $post_statuses, true ) ) {
+			$post_statuses = $public_post_statuses;
+
+			if ( in_array( 'attachment', $post_types, true ) ) {
+				$post_statuses[] = 'inherit';
+			}
+		} else {
+			$post_statuses = array_values( array_intersect( $post_statuses, $public_post_statuses ) );
+
+			if ( in_array( 'attachment', $post_types, true ) && in_array( 'inherit', acf_get_array( $args['post_status'] ), true ) ) {
+				$post_statuses[] = 'inherit';
+			}
+		}
+
+		if ( empty( $post_statuses ) ) {
+			return $data;
+		}
+
+		$args['post_type']   = $post_types;
+		$args['post_status'] = array_values( array_unique( $post_statuses ) );
+	}
 
 	// find array of post_type
 	$post_types          = acf_get_array( $args['post_type'] );
@@ -1394,6 +1438,19 @@ function acf_get_grouped_posts( $args ) {
 			if ( count( $ordered_posts ) == count( $all_posts ) ) {
 				$this_posts = array_slice( $ordered_posts, $offset, $length );
 			}
+		}
+
+		if ( $enforce_read_permissions ) {
+			$this_posts = array_filter(
+				$this_posts,
+				function ( $post ) {
+					return is_post_publicly_viewable( $post ) || current_user_can( 'read_post', $post->ID );
+				}
+			);
+		}
+
+		if ( empty( $this_posts ) ) {
+			continue;
 		}
 
 		// populate $this_posts

@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.9.2
+Stable tag: 6.9.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,17 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.3 =
+*Release Date 28th July 2026*
+
+*Hardening*
+
+- Restricted Local JSON writes for multisite users who are not super admins to save paths inside the current site's uploads directory.
+- Limited Options Page saves to values for fields assigned to the current page.
+- Excluded posts the current user cannot read from Post Object, Page Link, and Relationship field queries.
+- Block render templates are now always resolved from the registered block path, and template paths using stream wrappers are rejected.
+- Reduced User field values in REST API responses to user IDs, including within Group, Clone, Repeater, and Flexible Content fields.
+
 = 6.9.2 =
 *Release Date 21st July 2026*
 

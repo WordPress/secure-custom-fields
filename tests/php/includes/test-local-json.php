@@ -136,7 +136,7 @@ class Test_Local_JSON extends BaseTestCase {
 
 			$path = $dir . '/' . $entry;
 
-			if ( is_dir( $path ) ) {
+			if ( is_dir( $path ) && ! is_link( $path ) ) {
 				$this->delete_dir( $path );
 			} else {
 				unlink( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- test fixture cleanup.
@@ -161,6 +161,51 @@ class Test_Local_JSON extends BaseTestCase {
 		if ( ! has_filter( 'acf/prepare_field_for_import/type=text' ) ) {
 			acf_register_field_type( 'acf_field_text' );
 		}
+	}
+
+	/**
+	 * Creates a Local JSON instance that enforces multisite write restrictions.
+	 *
+	 * @return ACF_Local_JSON
+	 */
+	private function get_restricted_json_instance() {
+		return new class() extends ACF_Local_JSON {
+
+			/**
+			 * Avoids registering a duplicate set of hooks.
+			 */
+			public function __construct() {}
+
+			/**
+			 * Forces multisite write restrictions under WorDBless.
+			 *
+			 * WorDBless defines MULTISITE as false during bootstrap, so only the
+			 * environment decision is overridden.
+			 *
+			 * @return boolean
+			 */
+			protected function should_restrict_multisite_writes() {
+				return true;
+			}
+		};
+	}
+
+	/**
+	 * Reports a directory inside the temp dir as the site's uploads directory.
+	 *
+	 * @param string $basedir The uploads base directory to report.
+	 * @return callable The registered filter callback, for removal by the test.
+	 */
+	private function use_uploads_basedir( $basedir ) {
+		$filter = function ( $uploads ) use ( $basedir ) {
+			$uploads['basedir'] = $basedir;
+			$uploads['path']    = $basedir;
+
+			return $uploads;
+		};
+		add_filter( 'upload_dir', $filter );
+
+		return $filter;
 	}
 
 	/**
@@ -423,6 +468,153 @@ class Test_Local_JSON extends BaseTestCase {
 		$this->assertFileExists( $this->temp_dir . '/' . $key . '.json', 'Wrapper should write the file' );
 	}
 
+	/**
+	 * Test a restricted multisite save is denied by default without recording a filesystem failure.
+	 */
+	public function test_multisite_save_is_denied_by_default_without_failure_notice_state() {
+		$key = 'group_multisite_default_deny';
+		$this->write_json_file(
+			$key . '.json',
+			array(
+				'key'    => $key,
+				'title'  => 'Canary',
+				'fields' => array(),
+			)
+		);
+
+		$json = $this->get_restricted_json_instance();
+		$json->scan_files();
+
+		$result = $json->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Attempted Overwrite',
+				'fields' => array(),
+			)
+		);
+		$data   = json_decode( file_get_contents( $this->temp_dir . '/' . $key . '.json' ), true );
+
+		$this->assertFalse( $result, 'Restricted multisite saves should be denied without an opt-in' );
+		$this->assertSame( 'Canary', $data['title'], 'The existing JSON file should not be overwritten' );
+		$this->assertFalse( $json->has_save_file_failure(), 'An authorization denial should not trigger the filesystem warning' );
+	}
+
+	/**
+	 * Test a restricted multisite save succeeds inside the site's uploads directory.
+	 */
+	public function test_multisite_save_allows_directory_inside_site_uploads() {
+		$key         = 'group_multisite_uploads_allowed';
+		$uploads_dir = $this->temp_dir . '/uploads';
+		$json_dir    = $uploads_dir . '/scf-json';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $json_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+
+		$uploads_filter = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths     = function () use ( $json_dir ) {
+			return array( $json_dir );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+
+		$result = $this->get_restricted_json_instance()->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Uploads Allowed',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertTrue( $result, 'A save path inside the site uploads directory should be writable' );
+		$this->assertFileExists( $json_dir . '/' . $key . '.json', 'The JSON file should be written inside the uploads directory' );
+	}
+
+	/**
+	 * Test a restricted multisite save is denied inside the sites subdirectory of the uploads directory.
+	 *
+	 * On the main site of a subdirectory multisite, uploads/sites/{id} holds the
+	 * other sites' files, so it must never satisfy the containment policy.
+	 */
+	public function test_multisite_save_denies_other_site_uploads_subtree() {
+		$key         = 'group_multisite_other_site';
+		$uploads_dir = $this->temp_dir . '/uploads';
+		$other_site  = $uploads_dir . '/sites/2';
+		mkdir( $other_site, 0777, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+
+		$uploads_filter = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths     = function () use ( $other_site ) {
+			return array( $other_site );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+
+		$result = $this->get_restricted_json_instance()->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Cross Site Escape',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertFalse( $result, 'The sites subtree of the uploads directory should never be writable' );
+		$this->assertFileDoesNotExist( $other_site . '/' . $key . '.json', 'No file should be written into another site\'s uploads directory' );
+	}
+
+	/**
+	 * Test only save paths inside the site's uploads directory participate in multisite save routing.
+	 */
+	public function test_multisite_save_routes_among_authorized_paths_only() {
+		$key         = 'group_multisite_routing';
+		$uploads_dir = $this->temp_dir . '/uploads';
+		$first_dir   = $uploads_dir . '/first';
+		$last_dir    = $uploads_dir . '/last';
+		$blocked_dir = $uploads_dir . '-other';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $blocked_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $first_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $last_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+
+		file_put_contents( $blocked_dir . '/' . $key . '.json', acf_json_encode( array( 'title' => 'Blocked Canary' ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $last_dir . '/' . $key . '.json', acf_json_encode( array( 'title' => 'Authorized Existing' ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+
+		$uploads_filter = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths     = function () use ( $blocked_dir, $first_dir, $last_dir ) {
+			// Non-canonical entries must still resolve to their authorized directories.
+			return array( $first_dir . '/.', $last_dir . '/../last', $blocked_dir );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+
+		$result = $this->get_restricted_json_instance()->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Updated',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$blocked_data = json_decode( file_get_contents( $blocked_dir . '/' . $key . '.json' ), true );
+		$last_data    = json_decode( file_get_contents( $last_dir . '/' . $key . '.json' ), true );
+
+		$this->assertTrue( $result, 'The save should succeed through an authorized path' );
+		$this->assertSame( 'Blocked Canary', $blocked_data['title'], 'A prefix-matching sibling of the uploads directory should not be overwritten' );
+		$this->assertFileDoesNotExist( $first_dir . '/' . $key . '.json', 'The existing authorized destination should retain the current routing precedence' );
+		$this->assertSame( 'Updated', $last_data['title'], 'The last existing authorized destination should be updated' );
+	}
+
 	// =========================================================================
 	// Deleting field groups
 	// =========================================================================
@@ -507,6 +699,210 @@ class Test_Local_JSON extends BaseTestCase {
 
 		$this->assertTrue( $result, 'Wrapper should return true' );
 		$this->assertFileDoesNotExist( $this->temp_dir . '/' . $key . '.json', 'Wrapper should delete the file' );
+	}
+
+	/**
+	 * Test multisite delete authorization is evaluated for each save path.
+	 */
+	public function test_multisite_delete_only_removes_files_from_allowed_paths() {
+		$key         = 'group_multisite_delete_paths';
+		$uploads_dir = $this->temp_dir . '/uploads';
+		$allowed_dir = $uploads_dir . '/allowed-delete';
+		$blocked_dir = $this->temp_dir . '/blocked-delete';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $allowed_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $blocked_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		file_put_contents( $allowed_dir . '/' . $key . '.json', '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $blocked_dir . '/' . $key . '.json', '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+
+		$uploads_filter = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths     = function () use ( $blocked_dir, $allowed_dir ) {
+			return array( $blocked_dir, $allowed_dir );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+
+		$result = $this->get_restricted_json_instance()->delete_file( $key );
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertTrue( $result, 'Delete should preserve its existing return contract' );
+		$this->assertFileExists( $blocked_dir . '/' . $key . '.json', 'The file outside the uploads directory should remain' );
+		$this->assertFileDoesNotExist( $allowed_dir . '/' . $key . '.json', 'The file inside the uploads directory should be deleted' );
+	}
+
+	/**
+	 * Test the final path from WordPress's delete filter is also authorized.
+	 */
+	public function test_multisite_delete_authorizes_final_filtered_destination() {
+		$allowed_key         = 'group_multisite_allowed_filtered_delete';
+		$blocked_key         = 'group_multisite_blocked_filtered_delete';
+		$uploads_dir         = $this->temp_dir . '/uploads';
+		$allowed_dir         = $uploads_dir . '/allowed-filtered-delete';
+		$blocked_dir         = $this->temp_dir . '/blocked-filtered-delete';
+		$allowed_source      = $allowed_dir . '/' . $allowed_key . '.json';
+		$blocked_source      = $allowed_dir . '/' . $blocked_key . '.json';
+		$allowed_destination = $allowed_dir . '/allowed-destination.json';
+		$blocked_destination = $blocked_dir . '/blocked-destination.json';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $allowed_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $blocked_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		file_put_contents( $allowed_source, '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $blocked_source, '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $allowed_destination, '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $blocked_destination, '{}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+
+		$uploads_filter  = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths      = function () use ( $allowed_dir ) {
+			return array( $allowed_dir );
+		};
+		$destinations    = array( $allowed_destination, $blocked_destination );
+		$redirect_delete = function () use ( &$destinations ) {
+			return array_shift( $destinations );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+		add_filter( 'wp_delete_file', $redirect_delete, 10, 0 );
+
+		$json = $this->get_restricted_json_instance();
+		$json->delete_file( $allowed_key );
+		$json->delete_file( $blocked_key );
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'wp_delete_file', $redirect_delete );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertFileExists( $allowed_source, 'The first original file should remain after an allowed redirect' );
+		$this->assertFileDoesNotExist( $allowed_destination, 'A filtered destination in the allowed directory should be deleted' );
+		$this->assertFileExists( $blocked_source, 'The second original file should remain after a denied redirect' );
+		$this->assertFileExists( $blocked_destination, 'A filtered destination outside the allowlist should not be deleted' );
+	}
+
+	/**
+	 * Test save and delete authorization handle symlink targets according to the mutation.
+	 */
+	public function test_multisite_authorization_handles_symlinks_safely() {
+		if ( ! function_exists( 'symlink' ) ) {
+			$this->markTestSkipped( 'Symlinks are not supported in this environment.' );
+		}
+
+		$key                  = 'group_multisite_symlink';
+		$directory_escape_key = 'group_multisite_directory_symlink';
+		$uploads_dir          = $this->temp_dir . '/uploads';
+		$allowed_dir          = $uploads_dir . '/allowed-symlink';
+		$blocked_dir          = $this->temp_dir . '/blocked-symlink';
+		$target_dir           = $this->temp_dir . '/symlink-targets';
+		$directory_link       = $allowed_dir . '/directory-link';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $allowed_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $blocked_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $target_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+
+		$outside_target = $target_dir . '/outside.json';
+		$allowed_target = $allowed_dir . '/allowed-target.json';
+		file_put_contents( $outside_target, 'outside-canary' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		file_put_contents( $allowed_target, 'allowed-canary' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- test fixture.
+		symlink( $outside_target, $allowed_dir . '/' . $key . '.json' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_symlink -- test fixture.
+		symlink( $allowed_target, $blocked_dir . '/' . $key . '.json' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_symlink -- test fixture.
+		$this->assertTrue(
+			symlink( $target_dir, $directory_link ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_symlink -- test fixture.
+			'Could not create the directory symlink fixture'
+		);
+
+		$uploads_filter      = $this->use_uploads_basedir( $uploads_dir );
+		$allowed_save_path   = function () use ( $allowed_dir ) {
+			return array( $allowed_dir );
+		};
+		$directory_save_path = function () use ( $directory_link ) {
+			return array( $directory_link );
+		};
+		$all_delete_paths    = function () use ( $blocked_dir, $allowed_dir ) {
+			return array( $blocked_dir, $allowed_dir );
+		};
+		add_filter( 'acf/json/save_paths', $allowed_save_path, 100 );
+
+		$save_result = $this->get_restricted_json_instance()->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Symlink Escape',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $allowed_save_path, 100 );
+		add_filter( 'acf/json/save_paths', $directory_save_path, 100 );
+
+		$directory_save_result = $this->get_restricted_json_instance()->save_file(
+			$directory_escape_key,
+			array(
+				'ID'     => 0,
+				'key'    => $directory_escape_key,
+				'title'  => 'Directory Symlink Escape',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $directory_save_path, 100 );
+		add_filter( 'acf/json/save_paths', $all_delete_paths, 100 );
+
+		$delete_result = $this->get_restricted_json_instance()->delete_file( $key );
+
+		remove_filter( 'acf/json/save_paths', $all_delete_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertFalse( $save_result, 'A save symlinked outside the allowed directory should be denied' );
+		$this->assertSame( 'outside-canary', file_get_contents( $outside_target ), 'The external save target should not be overwritten' );
+		$this->assertFalse( $directory_save_result, 'A save through a symlinked directory should be denied' );
+		$this->assertFileDoesNotExist( $target_dir . '/' . $directory_escape_key . '.json', 'A symlinked directory should not create a file outside the allowlist' );
+		$this->assertTrue( $delete_result, 'Delete should preserve its existing return contract' );
+		$this->assertFalse( is_link( $allowed_dir . '/' . $key . '.json' ), 'A symlink located in an allowed directory may be unlinked' );
+		$this->assertFileExists( $outside_target, 'Deleting an allowed symlink should not delete its target' );
+		$this->assertTrue( is_link( $blocked_dir . '/' . $key . '.json' ), 'A symlink located in an unauthorized directory should remain' );
+		$this->assertSame( 'allowed-canary', file_get_contents( $allowed_target ), 'The unauthorized delete target should remain unchanged' );
+	}
+
+	/**
+	 * Test a broken file symlink cannot redirect a save outside the allowed directory.
+	 */
+	public function test_multisite_save_denies_broken_file_symlink() {
+		if ( ! function_exists( 'symlink' ) ) {
+			$this->markTestSkipped( 'Symlinks are not supported in this environment.' );
+		}
+
+		$key            = 'group_multisite_broken_symlink';
+		$uploads_dir    = $this->temp_dir . '/uploads';
+		$allowed_dir    = $uploads_dir . '/allowed-broken-symlink';
+		$outside_dir    = $this->temp_dir . '/outside-broken-symlink';
+		$outside_target = $outside_dir . '/created-through-link.json';
+		mkdir( $uploads_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $allowed_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		mkdir( $outside_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test fixture.
+		$file = $allowed_dir . '/' . $key . '.json';
+		symlink( $outside_target, $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_symlink -- test fixture.
+
+		$uploads_filter = $this->use_uploads_basedir( $uploads_dir );
+		$save_paths     = function () use ( $allowed_dir ) {
+			return array( $allowed_dir );
+		};
+		add_filter( 'acf/json/save_paths', $save_paths, 100 );
+
+		$result = $this->get_restricted_json_instance()->save_file(
+			$key,
+			array(
+				'ID'     => 0,
+				'key'    => $key,
+				'title'  => 'Broken Symlink Escape',
+				'fields' => array(),
+			)
+		);
+
+		remove_filter( 'acf/json/save_paths', $save_paths, 100 );
+		remove_filter( 'upload_dir', $uploads_filter );
+
+		$this->assertFalse( $result, 'A broken file symlink should not be authorized for saving' );
+		$this->assertTrue( is_link( $file ), 'The broken symlink should remain untouched' );
+		$this->assertFileDoesNotExist( $outside_target, 'The broken symlink should not create its external target' );
 	}
 
 	// =========================================================================
