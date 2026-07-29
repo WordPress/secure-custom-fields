@@ -684,7 +684,7 @@ test.describe( 'Import/Export', () => {
 			} );
 
 			await groupRow
-				.locator( 'th.check-column input[type="checkbox"]' )
+				.locator( '.check-column input[type="checkbox"]' )
 				.check();
 			await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 			await page.click( '#doaction2' );
@@ -867,7 +867,7 @@ test.describe( 'Import/Export', () => {
 				`#the-list tr:has-text("${ uniqueName }")`
 			);
 			await ptRow
-				.locator( 'th.check-column input[type="checkbox"]' )
+				.locator( '.check-column input[type="checkbox"]' )
 				.check();
 			await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 			await page.click( '#doaction2' );
@@ -934,7 +934,7 @@ test.describe( 'Import/Export', () => {
 			);
 			if ( await cleanupRow.isVisible().catch( () => false ) ) {
 				await cleanupRow
-					.locator( 'th.check-column input[type="checkbox"]' )
+					.locator( '.check-column input[type="checkbox"]' )
 					.check();
 				await page.selectOption(
 					'#bulk-action-selector-bottom',
@@ -1026,7 +1026,7 @@ test.describe( 'Import/Export', () => {
 				`#the-list tr:has-text("${ uniqueName }")`
 			);
 			await taxRow
-				.locator( 'th.check-column input[type="checkbox"]' )
+				.locator( '.check-column input[type="checkbox"]' )
 				.check();
 			await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 			await page.click( '#doaction2' );
@@ -1093,7 +1093,7 @@ test.describe( 'Import/Export', () => {
 			);
 			if ( await cleanupRow.isVisible().catch( () => false ) ) {
 				await cleanupRow
-					.locator( 'th.check-column input[type="checkbox"]' )
+					.locator( '.check-column input[type="checkbox"]' )
 					.check();
 				await page.selectOption(
 					'#bulk-action-selector-bottom',
@@ -1190,7 +1190,7 @@ test.describe( 'Import/Export', () => {
 				`#the-list tr:has-text("${ uniqueName }")`
 			);
 			await optRow
-				.locator( 'th.check-column input[type="checkbox"]' )
+				.locator( '.check-column input[type="checkbox"]' )
 				.check();
 			await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 			await page.click( '#doaction2' );
@@ -1266,7 +1266,7 @@ test.describe( 'Import/Export', () => {
 			);
 			if ( await cleanupRow.isVisible().catch( () => false ) ) {
 				await cleanupRow
-					.locator( 'th.check-column input[type="checkbox"]' )
+					.locator( '.check-column input[type="checkbox"]' )
 					.check();
 				await page.selectOption(
 					'#bulk-action-selector-bottom',
@@ -1404,7 +1404,7 @@ test.describe( 'Import/Export', () => {
 				);
 				if ( await cleanupRow.isVisible().catch( () => false ) ) {
 					await cleanupRow
-						.locator( 'th.check-column input[type="checkbox"]' )
+						.locator( '.check-column input[type="checkbox"]' )
 						.check();
 					await page.selectOption(
 						'#bulk-action-selector-bottom',
@@ -1540,7 +1540,7 @@ test.describe( 'Import/Export', () => {
 				);
 				if ( await cleanupRow.isVisible().catch( () => false ) ) {
 					await cleanupRow
-						.locator( 'th.check-column input[type="checkbox"]' )
+						.locator( '.check-column input[type="checkbox"]' )
 						.check();
 					await page.selectOption(
 						'#bulk-action-selector-bottom',
@@ -1671,7 +1671,7 @@ test.describe( 'Import/Export', () => {
 				);
 				if ( await cleanupRow.isVisible().catch( () => false ) ) {
 					await cleanupRow
-						.locator( 'th.check-column input[type="checkbox"]' )
+						.locator( '.check-column input[type="checkbox"]' )
 						.check();
 					await page.selectOption(
 						'#bulk-action-selector-bottom',
@@ -1743,7 +1743,7 @@ async function cleanupTestEntities( page, admin ) {
 		`#the-list tr:has-text("${ TEST_POST_TYPE_NAME }")`
 	);
 	if ( await ptRow.isVisible().catch( () => false ) ) {
-		await ptRow.locator( 'th.check-column input[type="checkbox"]' ).check();
+		await ptRow.locator( '.check-column input[type="checkbox"]' ).check();
 		await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 		await page.click( '#doaction2' );
 		await page.waitForLoadState( 'networkidle' );
@@ -1768,9 +1768,7 @@ async function cleanupTestEntities( page, admin ) {
 		`#the-list tr:has-text("${ TEST_TAXONOMY_NAME }")`
 	);
 	if ( await taxRow.isVisible().catch( () => false ) ) {
-		await taxRow
-			.locator( 'th.check-column input[type="checkbox"]' )
-			.check();
+		await taxRow.locator( '.check-column input[type="checkbox"]' ).check();
 		await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 		await page.click( '#doaction2' );
 		await page.waitForLoadState( 'networkidle' );

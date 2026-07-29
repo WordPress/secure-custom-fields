@@ -453,9 +453,7 @@ async function deletePostType( page, admin, postTypeName = POST_TYPE_NAME ) {
 		`tr.type-acf-post-type:has(a.row-title:text("${ postTypeName }"))`
 	);
 	await expect( postTypeRow ).toBeVisible( { timeout: DEFAULT_TIMEOUT } );
-	await postTypeRow
-		.locator( 'th.check-column input[type="checkbox"]' )
-		.check();
+	await postTypeRow.locator( '.check-column input[type="checkbox"]' ).check();
 
 	// Use bulk actions to trash the post type
 	await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
@@ -482,9 +480,7 @@ async function restorePostType( page, admin, postTypeName = POST_TYPE_NAME ) {
 		hasText: postTypeName,
 	} );
 	await expect( postTypeRow ).toBeVisible( { timeout: DEFAULT_TIMEOUT } );
-	await postTypeRow
-		.locator( 'th.check-column input[type="checkbox"]' )
-		.check();
+	await postTypeRow.locator( '.check-column input[type="checkbox"]' ).check();
 
 	// Use bulk actions to restore
 	await page.selectOption( '#bulk-action-selector-bottom', 'untrash' );
@@ -557,7 +553,7 @@ async function trashEntityByName( page, admin, postType, entityName ) {
 	const entityRow = page.locator( '#the-list tr', { hasText: entityName } );
 	if ( await entityRow.isVisible( { timeout: 1000 } ).catch( () => false ) ) {
 		await entityRow
-			.locator( 'th.check-column input[type="checkbox"]' )
+			.locator( '.check-column input[type="checkbox"]' )
 			.check();
 		await page.selectOption( '#bulk-action-selector-bottom', 'trash' );
 		await page.click( '#doaction2' );
