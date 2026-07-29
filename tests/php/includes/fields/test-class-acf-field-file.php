@@ -137,4 +137,32 @@ class Test_ACF_Field_File extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'url', $result );
 		$this->assertEquals( $this->attachment_id, $result['ID'] );
 	}
+
+	/**
+	 * Regression test for #527: get_field() (which routes through
+	 * acf_format_value() and the acf/format_value filter chain) must respect
+	 * every documented return_format on File fields, mirroring the Image fix.
+	 *
+	 * @dataProvider return_format_provider
+	 *
+	 * @param string $return_format The return format setting.
+	 */
+	public function test_get_field_pipeline_respects_return_format( $return_format ) {
+		$field = $this->get_field( array( 'return_format' => $return_format ) );
+
+		// The production path get_field() uses.
+		$result = acf_format_value( $this->attachment_id, $this->post_id, $field );
+
+		if ( 'url' === $return_format ) {
+			$this->assertIsString( $result );
+			$this->assertStringContainsString( 'test-file.pdf', $result );
+		} elseif ( 'array' === $return_format ) {
+			$this->assertIsArray( $result );
+			$this->assertArrayHasKey( 'ID', $result );
+			$this->assertArrayHasKey( 'url', $result );
+			$this->assertEquals( $this->attachment_id, $result['ID'] );
+		} else {
+			$this->assertEquals( $this->attachment_id, $result );
+		}
+	}
 }
