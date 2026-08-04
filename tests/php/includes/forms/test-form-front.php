@@ -37,15 +37,45 @@ class Test_Form_Front extends BaseTestCase {
 	public function test_constructor_registers_actions() {
 		$form_front = new acf_form_front();
 
-		$this->assertNotFalse(
+		$this->assertSame(
+			1,
 			has_action( 'acf/validate_save_post', array( $form_front, 'validate_save_post' ) ),
-			'Should register validate_save_post action'
+			'The legacy validate_save_post handler must remain at priority 1.'
 		);
 
 		$this->assertNotFalse(
 			has_filter( 'acf/pre_save_post', array( $form_front, 'pre_save_post' ) ),
 			'Should register pre_save_post filter'
 		);
+	}
+
+	/**
+	 * The honeypot check runs after callbacks registered at priority 0.
+	 */
+	public function test_honeypot_runs_after_priority_zero_integrations() {
+		$form_front    = new acf_form_front();
+		$previous_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Stores the request so the test can restore it.
+		$reset_errors  = static function () {
+			acf_reset_validation_errors();
+		};
+
+		add_action( 'acf/validate_save_post', $reset_errors, 0 );
+		acf_reset_validation_errors();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Sets the honeypot field for the hook-order regression.
+		$_POST['acf']['_validate_email'] = 'bot@example.com';
+
+		try {
+			do_action( 'acf/validate_save_post' );
+
+			$messages = wp_list_pluck( (array) acf_get_validation_errors(), 'message' );
+			$this->assertContains( 'Spam Detected', $messages );
+		} finally {
+			remove_action( 'acf/validate_save_post', $reset_errors, 0 );
+			remove_action( 'acf/validate_save_post', array( $form_front, 'validate_save_post' ), 1 );
+			acf_reset_validation_errors();
+			$_POST = $previous_post;
+		}
 	}
 
 	/**
