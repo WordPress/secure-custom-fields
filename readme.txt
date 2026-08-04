@@ -52,7 +52,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 = 6.9.4 =
-*Release Date 30th July 2026*
+*Release Date 3rd August 2026*
 
 *Security*
 
