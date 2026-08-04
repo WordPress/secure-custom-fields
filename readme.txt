@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.9.3
+Stable tag: 6.9.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,14 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.4 =
+*Release Date 30th July 2026*
+
+*Security*
+
+- Front-end `acf_form()` submissions are now limited to the save target, form settings, and fields that the rendered form exposed. Submissions carrying missing, altered, or expired form data are rejected before validation or saving.
+- The `acf/form/allowed_field_keys` filter now applies while a form renders rather than on submit. Keys added through it are still accepted on save, so forms extended at runtime keep working.
+
 = 6.9.3 =
 *Release Date 28th July 2026*
 
@@ -418,6 +426,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.4 =
+Security: front-end form submissions are now bound to the rendered form. Purge page caches after updating so visitors are served freshly rendered forms.
 
 = 6.4.2 =
 Security: improves validation of an URL in an admin field.
