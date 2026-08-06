@@ -482,6 +482,7 @@
 			var step3 = this.proxy( function ( html ) {
 				// bail early if no html
 				if ( ! html ) {
+					this.closeSidebar();
 					return;
 				}
 
