@@ -2502,6 +2502,27 @@ function acf_upload_file( $uploaded_file ) {
 	$file     = $file['file'];
 	$filename = basename( $file );
 
+	/*
+	 * WordPress derives the file type from the extension, and validates that guess against
+	 * the file's contents only for images. A PostScript program renamed with a `.pdf`
+	 * extension therefore reaches Ghostscript, which runs it as a program.
+	 *
+	 * Ghostscript skips leading bytes up to and including a space, then searches the next
+	 * 1023 bytes for the `%PDF-` marker. Finding the marker is not enough on its own: when
+	 * `%!PS` appears before it, Ghostscript uses its PostScript interpreter instead.
+	 * Requiring the marker at the start of the file is stricter than that rule, so nothing
+	 * accepted here can reach the PostScript interpreter. Delete rejected files rather than
+	 * leaving them for a later metadata job to process.
+	 */
+	if ( 'application/pdf' === $type ) {
+		$head = file_get_contents( $file, false, null, 0, 1024 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local bytes, not a remote request.
+
+		if ( false === $head || 0 !== strpos( ltrim( $head, "\x00..\x20" ), '%PDF-' ) ) {
+			wp_delete_file( $file );
+			return __( 'Sorry, this file could not be uploaded.', 'secure-custom-fields' );
+		}
+	}
+
 	// Construct the object array
 	$object = array(
 		'post_title'     => $filename,
