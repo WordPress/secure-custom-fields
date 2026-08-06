@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *	Field Group
@@ -82,15 +86,8 @@
 			display: flex;
 		}
 
-		.acf-pro-label-field-type {
-			position: relative;
-			top: -3px;
-			margin-left: 8px;
-
-			img {
-				max-width: 34px;
-			}
-		}
+		// SCF: removed ACF's .acf-pro-label-field-type rule — SCF has no
+		// PRO tier.
 
 	}
 
@@ -391,7 +388,7 @@
 				margin-right: 4px;
 
 				&:hover {
-					color: darken($color-primary-hover, 10%);
+					color: color.adjust($color-primary-hover, $lightness: -10%);
 				}
 
 			}
@@ -418,7 +415,7 @@
 
 		> .handle {
 			background: $acf_blue;
-			border: darken($acf_blue, 2%) solid 1px;
+			border: color.adjust($acf_blue, $lightness: -2%) solid 1px;
 			text-shadow: #268FBB 0 1px 0;
 			color: #fff;
 			position: relative;
@@ -668,18 +665,30 @@ table.conditional-logic-rules tbody td {
 *
 *----------------------------------------------------------------------------*/
 
+// Legacy selectors for older table-based field group editor
 .acf-field-object-message tr[data-name="name"],
 .acf-field-object-message tr[data-name="instructions"],
 .acf-field-object-message tr[data-name="required"] {
 	display: none !important;
 }
 
-.acf-field-object-message .li-field-name {
-	visibility: hidden;
-}
+.acf-field-object-message {
 
-.acf-field-object-message textarea {
-	height: 175px !important;
+	// hide setting (modern div-based field group editor)
+	.acf-field-setting-name,
+	.acf-field-setting-instructions,
+	.acf-field-setting-required {
+		display: none !important;
+	}
+
+	// hide name
+	.li-field-name {
+		visibility: hidden;
+	}
+
+	textarea {
+		height: 175px !important;
+	}
 }
 
 

@@ -48,7 +48,7 @@ if ( ! class_exists( 'ACF_Location_User_Form' ) ) :
 			}
 
 			// The "Add / Edit" choice (foolishly valued "edit") should match true for either "add" or "edit".
-			if ( $rule['value'] === 'edit' && $user_form === 'add' ) {
+			if ( 'edit' === ( $rule['value'] ?? '' ) && 'add' === $user_form ) {
 				$user_form = 'edit';
 			}
 

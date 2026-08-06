@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Field picker modal
@@ -141,6 +144,9 @@
 						@extend .p5;
 					}
 				}
+
+				// SCF: removed ACF's .field-type-requires-pro chip — all
+				// field types are available in SCF.
 			}
 		}
 
@@ -159,8 +165,9 @@
 			margin: 0;
 			border: none;
 
-			.acf-select-field,
-			.acf-btn-pro {
+			// SCF: removed .acf-btn-pro from this selector group — SCF has
+			// no upgrade button.
+			.acf-select-field {
 				min-width: 160px;
 				justify-content: center;
 			}
@@ -231,33 +238,8 @@
 				}
 			}
 
-			.field-type-upgrade-to-unlock {
-				display: inline-flex;
-				justify-items: center;
-				align-items: center;
-				min-height: 24px;
-				margin: {
-					bottom: 12px;
-				}
-				padding: {
-					right: 10px;
-					left: 10px;
-				}
-				background: $gradient-pro;
-				border-radius: 100px;
-				color: white;
-				text-decoration: none;
-				font-size: 10px;
-				text-transform: uppercase;
-
-				i.acf-icon {
-					width: 14px;
-					height: 14px;
-					margin: {
-						right: 4px;
-					}
-				}
-			}
+			// SCF: removed ACF's .field-type-upgrade-to-unlock upsell
+			// button — all field types are available in SCF.
 		}
 
 		.field-type-links {

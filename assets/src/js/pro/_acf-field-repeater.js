@@ -801,7 +801,8 @@
 				field_name: this.get( 'orig_name' ),
 				rows_per_page: parseInt( this.get( 'per_page' ) ),
 				refresh: clearChanged,
-				nonce: this.get( 'nonce' )
+				nonce: this.get( 'nonce' ),
+				options_page_slug: acf.get( 'options_page_slug' ) || '',
 			} );
 
 			$.ajax(

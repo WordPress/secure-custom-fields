@@ -1,3 +1,8 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'typography' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *	acf-field
@@ -396,6 +401,7 @@
 		width: 1.62rem; // Mimic WP 5.5
 		position: relative;
 		display: none;
+		vertical-align: middle;
 		&:hover {
 			color: #191e23;
 		}
@@ -406,6 +412,16 @@
 	> .postbox-header:hover {
 		.acf-hndle-cog {
 			display: inline-block;
+		}
+
+		// Fix alignment of handle actions when cog appears
+		.handle-actions {
+			.handle-order-higher,
+			.handle-order-lower,
+			.toggle-indicator,
+			.acf-hndle-cog {
+				vertical-align: middle;
+			}
 		}
 	}
 
@@ -546,6 +562,12 @@ body.acf-browser-firefox .acf-field select {
 		border-color: $wp38-input-border;
 		min-height: 28px;
 	}
+
+	// WP 7.0+
+	@include wp-admin("7-0") {
+		min-height: 40px;
+		padding: 9px 8px;
+	}
 }
 
 .acf-input-prepend {
@@ -609,18 +631,75 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 *-----------------------------------------------------------------------------*/
 
 .acf-color-picker {
+
 	.wp-color-result {
 		border-color: $wp-input-border;
+
 		@include wp-admin("3-8") {
 			border-color: $wp-card-border;
 		}
 	}
+
 	.wp-picker-active {
 		position: relative;
 		z-index: 1;
 	}
-}
 
+	&.acf-color-picker-large-custom-palette {
+
+		.iris-picker {
+			display: flex;
+			flex-direction: column;
+			height: inherit !important;
+
+			.iris-picker-inner {
+				position: initial;
+				margin: 10px;
+			}
+
+			.iris-palette-container {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				gap: 4px;
+				position: relative;
+				padding-top: 10px;
+
+				.iris-palette {
+					width: 20px !important;
+					height: 20px !important;
+					margin: 0 !important;
+				}
+			}
+		}
+	}
+
+	&.acf-hide-color-picker-color-wheel {
+
+		&:not(.acf-color-picker-large-custom-palette) {
+			.iris-picker {
+				width: inherit !important;
+				margin-right: 25px !important;
+			}
+		}
+
+		.iris-picker {
+			height: inherit !important;
+			padding: 10px 0 !important;
+
+			.iris-picker-inner {
+				display: none;
+			}
+
+			.iris-palette-container {
+				display: flex;
+				position: relative;
+				bottom: inherit;
+				padding-top: 0 !important;
+			}
+		}
+	}
+}
 /*-----------------------------------------------------------------------------
 *
 *  Url
@@ -628,10 +707,12 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 *-----------------------------------------------------------------------------*/
 
 .acf-url {
+
 	i {
 		position: absolute;
-		top: 5px;
+		top: 50%;
 		left: 5px;
+		transform: translateY(-50%);
 		opacity: 0.5;
 		color: #7e8993;
 	}
@@ -660,6 +741,11 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07) inset;
 		min-height: 31px;
 
+		// WP 7.0+
+		@include wp-admin("7-0") {
+			min-height: 40px;
+		}
+
 		.select2-search-choice {
 			margin: 5px 0 5px 5px;
 			padding: 3px 5px 3px 18px;
@@ -670,7 +756,7 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 			/* sortable item*/
 			&.ui-sortable-helper {
 				background: #5897fb;
-				border-color: darken(#5897fb, 5%);
+				border-color: color.adjust(#5897fb, $lightness: -5%);
 				color: #fff !important;
 				box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 
@@ -793,6 +879,40 @@ html[dir="rtl"] .select2-container.-acf {
 		// WP Admin 3.8
 		@include wp-admin("3-8") {
 			border-color: #aaa;
+		}
+	}
+
+	// WP 7.0+
+	@include wp-admin("7-0") {
+		.select2-selection--single {
+			height: 40px;
+
+			.select2-selection__rendered {
+				line-height: 38px;
+			}
+		}
+
+		.select2-selection--multiple {
+			min-height: 40px;
+			line-height: 0;
+
+			.select2-selection__rendered {
+				line-height: normal;
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				min-height: 38px;
+			}
+
+			.select2-search__field {
+				margin-top: 0;
+			}
+
+			.select2-selection__choice {
+				margin-top: 0;
+				padding-top: 4px;
+				padding-bottom: 4px;
+			}
 		}
 	}
 
@@ -986,7 +1106,7 @@ ul.acf-checkbox-list {
 	padding: 1px;
 	margin: 0;
 
-	&:focus-within {
+	&:focus-visible {
 		border: 1px solid $blue-200;
 		border-radius: $radius-md;
 	}
@@ -1058,6 +1178,7 @@ ul.acf-checkbox-list {
 		z-index: 1;
 		padding: 5px 10px;
 		background: #fff;
+		cursor: pointer;
 
 		&:hover {
 			color: #016087;
@@ -1066,9 +1187,18 @@ ul.acf-checkbox-list {
 			z-index: 2;
 		}
 
+		&:focus-visible {
+			color: #016087;
+			background: #f3f5f6;
+			border-color: #0071a1;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #007cba;
+			z-index: 2;
+			outline: none;
+		}
+
 		&.selected {
 			border-color: #007cba;
-			background: lighten(#007cba, 5%);
+			background: color.adjust(#007cba, $lightness: 5%);
 			color: #fff;
 			z-index: 2;
 		}
@@ -1166,6 +1296,12 @@ ul.acf-checkbox-list {
 
 			&:hover {
 				color: $color-primary;
+			}
+
+			&:focus-visible {
+				color: $color-primary;
+				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $color-primary;
+				outline: none;
 			}
 
 			&.selected {
@@ -1423,6 +1559,27 @@ ul.acf-checkbox-list {
 	border: $wp-card-border solid 1px;
 	background: #fff;
 
+	// Search box actions
+	.acf-actions .acf-icon.-cancel:before {
+		margin: -6px -1px 0 -1px;
+	}
+	.acf-actions .acf-icon.-location:before {
+		margin: -4px -1px 0 -1px;
+	}
+	.acf-actions .acf-icon.-search:before {
+		margin: -6px 0 0 0;
+	}
+	
+	// styles for icon buttons to match anchor styling
+	button.acf-icon {
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		color: inherit;
+		font: inherit;
+		font-size: 20px !important;
+	}
+
 	.title {
 		position: relative;
 		border-bottom: $wp-card-border solid 1px;
@@ -1552,9 +1709,10 @@ html[dir="rtl"] .pac-container .pac-item {
 
 	// Filters.
 	.filters {
-		@include clearfix();
 		border-bottom: $wp-card-border solid 1px;
 		background: #fff;
+		
+		@include clearfix();
 
 		.filter {
 			margin: 0;
@@ -1633,7 +1791,7 @@ html[dir="rtl"] .pac-container .pac-item {
 			}
 
 			.thumbnail {
-				background: darken(#f9f9f9, 10%);
+				background: color.adjust(#f9f9f9, $lightness: -10%);
 				width: 22px;
 				height: 22px;
 				float: left;
@@ -1662,7 +1820,7 @@ html[dir="rtl"] .pac-container .pac-item {
 				color: #fff;
 
 				.thumbnail {
-					background: lighten(#3875d7, 25%);
+					background: color.adjust(#3875d7, $lightness: 25%);
 
 					&.-icon {
 						background: #fff;
@@ -1680,7 +1838,7 @@ html[dir="rtl"] .pac-container .pac-item {
 					cursor: default;
 
 					.thumbnail {
-						background: darken(#f9f9f9, 10%);
+						background: color.adjust(#f9f9f9, $lightness: -10%);
 
 						&.-icon {
 							background: #fff;
@@ -1703,8 +1861,9 @@ html[dir="rtl"] .pac-container .pac-item {
 
 	/* selection (bottom) */
 	.selection {
-		@include clearfix();
 		position: relative;
+		
+		@include clearfix();
 
 		.values,
 		.choices {
@@ -1834,6 +1993,15 @@ html[dir="rtl"] .pac-container .pac-item {
 	clear: both;
 	z-index: 1;
 	overflow: auto;
+
+	// Hide scrollbar while maintaining overflow behavior
+	scrollbar-width: none; // Firefox
+	-ms-overflow-style: none; // IE/Edge
+	
+	&::-webkit-scrollbar {
+		display: none; // Chrome/Safari/Edge
+	}
+
 }
 
 // tab group
@@ -2350,8 +2518,9 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 *--------------------------------------------------------------------------------------------*/
 
 .acf-image-uploader {
-	@include clearfix();
 	position: relative;
+
+	@include clearfix();
 
 	p {
 		margin: 0;
@@ -2361,6 +2530,37 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 	.image-wrap {
 		position: relative;
 		float: left;
+
+		&.show-if-value {
+			/* Focus styling for keyboard accessibility */
+			.acf-actions {
+				display: block;
+				opacity: 0;
+				text-align: right;
+				z-index: 1;
+
+				/* hover */
+				&.-hover {
+					/* Focus styling for action buttons */
+					a:focus {
+						outline: 2px solid #0073aa;
+						outline-offset: 2px;
+						border-radius: 2px;
+					}
+				}
+			}
+
+			// Show actions on hover and when image-wrap has focus
+			&:hover .acf-actions,
+			&:focus-within .acf-actions {
+				opacity: 1;
+			}
+		}
+
+		&:focus {
+			outline: 2px solid #0073aa;
+			outline-offset: 2px;
+		}
 
 		img {
 			max-width: 100%;
@@ -2379,11 +2579,6 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 				min-height: 100px;
 				min-width: 100px;
 			}
-		}
-
-		/* hover */
-		&:hover .acf-actions {
-			display: block;
 		}
 	}
 
@@ -2418,6 +2613,11 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 		min-height: 84px;
 		position: relative;
 		background: #fff;
+
+		&:focus {
+			outline: 2px solid #0073aa;
+			outline-offset: 2px;
+		}
 	}
 
 	.file-icon {
@@ -2450,6 +2650,32 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 
 		a {
 			text-decoration: none;
+		}
+	}
+
+	&.has-value {
+		/* Focus styling for keyboard accessibility */
+		.acf-actions {
+			display: block;
+			opacity: 0;
+			text-align: right;
+			z-index: 1;
+
+			/* hover */
+			&.-hover {
+				/* Focus styling for action buttons */
+				a:focus {
+					outline: 2px solid #0073aa;
+					outline-offset: 2px;
+					border-radius: 2px;
+				}
+			}
+		}
+
+		// Show actions on hover and when file-wrap has focus
+		&:hover .acf-actions,
+		&:focus-within .acf-actions {
+			opacity: 1;
 		}
 	}
 
@@ -2655,6 +2881,11 @@ html[dir="rtl"] .form-table > tbody > tr.acf-tab-wrap .acf-tab-group {
 
 		&:hover {
 			background: #f3f4f5;
+		}
+
+		&:focus-visible {
+			box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			outline-offset: -2px;
 		}
 
 		label {
@@ -2943,13 +3174,14 @@ html[dir="rtl"] .acf-accordion {
 
 			// The notice below each field.
 			.acf-fields .acf-field .acf-notice {
-				margin: 0;
-				padding: 0;
+				margin: 10px 0;
+				padding: 2px 0 2px 5px;
+
+				p {
+					margin: 0;
+				}
 			}
 
-			.acf-fields .acf-error {
-				margin-bottom: 10px;
-			}
 		}
 	}
 }

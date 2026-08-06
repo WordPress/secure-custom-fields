@@ -203,6 +203,31 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test update_value handles a nested-array value without emitting
+	 * an "Array to string conversion" warning.
+	 *
+	 * A crafted POST such as acf[field_key][0][]=x produces a value where an
+	 * element is itself an array. update_value stringifies submitted values, and
+	 * array_map( 'strval', ... ) on such input triggers a PHP warning. The field
+	 * should handle this gracefully rather than emit the diagnostic.
+	 *
+	 * PHPUnit is configured with convertWarningsToExceptions, so an
+	 * "Array to string conversion" warning would surface as a test failure.
+	 */
+	public function test_update_value_nested_array() {
+		$field = $this->get_field( array( 'multiple' => 1 ) );
+
+		$result = $this->field_instance->update_value( array( array( 'x' ) ), $this->post_id, $field );
+
+		$this->assertIsArray( $result );
+
+		// Every stored value must be a scalar string; nested arrays must not leak through.
+		foreach ( $result as $stored ) {
+			$this->assertIsString( $stored );
+		}
+	}
+
+	/**
 	 * Test get_rest_schema returns valid schema.
 	 */
 	public function test_get_rest_schema() {
@@ -270,5 +295,114 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 		$result = $this->field_instance->format_value( '', $this->post_id, $field );
 
 		$this->assertSame( '', $result );
+	}
+
+	/**
+	 * Get a persisted select field for append_user_choices_to_field tests.
+	 *
+	 * @param array $overrides Optional field configuration overrides.
+	 * @return array The field array with a real acf-field post ID.
+	 */
+	protected function get_persisted_field( $overrides = array() ) {
+		$field       = $this->get_field( $overrides );
+		$field['ID'] = wp_insert_post(
+			array(
+				'post_title'  => $field['label'],
+				'post_name'   => $field['key'],
+				'post_type'   => 'acf-field',
+				'post_status' => 'publish',
+			)
+		);
+
+		return $field;
+	}
+
+	/**
+	 * Capture the field passed to acf_update_field via the acf/update_field filter.
+	 *
+	 * @param array|null $captured Set by reference to the saved field array.
+	 * @return void
+	 */
+	protected function capture_updated_field( &$captured ) {
+		add_filter(
+			'acf/update_field',
+			function ( $field ) use ( &$captured ) {
+				$captured = $field;
+				return $field;
+			}
+		);
+	}
+
+	/**
+	 * Test append_user_choices_to_field appends new sanitized choices and saves the field.
+	 */
+	public function test_append_user_choices_appends_and_saves() {
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple', '<script>alert(1)</script>orange' ), $this->post_id, $field );
+
+		$this->assertIsArray( $captured, 'acf_update_field should be called when a choice is appended' );
+		$this->assertArrayHasKey( 'purple', $captured['choices'] );
+		$this->assertArrayHasKey( 'orange', $captured['choices'], 'Appended choices should be sanitized with sanitize_text_field' );
+		$this->assertArrayNotHasKey( '<script>alert(1)</script>orange', $captured['choices'] );
+	}
+
+	/**
+	 * Test append_user_choices_to_field does not save when all values are duplicates or empty.
+	 */
+	public function test_append_user_choices_skips_duplicates_and_empty() {
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'red', '', '<b></b>' ), $this->post_id, $field );
+
+		$this->assertNull( $captured, 'acf_update_field should not be called when nothing new is appended' );
+	}
+
+	/**
+	 * Test the acf/fields/max_appended_choices cap stops appending new choices.
+	 */
+	public function test_append_user_choices_respects_max_appended_choices() {
+		// The base field already has 3 choices; cap at 4 so only one more fits.
+		add_filter(
+			'acf/fields/max_appended_choices',
+			function () {
+				return 4;
+			}
+		);
+
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple', 'orange' ), $this->post_id, $field );
+
+		$this->assertIsArray( $captured );
+		$this->assertArrayHasKey( 'purple', $captured['choices'] );
+		$this->assertArrayNotHasKey( 'orange', $captured['choices'], 'Choices beyond the max_appended_choices cap should not be appended' );
+		$this->assertCount( 4, $captured['choices'] );
+	}
+
+	/**
+	 * Test no choices are appended when the field is already at the cap.
+	 */
+	public function test_append_user_choices_at_cap_does_not_save() {
+		add_filter(
+			'acf/fields/max_appended_choices',
+			function () {
+				return 3;
+			}
+		);
+
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple' ), $this->post_id, $field );
+
+		$this->assertNull( $captured, 'acf_update_field should not be called when the cap is already reached' );
 	}
 }

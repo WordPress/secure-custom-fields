@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 /*--------------------------------------------------------------------------------------------
 *
 *	Post type & taxonomies styles
@@ -101,19 +103,67 @@
 			}
 		}
 
-		.acf_post_type_supports {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: flex-start;
-			align-content: flex-start;
-			align-items: flex-start;
+		ul.acf_post_type_supports.acf-checkbox-list {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-auto-flow: column;
+			grid-template-rows: repeat(4, auto);
+
+			// Hide clearfix pseudo-elements that interfere with grid layout.
+			&::before,
+			&::after {
+				display: none;
+			}
 
 			&:focus-within {
 				border-color: transparent;
 			}
 
-			li {
-				flex: 0 0 25%;
+			> li {
+				float: none;
+				width: auto;
+
+				// Notes checkbox - indented child of Editor with tree branch indicator.
+				&:has(input[value="notes"]) {
+					padding-left: 24px;
+					position: relative;
+
+					&::before {
+						content: '';
+						position: absolute;
+						left: 4px;
+						top: 25%;
+						transform: translateY(-50%);
+						width: 10px;
+						height: 12px;
+						background-color: $gray-300;
+						-webkit-mask-image: url("../../images/icons/icon-tree-branch.svg");
+						mask-image: url("../../images/icons/icon-tree-branch.svg");
+						-webkit-mask-size: contain;
+						mask-size: contain;
+						-webkit-mask-repeat: no-repeat;
+						mask-repeat: no-repeat;
+					}
+				}
+
+				// Disabled checkbox styling.
+				&:has(input:disabled) {
+					label {
+						color: $gray-400;
+						cursor: not-allowed;
+					}
+
+					input[type="checkbox"] {
+						cursor: not-allowed;
+					}
+				}
+
+				// Add Custom button - spans full width below checkboxes.
+				&:has(a.button.acf-add-checkbox) {
+					grid-column: 1 / -1;
+					grid-row: 5;
+					margin-top: 8px;
+				}
 
 				a.button {
 					background-color: transparent;

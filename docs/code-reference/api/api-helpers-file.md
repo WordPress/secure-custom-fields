@@ -53,6 +53,13 @@ Alias of acf()->get_setting()
 * @param string $value An optional default value for the setting if it doesn't exist.
 * @return n/a
 
+## `acf_is_pro()`
+
+Returns whether the current plugin load is running with PRO features enabled.
+
+* @since ACF 6.8
+* @return bool
+
 ## `acf_get_internal_post_types()`
 
 Return an array of ACF's internal post type names
@@ -277,9 +284,10 @@ Returns true if the current AJAX request is valid.
 It's action will also allow WPML to set the lang and avoid AJAX get_posts issues
 
 * @since   ACF 5.2.3
-* @param string $nonce  The nonce to check.
-* @param string $action The action of the nonce.
-* @param bool   $action_is_field Whether the action is a field key or not. Defaults to false.
+* @param string $nonce               The nonce to check.
+* @param string $action              The action of the nonce.
+* @param bool   $action_is_field     Whether the action is a field key or not. Defaults to false.
+* @param string $expected_field_type Optional field type the resolved field must be when $action_is_field is true. Prevents a nonce minted for one field type from being accepted by an AJAX handler that expects a different one. Defaults to empty (no type validation).
 * @return boolean
 
 ## `acf_get_image_sizes()`
@@ -408,8 +416,9 @@ acf_get_grouped_posts
 * This function will return all posts grouped by post_type
 This is handy for select settings
 * @since   ACF 5.0.0
-* @param   $args (array)
-* @return (array)
+* @param array $args                     The query arguments.
+* @param bool  $enforce_read_permissions Whether to exclude posts the current user cannot read.
+* @return array
 
 ## `_acf_orderby_post_type()`
 
@@ -688,12 +697,32 @@ Checks if the current user has the SCF capability for programmatic access, witho
 * @since 6.6.0
 * @return bool True if the user has the ACF capability.
 
+## `scf_numeric_to_int()`
+
+Casts a numeric value to an integer, returning 0 for floats that cannot
+be represented as an integer (NAN or outside the integer range). Casting
+such floats directly raises a deprecation notice on PHP 8.5+.
+
+* @since 6.9.1
+* @param mixed $value A numeric value (int, float, or numeric string).
+* @return integer
+
 ## `acf_current_user_can_edit_post()`
 
 Wrapper function for current_user_can( 'edit_post', $post_id ).
 
 * @since ACF 6.3.4
 * @param integer $post_id The post ID to check.
+* @return boolean
+
+## `acf_current_user_can_edit_in_context()`
+
+Checks if the current user can edit a given ACF context.
+
+* Handles post, user, term, comment, woo_order, block, and option contexts returned by acf_decode_post_id().
+* @since 6.7.2
+* @param array  $post_id_info      The result of acf_decode_post_id(), containing 'type' and 'id'.
+* @param string $options_page_slug Optional. The options page menu slug, used to look up the page's capability.
 * @return boolean
 
 ## `acf_get_filesize()`
@@ -939,13 +968,12 @@ acf_encrypt
 
 ## `acf_decrypt()`
 
-acf_decrypt
-
-* This function will decrypt an encrypted string using PHP
+Decrypts an encrypted string using PHP.
 <https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/>
+
 * @since   ACF 5.5.8
-* @param   $data (string)
-* @return (string)
+* @param string $data The string to decrypt.
+* @return string|false Decrypted string, or false if the payload is malformed or decryption fails.
 
 ## `acf_parse_markdown()`
 

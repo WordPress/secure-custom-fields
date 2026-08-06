@@ -31,45 +31,8 @@ function acf_commands_init() {
 		return;
 	}
 
-	$custom_post_types = array();
-
-	$scf_post_types = acf_get_acf_post_types();
-
-	foreach ( $scf_post_types as $post_type ) {
-		// Skip if post type name is not set (defensive) or post type is inactive.
-		if ( empty( $post_type['post_type'] ) || ( isset( $post_type['active'] ) && ! $post_type['active'] ) ) {
-			continue;
-		}
-
-		$post_type_obj = get_post_type_object( $post_type['post_type'] );
-
-		// Three conditions must be met to include this post type in the commands:
-		// 1. Post type object must exist
-		// 2. Current user must have permission to edit posts of this type.
-		// 3. Post type must have admin UI enabled (show_ui setting).
-		if ( $post_type_obj &&
-			current_user_can( $post_type_obj->cap->edit_posts ) &&
-			$post_type_obj->show_ui ) {
-
-			$labels = get_post_type_labels( $post_type_obj );
-
-			$custom_post_types[] = array(
-				'name'         => $post_type['post_type'],
-				'all_items'    => $labels->all_items,
-				'add_new_item' => $labels->add_new_item,
-				'icon'         => $post_type['menu_icon'] ?? '',
-				'label'        => $labels->name,
-				'id'           => $post_type['ID'],
-			);
-		}
-	}
-
-	if ( ! empty( $custom_post_types ) ) {
-		acf_localize_data(
-			array(
-				'customPostTypes' => $custom_post_types,
-			)
-		);
+	$scf_post_types = acf_get_acf_post_types( array( 'active' => true ) );
+	if ( ! empty( $scf_post_types ) ) {
 		wp_enqueue_script( 'scf-commands-custom-post-types' );
 	}
 

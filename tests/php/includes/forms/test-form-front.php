@@ -37,15 +37,45 @@ class Test_Form_Front extends BaseTestCase {
 	public function test_constructor_registers_actions() {
 		$form_front = new acf_form_front();
 
-		$this->assertNotFalse(
+		$this->assertSame(
+			1,
 			has_action( 'acf/validate_save_post', array( $form_front, 'validate_save_post' ) ),
-			'Should register validate_save_post action'
+			'The legacy validate_save_post handler must remain at priority 1.'
 		);
 
 		$this->assertNotFalse(
 			has_filter( 'acf/pre_save_post', array( $form_front, 'pre_save_post' ) ),
 			'Should register pre_save_post filter'
 		);
+	}
+
+	/**
+	 * The honeypot check runs after callbacks registered at priority 0.
+	 */
+	public function test_honeypot_runs_after_priority_zero_integrations() {
+		$form_front    = new acf_form_front();
+		$previous_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Stores the request so the test can restore it.
+		$reset_errors  = static function () {
+			acf_reset_validation_errors();
+		};
+
+		add_action( 'acf/validate_save_post', $reset_errors, 0 );
+		acf_reset_validation_errors();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Sets the honeypot field for the hook-order regression.
+		$_POST['acf']['_validate_email'] = 'bot@example.com';
+
+		try {
+			do_action( 'acf/validate_save_post' );
+
+			$messages = wp_list_pluck( (array) acf_get_validation_errors(), 'message' );
+			$this->assertContains( 'Spam Detected', $messages );
+		} finally {
+			remove_action( 'acf/validate_save_post', $reset_errors, 0 );
+			remove_action( 'acf/validate_save_post', array( $form_front, 'validate_save_post' ), 1 );
+			acf_reset_validation_errors();
+			$_POST = $previous_post;
+		}
 	}
 
 	/**
@@ -497,9 +527,12 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id' => $post_id,
-			'return'  => '',
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '',
+			)
 		);
 
 		$form_front->submit_form( $form );
@@ -536,9 +569,12 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id' => $post_id,
-			'return'  => '', // Empty to avoid redirect.
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '', // Empty to avoid redirect.
+			)
 		);
 
 		$form_front->submit_form( $form );
@@ -567,11 +603,15 @@ class Test_Form_Front extends BaseTestCase {
 			)
 		);
 
-		$form = array(
-			'post_id'     => $post_id,
-			'return'      => '',
-			'custom_data' => 'test_value',
+		// validate_form() applies the defaults that get_form_fields() relies on.
+		$form = $form_front->validate_form(
+			array(
+				'post_id' => $post_id,
+				'return'  => '',
+			)
 		);
+		// Preserve the test's custom marker after validation.
+		$form['custom_data'] = 'test_value';
 
 		$form_front->submit_form( $form );
 
@@ -581,5 +621,267 @@ class Test_Form_Front extends BaseTestCase {
 		// Cleanup.
 		wp_delete_post( $post_id, true );
 		unset( $GLOBALS['acf_form'] ); // @phpstan-ignore-line -- Cleanup global in test.
+	}
+
+	/**
+	 * Rejects injected post_title when form disables post_title editing.
+	 *
+	 * Asserts pre_save_post() does NOT apply $_POST['acf']['_post_title'] when the
+	 * form was not rendered with `post_title` enabled. This blocks a submitter from
+	 * injecting a post_title value into a form that did not expose the post title
+	 * field.
+	 */
+	public function test_pre_save_post_ignores_post_title_when_form_disables_it() {
+		$form_front = new acf_form_front();
+
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Original Title',
+				'post_status' => 'draft',
+			)
+		);
+
+		// Form config explicitly disables post_title rendering.
+		$form = array(
+			'post_id'      => $post_id,
+			'post_title'   => false,
+			'post_content' => false,
+			'new_post'     => false,
+		);
+
+		// Attacker injects _post_title into submission payload.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals to drive pre_save_post(); nonce verification is the responsibility of check_submit_form() upstream.
+		$_POST['acf'] = array( '_post_title' => 'Injected Title' );
+
+		$form_front->pre_save_post( $post_id, $form );
+
+		$post_after = get_post( $post_id );
+		$this->assertSame(
+			'Original Title',
+			$post_after->post_title,
+			'post_title must not change when the form did not enable post_title editing.'
+		);
+
+		$_POST = array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test cleanup.
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Applies post_title when form enables post_title editing.
+	 *
+	 * Asserts pre_save_post() applies $_POST['acf']['_post_title'] when the form
+	 * was rendered with `post_title` enabled. Regression check for legitimate use.
+	 */
+	public function test_pre_save_post_applies_post_title_when_form_enables_it() {
+		$form_front = new acf_form_front();
+
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Original Title',
+				'post_status' => 'draft',
+			)
+		);
+
+		$form = array(
+			'post_id'      => $post_id,
+			'post_title'   => true,
+			'post_content' => false,
+			'new_post'     => false,
+		);
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals; nonce verified upstream.
+		$_POST['acf'] = array( '_post_title' => 'Legitimate New Title' );
+
+		$form_front->pre_save_post( $post_id, $form );
+
+		$post_after = get_post( $post_id );
+		$this->assertSame(
+			'Legitimate New Title',
+			$post_after->post_title,
+			'post_title must update when the form enabled post_title editing.'
+		);
+
+		$_POST = array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test cleanup.
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Rejects injected post_content when form disables post_content editing.
+	 *
+	 * Asserts pre_save_post() does NOT apply $_POST['acf']['_post_content'] when
+	 * the form was not rendered with `post_content` enabled. Mirrors the
+	 * post_title check.
+	 */
+	public function test_pre_save_post_ignores_post_content_when_form_disables_it() {
+		$form_front = new acf_form_front();
+
+		$post_id = wp_insert_post(
+			array(
+				'post_title'   => 'Test Post',
+				'post_content' => 'Original Content',
+				'post_status'  => 'draft',
+			)
+		);
+
+		$form = array(
+			'post_id'      => $post_id,
+			'post_title'   => false,
+			'post_content' => false,
+			'new_post'     => false,
+		);
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test populates request superglobals; nonce verified upstream.
+		$_POST['acf'] = array( '_post_content' => 'Injected Content' );
+
+		$form_front->pre_save_post( $post_id, $form );
+
+		$post_after = get_post( $post_id );
+		$this->assertSame(
+			'Original Content',
+			$post_after->post_content,
+			'post_content must not change when the form did not enable post_content editing.'
+		);
+
+		$_POST = array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test cleanup.
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Returns only the field keys the form exposed via `fields` configuration.
+	 *
+	 * Asserts get_allowed_field_keys() returns only the field keys the form
+	 * actually exposed through its `fields` configuration. Fields not in the
+	 * configuration must not be accepted on save.
+	 */
+	public function test_get_allowed_field_keys_limits_to_form_fields_configuration() {
+		$form_front = new acf_form_front();
+
+		// Register two local fields; only one is exposed by the form.
+		acf_add_local_field(
+			array(
+				'key'  => 'field_allowed_text',
+				'name' => 'allowed_text',
+				'type' => 'text',
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'  => 'field_secret_meta',
+				'name' => 'secret_meta',
+				'type' => 'text',
+			)
+		);
+
+		$form = array(
+			'post_id'      => 0,
+			'post_title'   => false,
+			'post_content' => false,
+			'fields'       => array( 'field_allowed_text' ),
+			'field_groups' => false,
+			'new_post'     => false,
+			'honeypot'     => false,
+		);
+
+		$keys = $form_front->get_allowed_field_keys( $form );
+
+		$this->assertContains( 'field_allowed_text', $keys, 'Allowed field key must appear in the allowlist.' );
+		$this->assertNotContains( 'field_secret_meta', $keys, 'Unconfigured field key must NOT appear in the allowlist.' );
+
+		acf_remove_local_field( 'field_allowed_text' );
+		acf_remove_local_field( 'field_secret_meta' );
+	}
+
+	/**
+	 * Filter `acf/form/allowed_field_keys` must be able to extend the allowlist
+	 * (for sites that legitimately inject extra fields via JS at runtime).
+	 */
+	public function test_allowed_field_keys_filter_can_extend_set() {
+		$form_front = new acf_form_front();
+
+		acf_add_local_field(
+			array(
+				'key'  => 'field_base_allowed',
+				'name' => 'base_allowed',
+				'type' => 'text',
+			)
+		);
+
+		$form = array(
+			'post_id'      => 0,
+			'post_title'   => false,
+			'post_content' => false,
+			'fields'       => array( 'field_base_allowed' ),
+			'field_groups' => false,
+			'new_post'     => false,
+			'honeypot'     => false,
+		);
+
+		$extra_key = 'field_injected_via_filter';
+		add_filter(
+			'acf/form/allowed_field_keys',
+			static function ( $keys ) use ( $extra_key ) {
+				$keys[] = $extra_key;
+				return $keys;
+			}
+		);
+
+		$keys = $form_front->get_allowed_field_keys( $form );
+
+		$this->assertContains( 'field_base_allowed', $keys );
+		$this->assertContains( $extra_key, $keys );
+
+		remove_all_filters( 'acf/form/allowed_field_keys' );
+		acf_remove_local_field( 'field_base_allowed' );
+	}
+
+	/**
+	 * Filter `acf/form/allowed_field_keys` must defensively normalize the return
+	 * value: a misbehaving callback returning non-scalar values must not break the
+	 * downstream array_flip() in submit_form().
+	 */
+	public function test_allowed_field_keys_filter_normalizes_bad_return() {
+		$form_front = new acf_form_front();
+
+		acf_add_local_field(
+			array(
+				'key'  => 'field_normalize_test',
+				'name' => 'normalize_test',
+				'type' => 'text',
+			)
+		);
+
+		$form = array(
+			'post_id'      => 0,
+			'post_title'   => false,
+			'post_content' => false,
+			'fields'       => array( 'field_normalize_test' ),
+			'field_groups' => false,
+			'new_post'     => false,
+			'honeypot'     => false,
+		);
+
+		add_filter(
+			'acf/form/allowed_field_keys',
+			static function () {
+				return array(
+					'field_normalize_test',
+					'field_normalize_test', // duplicate
+					'',                     // empty
+					null,                   // non-scalar will survive earlier filter only after cast
+					array( 'nested' ),      // non-scalar
+				);
+			}
+		);
+
+		$keys = $form_front->get_allowed_field_keys( $form );
+
+		$this->assertSame(
+			array( 'field_normalize_test' ),
+			$keys,
+			'Allowlist must drop duplicates, empties, and non-scalar entries returned by filter callbacks.'
+		);
+
+		remove_all_filters( 'acf/form/allowed_field_keys' );
+		acf_remove_local_field( 'field_normalize_test' );
 	}
 }

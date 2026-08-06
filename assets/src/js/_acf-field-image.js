@@ -64,20 +64,21 @@
 		render: function ( attachment ) {
 			attachment = this.validateAttachment( attachment );
 
+			// Update value.
+			acf.val( this.$input(), String( attachment.id || '' ), true );
+
 			// Update DOM.
 			this.$( 'img' ).attr( {
 				src: attachment.url,
 				alt: attachment.alt,
 			} );
 			if ( attachment.id ) {
-				this.val( attachment.id );
 				this.$control().addClass( 'has-value' );
 				const imageWrap = this.$( '.image-wrap' );
 				if ( imageWrap.length ) {
 					imageWrap.trigger( 'focus' );
 				}
 			} else {
-				this.val( '' );
 				this.$control().removeClass( 'has-value' );
 			}
 		},
@@ -114,6 +115,10 @@
 
 			// render
 			if ( field ) {
+				acf.val(
+					field.$input(),
+					String( attachment.id || attachment.attributes?.id || '' )
+				);
 				field.render( attachment );
 			}
 		},
@@ -136,6 +141,12 @@
 					if ( i > 0 ) {
 						this.append( attachment, parent );
 					} else {
+						acf.val(
+							this.$input(),
+							String(
+								attachment.id || attachment.attributes?.id || ''
+							)
+						);
 						this.render( attachment );
 					}
 				}, this ),
@@ -155,6 +166,12 @@
 					attachment: val,
 					field: this.get( 'key' ),
 					select: $.proxy( function ( attachment ) {
+						acf.val(
+							this.$input(),
+							String(
+								attachment.id || attachment.attributes?.id || ''
+							)
+						);
 						this.render( attachment );
 					}, this ),
 					close: $.proxy( function () {
@@ -175,6 +192,7 @@
 		},
 
 		removeAttachment: function () {
+			acf.val( this.$input(), '' );
 			this.render( false );
 		},
 
@@ -200,6 +218,28 @@
 			acf.getFileInputData( $el, function ( data ) {
 				$hiddenInput.val( $.param( data ) );
 			} );
+		},
+		setValue: function ( val ) {
+			val = val ? String( val ) : '';
+
+			if ( acf.val( this.$input(), val, true ) === false ) {
+				return;
+			}
+
+			if ( val ) {
+				if ( window.wp && wp.media && wp.media.attachment ) {
+					const attachment = wp.media.attachment( val );
+					attachment.fetch().then(
+						$.proxy( function () {
+							this.render( attachment );
+						}, this )
+					);
+				} else {
+					this.$control().addClass( 'has-value' );
+				}
+			} else {
+				this.render( false );
+			}
 		},
 		onImageWrapKeydown: function ( event, imageWrapElement ) {
 			// Check if Enter key was pressed (keycode 13)

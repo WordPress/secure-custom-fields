@@ -333,6 +333,11 @@
 
 			// set active
 			this.setActive( tab );
+
+			// Recalculate admin menu pinning so a previously taller tab (e.g. one
+			// containing WYSIWYG fields) doesn't leave the menu pinned against a
+			// shorter page, which can lock page scroll.
+			$( document ).trigger( 'wp-pin-menu' );
 		},
 
 		closeTab: function ( tab ) {

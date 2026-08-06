@@ -94,6 +94,18 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 		if ( ! class_exists( 'ACF_Location_Taxonomy' ) ) {
 			acf_include( 'includes/locations/class-acf-location-taxonomy.php' );
 		}
+		if ( ! class_exists( 'acf_field_user' ) ) {
+			acf_include( 'includes/fields/class-acf-field-user.php' );
+		}
+		if ( ! class_exists( 'acf_field__group' ) ) {
+			acf_include( 'includes/fields/class-acf-field-group.php' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=user' ) ) {
+			acf_register_field_type( 'acf_field_user' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=group' ) ) {
+			acf_register_field_type( 'acf_field__group' );
+		}
 
 		// Store original settings.
 		$this->original_rest_api_enabled     = acf_get_setting( 'rest_api_enabled' );
@@ -363,6 +375,291 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 		$result = $this->rest_api->load_fields( $object, 'acf', new WP_REST_Request(), 'post' );
 
 		$this->assertIsArray( $result );
+	}
+
+	/**
+	 * Test load_fields uses REST-safe formatted values for User fields.
+	 */
+	public function test_load_fields_uses_rest_safe_user_formatted_values() {
+		wp_set_current_user( 0 );
+
+		$user_login = uniqid( 'rest_loaded_user_', false );
+		$user_email = "{$user_login}@example.invalid";
+
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => $user_login,
+				'user_pass'  => 'password',
+				'user_email' => $user_email,
+			)
+		);
+
+		$second_user_login = uniqid( 'rest_loaded_second_user_', false );
+		$second_user_email = "{$second_user_login}@example.invalid";
+		$second_user_id    = wp_insert_user(
+			array(
+				'user_login' => $second_user_login,
+				'user_pass'  => 'password',
+				'user_email' => $second_user_email,
+			)
+		);
+
+		global $wpdb;
+		$activation_key        = "{$user_login}-activation-key";
+		$second_activation_key = "{$second_user_login}-activation-key";
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test fixture needs a controlled activation key marker.
+		$wpdb->update(
+			$wpdb->users,
+			array( 'user_activation_key' => $activation_key ),
+			array( 'ID' => $user_id )
+		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test fixture needs a controlled activation key marker.
+		$wpdb->update(
+			$wpdb->users,
+			array( 'user_activation_key' => $second_activation_key ),
+			array( 'ID' => $second_user_id )
+		);
+		clean_user_cache( $user_id );
+		clean_user_cache( $second_user_id );
+
+		acf_add_local_field_group(
+			array_merge(
+				$this->test_field_group,
+				array(
+					'key'    => 'group_test_rest_user_source_values',
+					'title'  => 'Test REST User Source Values',
+					'fields' => array(
+						array(
+							'key'           => 'field_test_rest_user_array',
+							'label'         => 'Test REST User Array',
+							'name'          => 'test_rest_user_array',
+							'type'          => 'user',
+							'required'      => 0,
+							'multiple'      => 0,
+							'return_format' => 'array',
+							'role'          => array(),
+							'allow_null'    => 0,
+						),
+						array(
+							'key'           => 'field_test_rest_user_object',
+							'label'         => 'Test REST User Object',
+							'name'          => 'test_rest_user_object',
+							'type'          => 'user',
+							'required'      => 0,
+							'multiple'      => 0,
+							'return_format' => 'object',
+							'role'          => array(),
+							'allow_null'    => 0,
+						),
+						array(
+							'key'        => 'field_test_rest_user_group',
+							'label'      => 'Test REST User Group',
+							'name'       => 'test_rest_user_group',
+							'type'       => 'group',
+							'sub_fields' => array(
+								array(
+									'key'           => 'field_test_rest_nested_user_array',
+									'label'         => 'Test REST Nested User Array',
+									'name'          => 'nested_user_array',
+									'type'          => 'user',
+									'required'      => 0,
+									'multiple'      => 1,
+									'return_format' => 'array',
+									'role'          => array(),
+									'allow_null'    => 0,
+								),
+								array(
+									'key'           => 'field_test_rest_nested_user_object',
+									'label'         => 'Test REST Nested User Object',
+									'name'          => 'nested_user_object',
+									'type'          => 'user',
+									'required'      => 0,
+									'multiple'      => 1,
+									'return_format' => 'object',
+									'role'          => array(),
+									'allow_null'    => 0,
+								),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		update_field( 'field_test_rest_user_array', $user_id, $this->test_post_id );
+		update_field( 'field_test_rest_user_object', $user_id, $this->test_post_id );
+		update_field(
+			'field_test_rest_user_group',
+			array(
+				'field_test_rest_nested_user_array'  => array( $user_id, $second_user_id ),
+				'field_test_rest_nested_user_object' => array( $user_id, $second_user_id ),
+			),
+			$this->test_post_id
+		);
+		acf_get_store( 'fields' )->reset();
+
+		$request_prop = $this->reflection->getProperty( 'request' );
+		$request_prop->setAccessible( true );
+
+		$mock_request = new class() {
+			/**
+			 * The REST object type.
+			 *
+			 * @var string
+			 */
+			public $object_type = 'post';
+
+			/**
+			 * The REST object subtype.
+			 *
+			 * @var string
+			 */
+			public $object_sub_type = 'post';
+
+			/**
+			 * The REST request method.
+			 *
+			 * @var string
+			 */
+			public $http_method = 'GET';
+
+			/**
+			 * Get a URL parameter value.
+			 *
+			 * @param string $param The URL parameter name.
+			 * @return null
+			 */
+			public function get_url_param( $param ) {
+				return null;
+			}
+		};
+		$request_prop->setValue( $this->rest_api, $mock_request );
+
+		$shim_user_query = static function ( $results, $query ) {
+			$user_ids           = array_map( 'intval', (array) ( $query->query_vars['include'] ?? array() ) );
+			$query->total_users = count( $user_ids );
+			return $user_ids;
+		};
+		add_filter( 'users_pre_query', $shim_user_query, 10, 2 );
+
+		$remove_user_avatar = static function ( $formatted_value ) {
+			if ( is_array( $formatted_value ) && isset( $formatted_value['ID'] ) ) {
+				unset( $formatted_value['user_avatar'] );
+				return $formatted_value;
+			}
+
+			if ( is_array( $formatted_value ) ) {
+				foreach ( $formatted_value as &$user ) {
+					if ( is_array( $user ) ) {
+						unset( $user['user_avatar'] );
+					}
+				}
+			}
+
+			return $formatted_value;
+		};
+		add_filter( 'acf/format_value/type=user', $remove_user_avatar, 20 );
+
+		$rest_filter_calls = 0;
+		$count_rest_filter = static function ( $formatted_value, $post_id, $field ) use ( &$rest_filter_calls ) {
+			if ( ! in_array( $field['name'], array( 'test_rest_user_array', 'test_rest_user_object' ), true ) ) {
+				return $formatted_value;
+			}
+
+			++$rest_filter_calls;
+			return "rest-filtered-{$formatted_value}";
+		};
+		add_filter( 'acf/rest/format_value_for_rest', $count_rest_filter, 10, 3 );
+
+		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $this->test_post_id );
+
+		$result               = $this->rest_api->load_fields( array( 'id' => $this->test_post_id ), 'acf', $request, 'post' );
+		$default_filter_calls = $rest_filter_calls;
+
+		$standard_request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $this->test_post_id );
+		$standard_request->set_param( 'acf_format', 'standard' );
+
+		$standard_result = $this->rest_api->load_fields( array( 'id' => $this->test_post_id ), 'acf', $standard_request, 'post' );
+		remove_filter( 'acf/rest/format_value_for_rest', $count_rest_filter, 10 );
+		remove_filter( 'acf/format_value/type=user', $remove_user_avatar, 20 );
+		remove_filter( 'users_pre_query', $shim_user_query, 10 );
+
+		$this->assertSame( 2, $default_filter_calls );
+		$this->assertSame( 4, $rest_filter_calls );
+		$this->assertSame( "rest-filtered-{$user_id}", $result['test_rest_user_array'] );
+		$this->assertSame( "rest-filtered-{$user_id}", $result['test_rest_user_object'] );
+		$this->assertSame( $user_id, $result['test_rest_user_array_source']['formatted_value'] );
+		$this->assertSame( $user_id, $result['test_rest_user_object_source']['formatted_value'] );
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$result['test_rest_user_group']['nested_user_array']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$result['test_rest_user_group']['nested_user_object']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$result['test_rest_user_group_source']['formatted_value']['nested_user_array']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$result['test_rest_user_group_source']['formatted_value']['nested_user_object']
+		);
+		$this->assertRestUserResponseDoesNotExposePrivateData( $result, $user_email, $activation_key );
+		$this->assertRestUserResponseDoesNotExposePrivateData( $result, $second_user_email, $second_activation_key );
+
+		$this->assertSame( "rest-filtered-{$user_id}", $standard_result['test_rest_user_array'] );
+		$this->assertSame( "rest-filtered-{$user_id}", $standard_result['test_rest_user_object'] );
+		$this->assertSame( $user_id, $standard_result['test_rest_user_array_source']['formatted_value'] );
+		$this->assertSame( $user_id, $standard_result['test_rest_user_object_source']['formatted_value'] );
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$standard_result['test_rest_user_group']['nested_user_array']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$standard_result['test_rest_user_group']['nested_user_object']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$standard_result['test_rest_user_group_source']['formatted_value']['nested_user_array']
+		);
+		$this->assertSame(
+			array( $user_id, $second_user_id ),
+			$standard_result['test_rest_user_group_source']['formatted_value']['nested_user_object']
+		);
+		$this->assertRestUserResponseDoesNotExposePrivateData( $standard_result, $user_email, $activation_key );
+		$this->assertRestUserResponseDoesNotExposePrivateData(
+			$standard_result,
+			$second_user_email,
+			$second_activation_key
+		);
+
+		wp_delete_user( $user_id );
+		wp_delete_user( $second_user_id );
+		acf_remove_local_field_group( 'group_test_rest_user_source_values' );
+		acf_remove_local_field( 'field_test_rest_user_array' );
+		acf_remove_local_field( 'field_test_rest_user_object' );
+		acf_remove_local_field( 'field_test_rest_user_group' );
+		acf_remove_local_field( 'field_test_rest_nested_user_array' );
+		acf_remove_local_field( 'field_test_rest_nested_user_object' );
+	}
+
+	/**
+	 * Assert REST User field output does not expose private user data.
+	 *
+	 * @param array  $response       The REST field response.
+	 * @param string $user_email     The private user email marker.
+	 * @param string $activation_key The private user activation key marker.
+	 */
+	protected function assertRestUserResponseDoesNotExposePrivateData( $response, $user_email, $activation_key ) {
+		$json = wp_json_encode( $response );
+
+		$this->assertStringNotContainsString( $user_email, $json );
+		$this->assertStringNotContainsString( 'user_pass', $json );
+		$this->assertStringNotContainsString( $activation_key, $json );
+		$this->assertStringNotContainsString( 'user_activation_key', $json );
 	}
 
 	// =========================================================================

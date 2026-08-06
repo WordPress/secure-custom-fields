@@ -15,16 +15,36 @@ require_once __DIR__ . '/wc-order-test-functions.php';
  * Class Test_Form_WC_Order
  */
 class Test_Form_WC_Order extends BaseTestCase {
+	/**
+	 * User IDs created during a test.
+	 *
+	 * @var int[]
+	 */
+	private $user_ids = array();
 
 	/**
 	 * Tear down after each test.
 	 */
 	public function tear_down() {
-		parent::tear_down();
+		acf_get_store( 'form' )->reset();
 
 		// Clean up any filters/actions we added.
 		remove_all_filters( 'acf/input/meta_box_priority' );
 		remove_all_actions( 'acf/add_meta_boxes' );
+
+		foreach ( $this->user_ids as $user_id ) {
+			wp_delete_user( $user_id );
+		}
+		$this->user_ids = array();
+
+		unset( $_POST['acf'], $_POST['_acf_nonce'] );
+		wp_set_current_user( 0 );
+
+		global $current_screen;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test teardown.
+		$current_screen = null;
+
+		parent::tear_down();
 	}
 
 	/**
@@ -53,9 +73,9 @@ class Test_Form_WC_Order extends BaseTestCase {
 			'Should register initialize action for base WC orders page'
 		);
 
-		$this->assertNotFalse(
+		$this->assertFalse(
 			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
-			'Should register save_order action'
+			'Should not register save_order until an order edit screen loads'
 		);
 
 		$this->assertNotFalse(
@@ -242,7 +262,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 	}
 
 	/**
-	 * Test initialize method adds correct action.
+	 * Test initialize method adds correct actions.
 	 */
 	public function test_initialize_adds_meta_boxes_action() {
 		$wc_order = new WC_Order();
@@ -258,6 +278,14 @@ class Test_Form_WC_Order extends BaseTestCase {
 			has_action( 'add_meta_boxes', array( $wc_order, 'add_meta_boxes' ) ),
 			'initialize should add add_meta_boxes action'
 		);
+
+		// Check that the save handler is attached on the order edit screen.
+		$this->assertNotFalse(
+			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
+			'initialize should add save_order action'
+		);
+
+		remove_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ), 10 );
 	}
 
 	/**
@@ -386,15 +414,101 @@ class Test_Form_WC_Order extends BaseTestCase {
 	}
 
 	/**
+	 * Test save_order does not save outside the admin order screen.
+	 */
+	public function test_save_order_requires_admin_context() {
+		$wc_order = $this->get_hpos_enabled_order_form();
+		$this->set_order_manager_user();
+		$this->set_valid_acf_order_payload();
+
+		$saved_post_id = null;
+		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
+			$saved_post_id = $post_id;
+		};
+		add_action( 'acf/save_post', $save_hook );
+
+		$wc_order->save_order( 123 );
+
+		remove_action( 'acf/save_post', $save_hook );
+
+		$this->assertNull( $saved_post_id, 'ACF order fields should not save outside admin context.' );
+	}
+
+	/**
+	 * Test save_order requires the shop order editing capability.
+	 */
+	public function test_save_order_requires_shop_order_capability() {
+		$wc_order = $this->get_hpos_enabled_order_form();
+		set_current_screen( 'woocommerce_page_wc-orders' );
+		$this->set_order_manager_user( false );
+		$this->set_valid_acf_order_payload();
+
+		$saved_post_id = null;
+		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
+			$saved_post_id = $post_id;
+		};
+		add_action( 'acf/save_post', $save_hook );
+
+		$wc_order->save_order( 123 );
+
+		remove_action( 'acf/save_post', $save_hook );
+
+		$this->assertNull( $saved_post_id, 'Users without edit_shop_orders must not save ACF order fields.' );
+	}
+
+	/**
+	 * Test save_order requires an ACF post nonce.
+	 */
+	public function test_save_order_requires_acf_nonce() {
+		$wc_order = $this->get_hpos_enabled_order_form();
+		set_current_screen( 'woocommerce_page_wc-orders' );
+		$this->set_order_manager_user();
+		$_POST['acf'] = array( 'field_test_wc_order' => 'Injected value' );
+
+		$saved_post_id = null;
+		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
+			$saved_post_id = $post_id;
+		};
+		add_action( 'acf/save_post', $save_hook );
+
+		$wc_order->save_order( 123 );
+
+		remove_action( 'acf/save_post', $save_hook );
+
+		$this->assertNull( $saved_post_id, 'ACF order fields should not save without a valid ACF nonce.' );
+	}
+
+	/**
+	 * Test save_order saves ACF fields for authorized admin order edits.
+	 */
+	public function test_save_order_saves_for_authorized_admin_order_edit() {
+		$wc_order = $this->get_hpos_enabled_order_form();
+		set_current_screen( 'woocommerce_page_wc-orders' );
+		$this->set_order_manager_user();
+		$this->set_valid_acf_order_payload();
+
+		$saved_post_id = null;
+		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
+			$saved_post_id = $post_id;
+		};
+		add_action( 'acf/save_post', $save_hook );
+
+		$wc_order->save_order( 123 );
+
+		remove_action( 'acf/save_post', $save_hook );
+
+		$this->assertSame( 'woo_order_123', $saved_post_id, 'Authorized admin order edits should save ACF order fields.' );
+	}
+
+	/**
 	 * Test save_order removes action to prevent infinite loop.
 	 */
 	public function test_save_order_removes_action_to_prevent_loop() {
 		// Create a partial mock to control is_hpos_enabled.
-		$wc_order = $this->getMockBuilder( WC_Order::class )
-			->onlyMethods( array( 'is_hpos_enabled' ) )
-			->getMock();
-
-		$wc_order->method( 'is_hpos_enabled' )->willReturn( true );
+		$wc_order = $this->get_hpos_enabled_order_form();
+		set_current_screen( 'woocommerce_page_wc-orders' );
+		$this->set_order_manager_user();
+		$this->set_valid_acf_order_payload();
 
 		// Add the action first.
 		add_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ), 10 );
@@ -410,6 +524,57 @@ class Test_Form_WC_Order extends BaseTestCase {
 			has_action( 'woocommerce_update_order', array( $wc_order, 'save_order' ) ),
 			'save_order should remove itself to prevent infinite loop'
 		);
+	}
+
+	/**
+	 * Get a WC order form mock with HPOS enabled.
+	 *
+	 * @return WC_Order
+	 */
+	private function get_hpos_enabled_order_form() {
+		$wc_order = $this->getMockBuilder( WC_Order::class )
+			->onlyMethods( array( 'is_hpos_enabled' ) )
+			->getMock();
+
+		$wc_order->method( 'is_hpos_enabled' )->willReturn( true );
+
+		return $wc_order;
+	}
+
+	/**
+	 * Set the current user to a test user.
+	 *
+	 * @param bool $can_edit_orders Whether the user should have edit_shop_orders.
+	 * @return int The user ID.
+	 */
+	private function set_order_manager_user( $can_edit_orders = true ) {
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => 'wc_order_user_' . uniqid(),
+				'user_pass'  => 'password',
+				'user_email' => 'wc-order-user-' . uniqid() . '@example.com',
+				'role'       => 'subscriber',
+			)
+		);
+
+		$this->user_ids[] = $user_id;
+		$user             = get_user_by( 'id', $user_id );
+
+		if ( $can_edit_orders ) {
+			$user->add_cap( 'edit_shop_orders' );
+		}
+
+		wp_set_current_user( $user_id );
+
+		return $user_id;
+	}
+
+	/**
+	 * Set a valid ACF order save payload.
+	 */
+	private function set_valid_acf_order_payload() {
+		$_POST['_acf_nonce'] = wp_create_nonce( 'post' );
+		$_POST['acf']        = array( 'field_test_wc_order' => 'Saved value' );
 	}
 
 	/**

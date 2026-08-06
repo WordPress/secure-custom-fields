@@ -83,6 +83,11 @@ test.describe( 'Field Type > URL', () => {
 		// Verify the input
 		await expect( urlInput ).toHaveValue( 'https://wordpress.org' );
 
+		// Persist the metabox value before previewing; previewing an
+		// unsaved draft can race the metabox save request and render
+		// the preview without the field value.
+		await editor.saveDraft();
+
 		// Preview and verify
 		const previewPage = await editor.openPreviewPage();
 

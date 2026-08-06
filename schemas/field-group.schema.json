@@ -99,6 +99,16 @@
 					"default": false,
 					"description": "Whether to expose this field group's fields in the REST API"
 				},
+				"allow_ai_access": {
+					"type": [ "boolean", "integer" ],
+					"default": false,
+					"description": "Whether to expose this field group to AI integrations"
+				},
+				"ai_description": {
+					"type": "string",
+					"default": "",
+					"description": "Description that helps AI integrations understand how to use this field group"
+				},
 				"display_title": {
 					"type": "string",
 					"description": "Alternative display title for the field group"

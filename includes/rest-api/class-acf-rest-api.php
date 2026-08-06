@@ -231,15 +231,18 @@ class ACF_Rest_Api {
 				}
 
 				// Format the field value according to the request params.
-				$format     = $request->get_param( 'acf_format' ) ? $request->get_param( 'acf_format' ) : acf_get_setting( 'rest_api_format' );
-				$rest_value = acf_format_value_for_rest( $value, $post_id, $field, $format );
+				$format                 = $request->get_param( 'acf_format' ) ? $request->get_param( 'acf_format' ) : acf_get_setting( 'rest_api_format' );
+				$rest_value             = acf_format_value_for_rest( $value, $post_id, $field, $format );
+				$source_formatted_value = ( 'oembed' === $field['type'] && 'standard' !== $format )
+					? $rest_value
+					: scf_rest_format_standard_value( $value, $post_id, $field );
 
 				// We keep this one for backward compatibility with existing code that expects the field value to be.
 				$fields[ $field['name'] ]             = $rest_value;
 				$fields[ $field['name'] . '_source' ] = array(
 					'label'           => $field['label'],
 					'type'            => $field['type'],
-					'formatted_value' => acf_format_value( $value, $post_id, $field ),
+					'formatted_value' => $source_formatted_value,
 				);
 			}
 		}
@@ -325,6 +328,10 @@ class ACF_Rest_Api {
 			// If the incoming request has a map of field names to keys, extract it for use in the subsequent
 			// field search.
 			$field_key_map = acf_extract_var( $data, '_acf_field_key_map', array() );
+
+			if ( ! acf_allow_unfiltered_html() ) {
+				$data = wp_kses_post_deep( $data );
+			}
 
 			// Loop through the inbound data payload, find the field matching the incoming field name, and
 			// update the field.

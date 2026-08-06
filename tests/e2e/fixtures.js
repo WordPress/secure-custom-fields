@@ -46,7 +46,9 @@ async function saveCoverage( coverage ) {
  */
 function generateCoverageId( testInfo ) {
 	const testFile = path.basename( testInfo.file, '.spec.ts' );
-	const testName = testInfo.title.replace( /[^a-zA-Z0-9]/g, '_' ).slice( 0, 50 );
+	const testName = testInfo.title
+		.replace( /[^a-zA-Z0-9]/g, '_' )
+		.slice( 0, 50 );
 	return `${ testFile }-${ testName }-${ Date.now() }`;
 }
 
@@ -131,20 +133,24 @@ const test = wpTest.extend( {
 					} )();
 				},
 			},
-			// WP 6.2 has "Preview" button, WP 6.3+ has "View" button.
+			// Older WordPress versions expose "Preview"; newer versions expose "View".
 			openPreviewPage: {
 				value: async () => {
-					const isWP62 = await page.evaluate( () =>
-						document.body.classList.contains( 'branch-6-2' )
-					);
-
-					if ( ! isWP62 ) {
-						return editor.openPreviewPage();
-					}
-
 					const editorTopBar = page.locator(
 						'role=region[name="Editor top bar"i]'
 					);
+
+					const viewButton = editorTopBar.locator(
+						'role=button[name="View"i]'
+					);
+
+					if (
+						( await viewButton.count() ) > 0 &&
+						( await viewButton.first().isVisible() )
+					) {
+						return editor.openPreviewPage();
+					}
+
 					await editorTopBar
 						.locator( 'role=button[name="Preview"i]' )
 						.click();
@@ -152,7 +158,7 @@ const test = wpTest.extend( {
 					const [ previewPage ] = await Promise.all( [
 						context.waitForEvent( 'page' ),
 						page.click(
-							'role=menuitem[name="Preview in new tab"i]'
+							'role=menuitem[name=/Preview in new tab/i]'
 						),
 					] );
 
@@ -177,15 +183,17 @@ const test = wpTest.extend( {
 async function wpVersionAtLeast( page, major, minor ) {
 	return page.evaluate(
 		( [ maj, min ] ) => {
-			const branchClass = [ ...document.body.classList ].find( ( c ) =>
-				c.startsWith( 'branch-' )
+			const versionClass = [ ...document.body.classList ].find( ( c ) =>
+				/^(version|branch)-\d+-\d+/.test( c )
 			);
-			if ( ! branchClass ) {
-				return true;
+			if ( ! versionClass ) {
+				return false;
 			}
-			const match = branchClass.match( /branch-(\d+)-(\d+)/ );
+			const match = versionClass.match(
+				/^(?:version|branch)-(\d+)-(\d+)/
+			);
 			if ( ! match ) {
-				return true;
+				return false;
 			}
 			const [ , wpMajor, wpMinor ] = match.map( Number );
 			return wpMajor > maj || ( wpMajor === maj && wpMinor >= min );

@@ -15,6 +15,15 @@
 			return this.$( 'select' );
 		},
 
+		setValue: function ( val ) {
+			const $input = this.$input();
+			$input.val( val );
+
+			if ( this.select2 ) {
+				$input.trigger( 'change' );
+			}
+		},
+
 		initialize: function () {
 			// vars
 			var $select = this.$input();

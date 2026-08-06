@@ -129,6 +129,11 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 				return $valid;
 			}
 
+			// A non-string value (e.g. an array from a crafted submission) is never a valid URL.
+			if ( ! is_string( $value ) ) {
+				return __( 'Value must be a valid URL', 'secure-custom-fields' );
+			}
+
 			if ( strpos( $value, '://' ) !== false ) {
 
 				// url
@@ -156,7 +161,8 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 		 */
 		public function format_value( $value, $post_id, $field, $escape_html ) {
 			if ( $escape_html ) {
-				return esc_url( $value );
+				// esc_url() expects a string; treat a non-string value as empty.
+				return is_string( $value ) ? esc_url( $value ) : '';
 			}
 			return $value;
 		}
@@ -172,6 +178,17 @@ if ( ! class_exists( 'acf_field_url' ) ) :
 			$schema['format'] = 'uri';
 
 			return $schema;
+		}
+
+		/**
+		 * Returns an array of JSON-LD Property output types that are supported by this field type.
+		 *
+		 * @since 6.8
+		 *
+		 * @return string[]
+		 */
+		public function get_jsonld_output_types(): array {
+			return array( 'URL' );
 		}
 	}
 

@@ -55,6 +55,25 @@ class SCF_Rest_Types_Endpoint {
 	}
 
 	/**
+	 * Checks whether the matched REST route permits the request.
+	 *
+	 * @since SCF 6.8.0
+	 *
+	 * @param array           $handler The matched REST route handler.
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool True when the route permission callback allows the request.
+	 */
+	private function request_has_permission( $handler, $request ) {
+		if ( empty( $handler['permission_callback'] ) || ! is_callable( $handler['permission_callback'] ) ) {
+			return true;
+		}
+
+		$permission = call_user_func( $handler['permission_callback'], $request );
+
+		return ! is_wp_error( $permission ) && false !== $permission && null !== $permission;
+	}
+
+	/**
 	 * Filter post types requests for individual post type requests.
 	 *
 	 * @since SCF 6.5.0
@@ -76,6 +95,10 @@ class SCF_Rest_Types_Endpoint {
 
 		// Only proceed if source parameter is provided and valid
 		if ( ! $source || ! $this->is_valid_source( $source ) ) {
+			return $response;
+		}
+
+		if ( ! $this->request_has_permission( $handler, $request ) ) {
 			return $response;
 		}
 
@@ -175,12 +198,30 @@ class SCF_Rest_Types_Endpoint {
 	 * @return void
 	 */
 	public function register_extra_fields() {
+		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
+			return;
+		}
+
 		register_rest_field(
 			'type',
 			'scf_field_groups',
 			array(
 				'get_callback' => array( $this, 'get_scf_fields' ),
 				'schema'       => $this->get_field_schema(),
+			)
+		);
+
+		register_rest_field(
+			'type',
+			'scf_post_id',
+			array(
+				'get_callback' => array( $this, 'get_scf_post_id' ),
+				'schema'       => array(
+					'description' => __( 'The SCF internal post ID that defines this post type. Null if not managed by SCF or if the current user cannot edit the post type definition.', 'secure-custom-fields' ),
+					'type'        => array( 'integer', 'null' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
 			)
 		);
 	}
@@ -194,11 +235,19 @@ class SCF_Rest_Types_Endpoint {
 	 * @return array Array of field data.
 	 */
 	public function get_scf_fields( $post_type_object ) {
+		if ( ! scf_current_user_has_capability() ) {
+			return array();
+		}
+
 		$post_type         = $post_type_object['slug'];
 		$field_groups      = acf_get_field_groups( array( 'post_type' => $post_type ) );
 		$field_groups_data = array();
 
 		foreach ( $field_groups as $field_group ) {
+			if ( empty( $field_group['show_in_rest'] ) ) {
+				continue;
+			}
+
 			$fields       = acf_get_fields( $field_group );
 			$group_fields = array();
 
@@ -219,6 +268,37 @@ class SCF_Rest_Types_Endpoint {
 		}
 
 		return $field_groups_data;
+	}
+
+	/**
+	 * Get the SCF internal post ID for a post type.
+	 *
+	 * Only exposed to users who can edit the post type definition, so that
+	 * consumers (e.g. Command Palette commands) can rely on its presence as
+	 * a capability check.
+	 *
+	 * @since SCF 6.8.3
+	 *
+	 * @param array $post_type_object The post type object.
+	 * @return int|null The post ID if managed by SCF and editable by the current user, null otherwise.
+	 */
+	public function get_scf_post_id( $post_type_object ) {
+		$slug           = $post_type_object['slug'];
+		$scf_post_types = acf_get_acf_post_types();
+
+		foreach ( $scf_post_types as $scf_post_type ) {
+			if ( $scf_post_type['post_type'] === $slug ) {
+				$scf_post_id = isset( $scf_post_type['ID'] ) ? (int) $scf_post_type['ID'] : 0;
+
+				if ( ! $scf_post_id || ! current_user_can( 'edit_post', $scf_post_id ) ) {
+					return null;
+				}
+
+				return $scf_post_id;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -262,7 +342,7 @@ class SCF_Rest_Types_Endpoint {
 					),
 				),
 			),
-			'context'     => array( 'view', 'edit', 'embed' ),
+			'context'     => array( 'edit' ),
 		);
 	}
 

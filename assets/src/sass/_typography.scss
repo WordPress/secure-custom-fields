@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Global
@@ -123,7 +125,7 @@
 		display: none !important;
 	}
 
-	#acf-admin-tools h1 {
+	#acf-admin-tools h1:not(.acf-field-group-pro-features-title, .acf-field-group-pro-features-title-sm) {
 		display: none !important;
 	}
 

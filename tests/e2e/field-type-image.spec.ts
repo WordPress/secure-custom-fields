@@ -9,6 +9,7 @@ const {
 	PLUGIN_SLUG,
 	deleteFieldGroups,
 	waitForMetaBoxes,
+	uploadImageViaModal,
 } = require( './field-helpers' );
 const path = require( 'path' );
 
@@ -26,6 +27,7 @@ test.describe( 'Field Type > Image', () => {
 		await requestUtils.deactivatePlugin( TEST_PLUGIN_SLUG );
 		await requestUtils.deactivatePlugin( PLUGIN_SLUG );
 		await requestUtils.deleteAllPosts();
+		await requestUtils.deleteAllMedia();
 	} );
 
 	test.beforeEach( async ( { page, admin } ) => {
@@ -76,39 +78,16 @@ test.describe( 'Field Type > Image', () => {
 		await admin.editPost( post.id );
 		await waitForMetaBoxes( page );
 
-		// Click "Add Image" button
+		// "Add Image" button
 		const addImageButton = page.locator(
 			'.acf-field[data-name="test_image"] .acf-image-uploader[data-uploader="wp"] .acf-button-edit, .acf-field[data-name="test_image"] .acf-image-uploader a[data-name="add"]'
 		);
-		await addImageButton.click();
-
-		// Wait for media modal
-		await page.waitForSelector( '.media-modal', { state: 'visible' } );
-
-		// Click "Upload files" tab
-		const uploadTab = page.locator( '.media-modal #menu-item-upload' );
-		if ( await uploadTab.isVisible() ) {
-			await uploadTab.click();
-		}
-
-		// Upload the file
-		const fileInput = page.locator( '.media-modal input[type="file"]' );
-		await fileInput.setInputFiles( TEST_IMAGE_PATH );
-
-		// Wait for upload to complete
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 30000,
-		} );
-
-		// Click "Select" button
-		const selectButton = page.locator(
-			'.media-modal .media-toolbar-primary .media-button-select'
+		await uploadImageViaModal(
+			page,
+			TEST_IMAGE_PATH,
+			requestUtils,
+			addImageButton
 		);
-		await selectButton.click();
-
-		// Wait for modal to close
-		await page.waitForSelector( '.media-modal', { state: 'hidden' } );
 
 		// Verify image is displayed in the field
 		const imagePreview = page.locator(
@@ -173,29 +152,12 @@ test.describe( 'Field Type > Image', () => {
 		const addImageButton = page.locator(
 			'.acf-field[data-name="removable_image"] .acf-image-uploader a[data-name="add"]'
 		);
-		await addImageButton.click();
-
-		await page.waitForSelector( '.media-modal', { state: 'visible' } );
-
-		const uploadTab = page.locator( '.media-modal #menu-item-upload' );
-		if ( await uploadTab.isVisible() ) {
-			await uploadTab.click();
-		}
-
-		const fileInput = page.locator( '.media-modal input[type="file"]' );
-		await fileInput.setInputFiles( TEST_IMAGE_PATH );
-
-		await page.waitForSelector( '.media-modal .attachment.selected', {
-			state: 'visible',
-			timeout: 30000,
-		} );
-
-		const selectButton = page.locator(
-			'.media-modal .media-toolbar-primary .media-button-select'
+		await uploadImageViaModal(
+			page,
+			TEST_IMAGE_PATH,
+			requestUtils,
+			addImageButton
 		);
-		await selectButton.click();
-
-		await page.waitForSelector( '.media-modal', { state: 'hidden' } );
 
 		// Verify image is there
 		const imagePreview = page.locator(

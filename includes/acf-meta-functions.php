@@ -57,13 +57,14 @@ function acf_get_option_meta( $prefix = '' ) {
 	global $wpdb;
 
 	// Vars.
-	$meta    = array();
-	$search  = "{$prefix}_%";
-	$_search = "_{$prefix}_%";
+	$meta = array();
 
-	// Escape underscores for LIKE.
-	$search  = str_replace( '_', '\_', $search );
-	$_search = str_replace( '_', '\_', $_search );
+	// Escape the literal prefix for use in a LIKE clause, then append the
+	// trailing wildcard. esc_like() escapes %, _ and \ — a manual underscore
+	// replacement leaves % and \ active, letting a crafted prefix widen the
+	// match to unrelated option rows.
+	$search  = $wpdb->esc_like( "{$prefix}_" ) . '%';
+	$_search = $wpdb->esc_like( "_{$prefix}_" ) . '%';
 
 	// Query database for results.
 	$rows = $wpdb->get_results(

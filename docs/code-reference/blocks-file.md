@@ -25,6 +25,30 @@ Check if a block.json block is an SCF block.
 * @param array $metadata The raw block metadata array.
 * @return boolean
 
+## `acf_block_json_process_fields()`
+
+Recursively ensures every field in a set of block-inlined fields has a key,
+generating `field_{block_slug}_{parent_path}_{name}` for any that don't.
+
+* @since ACF 6.8.1
+* @param array  $fields      The fields to process.
+* @param string $block_slug  The sanitized block slug used to build keys.
+* @param string $block_name  The original block name (used for error messages).
+* @param string $parent_path Internal. Underscore-joined ancestor names for the current nesting level.
+* @return array The processed fields, with keys filled in and invalid entries removed.
+
+## `acf_register_block_field_group_from_fields()`
+
+Registers a local field group for a block from an inline fields array,
+as used by `acf.fields` in block.json and `fields` in acf_register_block_type().
+
+* @since ACF 6.8.1
+* @param string $block_name        The full block name (e.g. 'acf/my-block').
+* @param string $block_title       The block's display title, used in the default group title.
+* @param array  $fields            The fields defined inline on the block.
+* @param string $field_group_title Optional. Overrides the auto-generated "Block: {title}" group title.
+* @return boolean True if the field group was registered, false otherwise.
+
 ## `acf_register_block_type()`
 
 Registers a block type.
@@ -140,6 +164,29 @@ Returns the rendered block HTML.
 * @param boolean  $is_ajax_render Whether or not this is an ACF AJAX render.
 * @return string   The block HTML.
 
+## `acf_rendered_block_v3()`
+
+Returns the rendered block HTML for v3 blocks.
+
+* @date    21/1/26
+* @since ACF 6.8
+* @param   array    $attributes The block attributes.
+* @param string   $content    The block content.
+* @param boolean  $is_preview Whether or not the block is being rendered for editing preview.
+* @param integer  $post_id    The current post being edited or viewed.
+* @param WP_Block $wp_block   The block instance (since WP 5.5).
+* @param array    $context    The block context array.
+* @return string   The block HTML.
+
+## `acf_replace_inner_blocks_in_block_content()`
+
+Replaces InnerBlocks strings in a block with the inner block content.
+
+* @since ACF 6.8
+* @param string $content The block content.
+* @param string $html    The block html.
+* @return string
+
 ## `acf_render_block()`
 
 Renders the block HTML.
@@ -152,6 +199,14 @@ Renders the block HTML.
 * @param WP_Block $wp_block   The block instance (since WP 5.5).
 * @param array    $context    The block context array.
 * @return void|string
+
+## `scf_path_has_stream_wrapper()`
+
+Checks if a path uses a PHP stream wrapper, such as `phar://` or `php://`.
+
+* @since 6.9.3
+* @param string $path The path to check.
+* @return boolean True if the path begins with a stream wrapper.
 
 ## `acf_block_render_template()`
 
@@ -347,7 +402,7 @@ that need to be saved to post meta.
 
 ## `acf_inline_toolbar_editing_attrs()`
 
-Helper function that returns the HTML attributes required for toolbar inline editing as a string, escaped and ready for output.
+Helper function that returns the HTML attributes required for toolbar inline editing as a string or array.
 
 * Required. A list of the fields, each of which will be displayed in the popup toolbar.
 Each field can be passed as one of the following.
@@ -360,10 +415,15 @@ An associative array with specific keys:
 * @type string  $popover_min_width Enter the CSS width value to use for the popover. Default is "300px".
 * @param array $fields List of fields.
 * @param array $args   Additional options controlling toolbar display and behavior.
-* @type string $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
-* @type string $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
-* @type string $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
-* @return string A string containing the attributes.
+* @type string  $toolbar_icon  Optional. An html tag, can be an svg, to be used as the toolbar icon. If not passed, the icon of the first field will be used.
+* @type string  $toolbar_title Optional. A string to be used as the toolbar title. If not passed, the name of the first field will be used.
+* @type string  $uid           Optional. A unique identifier that isn't used by any other inline fields in this block. Pass if you have 2 elements that conflict.
+* @type boolean $return_array  Optional. If true, returns an array of attributes suitable for wp_get_attachment_image(). Default false.
+* @return string|array When $args['return_array'] is false (default): Returns a string of escaped HTML attributes ready for output.
+When $args['return_array'] is true: Returns an associative array of attribute names and escaped values.
+When using the array return value with wp_get_attachment_image(), no element will be rendered if
+the image field is empty. If users need an inline editing target for selecting an image, render a fallback element
+with the attributes returned by this function.
 
 ## `acf_inline_text_editing_attrs()`
 

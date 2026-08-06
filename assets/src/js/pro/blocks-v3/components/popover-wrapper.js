@@ -40,38 +40,36 @@ export const PopoverWrapper = ( {
 	hidePrimaryBlockToolbar = false,
 } ) => {
 	useEffect( () => {
-		// Get the appropriate document (iframe or regular document)
 		const doc = gutenbergIframeOrDocument?.contentDocument
 			? gutenbergIframeOrDocument.contentDocument
 			: gutenbergIframeOrDocument || document;
 
-		/**
-		 * Handle escape key to close popover
-		 */
 		const handleEscapeKey = ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onClose?.( event );
 			}
 		};
 
-		/**
-		 * Handle click outside popover to close it
-		 */
 		const handleClickOutside = ( event ) => {
-			// Check if click is outside the popover
-			const popoverElement = event.target.closest(
-				'.' + className.split( ' ' ).join( '.' )
-			);
+			if ( event?.key ) {
+				return;
+			}
+
+			const popoverSelector = className
+				? `.${ className.split( ' ' ).filter( Boolean ).join( '.' ) }`
+				: null;
+			const popoverElement = popoverSelector
+				? event.target.closest( popoverSelector )
+				: null;
+
 			if ( ! popoverElement ) {
 				onClose?.( event );
 			}
 		};
 
-		// Add event listeners
 		doc.addEventListener( 'keydown', handleEscapeKey, true );
 		doc.addEventListener( 'mousedown', handleClickOutside, true );
 
-		// Hide primary block toolbar if requested
 		if ( hidePrimaryBlockToolbar ) {
 			const toolbar = doc.querySelector(
 				'.block-editor-block-list__block.is-selected > .block-editor-block-contextual-toolbar'
@@ -81,12 +79,10 @@ export const PopoverWrapper = ( {
 			}
 		}
 
-		// Cleanup
 		return () => {
 			doc.removeEventListener( 'keydown', handleEscapeKey, true );
 			doc.removeEventListener( 'mousedown', handleClickOutside, true );
 
-			// Restore primary block toolbar
 			if ( hidePrimaryBlockToolbar ) {
 				const toolbar = doc.querySelector(
 					'.block-editor-block-list__block.is-selected > .block-editor-block-contextual-toolbar'

@@ -115,3 +115,9 @@ parameters:
 			identifier: requireOnce.fileNotFound
 			count: 2
 			path: ../includes/class-scf-json-schema-validator.php
+
+		-
+			message: '#^Function SCF\\Blocks\\AutoInlineEditing\\apply_inline_editing_attributes_to_render_template invoked with 7 parameters, 3 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: ../includes/blocks.php

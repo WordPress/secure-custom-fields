@@ -151,7 +151,7 @@ if ( ! class_exists( 'Acf_Field_Nav_Menu' ) ) :
 			}
 
 			?>
-				<select id="<?php esc_attr( $field['id'] ); ?>" class="<?php echo esc_attr( $field['class'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>">
+				<select id="<?php echo esc_attr( $field['id'] ); ?>" class="<?php echo esc_attr( $field['class'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>">
 					<?php
 					if ( $allow_null ) {
 						?>

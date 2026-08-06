@@ -58,6 +58,161 @@ function acf_get_field_rest_links( $post_id, array $field ) {
 acf_add_filter_variations( 'acf/rest/get_field_links', array( 'type', 'name', 'key' ), 2 );
 
 /**
+ * Replaces User subfield data with REST-safe values.
+ *
+ * @param mixed  $formatted_value The formatted parent value.
+ * @param mixed  $raw_value       The raw parent value.
+ * @param array  $sub_fields      The parent field's subfields.
+ * @param string $output_property The subfield property used as the output key.
+ * @return mixed
+ */
+function scf_rest_sanitize_user_sub_fields( $formatted_value, $raw_value, $sub_fields, $output_property ) {
+	if ( ! is_array( $formatted_value ) || ! is_array( $sub_fields ) ) {
+		return $formatted_value;
+	}
+
+	$raw_value = is_array( $raw_value ) ? $raw_value : array();
+
+	foreach ( $sub_fields as $sub_field ) {
+		if ( ! is_array( $sub_field ) ) {
+			continue;
+		}
+
+		$output_key = array_key_exists( $output_property, $sub_field )
+			? $sub_field[ $output_property ]
+			: $sub_field['name'] ?? '';
+		if ( '' === $output_key || ! array_key_exists( $output_key, $formatted_value ) ) {
+			continue;
+		}
+
+		$raw_key       = $sub_field['key'] ?? '';
+		$raw_sub_value = '' !== $raw_key && array_key_exists( $raw_key, $raw_value )
+			? $raw_value[ $raw_key ]
+			: null;
+
+		$formatted_value[ $output_key ] = scf_rest_sanitize_user_data(
+			$formatted_value[ $output_key ],
+			$raw_sub_value,
+			$sub_field
+		);
+	}
+
+	return $formatted_value;
+}
+
+/**
+ * Replaces formatted User field data with REST-safe values based on the field definition.
+ *
+ * @param mixed $formatted_value The formatted field value.
+ * @param mixed $raw_value       The raw field value.
+ * @param array $field           The field array.
+ * @return mixed
+ */
+function scf_rest_sanitize_user_data( $formatted_value, $raw_value, $field ) {
+	if ( ! is_array( $field ) || empty( $field['type'] ) ) {
+		return $formatted_value;
+	}
+
+	if ( 'user' === $field['type'] ) {
+		if ( ! $formatted_value ) {
+			return $formatted_value;
+		}
+
+		if ( ! empty( $field['multiple'] ) && is_array( $formatted_value ) ) {
+			$user_ids = array();
+			foreach ( $formatted_value as $user ) {
+				$user_ids[] = (int) acf_idval( $user );
+			}
+
+			return $user_ids;
+		}
+
+		return (int) acf_idval( $formatted_value );
+	}
+
+	if ( ! is_array( $formatted_value ) ) {
+		return $formatted_value;
+	}
+
+	$is_clone = 'clone' === $field['type'];
+	$is_group = 'group' === $field['type'];
+
+	if ( $is_group || $is_clone ) {
+		$output_property = $is_clone ? '__name' : '_name';
+
+		return scf_rest_sanitize_user_sub_fields(
+			$formatted_value,
+			$raw_value,
+			$field['sub_fields'] ?? array(),
+			$output_property
+		);
+	}
+
+	if ( 'repeater' === $field['type'] ) {
+		$raw_value = is_array( $raw_value ) ? $raw_value : array();
+
+		foreach ( $formatted_value as $row_index => $formatted_row ) {
+			$raw_row = array_key_exists( $row_index, $raw_value ) ? $raw_value[ $row_index ] : array();
+
+			$formatted_value[ $row_index ] = scf_rest_sanitize_user_sub_fields(
+				$formatted_row,
+				$raw_row,
+				$field['sub_fields'] ?? array(),
+				'_name'
+			);
+		}
+
+		return $formatted_value;
+	}
+
+	if ( 'flexible_content' === $field['type'] ) {
+		$raw_value = is_array( $raw_value ) ? $raw_value : array();
+
+		foreach ( $formatted_value as $row_index => $formatted_row ) {
+			if ( ! is_array( $formatted_row ) ) {
+				continue;
+			}
+
+			$raw_row     = array_key_exists( $row_index, $raw_value ) && is_array( $raw_value[ $row_index ] )
+				? $raw_value[ $row_index ]
+				: array();
+			$layout_name = $formatted_row['acf_fc_layout'] ?? $raw_row['acf_fc_layout'] ?? '';
+
+			foreach ( $field['layouts'] ?? array() as $layout ) {
+				if ( ! isset( $layout['name'] ) || $layout_name !== $layout['name'] ) {
+					continue;
+				}
+
+				$formatted_value[ $row_index ] = scf_rest_sanitize_user_sub_fields(
+					$formatted_row,
+					$raw_row,
+					$layout['sub_fields'] ?? array(),
+					'_name'
+				);
+				break;
+			}
+		}
+	}
+
+	return $formatted_value;
+}
+
+/**
+ * Applies standard field formatting while keeping User values safe for REST output.
+ *
+ * This does not apply the public acf/rest/format_value_for_rest filter.
+ *
+ * @param mixed      $value   The raw field value.
+ * @param string|int $post_id The post ID of the current object.
+ * @param array      $field   The field array.
+ * @return mixed
+ */
+function scf_rest_format_standard_value( $value, $post_id, $field ) {
+	$value_formatted = acf_format_value( $value, $post_id, $field );
+	return scf_rest_sanitize_user_data( $value_formatted, $value, $field );
+}
+
+/**
  * Format a given field's value for output in the REST API.
  *
  * @param        $value
@@ -67,8 +222,8 @@ acf_add_filter_variations( 'acf/rest/get_field_links', array( 'type', 'name', 'k
  * @return mixed
  */
 function acf_format_value_for_rest( $value, $post_id, $field, $format = 'light' ) {
-	if ( $format === 'standard' ) {
-		$value_formatted = acf_format_value( $value, $post_id, $field );
+	if ( 'standard' === $format ) {
+		$value_formatted = scf_rest_format_standard_value( $value, $post_id, $field );
 	} else {
 		$type            = acf_get_field_type( $field['type'] );
 		$value_formatted = $type->format_value_for_rest( $value, $post_id, $field );

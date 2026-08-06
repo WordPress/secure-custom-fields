@@ -11,6 +11,7 @@ import {
 	useRef,
 	createPortal,
 	useMemo,
+	useCallback,
 } from '@wordpress/element';
 
 import {
@@ -18,7 +19,13 @@ import {
 	useBlockProps,
 	useBlockEditContext,
 } from '@wordpress/block-editor';
-import { Button, Placeholder, Spinner, Modal } from '@wordpress/components';
+import {
+	Button,
+	Placeholder,
+	Spinner,
+	Modal,
+	PanelBody,
+} from '@wordpress/components';
 import { BlockPlaceholder } from './block-placeholder';
 import { BlockForm } from './block-form';
 import { BlockPreview } from './block-preview';
@@ -54,6 +61,95 @@ const InspectorBlockFormContainer = ( {
 	return <div ref={ inspectorBlockFormRef } />;
 };
 
+const isBlockEditorInspectorSidebarOpen = () => {
+	const interfaceStore = wp.data.select( 'core/interface' );
+
+	return (
+		typeof interfaceStore?.getActiveComplementaryArea === 'function' &&
+		interfaceStore.getActiveComplementaryArea( 'core' ) ===
+			'edit-post/block'
+	);
+};
+
+const useBlockEditorInspectorSidebarOpen = () => {
+	const [ isOpen, setIsOpen ] = useState( () =>
+		isBlockEditorInspectorSidebarOpen()
+	);
+
+	useEffect( () => {
+		if ( typeof wp.data.subscribe !== 'function' ) {
+			return;
+		}
+
+		const unsubscribe = wp.data.subscribe( () => {
+			setIsOpen( isBlockEditorInspectorSidebarOpen() );
+		} );
+
+		return () => {
+			unsubscribe();
+		};
+	}, [] );
+
+	return isOpen;
+};
+
+/**
+ * Converts serialized Google Map field values from JSON strings back into
+ * objects so they aren't double-encoded when the block's data is stored as
+ * a JSON block attribute. Google Map fields keep their value as a JSON
+ * string in a hidden input, which acf.serialize() would otherwise pass
+ * through as a string.
+ *
+ * @param {Object} $form          The block form jQuery element that was serialized.
+ * @param {Object} serializedData The data returned by acf.serialize(); modified in place.
+ * @param {string} clientId       The block client ID.
+ * @return {void}
+ */
+function deserializeGoogleMapValues( $form, serializedData, clientId ) {
+	const inputPrefix = `acf-block_${ clientId }`;
+
+	$form
+		.find( '.acf-field-google-map input[type="hidden"][name]' )
+		.each( function () {
+			if ( this.name.indexOf( inputPrefix ) !== 0 ) {
+				return;
+			}
+
+			// Extract the bracketed key path, e.g. "[field_abc][field_def]" -> [ 'field_abc', 'field_def' ].
+			const keyPath = this.name
+				.slice( inputPrefix.length )
+				.match( /([^\[\]])+/g );
+			if ( ! keyPath ) {
+				return;
+			}
+
+			// Walk the serialized data down to the parent of the leaf key.
+			let parent = serializedData;
+			for ( let i = 0; i < keyPath.length - 1; i++ ) {
+				if ( parent === null || typeof parent !== 'object' ) {
+					return;
+				}
+				parent = parent[ keyPath[ i ] ];
+			}
+			if ( parent === null || typeof parent !== 'object' ) {
+				return;
+			}
+
+			const leafKey = keyPath[ keyPath.length - 1 ];
+			if ( typeof parent[ leafKey ] === 'string' ) {
+				try {
+					const parsedValue = JSON.parse( parent[ leafKey ] );
+					if (
+						typeof parsedValue === 'object' &&
+						parsedValue !== null
+					) {
+						parent[ leafKey ] = parsedValue;
+					}
+				} catch ( err ) {}
+			}
+		} );
+}
+
 /**
  * Main BlockEdit component wrapper
  * Manages block data fetching and initial setup
@@ -88,7 +184,9 @@ export const BlockEdit = ( props ) => {
 
 	const [ showValidationErrors, setShowValidationErrors ] = useState( null );
 	const [ theSerializedAcfData, setTheSerializedAcfData ] = useState( null );
-	const [ blockFormHtml, setBlockFormHtml ] = useState( '' );
+	const [ blockFormHtml, setBlockFormHtml ] = useState(
+		() => preloadedData?.form ?? ''
+	);
 	const [ blockPreviewHtml, setBlockPreviewHtml ] = useState( () => {
 		if ( preloadedData?.html ) {
 			return acf.applyFilters(
@@ -103,10 +201,13 @@ export const BlockEdit = ( props ) => {
 		useState( false );
 	const [ hasFetchedOnce, setHasFetchedOnce ] = useState( false );
 	const [ ajaxRequest, setAjaxRequest ] = useState();
+	const [ isFetchingBlock, setIsFetchingBlock ] = useState( false );
 
 	// New state for inline editing features
 	const [ blockToolbarFields, setBlockToolbarFields ] = useState( [] );
-	const [ blockFieldInfo, setBlockFieldInfo ] = useState( null );
+	const [ blockFieldInfo, setBlockFieldInfo ] = useState(
+		() => preloadedData?.fields ?? null
+	);
 	const [ gutenbergIframeOrDocument, setGutenbergIframeOrDocument ] =
 		useState( () => {
 			const iframe = document.querySelector( '[name="editor-canvas"]' );
@@ -130,6 +231,12 @@ export const BlockEdit = ( props ) => {
 	] = useState( false );
 	const [ acfDynamicStylesElement, setAcfDynamicStylesElement ] =
 		useState( null );
+	const [
+		freezeInlineToolbarDuringReRender,
+		setFreezeInlineToolbarDuringReRender,
+	] = useState( '' );
+	const blockEditorInspectorSidebarOpen =
+		useBlockEditorInspectorSidebarOpen();
 
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
@@ -186,6 +293,8 @@ export const BlockEdit = ( props ) => {
 
 		if ( preloadedData ) {
 			handlePreloadedData( preloadedData );
+			unlockPostSavingByName( 'acf-fetching-block' );
+			setIsFetchingBlock( false );
 			return;
 		}
 
@@ -201,6 +310,7 @@ export const BlockEdit = ( props ) => {
 		const blockData = { ...theAttributes };
 
 		lockPostSavingByName( 'acf-fetching-block' );
+		setIsFetchingBlock( true );
 
 		// Fetch block data via AJAX
 		const request = $.ajax( {
@@ -218,6 +328,7 @@ export const BlockEdit = ( props ) => {
 		} )
 			.done( ( response ) => {
 				unlockPostSavingByName( 'acf-fetching-block' );
+				setIsFetchingBlock( false );
 
 				setBlockFormHtml( response.data.form );
 
@@ -264,6 +375,7 @@ export const BlockEdit = ( props ) => {
 			.fail( function () {
 				setHasFetchedOnce( true );
 				unlockPostSavingByName( 'acf-fetching-block' );
+				setIsFetchingBlock( false );
 			} );
 		setAjaxRequest( request );
 	}
@@ -299,25 +411,52 @@ export const BlockEdit = ( props ) => {
 			return false;
 		}
 
-		const preloadedBlocks = acf.get( 'preloadedBlocks' );
-		if ( ! preloadedBlocks || ! preloadedBlocks[ hash ] ) {
+		const data = getPreloadedBlockData(
+			hash,
+			clientId,
+			acf.get( 'preloadedBlocks' )
+		);
+
+		if ( ! data ) {
 			acf.debug( 'Preload failed: not preloaded.' );
 			return false;
 		}
 
-		const data = preloadedBlocks[ hash ];
+		acf.debug( 'Preload successful', data );
+		return data;
+	}
+
+	/**
+	 * Returns a copy of a preloaded block entry with the placeholder hash
+	 * replaced by the actual client ID.
+	 *
+	 * Works on a deep clone so the shared preloaded entry is never mutated —
+	 * duplicating a block with identical attributes reuses the same hash, and
+	 * an in-place replacement would corrupt the entry for the duplicate.
+	 *
+	 * @param {string} hash            - Attributes hash
+	 * @param {string} blockClientId   - Block client ID
+	 * @param {Object} preloadedBlocks - The preloaded blocks store
+	 * @return {Object|boolean} - Preloaded data or false
+	 */
+	function getPreloadedBlockData( hash, blockClientId, preloadedBlocks ) {
+		if ( ! preloadedBlocks || ! preloadedBlocks[ hash ] ) {
+			return false;
+		}
+
+		const data = JSON.parse( JSON.stringify( preloadedBlocks[ hash ] ) );
 
 		// Replace placeholder client ID with actual client ID
-		data.html = data.html.replaceAll( hash, clientId );
+		data.html = data.html.replaceAll( hash, blockClientId );
+		data.form = data.form.replaceAll( hash, blockClientId );
 
-		if ( data?.validation && data?.validation.errors ) {
+		if ( data?.validation?.errors ) {
 			data.validation.errors = data.validation.errors.map( ( error ) => {
-				error.input = error.input.replaceAll( hash, clientId );
+				error.input = error.input.replaceAll( hash, blockClientId );
 				return error;
 			} );
 		}
 
-		acf.debug( 'Preload successful', data );
 		return data;
 	}
 
@@ -347,8 +486,10 @@ export const BlockEdit = ( props ) => {
 	 */
 	function handlePreloadedData( data ) {
 		if ( data.form ) {
-			setBlockFormHtml( data.html );
-		} else if ( data.html ) {
+			setBlockFormHtml( data.form );
+		}
+
+		if ( data.html ) {
 			setBlockPreviewHtml(
 				acf.applyFilters( 'blocks/preview/render', data.html, true )
 			);
@@ -391,13 +532,6 @@ export const BlockEdit = ( props ) => {
 			window.removeEventListener( 'keydown', trackUserInteraction );
 		}
 
-		fetchBlockData( {
-			theAttributes: attributes,
-			theClientId: clientId,
-			theContext: context,
-			isSelected: isSelected,
-		} );
-
 		window.addEventListener( 'click', trackUserInteraction );
 		window.addEventListener( 'keydown', trackUserInteraction );
 
@@ -406,6 +540,16 @@ export const BlockEdit = ( props ) => {
 			window.removeEventListener( 'keydown', trackUserInteraction );
 		};
 	}, [] );
+
+	useEffect( () => {
+		if ( isSelected ) {
+			return;
+		}
+
+		setCurrentInlineEditingElementUid( null );
+		setCurrentInlineEditingElement( null );
+		setCurrentContentEditableElement( null );
+	}, [ isSelected ] );
 
 	// Update hasAcfError attribute based on validation errors
 	useEffect( () => {
@@ -447,6 +591,7 @@ export const BlockEdit = ( props ) => {
 	useEffect( () => {
 		clearTimeout( debounceRef.current );
 		lockPostSavingByName( 'acf-fetching-block' );
+		setIsFetchingBlock( true );
 
 		debounceRef.current = setTimeout( () => {
 			const parsedData = JSON.parse( theSerializedAcfData );
@@ -484,6 +629,7 @@ export const BlockEdit = ( props ) => {
 		return () => {
 			clearTimeout( debounceRef.current );
 			unlockPostSavingByName( 'acf-fetching-block' );
+			setIsFetchingBlock( false );
 		};
 	}, [ theSerializedAcfData, attributesWithoutError ] );
 
@@ -509,6 +655,31 @@ export const BlockEdit = ( props ) => {
 			}
 		}
 	}, [ blockPreviewHtml ] );
+
+	useEffect( () => {
+		if (
+			( currentContentEditableElement &&
+				! inlineEditingToolbarHasFocus ) ||
+			! currentInlineEditingElement
+		) {
+			return;
+		}
+
+		const toolbar = document.querySelector( '.acf-inline-editing-toolbar' );
+
+		if ( toolbar?.style?.cssText ) {
+			setFreezeInlineToolbarDuringReRender(
+				toolbar.style.cssText.replaceAll( ';', '!important;' )
+			);
+		}
+
+		setTimeout( () => {
+			setCurrentInlineEditingElement( currentInlineEditingElement );
+			setTimeout( () => {
+				setFreezeInlineToolbarDuringReRender( null );
+			}, 0 );
+		}, 0 );
+	}, [ currentInlineEditingElement ] );
 
 	return (
 		<BlockEditInner
@@ -547,6 +718,11 @@ export const BlockEdit = ( props ) => {
 			}
 			acfDynamicStylesElement={ acfDynamicStylesElement }
 			setAcfDynamicStylesElement={ setAcfDynamicStylesElement }
+			blockEditorInspectorSidebarOpen={ blockEditorInspectorSidebarOpen }
+			freezeInlineToolbarDuringReRender={
+				freezeInlineToolbarDuringReRender
+			}
+			isFetchingBlock={ isFetchingBlock }
 		/>
 	);
 };
@@ -590,14 +766,35 @@ function BlockEditInner( props ) {
 		setContentEditableChangeInProgress,
 		acfDynamicStylesElement,
 		setAcfDynamicStylesElement,
+		blockEditorInspectorSidebarOpen,
+		freezeInlineToolbarDuringReRender,
+		isFetchingBlock,
 	} = props;
 
 	const { clientId } = useBlockEditContext();
 	const inspectorControlsRef = useRef();
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ blockFormModalOpen, setBlockFormModalOpen ] = useState( false );
 	const modalFormContainerRef = useRef();
 	const [ currentFormContainer, setCurrentFormContainer ] = useState();
+	const [ canRenderForm, setCanRenderForm ] = useState( false );
+	const [ shouldShowModalDoneFallback, setShouldShowModalDoneFallback ] =
+		useState( false );
+	const [ invisibleBlockFormContainer, setInvisibleBlockFormContainer ] =
+		useState();
+	const closeBlockFormModal = useCallback( () => {
+		setCurrentFormContainer( null );
+		setBlockFormModalOpen( false );
+	}, [] );
+	const setModalFormContainer = useCallback(
+		( container ) => {
+			modalFormContainerRef.current = container;
+
+			if ( container && blockFormModalOpen ) {
+				setCurrentFormContainer( container );
+			}
+		},
+		[ blockFormModalOpen ]
+	);
 
 	// Render counter for debugging
 	const renderCount = useRef( 0 );
@@ -629,24 +826,105 @@ function BlockEditInner( props ) {
 		setAcfDynamicStylesElement( styleElement );
 	}, [ gutenbergIframeOrDocument ] );
 
-	// Set current form container when modal opens
 	useEffect( () => {
-		if ( isModalOpen && modalFormContainerRef?.current ) {
-			setCurrentFormContainer( modalFormContainerRef.current );
-		}
-	}, [ isModalOpen, modalFormContainerRef ] );
+		let invisibleContainer = document.getElementById(
+			'invisible-acf-form-element'
+		);
 
-	// Update form container when inspector panel is available
+		if ( ! invisibleContainer ) {
+			invisibleContainer = document.createElement( 'div' );
+			invisibleContainer.id = 'invisible-acf-form-element';
+			invisibleContainer.style.display = 'none';
+			document.body.appendChild( invisibleContainer );
+		}
+
+		setInvisibleBlockFormContainer( invisibleContainer );
+	}, [ blockEditorInspectorSidebarOpen ] );
+
+	useEffect( () => {
+		if ( blockFormModalOpen ) {
+			return;
+		}
+
+		setCurrentFormContainer(
+			blockEditorInspectorSidebarOpen
+				? inspectorControlsRef.current
+				: invisibleBlockFormContainer
+		);
+	}, [
+		blockEditorInspectorSidebarOpen,
+		invisibleBlockFormContainer,
+		blockFormModalOpen,
+	] );
+
+	useEffect( () => {
+		if ( ! blockFormModalOpen ) {
+			return;
+		}
+
+		const setModalContainer = () => {
+			if ( modalFormContainerRef?.current ) {
+				setCurrentFormContainer( modalFormContainerRef.current );
+			}
+		};
+
+		setModalContainer();
+		const timeout = setTimeout( setModalContainer, 0 );
+
+		return () => {
+			clearTimeout( timeout );
+		};
+	}, [ blockFormModalOpen ] );
+
+	useEffect( () => {
+		if ( ! blockFormModalOpen ) {
+			setShouldShowModalDoneFallback( false );
+			return;
+		}
+
+		const updateFallbackVisibility = () => {
+			const modal = modalFormContainerRef?.current?.closest(
+				'.acf-block-form-modal'
+			);
+			const hasHeaderActions = modal?.querySelector(
+				'.components-modal__header .components-button'
+			);
+
+			setShouldShowModalDoneFallback( ! hasHeaderActions );
+		};
+
+		updateFallbackVisibility();
+		const timeout = setTimeout( updateFallbackVisibility, 0 );
+
+		return () => {
+			clearTimeout( timeout );
+		};
+	}, [ blockFormModalOpen ] );
+
+	useEffect( () => {
+		if ( blockFormModalOpen ) {
+			return;
+		}
+
+		if ( blockEditorInspectorSidebarOpen ) {
+			setCurrentFormContainer( inspectorControlsRef.current );
+			return;
+		}
+
+		setCurrentFormContainer( invisibleBlockFormContainer );
+	}, [
+		blockEditorInspectorSidebarOpen,
+		invisibleBlockFormContainer,
+		blockFormModalOpen,
+	] );
+
 	useEffect( () => {
 		if ( isSelected && inspectorControlsRef?.current ) {
-			setCurrentFormContainer( inspectorControlsRef.current );
+			setCanRenderForm( true );
 		} else if ( isSelected && ! inspectorControlsRef?.current ) {
-			// Wait for inspector to be available
 			setTimeout( () => {
-				setCurrentFormContainer( inspectorControlsRef.current );
+				setCanRenderForm( true );
 			}, 1 );
-		} else if ( ! isSelected ) {
-			setCurrentFormContainer( null );
 		}
 	}, [ isSelected, inspectorControlsRef, inspectorControlsRef.current ] );
 
@@ -657,7 +935,7 @@ function BlockEditInner( props ) {
 			showValidationErrors &&
 			blockType?.hide_fields_in_sidebar
 		) {
-			setIsModalOpen( true );
+			setBlockFormModalOpen( true );
 		}
 	}, [ isSelected, showValidationErrors, validationErrors, blockType ] );
 
@@ -704,6 +982,7 @@ function BlockEditInner( props ) {
 			`acf-block_${ clientId }`
 		);
 		if ( serializedData ) {
+			deserializeGoogleMapValues( $form, serializedData, clientId );
 			setTheSerializedAcfData( JSON.stringify( serializedData ) );
 		} else {
 			setUserHasInteractedWithForm( false );
@@ -839,12 +1118,13 @@ function BlockEditInner( props ) {
 		}
 	};
 
-	// Determine portal target
-	let portalTarget = null;
+	let portalTarget =
+		blockEditorInspectorSidebarOpen && inspectorControlsRef?.current
+			? inspectorControlsRef.current
+			: invisibleBlockFormContainer;
+
 	if ( currentFormContainer ) {
 		portalTarget = currentFormContainer;
-	} else if ( inspectorControlsRef?.current ) {
-		portalTarget = inspectorControlsRef.current;
 	}
 
 	// Determine inline editing toolbar anchor (matches 6.7.0.2 logic)
@@ -880,12 +1160,22 @@ function BlockEditInner( props ) {
 				gutenbergIframeOrDocument={ gutenbergIframeOrDocument }
 				setBlockFormModalOpen={ setBlockFormModalOpen }
 				blockFormModalOpen={ blockFormModalOpen }
+				invisibleBlockFormContainer={ invisibleBlockFormContainer }
 				currentInlineEditingElement={ currentInlineEditingElement }
 				setCurrentInlineEditingElement={
 					setCurrentInlineEditingElement
 				}
 				currentInlineEditingElementUid={
 					currentInlineEditingElementUid
+				}
+				hideExpandedEditorBtnInToolbar={
+					blockType?.expanded_editor_buttons === false ||
+					( Array.isArray( blockType?.expanded_editor_buttons ) &&
+						! blockType?.expanded_editor_buttons.includes(
+							'toolbar'
+						) ) ||
+					! blockFieldInfo ||
+					blockFieldInfo?.length === 0
 				}
 				onNewInlineEditingElementSelected={
 					handleNewInlineEditingElementSelected
@@ -894,17 +1184,26 @@ function BlockEditInner( props ) {
 
 			{ /* Inspector panel container */ }
 			<InspectorControls>
-				<div style={ { padding: '16px' } }>
-					<Button
-						className="acf-blocks-open-expanded-editor-btn"
-						variant="secondary"
-						onClick={ () => {
-							setIsModalOpen( true );
-						} }
-						text={ acf.__( 'Open Expanded Editor' ) }
-						icon="edit"
-					/>
-				</div>
+				{ blockFieldInfo?.length > 0 &&
+					( blockType?.expanded_editor_buttons === true ||
+						( Array.isArray( blockType?.expanded_editor_buttons ) &&
+							blockType?.expanded_editor_buttons.includes(
+								'sidebar'
+							) ) ) && (
+						<PanelBody>
+							<Button
+								className="acf-blocks-open-expanded-editor-btn"
+								variant="secondary"
+								onClick={ () => {
+									setBlockFormModalOpen( true );
+								} }
+								icon="edit"
+							>
+								{ blockType?.expanded_editor_button_text ||
+									acf.__( 'Open Expanded Editor' ) }
+							</Button>
+						</PanelBody>
+					) }
 				<InspectorBlockFormContainer
 					inspectorBlockFormRef={ inspectorControlsRef }
 					setCurrentBlockFormContainer={ setCurrentFormContainer }
@@ -913,97 +1212,107 @@ function BlockEditInner( props ) {
 
 			{ /* Render form via portal when container is available */ }
 			{ portalTarget &&
+				canRenderForm &&
 				createPortal(
 					<>
 						<BlockForm
 							$={ $ }
 							clientId={ clientId }
 							blockFormHtml={ blockFormHtml }
-							onMount={ () => {
-								if ( ! hasFetchedOnce ) {
-									blockFetcher( {
-										theAttributes: attributes,
-										theClientId: clientId,
-										theContext: context,
-										isSelected: isSelected,
-									} );
-								}
-							} }
 							onChange={ function ( $form ) {
 								const serializedData = acf.serialize(
 									$form,
 									`acf-block_${ clientId }`
 								);
 								if ( serializedData ) {
-									// Normalize flexible content data for validation
-									const normalizedData =
-										acf.normalizeFlexibleContentData(
-											serializedData
-										);
+									deserializeGoogleMapValues(
+										$form,
+										serializedData,
+										clientId
+									);
 									setTheSerializedAcfData(
-										JSON.stringify( normalizedData )
+										JSON.stringify( serializedData )
 									);
 								}
 							} }
 							validationErrors={ validationErrors }
 							showValidationErrors={ showValidationErrors }
 							acfFormRef={ acfFormRef }
-							theSerializedAcfData={ theSerializedAcfData }
 							userHasInteractedWithForm={
 								userHasInteractedWithForm
 							}
-							setCurrentBlockFormContainer={
-								setCurrentFormContainer
-							}
 							attributes={ attributes }
 							hideFieldsInSidebar={
-								blockType?.hide_fields_in_sidebar &&
-								( ! currentFormContainer ||
-									inspectorControlsRef.current ===
-										currentFormContainer )
+								( blockType?.auto_inline_editing &&
+									blockType?.hide_fields_in_sidebar ===
+										undefined &&
+									currentFormContainer ===
+										inspectorControlsRef.current ) ||
+								( blockType?.hide_fields_in_sidebar &&
+									currentFormContainer ===
+										inspectorControlsRef.current )
 							}
 						/>
+						{ freezeInlineToolbarDuringReRender && (
+							<style>
+								{ `.acf-inline-editing-toolbar{${ freezeInlineToolbarDuringReRender }}` }
+							</style>
+						) }
 					</>,
-					currentFormContainer || inspectorControlsRef.current
+					portalTarget
 				) }
 			<>
 				{ /* Modal for editing block fields */ }
-				{ isModalOpen && (
+				{ blockFormModalOpen && (
 					<Modal
 						className="acf-block-form-modal"
+						overlayClassName={ acf.applyFilters(
+							'blocks/expanded_editor_overlay_class',
+							'acf-expanded-editor-panel-overlay'
+						) }
 						isFullScreen={ true }
 						title={ blockType.title }
 						onRequestClose={ () => {
-							// Check if block is fetching
-							const isFetching =
-								document.body.classList.contains(
-									'acf-fetching-block'
-								);
-							if ( ! isFetching ) {
-								setCurrentFormContainer( null );
-								setIsModalOpen( false );
+							if ( ! isFetchingBlock || validationErrors ) {
+								setBlockFormModalOpen( false );
 							}
 						} }
+						shouldCloseOnEsc={
+							! isFetchingBlock || validationErrors
+						}
 						isDismissible={ false }
 						headerActions={ [
 							<Button
 								key="done"
 								variant="primary"
-								disabled={ document.body.classList.contains(
-									'acf-fetching-block'
-								) }
-								onClick={ () => {
-									setCurrentFormContainer( null );
-									setIsModalOpen( false );
-								} }
+								disabled={
+									isFetchingBlock && ! validationErrors
+								}
+								isBusy={ isFetchingBlock }
+								onClick={ closeBlockFormModal }
 							>
 								{ acf.__( 'Done' ) }
 							</Button>,
 						] }
 					>
+						{ shouldShowModalDoneFallback && (
+							<div className="acf-block-form-modal__actions">
+								<Button
+									className="acf-block-form-modal__done-button"
+									variant="primary"
+									disabled={
+										isFetchingBlock && ! validationErrors
+									}
+									isBusy={ isFetchingBlock }
+									onClick={ closeBlockFormModal }
+								>
+									{ acf.__( 'Done' ) }
+								</Button>
+							</div>
+						) }
 						<div
 							className="acf-modal-block-form-container"
-							ref={ modalFormContainerRef }
+							ref={ setModalFormContainer }
 						/>
 					</Modal>
 				) }
@@ -1039,7 +1348,7 @@ function BlockEditInner( props ) {
 								! document.querySelector(
 									'.acf-inline-fields-popover-inner'
 								) &&
-								! inlineEditingToolbarHasFocus &&
+								! currentContentEditableElement &&
 								( currentInlineEditingElement &&
 									currentInlineEditingElement.focus(),
 								setCurrentInlineEditingElementUid( null ),
@@ -1107,10 +1416,12 @@ function BlockEditInner( props ) {
 				acfDynamicStylesElement &&
 				createPortal(
 					<style>
-						{ `[data-acf-inline-fields-uid="${ currentInlineEditingElementUid }"]{
-							outline: 2px solid var(--wp-admin-theme-color);
-							outline-offset: 2px;
-						}` }
+						{ `
+				[data-acf-inline-fields-uid="${ currentInlineEditingElementUid }"]{
+					outline: 2px solid var( --wp-admin-theme-color );
+					outline-offset: 2px;
+				}
+			` }
 					</style>,
 					acfDynamicStylesElement
 				) }
@@ -1127,33 +1438,14 @@ function BlockEditInner( props ) {
 								blockLabel={
 									blockType?.title || acf.__( 'ACF Block' )
 								}
-								setBlockFormModalOpen={ setIsModalOpen }
+								setBlockFormModalOpen={ setBlockFormModalOpen }
 								error={ error }
 							/>
 						) }
-						onError={ ( error, errorInfo ) => {
-							acf.debug(
-								'Block preview error caught:',
-								error,
-								errorInfo
-							);
-						} }
-						resetKeys={ [ blockPreviewHtml ] }
-						onReset={ ( { reason, next, prev } ) => {
-							acf.debug( 'Error boundary reset:', reason );
-							if ( reason === 'keys' ) {
-								acf.debug(
-									'Preview HTML changed from',
-									prev,
-									'to',
-									next
-								);
-							}
-						} }
 					>
 						{ blockPreviewHtml === 'acf-block-preview-no-html' ? (
 							<BlockPlaceholder
-								setBlockFormModalOpen={ setIsModalOpen }
+								setBlockFormModalOpen={ setBlockFormModalOpen }
 								blockLabel={ blockType.title }
 							/>
 						) : null }
@@ -1169,7 +1461,14 @@ function BlockEditInner( props ) {
 						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
 							blockPreviewHtml !== 'acf-block-preview-no-html' &&
 							blockPreviewHtml &&
-							acf.parseJSX( blockPreviewHtml, $ ) }
+							acf.parseJSX(
+								blockPreviewHtml,
+								handleNewInlineEditingElementSelected,
+								updateFieldValueFromContentEditable,
+								handleNewContentEditableElementSelected,
+								blockFieldInfo,
+								$
+							) }
 					</ErrorBoundary>
 				</BlockPreview>
 			</>

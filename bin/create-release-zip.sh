@@ -49,6 +49,7 @@ REQUIRED_DIRS=(
     "lang"
     "pro"
     "schemas"
+    "src"
 )
 
 for dir in "${REQUIRED_DIRS[@]}"; do
@@ -74,10 +75,20 @@ for item in "${DISALLOWED_ITEMS[@]}"; do
     fi
 done
 
-# Verify no untracked files exist in source directories
-if [[ -n $(git ls-files --others --exclude-standard includes/ pro/ | head -1) ]]; then
-    echo "Error: Untracked files found in includes/ or pro/ directories"
-    echo "Run 'git status' to see untracked files"
+# Verify no untracked files exist in release source directories
+SOURCE_DIRS=(
+    "includes"
+    "pro"
+    "src"
+    "schemas"
+    "assets"
+    "lang"
+)
+
+UNTRACKED_SOURCE_FILES=$(git ls-files --others --exclude-standard "${SOURCE_DIRS[@]}")
+if [[ -n "$UNTRACKED_SOURCE_FILES" ]]; then
+    echo "Error: Untracked files found in release source directories:"
+    printf '%s\n' "$UNTRACKED_SOURCE_FILES"
     exit 1
 fi
 
@@ -105,6 +116,9 @@ for dir in "${REQUIRED_DIRS[@]}"; do
     cp -r "$dir" "$PLUGIN_DIR/"
 done
 
+# Remove uncompiled sources (JS partials and Sass); only assets/build is used at runtime
+rm -rf "$PLUGIN_DIR/assets/src"
+
 # Install production dependencies
 echo "Installing production dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
@@ -116,6 +130,10 @@ cp -r vendor "$PLUGIN_DIR/"
 if [[ -d "$PLUGIN_DIR/vendor/bin" && -z "$(ls -A "$PLUGIN_DIR/vendor/bin")" ]]; then
     rm -rf "$PLUGIN_DIR/vendor/bin"
 fi
+
+# Remove macOS Finder metadata anywhere in the tree; gitignored, so the
+# untracked-files check above doesn't catch it, but cp -r copies it along
+find "$PLUGIN_DIR" -name '.DS_Store' -type f -delete
 
 # Create the zip file
 cd "$TEMP_DIR"

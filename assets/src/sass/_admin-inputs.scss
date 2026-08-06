@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 .acf-admin-page {
 
 	/*---------------------------------------------------------------------------------------------
@@ -31,7 +35,7 @@
 
 		&:disabled {
 			background-color: $gray-50;
-			color: lighten($gray-500, 10%);
+			color: color.adjust($gray-500, $lightness: 10%);
 		}
 
 		&::placeholder {
@@ -439,13 +443,13 @@
 		color: $blue-500;
 
 		&:hover {
-			background-color: lighten($blue-50, 2%);
+			background-color: color.adjust($blue-50, $lightness: 2%);
 			border-color: $color-primary;
 			color: $color-primary;
 		}
 
 		&:focus {
-			background-color: lighten($blue-50, 2%);
+			background-color: color.adjust($blue-50, $lightness: 2%);
 			outline: $outline;
 			color: $color-primary;
 		}
@@ -991,7 +995,21 @@
 			font-weight: normal;
 		}
 	}
-	
+
+	.schema-property-select-results,
+	.schema-type-select-results,
+	.schema-output-format-select-results {
+		@extend .field-type-select-results;
+
+		.select2-results__option .select2-results__option {
+			display: flex;
+		}
+
+		.select2-results__option .select2-results__options {
+			max-height: none;
+		}
+	}
+
 	/*---------------------------------------------------------------------------------------------
 	*
 	*  RTL arrow position

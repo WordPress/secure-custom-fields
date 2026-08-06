@@ -7,12 +7,13 @@
 		"prepare": "husky",
 		"sort-package-json": "sort-package-json",
 		"test:e2e": "wp-scripts test-playwright",
+		"test:e2e:all-coverage": "rm -rf .nyc_output .php-coverage && COVERAGE_ENABLED=true PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:coverage": "rm -rf .nyc_output && COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:coverage:report": "nyc report --reporter=html --reporter=lcov",
 		"test:e2e:debug": "wp-scripts test-playwright --debug --ui",
 		"test:e2e:php-coverage": "rm -rf .php-coverage && PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
 		"test:e2e:php-coverage:report": "node scripts/merge-php-coverage.js",
-		"test:e2e:all-coverage": "rm -rf .nyc_output .php-coverage && COVERAGE_ENABLED=true PHP_COVERAGE_ENABLED=true wp-scripts test-playwright",
+		"test:integration:local-json-multisite": "bash tests/integration/local-json-multisite.sh",
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"watch": "webpack --watch",
@@ -20,7 +21,7 @@
 	},
 	"dependencies": {
 		"@wordpress/icons": "^10.26.0",
-		"dompurify": "3.3.0",
+		"dompurify": "3.4.11",
 		"md5": "^2.3.0"
 	},
 	"devDependencies": {

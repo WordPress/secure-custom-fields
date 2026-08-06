@@ -26,6 +26,6 @@ The [Code Reference](../code-reference/) provides detailed technical documentati
 
 ## Prerequisites
 
-- WordPress 6.0 or later
+- WordPress 6.2 or later
 - PHP 7.4 or later
 - Basic understanding of WordPress development

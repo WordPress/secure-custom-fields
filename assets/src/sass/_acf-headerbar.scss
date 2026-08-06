@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  Hide WP default controls
@@ -75,9 +77,7 @@
 			color: $gray-400;
 		}
 
-		.acf-pro-label {
-			box-shadow: none;
-		}
+		// SCF: removed ACF's .acf-pro-label rule — SCF has no PRO tier.
 	}
 
 	@media screen and (max-width: $md) {

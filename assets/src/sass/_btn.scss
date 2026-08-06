@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'typography' as *;
+
 /*---------------------------------------------------------------------------------------------
 *
 *  ACF Buttons
@@ -57,7 +61,7 @@
 		border-color: $color-primary;
 
 		&:hover {
-			background-color: lighten($blue-50, 2%);
+			background-color: color.adjust($blue-50, $lightness: 2%);
 		}
 	}
 
@@ -96,10 +100,7 @@
 		}
 	}
 
-	&.acf-btn-pro {
-		background: $gradient-pro;
-		border: none;
-	}
+	// SCF: removed ACF's .acf-btn-pro upgrade-button variant.
 }
 
 /*---------------------------------------------------------------------------------------------
@@ -160,7 +161,7 @@
 *---------------------------------------------------------------------------------------------*/
 .acf-btn.acf-delete-field-group {
 	&:hover {
-		background-color: lighten($color-danger, 44%);
+		background-color: color.adjust($color-danger, $lightness: 44%);
 		border-color: $color-danger !important;
 		color: $color-danger !important;
 	}
