@@ -160,6 +160,39 @@ class Test_ACF_Field_Clone extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test seamless clones expose bidirectional fields at the parent level.
+	 */
+	public function test_acf_get_fields_exposes_bidirectional_field_from_seamless_clone() {
+		$fields = array(
+			array(
+				'key'        => 'field_clone_bidirectional',
+				'name'       => 'bidirectional_clone',
+				'type'       => 'clone',
+				'label'      => 'Bidirectional Clone',
+				'display'    => 'seamless',
+				'sub_fields' => array(
+					array(
+						'key'                  => 'field_cloned_relationship',
+						'name'                 => 'cloned_relationship',
+						'type'                 => 'relationship',
+						'label'                => 'Cloned Relationship',
+						'bidirectional'        => true,
+						'bidirectional_target' => array( 'field_relationship_target' ),
+					),
+				),
+			),
+		);
+
+		$result = $this->clone_field->acf_get_fields( $fields, array() );
+
+		$this->assertCount( 1, $result );
+		$this->assertSame( 'field_cloned_relationship', $result[0]['key'] );
+		$this->assertSame( 'relationship', $result[0]['type'] );
+		$this->assertTrue( $result[0]['bidirectional'] );
+		$this->assertSame( array( 'field_relationship_target' ), $result[0]['bidirectional_target'] );
+	}
+
+	/**
 	 * Test acf_get_fields filter does not expand group display clone fields.
 	 */
 	public function test_acf_get_fields_preserves_group_display_clone_fields() {

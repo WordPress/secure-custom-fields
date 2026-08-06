@@ -19,12 +19,22 @@ class ACF_Rest_Api {
 	/** @var ACF_Rest_Embed_Links */
 	private $embed_links;
 
+	/**
+	 * Fields and updates resolved during the current REST request.
+	 *
+	 * @since SCF 6.9.5
+	 * @var array|null
+	 */
+	private $rest_update_plan;
+
 	public function __construct() {
 		add_filter( 'rest_pre_dispatch', array( $this, 'initialize' ), 10, 3 );
+		add_filter( 'rest_dispatch_request', \Closure::fromCallable( array( $this, 'check_bidirectional_target_permissions' ) ), 10, 2 );
 		add_action( 'rest_api_init', array( $this, 'register_field' ) );
 	}
 
 	public function initialize( $response, $handler, $request ) {
+		$this->rest_update_plan = null;
 		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
 			return;
 		}
@@ -258,6 +268,72 @@ class ACF_Rest_Api {
 	}
 
 	/**
+	 * Check bidirectional target permissions before the REST callback runs.
+	 *
+	 * @since SCF 6.9.5
+	 *
+	 * @param mixed           $dispatch_result Result from an earlier dispatch filter.
+	 * @param WP_REST_Request $request         Current REST request.
+	 * @return mixed|WP_Error
+	 */
+	private function check_bidirectional_target_permissions( $dispatch_result, $request ) {
+		$data      = $request->get_param( 'acf' );
+		$route_id  = $this->request instanceof ACF_Rest_Request ? ( $this->request->get_url_param( 'child_id' ) ?? $this->request->get_url_param( 'id' ) ) : 0;
+		$object_id = $route_id ? ( $this->request->get_url_param( 'child_id' ) ? $request->get_param( 'child_id' ) : $request->get_param( 'id' ) ) : ( $this->request instanceof ACF_Rest_Request && 'user' === $this->request->object_type && 'me' === basename( $request->get_route() ) ? get_current_user_id() : 0 );
+		if ( null !== $dispatch_result || ! is_array( $data ) || ! ( $this->request instanceof ACF_Rest_Request ) || ! $this->request->object_type || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) ) {
+			return $dispatch_result;
+		}
+
+		if ( ! acf_get_setting( 'enable_bidirection' ) ) {
+			return $dispatch_result;
+		}
+
+		$this->rest_update_plan = array(
+			'request'         => $request,
+			'field_cache'     => array(),
+			'allowed_updates' => array(),
+		);
+
+		$updates = $this->prepare_field_updates( $data, $object_id, $this->request->object_type, $this->request->object_sub_type );
+		foreach ( $updates as list( $field, $value ) ) {
+			foreach ( _scf_collect_bidirectional_destinations( $field, $value, $this->make_identifier( $object_id, $this->request->object_type ), $object_id ? null : array() ) as $destination ) {
+				if ( ! acf_current_user_can_edit_in_context( acf_decode_post_id( $destination ) ) ) {
+					return new WP_Error( 'acf_rest_cannot_update_bidirectional_target', __( 'Sorry, you are not allowed to update one or more bidirectional targets.', 'secure-custom-fields' ), array( 'status' => 403 ) );
+				}
+			}
+		}
+		$this->rest_update_plan['allowed_updates'] = array_map(
+			fn( $update ) => array( $update[0]['key'], $update[1], $update[2] ),
+			$updates
+		);
+		return $dispatch_result;
+	}
+
+	/**
+	 * Resolve incoming values against fields active for the REST object.
+	 *
+	 * @since SCF 6.9.5
+	 *
+	 * @param array   $data            Incoming ACF field values.
+	 * @param integer $object_id       Object ID, or zero for a create request.
+	 * @param string  $object_type     ACF object type.
+	 * @param string  $object_sub_type Post type, taxonomy, or user.
+	 * @return array Field, value, and submitted field name tuples.
+	 */
+	private function prepare_field_updates( $data, $object_id, $object_type, $object_sub_type ) {
+		$scope        = acf_extract_var( $data, '_acf_field_group_scope', array() );
+		$field_groups = $object_id ? $this->get_field_groups_by_id( $object_id, $object_type, $object_sub_type, $scope ) : array_filter( $this->get_field_groups_by_object_type( $object_type ), fn( $group ) => ! $scope || in_array( $group['key'], $scope, true ) );
+		$fields       = array();
+		foreach ( $field_groups as $field_group ) {
+			$fields = array_merge( $this->get_fields( $field_group, $object_id ), $fields );
+		}
+		$field_key_map = acf_extract_var( $data, '_acf_field_key_map', array() );
+		$data          = acf_allow_unfiltered_html() ? $data : wp_kses_post_deep( $data );
+		$updates       = array_map( fn( $field_name, $value ) => array( acf_search_fields( $field_key_map[ $field_name ] ?? $field_name, $fields ), $value, $field_name ), array_keys( $data ), $data );
+		return array_filter( $updates, fn( $update ) => $update[0] );
+	}
+
+	/**
 	 * Update any incoming field values for the given object. This method is not a part of any public API and is only
 	 * public as it is required by WordPress.
 	 *
@@ -304,48 +380,17 @@ class ACF_Rest_Api {
 		//
 		// return true;
 		// }
-		// todo - consider/discuss handling this in the request object instead
-		// If the incoming data defines field group keys, extract it from the data. This is used to scope the
-		// field lookup in \ACF_Rest_Api::get_field_groups_by_id();
-		$field_group_scope = acf_extract_var( $data, '_acf_field_group_scope', array() );
-
-		// Get all field groups for the current object.
-		$field_groups = $this->get_field_groups_by_id( $object_id, $object_type, $object_sub_type, $field_group_scope );
-		if ( empty( $field_groups ) ) {
-			return true;
+		$plan    = $this->rest_update_plan;
+		$updates = $this->prepare_field_updates( $data, $object_id, $object_type, $object_sub_type );
+		if ( is_array( $plan ) && $plan['request'] === $request && is_array( $plan['allowed_updates'] ) ) {
+			$updates = array_filter(
+				$updates,
+				fn( $update ) => in_array( array( $update[0]['key'], $update[1], $update[2] ), $plan['allowed_updates'], true )
+			);
 		}
-
-		// Collect all fields from matching field groups.
-		$all_fields = array();
-		foreach ( $field_groups as $field_group ) {
-			if ( $fields = $this->get_fields( $field_group, $object_id ) ) {
-				$all_fields = array_merge( $fields, $all_fields );
-			}
-		}
-
-		if ( $all_fields ) {
-			// todo - consider/discuss handling this in the request object instead.
-			// If the incoming request has a map of field names to keys, extract it for use in the subsequent
-			// field search.
-			$field_key_map = acf_extract_var( $data, '_acf_field_key_map', array() );
-
-			if ( ! acf_allow_unfiltered_html() ) {
-				$data = wp_kses_post_deep( $data );
-			}
-
-			// Loop through the inbound data payload, find the field matching the incoming field name, and
-			// update the field.
-			foreach ( $data as $field_name => $value ) {
-
-				// If the field name has a key explicitly mapped to it, use the field key to find the field.
-				if ( isset( $field_key_map[ $field_name ] ) ) {
-					$field_name = $field_key_map[ $field_name ];
-				}
-
-				if ( $field = acf_search_fields( $field_name, $all_fields ) ) {
-					acf_update_value( $value, $post_id, $field );
-				}
-			}
+		$this->rest_update_plan = null;
+		foreach ( $updates as $update ) {
+			acf_update_value( $update[1], $post_id, $update[0] );
 		}
 
 		return true;
@@ -539,6 +584,21 @@ class ACF_Rest_Api {
 	 * @return array
 	 */
 	private function get_fields( $field_group, $object_id = null ) {
+		$cache_context = array(
+			$field_group['key'] ?? $field_group['ID'] ?? null,
+			is_numeric( $object_id ) ? (string) $object_id : $object_id,
+			$this->request->object_type,
+			$this->request->object_sub_type,
+			$this->request->http_method,
+		);
+		if ( is_array( $this->rest_update_plan ) ) {
+			foreach ( $this->rest_update_plan['field_cache'] as $cached ) {
+				if ( $cached['context'] === $cache_context ) {
+					return $cached['fields'];
+				}
+			}
+		}
+
 		// Get all fields for this field group that are rest enabled.
 		$fields = array_filter(
 			acf_get_fields( $field_group ),
@@ -564,6 +624,13 @@ class ACF_Rest_Api {
 		 * @param array  $resource Contextual information about the current resource request.
 		 * @param string $http_method The HTTP method of the current request (GET, POST, PUT, PATCH, DELETE, OPTION, HEAD).
 		 */
-		return (array) apply_filters( 'acf/rest/get_fields', $fields, $resource, $http_method );
+		$fields = (array) apply_filters( 'acf/rest/get_fields', $fields, $resource, $http_method );
+		if ( is_array( $this->rest_update_plan ) ) {
+			$this->rest_update_plan['field_cache'][] = array(
+				'context' => $cache_context,
+				'fields'  => $fields,
+			);
+		}
+		return $fields;
 	}
 }

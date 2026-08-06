@@ -34,39 +34,13 @@ function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $t
 		return;
 	}
 
-	$decoded            = acf_decode_post_id( $post_id );
-	$item_id            = $decoded['id'];
-	$valid_target_types = acf_get_valid_bidirectional_target_types( $decoded['type'] );
-	$valid_targets      = array();
-
-	foreach ( $field['bidirectional_target'] as $target_field ) {
-		$target_field_object = get_field_object( $target_field );
-		if ( empty( $target_field_object ) || ! is_array( $target_field_object ) ) {
-			continue;
-		}
-		if ( in_array( $target_field_object['type'], $valid_target_types, true ) ) {
-			$valid_targets[] = $target_field;
-		}
-	}
+	$update_plan   = _scf_prepare_bidirectional_update( $target_item_ids, $post_id, $field, $target_prefix );
+	$valid_targets = $update_plan['target_fields'];
+	$item_id       = $update_plan['item_id'];
+	$additions     = $update_plan['additions'];
+	$subtractions  = $update_plan['subtractions'];
 
 	if ( ! empty( $valid_targets ) ) {
-
-		// Get current values for this field.
-		$current_values = array_filter( acf_get_array( get_field( $field['key'], $post_id, false ) ) );
-		$new_values     = array_filter( acf_get_array( $target_item_ids ) );
-
-		$additions    = array_diff( $new_values, $current_values );
-		$subtractions = array_diff( $current_values, $new_values );
-
-		// Prefix additions and subtractions for destinations which aren't posts.
-		if ( ! empty( $target_prefix ) ) {
-			$mapper       = function ( $v ) use ( $target_prefix ) {
-				return $target_prefix . '_' . $v;
-			};
-			$additions    = array_map( $mapper, $additions );
-			$subtractions = array_map( $mapper, $subtractions );
-		}
-
 		acf_set_data( 'acf_doing_bidirectional_update', true );
 
 		// Loop over each target, processing additions and removals.
@@ -84,6 +58,187 @@ function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $t
 
 		acf_set_data( 'acf_doing_bidirectional_update', false );
 	}
+}
+
+/**
+ * Prepare a side-effect-free bidirectional update plan.
+ *
+ * @since SCF 6.9.5
+ * @internal
+ *
+ * @param array          $target_item_ids Target post, user, or term IDs.
+ * @param integer|string $post_id         Encoded origin object ID.
+ * @param array          $field           Field being updated on the origin object.
+ * @param string|false   $target_prefix   Target object prefix, or false for posts.
+ * @param array|null     $current_values  Optional current raw field values.
+ * @return array
+ */
+function _scf_prepare_bidirectional_update( $target_item_ids, $post_id, $field, $target_prefix = false, $current_values = null ) {
+	$decoded       = acf_decode_post_id( $post_id );
+	$valid_types   = acf_get_valid_bidirectional_target_types( $decoded['type'] );
+	$target_fields = array();
+	foreach ( $field['bidirectional_target'] as $target_field ) {
+		$target_field_object = get_field_object( $target_field );
+		if ( is_array( $target_field_object ) && in_array( $target_field_object['type'], $valid_types, true ) ) {
+			$target_fields[] = $target_field;
+		}
+	}
+	if ( empty( $target_fields ) ) {
+		$current_values = array();
+	} elseif ( null === $target_prefix && empty( $decoded['id'] ) ) {
+		// Creating the origin object: the saver applies the field default as the current
+		// value once the object exists, so mirror that instead of treating current as empty.
+		$current_values = acf_get_array( $field['default_value'] ?? array() );
+	} elseif ( null === $current_values ) {
+		$current_values = get_field( $field['key'], $post_id, false );
+	}
+	$target_item_ids = empty( $target_fields ) ? array() : $target_item_ids;
+	$additions       = array_diff( array_filter( acf_get_array( $target_item_ids ) ), array_filter( acf_get_array( $current_values ) ) );
+	$subtractions    = array_diff( array_filter( acf_get_array( $current_values ) ), array_filter( acf_get_array( $target_item_ids ) ) );
+	// A null prefix means the REST preflight is inferring the destination context, which is
+	// only reliable for core types. A third-party field type owns its own target context;
+	// guessing it (e.g. checking the ID as post/user/term) would raise false 403s on ID
+	// collisions and still miss custom contexts, so such fields are deliberately left out of
+	// the preflight. They keep working via their explicit prefix on the actual write path.
+	$infer         = null === $target_prefix;
+	$known_type    = in_array( $field['type'], array( 'relationship', 'post_object', 'user', 'taxonomy' ), true );
+	$target_prefix = $infer ? ( 'user' === $field['type'] ? 'user' : ( 'taxonomy' === $field['type'] ? 'term' : false ) ) : $target_prefix;
+	if ( $target_prefix ) {
+		$prefix       = fn( $value ) => $target_prefix . '_' . $value;
+		$additions    = array_map( $prefix, $additions );
+		$subtractions = array_map( $prefix, $subtractions );
+	}
+	if ( $infer && ! $known_type ) {
+		$destinations = array();
+	} else {
+		$destination_exists      = static function ( $destination ) {
+			$destination = acf_decode_post_id( $destination );
+			return ! in_array( $destination['type'], array( 'post', 'user', 'term', 'comment' ), true ) || '' !== get_object_subtype( $destination['type'], $destination['id'] );
+		};
+		$permission_subtractions = array_filter( $subtractions, $destination_exists );
+		$destinations            = array_values( array_unique( array_merge( $additions, $permission_subtractions ) ) );
+	}
+	$item_id = $decoded['id'];
+	return compact( 'target_fields', 'item_id', 'additions', 'subtractions', 'destinations' );
+}
+
+/**
+ * Collect the bidirectional destinations that a field update will write.
+ *
+ * @since SCF 6.9.5
+ * @internal
+ *
+ * @param array          $field   Resolved root or nested field.
+ * @param mixed          $value   Incoming value for the field.
+ * @param integer|string $post_id Encoded origin object ID.
+ * @param array|null     $current Optional current values, or null to load them.
+ * @param boolean        $resave_paginated Whether paginated repeater rows will be re-saved.
+ * @return array
+ */
+function _scf_collect_bidirectional_destinations( $field, $value, $post_id, $current = null, $resave_paginated = false ) {
+	if ( ! empty( $field['bidirectional'] ) && ! empty( $field['bidirectional_target'] ) ) {
+		return _scf_prepare_bidirectional_update( $value, $post_id, $field, null, $current )['destinations'];
+	}
+	if ( ! is_array( $value ) ) {
+		return array();
+	}
+	if ( $resave_paginated && 'repeater' === $field['type'] && ! empty( $field['pagination'] ) ) {
+		// A paginated save re-saves every surviving stored row plus submitted changes.
+		// Client-controlled aliases can collapse onto the same row index and resurrect a
+		// deleted-then-edited row, so collect the conservative union of everything it may write.
+		$rows = null === $current ? acf_get_value( $post_id, $field ) : $current;
+		$rows = is_array( $rows ) ? $rows : array();
+		unset( $value['acfcloneindex'] );
+		$submitted      = array();
+		$reordered_rows = array();
+		foreach ( $value as $key => $row ) {
+			if ( is_array( $row ) && false !== strpos( (string) $key, 'row' ) && ! isset( $row['acf_deleted'] ) && isset( $row['acf_reordered'] ) ) {
+				$reordered_rows[ (int) str_replace( 'row-', '', (string) $key ) ] = true;
+			}
+		}
+		foreach ( $value as $key => $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+			if ( false !== strpos( (string) $key, 'row' ) && isset( $row['acf_deleted'] ) ) {
+				// The saver drops the stored row this deletion targets and does not re-fire it.
+				$row_number = (int) str_replace( 'row-', '', (string) $key );
+				unset( $rows[ $row_number ] );
+				if ( 'row-' . $row_number === (string) $key && isset( $reordered_rows[ $row_number ] ) ) {
+					$submitted[] = $row;
+				}
+				continue;
+			}
+			$submitted[] = $row;
+		}
+		$value = array_merge( array_values( $rows ), $submitted );
+	}
+	$extract_sub_value = static function ( $row, $sub_field, $container_type ) {
+		// Group and Clone use key/_name with isset(); Repeater and Flexible Content use key/name and preserve explicit nulls.
+		$uses_isset = in_array( $container_type, array( 'group', 'clone' ), true );
+		$selectors  = $uses_isset
+			? array( $sub_field['key'] ?? null, $sub_field['_name'] ?? null )
+			: array( $sub_field['key'] ?? null, $sub_field['name'] ?? null );
+		foreach ( $selectors as $selector ) {
+			if ( null !== $selector && ( $uses_isset ? isset( $row[ $selector ] ) : array_key_exists( $selector, $row ) ) ) {
+				return array( true, $row[ $selector ] );
+			}
+		}
+		return array( false, null );
+	};
+	$destinations      = array();
+	if ( 'flexible_content' === $field['type'] && ! empty( $field['layouts'] ) ) {
+		foreach ( $value as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row['acf_fc_layout'] ) ) {
+				continue;
+			}
+			foreach ( $field['layouts'] as $layout ) {
+				if ( empty( $layout['sub_fields'] ) || $layout['name'] !== $row['acf_fc_layout'] ) {
+					continue;
+				}
+				foreach ( $layout['sub_fields'] as $sub_field ) {
+					list( $exists, $sub_value ) = $extract_sub_value( $row, $sub_field, $field['type'] );
+					if ( $exists ) {
+						$destinations = array_merge( $destinations, _scf_collect_bidirectional_destinations( $sub_field, $sub_value, $post_id, $current, $resave_paginated ) );
+					}
+				}
+				break;
+			}
+		}
+		return $destinations;
+	}
+	// Only traverse the core container shapes mirrored here; third-party containers may save different value structures.
+	if ( ! in_array( $field['type'], array( 'group', 'clone', 'repeater' ), true ) || empty( $field['sub_fields'] ) ) {
+		return $destinations;
+	}
+	$rows = ( 'repeater' === $field['type'] ) ? $value : array( $value );
+	foreach ( $rows as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+		foreach ( $field['sub_fields'] as $sub_field ) {
+			list( $exists, $sub_value ) = $extract_sub_value( $row, $sub_field, $field['type'] );
+			if ( $exists ) {
+				if ( 'clone' === $field['type'] && ! empty( $sub_field['_clone'] ) && isset( $sub_field['__key'] ) ) {
+					$sub_field['key'] = $sub_field['__key'];
+				}
+				if ( 'clone' === $field['type'] && isset( $field['_name'] ) && $field['name'] !== $field['_name'] ) {
+					$name_length = strlen( $field['_name'] );
+					$name_prefix = substr( $field['name'], 0, -$name_length );
+					if ( $name_prefix . $field['_name'] === $field['name'] ) {
+						$sub_field['name'] = $name_prefix . $sub_field['name'];
+					}
+				}
+				// A Group stores its children under a prefixed meta name; mirror that so a
+				// nested paginated repeater reads its existing rows from the right key.
+				if ( 'group' === $field['type'] ) {
+					$sub_field['name'] = $field['name'] . '_' . ( $sub_field['_name'] ?? $sub_field['name'] );
+				}
+				$destinations = array_merge( $destinations, _scf_collect_bidirectional_destinations( $sub_field, $sub_value, $post_id, $current, $resave_paginated ) );
+			}
+		}
+	}
+	return $destinations;
 }
 
 /**
