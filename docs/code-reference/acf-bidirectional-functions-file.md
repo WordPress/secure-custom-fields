@@ -11,6 +11,32 @@ Process updating bidirectional fields.
 * @param string|false   $target_prefix   The ACF prefix for a post, user or term ID required for the update_field call for this field type.
 * @return void
 
+## `_scf_prepare_bidirectional_update()`
+
+Prepare a side-effect-free bidirectional update plan.
+
+* @since SCF 6.9.5
+@internal
+* @param array          $target_item_ids Target post, user, or term IDs.
+* @param integer|string $post_id         Encoded origin object ID.
+* @param array          $field           Field being updated on the origin object.
+* @param string|false   $target_prefix   Target object prefix, or false for posts.
+* @param array|null     $current_values  Optional current raw field values.
+* @return array
+
+## `_scf_collect_bidirectional_destinations()`
+
+Collect the bidirectional destinations that a field update will write.
+
+* @since SCF 6.9.5
+@internal
+* @param array          $field   Resolved root or nested field.
+* @param mixed          $value   Incoming value for the field.
+* @param integer|string $post_id Encoded origin object ID.
+* @param array|null     $current Optional current values, or null to load them.
+* @param boolean        $resave_paginated Whether paginated repeater rows will be re-saved.
+* @return array
+
 ## `acf_get_valid_bidirectional_target_types()`
 
 Allows third party fields to enable support as a target field type for a particular object type
