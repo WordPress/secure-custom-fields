@@ -231,7 +231,12 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 	}
 
 	/**
-	 * A CBC-retargeted form is rejected while keeping its original authorization.
+	 * A CBC-retargeted form no longer decrypts and is rejected without side effects.
+	 *
+	 * The HMAC added to acf_encrypt()/acf_decrypt() in SCF 6.9.5 authenticates the
+	 * whole payload, so the ciphertext-truncation forgery this test reproduces now
+	 * fails to decrypt. The rendered grant's anchor mismatch remains as defense in
+	 * depth.
 	 *
 	 * @return void
 	 */
@@ -293,6 +298,9 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 		$encrypted_form   = base64_decode( $original_form, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Reproduces the documented form-token transport.
 		$this->assertIsString( $encrypted_form );
 
+		// Drop the authenticating HMAC (trailing 32 bytes) added in SCF 6.9.5 to
+		// recover the legacy `ciphertext::iv` payload the CBC forgery operated on.
+		$encrypted_form  = substr( $encrypted_form, 0, -32 );
 		$encrypted_parts = explode( '::', $encrypted_form, 2 );
 		$this->assertCount( 2, $encrypted_parts );
 		$ciphertext = base64_decode( $encrypted_parts[0], true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Reproduces the documented CBC ciphertext truncation.
@@ -304,7 +312,10 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 		$truncated_block = base64_encode( substr( $ciphertext, 0, $block_size ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Reproduces the documented CBC ciphertext truncation.
 		$retargeted_form = base64_encode( $truncated_block . '::' . $retargeted_iv ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Recreates the documented form-token transport.
 
-		$this->assertSame( $retargeted_json, acf_decrypt( $retargeted_form ) );
+		// The HMAC now authenticates the whole payload, so the CBC-forged form no
+		// longer decrypts. Before this hardening acf_decrypt() returned the
+		// retargeted JSON; the rendered grant's anchor is defense in depth on top.
+		$this->assertFalse( acf_decrypt( $retargeted_form ) );
 		$this->assertNotSame( $original_form, $retargeted_form );
 
 		$grant = $this->decode_grant_token( $original_grant[0] );

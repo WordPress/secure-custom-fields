@@ -963,8 +963,8 @@ acf_encrypt
 * This function will encrypt a string using PHP
 <https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/>
 * @since   ACF 5.5.8
-* @param   $data (string)
-* @return (string)
+* @param string $data The data to encrypt.
+* @return string|false Encrypted string, or false when OpenSSL is unavailable.
 
 ## `acf_decrypt()`
 
@@ -973,7 +973,7 @@ Decrypts an encrypted string using PHP.
 
 * @since   ACF 5.5.8
 * @param string $data The string to decrypt.
-* @return string|false Decrypted string, or false if the payload is malformed or decryption fails.
+* @return string|false Decrypted string, or false if the payload is malformed, unauthenticated, or decryption fails.
 
 ## `acf_parse_markdown()`
 

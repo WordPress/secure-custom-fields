@@ -10,6 +10,13 @@
 
 * @var ACF_Rest_Embed_Links
 
+### `$rest_update_plan`
+
+Fields and updates resolved during the current REST request.
+
+* @since SCF 6.9.5
+* @var array|null
+
 ## Methods
 
 ### `register_field`
@@ -46,6 +53,26 @@ it is required by WordPress.
 * @param string          $object_sub_type Note that this isn't the same as $this->object_type. This variable is
 more specific and can be a post type or taxonomy.
 * @return array
+
+### `check_bidirectional_target_permissions`
+
+Check bidirectional target permissions before the REST callback runs.
+
+* @since SCF 6.9.5
+* @param mixed           $dispatch_result Result from an earlier dispatch filter.
+* @param WP_REST_Request $request         Current REST request.
+* @return mixed|WP_Error
+
+### `prepare_field_updates`
+
+Resolve incoming values against fields active for the REST object.
+
+* @since SCF 6.9.5
+* @param array   $data            Incoming ACF field values.
+* @param integer $object_id       Object ID, or zero for a create request.
+* @param string  $object_type     ACF object type.
+* @param string  $object_sub_type Post type, taxonomy, or user.
+* @return array Field, value, and submitted field name tuples.
 
 ### `update_fields`
 

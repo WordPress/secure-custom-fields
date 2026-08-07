@@ -339,6 +339,68 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 	}
 
 	/**
+	 * Test trusted programmatic updates retain bidirectional synchronization.
+	 */
+	public function test_programmatic_update_field_retains_bidirectional_synchronization() {
+		acf_update_setting( 'enable_bidirection', true );
+		if ( ! class_exists( 'acf_field_relationship' ) ) {
+			acf_include( 'includes/fields/class-acf-field-relationship.php' );
+		} elseif ( ! has_filter( 'acf/update_value/type=relationship' ) ) {
+			acf_register_field_type( 'acf_field_relationship' );
+		}
+		$source_id = wp_insert_post( array( 'post_title' => 'Bidirectional source' ) );
+		$target_id = wp_insert_post( array( 'post_title' => 'Bidirectional target' ) );
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidirectional_source',
+				'name'                 => 'bidirectional_source',
+				'label'                => 'Bidirectional source',
+				'type'                 => 'relationship',
+				'post_type'            => array(),
+				'taxonomy'             => array(),
+				'bidirectional'        => true,
+				'bidirectional_target' => array( 'field_bidirectional_target' ),
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidirectional_target',
+				'name'                 => 'bidirectional_target',
+				'label'                => 'Bidirectional target',
+				'type'                 => 'relationship',
+				'post_type'            => array(),
+				'taxonomy'             => array(),
+				'bidirectional'        => false,
+				'bidirectional_target' => array(),
+			)
+		);
+
+		$field = acf_get_field( 'field_bidirectional_source' );
+		$plan  = _scf_prepare_bidirectional_update( array( $target_id ), $source_id, $field, false, array() );
+		$this->assertSame( array( $target_id ), $plan['destinations'] );
+		$this->assertNull( get_field( 'field_bidirectional_target', $target_id, false ) );
+
+		wp_set_current_user( 0 );
+		$this->assertFalse( acf_current_user_can_edit_in_context( acf_decode_post_id( $target_id ) ) );
+		update_field( 'field_bidirectional_source', array( $target_id ), $source_id );
+
+		$this->assertSame( array( (string) $target_id ), get_field( 'field_bidirectional_source', $source_id, false ) );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidirectional_target', $target_id, false ) );
+		$field['type'] = 'user';
+		$this->assertSame( array( "user_{$target_id}" ), _scf_prepare_bidirectional_update( array( $target_id ), $source_id, $field, null, array() )['destinations'] );
+		$field['type'] = 'taxonomy';
+		$this->assertSame( array( "term_{$target_id}" ), _scf_prepare_bidirectional_update( array( $target_id ), $source_id, $field, null, array() )['destinations'] );
+
+		$field['type'] = 'relationship';
+		wp_delete_post( $target_id, true );
+		$removal_plan = _scf_prepare_bidirectional_update( array(), $source_id, $field, false, array( $target_id ) );
+		$this->assertSame( array( $target_id ), $removal_plan['subtractions'] );
+		$this->assertSame( array(), $removal_plan['destinations'] );
+		$addition_plan = _scf_prepare_bidirectional_update( array( $target_id ), $source_id, $field, false, array() );
+		$this->assertSame( array( $target_id ), $addition_plan['destinations'] );
+	}
+
+	/**
 	 * Test acf_render_bidirectional_field_settings returns early when disabled.
 	 */
 	public function test_render_bidirectional_field_settings_disabled() {
@@ -444,5 +506,382 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 		$this->assertContains( 'post_object', $captured_types, 'Should include post_object type' );
 		$this->assertContains( 'user', $captured_types, 'Should include user type' );
 		$this->assertContains( 'taxonomy', $captured_types, 'Should include taxonomy type' );
+	}
+
+	/**
+	 * Registers the container field types used by the preflight regression tests.
+	 */
+	private function register_container_field_types() {
+		foreach ( array( 'relationship', 'repeater', 'group' ) as $type ) {
+			$class = 'acf_field_' . ( 'group' === $type ? '_group' : $type );
+			if ( ! class_exists( $class ) ) {
+				acf_include( "includes/fields/class-acf-field-{$type}.php" );
+				acf_register_field_type( $class );
+			}
+		}
+		if ( ! class_exists( 'acf_repeater_table' ) ) {
+			acf_include( 'includes/fields/class-acf-repeater-table.php' );
+		}
+	}
+
+	/**
+	 * Client-controlled paginated row keys cannot hide a bidirectional destination from the preflight.
+	 */
+	public function test_paginated_client_row_keys_are_still_checked() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_container_field_types();
+		$source = wp_insert_post( array( 'post_title' => 'Alias source' ) );
+		$target = wp_insert_post( array( 'post_title' => 'Alias target' ) );
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_alias',
+				'title'    => 'Alias',
+				'fields'   => array(
+					array(
+						'key'        => 'field_alias_repeater',
+						'name'       => 'alias_repeater',
+						'type'       => 'repeater',
+						'pagination' => 1,
+						'sub_fields' => array(
+							array(
+								'key'                  => 'field_alias_rel',
+								'name'                 => 'alias_rel',
+								'type'                 => 'relationship',
+								'post_type'            => array(),
+								'taxonomy'             => array(),
+								'bidirectional'        => true,
+								'bidirectional_target' => array( 'field_alias_target' ),
+							),
+						),
+					),
+					array(
+						'key'       => 'field_alias_target',
+						'name'      => 'alias_target',
+						'type'      => 'relationship',
+						'post_type' => array(),
+						'taxonomy'  => array(),
+					),
+				),
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'post',
+						),
+					),
+				),
+			)
+		);
+		acf_update_setting( 'enable_bidirection', false );
+		update_field( 'field_alias_repeater', array( array( 'field_alias_rel' => array() ) ), $source );
+		acf_update_setting( 'enable_bidirection', true );
+
+		// `row-0` deletes index 0; the aliased `evilrow-0` edits the same index with the target,
+		// which the saver resurrects. The preflight must still see the target.
+		$payload      = array(
+			'row-0'     => array(
+				'acf_deleted'     => 1,
+				'field_alias_rel' => array(),
+			),
+			'evilrow-0' => array( 'field_alias_rel' => array( (string) $target ) ),
+		);
+		$destinations = _scf_collect_bidirectional_destinations( acf_get_field( 'field_alias_repeater' ), $payload, $source, null, true );
+
+		$this->assertContains( (string) $target, $destinations, 'Aliased paginated edit must be checked' );
+
+		// The saver treats keys without `row` as new rows before inspecting `acf_deleted`,
+		// so the preflight must collect their destinations too.
+		$payload      = array(
+			'new-abc' => array(
+				'acf_deleted'     => 1,
+				'field_alias_rel' => array( (string) $target ),
+			),
+		);
+		$destinations = _scf_collect_bidirectional_destinations( acf_get_field( 'field_alias_repeater' ), $payload, $source, null, true );
+
+		$this->assertContains( (string) $target, $destinations, 'New paginated row with deletion metadata must be checked' );
+
+		// An aliased reorder can resurrect the canonical deletion payload, including its
+		// relationship value, so that value must remain in the permission plan.
+		$payload      = array(
+			'row-0'     => array(
+				'acf_deleted'     => 1,
+				'field_alias_rel' => array( (string) $target ),
+			),
+			'evilrow-0' => array(
+				'acf_reordered'   => 1,
+				'field_alias_rel' => array(),
+			),
+		);
+		$destinations = _scf_collect_bidirectional_destinations( acf_get_field( 'field_alias_repeater' ), $payload, $source, null, true );
+
+		$this->assertContains( (string) $target, $destinations, 'Reordered deletion payload must be checked' );
+	}
+
+	/**
+	 * A paginated repeater nested in a Group loads its existing rows from the prefixed key.
+	 */
+	public function test_paginated_repeater_in_group_uses_prefixed_name() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_container_field_types();
+		$source = wp_insert_post( array( 'post_title' => 'Group source' ) );
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_nested_pag',
+				'title'    => 'Nested pag',
+				'fields'   => array(
+					array(
+						'key'        => 'field_np_group',
+						'name'       => 'np_group',
+						'type'       => 'group',
+						'sub_fields' => array(
+							array(
+								'key'        => 'field_np_repeater',
+								'name'       => 'np_repeater',
+								'type'       => 'repeater',
+								'pagination' => 1,
+								'sub_fields' => array(
+									array(
+										'key'           => 'field_np_rel',
+										'name'          => 'np_rel',
+										'type'          => 'relationship',
+										'post_type'     => array(),
+										'taxonomy'      => array(),
+										'bidirectional' => true,
+										'bidirectional_target' => array( 'field_np_target' ),
+									),
+								),
+							),
+						),
+					),
+					array(
+						'key'       => 'field_np_target',
+						'name'      => 'np_target',
+						'type'      => 'relationship',
+						'post_type' => array(),
+						'taxonomy'  => array(),
+					),
+				),
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'post',
+						),
+					),
+				),
+			)
+		);
+
+		// The Group stores its child repeater under `np_group_np_repeater`; the preflight must
+		// load existing rows from that key, not the child's own name.
+		$loaded_names = array();
+		$spy          = static function ( $check, $post_id, $field ) use ( &$loaded_names ) {
+			if ( 'repeater' === $field['type'] ) {
+				$loaded_names[] = $field['name'];
+			}
+			return $check;
+		};
+		add_filter( 'acf/pre_load_value', $spy, 10, 3 );
+		_scf_collect_bidirectional_destinations(
+			acf_get_field( 'field_np_group' ),
+			array( 'field_np_repeater' => array( array( 'field_np_rel' => array() ) ) ),
+			$source,
+			null,
+			true
+		);
+		remove_filter( 'acf/pre_load_value', $spy, 10 );
+
+		$this->assertContains( 'np_group_np_repeater', $loaded_names, 'Nested repeater must load from the prefixed key' );
+		$this->assertNotContains( 'np_repeater', $loaded_names, 'Nested repeater must not load from the unprefixed key' );
+	}
+
+	/**
+	 * A paginated repeater nested in a grouped Clone uses the Clone's database prefix.
+	 */
+	public function test_paginated_repeater_in_nested_clone_uses_prefixed_name() {
+		$source       = wp_insert_post( array( 'post_title' => 'Nested clone source' ) );
+		$loaded_names = array();
+		$spy          = static function ( $check, $post_id, $field ) use ( &$loaded_names ) {
+			if ( 'repeater' === $field['type'] ) {
+				$loaded_names[] = $field['name'];
+			}
+			return $check;
+		};
+		add_filter( 'acf/pre_load_value', $spy, 10, 3 );
+
+		foreach (
+			array(
+				'without_name_prefix' => array( 'rows', 'outer_rows' ),
+				'with_name_prefix'    => array( 'clonebox_rows', 'outer_clonebox_rows' ),
+			) as list( $resolved_name, $expected_name )
+		) {
+			$field = array(
+				'key'        => 'field_clone_outer',
+				'name'       => 'outer',
+				'_name'      => 'outer',
+				'type'       => 'group',
+				'sub_fields' => array(
+					array(
+						'key'        => 'field_clonebox',
+						'name'       => 'clonebox',
+						'_name'      => 'clonebox',
+						'type'       => 'clone',
+						'sub_fields' => array(
+							array(
+								'key'        => 'field_clone_rows',
+								'name'       => $resolved_name,
+								'_name'      => 'rows',
+								'type'       => 'repeater',
+								'pagination' => 1,
+								'sub_fields' => array(),
+							),
+						),
+					),
+				),
+			);
+			$value = array(
+				'field_clonebox' => array(
+					'field_clone_rows' => array(),
+				),
+			);
+
+			_scf_collect_bidirectional_destinations( $field, $value, $source, null, true );
+
+			$this->assertContains( $expected_name, $loaded_names );
+			$this->assertNotContains( $resolved_name, $loaded_names );
+		}
+
+		remove_filter( 'acf/pre_load_value', $spy, 10 );
+	}
+
+	/**
+	 * On create, a default-value target is checked because the saver applies the default.
+	 */
+	public function test_create_checks_default_value_targets() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_container_field_types();
+		$target = wp_insert_post( array( 'post_title' => 'Default target' ) );
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_default',
+				'title'    => 'Default',
+				'fields'   => array(
+					array(
+						'key'                  => 'field_default_rel',
+						'name'                 => 'default_rel',
+						'type'                 => 'relationship',
+						'post_type'            => array(),
+						'taxonomy'             => array(),
+						'default_value'        => array( (string) $target ),
+						'bidirectional'        => true,
+						'bidirectional_target' => array( 'field_default_target' ),
+					),
+					array(
+						'key'       => 'field_default_target',
+						'name'      => 'default_target',
+						'type'      => 'relationship',
+						'post_type' => array(),
+						'taxonomy'  => array(),
+					),
+				),
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'post',
+						),
+					),
+				),
+			)
+		);
+
+		// Create (origin id 0), field submitted empty: the saver subtracts the default target.
+		$destinations = _scf_collect_bidirectional_destinations( acf_get_field( 'field_default_rel' ), array(), 0, array(), false );
+
+		$this->assertContains( (string) $target, $destinations, 'Create must check the default-derived subtraction target' );
+	}
+
+	/**
+	 * The preflight does not infer a destination context for third-party field types.
+	 */
+	public function test_non_core_field_type_without_explicit_prefix_has_no_permission_destinations() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_container_field_types();
+		$source = wp_insert_post( array( 'post_title' => 'Non-core source' ) );
+		$target = wp_insert_post( array( 'post_title' => 'Non-core target' ) );
+		acf_add_local_field(
+			array(
+				'key'       => 'field_noncore_target',
+				'name'      => 'noncore_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+		$field = array(
+			'key'                  => 'field_noncore_source',
+			'name'                 => 'noncore_source',
+			'type'                 => 'relationship',
+			'bidirectional'        => true,
+			'bidirectional_target' => array( 'field_noncore_target' ),
+		);
+
+		// Core type maps precisely: a single post-context destination, no over-check.
+		$core = _scf_prepare_bidirectional_update( array( $target ), $source, $field, null, array() )['destinations'];
+		$this->assertSame( array( $target ), $core );
+
+		// A third-party field's target context cannot be inferred from its type.
+		$field['type'] = 'my_custom_selector';
+		$destinations  = _scf_prepare_bidirectional_update( array( $target ), $source, $field, null, array() )['destinations'];
+		$this->assertSame( array(), $destinations );
+	}
+
+	/**
+	 * Non-core field types retain explicit prefixes for trusted programmatic updates.
+	 */
+	public function test_non_core_field_type_uses_explicit_target_prefix() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_container_field_types();
+		$source  = wp_insert_post( array( 'post_title' => 'Non-core source' ) );
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => 'noncore-target',
+				'user_pass'  => 'password',
+			)
+		);
+		$this->assertNull( get_post( $user_id ), 'Fixture requires no post with the user ID' );
+		acf_add_local_field(
+			array(
+				'key'       => 'field_noncore_subtraction_target',
+				'name'      => 'noncore_subtraction_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+		$field = array(
+			'key'                  => 'field_noncore_subtraction_source',
+			'name'                 => 'noncore_subtraction_source',
+			'type'                 => 'my_custom_selector',
+			'bidirectional'        => true,
+			'bidirectional_target' => array( 'field_noncore_subtraction_target' ),
+		);
+
+		$additions    = _scf_prepare_bidirectional_update( array( $user_id ), $source, $field, 'user', array() )['destinations'];
+		$subtractions = _scf_prepare_bidirectional_update( array(), $source, $field, 'user', array( $user_id ) )['destinations'];
+
+		$this->assertSame( array( "user_{$user_id}" ), $additions );
+		$this->assertSame( array( "user_{$user_id}" ), $subtractions );
+
+		$unprefixed = _scf_prepare_bidirectional_update( array( $user_id ), $source, $field, false, array() );
+		$this->assertSame( array( $user_id ), $unprefixed['additions'] );
+		$this->assertSame( array( $user_id ), $unprefixed['destinations'] );
+
+		acf_update_bidirectional_values( array( $user_id ), $source, $field, 'user' );
+		$this->assertSame( array( (string) $source ), get_field( 'field_noncore_subtraction_target', "user_{$user_id}", false ) );
 	}
 }
