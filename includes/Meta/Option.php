@@ -41,8 +41,8 @@ class Option extends MetaLocation {
 			}
 		}
 
-		// Return results.
-		return $meta;
+		// Unserialize results and return.
+		return array_map( 'acf_maybe_unserialize', $meta );
 	}
 
 	/**
@@ -84,7 +84,6 @@ class Option extends MetaLocation {
 		$autoload = (bool) acf_get_setting( 'autoload' );
 
 		foreach ( $meta as $name => $value ) {
-			$value = wp_unslash( $value );
 			update_option( $object_id . '_' . $name, $value, $autoload );
 		}
 	}

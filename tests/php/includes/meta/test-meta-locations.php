@@ -786,20 +786,17 @@ class Test_Meta_Locations extends BaseTestCase {
 		$this->assertSame( 'field_color', $meta['_color'] );
 		$this->assertArrayNotHasKey( 'orphan', $meta );
 
-		// NOTE: documents current behavior — possible bug: unlike
-		// MetaLocation::get_meta(), Option::get_meta() does not run values
-		// through acf_maybe_unserialize(), so serialized arrays are returned
-		// as raw serialized strings. Tracked in #454.
-		$this->assertSame( $serialized_array, $meta['list'] );
+		// Serialized values are unserialized on read, matching MetaLocation.
+		$this->assertSame( array( 'a', 'b' ), $meta['list'] );
 
 		// acf_get_meta( 'options' ) routes to the same backend.
 		$this->assertSame( $meta, acf_get_meta( 'options' ) );
 	}
 
 	/**
-	 * Test Option::update_meta() unslashing behavior.
+	 * Test Option::update_meta() preserves backslashes.
 	 */
-	public function test_option_update_meta_unslashes_values() {
+	public function test_option_update_meta_preserves_slashes() {
 		$instance = acf_get_meta_instance( 'option' );
 
 		$instance->update_meta(
@@ -812,12 +809,9 @@ class Test_Meta_Locations extends BaseTestCase {
 
 		$this->assertSame( 'value1', get_option( 'options_plain' ) );
 
-		// NOTE: documents current behavior — possible bug: Option::update_meta()
-		// calls wp_unslash() on the raw values while MetaLocation::update_meta()
-		// wp_slash()es them before update_metadata(), so values containing
-		// backslashes lose them when copied to an option location
-		// (e.g. via acf_copy_metadata() to an options page). Tracked in #454.
-		$this->assertSame( 'C:tempnew', get_option( 'options_slashy' ) );
+		// Unlike MetaLocation::update_meta(), update_option() does not unslash
+		// internally, so values are stored as-is and backslashes are preserved.
+		$this->assertSame( 'C:\\temp\\new', get_option( 'options_slashy' ) );
 	}
 
 	// =========================================================================
