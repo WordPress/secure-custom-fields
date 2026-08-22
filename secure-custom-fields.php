@@ -259,6 +259,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/validation.php' );
 			acf_include( 'includes/rest-api.php' );
 			acf_include( 'includes/datastore.php' );
+			acf_include( 'includes/beta-features.php' );
 			acf_include( 'includes/blocks.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
 
@@ -970,6 +971,9 @@ function scf_plugin_uninstall() {
 	// List of known beta features.
 	$beta_features = array(
 		'editor_sidebar',
+		'enable_datastore',
+		'enable_acf_ai',
+		'enable_schema',
 	);
 
 	foreach ( $beta_features as $beta_feature ) {
