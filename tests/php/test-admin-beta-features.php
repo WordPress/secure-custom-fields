@@ -27,8 +27,6 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 		parent::set_up();
 
 		acf_include( 'includes/admin/beta-features.php' );
-		acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
-		acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
 
 		$this->beta_features = new SCF_Admin_Beta_Features();
 	}
@@ -37,7 +35,11 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	 * Clean up after each test.
 	 */
 	public function tear_down() {
-		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
+		foreach ( array( 'editor_sidebar', 'enable_datastore', 'enable_acf_ai', 'enable_schema' ) as $name ) {
+			delete_option( 'scf_beta_feature_' . $name . '_enabled' );
+		}
+
+		unset( $_POST['scf_beta_features_nonce'], $_POST['scf_beta_features'] );
 		parent::tear_down();
 	}
 
@@ -49,6 +51,35 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 		$beta_features = $this->beta_features->get_beta_features();
 		$this->assertArrayHasKey( 'editor_sidebar', $beta_features );
 		$this->assertInstanceOf( 'SCF_Admin_Beta_Feature_Editor_Sidebar', $beta_features['editor_sidebar'] );
+	}
+
+	/**
+	 * Test default beta feature registration.
+	 */
+	public function test_register_default_beta_features() {
+		$beta_features = $this->beta_features->get_beta_features();
+
+		$this->assertCount( 4, $beta_features );
+		$this->assertArrayHasKey( 'editor_sidebar', $beta_features );
+		$this->assertArrayHasKey( 'enable_datastore', $beta_features );
+		$this->assertArrayHasKey( 'enable_acf_ai', $beta_features );
+		$this->assertArrayHasKey( 'enable_schema', $beta_features );
+
+		$expected_classes = array(
+			'editor_sidebar'   => 'SCF_Admin_Beta_Feature_Editor_Sidebar',
+			'enable_datastore' => 'SCF_Admin_Beta_Feature_Datastore',
+			'enable_acf_ai'    => 'SCF_Admin_Beta_Feature_ACF_AI',
+			'enable_schema'    => 'SCF_Admin_Beta_Feature_Schema',
+		);
+
+		foreach ( $expected_classes as $name => $class_name ) {
+			$this->assertInstanceOf( $class_name, $beta_features[ $name ] );
+			$this->assertSame( $name, $beta_features[ $name ]->name );
+		}
+
+		$this->assertNotEmpty( $beta_features['enable_datastore']->title );
+		$this->assertNotEmpty( $beta_features['enable_acf_ai']->description );
+		$this->assertNotEmpty( $beta_features['enable_schema']->description );
 	}
 
 	/**
@@ -116,6 +147,59 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 
 		$this->assertTrue( $beta_feature->is_enabled() );
 		$this->assertTrue( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
+	}
+
+	/**
+	 * Test beta feature settings enable runtime flags.
+	 */
+	public function test_beta_feature_settings_enable_runtime_flags() {
+		foreach ( array( 'enable_datastore', 'enable_acf_ai', 'enable_schema' ) as $name ) {
+			$this->assertFalse( apply_filters( 'acf/settings/' . $name, false ) );
+			update_option( 'scf_beta_feature_' . $name . '_enabled', true );
+			$this->assertTrue( apply_filters( 'acf/settings/' . $name, false ) );
+		}
+	}
+
+	/**
+	 * Test submitting beta feature settings updates every registered feature.
+	 */
+	public function test_beta_feature_form_submission_updates_all_features() {
+		$beta_features = $this->beta_features->get_beta_features();
+		$all_names     = array_keys( $beta_features );
+
+		$_POST['scf_beta_features_nonce'] = wp_create_nonce( 'scf_beta_features_update' );
+		$_POST['scf_beta_features']       = array_fill_keys( $all_names, '1' );
+
+		$this->beta_features->check_submit();
+
+		foreach ( $all_names as $name ) {
+			$this->assertTrue( $beta_features[ $name ]->is_enabled() );
+		}
+
+		$_POST['scf_beta_features_nonce'] = wp_create_nonce( 'scf_beta_features_update' );
+		$_POST['scf_beta_features']       = array( 'editor_sidebar' => '1' );
+
+		$this->beta_features->check_submit();
+
+		foreach ( $all_names as $name ) {
+			$expected = 'editor_sidebar' === $name;
+			$this->assertSame( $expected, $beta_features[ $name ]->is_enabled() );
+		}
+	}
+
+	/**
+	 * Test existing filters can enable runtime flags.
+	 */
+	public function test_existing_filters_can_enable_runtime_flags() {
+		foreach ( array( 'enable_datastore', 'enable_acf_ai', 'enable_schema' ) as $name ) {
+			add_filter( 'acf/settings/' . $name, '__return_true' );
+
+			try {
+				$this->assertTrue( apply_filters( 'acf/settings/' . $name, false ) );
+			} finally {
+				remove_filter( 'acf/settings/' . $name, '__return_true' );
+			}
+		}
 	}
 
 	/**
