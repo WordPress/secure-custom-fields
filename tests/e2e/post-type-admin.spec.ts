@@ -449,9 +449,9 @@ async function deletePostType( page, admin, postTypeName = POST_TYPE_NAME ) {
 	);
 
 	// Find and select the post type row
-	const postTypeRow = page.locator(
-		`tr.type-acf-post-type:has(a.row-title:text("${ postTypeName }"))`
-	);
+	const postTypeRow = page.locator( '#the-list tr', {
+		hasText: postTypeName,
+	} );
 	await expect( postTypeRow ).toBeVisible( { timeout: DEFAULT_TIMEOUT } );
 	await postTypeRow.locator( '.check-column input[type="checkbox"]' ).check();
 

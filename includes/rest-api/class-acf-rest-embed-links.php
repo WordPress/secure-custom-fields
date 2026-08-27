@@ -42,8 +42,8 @@ class ACF_Rest_Embed_Links {
 	/**
 	 * Add links to internal property for subsequent use in \ACF_Rest_Embed_Links::load_item_links().
 	 *
-	 * @param       $post_id
-	 * @param array   $field
+	 * @param string|int $post_id The object ID.
+	 * @param array      $field   The field array.
 	 */
 	public function prepare_links( $post_id, array $field ) {
 		$links = acf_get_field_rest_links( $post_id, $field );
