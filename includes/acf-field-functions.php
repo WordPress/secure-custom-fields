@@ -111,6 +111,48 @@ function acf_get_raw_field( $id = 0 ) {
 }
 
 /**
+ * Builds the cache key for a field post lookup.
+ *
+ * The identifier is lowercased to match both the case-insensitive
+ * post_name/post_excerpt comparison in the lookup query and the stored
+ * (sanitized, lowercase) slug, so lookups, sibling priming, and
+ * acf_flush_field_cache() all agree on one key per field.
+ *
+ * @since SCF 6.9.2
+ *
+ * @param string $type The lookup type: 'key' or 'name'.
+ * @param string $id   The field key or name.
+ * @return string The cache key.
+ */
+function _scf_field_post_cache_key( $type, $id ) {
+	return acf_cache_key( "acf_get_field_post:$type:" . strtolower( $id ) );
+}
+
+/**
+ * Returns the shared get_posts() arguments for field post lookups.
+ *
+ * The per-key lookup in acf_get_field_post() and the sibling priming query
+ * must keep identical semantics — the ordering decides which post wins when
+ * a key exists more than once, and `suppress_filters => false` keeps
+ * third-party query filters running — so both build on these arguments.
+ *
+ * @since SCF 6.9.2
+ *
+ * @return array get_posts() arguments.
+ */
+function _scf_field_post_query_args() {
+	return array(
+		'post_type'              => 'acf-field',
+		'orderby'                => 'menu_order title',
+		'order'                  => 'ASC',
+		'suppress_filters'       => false,
+		'cache_results'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+	);
+}
+
+/**
  * acf_get_field_post
  *
  * Retrieves the field's WP_Post object.
@@ -134,22 +176,18 @@ function acf_get_field_post( $id = 0 ) {
 		$type = acf_is_field_key( $id ) ? 'key' : 'name';
 
 		// Try cache.
-		$cache_key = acf_cache_key( "acf_get_field_post:$type:$id" );
+		$cache_key = _scf_field_post_cache_key( $type, $id );
 		$post_id   = wp_cache_get( $cache_key, 'secure-custom-fields' );
 		if ( $post_id === false ) {
 
 			// Query posts.
 			$posts = get_posts(
-				array(
-					'posts_per_page'         => 1,
-					'post_type'              => 'acf-field',
-					'orderby'                => 'menu_order title',
-					'order'                  => 'ASC',
-					'suppress_filters'       => false,
-					'cache_results'          => true,
-					'update_post_meta_cache' => false,
-					'update_post_term_cache' => false,
-					"acf_field_$type"        => $id,
+				array_merge(
+					_scf_field_post_query_args(),
+					array(
+						'posts_per_page'  => 1,
+						"acf_field_$type" => $id,
+					)
 				)
 			);
 
@@ -158,6 +196,15 @@ function acf_get_field_post( $id = 0 ) {
 
 			// Update cache.
 			wp_cache_set( $cache_key, $post_id, 'secure-custom-fields' );
+
+			// A cache miss means sibling field lookups are likely cold too:
+			// prime them in bulk to avoid one query per field. Only key
+			// lookups are primed (priming writes key entries, so name misses
+			// would pay its cost without ever benefiting); cache hits skip
+			// this so warm requests stay query-free.
+			if ( 'key' === $type && $posts && $posts[0]->post_parent ) {
+				_scf_prime_sibling_field_posts( $posts[0] );
+			}
 		}
 
 		// Check $post_id and return the post when possible.
@@ -168,6 +215,117 @@ function acf_get_field_post( $id = 0 ) {
 
 	// Return false by default.
 	return false;
+}
+
+/**
+ * Primes the field key lookup cache for the sibling fields of the given field post.
+ *
+ * Resolving a field key normally runs one query per field. When key lookups
+ * for two fields of the same field group miss the cache in one request, the
+ * keys of all the group's published fields are resolved in bulk and cached,
+ * so further sibling key lookups avoid their per-field queries. Priming is
+ * deferred to the second miss so requests that resolve a single field keep
+ * paying only that field's query.
+ *
+ * The bulk query keeps the semantics of the per-key lookup in
+ * acf_get_field_post(): it is not scoped to the field group, so a key that
+ * exists in more than one group resolves to the same post either way; it runs
+ * with `suppress_filters => false`, so plugins that filter field queries per
+ * language/context (e.g. WPML, Polylang) still apply; and cache keys are built
+ * per sibling with acf_cache_key(), so language-scoped cache keys behave as
+ * they do for individual lookups.
+ *
+ * @since SCF 6.9.2
+ *
+ * @param WP_Post $post The field post object.
+ * @return void
+ */
+function _scf_prime_sibling_field_posts( $post ) {
+	static $primed = array();
+	static $missed = array();
+
+	// Bail early if this parent was already handled during this request. Marking
+	// it up front also memoizes non-group parents (e.g. repeater sub-fields), so
+	// their repeated lookups skip the checks below.
+	if ( isset( $primed[ $post->post_parent ] ) ) {
+		return;
+	}
+
+	// Defer priming until a second sibling of the same parent misses the
+	// cache, so single-field requests skip the priming queries entirely.
+	if ( ! isset( $missed[ $post->post_parent ] ) ) {
+		$missed[ $post->post_parent ] = true;
+		return;
+	}
+	$primed[ $post->post_parent ] = true;
+
+	/**
+	 * Filters whether sibling field lookups are primed when a field is loaded by key.
+	 *
+	 * Priming collapses the per-field key lookups into a single query; it does
+	 * not bypass query filters, but can be disabled here if needed. Runs once
+	 * per field parent per request.
+	 *
+	 * @since SCF 6.9.2
+	 *
+	 * @param boolean $prime True to prime sibling field lookups. Default true.
+	 */
+	if ( ! apply_filters( 'scf/prime_field_group_fields', true ) ) {
+		return;
+	}
+
+	// Only prime when the parent is a field group.
+	$parent = get_post( $post->post_parent );
+	if ( ! $parent || 'acf-field-group' !== $parent->post_type ) {
+		return;
+	}
+
+	// Collect the published sibling field keys from the group's raw fields.
+	// This reuses (and warms) the same cached bulk fetch used when the group
+	// is rendered, rather than running a second group-scoped query. Trashed
+	// siblings are skipped so they don't consume the priming cap with keys
+	// the publish-only bulk query below can never match.
+	$keys = array();
+	foreach ( acf_get_raw_fields( $parent->ID ) as $raw_field ) {
+		if ( ! empty( $raw_field['key'] ) && 'publish' === get_post_status( $raw_field['ID'] ) ) {
+			$keys[] = $raw_field['key'];
+		}
+	}
+
+	// Cap the primed keys so pathologically large groups don't hydrate
+	// thousands of posts at once; the rest fall back to per-key lookups.
+	$keys = array_slice( array_unique( $keys ), 0, 100 );
+	if ( ! $keys ) {
+		return;
+	}
+
+	// Resolve all keys in one query with the same semantics as the per-key
+	// lookup in acf_get_field_post(). The post_name__in clause bounds the
+	// result set.
+	$field_posts = get_posts(
+		array_merge(
+			_scf_field_post_query_args(),
+			array(
+				'posts_per_page' => -1,
+				'post_name__in'  => $keys,
+			)
+		)
+	);
+
+	// Collect key => post ID pairs, keeping the first post per key: the field
+	// key is stored as the post_name, and the first post per key in the
+	// ordered result matches what the per-key query would select.
+	$adds = array();
+	foreach ( $field_posts as $field_post ) {
+		$cache_key = _scf_field_post_cache_key( 'key', $field_post->post_name );
+		if ( ! isset( $adds[ $cache_key ] ) ) {
+			$adds[ $cache_key ] = $field_post->ID;
+		}
+	}
+
+	// A single batched add avoids one cache round-trip per sibling on
+	// external object caches and never overwrites existing entries.
+	wp_cache_add_multiple( $adds, 'secure-custom-fields' );
 }
 
 /**
@@ -432,6 +590,13 @@ function acf_get_raw_fields( $id = 0 ) {
 
 		// Update cache.
 		wp_cache_set( $cache_key, $post_ids, 'secure-custom-fields' );
+	}
+
+	// Batch-fetch any posts missing from the object cache before the loop
+	// hydrates them individually: a warm ID list with evicted post entries
+	// would otherwise cost one query per field.
+	if ( $post_ids ) {
+		_prime_post_caches( $post_ids, false, false );
 	}
 
 	// Loop over ids and populate array of fields.
@@ -1133,8 +1298,8 @@ function acf_flush_field_cache( $field ) {
 	acf_get_store( 'fields' )->remove( $field['key'] );
 
 	// Flush cached post_id for this field's name and key.
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:name:{$field['name']}" ), 'secure-custom-fields' );
-	wp_cache_delete( acf_cache_key( "acf_get_field_post:key:{$field['key']}" ), 'secure-custom-fields' );
+	wp_cache_delete( _scf_field_post_cache_key( 'name', $field['name'] ), 'secure-custom-fields' );
+	wp_cache_delete( _scf_field_post_cache_key( 'key', $field['key'] ), 'secure-custom-fields' );
 
 	// Flush cached array of post_ids for this field's parent.
 	wp_cache_delete( acf_cache_key( "acf_get_field_posts:{$field['parent']}" ), 'secure-custom-fields' );
@@ -1207,6 +1372,10 @@ function acf_trash_field( $id = 0 ) {
 
 	// Trash post.
 	wp_trash_post( $field['ID'] );
+
+	// Flush field cache so lookups by key or name stop resolving the trashed
+	// post (matching acf_untrash_field, which flushes on restore).
+	acf_flush_field_cache( $field );
 
 	/**
 	 * Fires immediately after a field has been trashed.
