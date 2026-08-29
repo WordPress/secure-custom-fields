@@ -1217,6 +1217,10 @@ function acf_enqueue_block_assets() {
 		)
 	);
 
+	// React StrictMode is only active in the block editor on WP 6.9+.
+	global $wp_version;
+	$is_wp_69_plus = version_compare( $wp_version, '6.9', '>=' );
+
 	// Get block types.
 	$block_types = array_map(
 		function ( $block ) {
@@ -1256,6 +1260,9 @@ function acf_enqueue_block_assets() {
 		array(
 			'blockTypes' => array_values( $block_types ),
 			'postType'   => get_post_type(),
+			// Key is intentionally PascalCase to match `acf.get('StrictMode')` in the
+			// compiled `acf-pro-blocks.js`. Do not normalize to camelCase.
+			'StrictMode' => $is_wp_69_plus,
 		)
 	);
 
@@ -1339,7 +1346,37 @@ function acf_enqueue_block_type_assets( $block_type ) {
 }
 
 /**
+ * Decodes the block `query` ajax arg, which may arrive as either an array
+ * or a JSON-encoded string depending on how the block editor JS serializes
+ * the request. Falls back to an empty array when decoding fails or yields
+ * a non-array value.
+ *
+ * @since SCF 6.5.4
+ *
+ * @param mixed $query The raw query arg.
+ * @return array
+ */
+function acf_decode_block_query_arg( $query ) {
+	if ( is_array( $query ) ) {
+		return $query;
+	}
+
+	if ( ! is_string( $query ) ) {
+		return array();
+	}
+
+	$decoded = json_decode( wp_unslash( $query ), true );
+
+	return is_array( $decoded ) ? $decoded : array();
+}
+
+/**
  * Handles the ajax request for block data.
+ *
+ * The `query` arg may arrive as a JSON-encoded string instead of an array
+ * (the block editor JS may serialize it that way). It is normalized via
+ * `acf_decode_block_query_arg()` to avoid a fatal TypeError on PHP 8.4
+ * when accessing offsets on a string.
  *
  * @since   ACF 5.7.13
  *
@@ -1383,6 +1420,12 @@ function acf_ajax_fetch_block() {
 	$client_id   = $args['clientId'];
 	$raw_context = $args['context'];
 	$post_id     = $args['post_id'];
+
+	// `$query` flows through `acf_sanitize_request_args()` (so a JSON string
+	// is `wp_kses`-filtered before we see it). Safe today because callers only
+	// boolean-test keys like `preview`/`form`/`validate`; revisit if a string
+	// value ever gets read out of `$query`.
+	$query = acf_decode_block_query_arg( $query );
 
 	// Bail early if no block.
 	if ( ! $block ) {
