@@ -155,4 +155,37 @@ class Test_ACF_Field_Image extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'url', $result );
 		$this->assertEquals( $this->attachment_id, $result['ID'] );
 	}
+
+	/**
+	 * Regression test for #527: get_field() (which routes through
+	 * acf_format_value() and the acf/format_value filter chain) must respect
+	 * every documented return_format. Previously, only direct calls to
+	 * format_value()/format_value_for_rest() were covered, leaving the real
+	 * filter-chain path untested.
+	 *
+	 * @dataProvider return_format_provider
+	 *
+	 * @param string $return_format The return format setting.
+	 */
+	public function test_get_field_pipeline_respects_return_format( $return_format ) {
+		$field = $this->get_field( array( 'return_format' => $return_format ) );
+
+		// The production path get_field() uses: acf_format_value() invokes the
+		// acf/format_value filter chain, which dispatches to acf_field_image::
+		// format_value via the type=name=key variation in
+		// _acf_apply_hook_variations().
+		$result = acf_format_value( $this->attachment_id, $this->post_id, $field );
+
+		if ( 'url' === $return_format ) {
+			$this->assertIsString( $result );
+			$this->assertStringContainsString( 'test-image.jpg', $result );
+		} elseif ( 'array' === $return_format ) {
+			$this->assertIsArray( $result );
+			$this->assertArrayHasKey( 'ID', $result );
+			$this->assertArrayHasKey( 'url', $result );
+			$this->assertEquals( $this->attachment_id, $result['ID'] );
+		} else {
+			$this->assertEquals( $this->attachment_id, $result );
+		}
+	}
 }

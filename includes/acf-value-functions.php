@@ -178,6 +178,11 @@ function acf_format_value( $value, $post_id, $field, $escape_html = false ) {
 		return $store->get( $cache_name );
 	}
 
+	// Snapshot the raw value so we can detect a missed type-specific
+	// dispatcher below. If the filter chain leaves the value untouched and the
+	// field has a non-id return_format, run the formatter directly (#527).
+	$raw_value = $value;
+
 	/**
 	 * Filters the $value for use in a template function.
 	 *
@@ -189,6 +194,32 @@ function acf_format_value( $value, $post_id, $field, $escape_html = false ) {
 	 * @param boolean $escape_html Ask the field for a HTML safe version of it's output.
 	 */
 	$value = apply_filters( 'acf/format_value', $value, $post_id, $field, $escape_html );
+
+	// Safety net: if the filter chain left the value unchanged and the field
+	// expects a formatted output, the type callback was skipped. Run the field
+	// type's format_value() directly so Image/File fields honor their
+	// return_format setting (#527).
+	if (
+		$value === $raw_value
+		&& is_numeric( $value )
+		&& ! is_float( $value )
+		&& (string) (int) $value === (string) $value
+		&& ! empty( $field['type'] )
+		&& ! empty( $field['return_format'] )
+		&& 'id' !== $field['return_format']
+	) {
+		$type = acf_get_field_type( $field['type'] );
+		if ( $type && method_exists( $type, 'format_value' ) ) {
+			try {
+				$candidate = $type->format_value( $value, $post_id, $field );
+			} catch ( \Throwable $e ) {
+				$candidate = $value;
+			}
+			if ( ! is_numeric( $candidate ) ) {
+				$value = $candidate;
+			}
+		}
+	}
 
 	// Update store.
 	$store->set( $cache_name, $value );
