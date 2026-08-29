@@ -1,0 +1,32 @@
+{
+	"key": "post_type_book",
+	"title": "Book",
+	"post_type": "book",
+	"labels": {
+		"singular_name": "Book",
+		"name": "Books",
+		"add_new_item": "Add New Book"
+	},
+	"public": true,
+	"supports": [ "title", "editor", "thumbnail" ],
+	"field_groups": [
+		{
+			"key": "group_book_details",
+			"title": "Book Details",
+			"fields": [
+				{
+					"key": "field_book_isbn",
+					"label": "ISBN",
+					"name": "isbn",
+					"type": "text"
+				},
+				{
+					"key": "field_book_publisher",
+					"label": "Publisher",
+					"name": "publisher",
+					"type": "text"
+				}
+			]
+		}
+	]
+}

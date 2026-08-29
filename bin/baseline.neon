@@ -90,13 +90,11 @@ parameters:
 			count: 1
 			path: ../includes/admin/views/upgrade/notice.php
 
-
 		-
 			message: '#^Offset ''thumb'' on array\{alt\: string, author\: string, authorName\: string, caption\: string, compat\: array, context\: string, date\: int, dateFormatted\: string, \.\.\.\}\|null in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../includes/fields/class-acf-field-gallery.php
-
 
 		-
 			message: '#^Undefined variable\: \$method$#'
@@ -111,13 +109,115 @@ parameters:
 			path: ../includes/locations/abstract-acf-legacy-location.php
 
 		-
-			message: '#^Path in require_once\(\) "\./wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 2
-			path: ../includes/class-scf-json-schema-validator.php
+			message: '#^Variable \$field might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/field.php
 
 		-
-			message: '#^Function SCF\\Blocks\\AutoInlineEditing\\apply_inline_editing_attributes_to_render_template invoked with 7 parameters, 3 required\.$#'
-			identifier: arguments.count
+			message: '#^Variable \$i might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/field.php
+
+		-
+			message: '#^Variable \$fields might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/fields.php
+
+		-
+			message: '#^Variable \$parent might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/fields.php
+
+		-
+			message: '#^Variable \$group might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
-			path: ../includes/blocks.php
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/location-group.php
+
+		-
+			message: '#^Variable \$group_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/location-group.php
+
+		-
+			message: '#^Variable \$rule might not be defined\.$#'
+			identifier: variable.undefined
+			count: 8
+			path: ../release/secure-custom-fields/includes/admin/views/acf-field-group/location-rule.php
+
+		-
+			message: '#^Variable \$acf_parent_page_choices might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/acf-ui-options-page/create-options-page-modal.php
+
+		-
+			message: '#^Variable \$page_title might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/html-options-page.php
+
+		-
+			message: '#^Variable \$post_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/html-options-page.php
+
+		-
+			message: '#^Variable \$active might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/tools/tools.php
+
+		-
+			message: '#^Variable \$screen_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/tools/tools.php
+
+		-
+			message: '#^Variable \$button_text might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/upgrade/notice.php
+
+		-
+			message: '#^Variable \$button_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/upgrade/notice.php
+
+		-
+			message: '#^Variable \$confirm might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/admin/views/upgrade/notice.php
+
+		-
+			message: '#^Offset ''thumb'' on array\{alt\: string, author\: string, authorName\: string, caption\: string, compat\: array, context\: string, date\: int, dateFormatted\: string, \.\.\.\}\|null in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../release/secure-custom-fields/includes/fields/class-acf-field-gallery.php
+
+		-
+			message: '#^Undefined variable\: \$method$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../release/secure-custom-fields/includes/locations/abstract-acf-legacy-location.php
+
+		-
+			message: '#^Variable \$method in isset\(\) is never defined\.$#'
+			identifier: isset.variable
+			count: 1
+			path: ../release/secure-custom-fields/includes/locations/abstract-acf-legacy-location.php
+
+		-
+			message: '#^Call to an undefined static method ACF_Local_JSON\:\:is_unified_definition\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 7
+			path: ../tests/php/test-unified-definitions.php
