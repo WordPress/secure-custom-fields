@@ -49,13 +49,6 @@ class Test_Blocks_Render extends BaseTestCase {
 	private $temp_files = array();
 
 	/**
-	 * Block IDs that had local meta set up during a test.
-	 *
-	 * @var array
-	 */
-	private $meta_block_ids = array();
-
-	/**
 	 * Set up test fixtures.
 	 */
 	public function set_up() {
@@ -116,17 +109,6 @@ class Test_Blocks_Render extends BaseTestCase {
 			}
 		}
 		$this->temp_files = array();
-
-		// NOTE: documents current behavior — possible bug: the preview render
-		// paths in acf_rendered_block()/acf_rendered_block_v3() call
-		// acf_setup_meta() for validation after rendering without a matching
-		// acf_reset_meta(), leaving block-scoped local meta active after the
-		// function returns. Reset it to avoid leaking into other tests.
-		// Tracked in #455.
-		foreach ( $this->meta_block_ids as $block_id ) {
-			acf_reset_meta( $block_id );
-		}
-		$this->meta_block_ids = array();
 
 		acf_set_data( 'acf_current_block_version', null );
 		acf_set_data( 'acf_doing_block_preview', false );
@@ -276,8 +258,7 @@ class Test_Blocks_Render extends BaseTestCase {
 		// the front-end render that was just cached for the same block ID.
 		acf_get_store( 'block-cache' )->reset();
 
-		$preview_html           = acf_rendered_block( $attributes, '', true, 0 );
-		$this->meta_block_ids[] = 'block_missingtpl';
+		$preview_html = acf_rendered_block( $attributes, '', true, 0 );
 		$this->assertStringContainsString( 'The render template for this ACF Block was not found', $preview_html );
 	}
 
@@ -358,8 +339,7 @@ class Test_Blocks_Render extends BaseTestCase {
 			'mode' => 'preview',
 		);
 
-		$html                   = acf_rendered_block( $attributes, '', true, 0 );
-		$this->meta_block_ids[] = 'block_previewcache';
+		$html = acf_rendered_block( $attributes, '', true, 0 );
 
 		$this->assertTrue( $captured_preview );
 		$this->assertStringContainsString( 'PREVIEW-HTML', $html );
@@ -566,7 +546,6 @@ class Test_Blocks_Render extends BaseTestCase {
 			'block_inlineempty',
 			true
 		);
-		$this->meta_block_ids[] = 'block_inlineempty';
 
 		// The auto inline editing placeholder counts as empty.
 		$this->assertTrue( acf_inline_editing_field_is_empty( 'inline_empty_text' ) );
@@ -579,7 +558,6 @@ class Test_Blocks_Render extends BaseTestCase {
 			'block_inlineempty2',
 			true
 		);
-		$this->meta_block_ids[] = 'block_inlineempty2';
 		acf_get_store( 'values' )->reset();
 
 		$this->assertFalse( acf_inline_editing_field_is_empty( 'inline_empty_text' ) );
@@ -667,7 +645,6 @@ class Test_Blocks_Render extends BaseTestCase {
 		// V3 in a block preview with block-scoped local meta renders attributes.
 		acf_set_data( 'acf_doing_block_preview', true );
 		acf_setup_meta( array(), 'block_toolbar1', true );
-		$this->meta_block_ids[] = 'block_toolbar1';
 
 		$attrs = acf_inline_toolbar_editing_attrs( array( 'toolbar_text' ) );
 		$this->assertStringContainsString( 'data-acf-inline-fields-uid="block_toolbar1toolbar_text"', $attrs );
@@ -704,5 +681,102 @@ class Test_Blocks_Render extends BaseTestCase {
 		// Unknown fields are skipped entirely.
 		$attrs = acf_inline_toolbar_editing_attrs( array( 'this_field_does_not_exist' ) );
 		$this->assertStringContainsString( 'data-acf-inline-fields="[]"', $attrs );
+	}
+
+	/**
+	 * Regression test for #455. Preview renders of both v1/v2 and v3 paths
+	 * must call acf_reset_meta() after acf_setup_meta() so unrelated
+	 * get_field()/get_post_meta() reads against the same post id continue
+	 * to return real DB values once the preview render returns.
+	 */
+	public function test_rendered_block_does_not_leak_meta() {
+		$post_id = wp_insert_post(
+			array(
+				'post_type'   => 'post',
+				'post_title'  => 'Leak Regression',
+				'post_status' => 'publish',
+			)
+		);
+		update_post_meta( $post_id, 'unrelated_field', 'db_value' );
+
+		// v1/v2 form branch.
+		$this->register_block(
+			array(
+				'name'            => 'leak-v1-block',
+				'title'           => 'Leak V1 Block',
+				'render_callback' => function () {
+					echo 'v1';
+				},
+			)
+		);
+		$block = array(
+			'id'   => 'block_leakv1',
+			'name' => 'acf/leak-v1-block',
+			'data' => array(),
+		);
+		$html  = acf_rendered_block( $block, '', true, $post_id, null, array( 'mode' => 'edit' ), false /* not ajax */ );
+		$this->assertStringContainsString( 'v1', $html );
+		$this->assertSame(
+			'db_value',
+			get_post_meta( $post_id, 'unrelated_field', true ),
+			'Form-branch preview must not leak meta'
+		);
+
+		// v1/v2 preloaded preview re-setup path. Use a different block id so
+		// the block-cache short-circuit cannot serve the previous render.
+		acf_get_store( 'block-cache' )->reset();
+		$this->register_block(
+			array(
+				'name'            => 'leak-v1-preload-block',
+				'title'           => 'Leak V1 Preload Block',
+				'render_callback' => function () {
+					echo 'v1preload';
+				},
+			)
+		);
+		$block = array(
+			'id'   => 'block_leakv1preload',
+			'name' => 'acf/leak-v1-preload-block',
+			'data' => array(),
+		);
+		// First non-ajax non-preview render to populate cache and reach
+		// the preloaded-preview re-setup branch on a subsequent preview call.
+		acf_rendered_block( $block, '', false, $post_id, null, array(), false /* not ajax */ );
+		acf_set_data( 'acf_doing_block_preview', true );
+		$preview_html = acf_rendered_block( $block, '', true, $post_id, null, array(), false /* not ajax */ );
+		acf_set_data( 'acf_doing_block_preview', false );
+		$this->assertStringContainsString( 'v1preload', $preview_html );
+		$this->assertSame(
+			'db_value',
+			get_post_meta( $post_id, 'unrelated_field', true ),
+			'Preloaded-preview re-setup must not leak meta'
+		);
+
+		// v3 path.
+		acf_get_store( 'block-cache' )->reset();
+		$this->register_block(
+			array(
+				'name'              => 'leak-v3-block',
+				'title'             => 'Leak V3 Block',
+				'acf_block_version' => 3,
+				'render_callback'   => function () {
+					echo 'v3';
+				},
+			)
+		);
+		$block = array(
+			'id'   => 'block_leakv3',
+			'name' => 'acf/leak-v3-block',
+			'data' => array(),
+		);
+		$html  = acf_rendered_block_v3( $block, '', true, $post_id, null, array() );
+		$this->assertStringContainsString( 'v3', $html );
+		$this->assertSame(
+			'db_value',
+			get_post_meta( $post_id, 'unrelated_field', true ),
+			'V3 preview must not leak meta'
+		);
+
+		wp_delete_post( $post_id, true );
 	}
 }
