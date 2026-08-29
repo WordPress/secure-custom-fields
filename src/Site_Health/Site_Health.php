@@ -32,7 +32,7 @@ class Site_Health {
 	private AI_Usage $ai_usage;
 
 	/**
-	 * Constructs the ACF_Site_Health class.
+	 * Constructs the Site_Health class.
 	 *
 	 * @since 6.3
 	 */
@@ -517,7 +517,7 @@ class Site_Health {
 		$php_field_groups = array_filter(
 			$field_groups,
 			function ( $field_group ) {
-				return ! empty( $field_group['local'] ) && 'PHP' === $field_group['local'];
+				return ! empty( $field_group['local'] ) && 'php' === $field_group['local'];
 			}
 		);
 
