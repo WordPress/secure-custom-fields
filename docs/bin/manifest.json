@@ -229,6 +229,11 @@
         "parent": "concepts",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/concepts/security.md"
     },
+    "contributing/admin-performance-testing": {
+        "slug": "admin-performance-testing",
+        "parent": "contributing",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/admin-performance-testing.md"
+    },
     "contributing/documentation": {
         "slug": "documentation",
         "parent": "contributing",

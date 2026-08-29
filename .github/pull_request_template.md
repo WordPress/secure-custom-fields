@@ -1,6 +1,9 @@
 <!-- Thanks for contributing to Secure Custom Fields (SCF)! Please have a look at the Contributing Guidelines:
 https://github.com/WordPress/secure-custom-fields/blob/trunk/docs/contributing/index.md -->
 
+<!-- For PRs touching admin screen rendering, see the performance testing checklist:
+https://github.com/WordPress/secure-custom-fields/blob/trunk/docs/contributing/admin-performance-testing.md -->
+
 <!-- Insert a description of your changes here -->
 
 <!-- Link this PR to its associated issue with an appropriate keyword: Closes, See, Follow up to, etc. -->
