@@ -40,12 +40,12 @@ describe( 'SCF Compatibility Layer', () => {
 		window.acf.screen = { check: jest.fn(), set: jest.fn() };
 
 		// The production webpack bundle executes this module in sloppy
-		// (non-strict) mode and the legacy code relies on it: maybe_get()
-		// assigns to an undeclared `keys` variable and add_action() relies
-		// on `arguments` aliasing its named parameters. babel-jest compiles
-		// required modules to strict mode which breaks both, so evaluate
-		// the raw source instead to match production semantics.
-		// The strict-mode fragility is tracked in #460.
+		// (non-strict) mode. babel-jest compiles required modules to strict
+		// mode, which would clobber the `acf` global. Evaluate the raw
+		// source in indirect-eval scope so the IIFE gets its own `acf`
+		// binding like in production. The strict-mode fragility previously
+		// tracked in #460 is fixed in this file; the static check below
+		// guards against regression.
 		// eslint-disable-next-line no-eval
 		( 0, eval )( compatibilitySource );
 
@@ -281,6 +281,84 @@ describe( 'SCF Compatibility Layer', () => {
 			model.set( 'status', 'ready' );
 
 			expect( model._set_status ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'strict-mode safety (regression for #460)', () => {
+		// The source must not rely on sloppy-mode semantics. Two specific
+		// patterns are forbidden because they break under strict mode:
+		//   1. Assigning to an undeclared identifier inside `maybe_get`
+		//      throws ReferenceError under strict mode.
+		//   2. Recursive calls in `add_action` that forward `arguments`
+		//      break because strict mode disables the aliasing of named
+		//      parameters by `arguments`.
+		// The static checks below fail loudly if either pattern returns.
+
+		// Extract a function body by walking braces from the line that
+		// contains the function name. Avoids matching unrelated blocks
+		// that happen to also call `.apply( this, arguments )`.
+		const extractFunctionBody = ( source, fnName ) => {
+			const lines = source
+				.replace( /\/\*[\s\S]*?\*\//g, '' )
+				.split( '\n' );
+			const start = lines.findIndex( ( l ) => l.includes( fnName ) );
+			if ( start === -1 ) {
+				return null;
+			}
+			let depth = 0;
+			let sawOpen = false;
+			const body = [];
+			for ( let i = start; i < lines.length; i++ ) {
+				const line = lines[ i ];
+				for ( const ch of line ) {
+					if ( ch === '{' ) {
+						depth++;
+						sawOpen = true;
+					} else if ( ch === '}' ) {
+						depth--;
+					}
+				}
+				if ( sawOpen && depth === 0 ) {
+					break;
+				}
+				if ( sawOpen ) {
+					body.push( line );
+				}
+			}
+			return body.join( '\n' );
+		};
+
+		it( 'should not assign to an undeclared `keys` in maybe_get()', () => {
+			const body = extractFunctionBody(
+				compatibilitySource,
+				'_acf.maybe_get'
+			);
+			expect( body ).not.toBeNull();
+			// `keys` must be declared with `var` before any assignment to
+			// it. Ignore `keys ==` / `keys ===` comparisons (regex `(?!=)`).
+			let declared = false;
+			const offenders = body.split( '\n' ).filter( ( l ) => {
+				if ( /^[\s]*var\s+keys\b/.test( l ) ) {
+					declared = true;
+					return false;
+				}
+				return (
+					! declared &&
+					/(^|[\s;{(])keys\s*=(?!=)/.test( l )
+				);
+			} );
+			expect( offenders ).toEqual( [] );
+		} );
+
+		it( 'should not forward `arguments` from the multi-action recursion in add_action()', () => {
+			const body = extractFunctionBody(
+				compatibilitySource,
+				'_acf.add_action = function'
+			);
+			expect( body ).not.toBeNull();
+			expect( body ).not.toMatch(
+				/_acf\.add_action\.apply\(\s*this\s*,\s*arguments\s*\)/
+			);
 		} );
 	} );
 } );
