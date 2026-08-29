@@ -23,6 +23,9 @@ acf_enable_filter( 'local' );
  */
 function acf_enable_local() {
 	acf_enable_filter( 'local' );
+	// Clear dummy local-empty store on enable so any registrations that
+	// landed there while disabled do not leak back (issue #459).
+	acf_get_store( 'local-empty' )->reset();
 }
 
 /**
@@ -37,6 +40,9 @@ function acf_enable_local() {
  */
 function acf_disable_local() {
 	acf_disable_filter( 'local' );
+	// Clear dummy local-empty store on disable so registrations made while
+	// disabled do not accumulate across toggles (issue #459).
+	acf_get_store( 'local-empty' )->reset();
 }
 
 /**

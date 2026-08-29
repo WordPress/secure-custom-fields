@@ -512,8 +512,9 @@ class Test_Local_Fields extends BaseTestCase {
 	/**
 	 * Test the acf/settings/local filter disables the local layer.
 	 *
-	 * While disabled, registrations land in the shared writable 'local-empty'
-	 * dummy store; that foot-gun is tracked in #459.
+	 * While disabled, registrations land in the dummy local-empty store and
+	 * must not appear in the real local store. Toggling clears that dummy
+	 * store so its contents cannot leak back later (issue #459).
 	 */
 	public function test_local_setting_filter_disables_local() {
 		add_filter( 'acf/settings/local', '__return_false' );
@@ -523,6 +524,12 @@ class Test_Local_Fields extends BaseTestCase {
 		// While disabled, registrations are routed to the dummy store.
 		acf_add_local_field_group( $this->make_group( 'group_while_disabled' ) );
 
+		$this->assertSame(
+			1,
+			acf_get_store( 'local-empty' )->count(),
+			'Disabled-local writes should land in the dummy store'
+		);
+
 		remove_filter( 'acf/settings/local', '__return_false' );
 
 		$this->assertFalse(
@@ -530,8 +537,10 @@ class Test_Local_Fields extends BaseTestCase {
 			'Groups registered while disabled should not appear in the real local store'
 		);
 
-		// Clean the dummy store which received the write.
-		acf_get_store( 'local-empty' )->reset();
+		// Re-enabling clears the dummy store so the disabled write does not
+		// leak back into a later session (issue #459).
+		acf_enable_local();
+		$this->assertSame( 0, acf_get_store( 'local-empty' )->count(), 'Enabling local must clear the dummy store' );
 	}
 
 	/**
@@ -561,6 +570,26 @@ class Test_Local_Fields extends BaseTestCase {
 			acf_get_local_store( '', 'acf-field-group' ),
 			'acf-field-group post type should route to the groups store'
 		);
+	}
+
+	/**
+	 * Test acf_disable_local / acf_enable_local clear the dummy store so
+	 * accumulated writes cannot leak into a later session (issue #459).
+	 */
+	public function test_disabled_local_clears_dummy_store_on_toggle() {
+		$empty = acf_get_store( 'local-empty' );
+
+		// Disable with no prior state: dummy should already be empty.
+		acf_disable_local();
+		$this->assertSame( 0, $empty->count(), 'Dummy store should start empty on disable' );
+
+		// Seed via a disabled-local registration.
+		acf_add_local_field_group( $this->make_group( 'group_then_toggle' ) );
+		$this->assertSame( 1, $empty->count(), 'Disabled-local write should land in dummy store' );
+
+		// Re-enabling must clear the accumulated write.
+		acf_enable_local();
+		$this->assertSame( 0, $empty->count(), 'Enabling local should clear the dummy store' );
 	}
 
 	// =========================================================================
