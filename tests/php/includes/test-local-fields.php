@@ -466,30 +466,90 @@ class Test_Local_Fields extends BaseTestCase {
 	}
 
 	/**
-	 * Test removing a field group does not remove its registered fields.
+	 * Test removing a field group also cascades to remove its registered fields.
 	 *
-	 * NOTE: documents current behavior — possible bug: acf_remove_local_field_group()
-	 * only removes the group from the local store, leaving its (now orphaned) fields
-	 * registered in the local-fields store. Tracked in #458.
+	 * Fixes #458: acf_remove_local_field_group() now removes the group's fields
+	 * from the local-fields store so they do not remain as orphans discoverable
+	 * by key/name lookups.
 	 */
-	public function test_remove_local_field_group_leaves_fields_registered() {
+	public function test_remove_local_field_group_cascades_to_fields() {
 		acf_add_local_field_group(
 			$this->make_group(
-				'group_orphan_test',
+				'group_cascade_test',
 				array(
 					array(
-						'key'   => 'field_orphan',
-						'label' => 'Orphan',
-						'name'  => 'orphan',
+						'key'   => 'field_cascade_one',
+						'label' => 'One',
+						'name'  => 'cascade_one',
+						'type'  => 'text',
+					),
+					array(
+						'key'   => 'field_cascade_two',
+						'label' => 'Two',
+						'name'  => 'cascade_two',
 						'type'  => 'text',
 					),
 				)
 			)
 		);
 
-		acf_remove_local_field_group( 'group_orphan_test' );
+		$this->assertTrue( acf_is_local_field( 'field_cascade_one' ), 'Field should exist before removal' );
+		$this->assertTrue( acf_is_local_field( 'cascade_one' ), 'Field should exist by name before removal' );
 
-		$this->assertTrue( acf_is_local_field( 'field_orphan' ), 'Fields remain after their group is removed' );
+		acf_remove_local_field_group( 'group_cascade_test' );
+
+		$this->assertFalse( acf_is_local_field_group( 'group_cascade_test' ), 'Group should be removed' );
+		$this->assertFalse( acf_is_local_field( 'field_cascade_one' ), 'Field key should be removed' );
+		$this->assertFalse( acf_is_local_field( 'cascade_one' ), 'Field name alias should be removed' );
+		$this->assertFalse( acf_is_local_field( 'field_cascade_two' ), 'Second field key should be removed' );
+		$this->assertSame( 0, acf_count_local_fields( 'group_cascade_test' ), 'Group should report zero child fields' );
+	}
+
+	/**
+	 * Test removing a field group cascades through repeater sub-fields.
+	 *
+	 * Fixes #458: sub-fields registered under a parent field (via parent =
+	 * field_key) must also be cleaned up when the parent group is removed.
+	 */
+	public function test_remove_local_field_group_cascades_to_sub_fields() {
+		acf_add_local_field_group(
+			$this->make_group(
+				'group_cascade_sub',
+				array(
+					array(
+						'key'        => 'field_cascade_repeater',
+						'label'      => 'Items',
+						'name'       => 'cascade_items',
+						'type'       => 'repeater',
+						'sub_fields' => array(
+							array(
+								'key'   => 'field_cascade_sub_a',
+								'label' => 'A',
+								'name'  => 'cascade_sub_a',
+								'type'  => 'text',
+							),
+							array(
+								'key'   => 'field_cascade_sub_b',
+								'label' => 'B',
+								'name'  => 'cascade_sub_b',
+								'type'  => 'text',
+							),
+						),
+					),
+				)
+			)
+		);
+
+		$this->assertTrue( acf_is_local_field( 'field_cascade_repeater' ), 'Repeater should exist' );
+		$this->assertTrue( acf_is_local_field( 'field_cascade_sub_a' ), 'Sub field A should exist' );
+		$this->assertTrue( acf_is_local_field( 'field_cascade_sub_b' ), 'Sub field B should exist' );
+
+		acf_remove_local_field_group( 'group_cascade_sub' );
+
+		$this->assertFalse( acf_is_local_field( 'field_cascade_repeater' ), 'Repeater should be removed' );
+		$this->assertFalse( acf_is_local_field( 'field_cascade_sub_a' ), 'Sub field A should be removed' );
+		$this->assertFalse( acf_is_local_field( 'field_cascade_sub_b' ), 'Sub field B should be removed' );
+		$this->assertFalse( acf_is_local_field( 'cascade_sub_a' ), 'Sub field A name alias should be removed' );
 	}
 
 	// =========================================================================
