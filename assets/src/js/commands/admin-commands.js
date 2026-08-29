@@ -23,6 +23,7 @@ import {
 	tool,
 	upload,
 	download,
+	page,
 } from '@wordpress/icons';
 
 /**
@@ -165,10 +166,34 @@ const registerAdminCommands = () => {
 		} );
 	};
 
+	// Options page commands — one per registered SCF options page.
+	const optionsPageCommands = [];
+	if ( Array.isArray( window.scfOptionsPages ) ) {
+		window.scfOptionsPages.forEach( ( optionsPage ) => {
+			if ( ! optionsPage?.menu_slug ) {
+				return;
+			}
+			optionsPageCommands.push( {
+				name: 'options-page-' + optionsPage.menu_slug,
+				label: optionsPage.menu_title || optionsPage.page_title,
+				url: 'admin.php',
+				urlArgs: { page: optionsPage.menu_slug },
+				icon: page,
+				keywords: [
+					'options',
+					'settings',
+					'scf',
+					optionsPage.menu_title,
+					optionsPage.page_title,
+				].filter( Boolean ),
+			} );
+		} );
+	}
+
 	// WordPress 6.9+ adds Command Palette commands for all admin menu items.
 	// For older versions, we need to register them manually. The most reliable way to
 	// detect this is to check if the commands are already registered.
-	viewCommands.forEach( ( command ) => {
+	const registerIfNotAutoRegistered = ( command ) => {
 		const commandUrl = addQueryArgs( command.url, command.urlArgs );
 		// WordPress stores destination URLs in the command *name*, appended to
 		// the menu slug (which is also a relative URL), resulting in somewhat
@@ -178,11 +203,15 @@ const registerAdminCommands = () => {
 			return;
 		}
 		registerCommand( command );
-	} );
+	};
+
+	viewCommands.forEach( registerIfNotAutoRegistered );
 
 	// "Create New" commands are not automatically registered by WordPress,
 	// so we always register them.
 	createCommands.forEach( registerCommand );
+
+	optionsPageCommands.forEach( registerIfNotAutoRegistered );
 };
 
 if ( 'requestIdleCallback' in window ) {
