@@ -279,4 +279,46 @@ class Test_Form_Post extends BaseTestCase {
 			'Field group with block location among other rules should be identified as block field group'
 		);
 	}
+
+	/**
+	 * Test should_validate_post returns true for statuses that publish the post
+	 * or hand it off for review.
+	 */
+	public function test_should_validate_post_for_publishing_statuses() {
+		$form_post = new ACF_Form_Post();
+
+		foreach ( array( 'publish', 'pending', 'future', 'private' ) as $status ) {
+			$post = (object) array(
+				'ID'          => 1,
+				'post_type'   => 'post',
+				'post_status' => $status,
+			);
+
+			$this->assertTrue(
+				$form_post->should_validate_post( $post ),
+				sprintf( 'Status "%s" should trigger required-field validation', $status )
+			);
+		}
+	}
+
+	/**
+	 * Test should_validate_post returns false for intermediate statuses so
+	 * drafts and auto-drafts keep saving without enforcement.
+	 */
+	public function test_should_validate_post_for_drafting_statuses() {
+		$form_post = new ACF_Form_Post();
+
+		foreach ( array( 'draft', 'auto-draft', 'inherit', 'trash' ) as $status ) {
+			$post = (object) array(
+				'ID'          => 1,
+				'post_type'   => 'post',
+				'post_status' => $status,
+			);
+
+			$this->assertFalse(
+				$form_post->should_validate_post( $post ),
+				sprintf( 'Status "%s" should bypass required-field validation', $status )
+			);
+		}
+	}
 }

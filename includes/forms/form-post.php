@@ -329,6 +329,24 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		}
 
 		/**
+		 * Returns whether required-field validation should run for a given post.
+		 *
+		 * Statuses that represent a post leaving the author's hands (publish,
+		 * pending review, scheduled, private) require validation; intermediate
+		 * statuses (draft, auto-draft, inherit, trash) save without enforcement
+		 * so authors can keep iterating.
+		 *
+		 * @since ACF 6.8.1
+		 *
+		 * @param WP_Post $post The post being saved.
+		 * @return boolean
+		 */
+		public function should_validate_post( $post ) {
+			$validating_statuses = array( 'publish', 'pending', 'future', 'private' );
+			return in_array( $post->post_status, $validating_statuses, true );
+		}
+
+		/**
 		 * Triggers during the 'save_post' action to save the $_POST data.
 		 *
 		 * @since   ACF 1.0.0.0.0
@@ -364,8 +382,8 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 				return $post_id;
 			}
 
-			// Validate for published post (allow draft to save without validation).
-			if ( 'publish' === $post->post_status ) {
+			// Validate on statuses where the post leaves the author's hands.
+			if ( $this->should_validate_post( $post ) ) {
 				// Bail early if validation fails.
 				if ( ! acf_validate_save_post() ) {
 					return;
