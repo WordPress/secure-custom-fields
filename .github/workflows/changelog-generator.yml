@@ -1,0 +1,139 @@
+name: Generate Changelog
+
+on:
+  milestone:
+    types: [closed]
+  workflow_dispatch: 
+    inputs:
+      milestone:
+        description: 'Milestone number or title to generate changelog for'
+        required: true
+        type: string
+      dry_run:
+        description: 'Preview changelog without committing'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  generate-changelog:
+    name: Generate WordPress readme.txt Changelog
+    runs-on: ubuntu-latest
+    
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+      
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+      
+      - name: Get milestone information
+        id: milestone
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MILESTONE_INPUT: ${{ github.event.inputs.milestone }}
+          EVENT_MILESTONE: ${{ github.event.milestone.number }}
+        run: |
+          if [ -n "$MILESTONE_INPUT" ]; then
+            MILESTONE="$MILESTONE_INPUT"
+          else
+            MILESTONE="$EVENT_MILESTONE"
+          fi
+          
+          echo "milestone=$MILESTONE" >> $GITHUB_OUTPUT
+          
+          # Fetch milestone details
+          MILESTONE_DATA=$(gh api "repos/${{ github.repository }}/milestones" \
+            --jq ". [] | select(.number == $MILESTONE or .title == \"$MILESTONE\")")
+          
+          MILESTONE_TITLE=$(echo "$MILESTONE_DATA" | jq -r '.title')
+          MILESTONE_NUMBER=$(echo "$MILESTONE_DATA" | jq -r '.number')
+          DUE_DATE=$(echo "$MILESTONE_DATA" | jq -r '.due_on // empty')
+          
+          echo "title=$MILESTONE_TITLE" >> $GITHUB_OUTPUT
+          echo "number=$MILESTONE_NUMBER" >> $GITHUB_OUTPUT
+          
+          if [ -n "$DUE_DATE" ]; then
+            FORMATTED_DATE=$(date -d "$DUE_DATE" "+%d %b %Y")
+            echo "date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
+          else
+            FORMATTED_DATE=$(date "+%d %b %Y")
+            echo "date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
+          fi
+      
+      - name:  Fetch PRs from milestone
+        id: prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MILESTONE_NUMBER: ${{ steps.milestone.outputs.number }}
+        run: |
+          # Fetch all merged PRs in this milestone
+          gh pr list \
+            --repo "${{ github.repository }}" \
+            --state merged \
+            --milestone "$MILESTONE_NUMBER" \
+            --limit 1000 \
+            --json number,title,labels,author,mergedAt \
+            > prs.json
+          
+          echo "Found $(jq length prs.json) merged PRs in milestone"
+      
+      - name: Generate changelog entry
+        id: changelog
+        env:
+          MILESTONE_TITLE: ${{ steps.milestone.outputs.title }}
+          RELEASE_DATE: ${{ steps.milestone.outputs.date }}
+        run: |
+          php bin/generate-changelog.php \
+            --milestone-title "$MILESTONE_TITLE" \
+            --release-date "$RELEASE_DATE" \
+            --prs-file prs.json \
+            --output changelog-entry.txt
+          
+          echo "Generated changelog entry:"
+          cat changelog-entry.txt
+      
+      - name: Update readme.txt
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          php bin/update-readme-changelog.php \
+            --readme readme.txt \
+            --changelog-entry changelog-entry.txt \
+            --output readme.txt
+      
+      - name: Commit changes
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          MILESTONE_TITLE: ${{ steps.milestone.outputs.title }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add readme.txt
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update changelog for $MILESTONE_TITLE"
+            git push origin trunk
+          fi
+      
+      - name: Display changelog preview
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "# Changelog Preview (Dry Run)"
+          echo ""
+          cat changelog-entry.txt
