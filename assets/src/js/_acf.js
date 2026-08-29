@@ -33,7 +33,7 @@
 	 */
 
 	acf.get = function ( name ) {
-		return this.data[ name ] || null;
+		return this.data.hasOwnProperty( name ) ? this.data[ name ] : null;
 	};
 
 	/**
@@ -766,7 +766,7 @@
 	};
 
 	acf.isObject = function ( a ) {
-		return typeof a === 'object';
+		return a !== null && typeof a === 'object';
 	};
 
 	/**
