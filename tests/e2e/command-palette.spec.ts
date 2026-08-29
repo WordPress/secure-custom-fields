@@ -170,6 +170,28 @@ test.describe( 'Command Palette', () => {
 						page.getByRole( 'textbox', { name: /Plural Label/ } )
 					).toHaveValue( 'SCF E2E Test Type' );
 				} );
+
+				test( 'should surface an existing instance to edit via search', async ( {
+					page,
+				} ) => {
+					await openCommandPalette( page );
+
+					const input = getCommandPaletteInput( page );
+
+					// The search loader returns posts of the test type as results.
+					await input.fill( 'SCF E2E Test Instance' );
+
+					await page
+						.getByRole( 'option', {
+							name: /SCF E2E Test Instance/,
+						} )
+						.click();
+
+					// Selecting the result opens the post editor for that instance.
+					await expect( page ).toHaveURL(
+						/post\.php\?post=\d+&action=edit/
+					);
+				} );
 			} );
 		} );
 	} );

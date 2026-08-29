@@ -36,6 +36,7 @@ class SCF_Rest_Types_Endpoint {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_extra_fields' ) );
+		add_action( 'rest_api_init', array( $this, 'register_taxonomy_fields' ) );
 		add_action( 'rest_api_init', array( $this, 'register_parameters' ) );
 		add_filter( 'rest_request_before_callbacks', array( $this, 'filter_types_request' ), 10, 3 );
 		add_filter( 'rest_prepare_post_type', array( $this, 'filter_post_type' ), 10, 3 );
@@ -188,6 +189,64 @@ class SCF_Rest_Types_Endpoint {
 			default:
 				return array();
 		}
+	}
+
+	/**
+	 * Register extra SCF fields for the taxonomies endpoint.
+	 *
+	 * @since SCF 6.8.3
+	 *
+	 * @return void
+	 */
+	public function register_taxonomy_fields() {
+		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
+			return;
+		}
+
+		register_rest_field(
+			'taxonomy',
+			'scf_taxonomy_id',
+			array(
+				'get_callback' => array( $this, 'get_scf_taxonomy_id' ),
+				'schema'       => array(
+					'description' => __( 'The SCF internal post ID that defines this taxonomy. Null if not managed by SCF or if the current user cannot edit the taxonomy definition.', 'secure-custom-fields' ),
+					'type'        => array( 'integer', 'null' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Get the SCF internal post ID for a taxonomy.
+	 *
+	 * Only exposed to users who can edit the taxonomy definition, so that
+	 * consumers (e.g. Command Palette commands) can rely on its presence as
+	 * a capability check.
+	 *
+	 * @since SCF 6.8.3
+	 *
+	 * @param array $taxonomy_object The taxonomy object.
+	 * @return int|null The post ID if managed by SCF and editable by the current user, null otherwise.
+	 */
+	public function get_scf_taxonomy_id( $taxonomy_object ) {
+		$slug           = $taxonomy_object['slug'];
+		$scf_taxonomies = acf_get_acf_taxonomies();
+
+		foreach ( $scf_taxonomies as $scf_taxonomy ) {
+			if ( $scf_taxonomy['taxonomy'] === $slug ) {
+				$scf_tax_id = isset( $scf_taxonomy['ID'] ) ? (int) $scf_taxonomy['ID'] : 0;
+
+				if ( ! $scf_tax_id || ! current_user_can( 'edit_post', $scf_tax_id ) ) {
+					return null;
+				}
+
+				return $scf_tax_id;
+			}
+		}
+
+		return null;
 	}
 
 	/**

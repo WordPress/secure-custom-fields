@@ -361,7 +361,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 				array_unique(
 					array_merge(
 						$custom_post_type_commands_asset['dependencies'],
-						array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' )
+						array( 'acf', 'wp-plugins', 'wp-element', 'wp-components', 'wp-data', 'wp-core-data', 'wp-commands', 'wp-i18n', 'wp-dom-ready' )
 					)
 				)
 			);

@@ -11,7 +11,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { dispatch, select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import {
@@ -23,13 +23,14 @@ import {
 	tool,
 	upload,
 	download,
+	edit,
 } from '@wordpress/icons';
 
 /**
  * Register admin commands for SCF
  */
 const registerAdminCommands = () => {
-	if ( ! select( 'core/commands') || ! dispatch( 'core/commands' ) ) {
+	if ( ! select( 'core/commands' ) || ! dispatch( 'core/commands' ) ) {
 		return;
 	}
 
@@ -174,7 +175,11 @@ const registerAdminCommands = () => {
 		// the menu slug (which is also a relative URL), resulting in somewhat
 		// peculiar naming, e.g.
 		// edit.php?post_type=acf-field-group-edit.php?post_type=acf-ui-options-page
-		if ( registeredCommands.some( ( cmd ) => cmd.name.endsWith( commandUrl ) ) ) {
+		if (
+			registeredCommands.some( ( cmd ) =>
+				cmd.name.endsWith( commandUrl )
+			)
+		) {
 			return;
 		}
 		registerCommand( command );
@@ -183,6 +188,74 @@ const registerAdminCommands = () => {
 	// "Create New" commands are not automatically registered by WordPress,
 	// so we always register them.
 	createCommands.forEach( registerCommand );
+
+	// Edit commands for existing field groups — data injected via PHP since
+	// acf-field-group posts are not REST-accessible.
+	const fieldGroups = window.scfFieldGroups;
+	if ( Array.isArray( fieldGroups ) ) {
+		fieldGroups.forEach( ( fieldGroup ) => {
+			if ( ! fieldGroup?.id ) {
+				return;
+			}
+			commandStore.registerCommand( {
+				name: 'scf/edit-field-group-' + fieldGroup.key,
+				label: sprintf(
+					/* translators: %s: field group title */
+					__( 'Edit field group: %s', 'secure-custom-fields' ),
+					fieldGroup.title
+				),
+				icon: edit,
+				keywords: [
+					'edit',
+					'modify',
+					'field group',
+					'fields',
+					fieldGroup.title,
+				],
+				callback: ( { close } ) => {
+					document.location = addQueryArgs( 'post.php', {
+						post: fieldGroup.id,
+						action: 'edit',
+					} );
+					close();
+				},
+			} );
+		} );
+	}
+
+	// Edit commands for existing SCF options pages — data injected via PHP since
+	// acf-ui-options-page posts are not REST-accessible.
+	const editOptionsPages = window.scfEditOptionsPages;
+	if ( Array.isArray( editOptionsPages ) ) {
+		editOptionsPages.forEach( ( optionsPage ) => {
+			if ( ! optionsPage?.id ) {
+				return;
+			}
+			commandStore.registerCommand( {
+				name: 'scf/edit-options-page-' + optionsPage.menu_slug,
+				label: sprintf(
+					/* translators: %s: options page title */
+					__( 'Edit options page: %s', 'secure-custom-fields' ),
+					optionsPage.title
+				),
+				icon: edit,
+				keywords: [
+					'edit',
+					'modify',
+					'options page',
+					'settings',
+					optionsPage.title,
+				],
+				callback: ( { close } ) => {
+					document.location = addQueryArgs( 'post.php', {
+						post: optionsPage.id,
+						action: 'edit',
+					} );
+					close();
+				},
+			} );
+		} );
+	}
 };
 
 if ( 'requestIdleCallback' in window ) {

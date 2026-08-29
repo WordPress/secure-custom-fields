@@ -86,12 +86,34 @@ function scf_test_create_scf_post_type_entry() {
 
 	// Create the post type entry in the database using SCF's API
 	acf_update_post_type( $post_type_config );
+
+	// Seed a published post of the test type for command palette search tests.
+	if ( ! get_option( 'scf_e2e_test_instance_created' ) ) {
+		$post_id = wp_insert_post(
+			array(
+				'post_title'   => 'SCF E2E Test Instance',
+				'post_type'    => 'scf-e2e-test-type',
+				'post_status'  => 'publish',
+				'post_content' => 'Test instance for command palette editing.',
+			)
+		);
+
+		if ( $post_id && ! is_wp_error( $post_id ) ) {
+			update_option( 'scf_e2e_test_instance_created', $post_id );
+		}
+	}
 }
 
 /**
  * Clean up on plugin deactivation
  */
 function scf_test_cleanup() {
+	$instance_id = get_option( 'scf_e2e_test_instance_created' );
+	if ( $instance_id ) {
+		wp_delete_post( $instance_id, true );
+		delete_option( 'scf_e2e_test_instance_created' );
+	}
+
 	acf_delete_post_type( 'scf_e2e_test_post_type' );
 }
 
