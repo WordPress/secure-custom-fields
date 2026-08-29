@@ -1,12 +1,5 @@
 {
   "$schema": "https://schemas.wp.org/trunk/wp-env.json",
-  "plugins": ["."],
-  "env": {
-    "tests": {
-      "mappings": {
-        "wp-content/plugins/secure-custom-fields": ".",
-        "wp-content/plugins/scf-test-plugins": "./tests/e2e/plugins"
-      }
-    }
-  }
+  "testsEnvironment": false,
+  "plugins": ["."]
 }

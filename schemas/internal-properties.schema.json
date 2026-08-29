@@ -27,6 +27,7 @@
 			"description": "Internal prefix used for field naming during rendering."
 		},
 		"value": {
+			"type": [ "array", "object", "string", "number", "integer", "boolean", "null" ],
 			"description": "Current field value. Type varies by field type."
 		},
 		"id": {

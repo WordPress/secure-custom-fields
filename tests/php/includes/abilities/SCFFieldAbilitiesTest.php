@@ -203,6 +203,36 @@ class SCFFieldAbilitiesTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Test list-fields output schema declares a type for the internal value property.
+	 */
+	public function test_list_fields_output_schema_declares_type_for_internal_value() {
+		global $mock_registered_abilities;
+		$mock_registered_abilities = array();
+
+		$this->abilities->register_abilities();
+
+		$this->assertArrayHasKey( 'scf/list-fields', $mock_registered_abilities );
+		$schema = $mock_registered_abilities['scf/list-fields']['output_schema'];
+
+		$this->assertArrayHasKey( 'oneOf', $schema['items'] );
+
+		$expected_types = array( 'array', 'boolean', 'integer', 'null', 'number', 'object', 'string' );
+		foreach ( $schema['items']['oneOf'] as $variant ) {
+			$this->assertArrayHasKey( 'value', $variant['properties'] );
+			$this->assertArrayHasKey(
+				'type',
+				$variant['properties']['value'],
+				'The internal value property must declare a type for REST schema validation.'
+			);
+
+			$actual_types = $variant['properties']['value']['type'];
+			sort( $actual_types );
+
+			$this->assertSame( $expected_types, $actual_types );
+		}
+	}
+
 	// List callback tests.
 
 	/**

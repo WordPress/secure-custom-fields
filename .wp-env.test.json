@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/wp-env.json",
+	"testsEnvironment": false,
+	"port": 8889,
+  "plugins": ["."],
+  "lifecycleScripts": {
+    "afterStart": "bash ./scripts/install-pcov.sh"
+  },
+  "mappings": {
+    "wp-content/plugins/secure-custom-fields": ".",
+    "wp-content/plugins/scf-test-plugins": "./tests/e2e/plugins",
+    "wp-content/mu-plugins/php-coverage-collector.php": "./tests/e2e/mu-plugins/php-coverage-collector.php"
+  }
+}
