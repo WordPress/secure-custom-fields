@@ -1587,6 +1587,175 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 	}
 
 	/**
+	 * AJAX validation remains available to third-party forms that use
+	 * acf_form_data() without rendering an acf_form().
+	 *
+	 * Advanced Forms uses the acf_form screen and supplies its own encoded form
+	 * configuration, but it cannot emit SCF's acf_form()-specific grant fields.
+	 *
+	 * @return void
+	 * @throws RuntimeException If AJAX handling raises an unrelated exception.
+	 */
+	public function test_ajax_gate_allows_third_party_acf_form_data_validation(): void {
+		$field_key = 'field_front_grant_third_party';
+		$this->register_text_field( $field_key, 'front_grant_third_party' );
+
+		$encoded_args    = base64_encode( wp_json_encode( array( 'display_title' => false ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Matches the third-party form transport under test.
+		$validator_calls = 0;
+		$this->add_test_hook(
+			'acf/validate_value/key=' . $field_key,
+			static function ( $valid ) use ( &$validator_calls ) {
+				++$validator_calls;
+				return $valid;
+			},
+			PHP_INT_MAX
+		);
+
+		ob_start();
+		acf_form_data(
+			array(
+				'screen'  => 'acf_form',
+				'post_id' => false,
+				'form'    => false,
+			)
+		);
+		$request = $this->request_from_html( (string) ob_get_clean(), false );
+
+		$this->assertArrayHasKey( '_acf_external_form_meta', $request );
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Simulates Advanced Forms' AJAX validation request.
+		$_POST                  = $request;
+		$_POST['action']        = 'acf/validate_save_post';
+		$_POST['nonce']         = wp_create_nonce( 'acf_nonce' );
+		$_POST['_acf_form']     = $encoded_args;
+		$_POST['af_form']       = 'form_third_party';
+		$_POST['af_form_args']  = $encoded_args;
+		$_POST['af_form_nonce'] = wp_create_nonce( 'af_submission_form_third_party_' . hash( 'sha256', $encoded_args ) );
+		$_POST['acf']           = array( $field_key => 'third-party value' );
+		$_REQUEST               = $_POST;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		$response = $this->invoke_ajax_validation();
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( 1, $response['data']['valid'], 'Third-party front-end validation must not require an acf_form() grant.' );
+		$this->assertSame( 0, $response['data']['errors'] );
+		$this->assertSame( 1, $validator_calls );
+	}
+
+	/**
+	 * AJAX validation rejects a tampered third-party form grant.
+	 *
+	 * @return void
+	 * @throws RuntimeException If AJAX handling raises an unrelated exception.
+	 */
+	public function test_ajax_gate_rejects_tampered_third_party_form_grant(): void {
+		$field_key = 'field_front_grant_third_party_tampered';
+		$this->register_text_field( $field_key, 'front_grant_third_party_tampered' );
+
+		ob_start();
+		acf_form_data(
+			array(
+				'screen'  => 'acf_form',
+				'post_id' => false,
+				'form'    => false,
+			)
+		);
+		$request = $this->request_from_html( (string) ob_get_clean(), false );
+
+		$token                               = $request['_acf_external_form_meta'];
+		$last_character                      = substr( $token, -1 );
+		$request['_acf_external_form_meta']  = substr( $token, 0, -1 );
+		$request['_acf_external_form_meta'] .= 'a' === $last_character ? 'b' : 'a';
+
+		$validator_calls = 0;
+		$this->add_test_hook(
+			'acf/validate_value/key=' . $field_key,
+			static function ( $valid ) use ( &$validator_calls ) {
+				++$validator_calls;
+				return $valid;
+			},
+			PHP_INT_MAX
+		);
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Submits a deliberately tampered signed grant to the AJAX handler under test.
+		$_POST           = $request;
+		$_POST['action'] = 'acf/validate_save_post';
+		$_POST['nonce']  = wp_create_nonce( 'acf_nonce' );
+		$_POST['acf']    = array( $field_key => 'must not validate' );
+		$_REQUEST        = $_POST;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		$response = $this->invoke_ajax_validation();
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( 0, $response['data']['valid'] );
+		$this->assertSame( 0, $validator_calls );
+	}
+
+	/**
+	 * A third-party grant cannot override a tampered native acf_form() grant.
+	 *
+	 * @return void
+	 * @throws RuntimeException If AJAX handling raises an unrelated exception.
+	 */
+	public function test_ajax_external_grant_cannot_bypass_tampered_native_grant(): void {
+		$field_key = 'field_front_grant_external_native_tampered';
+		$post_id   = $this->create_post( 'External grant native tamper target' );
+		$this->register_text_field( $field_key, 'front_grant_external_native_tampered' );
+
+		$request = $this->render_request(
+			array(
+				'id'       => 'front-grant-external-native-tampered',
+				'post_id'  => $post_id,
+				'fields'   => array( $field_key ),
+				'honeypot' => false,
+				'return'   => '',
+			)
+		);
+
+		ob_start();
+		acf_form_data(
+			array(
+				'screen'  => 'acf_form',
+				'post_id' => $post_id,
+				'form'    => false,
+			)
+		);
+		$external_request                   = $this->request_from_html( (string) ob_get_clean(), false );
+		$request['_acf_external_form_meta'] = $external_request['_acf_external_form_meta'];
+
+		$token                         = $request['_acf_form_meta'][0];
+		$last_character                = substr( $token, -1 );
+		$request['_acf_form_meta'][0]  = substr( $token, 0, -1 );
+		$request['_acf_form_meta'][0] .= 'a' === $last_character ? 'b' : 'a';
+
+		$validator_calls = 0;
+		$this->add_test_hook(
+			'acf/validate_value/key=' . $field_key,
+			static function ( $valid ) use ( &$validator_calls ) {
+				++$validator_calls;
+				return $valid;
+			},
+			PHP_INT_MAX
+		);
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Submits a valid external grant beside a deliberately tampered native grant.
+		$_POST           = $request;
+		$_POST['action'] = 'acf/validate_save_post';
+		$_POST['nonce']  = wp_create_nonce( 'acf_nonce' );
+		$_POST['acf']    = array( $field_key => 'must not validate' );
+		$_REQUEST        = $_POST;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		$response = $this->invoke_ajax_validation();
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( 0, $response['data']['valid'] );
+		$this->assertSame( 0, $validator_calls );
+	}
+
+	/**
 	 * The AJAX grant gate applies only to acf_form() submissions. Requests from
 	 * the post editor have no front-end markers and follow normal validation.
 	 *
@@ -1766,6 +1935,7 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 	 * @return void
 	 */
 	private function detach_request_hooks( acf_form_front $front ): void {
+		remove_action( 'acf/form_data', array( $front, 'render_external_form_meta' ) );
 		remove_action( 'acf/validate_save_post', array( $front, 'validate_save_post' ), 1 );
 		remove_filter( 'acf/pre_save_post', array( $front, 'pre_save_post' ), 5 );
 	}
@@ -1819,10 +1989,11 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 	/**
 	 * Extracts hidden ACF form values from rendered HTML.
 	 *
-	 * @param string $html Rendered HTML.
+	 * @param string $html           Rendered HTML.
+	 * @param bool   $require_native Whether native acf_form() grant fields are required.
 	 * @return array
 	 */
-	private function request_from_html( string $html ): array {
+	private function request_from_html( string $html, bool $require_native = true ): array {
 		$inputs  = array();
 		$request = array();
 
@@ -1853,8 +2024,10 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 			}
 		}
 
-		foreach ( array( '_acf_nonce', '_acf_post_id', '_acf_form', '_acf_render_id', '_acf_form_meta' ) as $required_key ) {
-			$this->assertArrayHasKey( $required_key, $request, "Rendered form is missing {$required_key}." );
+		if ( $require_native ) {
+			foreach ( array( '_acf_nonce', '_acf_post_id', '_acf_form', '_acf_render_id', '_acf_form_meta' ) as $required_key ) {
+				$this->assertArrayHasKey( $required_key, $request, "Rendered form is missing {$required_key}." );
+			}
 		}
 
 		return $request;
