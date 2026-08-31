@@ -3,15 +3,9 @@
  * Schema robustness repro for the scf/list-fields ability output
  *
  * The scf/list-fields output_schema is `{ type: array, items: { oneOf: [...] } }`
- * where every oneOf variant pins `type` to a known field type enum, sets
- * `additionalProperties: false`, and requires `ID >= 1`. JSON Schema array
- * validation is all-or-nothing: if ANY stored field drifts from its type schema
- * (unknown type, stray property, local field with ID 0), that item matches no
- * oneOf variant and the WHOLE array output is rejected by output-schema
- * validation.
- *
- * NOTE: documents current behavior — possible bug: one invalid field makes the
- * entire listing unusable. Tracked in #453.
+ * with strict variants for built-in field types and a permissive fallback for
+ * extension field types. Local fields legitimately use `ID => 0`, while
+ * database-backed fields use positive post IDs.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -268,10 +262,9 @@ class Test_SCF_List_Fields_Schema_Robustness extends BaseTestCase {
 	}
 
 	/**
-	 * Sanity check: a field stored with an unknown type fails every oneOf
-	 * type variant of the item schema.
+	 * A field stored with an unknown type matches the fallback item schema.
 	 */
-	public function test_drifted_field_alone_fails_item_schema() {
+	public function test_unknown_field_alone_passes_item_schema() {
 		$schema      = $this->get_list_fields_output_schema();
 		$item_schema = $schema['items'];
 
@@ -280,80 +273,46 @@ class Test_SCF_List_Fields_Schema_Robustness extends BaseTestCase {
 
 		$validator = $this->validate_against_schema( $drifted_field, $item_schema );
 
-		$this->assertFalse(
+		$this->assertTrue(
 			$validator->isValid(),
-			'A field with an unknown stored type should match no oneOf variant'
+			'A field with an unknown stored type should match the fallback variant. Errors: '
+				. wp_json_encode( $validator->getErrors() )
 		);
 	}
 
 	/**
-	 * Repro: one drifted field invalidates the ENTIRE list-fields output.
-	 *
-	 * The list output schema is `array` of `oneOf` variants, each pinned to a
-	 * known type enum with additionalProperties: false. Because array schema
-	 * validation rejects the whole array when any single item fails, a single
-	 * stored field that drifted from its type schema (here: an unknown field
-	 * type, e.g. from a third-party or removed field type plugin) makes
-	 * output-schema validation fail for the complete listing - including all
-	 * perfectly valid fields in it.
-	 *
-	 * NOTE: documents current behavior - possible bug: one invalid field makes
-	 * the entire listing unusable. A consumer validating scf/list-fields output
-	 * against its registered output_schema (as the WordPress Abilities API does
-	 * for ability results) receives a validation error instead of the valid
-	 * fields. Tracked in #453.
+	 * A third-party field type does not invalidate the complete list output.
 	 */
-	public function test_single_drifted_field_invalidates_entire_list_output() {
+	public function test_unknown_field_type_keeps_entire_list_output_valid() {
 		$schema        = $this->get_list_fields_output_schema();
 		$drifted_field = acf_get_field( $this->local_drifted_key );
 		$output        = $this->build_list_output( array( $this->db_text_field, $drifted_field ) );
 
 		$this->assertCount( 2, $output, 'The callback itself happily returns both fields' );
 
-		// The valid field on its own passes...
+		// The valid field on its own passes.
 		$valid_only = $this->validate_against_schema( array( $this->db_text_field ), $schema );
 		$this->assertTrue( $valid_only->isValid(), 'The valid field alone passes the output schema' );
 
-		// ...but the combined listing is rejected wholesale.
+		// The fallback keeps the combined listing valid as well.
 		$combined = $this->validate_against_schema( $output, $schema );
-		$this->assertFalse(
+		$this->assertTrue(
 			$combined->isValid(),
-			'One drifted field should (currently) cause the whole list output to fail validation'
-		);
-
-		// The failure is reported against the drifted item, confirming the
-		// rejection is caused by the single bad field poisoning the array.
-		$error_properties    = wp_list_pluck( $combined->getErrors(), 'property' );
-		$drifted_item_errors = array_filter(
-			$error_properties,
-			function ( $property ) {
-				return 0 === strpos( (string) $property, '[1]' );
-			}
-		);
-		$this->assertNotEmpty(
-			$drifted_item_errors,
-			'Validation errors should point at the drifted item ([1]). Errors: '
+			'A third-party field type should not invalidate the list output. Errors: '
 				. wp_json_encode( $combined->getErrors() )
 		);
 	}
 
 	/**
-	 * Repro: ordinary local (code-registered) fields fail the output schema
-	 * because their ID is 0.
+	 * Ordinary local (code-registered) fields pass with an ID of 0.
 	 *
 	 * This run uses the REAL, unmocked list_callback: local field groups are
 	 * aggregated by the production code path. Local fields legitimately have
-	 * `ID => 0` (they have no backing post), but the internal-properties schema
-	 * merged into every oneOf variant requires `ID` with `minimum: 1`, so a
-	 * perfectly ordinary code-registered text field - the most common kind of
-	 * field on real sites - fails the item schema, and with it the whole list.
-	 *
-	 * NOTE: documents current behavior - possible bug: any site registering
-	 * fields in code (acf_add_local_field_group / local JSON) produces
-	 * scf/list-fields output that fails its own output_schema validation.
-	 * Tracked in #453.
+	 * `ID => 0` because they have no backing post. The field-specific internal
+	 * properties schema accepts that value while database-backed entities retain
+	 * the positive-ID constraint.
 	 */
-	public function test_local_text_field_fails_output_schema_due_to_id_zero() {
+	public function test_local_text_field_passes_output_schema_with_id_zero() {
 		$schema = $this->get_list_fields_output_schema();
 
 		// Real list_callback, no mocks: aggregates the local field group.
@@ -367,21 +326,9 @@ class Test_SCF_List_Fields_Schema_Robustness extends BaseTestCase {
 
 		$validator = $this->validate_against_schema( $output, $schema );
 
-		$this->assertFalse(
+		$this->assertTrue(
 			$validator->isValid(),
-			'A listing containing a local field should (currently) fail the output schema'
-		);
-
-		// Confirm the ID minimum constraint is among the failures.
-		$minimum_errors = array_filter(
-			$validator->getErrors(),
-			function ( $error ) {
-				return 'minimum' === $error['constraint'] && '[0].ID' === $error['property'];
-			}
-		);
-		$this->assertNotEmpty(
-			$minimum_errors,
-			'Validation should fail on the ID >= 1 requirement. Errors: '
+			'A listing containing a local field should pass the output schema. Errors: '
 				. wp_json_encode( $validator->getErrors() )
 		);
 	}
