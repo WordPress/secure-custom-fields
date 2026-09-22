@@ -28,6 +28,13 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		private $beta_features = array();
 
 		/**
+		 * Whether beta feature files have been included and registered.
+		 *
+		 * @var bool
+		 */
+		private $beta_features_included = false;
+
+		/**
 		 * This function will setup the class functionality
 		 *
 		 * @since   SCF 6.5.0
@@ -137,8 +144,15 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		private function include_beta_features() {
+			if ( $this->beta_features_included ) {
+				return;
+			}
+
+			$this->beta_features_included = true;
+
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-connect-fields.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-taxonomy-editor.php' );
 
 			add_action( 'scf/include_admin_beta_features', array( $this, 'register_beta_features' ) );
 
@@ -153,6 +167,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
+			scf_register_admin_beta_feature( 'SCF_Admin_Beta_Feature_Taxonomy_Editor' );
 		}
 
 		/**

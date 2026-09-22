@@ -118,6 +118,19 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 		 */
 		public function admin_enqueue_scripts() {
 
+			if ( $this->is_taxonomy_editor_enabled() && version_compare( get_bloginfo( 'version' ), '7.0', '>=' ) ) {
+				wp_enqueue_style( 'scf-taxonomy-editor' );
+				wp_enqueue_script( 'scf-taxonomy-editor' );
+				global $post;
+				wp_localize_script(
+					'scf-taxonomy-editor',
+					'scfTaxonomyEditor',
+					array(
+						'data' => acf_get_internal_post_type( $post->ID, $this->post_type ),
+					)
+				);
+			}
+
 			wp_enqueue_style( 'acf-field-group' );
 
 			acf_localize_text(
@@ -311,11 +324,13 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Validated in $this->verify_save_post() above.
 			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized when saved.
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized when saved.
 			$_POST['acf_taxonomy']['ID']    = $post_id;
 			$_POST['acf_taxonomy']['title'] = isset( $_POST['acf_taxonomy']['labels']['name'] ) ? $_POST['acf_taxonomy']['labels']['name'] : '';
 
 			// Save the taxonomy.
 			acf_update_internal_post_type( $_POST['acf_taxonomy'], $this->post_type ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Validated in verify_save_post
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 
@@ -334,7 +349,11 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 				$acf_taxonomy['key'] = uniqid( 'taxonomy_' );
 			}
 
-			acf_get_view( $this->post_type . '/basic-settings' );
+			$view = $this->is_taxonomy_editor_enabled() && version_compare( get_bloginfo( 'version' ), '7.0', '>=' )
+				? $this->post_type . '/dataform-editor'
+				: $this->post_type . '/basic-settings';
+
+			acf_get_view( $view );
 		}
 
 
@@ -345,6 +364,18 @@ if ( ! class_exists( 'ACF_Admin_Taxonomy' ) ) :
 		 */
 		public function mb_advanced_settings() {
 			acf_get_view( $this->post_type . '/advanced-settings' );
+		}
+
+		/**
+		 * Returns whether the taxonomy DataForm editor is enabled.
+		 *
+		 * @return bool
+		 */
+		private function is_taxonomy_editor_enabled() {
+			$features = acf()->admin_beta_features->get_beta_features();
+			$feature  = isset( $features['taxonomy_editor'] ) ? $features['taxonomy_editor'] : null;
+
+			return $feature && $feature->is_enabled();
 		}
 	}
 

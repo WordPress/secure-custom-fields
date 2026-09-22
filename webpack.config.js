@@ -15,6 +15,7 @@ const commonConfig = {
 		'js/acf-input': './assets/src/js/acf-input.js',
 		'js/acf-internal-post-type':
 			'./assets/src/js/acf-internal-post-type.js',
+		'js/scf-taxonomy-editor': './assets/src/js/scf-taxonomy-editor.js',
 		'js/commands/scf-admin': './assets/src/js/commands/admin-commands.js',
 		'js/commands/scf-custom-post-types':
 			'./assets/src/js/commands/custom-post-type-commands.js',
@@ -31,6 +32,8 @@ const commonConfig = {
 		'js/scf-bindings': './assets/src/js/bindings/index.js',
 
 		// CSS files
+		'css/scf-taxonomy-editor':
+			'./node_modules/@wordpress/dataviews/build-style/style.css',
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',
 		'css/acf-field-group': './assets/src/sass/acf-field-group.scss',
 		'css/acf-global': './assets/src/sass/acf-global.scss',
@@ -62,6 +65,18 @@ const commonConfig = {
 							: [],
 					},
 				},
+			},
+			{
+				test: /\.css$/,
+				use: [
+					MiniCssExtractPlugin.loader, // Extract CSS into separate files.
+					{
+						loader: 'css-loader',
+						options: {
+							url: false, // Don't resolve URLs.
+						},
+					},
+				],
 			},
 			{
 				test: /\.scss$/,

@@ -263,6 +263,14 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'version'    => $version,
 					'in_footer'  => false,
 				),
+				'scf-taxonomy-editor'     => array(
+					'handle'     => 'scf-taxonomy-editor',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'scf-taxonomy-editor' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'scf-taxonomy-editor' ) ),
+					'deps'       => array( 'wp-element', 'wp-i18n' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
 				'acf-escaped-html-notice' => array(
 					'handle'     => 'acf-escaped-html-notice',
 					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'acf-escaped-html-notice' ) ),
@@ -283,6 +291,12 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 
 			// Define style registrations.
 			$styles = array(
+				'scf-taxonomy-editor' => array(
+					'handle'  => 'scf-taxonomy-editor',
+					'src'     => acf_get_url( sprintf( $css_path_patterns['base'], 'scf-taxonomy-editor' ) ),
+					'deps'    => array(),
+					'version' => $version,
+				),
 				'acf-pro-input'       => array(
 					'handle'  => 'acf-pro-input',
 					'src'     => acf_get_url( sprintf( $css_path_patterns['pro'], 'acf-pro-input' ) ),

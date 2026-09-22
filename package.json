@@ -20,6 +20,7 @@
 		"wp-env": "wp-env"
 	},
 	"dependencies": {
+		"@wordpress/dataviews": "^7.0.0",
 		"@wordpress/icons": "^10.26.0",
 		"dompurify": "3.4.11",
 		"md5": "^2.3.0"

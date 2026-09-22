@@ -133,7 +133,8 @@ const test = wpTest.extend( {
 					} )();
 				},
 			},
-			// Older WordPress versions expose "Preview"; newer versions expose "View".
+			// Older WordPress versions expose "Preview"; newer versions expose "View"
+			// and the menu item labelling changed again in WP trunk.
 			openPreviewPage: {
 				value: async () => {
 					const editorTopBar = page.locator(
@@ -148,18 +149,17 @@ const test = wpTest.extend( {
 						( await viewButton.count() ) > 0 &&
 						( await viewButton.first().isVisible() )
 					) {
-						return editor.openPreviewPage();
+						await viewButton.first().click();
+					} else {
+						await editorTopBar
+							.locator( 'role=button[name="Preview"i]' )
+							.click();
 					}
 
-					await editorTopBar
-						.locator( 'role=button[name="Preview"i]' )
-						.click();
-
+					// WP trunk renamed the item to "Preview (opens in a new tab)".
 					const [ previewPage ] = await Promise.all( [
 						context.waitForEvent( 'page' ),
-						page.click(
-							'role=menuitem[name=/Preview in new tab/i]'
-						),
+						page.click( 'role=menuitem[name=/Preview.*new tab/i]' ),
 					] );
 
 					return previewPage;
