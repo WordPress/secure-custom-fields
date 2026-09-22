@@ -16,6 +16,148 @@ function acf_get_field_group( $id = 0 ) {
 }
 
 /**
+ * Returns the post types targeted by a field group for PHP export.
+ *
+ * Only location groups made up of a single "post_type" rule using the "=="
+ * operator are returned. Anything else is treated as ambiguous and skipped.
+ *
+ * @since SCF 6.9.6
+ *
+ * @param array $field_group The field group array.
+ * @return array
+ */
+function acf_get_field_group_post_types_for_export( array $field_group ) {
+	if ( empty( $field_group['location'] ) || ! is_array( $field_group['location'] ) ) {
+		return array();
+	}
+
+	$post_types = array();
+
+	foreach ( $field_group['location'] as $rule_group ) {
+		if ( ! is_array( $rule_group ) || 1 !== count( $rule_group ) ) {
+			return array();
+		}
+
+		$rule = reset( $rule_group );
+		if ( ! is_array( $rule ) || 'post_type' !== ( $rule['param'] ?? '' ) || '==' !== ( $rule['operator'] ?? '' ) || empty( $rule['value'] ) || ! is_string( $rule['value'] ) ) {
+			return array();
+		}
+
+		$post_types[] = $rule['value'];
+	}
+
+	return array_values( array_unique( array_filter( $post_types, 'is_string' ) ) );
+}
+
+/**
+ * Returns registered post meta arguments for a field group.
+ *
+ * Only fields that can be represented as single scalar post meta are returned.
+ * Fields targeting ambiguous locations or storing multiple values are skipped.
+ *
+ * @since SCF 6.9.6
+ *
+ * @param array $field_group The field group array.
+ * @return array
+ */
+function acf_get_field_group_post_meta_for_export( array $field_group ) {
+	if ( empty( $field_group['show_in_rest'] ) || empty( $field_group['fields'] ) ) {
+		return array();
+	}
+
+	$post_types = acf_get_field_group_post_types_for_export( $field_group );
+	if ( empty( $post_types ) ) {
+		return array();
+	}
+
+	$supported_types = array( 'string', 'boolean', 'integer', 'number' );
+	$meta            = array();
+
+	foreach ( $field_group['fields'] as $field ) {
+		if ( ! is_array( $field ) || empty( $field['name'] ) ) {
+			continue;
+		}
+
+		if ( is_protected_meta( $field['name'], 'post' ) ) {
+			continue;
+		}
+
+		if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
+			continue;
+		}
+
+		if ( ! acf_field_type_supports( $field['type'] ?? '', 'bindings', true ) ) {
+			continue;
+		}
+
+		$field_type = acf_get_field_type( $field['type'] ?? '' );
+		if ( ! $field_type || empty( $field_type->show_in_rest ) ) {
+			continue;
+		}
+
+		$schema = acf_get_field_rest_schema( $field );
+		$types  = array_values( array_diff( (array) ( $schema['type'] ?? array() ), array( 'null' ) ) );
+
+		// Skip fields that store more than one kind of value, such as checkbox or post object.
+		if ( 1 !== count( $types ) || ! in_array( $types[0], $supported_types, true ) ) {
+			continue;
+		}
+
+		$args = array(
+			'single'       => true,
+			'type'         => $types[0],
+			'show_in_rest' => true,
+		);
+
+		foreach ( $post_types as $post_type ) {
+			$meta[ $post_type ][ $field['name'] ] = $args;
+		}
+	}
+
+	return $meta;
+}
+
+/**
+ * Exports registered post meta for eligible field groups as PHP.
+ *
+ * @since SCF 6.9.6
+ *
+ * @param array $field_groups The field groups being exported.
+ * @return string
+ */
+function acf_export_field_groups_post_meta_as_php( array $field_groups ) {
+	$meta = array();
+
+	foreach ( $field_groups as $field_group ) {
+		foreach ( acf_get_field_group_post_meta_for_export( $field_group ) as $post_type => $fields ) {
+			foreach ( $fields as $name => $args ) {
+				$meta[ $post_type ][ $name ] = $args;
+			}
+		}
+	}
+
+	if ( empty( $meta ) ) {
+		return '';
+	}
+
+	$instance = acf_get_internal_post_type_instance( 'acf-field-group' );
+	$export   = "add_action( 'init', function() {\r\n";
+
+	foreach ( $meta as $post_type => $fields ) {
+		foreach ( $fields as $name => $args ) {
+			$code = var_export( $args, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions -- Used for PHP export.
+			$code = $instance ? $instance->format_code_for_export( $code ) : $code;
+
+			$export .= "\tregister_post_meta( " . var_export( $post_type, true ) . ', ' . var_export( $name, true ) . ", {$code} );\r\n"; // phpcs:ignore WordPress.PHP.DevelopmentFunctions -- Used for PHP export.
+		}
+	}
+
+	$export .= "} );\r\n\r\n";
+
+	return esc_textarea( $export );
+}
+
+/**
  * acf_get_raw_field_group
  *
  * Retrieves raw field group data for the given identifier.

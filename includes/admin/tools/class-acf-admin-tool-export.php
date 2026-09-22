@@ -419,6 +419,11 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 				if ( 'acf-post-type' === $post_type ) {
 					echo acf_export_enter_title_here( $posts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_textarea() used earlier.
 				}
+
+				// Register exported fields as post meta so they work with block bindings.
+				if ( 'acf-field-group' === $post_type ) {
+					echo acf_export_field_groups_post_meta_as_php( $posts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_textarea() used earlier.
+				}
 			}
 
 			echo '</textarea>';

@@ -101,6 +101,147 @@ class Test_ACF_Field_Group_Functions extends BaseTestCase {
 	}
 
 	// =========================================================================
+	// Post meta export tests
+	// =========================================================================
+
+	/**
+	 * Builds a REST enabled field group targeting the given post types.
+	 *
+	 * @param array $post_types Post type slugs to target.
+	 * @param array $fields     Field definitions.
+	 * @return array
+	 */
+	private function make_meta_field_group( $post_types, $fields ) {
+		$location = array();
+		foreach ( $post_types as $post_type ) {
+			$location[] = array(
+				array(
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => $post_type,
+				),
+			);
+		}
+
+		$field_group                 = $this->make_field_group( 'group_' . uniqid(), $location );
+		$field_group['show_in_rest'] = true;
+		$field_group['fields']       = $fields;
+
+		return $field_group;
+	}
+
+	/**
+	 * Test exporting scalar fields as registered post meta.
+	 */
+	public function test_export_field_group_post_meta() {
+		// Field types are loaded by the plugin init hook, which the test bootstrap does not fire.
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+
+		$field_group = $this->make_meta_field_group(
+			array( 'book' ),
+			array(
+				array(
+					'key'               => 'field_title',
+					'name'              => 'book_title',
+					'type'              => 'text',
+					'allow_in_bindings' => true,
+				),
+			)
+		);
+
+		$meta = acf_get_field_group_post_meta_for_export( $field_group );
+		$code = html_entity_decode( acf_export_field_groups_post_meta_as_php( array( $field_group ) ), ENT_QUOTES, 'UTF-8' );
+
+		$this->assertSame( true, $meta['book']['book_title']['single'] );
+		$this->assertSame( 'string', $meta['book']['book_title']['type'] );
+		$this->assertStringContainsString( "register_post_meta( 'book', 'book_title'", $code );
+		$this->assertStringContainsString( "'show_in_rest' => true", $code );
+	}
+
+	/**
+	 * Test registering a field for every post type the group targets.
+	 */
+	public function test_export_field_group_post_meta_multiple_post_types() {
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+
+		$field_group = $this->make_meta_field_group(
+			array( 'book', 'movie' ),
+			array(
+				array(
+					'name' => 'subtitle',
+					'type' => 'text',
+				),
+			)
+		);
+
+		$meta = acf_get_field_group_post_meta_for_export( $field_group );
+
+		$this->assertArrayHasKey( 'book', $meta );
+		$this->assertArrayHasKey( 'movie', $meta );
+	}
+
+	/**
+	 * Test skipping fields that should not be exported as post meta.
+	 */
+	public function test_export_field_group_post_meta_skips_ineligible_fields() {
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		acf_include( 'includes/fields/class-acf-field-select.php' );
+		acf_include( 'includes/fields/class-acf-field-checkbox.php' );
+
+		$field_group = $this->make_meta_field_group(
+			array( 'book' ),
+			array(
+				array(
+					'name'              => 'hidden_title',
+					'type'              => 'text',
+					'allow_in_bindings' => false,
+				),
+				array(
+					'name'              => 'multiple_values',
+					'type'              => 'checkbox',
+					'allow_in_bindings' => true,
+					'choices'           => array(
+						'one' => 'One',
+						'two' => 'Two',
+					),
+				),
+				array(
+					'name' => '_protected_title',
+					'type' => 'text',
+				),
+			)
+		);
+
+		$this->assertSame( array(), acf_get_field_group_post_meta_for_export( $field_group ) );
+	}
+
+	/**
+	 * Test skipping field groups without a concrete post type location.
+	 */
+	public function test_export_field_group_post_meta_skips_ambiguous_location() {
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+
+		$field_group = $this->make_meta_field_group(
+			array( 'book' ),
+			array(
+				array(
+					'name' => 'book_title',
+					'type' => 'text',
+				),
+			)
+		);
+
+		// Add a second rule to the same location group so it is no longer a single post type.
+		$field_group['location'][0][] = array(
+			'param'    => 'post_status',
+			'operator' => '==',
+			'value'    => 'publish',
+		);
+
+		$this->assertSame( array(), acf_get_field_group_post_meta_for_export( $field_group ) );
+	}
+
+	// =========================================================================
 	// SECTION 1: Field Group Key Validation
 	// =========================================================================
 
