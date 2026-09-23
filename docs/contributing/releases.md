@@ -59,6 +59,7 @@ This will run an interactive script that will:
 - Generate documentation, verify generated schemas, and update translations
 - Commit these changes to the current branch
 - Prompt the user for the new version number and update it accordingly in `secure-custom-fields.php`
+- Replace `@since SCF {NEXT_MAJOR_VERSION}` placeholders with the release version and regenerate the reference documentation
 - Offer the user to update the stable tag in `readme.txt`
 - Offer the user to create a PR (so the changes can be merged back to `trunk`)
 

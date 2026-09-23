@@ -14,6 +14,7 @@ namespace WordPress\SCF\Scripts;
 
 // Ensure we're in the right directory.
 chdir( dirname( __DIR__ ) );
+require_once __DIR__ . '/class-scf-since-resolver.php';
 
 // Check if required PHP functions are available.
 $required_functions = array( 'exec', 'passthru' );
@@ -73,6 +74,12 @@ class Release_Preparation {
 			}
 		} elseif ( ! $this->confirm( "No changelog found for {$new_version}. Is this expected?" ) ) {
 			exit( 1 );
+		}
+
+		$resolved_sources = $this->resolve_since_annotations( $new_version );
+		if ( $resolved_sources ) {
+			$this->generate_docs();
+			$this->commit_since_annotations( $new_version, $resolved_sources );
 		}
 
 		$this->update_version( $new_version );
@@ -258,6 +265,47 @@ class Release_Preparation {
 			return trim( $matches[1] );
 		}
 		return '';
+	}
+
+	/**
+	 * Resolve release-time @since placeholders.
+	 *
+	 * @param string $version Release version.
+	 * @return string[] Paths of files that were changed.
+	 */
+	private function resolve_since_annotations( $version ) {
+		$resolver = new Since_Resolver();
+		$changed  = $resolver->resolve( $version, dirname( __DIR__ ) );
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo 'Resolved @since placeholders in ' . count( $changed ) . " file(s) to {$version}.\n";
+
+		return $changed;
+	}
+
+	/**
+	 * Commit resolved @since annotations and their regenerated documentation.
+	 *
+	 * @param string   $version Version the annotations were resolved to.
+	 * @param string[] $sources Source files that were changed.
+	 */
+	private function commit_since_annotations( $version, $sources ) {
+		$paths = array_merge( $sources, array( 'docs/code-reference', 'docs/bin/manifest.json' ) );
+		passthru( 'git add ' . implode( ' ', array_map( 'escapeshellarg', $paths ) ), $return );
+		if ( 0 !== $return ) {
+			exit( $return );
+		}
+
+		exec( 'git diff --cached --quiet', $output, $status );
+		if ( 0 === $status ) {
+			return;
+		}
+
+		echo "Committing resolved @since annotations...\n";
+		passthru( "git commit -m 'Resolve @since placeholders for {$version}'", $return );
+		if ( 0 !== $return ) {
+			exit( $return );
+		}
 	}
 
 	/**

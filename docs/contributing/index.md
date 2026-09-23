@@ -72,3 +72,4 @@ Releases are **not** deployed automatically — there is no GitHub Action that p
 - Write unit tests for new features
 - Document all changes
 - Keep pull requests focused
+- For new SCF APIs, use `@since SCF {NEXT_MAJOR_VERSION}`. The release preparation script replaces this placeholder with the release version.
