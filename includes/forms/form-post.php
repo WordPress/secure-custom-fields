@@ -24,6 +24,13 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 		public $style = '';
 
 		/**
+		 * Meta box IDs moved into the editor sidebar by a beta feature.
+		 *
+		 * @var array
+		 */
+		private $sidebar_meta_box_ids = array();
+
+		/**
 		 * __construct
 		 *
 		 * Sets up the class functionality.
@@ -129,6 +136,12 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			// Storage for localized postboxes.
 			$postboxes = array();
 
+			// Storage for postboxes moved to the editor sidebar by a beta feature.
+			$this->sidebar_meta_box_ids = array();
+
+			// Whether field groups are rendered in the editor sidebar rather than below the content.
+			$use_sidebar = scf_field_groups_use_editor_sidebar( $post_type );
+
 			// Get field groups for this screen.
 			$field_groups = acf_get_field_groups(
 				array(
@@ -146,7 +159,7 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 					}
 
 					$id       = esc_attr( "acf-{$field_group['key']}" );
-					$context  = esc_attr( $field_group['position'] );
+					$context  = esc_attr( scf_get_field_group_meta_box_position( $post_type, $field_group['position'] ) );
 					$priority = 'high';
 
 					// Reduce priority for sidebar metaboxes for best position.
@@ -174,6 +187,10 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 						'edit'  => esc_url( acf_get_field_group_edit_link( $field_group['ID'] ) ),
 					);
 
+					if ( $use_sidebar ) {
+						$this->sidebar_meta_box_ids[] = $id;
+					}
+
 					// Add the meta box.
 					add_meta_box(
 						$id,
@@ -184,6 +201,11 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 						$priority,
 						array( 'field_group' => $field_group )
 					);
+				}
+
+				// Keep the order saved for this screen from moving the boxes back out of the sidebar.
+				if ( $this->sidebar_meta_box_ids ) {
+					add_filter( 'get_user_option_meta-box-order_' . $post_type, array( $this, 'modify_user_option_meta_box_order' ) );
 				}
 
 				// Set style from first field group.
@@ -216,6 +238,21 @@ if ( ! class_exists( 'ACF_Form_Post' ) ) :
 			* @param   array $field_groups The field groups added.
 			*/
 			do_action( 'acf/add_meta_boxes', $post_type, $post, $field_groups );
+		}
+
+		/**
+		 * Keeps field groups registered in the sidebar inside the sidebar.
+		 *
+		 * WordPress rebuilds the meta box registry from the order saved for the
+		 * screen, and that order still lists field groups under the position saved
+		 * on them. Without this the saved order would move them back below the
+		 * content.
+		 *
+		 * @param   array $locations The meta box order saved for this screen.
+		 * @return  array
+		 */
+		public function modify_user_option_meta_box_order( $locations ) {
+			return scf_move_meta_box_ids_to_sidebar( $locations, $this->sidebar_meta_box_ids );
 		}
 
 		/**

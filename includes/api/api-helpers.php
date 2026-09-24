@@ -4147,6 +4147,107 @@ function acf_is_block_editor() {
 }
 
 /**
+ * Returns true when the "Move Elements to Editor Sidebar" beta feature is
+ * enabled and the given post type is edited with the block editor.
+ *
+ * The beta feature registry only loads on admin screens, so this is always
+ * false outside of them, and post types using the classic editor are never
+ * affected.
+ *
+ * @param  string $post_type The post type being edited.
+ * @return boolean
+ */
+function scf_field_groups_use_editor_sidebar( $post_type ) {
+	if ( ! is_string( $post_type ) || '' === $post_type ) {
+		return false;
+	}
+
+	if ( ! function_exists( 'use_block_editor_for_post_type' ) || ! use_block_editor_for_post_type( $post_type ) ) {
+		return false;
+	}
+
+	$acf = acf();
+
+	if ( ! isset( $acf->admin_beta_features ) ) {
+		return false;
+	}
+
+	$feature = $acf->admin_beta_features->get_beta_feature( 'editor_sidebar' );
+
+	return $feature && $feature->is_enabled();
+}
+
+/**
+ * Returns the meta box position a field group should render in.
+ *
+ * Field groups keep the position saved on them unless the editor sidebar beta
+ * feature moves them into the block editor sidebar.
+ *
+ * @param  string $post_type The post type being edited.
+ * @param  string $position  The position saved on the field group.
+ * @return string
+ */
+function scf_get_field_group_meta_box_position( $post_type, $position ) {
+	if ( 'side' === $position || ! scf_field_groups_use_editor_sidebar( $post_type ) ) {
+		return $position;
+	}
+
+	return 'side';
+}
+
+/**
+ * Moves meta boxes into the sidebar within a saved meta box order.
+ *
+ * WordPress rebuilds the meta box registry from the order a user saved for the
+ * screen, and that order still lists field groups under the position saved on
+ * them. Without this the saved order would pull a field group back out of the
+ * editor sidebar.
+ *
+ * @param  array $meta_box_order The saved order, a comma separated list of IDs per location.
+ * @param  array $ids            The meta box IDs to move.
+ * @return array
+ */
+function scf_move_meta_box_ids_to_sidebar( $meta_box_order, $ids ) {
+	if ( ! is_array( $meta_box_order ) || empty( $ids ) ) {
+		return $meta_box_order;
+	}
+
+	$sidebar = array();
+
+	foreach ( array( 'side', 'acf_after_title', 'normal', 'advanced' ) as $location ) {
+		if ( empty( $meta_box_order[ $location ] ) || ! is_string( $meta_box_order[ $location ] ) ) {
+			continue;
+		}
+
+		$remaining = array();
+
+		foreach ( explode( ',', $meta_box_order[ $location ] ) as $id ) {
+			$id = trim( $id );
+
+			if ( '' === $id ) {
+				continue;
+			}
+
+			if ( 'side' === $location ) {
+				$sidebar[] = $id;
+			} elseif ( in_array( $id, $ids, true ) ) {
+				$sidebar[] = $id;
+			} else {
+				$remaining[] = $id;
+			}
+		}
+
+		if ( 'side' !== $location ) {
+			$meta_box_order[ $location ] = implode( ',', $remaining );
+		}
+	}
+
+	$meta_box_order['side'] = implode( ',', array_values( array_unique( $sidebar ) ) );
+
+	return $meta_box_order;
+}
+
+/**
  * Return an array of the WordPress reserved terms
  *
  * @since ACF 6.1

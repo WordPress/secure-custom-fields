@@ -37,6 +37,12 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 				return new WP_Error( 'acf_invalid_permissions', __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 			}
 
+			$post_type = $this->get( 'post_type' );
+
+			if ( ! $post_type && 'post' === $args['screen'] ) {
+				$post_type = get_post_type( (int) $args['post_id'] );
+			}
+
 			$response = array(
 				'results' => array(),
 				'style'   => '',
@@ -44,6 +50,9 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 
 			// get field groups
 			$field_groups = acf_get_field_groups( $args );
+
+			// Meta box IDs moved into the editor sidebar by a beta feature.
+			$relocated = array();
 
 			// loop through field groups
 			if ( $field_groups ) {
@@ -54,13 +63,17 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 						'id'       => esc_attr( 'acf-' . $field_group['key'] ),
 						'key'      => esc_attr( $field_group['key'] ),
 						'title'    => acf_esc_html( acf_get_field_group_title( $field_group ) ),
-						'position' => esc_attr( $field_group['position'] ),
+						'position' => esc_attr( scf_get_field_group_meta_box_position( $post_type, $field_group['position'] ) ),
 						'classes'  => postbox_classes( 'acf-' . $field_group['key'], $args['screen'] ),
 						'style'    => esc_attr( $field_group['style'] ),
 						'label'    => esc_attr( $field_group['label_placement'] ),
 						'edit'     => esc_url( acf_get_field_group_edit_link( $field_group['ID'] ) ),
 						'html'     => '',
 					);
+
+					if ( $item['position'] !== $field_group['position'] ) {
+						$relocated[] = $item['id'];
+					}
 
 					$hidden_metaboxes = get_hidden_meta_boxes( $args['screen'] );
 
@@ -95,7 +108,13 @@ if ( ! class_exists( 'ACF_Ajax_Check_Screen' ) ) :
 
 			// Custom metabox order.
 			if ( $this->get( 'screen' ) == 'post' ) {
-				$response['sorted'] = get_user_option( 'meta-box-order_' . $this->get( 'post_type' ) );
+				$sorted = get_user_option( 'meta-box-order_' . $post_type );
+
+				if ( $relocated && is_array( $sorted ) ) {
+					$sorted = scf_move_meta_box_ids_to_sidebar( $sorted, $relocated );
+				}
+
+				$response['sorted'] = $sorted;
 			}
 
 			/**

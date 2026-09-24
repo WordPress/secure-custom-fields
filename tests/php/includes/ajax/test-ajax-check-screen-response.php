@@ -100,6 +100,7 @@ class Test_Ajax_Check_Screen_Response extends BaseTestCase {
 	 */
 	public function tear_down(): void {
 		acf_remove_local_field_group( $this->group_key );
+		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
 		wp_set_current_user( 0 );
 
 		$_REQUEST = array();
@@ -279,6 +280,28 @@ class Test_Ajax_Check_Screen_Response extends BaseTestCase {
 
 		$this->assertNotNull( $item );
 		$this->assertStringContainsString( 'hide-if-js', $item['classes'] );
+	}
+
+	/**
+	 * Test that the editor sidebar beta feature reports the sidebar position.
+	 */
+	public function test_position_is_the_sidebar_when_the_editor_sidebar_beta_is_enabled() {
+		wp_set_current_user( $this->admin_user_id );
+
+		acf_include( 'includes/admin/beta-features.php' );
+		update_option( 'scf_beta_feature_editor_sidebar_enabled', true );
+
+		update_user_option( $this->admin_user_id, 'meta-box-order_post', array( 'normal' => 'acf-' . $this->group_key . ',submitdiv' ), true );
+
+		$response = $this->run_check_screen( $this->get_request() );
+		$item     = $this->find_group_item( $response );
+
+		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
+
+		$this->assertNotNull( $item );
+		$this->assertSame( 'side', $item['position'], 'The field group should report the sidebar position' );
+		$this->assertSame( 'submitdiv', $response['sorted']['normal'], 'The saved order should no longer list the group under the content' );
+		$this->assertSame( 'acf-' . $this->group_key, $response['sorted']['side'], 'The saved order should list the group in the sidebar' );
 	}
 
 	/**

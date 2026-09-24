@@ -28,6 +28,13 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		private $beta_features = array();
 
 		/**
+		 * Whether the beta feature classes have been included.
+		 *
+		 * @var bool
+		 */
+		private $included = false;
+
+		/**
 		 * This function will setup the class functionality
 		 *
 		 * @since   SCF 6.5.0
@@ -64,6 +71,9 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  mixed (SCF_Admin_Beta_Feature|null)
 		 */
 		public function get_beta_feature( $name ) {
+			// Include beta features.
+			$this->include_beta_features();
+
 			return isset( $this->beta_features[ $name ] ) ? $this->beta_features[ $name ] : null;
 		}
 
@@ -137,8 +147,13 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		private function include_beta_features() {
+			if ( $this->included ) {
+				return;
+			}
+			$this->included = true;
+
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
-			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-connect-fields.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
 
 			add_action( 'scf/include_admin_beta_features', array( $this, 'register_beta_features' ) );
 
@@ -153,6 +168,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
+			$this->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
 		}
 
 		/**
