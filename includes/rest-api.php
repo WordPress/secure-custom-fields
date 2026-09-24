@@ -16,6 +16,7 @@ acf_include( 'includes/rest-api/class-acf-rest-api.php' );
 acf_include( 'includes/rest-api/class-acf-rest-embed-links.php' );
 acf_include( 'includes/rest-api/class-acf-rest-request.php' );
 acf_include( 'includes/rest-api/class-acf-rest-types-endpoint.php' );
+acf_include( 'includes/rest-api/class-scf-rest-create-taxonomy.php' );
 
 acf_new_instance( 'ACF_Rest_Api' );
 acf_new_instance( 'SCF_Rest_Types_Endpoint' );

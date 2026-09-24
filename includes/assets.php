@@ -279,6 +279,14 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'deps'       => array(),
 					'in_footer'  => true,
 				),
+				'scf-create-taxonomies'   => array(
+					'handle'     => 'scf-create-taxonomies',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'scf-create-taxonomies' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'scf-create-taxonomies' ) ),
+					'version'    => $version,
+					'deps'       => array( 'wp-plugins', 'wp-editor', 'wp-core-data', 'wp-components', 'wp-element', 'wp-data', 'wp-i18n', 'wp-api-fetch' ),
+					'in_footer'  => true,
+				),
 			);
 
 			// Define style registrations.

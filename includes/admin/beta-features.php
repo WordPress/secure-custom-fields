@@ -90,6 +90,13 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function admin_menu() {
+			// Include and register the beta features before the block editor
+			// enqueues its assets. Features that add editor scripts attach their
+			// own callbacks in initialize(), and "enqueue_block_editor_assets"
+			// fires before "admin_enqueue_scripts", so registering any later
+			// would leave those callbacks unhooked.
+			$this->include_beta_features();
+
 			// bail early if no show_admin
 			if ( ! acf_get_setting( 'show_admin' ) ) {
 				return;
@@ -137,8 +144,16 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		private function include_beta_features() {
+			// Only include and register the beta features once.
+			static $included = false;
+			if ( $included ) {
+				return;
+			}
+			$included = true;
+
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
-			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-connect-fields.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-create-taxonomies.php' );
 
 			add_action( 'scf/include_admin_beta_features', array( $this, 'register_beta_features' ) );
 
@@ -153,6 +168,8 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
+			$this->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
+			$this->register_beta_feature( 'SCF_Admin_Beta_Feature_Create_Taxonomies' );
 		}
 
 		/**

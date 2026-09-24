@@ -29,6 +29,7 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 		acf_include( 'includes/admin/beta-features.php' );
 		acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
 		acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
+		acf_include( 'includes/admin/beta-features/class-scf-beta-feature-create-taxonomies.php' );
 
 		$this->beta_features = new SCF_Admin_Beta_Features();
 	}
@@ -36,9 +37,37 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	/**
 	 * Clean up after each test.
 	 */
-	public function tear_down() {
+	public function tear_down(): void {
 		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
+		delete_option( 'scf_beta_feature_create_taxonomies_enabled' );
 		parent::tear_down();
+	}
+
+	/**
+	 * Test the create taxonomies beta feature registers.
+	 */
+	public function test_create_taxonomies_beta_feature() {
+		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Create_Taxonomies' );
+
+		$beta_features = $this->beta_features->get_beta_features();
+		$this->assertArrayHasKey( 'create_taxonomies', $beta_features );
+
+		$beta_feature = $beta_features['create_taxonomies'];
+		$this->assertInstanceOf( 'SCF_Admin_Beta_Feature_Create_Taxonomies', $beta_feature );
+		$this->assertNotEmpty( $beta_feature->title );
+		$this->assertNotEmpty( $beta_feature->description );
+		$this->assertFalse( $beta_feature->is_enabled() );
+	}
+
+	/**
+	 * Test the default beta features are registered.
+	 */
+	public function test_default_beta_features_registered() {
+		$this->beta_features->register_beta_features();
+
+		$beta_features = $this->beta_features->get_beta_features();
+		$this->assertArrayHasKey( 'editor_sidebar', $beta_features );
+		$this->assertArrayHasKey( 'create_taxonomies', $beta_features );
 	}
 
 	/**

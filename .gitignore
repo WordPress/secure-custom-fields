@@ -73,3 +73,5 @@ assets/build/**/*.php
 # Release folder
 release/
 
+# Local agent planning notes
+.zcode/
