@@ -145,6 +145,27 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
+		 * Registers a fallback for the wp-polyfill script handle.
+		 *
+		 * Generated asset files list this handle as a dependency of every SCF
+		 * script. Systems that never register it, such as ClassicPress, silently
+		 * drop each dependent script, which leaves the inline footer code
+		 * running against a missing acf global.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param string $version The script version.
+		 * @return void
+		 */
+		private function register_wp_polyfill_fallback( $version ) {
+			if ( wp_script_is( 'wp-polyfill', 'registered' ) ) {
+				return;
+			}
+
+			wp_register_script( 'wp-polyfill', false, array(), $version, true );
+		}
+
+		/**
 		 * Returns whether the legacy SCF block bindings editor script can run.
 		 *
 		 * The script depends on the stable WordPress block bindings JavaScript
@@ -174,6 +195,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			$version = acf_get_setting( 'version' );
 
 			$this->register_react_jsx_runtime_polyfill( $version );
+			$this->register_wp_polyfill_fallback( $version );
 
 			// Define path patterns.
 			$js_path_patterns    = array(

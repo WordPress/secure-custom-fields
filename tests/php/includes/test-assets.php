@@ -52,6 +52,7 @@ class Test_Assets extends BaseTestCase {
 		wp_dequeue_script( 'acf-pro-ui-options-page' );
 		wp_dequeue_script( 'scf-bindings' );
 		wp_deregister_script( 'react-jsx-runtime' );
+		wp_deregister_script( 'wp-polyfill' );
 		wp_deregister_script( 'scf-commands-admin' );
 		wp_deregister_script( 'scf-bindings' );
 	}
@@ -67,6 +68,7 @@ class Test_Assets extends BaseTestCase {
 		wp_dequeue_script( 'acf-pro-ui-options-page' );
 		wp_dequeue_script( 'scf-bindings' );
 		wp_deregister_script( 'react-jsx-runtime' );
+		wp_deregister_script( 'wp-polyfill' );
 		wp_deregister_script( 'scf-commands-admin' );
 		wp_deregister_script( 'scf-bindings' );
 
@@ -105,6 +107,29 @@ class Test_Assets extends BaseTestCase {
 			'window.ReactJSXRuntime',
 			implode( "\n", $wp_scripts->registered['react-jsx-runtime']->extra['after'] )
 		);
+	}
+
+	/**
+	 * Test installs without wp-polyfill get a fallback registration.
+	 */
+	public function test_register_scripts_adds_wp_polyfill_fallback_when_missing() {
+		acf_get_instance( 'ACF_Assets' )->register_scripts();
+
+		$this->assertTrue( wp_script_is( 'wp-polyfill', 'registered' ) );
+	}
+
+	/**
+	 * Test an existing wp-polyfill registration is left untouched.
+	 */
+	public function test_register_scripts_keeps_existing_wp_polyfill_registration() {
+		wp_register_script( 'wp-polyfill', 'https://example.org/polyfill.js', array(), 'test-version', true );
+
+		acf_get_instance( 'ACF_Assets' )->register_scripts();
+
+		$wp_scripts = wp_scripts();
+
+		$this->assertSame( 'https://example.org/polyfill.js', $wp_scripts->registered['wp-polyfill']->src );
+		$this->assertSame( 'test-version', $wp_scripts->registered['wp-polyfill']->ver );
 	}
 
 	/**
