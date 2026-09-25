@@ -65,6 +65,13 @@ class Bindings {
 
 			if ( ! acf_field_type_supports( $field['type'], 'bindings', true ) ) {
 				if ( is_preview() ) {
+					/**
+					 * Filters the message shown in the editor preview when a field type cannot be used in bindings.
+					 *
+					 * @since ACF 6.2.8
+					 *
+					 * @param string $message The message to display.
+					 */
 					return apply_filters( 'acf/bindings/field_not_supported_message', '[' . esc_html__( 'The requested SCF field type does not support output in Block Bindings or the SCF shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
@@ -73,6 +80,13 @@ class Bindings {
 
 			if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
 				if ( is_preview() ) {
+					/**
+					 * Filters the message shown in the editor preview when a field is not allowed in bindings.
+					 *
+					 * @since ACF 6.2.8
+					 *
+					 * @param string $message The message to display.
+					 */
 					return apply_filters( 'acf/bindings/field_not_allowed_message', '[' . esc_html__( 'The requested SCF field is not allowed to be output in bindings or the SCF Shortcode.', 'secure-custom-fields' ) . ']' );
 				} else {
 					return '';
@@ -80,6 +94,30 @@ class Bindings {
 			}
 
 			$field_value = $field['value'];
+
+			/**
+			 * Filters the field value before it is mapped to a block attribute.
+			 *
+			 * Use this filter to replace a stored value with data from another
+			 * source, for example an external API. The value arriving here is
+			 * already formatted and HTML escaped, because the field is loaded
+			 * with formatting on. The filtered value is then passed through the
+			 * standard attribute mapping, so arrays returned here still resolve
+			 * for image and link attributes.
+			 *
+			 * The filter does not run for field types that opt out of bindings,
+			 * for fields with allow_in_bindings turned off, or for sub fields of
+			 * repeater, group and clone fields.
+			 *
+			 * @since SCF 6.9.6
+			 *
+			 * @param mixed     $field_value    The loaded, formatted field value.
+			 * @param array     $field          The field array.
+			 * @param array     $source_attrs   The source attributes requested by the binding.
+			 * @param \WP_Block $block_instance The block instance.
+			 * @param string    $attribute_name The block's bound attribute name.
+			 */
+			$field_value = apply_filters( 'scf/blocks/binding_field_value', $field_value, $field, $source_attrs, $block_instance, $attribute_name );
 
 			switch ( $attribute_name ) {
 				case 'id':
@@ -120,6 +158,19 @@ class Bindings {
 			}
 		}
 
+		/**
+		 * Filters the final value returned by the binding source.
+		 *
+		 * Runs after the value has been mapped to the bound attribute, so it can
+		 * be used to adjust the output of any field type or attribute.
+		 *
+		 * @since ACF 6.2.8
+		 *
+		 * @param mixed     $value          The value to return to the block binding.
+		 * @param array     $source_attrs   The source attributes requested by the binding.
+		 * @param \WP_Block $block_instance The block instance.
+		 * @param string    $attribute_name The block's bound attribute name.
+		 */
 		return apply_filters( 'acf/blocks/binding_value', $value, $source_attrs, $block_instance, $attribute_name );
 	}
 }

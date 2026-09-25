@@ -8,6 +8,7 @@ This section details all features available in Secure Custom Fields.
 - [Fields](fields) - Available field types and their usage
 - [Local JSON](local-json) - Save field definitions as versionable JSON files
 - [API](api) - Programmatic access and integration
+- [Block Bindings](block-bindings) - Bind block attributes to field values
 
 ## Feature Categories
 

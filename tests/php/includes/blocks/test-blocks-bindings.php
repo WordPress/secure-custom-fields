@@ -5,8 +5,8 @@
  * Covers registration of the acf/field binding source, value resolution for
  * text-ish fields bound to post meta, attribute-specific handling (url, rel,
  * id/alt/title), JSON encoding of array values, unsupported field types,
- * the allow_in_bindings field setting and the binding value filter,
- * including a full do_blocks() render of a bound paragraph block.
+ * the allow_in_bindings field setting, the field value and binding value
+ * filters, including a full do_blocks() render of a bound paragraph block.
  *
  * @package wordpress/secure-custom-fields
  */
@@ -394,5 +394,145 @@ class Test_Blocks_Bindings extends BaseTestCase {
 
 		$this->assertStringContainsString( 'Rendered via binding', $html );
 		$this->assertStringNotContainsString( 'placeholder', $html );
+	}
+
+	/**
+	 * Test the binding_field_value filter replaces the stored value.
+	 */
+	public function test_get_value_applies_binding_field_value_filter() {
+		update_field( 'bindings_text', 'Stored reference', $this->post_id );
+		acf_get_store( 'values' )->reset();
+
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+
+		add_filter(
+			'scf/blocks/binding_field_value',
+			function () {
+				return 'Resolved externally';
+			}
+		);
+
+		$this->assertSame(
+			'Resolved externally',
+			$bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'content' )
+		);
+	}
+
+	/**
+	 * Test the binding_field_value filter receives the documented arguments.
+	 */
+	public function test_binding_field_value_filter_receives_arguments() {
+		update_field( 'bindings_text', 'Stored reference', $this->post_id );
+		acf_get_store( 'values' )->reset();
+
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+
+		$received = array();
+
+		add_filter(
+			'scf/blocks/binding_field_value',
+			function ( $field_value, $field, $source_attrs, $block_instance, $attribute_name ) use ( &$received ) {
+				$received = array(
+					'value'          => $field_value,
+					'field_name'     => $field['name'],
+					'key'            => $source_attrs['key'],
+					'block'          => $block_instance,
+					'attribute_name' => $attribute_name,
+				);
+				return $field_value;
+			},
+			10,
+			5
+		);
+
+		$bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'content' );
+
+		$this->assertSame( 'Stored reference', $received['value'] );
+		$this->assertSame( 'bindings_text', $received['field_name'] );
+		$this->assertSame( 'field_bindings_text', $received['key'] );
+		$this->assertSame( $block, $received['block'] );
+		$this->assertSame( 'content', $received['attribute_name'] );
+	}
+
+	/**
+	 * Test a value supplied by the filter still resolves attribute mapping.
+	 */
+	public function test_binding_field_value_filter_supports_attribute_mapping() {
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+
+		// Simulate an external source returning a media-like array for an image binding.
+		add_filter(
+			'scf/blocks/binding_field_value',
+			function () {
+				return array(
+					'id'    => 42,
+					'url'   => 'https://example.com/remote.jpg',
+					'title' => 'Remote title',
+					'alt'   => 'Remote alt text',
+				);
+			}
+		);
+
+		$this->assertSame(
+			'https://example.com/remote.jpg',
+			$bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'url' )
+		);
+		$this->assertSame(
+			'Remote alt text',
+			$bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'alt' )
+		);
+		$this->assertSame(
+			'Remote title',
+			$bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'title' )
+		);
+	}
+
+	/**
+	 * Test the binding_field_value filter is skipped for an unknown field.
+	 */
+	public function test_binding_field_value_filter_not_applied_without_field() {
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+		$called   = false;
+
+		add_filter(
+			'scf/blocks/binding_field_value',
+			function ( $field_value ) use ( &$called ) {
+				$called = true;
+				return $field_value;
+			}
+		);
+
+		$this->assertSame(
+			'',
+			$bindings->get_value( array( 'key' => 'field_does_not_exist' ), $block, 'content' )
+		);
+		$this->assertFalse( $called );
+	}
+
+	/**
+	 * Test the binding_field_value filter is skipped when the key is invalid.
+	 */
+	public function test_binding_field_value_filter_not_applied_without_key() {
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+		$called   = false;
+
+		add_filter(
+			'scf/blocks/binding_field_value',
+			function ( $field_value ) use ( &$called ) {
+				$called = true;
+				return $field_value;
+			}
+		);
+
+		$this->assertSame(
+			'',
+			$bindings->get_value( array( 'key' => array( 'not' => 'a string' ) ), $block, 'content' )
+		);
+		$this->assertFalse( $called );
 	}
 }

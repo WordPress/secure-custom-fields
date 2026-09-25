@@ -12,6 +12,8 @@ import {
 	fieldsToOptions,
 } from '../../../assets/src/js/bindings/utils';
 
+import { applyFilters } from '@wordpress/hooks';
+
 describe( 'Block Bindings Utils', () => {
 	describe( 'getBindableAttributes', () => {
 		it( 'should return bindable attributes for core/paragraph', () => {
@@ -330,6 +332,80 @@ describe( 'Block Bindings Utils', () => {
 			expect( result ).toEqual( [
 				{ value: 'field1', label: 'Field 1', type: 'text' },
 			] );
+		} );
+	} );
+
+	describe( 'extended block bindings config', () => {
+		const extendedConfig = {
+			'core/paragraph': {
+				content: [ 'text', 'remote_data' ],
+			},
+			'core/post-title': {
+				content: [ 'text' ],
+				level: [ 'number' ],
+			},
+		};
+
+		beforeEach( () => {
+			applyFilters.mockImplementation( ( hook, value ) => {
+				if ( hook === 'scf/block-bindings-config' ) {
+					return extendedConfig;
+				}
+				return value;
+			} );
+		} );
+
+		afterEach( () => {
+			applyFilters.mockImplementation( ( hook, value ) => value );
+		} );
+
+		it( 'should expose a block added by a third party', () => {
+			expect( getBindableAttributes( 'core/post-title' ) ).toEqual( [
+				'content',
+				'level',
+			] );
+		} );
+
+		it( 'should expose a field type added to an existing block', () => {
+			expect(
+				getAllowedFieldTypes( 'core/paragraph', 'content' )
+			).toEqual( [ 'text', 'remote_data' ] );
+		} );
+
+		it( 'should include an added field type in the unfiltered type list', () => {
+			expect( getAllowedFieldTypes( 'core/paragraph' ) ).toContain(
+				'remote_data'
+			);
+		} );
+
+		it( 'should return false for an added block whose attributes differ', () => {
+			expect(
+				canUseUnifiedBinding( 'core/post-title', [
+					'content',
+					'level',
+				] )
+			).toBe( false );
+		} );
+
+		it( 'should detect a unified binding when attributes match', () => {
+			applyFilters.mockImplementation( ( hook, value ) => {
+				if ( hook === 'scf/block-bindings-config' ) {
+					return {
+						'core/post-title': {
+							content: [ 'text' ],
+							level: [ 'text' ],
+						},
+					};
+				}
+				return value;
+			} );
+
+			expect(
+				canUseUnifiedBinding( 'core/post-title', [
+					'content',
+					'level',
+				] )
+			).toBe( true );
 		} );
 	} );
 } );

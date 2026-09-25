@@ -239,6 +239,11 @@
         "parent": "contributing",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/contributing/releases.md"
     },
+    "features/block-bindings": {
+        "slug": "block-bindings",
+        "parent": "features",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/block-bindings.md"
+    },
     "features/field": {
         "slug": "field",
         "parent": "features",

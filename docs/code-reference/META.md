@@ -9,6 +9,7 @@ This file tracks code elements that need documentation.
 - `acf/bindings/field_not_allowed_message`
 - `acf/bindings/field_not_supported_message`
 - `acf/blocks/binding_value`
+- `scf/blocks/binding_field_value`
 
 ## Datastore/Localization.php
 

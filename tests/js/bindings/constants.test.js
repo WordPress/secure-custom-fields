@@ -7,10 +7,18 @@
 
 import {
 	BLOCK_BINDINGS_CONFIG,
+	BLOCK_BINDINGS_CONFIG_FILTER,
 	BINDING_SOURCE,
+	getBlockBindingsConfig,
 } from '../../../assets/src/js/bindings/constants';
 
+import { applyFilters } from '@wordpress/hooks';
+
 describe( 'Block Binding Constants', () => {
+	afterEach( () => {
+		applyFilters.mockImplementation( ( hook, value ) => value );
+	} );
+
 	describe( 'BINDING_SOURCE', () => {
 		it( 'should be acf/field following WordPress binding source convention', () => {
 			expect( BINDING_SOURCE ).toBe( 'acf/field' );
@@ -77,6 +85,54 @@ describe( 'Block Binding Constants', () => {
 						}
 					);
 				}
+			);
+		} );
+	} );
+
+	describe( 'getBlockBindingsConfig', () => {
+		it( 'should return the default configuration unchanged without filters', () => {
+			expect( getBlockBindingsConfig() ).toBe( BLOCK_BINDINGS_CONFIG );
+		} );
+
+		it( 'should apply the block bindings config filter', () => {
+			const extended = {
+				...BLOCK_BINDINGS_CONFIG,
+				'core/post-title': { content: [ 'text' ] },
+			};
+
+			applyFilters.mockImplementation( ( hook, value ) => {
+				if ( hook === BLOCK_BINDINGS_CONFIG_FILTER ) {
+					return extended;
+				}
+				return value;
+			} );
+
+			expect( getBlockBindingsConfig() ).toBe( extended );
+			expect( getBlockBindingsConfig()[ 'core/post-title' ] ).toEqual( {
+				content: [ 'text' ],
+			} );
+		} );
+
+		it( 'should read the filter on every call rather than caching it', () => {
+			applyFilters.mockImplementation( ( hook, value ) => {
+				if ( hook === BLOCK_BINDINGS_CONFIG_FILTER ) {
+					return { ...value, 'core/quote': { content: [ 'text' ] } };
+				}
+				return value;
+			} );
+
+			expect( getBlockBindingsConfig()[ 'core/quote' ] ).toEqual( {
+				content: [ 'text' ],
+			} );
+
+			applyFilters.mockImplementation( ( hook, value ) => value );
+
+			expect( getBlockBindingsConfig()[ 'core/quote' ] ).toBeUndefined();
+		} );
+
+		it( 'should use the documented filter name', () => {
+			expect( BLOCK_BINDINGS_CONFIG_FILTER ).toBe(
+				'scf/block-bindings-config'
 			);
 		} );
 	} );

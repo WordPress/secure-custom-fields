@@ -2,7 +2,7 @@
  * Utility functions for block bindings
  */
 
-import { BLOCK_BINDINGS_CONFIG } from './constants';
+import { getBlockBindingsConfig } from './constants';
 
 /**
  * Gets the bindable attributes for a given block.
@@ -12,7 +12,7 @@ import { BLOCK_BINDINGS_CONFIG } from './constants';
  * @return {string[]} The bindable attributes for the block.
  */
 export function getBindableAttributes( blockName ) {
-	const config = BLOCK_BINDINGS_CONFIG[ blockName ];
+	const config = getBlockBindingsConfig()[ blockName ];
 	return config ? Object.keys( config ) : [];
 }
 
@@ -25,7 +25,7 @@ export function getBindableAttributes( blockName ) {
  * @return {string[]|null} The allowed field types, or null if no restrictions.
  */
 export function getAllowedFieldTypes( blockName, attribute = null ) {
-	const blockConfig = BLOCK_BINDINGS_CONFIG[ blockName ];
+	const blockConfig = getBlockBindingsConfig()[ blockName ];
 
 	if ( ! blockConfig ) {
 		return null;
@@ -81,7 +81,7 @@ export function canUseUnifiedBinding( blockName, bindableAttributes ) {
 		return false;
 	}
 
-	const blockConfig = BLOCK_BINDINGS_CONFIG[ blockName ];
+	const blockConfig = getBlockBindingsConfig()[ blockName ];
 	if ( ! blockConfig ) {
 		return false;
 	}
