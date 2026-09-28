@@ -970,6 +970,7 @@ function scf_plugin_uninstall() {
 	// List of known beta features.
 	$beta_features = array(
 		'editor_sidebar',
+		'tools_redesign',
 	);
 
 	foreach ( $beta_features as $beta_feature ) {

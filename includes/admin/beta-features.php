@@ -138,7 +138,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 */
 		private function include_beta_features() {
 			acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
-			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-connect-fields.php' );
+			acf_include( 'includes/admin/beta-features/class-scf-beta-feature-tools-redesign.php' );
 
 			add_action( 'scf/include_admin_beta_features', array( $this, 'register_beta_features' ) );
 
@@ -153,6 +153,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function register_beta_features() {
+			scf_register_admin_beta_feature( 'SCF_Admin_Beta_Feature_Tools_Redesign' );
 		}
 
 		/**

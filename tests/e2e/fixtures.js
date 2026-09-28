@@ -144,22 +144,25 @@ const test = wpTest.extend( {
 						'role=button[name="View"i]'
 					);
 
-					if (
+					const hasViewButton =
 						( await viewButton.count() ) > 0 &&
-						( await viewButton.first().isVisible() )
-					) {
-						return editor.openPreviewPage();
-					}
+						( await viewButton.first().isVisible() );
 
-					await editorTopBar
-						.locator( 'role=button[name="Preview"i]' )
-						.click();
+					await ( hasViewButton
+						? viewButton.first()
+						: editorTopBar.locator( 'role=button[name="Preview"i]' )
+					).click();
 
+					// WordPress trunk renamed the menu item to
+					// "Preview (opens in a new tab)", so match on the shared
+					// "Preview ... new tab" text instead of the exact label.
 					const [ previewPage ] = await Promise.all( [
 						context.waitForEvent( 'page' ),
-						page.click(
-							'role=menuitem[name=/Preview in new tab/i]'
-						),
+						page
+							.getByRole( 'menuitem', {
+								name: /Preview.*new tab/i,
+							} )
+							.click(),
 					] );
 
 					return previewPage;

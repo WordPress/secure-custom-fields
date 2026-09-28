@@ -134,6 +134,194 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 
 			// load acf scripts
 			acf_enqueue_scripts();
+
+			// load the redesigned screen when the beta feature is enabled
+			if ( $this->is_tools_redesign_enabled() ) {
+				$this->enqueue_tools_redesign_assets();
+			}
+		}
+
+		/**
+		 * Checks if the tools redesign beta feature is enabled.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return boolean
+		 */
+		public function is_tools_redesign_enabled() {
+			// triggers discovery of beta features when not yet loaded
+			acf()->admin_beta_features->get_beta_features();
+
+			$feature = acf()->admin_beta_features->get_beta_feature( 'tools_redesign' );
+			return $feature ? $feature->is_enabled() : false;
+		}
+
+		/**
+		 * Enqueues the scripts and data for the tools redesign prototype.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return  void
+		 */
+		public function enqueue_tools_redesign_assets() {
+			$version = acf_get_setting( 'version' );
+			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
+			$asset   = acf_get_path( 'assets/build/js/scf-tools-redesign.asset.php' );
+			$deps    = file_exists( $asset ) ? ( require $asset ) : array();
+
+			wp_enqueue_script(
+				'scf-tools-redesign',
+				acf_get_url( 'assets/build/js/scf-tools-redesign' . $suffix . '.js' ),
+				isset( $deps['dependencies'] ) ? $deps['dependencies'] : array( 'wp-element', 'wp-i18n' ),
+				isset( $deps['version'] ) ? $deps['version'] : $version,
+				true
+			);
+
+			wp_enqueue_style( 'wp-components' );
+
+			wp_print_inline_script_tag(
+				'window.scfToolsRedesign = ' . acf_json_encode( $this->get_tools_redesign_data() ) . ';'
+			);
+		}
+
+		/**
+		 * Builds the data consumed by the tools redesign prototype.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return array
+		 */
+		private function get_tools_redesign_data() {
+			return array(
+				'nonces'    => array(
+					'import' => wp_create_nonce( 'import' ),
+					'export' => wp_create_nonce( 'export' ),
+				),
+				'items'     => $this->get_exportable_items(),
+				'cptui'     => $this->get_cptui_data(),
+				'phpExport' => $this->get_php_export_data(),
+			);
+		}
+
+		/**
+		 * Returns field groups, post types, taxonomies, and options pages available for export.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return array
+		 */
+		private function get_exportable_items() {
+			$groups = array(
+				'acf-field-group',
+				'acf-post-type',
+				'acf-taxonomy',
+				'acf-ui-options-page',
+			);
+
+			$items = array();
+			foreach ( $groups as $internal_type ) {
+				$posts = array_filter(
+					acf_get_internal_post_type_posts( $internal_type ),
+					'acf_internal_post_object_contains_valid_key'
+				);
+
+				foreach ( $posts as $post ) {
+					$items[ $internal_type ][] = array(
+						'key'   => $post['key'],
+						'title' => $post['title'],
+					);
+				}
+			}
+
+			return $items;
+		}
+
+		/**
+		 * Returns the Custom Post Type UI import options when the plugin is active.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return array
+		 */
+		private function get_cptui_data() {
+			if ( ! is_plugin_active( 'custom-post-type-ui/custom-post-type-ui.php' ) || ! acf_get_setting( 'enable_post_types' ) ) {
+				return array();
+			}
+
+			$cptui_post_types = get_option( 'cptui_post_types' );
+			$cptui_taxonomies = get_option( 'cptui_taxonomies' );
+
+			if ( ! is_array( $cptui_post_types ) ) {
+				$cptui_post_types = array();
+			}
+			if ( ! is_array( $cptui_taxonomies ) ) {
+				$cptui_taxonomies = array();
+			}
+
+			if ( empty( $cptui_post_types ) && empty( $cptui_taxonomies ) ) {
+				return array();
+			}
+
+			$choices = array();
+			if ( ! empty( $cptui_post_types ) ) {
+				$choices['post_types'] = __( 'Post Types', 'secure-custom-fields' );
+			}
+			if ( ! empty( $cptui_taxonomies ) ) {
+				$choices['taxonomies'] = __( 'Taxonomies', 'secure-custom-fields' );
+			}
+
+			return array(
+				'choices'          => $choices,
+				'overwriteWarning' => $this->cptui_overwrites_existing( $cptui_post_types, $cptui_taxonomies ),
+			);
+		}
+
+		/**
+		 * Checks whether importing from Custom Post Type UI would overwrite existing SCF items.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @param array $cptui_post_types CPTUI post types.
+		 * @param array $cptui_taxonomies CPTUI taxonomies.
+		 * @return bool
+		 */
+		private function cptui_overwrites_existing( $cptui_post_types, $cptui_taxonomies ) {
+			foreach ( acf_get_acf_post_types() as $post_type ) {
+				if ( isset( $cptui_post_types[ $post_type['post_type'] ] ) ) {
+					return true;
+				}
+			}
+
+			foreach ( acf_get_acf_taxonomies() as $taxonomy ) {
+				if ( isset( $cptui_taxonomies[ $taxonomy['taxonomy'] ] ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Returns the generated PHP code when the export tool is in its keys mode.
+		 *
+		 * @since SCF 6.5.0
+		 *
+		 * @return array
+		 */
+		private function get_php_export_data() {
+			$tool = $this->get_tool( 'export' );
+			if ( ! $tool ) {
+				return array();
+			}
+
+			$keys = $tool->get_selected_keys();
+			if ( ! $keys ) {
+				return array();
+			}
+
+			return array(
+				'code' => $tool->get_php_export_code(),
+			);
 		}
 
 		/**
@@ -206,6 +394,12 @@ if ( ! class_exists( 'acf_admin_tools' ) ) :
 			// vars
 			$screen = get_current_screen();
 			$active = acf_maybe_get_GET( 'tool' );
+
+			// the redesigned screen renders its own tool selection without metaboxes
+			if ( $this->is_tools_redesign_enabled() ) {
+				acf_get_view( 'tools/tools-redesign' );
+				return;
+			}
 
 			// view
 			$view = array(

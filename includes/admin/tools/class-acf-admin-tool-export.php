@@ -370,16 +370,23 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 		}
 
 		/**
-		 * Generates the HTML for the PHP export functionality.
+		 * Generates the PHP code for the selected items.
 		 *
-		 * @since   ACF 5.6.3
+		 * @since ACF 5.6.3
+		 *
+		 * @return string
 		 */
-		public function html_generate() {
+		public function get_php_export_code() {
 			// Prevent default translation and fake __() within string.
 			acf_update_setting( 'l10n_var_export', true );
 
 			$json      = $this->get_selected();
 			$to_export = array();
+			$code      = '';
+
+			if ( ! $json ) {
+				return $code;
+			}
 
 			// Sort by ACF post type first so we can wrap them in related functions.
 			foreach ( $json as $post ) {
@@ -390,37 +397,46 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 				}
 			}
 
-			echo '<textarea id="acf-export-textarea" readonly="readonly">';
-
 			foreach ( $to_export as $post_type => $posts ) {
 				if ( 'acf-field-group' === $post_type ) {
-					echo "add_action( 'acf/include_fields', function() {\r\n";
-					echo "\tif ( ! function_exists( 'acf_add_local_field_group' ) ) {\r\n\t\treturn;\r\n\t}\r\n\r\n";
+					$code .= "add_action( 'acf/include_fields', function() {\r\n";
+					$code .= "\tif ( ! function_exists( 'acf_add_local_field_group' ) ) {\r\n\t\treturn;\r\n\t}\r\n\r\n";
 				} elseif ( 'acf-post-type' === $post_type || 'acf-taxonomy' === $post_type ) {
-					echo "add_action( 'init', function() {\r\n";
+					$code .= "add_action( 'init', function() {\r\n";
 				} elseif ( 'acf-ui-options-page' === $post_type ) {
-					echo "add_action( 'acf/init', function() {\r\n";
+					$code .= "add_action( 'acf/init', function() {\r\n";
 				}
 
 				$count = 0;
 				foreach ( $posts as $post ) {
 					if ( $count !== 0 ) {
-						echo "\r\n";
+						$code .= "\r\n";
 					}
 
-					echo "\t" . acf_export_internal_post_type_as_php( $post, $post_type ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_textarea() used earlier.
+					$code .= "\t" . acf_export_internal_post_type_as_php( $post, $post_type );
 					++$count;
 				}
 
 				if ( in_array( $post_type, array( 'acf-post-type', 'acf-taxonomy', 'acf-field-group', 'acf-ui-options-page' ), true ) ) {
-					echo "} );\r\n\r\n";
+					$code .= "} );\r\n\r\n";
 				}
 
 				if ( 'acf-post-type' === $post_type ) {
-					echo acf_export_enter_title_here( $posts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_textarea() used earlier.
+					$code .= acf_export_enter_title_here( $posts );
 				}
 			}
 
+			return $code;
+		}
+
+		/**
+		 * Generates the HTML for the PHP export functionality.
+		 *
+		 * @since   ACF 5.6.3
+		 */
+		public function html_generate() {
+			echo '<textarea id="acf-export-textarea" readonly="readonly">';
+			echo esc_textarea( $this->get_php_export_code() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped here.
 			echo '</textarea>';
 			?>
 			<p class="acf-submit">

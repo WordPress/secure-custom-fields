@@ -29,6 +29,7 @@ const commonConfig = {
 		'js/pro/acf-pro-ui-options-page':
 			'./assets/src/js/pro/acf-pro-ui-options-page.js',
 		'js/scf-bindings': './assets/src/js/bindings/index.js',
+		'js/scf-tools-redesign': './assets/src/js/tools-redesign/index.js',
 
 		// CSS files
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',
