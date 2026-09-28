@@ -194,6 +194,11 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/loop-file.md"
     },
+    "code-reference/nested-post-types-file": {
+        "slug": "nested-post-types-file",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/nested-post-types-file.md"
+    },
     "code-reference/rest-api": {
         "slug": "rest-api",
         "parent": "code-reference",
@@ -248,6 +253,11 @@
         "slug": "local-json",
         "parent": "features",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/local-json.md"
+    },
+    "features/nested-post-types": {
+        "slug": "nested-post-types",
+        "parent": "features",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/features/nested-post-types.md"
     },
     "features/post-types": {
         "slug": "post-types",

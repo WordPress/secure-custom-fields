@@ -30,6 +30,7 @@
 - [Local Meta](local-meta-file)
 - [Locations](locations-file)
 - [Loop](loop-file)
+- [Nested Post Types](nested-post-types-file)
 - [Revisions](revisions-file)
 - [Scf Ui Options Page Functions](scf-ui-options-page-functions-file)
 - [Upgrades](upgrades-file)

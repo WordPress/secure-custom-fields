@@ -134,6 +134,35 @@ acf_render_field_wrap(
 	'div'
 );
 
+if ( scf_nested_post_types_enabled() ) {
+	$nested_post_types     = get_post_types( array( 'public' => true ), 'objects' );
+	$nested_parent_choices = array();
+	unset( $nested_post_types[ $acf_post_type['post_type'] ] );
+
+	foreach ( $nested_post_types as $nested_candidate ) {
+		$nested_parent_choices[ $nested_candidate->name ] = $nested_candidate->labels->name;
+	}
+
+	acf_render_field_wrap(
+		array(
+			'type'         => 'select',
+			'name'         => 'nested_parent_post_type',
+			'key'          => 'nested_parent_post_type',
+			'prefix'       => 'acf_post_type',
+			'value'        => $acf_post_type['nested_parent_post_type'],
+			'label'        => __( 'Nested Parent', 'secure-custom-fields' ),
+			'instructions' => __( 'Let items of this post type nest under items of another post type, extending its URL.', 'secure-custom-fields' ),
+			'choices'      => $nested_parent_choices,
+			'ui'           => true,
+			'allow_null'   => true,
+			'placeholder'  => __( 'No parent post type', 'secure-custom-fields' ),
+			'return_id'    => true,
+		),
+		'div',
+		'field'
+	);
+}
+
 do_action( 'acf/post_type/basic_settings', $acf_post_type );
 
 acf_render_field_wrap( array( 'type' => 'seperator' ) );

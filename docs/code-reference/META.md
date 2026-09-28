@@ -644,6 +644,15 @@ This file tracks code elements that need documentation.
 
 - `acf/upload_prefilter`
 
+## nested-post-types.php
+
+### Hooks
+
+- `scf/nested_children`
+- `scf/nested_parent_post_type`
+- `scf/nested_post_ids`
+- `scf/nested_resolve_candidates`
+
 ## post-types/class-acf-post-type.php
 
 ### Hooks

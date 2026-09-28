@@ -199,6 +199,12 @@
 					"default": false,
 					"description": "Whether the post type is hierarchical (e.g. page)"
 				},
+				"nested_parent_post_type": {
+					"type": "string",
+					"default": "",
+					"maxLength": 20,
+					"description": "SCF post type key this post type nests under (beta feature). Empty string when the post type is not nested."
+				},
 				"exclude_from_search": {
 					"type": "boolean",
 					"default": false,

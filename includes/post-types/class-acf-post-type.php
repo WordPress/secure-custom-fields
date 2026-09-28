@@ -220,6 +220,7 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 				'description'              => '',
 				'public'                   => true, // WP defaults false, ACF defaults true.
 				'hierarchical'             => false,
+				'nested_parent_post_type'  => '', // ACF-specific setting, not passed to register_post_type().
 				'exclude_from_search'      => false,
 				'publicly_queryable'       => true,
 				'show_ui'                  => true,
@@ -310,6 +311,30 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 		}
 
 		/**
+		 * Validates the nested parent post type setting before save.
+		 *
+		 * Rejects values that point at an unknown post type or the post type
+		 * being edited, so the relationship can never be self-referential.
+		 *
+		 * @since SCF {NEXT_MAJOR_VERSION}
+		 *
+		 * @param array $acf_post_type The raw (unslashed) post type settings.
+		 * @return void
+		 */
+		protected function ajax_validate_nested_parent_setting( $acf_post_type ) {
+			if ( empty( $acf_post_type['nested_parent_post_type'] ) ) {
+				return;
+			}
+
+			$parent_type = sanitize_text_field( $acf_post_type['nested_parent_post_type'] );
+			$child_type  = isset( $acf_post_type['post_type'] ) ? sanitize_text_field( $acf_post_type['post_type'] ) : '';
+
+			if ( $parent_type === $child_type || ! post_type_exists( $parent_type ) ) {
+				acf_add_internal_post_type_validation_error( 'nested_parent_post_type', __( 'The nested parent must be another registered post type.', 'secure-custom-fields' ) );
+			}
+		}
+
+		/**
 		 * Validates post type values before allowing save from the global $_POST object.
 		 * Errors are added to the form using acf_add_internal_post_type_validation_error().
 		 *
@@ -321,6 +346,9 @@ if ( ! class_exists( 'ACF_Post_Type' ) ) {
 			if ( empty( $_POST['acf_post_type']['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 				return false;
 			}
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
+			$this->ajax_validate_nested_parent_setting( acf_sanitize_request_args( wp_unslash( $_POST['acf_post_type'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 
 			$post_type_key = acf_sanitize_request_args( wp_unslash( $_POST['acf_post_type']['post_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 			$post_type_key = is_string( $post_type_key ) ? $post_type_key : '';

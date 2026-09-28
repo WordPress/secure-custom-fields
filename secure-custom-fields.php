@@ -258,6 +258,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/upgrades.php' );
 			acf_include( 'includes/validation.php' );
 			acf_include( 'includes/rest-api.php' );
+			acf_include( 'includes/nested-post-types.php' );
 			acf_include( 'includes/datastore.php' );
 			acf_include( 'includes/blocks.php' );
 			acf_include( 'includes/class-acf-options-page.php' );
@@ -970,6 +971,7 @@ function scf_plugin_uninstall() {
 	// List of known beta features.
 	$beta_features = array(
 		'editor_sidebar',
+		'nested_post_types',
 	);
 
 	foreach ( $beta_features as $beta_feature ) {
