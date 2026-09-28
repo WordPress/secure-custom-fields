@@ -152,4 +152,75 @@ class Test_ACF_Field_Date_Picker extends Abstract_ACF_Field_Test {
 		// Invalid dates should still return something.
 		$this->assertNotNull( $result );
 	}
+
+	/**
+	 * Test the legacy picker markup is used by default.
+	 */
+	public function test_render_field_uses_legacy_picker_by_default() {
+		$field          = $this->get_field( array( 'value' => '20231225' ) );
+		$field['id']    = 'acf-field-date';
+		$field['class'] = '';
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="date"', $html );
+		$this->assertStringContainsString( 'acf-date-picker', $html );
+	}
+
+	/**
+	 * Test the native input is used when the beta feature is enabled.
+	 */
+	public function test_render_field_uses_native_input_when_enabled() {
+		$this->enable_native_pickers();
+
+		$field          = $this->get_field( array( 'value' => '20231225' ) );
+		$field['id']    = 'acf-field-date';
+		$field['class'] = '';
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringContainsString( 'type="date"', $html );
+		$this->assertStringContainsString( 'value="2023-12-25"', $html );
+		// The named hidden input keeps the stored Ymd format.
+		$this->assertStringContainsString( 'name="test_date_picker"', $html );
+		$this->assertStringContainsString( 'value="20231225"', $html );
+	}
+
+	/**
+	 * Test the saved value format is unchanged in native mode.
+	 */
+	public function test_native_input_keeps_stored_format() {
+		$this->enable_native_pickers();
+
+		$field          = $this->get_field( array( 'value' => '20231225' ) );
+		$field['id']    = 'acf-field-date';
+		$field['class'] = '';
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringContainsString( 'value="2023-12-25"', $html );
+			$this->assertStringContainsString( 'name="test_date_picker"', $html );
+			$this->assertStringContainsString( 'value="20231225"', $html );
+	}
+
+	/**
+	 * Test a legacy save_format field keeps the JavaScript picker in native mode.
+	 */
+	public function test_render_field_keeps_legacy_markup_with_save_format() {
+		$this->enable_native_pickers();
+
+		$field          = $this->get_field(
+			array(
+				'value'       => '2023-12-25',
+				'save_format' => 'Y-m-d',
+			)
+		);
+		$field['id']    = 'acf-field-date';
+		$field['class'] = '';
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="date"', $html );
+		$this->assertStringContainsString( 'data-save_format', $html );
+	}
 }

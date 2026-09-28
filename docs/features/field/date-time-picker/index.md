@@ -16,3 +16,7 @@ The Date Time Picker field combines date and time selection into a single interf
 - Return Format - How the datetime is stored/returned
 - Week Starts On - Set first day of week
 - Time Increment - Control minute stepping
+
+## Native Input
+
+When the native pickers beta feature is enabled, this field uses the browser's built-in date and time inputs instead of the bundled picker. The stored value is unchanged. The browser controls how the value is displayed, so the Display Format and Week Starts On settings no longer apply.

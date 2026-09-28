@@ -110,6 +110,13 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 		 * @date    23/01/13
 		 */
 		public function render_field( $field ) {
+
+			// The browser's color input only supports an opaque hex value and has no palette support.
+			if ( $this->scf_use_native_picker() && $this->can_use_native_field( $field ) ) {
+				$this->render_native_field( $field );
+				return;
+			}
+
 			$text_input                             = acf_get_sub_array( $field, array( 'id', 'class', 'name', 'value' ) );
 			$hidden_input                           = acf_get_sub_array( $field, array( 'name', 'value' ) );
 			$text_input['data-alpha-skip-debounce'] = true;
@@ -172,6 +179,105 @@ if ( ! class_exists( 'acf_field_color_picker' ) ) :
 			<?php acf_text_input( $text_input ); ?>
 		</div>
 			<?php
+		}
+
+
+		/**
+		 * Checks whether the browser's color input can render this field.
+		 *
+		 * The native input only handles an opaque 6 digit hex value, it has no
+		 * palette support and it cannot be cleared, so transparency, custom
+		 * palettes and anything that is not a plain hex color keep the existing
+		 * picker.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param array $field The field array.
+		 * @return boolean
+		 */
+		protected function can_use_native_field( $field ) {
+			if ( ! empty( $field['enable_opacity'] ) ) {
+				return false;
+			}
+
+			if ( ! empty( $field['custom_palette_source'] ) || ! empty( $field['palette_colors'] ) || ! empty( $field['show_custom_palette'] ) ) {
+				return false;
+			}
+
+			// The native input always holds a color, so an empty value would be
+			// impossible to clear again. Keep the existing picker, which has one.
+			return null !== $this->to_native_hex( $field['value'] );
+		}
+
+
+		/**
+		 * Renders the field using the browser's native color input.
+		 *
+		 * The hidden input keeps the same value the existing picker would have
+		 * saved, so stored data and return formats are unchanged.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param array $field The field array.
+		 * @return void
+		 */
+		protected function render_native_field( $field ) {
+			$div          = array(
+				'class'       => 'acf-color-picker acf-native-picker',
+				'data-native' => '1',
+			);
+			$hidden_input = array(
+				'name'  => $field['name'],
+				'value' => $field['value'],
+			);
+			$native_input = array(
+				'id'    => $field['id'],
+				'class' => $field['class'] . ' input',
+				'type'  => 'color',
+				'value' => $this->to_native_hex( $field['value'] ),
+			);
+
+			foreach ( array( 'readonly', 'disabled' ) as $k ) {
+				if ( ! empty( $field[ $k ] ) ) {
+					$hidden_input[ $k ] = $k;
+					$native_input[ $k ] = $k;
+				}
+			}
+
+			?>
+		<div <?php echo acf_esc_attrs( $div ); ?>>
+			<?php acf_hidden_input( $hidden_input ); ?>
+			<?php echo acf_get_text_input( $native_input ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by the input helper. ?>
+		</div>
+			<?php
+		}
+
+
+		/**
+		 * Converts a color value to the 6 digit hex format the native input needs.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param mixed $value The stored color value.
+		 * @return string|null The expanded hex value, or null when it is not a hex color.
+		 */
+		protected function to_native_hex( $value ) {
+			if ( ! is_string( $value ) ) {
+				return null;
+			}
+
+			$value = trim( $value );
+
+			// Expand a 3 digit hex value, the native input only accepts 6 digits.
+			if ( preg_match( '/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i', $value, $matches ) ) {
+				$value = '#' . $matches[1] . $matches[1] . $matches[2] . $matches[2] . $matches[3] . $matches[3];
+			}
+
+			if ( ! preg_match( '/^#[0-9a-f]{6}$/i', $value ) ) {
+				return null;
+			}
+
+			return strtolower( $value );
 		}
 
 

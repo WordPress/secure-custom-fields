@@ -99,6 +99,12 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 				$display_value = acf_format_date( $field['value'], $field['display_format'] );
 			}
 
+			// The native date input uses the ISO format and cannot express a custom display format.
+			if ( $this->scf_use_native_picker() && empty( $field['save_format'] ) ) {
+				$this->render_native_field( $field, $hidden_value );
+				return;
+			}
+
 			// elements
 			$div          = array(
 				'class'            => 'acf-date-picker acf-input-wrap',
@@ -146,6 +152,57 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			<?php
 		}
 
+		/**
+		 * Renders the field using the browser's native date input.
+		 *
+		 * The hidden input keeps the same `Ymd` value the JavaScript picker
+		 * would have saved, so stored data and return formats are unchanged.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param array  $field        The field array.
+		 * @param string $hidden_value The value in the saved `Ymd` format.
+		 * @return void
+		 */
+		protected function render_native_field( $field, $hidden_value ) {
+			$native_value = $hidden_value ? acf_format_date( $hidden_value, 'Y-m-d' ) : '';
+
+			// The JS picker applied the current date default, do the same here.
+			if ( '' === $native_value && ! empty( $field['default_to_current_date'] ) ) {
+				$native_value = current_time( 'Y-m-d' );
+				$hidden_value = current_time( 'Ymd' );
+			}
+
+			$div          = array(
+				'class'       => 'acf-date-picker acf-input-wrap acf-native-picker',
+				'data-native' => '1',
+			);
+			$hidden_input = array(
+				'id'    => $field['id'],
+				'name'  => $field['name'],
+				'value' => $hidden_value,
+			);
+			$native_input = array(
+				'class' => $field['class'] . ' input',
+				'type'  => 'date',
+				'value' => $native_value,
+			);
+
+			foreach ( array( 'readonly', 'disabled' ) as $k ) {
+				if ( ! empty( $field[ $k ] ) ) {
+					$hidden_input[ $k ] = $k;
+					$native_input[ $k ] = $k;
+				}
+			}
+
+			?>
+		<div <?php echo acf_esc_attrs( $div ); ?>>
+			<?php acf_hidden_input( $hidden_input ); ?>
+			<?php echo acf_get_text_input( $native_input ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by the input helper. ?>
+		</div>
+			<?php
+		}
+
 
 		/**
 		 * Create extra options for your field. This is rendered when editing a field.
@@ -165,6 +222,8 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 			$F_j_Y = date_i18n( 'F j, Y' );
 			$Ymd   = date_i18n( 'Ymd' );
 
+			$native_picker = $this->scf_use_native_picker() && empty( $field['save_format'] );
+
 			echo '<div class="acf-field-settings-split">';
 
 			acf_render_field_setting(
@@ -183,6 +242,13 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 					),
 				)
 			);
+
+			if ( $native_picker ) {
+				printf(
+					'<p class="description">%s</p>',
+					esc_html__( 'The native date input is in use, so this format is only used by older picker fields. The browser decides how the date is displayed.', 'secure-custom-fields' )
+				);
+			}
 
 			// save_format - compatibility with ACF < 5.0.0
 			if ( ! empty( $field['save_format'] ) ) {
@@ -228,6 +294,13 @@ if ( ! class_exists( 'acf_field_date_picker' ) ) :
 					'choices'      => array_values( $wp_locale->weekday ),
 				)
 			);
+
+			if ( $native_picker ) {
+				printf(
+					'<p class="description">%s</p>',
+					esc_html__( 'The native date input is in use, so the browser decides which day the week starts on.', 'secure-custom-fields' )
+				);
+			}
 
 			acf_render_field_setting(
 				$field,

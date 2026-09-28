@@ -160,4 +160,34 @@ class Test_ACF_Field_Time_Picker extends Abstract_ACF_Field_Test {
 
 		$this->assertEquals( '23:59:59', $result );
 	}
+
+	/**
+	 * Test the legacy picker markup is used by default.
+	 */
+	public function test_render_field_uses_legacy_picker_by_default() {
+		$field = $this->get_field( array( 'value' => '14:30:00' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="time"', $html );
+		$this->assertStringContainsString( 'acf-time-picker', $html );
+	}
+
+	/**
+	 * Test the native input is used when the beta feature is enabled.
+	 */
+	public function test_render_field_uses_native_input_when_enabled() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field( array( 'value' => '14:30:00' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringContainsString( 'type="time"', $html );
+		$this->assertStringContainsString( 'value="14:30:00"', $html );
+		// The named hidden input keeps the stored H:i:s format.
+		$this->assertStringContainsString( 'name="test_time_picker"', $html );
+		$this->assertStringContainsString( 'name="test_time_picker"', $html );
+			$this->assertStringContainsString( 'value="14:30:00"', $html );
+	}
 }

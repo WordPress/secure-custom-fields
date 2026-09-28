@@ -76,6 +76,37 @@ abstract class Abstract_ACF_Field_Test extends BaseTestCase {
 	}
 
 	/**
+	 * Render a field and return the generated HTML.
+	 *
+	 * The field type defaults are merged in first so the field matches what the
+	 * render pipeline would pass after `validate_field` has run.
+	 *
+	 * @param array $field The field configuration.
+	 * @return string The rendered HTML.
+	 */
+	protected function render_field_html( $field ) {
+		if ( isset( $this->field_instance->defaults ) && is_array( $this->field_instance->defaults ) ) {
+			$field = array_merge( $this->field_instance->defaults, $field );
+		}
+
+		$field['id']    = isset( $field['id'] ) ? $field['id'] : 'acf-field-test';
+		$field['class'] = isset( $field['class'] ) ? $field['class'] : '';
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Enable the native pickers beta feature for the current test.
+	 *
+	 * @return void
+	 */
+	protected function enable_native_pickers() {
+		update_option( 'scf_beta_feature_native_pickers_enabled', true );
+	}
+
+	/**
 	 * Set up the test case.
 	 */
 	public function set_up() {
@@ -105,6 +136,8 @@ abstract class Abstract_ACF_Field_Test extends BaseTestCase {
 	 * Clean up after each test.
 	 */
 	public function tear_down() {
+		delete_option( 'scf_beta_feature_native_pickers_enabled' );
+
 		if ( $this->post_id ) {
 			wp_delete_post( $this->post_id, true );
 		}

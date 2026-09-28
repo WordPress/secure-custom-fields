@@ -123,4 +123,107 @@ class Test_ACF_Field_Color_Picker extends Abstract_ACF_Field_Test {
 
 		$this->assertEquals( $rgba, $result );
 	}
+
+	/**
+	 * Test the legacy picker markup is used by default.
+	 */
+	public function test_render_field_uses_legacy_picker_by_default() {
+		$field = $this->get_field( array( 'value' => '#ff5733' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="color"', $html );
+		$this->assertStringContainsString( 'acf-color-picker', $html );
+	}
+
+	/**
+	 * Test the native input is used for a plain hex value when enabled.
+	 */
+	public function test_render_field_uses_native_input_when_enabled() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field( array( 'value' => '#ff5733' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringContainsString( 'type="color"', $html );
+		$this->assertStringContainsString( 'value="#ff5733"', $html );
+		// The named hidden input still carries the saved value.
+		$this->assertStringContainsString( 'name="test_color_picker"', $html );
+	}
+
+	/**
+	 * Test a 3 digit hex value is expanded for the native input.
+	 */
+	public function test_native_input_expands_short_hex() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field( array( 'value' => '#F53' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringContainsString( 'value="#ff5533"', $html );
+	}
+
+	/**
+	 * Test opacity fields keep the existing picker.
+	 */
+	public function test_native_input_skipped_when_opacity_enabled() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field(
+			array(
+				'value'          => '#ff5733',
+				'enable_opacity' => 1,
+			)
+		);
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="color"', $html );
+	}
+
+	/**
+	 * Test fields with a custom palette keep the existing picker.
+	 */
+	public function test_native_input_skipped_with_custom_palette() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field(
+			array(
+				'value'          => '#ff5733',
+				'palette_colors' => '#ff0000,#00ff00',
+			)
+		);
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="color"', $html );
+	}
+
+	/**
+	 * Test a non hex value keeps the existing picker.
+	 */
+	public function test_native_input_skipped_for_non_hex_value() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field( array( 'value' => 'rgba(255, 87, 51, 0.5)' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="color"', $html );
+	}
+
+	/**
+	 * Test an empty value keeps the existing picker.
+	 */
+	public function test_native_input_skipped_for_empty_value() {
+		$this->enable_native_pickers();
+
+		$field = $this->get_field( array( 'value' => '' ) );
+
+		$html = $this->render_field_html( $field );
+
+		$this->assertStringNotContainsString( 'type="color"', $html );
+	}
 }

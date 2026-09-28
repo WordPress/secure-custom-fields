@@ -19,7 +19,17 @@
 			return this.$( 'input[type="text"]' );
 		},
 
+		$inputNative: function () {
+			return this.$( 'input[type="date"]' );
+		},
+
 		initialize: function () {
+			// Native input: the browser provides the picker, we only keep the
+			// hidden input in sync with the ISO value the input reports.
+			if ( this.$control().data( 'native' ) === 1 ) {
+				return this.initializeNative();
+			}
+
 			// save_format: compatibility with ACF < 5.0.0
 			if ( this.has( 'save_format' ) ) {
 				return this.initializeCompatibility();
@@ -76,6 +86,22 @@
 			acf.doAction( 'date_picker_init', $inputText, args, this );
 		},
 
+		initializeNative: function () {
+			var self = this;
+			var $native = this.$inputNative();
+
+			$native.on( 'change input', function () {
+				self.syncNative();
+			} );
+		},
+
+		syncNative: function () {
+			var val = this.$inputNative().val();
+
+			// The stored format is Ymd, the native input reports Y-m-d.
+			acf.val( this.$input(), val ? val.replace( /-/g, '' ) : '' );
+		},
+
 		initializeCompatibility: function () {
 			// vars
 			var $input = this.$input();
@@ -118,6 +144,13 @@
 		setValue: function ( val ) {
 			acf.val( this.$input(), val );
 
+			// Native input expects the ISO value.
+			var $native = this.$inputNative();
+			if ( $native.length ) {
+				$native.val( val ? this.toNative( val ) : '' );
+				return;
+			}
+
 			const $inputText = this.$inputText();
 			if ( val && $inputText.length ) {
 				try {
@@ -136,6 +169,20 @@
 			}
 		},
 
+		toNative: function ( val ) {
+			// Ymd to Y-m-d
+			if ( /^\d{8}$/.test( val ) ) {
+				return (
+					val.substring( 0, 4 ) +
+					'-' +
+					val.substring( 4, 6 ) +
+					'-' +
+					val.substring( 6, 8 )
+				);
+			}
+			return val;
+		},
+
 		onBlur: function () {
 			if ( ! this.$inputText().val() ) {
 				acf.val( this.$input(), '' );
@@ -143,6 +190,11 @@
 		},
 
 		onDuplicate: function ( e, $el, $duplicate ) {
+			// Native inputs carry no generated markup to clean up.
+			if ( this.$control().data( 'native' ) === 1 ) {
+				return;
+			}
+
 			$duplicate
 				.find( 'input[type="text"]' )
 				.removeClass( 'hasDatepicker' )

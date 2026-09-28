@@ -50,6 +50,12 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 				$display_value = acf_format_date( $field['value'], $field['display_format'] );
 			}
 
+			// The native time input uses the ISO format and cannot express a custom display format.
+			if ( $this->scf_use_native_picker() ) {
+				$this->render_native_field( $field );
+				return;
+			}
+
 			// Elements.
 			$div          = array(
 				'class'            => 'acf-time-picker acf-input-wrap',
@@ -85,6 +91,58 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 
 
 		/**
+		 * Renders the field using the browser's native time input.
+		 *
+		 * The hidden input keeps the same `H:i:s` value the JavaScript picker
+		 * would have saved, so stored data and return formats are unchanged.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param array $field The field array.
+		 * @return void
+		 */
+		protected function render_native_field( $field ) {
+			$native_value = '';
+
+			if ( ! empty( $field['value'] ) ) {
+				$native_value = acf_format_date( $field['value'], 'H:i:s' );
+			}
+
+			$div          = array(
+				'class'       => 'acf-time-picker acf-input-wrap acf-native-picker',
+				'data-native' => '1',
+			);
+			$hidden_input = array(
+				'id'    => $field['id'],
+				'class' => 'input-alt',
+				'name'  => $field['name'],
+				'value' => $field['value'],
+			);
+			$native_input = array(
+				'class' => $field['class'] . ' input',
+				'type'  => 'time',
+				// Without a step the input hides seconds and reports HH:MM, which is not the H:i:s format we save.
+				'step'  => 1,
+				'value' => $native_value,
+			);
+
+			foreach ( array( 'readonly', 'disabled' ) as $k ) {
+				if ( ! empty( $field[ $k ] ) ) {
+					$hidden_input[ $k ] = $k;
+					$native_input[ $k ] = $k;
+				}
+			}
+
+			?>
+		<div <?php echo acf_esc_attrs( $div ); ?>>
+			<?php acf_hidden_input( $hidden_input ); ?>
+			<?php echo acf_get_text_input( $native_input ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by the input helper. ?>
+		</div>
+			<?php
+		}
+
+
+		/**
 		 * Create extra options for your field. This is rendered when editing a field.
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
@@ -97,6 +155,8 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 		function render_field_settings( $field ) {
 			$g_i_a = date_i18n( 'g:i a' );
 			$H_i_s = date_i18n( 'H:i:s' );
+
+			$native_picker = $this->scf_use_native_picker();
 
 			echo '<div class="acf-field-settings-split">';
 
@@ -115,6 +175,13 @@ if ( ! class_exists( 'acf_field_time_picker' ) ) :
 					),
 				)
 			);
+
+			if ( $native_picker ) {
+				printf(
+					'<p class="description">%s</p>',
+					esc_html__( 'The native time input is in use, so this format is only used by older picker fields. The browser decides how the time is displayed.', 'secure-custom-fields' )
+				);
+			}
 
 			acf_render_field_setting(
 				$field,

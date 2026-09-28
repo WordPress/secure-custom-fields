@@ -201,6 +201,31 @@ if ( ! class_exists( 'acf_field' ) ) :
 		}
 
 		/**
+		 * Checks whether the native pickers beta feature is enabled.
+		 *
+		 * The beta feature registry is only loaded in the admin, so this falls
+		 * back to the stored option when the registry is not available. That
+		 * keeps front-end forms and REST requests consistent with the editor.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @return boolean
+		 */
+		protected function scf_use_native_picker() {
+			$acf = function_exists( 'acf' ) ? acf() : null;
+
+			if ( $acf && isset( $acf->admin_beta_features ) ) {
+				$feature = $acf->admin_beta_features->get_beta_feature( 'native_pickers' );
+
+				if ( $feature ) {
+					return $feature->is_enabled();
+				}
+			}
+
+			return (bool) get_option( 'scf_beta_feature_native_pickers_enabled', false );
+		}
+
+		/**
 		 * Appends default settings to a field.
 		 * Runs on `acf/validate_field/type={$this->name}`.
 		 *

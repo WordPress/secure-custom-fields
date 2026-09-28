@@ -51,6 +51,13 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.6 =
+*Release Date TBD*
+
+*Enhancements*
+
+- Added a native pickers beta feature. When enabled, Date Picker, Date Time Picker and Time Picker fields use the browser's built-in date and time inputs, and Color Picker fields use the browser's color input when transparency, a custom palette or a non-hex value are not in use. The saved value format is unchanged, and fields that a native input cannot represent keep the existing pickers.
+
 = 6.9.5 =
 *Release Date 7th August 2026*
 

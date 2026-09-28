@@ -6,7 +6,40 @@
 			return this.$( '.acf-date-time-picker' );
 		},
 
+		$inputNative: function () {
+			return this.$( 'input[type="datetime-local"]' );
+		},
+
+		syncNative: function () {
+			var val = this.$inputNative().val();
+
+			if ( val ) {
+				// The stored format is Y-m-d H:i:s, the input reports Y-m-dTH:i(:s).
+				val = val.replace( 'T', ' ' );
+
+				// The input can report HH:MM, but the stored value always has seconds.
+				if ( /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test( val ) ) {
+					val += ':00';
+				}
+			}
+
+			acf.val( this.$input(), val );
+		},
+
+		toNative: function ( val ) {
+			// Y-m-d H:i:s to Y-m-dTH:i:s
+			return val.indexOf( ' ' ) !== -1 ? val.replace( ' ', 'T' ) : val;
+		},
+
 		setValue: function ( val ) {
+			// The native input only needs the ISO value, the parent handles the rest.
+			var $native = this.$inputNative();
+			if ( $native.length ) {
+				acf.val( this.$input(), val );
+				$native.val( val ? this.toNative( val ) : '' );
+				return;
+			}
+
 			acf.val( this.$input(), val );
 
 			const $inputText = this.$inputText();
@@ -52,6 +85,12 @@
 		},
 
 		initialize: function () {
+			// Native input: the browser provides the picker, we only keep the
+			// hidden input in sync with the ISO value the input reports.
+			if ( this.$control().data( 'native' ) === 1 ) {
+				return this.initializeNative();
+			}
+
 			// vars
 			var $input = this.$input();
 			var $inputText = this.$inputText();
@@ -118,6 +157,14 @@
 
 			// action
 			acf.doAction( 'date_time_picker_init', $inputText, args, this );
+		},
+
+		initializeNative: function () {
+			var self = this;
+
+			this.$inputNative().on( 'change input', function () {
+				self.syncNative();
+			} );
 		},
 	} );
 

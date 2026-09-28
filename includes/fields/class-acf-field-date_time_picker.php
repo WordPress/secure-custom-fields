@@ -109,6 +109,12 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 				$display_value = acf_format_date( $field['value'], $field['display_format'] );
 			}
 
+			// The native date and time inputs use the ISO format and cannot express a custom display format.
+			if ( $this->scf_use_native_picker() ) {
+				$this->render_native_field( $field, $hidden_value );
+				return;
+			}
+
 			// Convert "display_format" setting to individual date and time formats.
 			$formats = acf_split_date_time( $field['display_format'] );
 
@@ -148,6 +154,61 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 
 
 		/**
+		 * Renders the field using the browser's native date and time input.
+		 *
+		 * The hidden input keeps the `Y-m-d H:i:s` value the JavaScript picker
+		 * would have saved, so stored data and return formats are unchanged.
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param array  $field        The field array.
+		 * @param string $hidden_value The value in the saved `Y-m-d H:i:s` format.
+		 * @return void
+		 */
+		protected function render_native_field( $field, $hidden_value ) {
+			$native_value = $hidden_value ? acf_format_date( $hidden_value, 'Y-m-d\TH:i:s' ) : '';
+
+			// The JS picker applied the current date default, do the same here.
+			if ( '' === $native_value && ! empty( $field['default_to_current_date'] ) ) {
+				$native_value = current_time( 'Y-m-d\TH:i:s' );
+				$hidden_value = current_time( 'Y-m-d H:i:s' );
+			}
+
+			$div          = array(
+				'class'       => 'acf-date-time-picker acf-input-wrap acf-native-picker',
+				'data-native' => '1',
+			);
+			$hidden_input = array(
+				'id'    => $field['id'],
+				'class' => 'input-alt',
+				'name'  => $field['name'],
+				'value' => $hidden_value,
+			);
+			$native_input = array(
+				'class' => $field['class'] . ' input',
+				'type'  => 'datetime-local',
+				// Without a step the input hides seconds and reports Y-m-dTH:i, which is not the format we save.
+				'step'  => 1,
+				'value' => $native_value,
+			);
+
+			foreach ( array( 'readonly', 'disabled' ) as $k ) {
+				if ( ! empty( $field[ $k ] ) ) {
+					$hidden_input[ $k ] = $k;
+					$native_input[ $k ] = $k;
+				}
+			}
+
+			?>
+		<div <?php echo acf_esc_attrs( $div ); ?>>
+			<?php acf_hidden_input( $hidden_input ); ?>
+			<?php echo acf_get_text_input( $native_input ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by the input helper. ?>
+		</div>
+			<?php
+		}
+
+
+		/**
 		 * Create extra options for your field. This is rendered when editing a field.
 		 * The value of $field['name'] can be used (like bellow) to save extra data to the $field
 		 *
@@ -164,6 +225,8 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 			$m_d_Y = date_i18n( 'm/d/Y g:i a' );
 			$F_j_Y = date_i18n( 'F j, Y g:i a' );
 			$Ymd   = date_i18n( 'Y-m-d H:i:s' );
+
+			$native_picker = $this->scf_use_native_picker();
 
 			echo '<div class="acf-field-settings-split">';
 
@@ -184,6 +247,13 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 					),
 				)
 			);
+
+			if ( $native_picker ) {
+				printf(
+					'<p class="description">%s</p>',
+					esc_html__( 'The native date and time inputs are in use, so this format is only used by older picker fields. The browser decides how the value is displayed.', 'secure-custom-fields' )
+				);
+			}
 
 			acf_render_field_setting(
 				$field,
@@ -215,6 +285,13 @@ if ( ! class_exists( 'acf_field_date_and_time_picker' ) ) :
 					'choices'      => array_values( $wp_locale->weekday ),
 				)
 			);
+
+			if ( $native_picker ) {
+				printf(
+					'<p class="description">%s</p>',
+					esc_html__( 'The native date and time inputs are in use, so the browser decides which day the week starts on.', 'secure-custom-fields' )
+				);
+			}
 
 			acf_render_field_setting(
 				$field,

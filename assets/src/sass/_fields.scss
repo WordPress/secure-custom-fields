@@ -632,6 +632,14 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 
 .acf-color-picker {
 
+	/* The native color input has an intrinsic size, keep it in line with the field row. */
+	&.acf-native-picker input[type="color"] {
+		width: 60px;
+		height: 34px;
+		padding: 2px;
+		cursor: pointer;
+	}
+
 	.wp-color-result {
 		border-color: $wp-input-border;
 

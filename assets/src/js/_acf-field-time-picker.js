@@ -6,8 +6,30 @@
 			return this.$( '.acf-time-picker' );
 		},
 
+		$inputNative: function () {
+			return this.$( 'input[type="time"]' );
+		},
+
+		syncNative: function () {
+			var val = this.$inputNative().val();
+
+			// The input can report HH:MM, but the stored value is always H:i:s.
+			if ( /^\d{2}:\d{2}$/.test( val ) ) {
+				val += ':00';
+			}
+
+			acf.val( this.$input(), val );
+		},
+
 		setValue: function ( val ) {
 			acf.val( this.$input(), val );
+
+			// Native input only needs the stored value, it is already ISO.
+			var $native = this.$inputNative();
+			if ( $native.length ) {
+				$native.val( val || '' );
+				return;
+			}
 
 			const $inputText = this.$inputText();
 			if ( val && $inputText.length ) {
@@ -36,6 +58,12 @@
 		},
 
 		initialize: function () {
+			// Native input: the browser provides the picker, we only keep the
+			// hidden input in sync with the value the input reports.
+			if ( this.$control().data( 'native' ) === 1 ) {
+				return this.initializeNative();
+			}
+
 			// vars
 			var $input = this.$input();
 			var $inputText = this.$inputText();
@@ -72,6 +100,14 @@
 
 			// action
 			acf.doAction( 'time_picker_init', $inputText, args, this );
+		},
+
+		initializeNative: function () {
+			var self = this;
+
+			this.$inputNative().on( 'change input', function () {
+				self.syncNative();
+			} );
 		},
 	} );
 

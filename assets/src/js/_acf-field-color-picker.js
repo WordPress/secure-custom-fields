@@ -20,15 +20,32 @@
 			return this.$( 'input[type="text"]' );
 		},
 
+		$inputNative: function () {
+			return this.$( 'input[type="color"]' );
+		},
+
 		setValue: function ( val ) {
 			// update input (with change)
 			acf.val( this.$input(), val );
+
+			// Native input only needs the hex value.
+			var $native = this.$inputNative();
+			if ( $native.length ) {
+				$native.val( val || '' );
+				return;
+			}
 
 			// update iris
 			this.$inputText().iris( 'color', val );
 		},
 
 		initialize: function () {
+			// Native input: the browser provides the picker, we only keep the
+			// hidden input in sync with the hex value the input reports.
+			if ( this.$control().data( 'native' ) === 1 ) {
+				return this.initializeNative();
+			}
+
 			// vars
 			var $input = this.$input();
 			var $inputText = this.$inputText();
@@ -73,7 +90,21 @@
 			$inputText.wpColorPicker( args );
 		},
 
+		initializeNative: function () {
+			var self = this;
+			var $native = this.$inputNative();
+
+			$native.on( 'change input', function () {
+				acf.val( self.$input(), $native.val() );
+			} );
+		},
+
 		onDuplicate: function ( e, $el, $duplicate ) {
+			// Native inputs carry no generated markup to clean up.
+			if ( this.$inputNative().length ) {
+				return;
+			}
+
 			// The wpColorPicker library does not provide a destroy method.
 			// Manually reset DOM by replacing elements back to their original state.
 			$colorPicker = $duplicate.find( '.wp-picker-container' );

@@ -29,6 +29,7 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 		acf_include( 'includes/admin/beta-features.php' );
 		acf_include( 'includes/admin/beta-features/class-scf-beta-feature.php' );
 		acf_include( 'includes/admin/beta-features/class-scf-beta-feature-editor-sidebar.php' );
+		acf_include( 'includes/admin/beta-features/class-scf-beta-feature-native-pickers.php' );
 
 		$this->beta_features = new SCF_Admin_Beta_Features();
 	}
@@ -38,6 +39,7 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	 */
 	public function tear_down() {
 		delete_option( 'scf_beta_feature_editor_sidebar_enabled' );
+		delete_option( 'scf_beta_feature_native_pickers_enabled' );
 		parent::tear_down();
 	}
 
@@ -151,5 +153,39 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 
 		$this->assertFalse( $beta_feature->is_enabled() );
 		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
+	}
+
+	/**
+	 * Test the native pickers feature is registered by default.
+	 */
+	public function test_native_pickers_registered_by_default() {
+		$this->beta_features->register_beta_features();
+
+		$beta_feature = $this->beta_features->get_beta_feature( 'native_pickers' );
+
+		$this->assertNotNull( $beta_feature );
+		$this->assertInstanceOf( 'SCF_Admin_Beta_Feature_Native_Pickers', $beta_feature );
+		$this->assertEquals( 'native_pickers', $beta_feature->name );
+		$this->assertNotEmpty( $beta_feature->title );
+		$this->assertNotEmpty( $beta_feature->description );
+	}
+
+	/**
+	 * Test the native pickers feature is disabled by default and can be toggled.
+	 */
+	public function test_native_pickers_enable_disable() {
+		$this->beta_features->register_beta_features();
+
+		$beta_feature = $this->beta_features->get_beta_feature( 'native_pickers' );
+
+		$this->assertFalse( $beta_feature->is_enabled() );
+
+		$beta_feature->set_enabled( true );
+		$this->assertTrue( $beta_feature->is_enabled() );
+		$this->assertTrue( get_option( 'scf_beta_feature_native_pickers_enabled' ) );
+
+		$beta_feature->set_enabled( false );
+		$this->assertFalse( $beta_feature->is_enabled() );
+		$this->assertFalse( get_option( 'scf_beta_feature_native_pickers_enabled' ) );
 	}
 }
