@@ -173,14 +173,16 @@ if ( ! class_exists( 'acf_validation' ) ) :
 
 			if ( in_array( $screen, array( 'post_type', 'taxonomy', 'ui_options_page' ), true ) && in_array( $post_type, array( 'acf-post-type', 'acf-taxonomy', 'acf-ui-options-page' ), true ) ) {
 				acf_validate_internal_post_type_values( $post_type );
-			} elseif ( acf_request_arg( 'acf_ui_options_page' ) ) {
+			} elseif (
+				is_admin()
+				&& current_user_can( acf_get_setting( 'capability' ) )
+				&& wp_doing_ajax()
+				&& ! empty( $_POST['acf_ui_options_page'] )
+			) {
 				acf_validate_internal_post_type_values( 'acf-ui-options-page' );
-			} else {
-				// Bail early if no matching $_POST.
-				if ( empty( $_POST['acf'] ) ) {
-					return;
-				}
+			}
 
+			if ( ! empty( $_POST['acf'] ) ) {
 				acf_validate_values( wp_unslash( $_POST['acf'] ), 'acf' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
