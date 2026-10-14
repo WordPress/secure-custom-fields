@@ -86,7 +86,7 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 	 */
 	public function test_update_value_returns_array() {
 		$field = $this->get_field();
-		$ids   = array( 1, 2, 3 );
+		$ids   = $this->create_attachments( 3 );
 
 		$result = $this->field_instance->update_value( $ids, $this->post_id, $field );
 
@@ -127,7 +127,7 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 	 */
 	public function test_validate_value_valid() {
 		$field = $this->get_field( array( 'required' => 1 ) );
-		$ids   = array( 1, 2, 3 );
+		$ids   = $this->create_attachments( 3 );
 
 		$valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
 
@@ -139,7 +139,7 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 	 */
 	public function test_validate_value_min_not_met() {
 		$field = $this->get_field( array( 'min' => 5 ) );
-		$ids   = array( 1, 2, 3 );
+		$ids   = $this->create_attachments( 3 );
 
 		$valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
 
@@ -155,7 +155,7 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 	 */
 	public function test_validate_value_max_not_server_validated() {
 		$field = $this->get_field( array( 'max' => 2 ) );
-		$ids   = array( 1, 2, 3 );
+		$ids   = $this->create_attachments( 3 );
 
 		$valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
 
@@ -173,11 +173,34 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 				'max' => 5,
 			)
 		);
-		$ids   = array( 1, 2, 3 );
+		$ids   = $this->create_attachments( 3 );
 
 		$valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
 
 		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value rejects attachments that are not images.
+	 */
+	public function test_validate_value_rejects_non_image_attachment() {
+		$field = $this->get_field();
+		$ids   = array_merge( $this->create_attachments( 1 ), $this->create_attachments( 1, 'application/pdf', 'pdf' ) );
+
+		$valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
+
+		$this->assertSame( 'File must be a valid image.', $valid );
+	}
+
+	/**
+	 * Test validate_value returns an earlier validation error unchanged.
+	 */
+	public function test_validate_value_keeps_earlier_error() {
+		$field = $this->get_field();
+
+		$valid = $this->field_instance->validate_value( 'Earlier error.', $this->create_attachments( 1, 'application/pdf', 'pdf' ), $field, 'acf[field_gallery_test]' );
+
+		$this->assertSame( 'Earlier error.', $valid );
 	}
 
 	/**
@@ -214,5 +237,32 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 
 		$this->assertArrayHasKey( 'items', $schema );
 		$this->assertIsArray( $schema['items'] );
+	}
+
+	/**
+	 * Creates attachments attached to the test post.
+	 *
+	 * @param int    $count     Number of attachments to create.
+	 * @param string $mime      The attachment MIME type.
+	 * @param string $extension The attached file extension.
+	 * @return int[]
+	 */
+	private function create_attachments( $count, $mime = 'image/jpeg', $extension = 'jpg' ) {
+		$ids = array();
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$ids[] = wp_insert_attachment(
+				array(
+					'post_title'     => 'Gallery attachment',
+					'post_type'      => 'attachment',
+					'post_mime_type' => $mime,
+					'post_status'    => 'inherit',
+				),
+				'/tmp/gallery-' . uniqid() . '.' . $extension,
+				$this->post_id
+			);
+		}
+
+		return $ids;
 	}
 }

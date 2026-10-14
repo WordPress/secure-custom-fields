@@ -155,4 +155,72 @@ class Test_ACF_Field_Image extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'url', $result );
 		$this->assertEquals( $this->attachment_id, $result['ID'] );
 	}
+
+	/**
+	 * Test validate_value accepts an image attachment.
+	 */
+	public function test_validate_value_accepts_image_attachment() {
+		$valid = $this->field_instance->validate_value( true, $this->attachment_id, $this->get_field(), 'acf[field_image_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value rejects an attachment that is not an image.
+	 */
+	public function test_validate_value_rejects_non_image_attachment() {
+		$pdf_id = wp_insert_attachment(
+			array(
+				'post_title'     => 'Test Document',
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'application/pdf',
+				'post_status'    => 'inherit',
+			),
+			'/tmp/test-document.pdf',
+			$this->post_id
+		);
+
+		$valid = $this->field_instance->validate_value( true, $pdf_id, $this->get_field(), 'acf[field_image_test]' );
+
+		wp_delete_attachment( $pdf_id, true );
+		$this->assertSame( 'File must be a valid image.', $valid );
+	}
+
+	/**
+	 * Test validate_value allows an empty value and keeps earlier errors.
+	 */
+	public function test_validate_value_empty_and_earlier_error() {
+		$this->assertTrue( $this->field_instance->validate_value( true, '', $this->get_field(), 'acf[field_image_test]' ) );
+		$this->assertSame( 'Earlier error.', $this->field_instance->validate_value( 'Earlier error.', 999999, $this->get_field(), 'acf[field_image_test]' ) );
+	}
+
+	/**
+	 * Test the basic uploader limits the file picker to images.
+	 */
+	public function test_basic_uploader_accept_attribute() {
+		$uploader = acf_get_setting( 'uploader' );
+		acf_update_setting( 'uploader', 'basic' );
+
+		$field = $this->get_field(
+			array(
+				'id'         => 'acf-field_image_test',
+				'value'      => '',
+				'library'    => 'all',
+				'mime_types' => '',
+			)
+		);
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$default = ob_get_clean();
+
+		ob_start();
+		$this->field_instance->render_field( array_merge( $field, array( 'mime_types' => 'jpg, .png' ) ) );
+		$restricted = ob_get_clean();
+
+		acf_update_setting( 'uploader', $uploader );
+
+		$this->assertStringContainsString( 'accept="image/*"', $default );
+		$this->assertStringContainsString( 'accept=".jpg,.png"', $restricted );
+	}
 }
