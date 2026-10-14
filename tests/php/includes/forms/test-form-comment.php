@@ -165,6 +165,13 @@ class Test_Form_Comment extends BaseTestCase {
 			'field_test' => '<script>alert("xss")</script><p>Safe content</p>',
 		);
 
+		// The comment has no field groups, so allow the submitted key explicitly.
+		$allow_field_test = function ( $keys ) {
+			$keys[] = 'field_test';
+			return $keys;
+		};
+		add_filter( 'acf/form/comment/allowed_field_keys', $allow_field_test );
+
 		// Track if save was attempted.
 		$saved = false;
 		add_action(
@@ -181,6 +188,7 @@ class Test_Form_Comment extends BaseTestCase {
 		$this->assertStringNotContainsString( '<script>', $_POST['acf']['field_test'], 'Script tags should be sanitized' );
 
 		// Cleanup.
+		remove_filter( 'acf/form/comment/allowed_field_keys', $allow_field_test );
 		unset( $_POST['_acf_screen'] );
 		unset( $_POST['_acf_nonce'] );
 		unset( $_POST['acf'] );
