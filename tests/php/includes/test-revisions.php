@@ -69,6 +69,13 @@ class Test_ACF_Revisions extends BaseTestCase {
 	private $posts_pre_query_filter = null;
 
 	/**
+	 * ID of the user created for the current test, if any.
+	 *
+	 * @var integer
+	 */
+	private $user_id = 0;
+
+	/**
 	 * Set up test fixtures.
 	 */
 	public function setUp(): void {
@@ -108,6 +115,13 @@ class Test_ACF_Revisions extends BaseTestCase {
 	 */
 	public function tearDown(): void {
 		unset( $_POST['_acf_changed'], $_POST['action'], $_GET['preview'], $_GET['preview_id'] );
+		$GLOBALS['wp_query']->is_preview = false;
+		acf()->revisions->cache          = array();
+		wp_set_current_user( 0 );
+		if ( $this->user_id ) {
+			wp_delete_user( $this->user_id );
+			$this->user_id = 0;
+		}
 		remove_filter( 'wp_doing_ajax', '__return_true' );
 		if ( $this->field_name ) {
 			remove_filter( "_wp_post_revision_field_{$this->field_name}", array( acf()->revisions, 'wp_post_revision_field' ), 10 );
@@ -487,15 +501,92 @@ class Test_ACF_Revisions extends BaseTestCase {
 	 */
 	public function test_validate_post_id_returns_revision_for_preview() {
 		$rev_id = wp_save_post_revision( $this->post_id );
+		$this->set_current_user_role( 'administrator' );
 
 		// Not previewing: post ID is returned untouched.
 		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
 
 		// Previewing: the latest revision ID is returned instead.
+		$this->start_preview();
+
+		$this->assertEquals( $rev_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Test that a preview query arg alone does not swap in the revision
+	 * when WordPress is not in a preview context.
+	 */
+	public function test_validate_post_id_ignores_preview_arg_outside_preview_context() {
+		wp_save_post_revision( $this->post_id );
+		$this->set_current_user_role( 'administrator' );
+
 		$_GET['preview']    = 'true';
 		$_GET['preview_id'] = (string) $this->post_id;
 
+		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Test that logged-out visitors never receive revision values.
+	 */
+	public function test_validate_post_id_ignores_preview_for_logged_out_visitor() {
+		wp_save_post_revision( $this->post_id );
+		wp_set_current_user( 0 );
+		$this->start_preview();
+
+		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Test that users who cannot edit the post never receive revision values.
+	 */
+	public function test_validate_post_id_ignores_preview_for_user_without_edit_capability() {
+		wp_save_post_revision( $this->post_id );
+		$this->set_current_user_role( 'subscriber' );
+		$this->start_preview();
+
+		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Test that a revision cached for an editor is not served to a user
+	 * without edit capability.
+	 */
+	public function test_validate_post_id_cache_is_not_served_without_edit_capability() {
+		$rev_id = wp_save_post_revision( $this->post_id );
+		$this->start_preview();
+
+		$this->set_current_user_role( 'administrator' );
 		$this->assertEquals( $rev_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+
+		wp_set_current_user( 0 );
+		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Puts the main query into a preview context for the test post.
+	 */
+	private function start_preview() {
+		$_GET['preview']    = 'true';
+		$_GET['preview_id'] = (string) $this->post_id;
+
+		$GLOBALS['wp_query']->is_preview = true;
+	}
+
+	/**
+	 * Creates a user with the given role and makes them the current user.
+	 *
+	 * @param string $role The role to assign.
+	 */
+	private function set_current_user_role( $role ) {
+		$this->user_id = wp_insert_user(
+			array(
+				'user_login' => $role . '_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => $role,
+			)
+		);
+		wp_set_current_user( $this->user_id );
 	}
 
 	// =========================================================================
