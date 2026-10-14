@@ -311,6 +311,14 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 	}
 
 	/**
+	 * The upload check runs after other plugins' default-priority prefilters,
+	 * such as SVG sanitizers, so it validates the file they produce.
+	 */
+	public function test_upload_prefilter_runs_after_default_priority() {
+		$this->assertSame( 20, has_filter( 'wp_handle_upload_prefilter', array( acf_get_instance( 'ACF_Media' ), 'handle_upload_prefilter' ) ) );
+	}
+
+	/**
 	 * Uploads for an image field only allow image MIME types.
 	 */
 	public function test_upload_file_restricts_mimes_for_image_fields() {
