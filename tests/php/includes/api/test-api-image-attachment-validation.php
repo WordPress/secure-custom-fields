@@ -172,6 +172,45 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 	}
 
 	/**
+	 * An SVG passes when SVG is an allowed image type, because the binary
+	 * image check cannot read vector images.
+	 */
+	public function test_upload_accepts_svg_when_allowed() {
+		$this->allow_svg();
+
+		$errors = acf_validate_is_image_attachment( array(), array(), $this->upload_fixture( $this->svg_bytes(), 'logo.svg' ), $this->field( 'image' ), 'upload' );
+
+		$this->assertSame( array(), $errors );
+	}
+
+	/**
+	 * A file named .svg that is not an SVG is still rejected.
+	 */
+	public function test_upload_rejects_non_svg_with_svg_extension() {
+		$this->allow_svg();
+
+		$errors = acf_validate_is_image_attachment( array(), array(), $this->upload_fixture( '<?php echo 1;', 'logo.svg' ), $this->field( 'image' ), 'upload' );
+
+		$this->assertArrayHasKey( 'invalid_image', $errors );
+	}
+
+	/**
+	 * Removing SVG from the vector types applies the binary image check again.
+	 */
+	public function test_vector_mime_types_filter_can_remove_svg() {
+		if ( PHP_VERSION_ID >= 80500 ) {
+			$this->markTestSkipped( 'PHP 8.5+ reads SVG as an image natively, so the binary image check accepts it.' );
+		}
+
+		$this->allow_svg();
+		$this->add_test_filter( 'acf/validate_is_image_attachment/vector_mime_types', '__return_empty_array' );
+
+		$errors = acf_validate_is_image_attachment( array(), array(), $this->upload_fixture( $this->svg_bytes(), 'logo.svg' ), $this->field( 'image' ), 'upload' );
+
+		$this->assertArrayHasKey( 'invalid_image', $errors );
+	}
+
+	/**
 	 * A missing temporary file is rejected.
 	 */
 	public function test_upload_rejects_missing_temp_file() {
@@ -337,6 +376,38 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 	 */
 	private function png_bytes() {
 		return base64_decode( self::PNG_BASE64 ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decodes a fixed image fixture.
+	}
+
+	/**
+	 * Returns the bytes of a small SVG.
+	 *
+	 * @return string
+	 */
+	private function svg_bytes() {
+		return '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1"/></svg>';
+	}
+
+	/**
+	 * Allows SVG uploads site-wide, as an SVG plugin would.
+	 *
+	 * The site-wide list in acf_get_image_mime_types() is cached for the request,
+	 * so SVG is also added through the test field's filter.
+	 */
+	private function allow_svg() {
+		$this->add_test_filter(
+			'upload_mimes',
+			function ( $mimes ) {
+				$mimes['svg'] = 'image/svg+xml';
+				return $mimes;
+			}
+		);
+		$this->add_test_filter(
+			'acf/get_image_mime_types/key=field_test_image',
+			function ( $mimes ) {
+				$mimes['svg'] = 'image/svg+xml';
+				return $mimes;
+			}
+		);
 	}
 
 	/**
