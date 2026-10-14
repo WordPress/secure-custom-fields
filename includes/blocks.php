@@ -62,9 +62,11 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 	 *
 	 * @param integer $default_acf_block_version The default ACF block version.
 	 * @param array   $settings                  An array of block settings.
+	 * @param string  $source                    The registration source (`php` or `json`).
 	 * @return integer
 	 */
-	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 2, $settings );
+	$default_acf_block_version = version_compare( get_bloginfo( 'version' ), '7.1', '>=' ) ? 3 : 2;
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', $default_acf_block_version, $settings, 'json' );
 
 	// Setup SCF defaults.
 	$settings = wp_parse_args(
@@ -131,6 +133,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		'expandedEditorButtons'    => 'expanded_editor_buttons',
 		'autoInlineEditing'        => 'auto_inline_editing',
 		'expandedEditorButtonText' => 'expanded_editor_button_text',
+		'renderPreview'            => 'render_preview',
 	);
 	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
@@ -140,7 +143,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 			unset( $settings[ $key ] );
 			$settings[ $mapped_key ] = $metadata['acf'][ $key ];
 			if ( $textdomain && isset( $i18n_schema->$key ) ) {
-				$settings[ $mapped_key ] = translate_settings_using_i18n_schema( $i18n_schema->$key, $settings[ $key ], $textdomain );
+				$settings[ $mapped_key ] = translate_settings_using_i18n_schema( $i18n_schema->$key, $settings[ $mapped_key ], $textdomain );
 			}
 		}
 	}
@@ -354,9 +357,11 @@ function acf_register_block_type( $block ) {
 	 *
 	 * @param integer $default_acf_block_version The default ACF block version.
 	 * @param array   $block                     An array of block settings.
+	 * @param string  $source                    The registration source (`php` or `json`).
 	 * @return integer
 	 */
-	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 1, $block );
+	$default_acf_block_version = version_compare( get_bloginfo( 'version' ), '7.1', '>=' ) ? 3 : 1;
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', $default_acf_block_version, $block, 'php' );
 
 	if ( ! isset( $block['acf_block_version'] ) ) {
 		$block['acf_block_version'] = $default_acf_block_version;
@@ -954,14 +959,23 @@ function acf_rendered_block_v3( $attributes, $content = '', $is_preview = false,
 		acf_get_store( 'values' )->reset();
 	}
 
-	// Capture block render output.
-	acf_set_data( 'acf_doing_block_preview', true );
+	// When preview rendering is disabled for this block, skip template rendering in the editor.
+	// The block's template still renders normally on the front-end (when $is_preview is false).
+	if ( $is_preview && isset( $block['render_preview'] ) && false === $block['render_preview'] ) {
+		$html = '';
+		// Mirror the else branch: always leave the flag as false when returning,
+		// so a stale true value from an outer/previous render doesn't affect subsequent blocks.
+		acf_set_data( 'acf_doing_block_preview', false );
+	} else {
+		// Capture block render output.
+		acf_set_data( 'acf_doing_block_preview', true );
 
-	ob_start();
-	acf_render_block( $attributes, $content, $is_preview, $post_id, $wp_block, $context );
-	acf_set_data( 'acf_doing_block_preview', false );
-	$html = ob_get_clean();
-	$html = is_string( $html ) ? $html : '';
+		ob_start();
+		acf_render_block( $attributes, $content, $is_preview, $post_id, $wp_block, $context );
+		acf_set_data( 'acf_doing_block_preview', false );
+		$html = ob_get_clean();
+		$html = is_string( $html ) ? $html : '';
+	}
 
 	// Replace <InnerBlocks /> placeholder on front-end, or if we're rendering an ACF block inside another ACF block template.
 	if ( ! $is_preview || doing_action( 'acf_block_render_template' ) ) {

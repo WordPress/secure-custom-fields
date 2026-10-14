@@ -261,6 +261,85 @@ class Test_Blocks extends BaseTestCase {
 	}
 
 	/**
+	 * Test that PHP-registered blocks default to version 3 on WordPress 7.1+,
+	 * and that an explicit version is kept.
+	 */
+	public function test_register_block_type_defaults_to_v3_on_wp_7_1() {
+		$wp_version            = $GLOBALS['wp_version'];
+		$GLOBALS['wp_version'] = '7.1'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates WordPress 7.1.
+
+		try {
+			$default  = $this->register_block( array( 'name' => 'wp71-default' ) );
+			$explicit = $this->register_block(
+				array(
+					'name'              => 'wp71-explicit',
+					'acf_block_version' => 2,
+				)
+			);
+		} finally {
+			$GLOBALS['wp_version'] = $wp_version; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restores the real version.
+		}
+
+		$this->assertSame( 3, $default['acf_block_version'] );
+		$this->assertSame( 2, $explicit['acf_block_version'] );
+	}
+
+	/**
+	 * Test that the default block version filter receives the registration source.
+	 */
+	public function test_default_block_version_filter_receives_source() {
+		$sources  = array();
+		$callback = function ( $version, $settings, $source ) use ( &$sources ) {
+			$sources[] = $source;
+			return $version;
+		};
+		add_filter( 'acf/blocks/default_block_version', $callback, 10, 3 );
+
+		$this->register_block( array( 'name' => 'source-php' ) );
+		$this->block_names[] = 'acf/source-json';
+		acf_handle_json_block_registration(
+			array(),
+			array(
+				'name' => 'acf/source-json',
+				'file' => '/tmp/scf-test-json/block.json',
+				'acf'  => array( 'mode' => 'preview' ),
+			)
+		);
+
+		remove_filter( 'acf/blocks/default_block_version', $callback, 10 );
+
+		$this->assertSame( array( 'php', 'json' ), $sources );
+	}
+
+	/**
+	 * Test that block.json blocks default to version 3 on WordPress 7.1+,
+	 * and that renderPreview is mapped to render_preview.
+	 */
+	public function test_handle_json_block_registration_wp_7_1_default_and_render_preview() {
+		$this->block_names[] = 'acf/json-wp71';
+
+		$wp_version            = $GLOBALS['wp_version'];
+		$GLOBALS['wp_version'] = '7.1'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates WordPress 7.1.
+
+		try {
+			$settings = acf_handle_json_block_registration(
+				array(),
+				array(
+					'name' => 'acf/json-wp71',
+					'file' => '/tmp/scf-test-json/block.json',
+					'acf'  => array( 'renderPreview' => false ),
+				)
+			);
+		} finally {
+			$GLOBALS['wp_version'] = $wp_version; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restores the real version.
+		}
+
+		$this->assertSame( 3, $settings['acf_block_version'] );
+		$this->assertFalse( $settings['render_preview'] );
+		$this->assertArrayNotHasKey( 'renderPreview', $settings );
+	}
+
+	/**
 	 * Test that registering a duplicate block type name fails.
 	 */
 	public function test_register_block_type_duplicate_returns_false() {
