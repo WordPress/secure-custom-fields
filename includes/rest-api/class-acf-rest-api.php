@@ -16,8 +16,29 @@ class ACF_Rest_Api {
 	/** @var ACF_Rest_Request */
 	private $request;
 
+	/**
+	 * The WP_REST_Request object.
+	 *
+	 * @var WP_REST_Request|null
+	 */
+	private $wp_request;
+
+	/**
+	 * Per-object schema set by maybe_apply_per_object_schema().
+	 *
+	 * @var array|null
+	 */
+	private $per_object_schema;
+
 	/** @var ACF_Rest_Embed_Links */
 	private $embed_links;
+
+	/**
+	 * Cached controllers WP core does not lazy-load.
+	 *
+	 * @var array<string, WP_REST_Controller>
+	 */
+	private static $core_controllers = array();
 
 	/**
 	 * Fields and updates resolved during the current REST request.
@@ -28,30 +49,279 @@ class ACF_Rest_Api {
 	private $rest_update_plan;
 
 	public function __construct() {
-		add_filter( 'rest_pre_dispatch', array( $this, 'initialize' ), 10, 3 );
+		// Priority 9 runs before rest_handle_options_request (priority 10).
+		add_filter( 'rest_pre_dispatch', array( $this, 'initialize' ), 9, 3 );
 		add_filter( 'rest_dispatch_request', \Closure::fromCallable( array( $this, 'check_bidirectional_target_permissions' ) ), 10, 2 );
 		add_action( 'rest_api_init', array( $this, 'register_field' ) );
+		add_filter( 'rest_endpoints', array( $this, 'enrich_options_endpoint_args' ) );
 	}
 
 	public function initialize( $response, $handler, $request ) {
 		$this->rest_update_plan = null;
 		if ( ! acf_get_setting( 'rest_api_enabled' ) ) {
-			return;
+			return $response;
 		}
+
+		// Clear per-request state so a prior dispatch's per-object properties can't leak into enrich_options_endpoint_args().
+		$this->per_object_schema = null;
+		$this->wp_request        = $request;
 
 		// Parse request and set the object for local access.
 		$this->request = new ACF_Rest_Request();
 		$this->request->parse_request( $request );
 
-		// Register the 'acf' REST property.
 		$this->register_field();
+		$this->maybe_apply_per_object_schema();
 
 		// If embed links are enabled in ACF's global settings, init the handler and set for local access.
 		if ( acf_get_setting( 'rest_api_embed_links' ) ) {
 			$this->embed_links = new ACF_Rest_Embed_Links();
 			$this->embed_links->initialize();
 		}
+
+		return $response;
 	}
+	/**
+	 * Upgrade both OPTIONS surfaces (schema.properties.acf and
+	 * endpoints[].args.acf) from the type-level union to per-object precision
+	 * when the caller can read the target object.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @return void
+	 */
+	private function maybe_apply_per_object_schema() {
+		// Both outputs are only read during OPTIONS response building.
+		if ( ! ( $this->wp_request instanceof WP_REST_Request ) || 'OPTIONS' !== $this->wp_request->get_method() ) {
+			return;
+		}
+
+		if ( ! $this->request instanceof ACF_Rest_Request || ! $this->request->object_type ) {
+			return;
+		}
+
+		$child_id  = $this->request->get_url_param( 'child_id' );
+		$object_id = $child_id ? $child_id : $this->request->get_url_param( 'id' );
+
+		// Collection routes are already correct at the type-level union.
+		if ( ! $object_id ) {
+			return;
+		}
+
+		if ( ! $this->current_user_can_read_request_object( $object_id, $child_id ) ) {
+			return;
+		}
+
+		$per_object = $this->build_per_object_schema( $object_id );
+
+		if ( empty( $per_object['properties'] ) ) {
+			return;
+		}
+
+		$this->per_object_schema = $per_object;
+
+		$base = $this->request->child_object_type
+			? $this->request->child_object_type
+			: $this->request->object_sub_type;
+		if ( ! $base ) {
+			return;
+		}
+
+		global $wp_rest_additional_fields;
+		if ( isset( $wp_rest_additional_fields[ $base ]['acf'] ) ) {
+			$wp_rest_additional_fields[ $base ]['acf']['schema'] = $per_object;
+		}
+	}
+
+	/**
+	 * Build the per-object ACF schema for the current request's target object.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param integer|string $object_id The target object ID (may be a child id for revisions/autosaves).
+	 * @return array
+	 */
+	private function build_per_object_schema( $object_id ) {
+		$field_groups = $this->get_field_groups_by_id(
+			$object_id,
+			$this->request->object_type,
+			$this->request->object_sub_type
+		);
+
+		return $this->build_schema_from_field_groups( $field_groups, $object_id );
+	}
+
+	/**
+	 * Build the ACF schema scaffold and populate its `properties` from the
+	 * given field groups. Shared between the type-level get_schema() and the
+	 * per-object build_per_object_schema() so both surfaces stay in lockstep.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param array               $field_groups Field groups to walk.
+	 * @param integer|string|null $object_id    Object ID passed to get_fields() so field-level filters see the target.
+	 * @return array
+	 */
+	private function build_schema_from_field_groups( array $field_groups, $object_id = null ) {
+		$schema = array(
+			'description' => 'ACF field data',
+			'type'        => 'object',
+			'properties'  => array(),
+			'arg_options' => array(
+				'validate_callback' => array( $this, 'validate_rest_arg' ),
+			),
+		);
+
+		foreach ( $field_groups as $field_group ) {
+			foreach ( $this->get_fields( $field_group, $object_id ) as $field ) {
+				$schema['properties'][ $field['name'] ] = acf_get_field_rest_schema( $field );
+			}
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Filter callback for `rest_endpoints`. Swaps the per-object properties
+	 * into the `acf` entry of each matching endpoint's args. Only runs for
+	 * OPTIONS requests on routes matching the current URL, so write
+	 * validation is left untouched.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param array $endpoints Endpoints as passed by WP_REST_Server::get_routes().
+	 * @return array
+	 */
+	public function enrich_options_endpoint_args( $endpoints ) {
+		if (
+			empty( $this->per_object_schema )
+			|| ! ( $this->wp_request instanceof WP_REST_Request )
+			|| 'OPTIONS' !== $this->wp_request->get_method()
+		) {
+			return $endpoints;
+		}
+
+		$current_route = $this->wp_request->get_route();
+		if ( empty( $current_route ) ) {
+			return $endpoints;
+		}
+
+		$per_object_properties = $this->per_object_schema['properties'];
+
+		foreach ( $endpoints as $route_pattern => &$handlers ) {
+			if ( ! preg_match( '@^' . $route_pattern . '$@i', $current_route ) ) {
+				continue;
+			}
+
+			foreach ( $handlers as &$handler ) {
+				if ( ! is_array( $handler ) || ! isset( $handler['args']['acf'] ) || ! is_array( $handler['args']['acf'] ) ) {
+					continue;
+				}
+				// Preserve validate_callback, sanitize_callback, etc — only swap properties.
+				$handler['args']['acf']['properties'] = $per_object_properties;
+			}
+			unset( $handler );
+		}
+		unset( $handlers );
+
+		return $endpoints;
+	}
+
+	/**
+	 * Whether the current caller can read the given object. Fails closed
+	 * (returns false) when permission cannot be conclusively verified.
+	 * Callers guarantee that $this->wp_request is a WP_REST_Request.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param integer|string $object_id The effective target ID (child ID if present, otherwise the URL id).
+	 * @param integer|string $child_id  The URL child_id, if any — signals a revision/autosave context.
+	 * @return boolean
+	 */
+	private function current_user_can_read_request_object( $object_id, $child_id ) {
+		// Revisions and autosaves inherit edit_post on the parent.
+		if ( $child_id ) {
+			$parent_id = (int) $this->request->get_url_param( 'id' );
+			return $parent_id > 0 && acf_current_user_can_edit_post( $parent_id );
+		}
+
+		$controller = $this->resolve_rest_controller();
+		if ( ! $controller instanceof WP_REST_Controller ) {
+			return false;
+		}
+
+		// untrailingslashit so trailing-slash URLs still match core's route registrations.
+		$route = untrailingslashit( $this->wp_request->get_route() );
+		if ( '' === $route ) {
+			return false;
+		}
+
+		$check = new WP_REST_Request( 'GET', $route );
+		$check->set_url_params( array( 'id' => $object_id ) );
+		$check->set_query_params( array( 'context' => 'view' ) );
+
+		// Strict === so WP_Error is treated as unauthorized.
+		return true === $controller->get_item_permissions_check( $check );
+	}
+
+	/**
+	 * Resolve the WP REST controller for the current request's object type.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @return WP_REST_Controller|null
+	 */
+	private function resolve_rest_controller() {
+		switch ( $this->request->object_type ) {
+			case 'post':
+				$type = get_post_type_object( $this->request->object_sub_type );
+				break;
+			case 'term':
+				$type = get_taxonomy( $this->request->object_sub_type );
+				break;
+			case 'user':
+			case 'comment':
+				return self::get_core_controller( $this->request->object_type );
+			default:
+				return null;
+		}
+
+		if ( ! $type || ! $type->show_in_rest ) {
+			return null;
+		}
+
+		$controller = $type->get_rest_controller();
+
+		return $controller instanceof WP_REST_Controller ? $controller : null;
+	}
+
+	/**
+	 * Cache and return a WP core REST controller for 'user' or 'comment'.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param string $object_type One of 'user' or 'comment'.
+	 * @return WP_REST_Controller|null
+	 */
+	private static function get_core_controller( $object_type ) {
+		if ( isset( self::$core_controllers[ $object_type ] ) ) {
+			return self::$core_controllers[ $object_type ];
+		}
+
+		switch ( $object_type ) {
+			case 'user':
+				self::$core_controllers[ $object_type ] = new WP_REST_Users_Controller();
+				break;
+			case 'comment':
+				self::$core_controllers[ $object_type ] = new WP_REST_Comments_Controller();
+				break;
+			default:
+				return null;
+		}
+
+		return self::$core_controllers[ $object_type ];
+	}
+
 
 	/**
 	 * Register our custom property as a REST field.
@@ -99,51 +369,21 @@ class ACF_Rest_Api {
 	}
 
 	/**
-	 * Dynamically generate the schema for the current request.
+	 * Generate the type-level schema for the current request's object type.
+	 * Gets baked into $wp_rest_additional_fields and endpoint args at
+	 * rest_api_init. Per-object precision is layered on top in
+	 * maybe_apply_per_object_schema() and enrich_options_endpoint_args().
 	 *
 	 * @return array
 	 */
 	private function get_schema() {
-		$schema = array(
-			'description' => 'ACF field data',
-			'type'        => 'object',
-			'properties'  => array(),
-			'arg_options' => array(
-				'validate_callback' => array( $this, 'validate_rest_arg' ),
-			),
-		);
-
-		// If we don't have an object type, we can't determine the schema for the current request.
 		$object_type = $this->request->object_type;
-		if ( ! $object_type ) {
-			return $schema;
-		}
 
-		$object_id       = $this->request->get_url_param( 'id' );
-		$child_id        = $this->request->get_url_param( 'child_id' );
-		$object_sub_type = $this->request->object_sub_type;
+		$field_groups = $object_type
+			? $this->get_field_groups_by_object_type( $object_type )
+			: array();
 
-		if ( $child_id ) {
-			$object_id = $child_id;
-		}
-
-		if ( ! $object_id ) {
-			$field_groups = $this->get_field_groups_by_object_type( $object_type );
-		} else {
-			$field_groups = $this->get_field_groups_by_id( $object_id, $object_type, $object_sub_type );
-		}
-
-		if ( empty( $field_groups ) ) {
-			return $schema;
-		}
-
-		foreach ( $field_groups as $field_group ) {
-			foreach ( $this->get_fields( $field_group, $object_id ) as $field ) {
-				$schema['properties'][ $field['name'] ] = acf_get_field_rest_schema( $field );
-			}
-		}
-
-		return $schema;
+		return $this->build_schema_from_field_groups( $field_groups );
 	}
 
 	/**
