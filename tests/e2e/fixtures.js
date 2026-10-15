@@ -134,6 +134,8 @@ const test = wpTest.extend( {
 				},
 			},
 			// Older WordPress versions expose "Preview"; newer versions expose "View".
+			// The menu item that opens the preview tab is "Preview in new tab",
+			// or "Preview" from WordPress 7.2.
 			openPreviewPage: {
 				value: async () => {
 					const editorTopBar = page.locator(
@@ -144,22 +146,19 @@ const test = wpTest.extend( {
 						'role=button[name="View"i]'
 					);
 
-					if (
+					const menuButton =
 						( await viewButton.count() ) > 0 &&
 						( await viewButton.first().isVisible() )
-					) {
-						return editor.openPreviewPage();
-					}
+							? viewButton.first()
+							: editorTopBar.locator(
+									'role=button[name="Preview"i]'
+							  );
 
-					await editorTopBar
-						.locator( 'role=button[name="Preview"i]' )
-						.click();
+					await menuButton.click();
 
 					const [ previewPage ] = await Promise.all( [
 						context.waitForEvent( 'page' ),
-						page.click(
-							'role=menuitem[name=/Preview in new tab/i]'
-						),
+						page.click( 'role=menuitem[name=/^Preview/i]' ),
 					] );
 
 					return previewPage;
