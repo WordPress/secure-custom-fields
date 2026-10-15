@@ -105,6 +105,39 @@ function acf_form_data( $data = array() ) {
 
 
 /**
+ * Removes uploaded files for top-level `acf` input keys that are not allowed.
+ *
+ * Use alongside the `$_POST['acf']` key restriction of a save handler, so
+ * uploads cannot target fields the form did not render.
+ *
+ * @since SCF 6.9.6
+ *
+ * @param array $allowed_keys The allowed top-level `acf` input keys.
+ * @return void
+ */
+function scf_restrict_uploaded_field_keys( array $allowed_keys ): void {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Callers verify the nonce. Only keys are checked here.
+	if ( ! isset( $_FILES['acf'] ) ) {
+		return;
+	}
+
+	if ( ! is_array( $_FILES['acf'] ) ) {
+		$_FILES['acf'] = array();
+		return;
+	}
+
+	$allowed_keys = array_flip( array_filter( $allowed_keys, 'is_string' ) );
+
+	foreach ( $_FILES['acf'] as $attribute => $branches ) {
+		$_FILES['acf'][ $attribute ] = is_array( $branches )
+			? array_intersect_key( $branches, $allowed_keys )
+			: array();
+	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput
+}
+
+
+/**
  * acf_save_post
  *
  * Saves the $_POST data.

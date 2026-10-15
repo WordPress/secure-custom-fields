@@ -344,6 +344,64 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	}
 
 	// =========================================================================
+	// Uploads
+	// =========================================================================
+
+	/**
+	 * Uploaded files for fields that are not allowed are dropped from comment saves.
+	 */
+	public function test_save_comment_drops_uploads_for_fields_not_allowed() {
+		$this->submit( 'comment', array( 'field_page_comment' => 'dropped' ) );
+		$this->add_upload_fixture( array( 'field_post_comment', 'field_page_comment' ) );
+
+		( new acf_form_comment() )->save_comment( $this->comment_id );
+
+		$this->assertUploadKeys( array( 'field_post_comment' ) );
+	}
+
+	/**
+	 * Uploaded files for fields that are not allowed are dropped from user saves.
+	 */
+	public function test_save_user_drops_uploads_for_fields_not_allowed() {
+		$this->submit( 'user', array( 'field_register' => 'dropped' ) );
+		$this->add_upload_fixture( array( 'field_edit', 'field_register' ) );
+
+		$this->run_in_action( 'profile_update', $this->user_id );
+
+		$this->assertUploadKeys( array( 'field_edit' ) );
+	}
+
+	/**
+	 * Adds an upload request with no actual files for the given field keys.
+	 *
+	 * @param string[] $keys The field keys.
+	 */
+	private function add_upload_fixture( array $keys ) {
+		$branch = array_fill_keys( $keys, '' );
+
+		$_FILES['acf'] = array(
+			'name'     => $branch,
+			'type'     => $branch,
+			'tmp_name' => $branch,
+			'error'    => array_fill_keys( $keys, UPLOAD_ERR_NO_FILE ),
+			'size'     => array_fill_keys( $keys, 0 ),
+		);
+	}
+
+	/**
+	 * Asserts the field keys left in every uploaded file attribute.
+	 *
+	 * @param string[] $expected The expected field keys.
+	 */
+	private function assertUploadKeys( array $expected ) {
+		// phpcs:disable WordPress.Security -- Test reads the request it built.
+		foreach ( $_FILES['acf'] as $attribute => $branch ) {
+			$this->assertSame( $expected, array_keys( $branch ), "Unexpected keys in {$attribute}." );
+		}
+		// phpcs:enable WordPress.Security
+	}
+
+	// =========================================================================
 	// Helpers
 	// =========================================================================
 
