@@ -141,6 +141,18 @@ class Test_Blocks_Auto_Inline_Editing extends BaseTestCase {
 	}
 
 	/**
+	 * Test that the legacy pro/ path loads the current implementation instead
+	 * of redeclaring the functions.
+	 */
+	public function test_pro_path_loads_the_current_implementation() {
+		require ACF_PATH . 'pro/blocks-auto-inline-editing.php';
+
+		$function = new ReflectionFunction( 'SCF\Blocks\AutoInlineEditing\populate_auto_inline_editing_values' );
+
+		$this->assertSame( realpath( ACF_PATH . 'includes/blocks-auto-inline-editing.php' ), realpath( $function->getFileName() ) );
+	}
+
+	/**
 	 * Test the field type allow-lists.
 	 */
 	public function test_field_type_lists() {
