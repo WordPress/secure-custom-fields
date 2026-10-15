@@ -30,6 +30,16 @@ acf_form_data
 * @since ACF 5.0.0
 * @return  void
 
+## `scf_restrict_uploaded_field_keys()`
+
+Removes uploaded files for top-level `acf` input keys that are not allowed.
+
+* Use alongside the `$_POST['acf']` key restriction of a save handler, so
+uploads cannot target fields the form did not render.
+* @since SCF 6.9.6
+* @param array $allowed_keys The allowed top-level `acf` input keys.
+* @return void
+
 ## `acf_save_post()`
 
 acf_save_post

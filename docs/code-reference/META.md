@@ -174,6 +174,7 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/input/meta_box_priority`
+- `acf/options_page/allowed_field_keys`
 
 ## admin/post-types/admin-field-group.php
 
@@ -332,14 +333,20 @@ This file tracks code elements that need documentation.
 - `acf/current_user_can_edit_in_context`
 - `acf/current_user_can_edit_post`
 - `acf/filesize`
+- `acf/get_image_mime_types`
 - `acf/get_image_sizes`
 - `acf/get_post_id_info`
 - `acf/get_post_stati`
 - `acf/get_post_types`
+- `acf/is_image_field`
+- `acf/is_image_field`
 - `acf/load_attachment`
 - `acf/pre_load_attachment`
 - `acf/pre_load_post_id`
 - `acf/validate_attachment`
+- `acf/validate_is_image_attachment`
+- `acf/validate_is_image_attachment/error_message`
+- `acf/validate_is_image_attachment/vector_mime_types`
 - `acf/validate_post_id`
 - `acf/validate_setting`
 - `acf/verify_ajax`
@@ -410,6 +417,7 @@ This file tracks code elements that need documentation.
 - `acf/blocks/pre_block_template_render`
 - `acf/blocks/prevent_edit_forms_on_rest_endpoints`
 - `acf/blocks/render_capability`
+- `acf/blocks/show_legacy_block_version_notice`
 - `acf/blocks/template_not_found_message`
 - `acf/blocks/top_toolbar_fields`
 - `acf/blocks/top_toolbar_fields`
@@ -569,6 +577,12 @@ This file tracks code elements that need documentation.
 
 - `acf/input/meta_box_priority`
 
+## forms/form-comment.php
+
+### Hooks
+
+- `acf/form/comment/allowed_field_keys`
+
 ## forms/form-front.php
 
 ### Functions
@@ -593,6 +607,12 @@ This file tracks code elements that need documentation.
 
 - `acf/form-post/skip_save`
 - `acf/input/meta_box_priority`
+
+## forms/form-user.php
+
+### Hooks
+
+- `acf/form/user/allowed_field_keys`
 
 ## l10n.php
 
@@ -674,6 +694,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/rest/expose_reference_target`
 - `acf/rest/format_value_for_rest`
 - `acf/rest/get_field_links`
 - `acf/rest/get_field_schema`
