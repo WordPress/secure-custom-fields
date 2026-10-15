@@ -568,6 +568,82 @@ class Test_Validation extends BaseTestCase {
 	}
 
 	/**
+	 * Test that adding an `acf_ui_options_page` argument to a request does not
+	 * skip field validation.
+	 *
+	 * @dataProvider data_ui_options_page_request_locations
+	 *
+	 * @param string $location Where the argument is sent: 'get' or 'post'.
+	 */
+	public function test_validate_save_post_ui_options_page_arg_does_not_skip_validation( $location ) {
+		$_POST['acf'] = array(
+			'field_validation_req_text' => '',
+		);
+
+		if ( 'get' === $location ) {
+			$_GET['acf_ui_options_page']     = '1';
+			$_REQUEST['acf_ui_options_page'] = '1';
+		} else {
+			$_POST['acf_ui_options_page']    = '1';
+			$_REQUEST['acf_ui_options_page'] = '1';
+		}
+
+		$valid = acf_validate_save_post();
+		unset( $_GET['acf_ui_options_page'] );
+
+		$this->assertFalse( $valid, 'Field validation should still run' );
+		$this->assertIsArray( acf_get_validation_error( 'acf[field_validation_req_text]' ) );
+	}
+
+	/**
+	 * Request locations for the `acf_ui_options_page` argument.
+	 *
+	 * @return array
+	 */
+	public function data_ui_options_page_request_locations() {
+		return array(
+			'query string' => array( 'get' ),
+			'post body'    => array( 'post' ),
+		);
+	}
+
+	/**
+	 * Test that field values are still validated alongside a real options page
+	 * AJAX validation request from an administrator.
+	 */
+	public function test_validate_save_post_validates_fields_in_ui_options_page_ajax() {
+		$admin_id = wp_insert_user(
+			array(
+				'user_login' => 'validation_admin_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => 'administrator',
+			)
+		);
+		wp_set_current_user( $admin_id );
+		set_current_screen( 'edit-post' );
+		add_filter( 'wp_doing_ajax', '__return_true' );
+
+		$options_page                    = array(
+			'page_title' => 'Options',
+			'menu_slug'  => 'scf-validation-options',
+		);
+		$_POST['acf_ui_options_page']    = $options_page;
+		$_REQUEST['acf_ui_options_page'] = $options_page;
+		$_POST['acf']                    = array(
+			'field_validation_req_text' => '',
+		);
+
+		$valid = acf_validate_save_post();
+
+		remove_filter( 'wp_doing_ajax', '__return_true' );
+		$GLOBALS['current_screen'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in tests.
+		wp_set_current_user( 0 );
+
+		$this->assertFalse( $valid );
+		$this->assertIsArray( acf_get_validation_error( 'acf[field_validation_req_text]' ) );
+	}
+
+	/**
 	 * Test a filled required text field submitted via $_POST passes validation.
 	 */
 	public function test_validate_save_post_passes_for_filled_required_field() {

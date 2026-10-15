@@ -495,6 +495,65 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 	}
 
 	/**
+	 * The allowed-keys filter can allow fields injected into the page, and
+	 * receives the current page settings.
+	 */
+	public function test_allowed_keys_filter_adds_keys() {
+		$this->add_page_group(
+			'group_low_filtered',
+			self::LOW_PAGE_SLUG,
+			array( $this->make_text_field( 'field_low_filtered' ) )
+		);
+
+		$received_page = null;
+		$this->add_test_filter(
+			'acf/options_page/allowed_field_keys',
+			static function ( $keys, $page ) use ( &$received_page ) {
+				$received_page = $page;
+				$keys[]        = 'field_low_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+
+		$this->assertSame(
+			array(
+				'field_low_filtered' => 'kept',
+				'field_low_injected' => 'kept',
+			),
+			$this->options_page->filter_test_field_values(
+				array(
+					'field_low_filtered' => 'kept',
+					'field_low_injected' => 'kept',
+					'field_low_foreign'  => 'dropped',
+				)
+			)
+		);
+		$this->assertSame( self::LOW_PAGE_SLUG, $received_page['menu_slug'] );
+	}
+
+	/**
+	 * Invalid values returned by the allowed-keys filter are discarded.
+	 */
+	public function test_allowed_keys_filter_result_is_normalized() {
+		$this->add_page_group(
+			'group_low_normalized',
+			self::LOW_PAGE_SLUG,
+			array( $this->make_text_field( 'field_low_normalized' ) )
+		);
+
+		$this->add_test_filter(
+			'acf/options_page/allowed_field_keys',
+			static function ( $keys ) {
+				return array_merge( $keys, array( array( 'nested' ), null, '', 'field_low_normalized' ) );
+			}
+		);
+
+		$this->assertSame( array( 'field_low_normalized' ), $this->options_page->get_test_allowed_field_keys() );
+	}
+
+	/**
 	 * Discovering saveable keys does not invoke render-time field filters.
 	 */
 	public function test_allowed_keys_do_not_run_pre_render_fields() {

@@ -406,6 +406,46 @@ class Test_Blocks_Render extends BaseTestCase {
 	}
 
 	/**
+	 * Test that v3 blocks with render_preview disabled skip the template in
+	 * the editor but still render it on the front end.
+	 */
+	public function test_v3_render_preview_false_skips_template_in_editor() {
+		$template = $this->make_template( '<div class="no-preview-block">Rendered</div>' );
+
+		$this->register_block(
+			array(
+				'name'              => 'v3-no-preview',
+				'title'             => 'V3 No Preview',
+				'acf_block_version' => 3,
+				'render_template'   => $template,
+				'render_preview'    => false,
+			)
+		);
+
+		$attributes = array(
+			'id'   => 'block_v3nopreview',
+			'name' => 'acf/v3-no-preview',
+			'data' => array(),
+			'mode' => 'preview',
+		);
+
+		$this->meta_block_ids[] = $attributes['id'];
+		acf_set_data( 'acf_doing_block_preview', true );
+
+		$editor_html = acf_rendered_block( $attributes, '', true, 0 );
+
+		$this->assertStringNotContainsString( 'no-preview-block', $editor_html );
+		$this->assertFalse( acf_get_data( 'acf_doing_block_preview' ) );
+
+		acf_get_store( 'block-cache' )->reset();
+		acf_get_store( 'values' )->reset();
+
+		$front_end_html = acf_rendered_block( $attributes, '', false, 0 );
+
+		$this->assertStringContainsString( '<div class="no-preview-block">Rendered</div>', $front_end_html );
+	}
+
+	/**
 	 * Test the InnerBlocks placeholder replacement helper.
 	 */
 	public function test_replace_inner_blocks_in_block_content() {

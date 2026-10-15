@@ -1223,7 +1223,8 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 
 		$this->assertSame( 200, $saved->get_status() );
 		$this->assertSame( $original, $observed );
-		$this->assertSame( $preflight_callbacks + 1, $get_fields_calls );
+		// One lookup per preflight callback. The schema is built for the object type, so it adds none.
+		$this->assertSame( $preflight_callbacks, $get_fields_calls );
 		$this->assertSame( array( (string) $fixture['target'] ), get_field( $fixture['source_field']['key'], $fixture['source'], false ) );
 
 		acf_update_setting( 'enable_bidirection', false );
@@ -1262,7 +1263,8 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 		remove_filter( 'acf/rest/get_fields', $get_fields, 10 );
 
 		$this->assertSame( 200, $changed_after_preflight->get_status() );
-		$this->assertSame( 2 * ( $preflight_callbacks + 1 ), $get_fields_calls );
+		// Two requests, each with one lookup per preflight callback.
+		$this->assertSame( 2 * $preflight_callbacks, $get_fields_calls );
 		$this->assertEmpty( get_post_meta( $fixture['source'], $fixture['source_field']['name'], true ) );
 		$this->assertEmpty( get_post_meta( $fixture['target'], $fixture['target_field']['name'], true ) );
 		$this->assertEmpty( get_post_meta( $private_target, $fixture['target_field']['name'], true ) );
@@ -2365,5 +2367,176 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 		$this->assertIsArray( $group2, 'Second group should be created' );
 		$this->assertTrue( $group1['show_in_rest'], 'First group should have REST enabled' );
 		$this->assertFalse( $group2['show_in_rest'], 'Second group should have REST disabled' );
+	}
+
+	// =========================================================================
+	// OPTIONS schema
+	// =========================================================================
+
+	/**
+	 * Logged-out visitors get the post type's schema, not the schema of a draft
+	 * they cannot read.
+	 */
+	public function test_options_schema_for_unreadable_post_is_type_level() {
+		$fixture = $this->create_options_schema_fixture();
+
+		$this->assertSame(
+			array( 'options_all', 'options_draft', 'options_published' ),
+			$this->get_options_acf_properties( $fixture['draft'] )
+		);
+	}
+
+	/**
+	 * Users who can read the post get the schema for that post.
+	 */
+	public function test_options_schema_for_readable_post_is_per_object() {
+		$fixture = $this->create_options_schema_fixture();
+
+		$this->assertSame(
+			array( 'options_all', 'options_published' ),
+			$this->get_options_acf_properties( $fixture['published'] ),
+			'Published posts are readable by anyone.'
+		);
+
+		wp_set_current_user(
+			wp_insert_user(
+				array(
+					'user_login' => 'options_editor_' . uniqid(),
+					'user_pass'  => 'password',
+					'role'       => 'editor',
+				)
+			)
+		);
+
+		$this->assertSame(
+			array( 'options_all', 'options_draft' ),
+			$this->get_options_acf_properties( $fixture['draft'] ),
+			'Editors can read drafts.'
+		);
+	}
+
+	/**
+	 * The REST pre-dispatch filter passes earlier results through.
+	 */
+	public function test_initialize_returns_the_dispatch_result() {
+		$response = new WP_REST_Response( 'short-circuit' );
+
+		$this->assertSame( $response, $this->rest_api->initialize( $response, null, new WP_REST_Request( 'GET', '/wp/v2/posts' ) ) );
+
+		acf_update_setting( 'rest_api_enabled', false );
+		$this->assertSame( $response, $this->rest_api->initialize( $response, null, new WP_REST_Request( 'GET', '/wp/v2/posts' ) ) );
+	}
+
+	/**
+	 * Creates a published post, a draft, and three field groups: one for all
+	 * posts and one for each of the two posts.
+	 *
+	 * @return array
+	 */
+	private function create_options_schema_fixture() {
+		if ( ! class_exists( 'ACF_Location_Post' ) ) {
+			acf_include( 'includes/locations/class-acf-location-post.php' );
+		}
+		if ( ! acf_get_location_type( 'post' ) ) {
+			acf_register_location_type( 'ACF_Location_Post' );
+		}
+		if ( ! acf_get_location_type( 'post_type' ) ) {
+			acf_register_location_type( 'ACF_Location_Post_Type' );
+		}
+
+		$published = wp_insert_post(
+			array(
+				'post_title'  => 'Options Published',
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+		$draft     = wp_insert_post(
+			array(
+				'post_title'  => 'Options Draft',
+				'post_status' => 'draft',
+				'post_type'   => 'post',
+			)
+		);
+
+		// All groups are for the post type; the per-post groups also require one post.
+		$groups = array(
+			'all'       => null,
+			'published' => (string) $published,
+			'draft'     => (string) $draft,
+		);
+		// Unique keys, so groups registered by an earlier test are not reused.
+		$suffix = uniqid();
+		foreach ( $groups as $name => $post_rule ) {
+			$rules = array(
+				array(
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => 'post',
+				),
+			);
+			if ( $post_rule ) {
+				$rules[] = array(
+					'param'    => 'post',
+					'operator' => '==',
+					'value'    => $post_rule,
+				);
+			}
+
+			acf_add_local_field_group(
+				array(
+					'key'          => 'group_options_' . $name . '_' . $suffix,
+					'title'        => 'Options ' . $name,
+					'fields'       => array(
+						array(
+							'key'  => 'field_options_' . $name . '_' . $suffix,
+							'name' => 'options_' . $name,
+							'type' => 'text',
+						),
+					),
+					'location'     => array( $rules ),
+					'show_in_rest' => true,
+					'active'       => true,
+				)
+			);
+		}
+
+		return array(
+			'published' => $published,
+			'draft'     => $draft,
+		);
+	}
+
+	/**
+	 * Dispatches an OPTIONS request for a post and returns the `acf` field names
+	 * from the schema, checking that the endpoint args list the same ones.
+	 *
+	 * @param int $post_id The post ID.
+	 * @return string[]
+	 */
+	private function get_options_acf_properties( $post_id ) {
+		unset( $GLOBALS['wp_rest_additional_fields']['post']['acf'] );
+
+		// WordPress answers OPTIONS requests through this default filter, which the
+		// test hook reset can remove.
+		if ( ! has_filter( 'rest_pre_dispatch', 'rest_handle_options_request' ) ) {
+			add_filter( 'rest_pre_dispatch', 'rest_handle_options_request', 10, 3 );
+		}
+
+		$response = rest_get_server()->dispatch( new WP_REST_Request( 'OPTIONS', "/wp/v2/posts/{$post_id}" ) );
+		$data     = $response->get_data();
+
+		$schema_properties = array_keys( $data['schema']['properties']['acf']['properties'] ?? array() );
+		sort( $schema_properties );
+
+		foreach ( $data['endpoints'] as $endpoint ) {
+			if ( isset( $endpoint['args']['acf']['properties'] ) ) {
+				$arg_properties = array_keys( $endpoint['args']['acf']['properties'] );
+				sort( $arg_properties );
+				$this->assertSame( $schema_properties, $arg_properties, 'Endpoint args should match the schema.' );
+			}
+		}
+
+		return $schema_properties;
 	}
 }

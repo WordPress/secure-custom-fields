@@ -407,4 +407,123 @@ describe( 'BlockEdit Component', () => {
 		// Check component renders without errors
 		expect( screen.getByTestId( 'block-props' ) ).toBeInTheDocument();
 	} );
+
+	test( 'mounts the block form on the first inline editing click', async () => {
+		await act( async () => {
+			render( <BlockEdit { ...defaultProps } isSelected={ false } /> );
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 250 );
+		} );
+
+		expect( screen.queryByTestId( 'block-form' ) ).not.toBeInTheDocument();
+
+		// The preview passes this handler to inline editable elements.
+		const onInlineEditingElementSelected =
+			acf.parseJSX.mock.calls.at( -1 )[ 1 ];
+
+		await act( async () => {
+			onInlineEditingElementSelected( 'inline-uid' );
+		} );
+
+		expect( screen.getByTestId( 'block-form' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'renderPreview', () => {
+		beforeEach( () => {
+			// Like the server, only return a preview when one is requested.
+			mockAjax.mockImplementation( ( options ) => ( {
+				done( callback ) {
+					callback( {
+						data: {
+							form: '<div>Form HTML</div>',
+							preview: options.data.query.preview
+								? '<div>Preview HTML</div>'
+								: undefined,
+							validation: { valid: true },
+						},
+					} );
+					return this;
+				},
+				fail() {
+					return this;
+				},
+				abort: jest.fn(),
+			} ) );
+		} );
+
+		/**
+		 * Renders the block, runs the debounced fetch and returns the query
+		 * sent to the server.
+		 *
+		 * @param {Object} blockType The block type configuration.
+		 * @return {Object} The AJAX query options.
+		 */
+		const renderAndFetch = async ( blockType ) => {
+			await act( async () => {
+				render(
+					<BlockEdit
+						{ ...defaultProps }
+						blockType={ {
+							...defaultProps.blockType,
+							...blockType,
+						} }
+					/>
+				);
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+
+			expect( mockAjax ).toHaveBeenCalled();
+			return mockAjax.mock.calls.at( -1 )[ 0 ].data.query;
+		};
+
+		test( 'requests and renders the preview by default', async () => {
+			const query = await renderAndFetch( {} );
+
+			expect( query.preview ).toBe( true );
+			expect( acf.parseJSX.mock.calls.at( -1 )[ 0 ] ).toBe(
+				'<div>Preview HTML</div>'
+			);
+			expect(
+				screen.queryByTestId( 'block-placeholder' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'skips the preview when render_preview is false', async () => {
+			const query = await renderAndFetch( { render_preview: false } );
+
+			expect( query ).not.toHaveProperty( 'preview' );
+			expect( acf.parseJSX ).not.toHaveBeenCalled();
+			expect(
+				screen.getByTestId( 'block-placeholder' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'skips the preview for edit-only blocks', async () => {
+			const query = await renderAndFetch( {
+				mode: 'edit',
+				supports: { mode: false },
+			} );
+
+			expect( query ).not.toHaveProperty( 'preview' );
+			expect(
+				screen.getByTestId( 'block-placeholder' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'render_preview true keeps the preview for edit-only blocks', async () => {
+			const query = await renderAndFetch( {
+				mode: 'edit',
+				supports: { mode: false },
+				render_preview: true,
+			} );
+
+			expect( query.preview ).toBe( true );
+			expect(
+				screen.queryByTestId( 'block-placeholder' )
+			).not.toBeInTheDocument();
+		} );
+	} );
 } );
