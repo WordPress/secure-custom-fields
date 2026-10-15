@@ -312,6 +312,40 @@ class Test_ACF_REST_Reference_Sanitization extends BaseTestCase {
 	}
 
 	/**
+	 * The standard value used for the `_source` REST output reduces unreadable
+	 * references too, without going through the REST format filter.
+	 */
+	public function test_source_value_reduces_unreadable_references() {
+		$field = $this->field( 'file' );
+
+		$this->add_test_filter(
+			'acf/format_value/type=file',
+			function ( $value ) {
+				return array(
+					'ID'  => (int) $value,
+					'url' => 'https://example.test/file-' . (int) $value,
+				);
+			}
+		);
+		remove_filter( 'acf/rest/format_value_for_rest', 'acf_rest_apply_reference_sanitizer', 10 );
+
+		$draft = scf_rest_format_standard_value( $this->draft_id, $this->public_id, $field );
+		acf_get_store( 'values' )->reset();
+		$public = scf_rest_format_standard_value( $this->public_id, $this->public_id, $field );
+
+		add_filter( 'acf/rest/format_value_for_rest', 'acf_rest_apply_reference_sanitizer', 10, 5 );
+
+		$this->assertSame( $this->draft_id, $draft );
+		$this->assertSame(
+			array(
+				'ID'  => $this->public_id,
+				'url' => 'https://example.test/file-' . $this->public_id,
+			),
+			$public
+		);
+	}
+
+	/**
 	 * Light formatting is left alone.
 	 */
 	public function test_light_format_is_not_changed() {
