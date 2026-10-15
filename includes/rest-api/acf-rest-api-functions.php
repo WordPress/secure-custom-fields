@@ -542,9 +542,11 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 }
 
 /**
- * Applies standard field formatting while keeping User values safe for REST output.
+ * Applies standard field formatting while keeping User values and references to
+ * resources the current user cannot read safe for REST output.
  *
- * This does not apply the public acf/rest/format_value_for_rest filter.
+ * This does not apply the public acf/rest/format_value_for_rest filter, so it
+ * reduces references itself. The `{field}_source` REST output relies on that.
  *
  * @param mixed      $value   The raw field value.
  * @param string|int $post_id The post ID of the current object.
@@ -553,7 +555,8 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
  */
 function scf_rest_format_standard_value( $value, $post_id, $field ) {
 	$value_formatted = acf_format_value( $value, $post_id, $field );
-	return scf_rest_sanitize_user_data( $value_formatted, $value, $field );
+	$value_formatted = scf_rest_sanitize_user_data( $value_formatted, $value, $field );
+	return acf_rest_sanitize_reference_data( $value_formatted, $value, $field );
 }
 
 /**

@@ -98,6 +98,51 @@ Removes a block type for the given name.
 * @param   string $name The block type name.
 * @return void
 
+## `acf_get_legacy_version_block_types()`
+
+Returns registered block types that are still explicitly on a legacy
+version (block version 2 or earlier), keyed by block name.
+
+* On WP 7.1+, blocks without an explicit version default to V3, so any
+registered block still reporting a version of 2 or lower has been
+deliberately pinned to a legacy version (via block.json `blockVersion`,
+`acf_register_block_type()`, or the `acf/blocks/default_block_version`
+filter).
+* @since SCF 6.9.6
+* @return array An array of block titles keyed by block name.
+
+## `acf_get_legacy_block_version_notice_option()`
+
+Returns the site-wide dismissal option name for a legacy block notice context.
+
+* @since SCF 6.9.6
+* @param string $context The notice context: 'pre_upgrade' or 'post_upgrade'.
+* @return string The option name used to store the dismissal.
+
+## `acf_maybe_show_legacy_block_version_notice()`
+
+Displays an admin notice on SCF admin screens when the site still has
+blocks explicitly registered as a legacy version (V2 or earlier).
+
+* Two variants are shown depending on the WordPress version:
+* On WP 7.1+ ("post_upgrade"): the editor is now always iframed, so the
+legacy V2 in-canvas edit form is already gone and fields appear in the
+sidebar. This has already happened.
+* On WP < 7.1 ("pre_upgrade"): a heads-up that updating to 7.1 will move
+those fields to the sidebar, so the blocks should be migrated first.
+
+* The notice lists the affected blocks, is only shown to administrators, and
+each variant can be dismissed permanently for the whole site independently.
+* @since SCF 6.9.6
+* @return void
+
+## `acf_dismiss_legacy_block_version_notice()`
+
+Permanently dismisses a legacy block version notice for the entire site.
+
+* @since SCF 6.9.6
+* @return void
+
 ## `acf_get_block_type_default_attributes()`
 
 Returns an array of default attribute settings for a block type.

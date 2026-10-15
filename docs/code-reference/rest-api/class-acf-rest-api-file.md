@@ -6,9 +6,27 @@
 
 * @var ACF_Rest_Request
 
+### `$wp_request`
+
+The WP_REST_Request object.
+
+* @var WP_REST_Request|null
+
+### `$per_object_schema`
+
+Per-object schema set by maybe_apply_per_object_schema().
+
+* @var array|null
+
 ### `$embed_links`
 
 * @var ACF_Rest_Embed_Links
+
+### `$core_controllers`
+
+Cached controllers WP core does not lazy-load.
+
+* @var array<string, WP_REST_Controller>
 
 ### `$rest_update_plan`
 
@@ -19,13 +37,81 @@ Fields and updates resolved during the current REST request.
 
 ## Methods
 
+### `maybe_apply_per_object_schema`
+
+Upgrade both OPTIONS surfaces (schema.properties.acf and
+endpoints[].args.acf) from the type-level union to per-object precision
+when the caller can read the target object.
+
+* @since SCF 6.9.6
+* @return void
+
+### `build_per_object_schema`
+
+Build the per-object ACF schema for the current request's target object.
+
+* @since SCF 6.9.6
+* @param integer|string $object_id The target object ID (may be a child id for revisions/autosaves).
+* @return array
+
+### `build_schema_from_field_groups`
+
+Build the ACF schema scaffold and populate its `properties` from the
+given field groups. Shared between the type-level get_schema() and the
+per-object build_per_object_schema() so both surfaces stay in lockstep.
+
+* @since SCF 6.9.6
+* @param array               $field_groups Field groups to walk.
+* @param integer|string|null $object_id    Object ID passed to get_fields() so field-level filters see the target.
+* @return array
+
+### `enrich_options_endpoint_args`
+
+Filter callback for `rest_endpoints`. Swaps the per-object properties
+into the `acf` entry of each matching endpoint's args. Only runs for
+OPTIONS requests on routes matching the current URL, so write
+validation is left untouched.
+
+* @since SCF 6.9.6
+* @param array $endpoints Endpoints as passed by WP_REST_Server::get_routes().
+* @return array
+
+### `current_user_can_read_request_object`
+
+Whether the current caller can read the given object. Fails closed
+(returns false) when permission cannot be conclusively verified.
+Callers guarantee that $this->wp_request is a WP_REST_Request.
+
+* @since SCF 6.9.6
+* @param integer|string $object_id The effective target ID (child ID if present, otherwise the URL id).
+* @param integer|string $child_id  The URL child_id, if any — signals a revision/autosave context.
+* @return boolean
+
+### `resolve_rest_controller`
+
+Resolve the WP REST controller for the current request's object type.
+
+* @since SCF 6.9.6
+* @return WP_REST_Controller|null
+
+### `get_core_controller`
+
+Cache and return a WP core REST controller for 'user' or 'comment'.
+
+* @since SCF 6.9.6
+* @param string $object_type One of 'user' or 'comment'.
+* @return WP_REST_Controller|null
+
 ### `register_field`
 
 Register our custom property as a REST field.
 
 ### `get_schema`
 
-Dynamically generate the schema for the current request.
+Generate the type-level schema for the current request's object type.
+Gets baked into $wp_rest_additional_fields and endpoint args at
+rest_api_init. Per-object precision is layered on top in
+maybe_apply_per_object_schema() and enrich_options_endpoint_args().
 
 * @return array
 

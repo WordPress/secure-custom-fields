@@ -248,6 +248,7 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 				// Restrict $_POST['acf'] to keys of fields belonging to field groups that apply to this comment.
 				$allowed_keys = $this->get_allowed_field_keys( $comment_id );
 				$_POST['acf'] = array_intersect_key( $_POST['acf'], array_flip( $allowed_keys ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Verified above; sanitized below.
+				scf_restrict_uploaded_field_keys( $allowed_keys );
 
 				if ( empty( $_POST['acf'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above.
 					return $comment_id;
