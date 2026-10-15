@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 6.9.5
+Stable tag: 6.9.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,32 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.6 =
+*Release Date 16th October 2026*
+
+*Security*
+
+- Field values from a post's latest revision are only loaded in a real preview, for users who can edit the post.
+- Submitted field values are always validated.
+- Comment and user saves only keep values and uploaded files for fields from field groups that apply to the comment or user. New filters: `acf/form/comment/allowed_field_keys`, `acf/form/user/allowed_field_keys`, and `acf/options_page/allowed_field_keys` for the existing options page restriction.
+- Image and Gallery fields only accept image files. SVG uploads are still accepted when the site allows them.
+- REST responses with `acf_format=standard`, and the `_source` values in every REST response, return IDs instead of full objects for referenced posts and attachments the requester cannot read.
+- REST OPTIONS responses only list the fields of a specific object to requesters who can read it.
+- User field searches require a nonce created for a User field.
+
+*Enhancements*
+
+- On WordPress 7.1+, blocks registered without a version default to block version 3. The `acf/blocks/default_block_version` filter receives the registration source (`php` or `json`).
+- Version 3 blocks support `"renderPreview": false` to show a placeholder in the editor instead of rendering the template.
+- SCF admin screens list blocks still pinned to block version 2 or earlier, with a dismissible notice.
+- `acf_encrypt()` and `acf_decrypt()` accept an optional `$context`.
+
+*Fixes*
+
+- Inline editable fields in version 3 blocks open on the first click.
+- Radio buttons in SCF admin screens draw a centered dot.
+- Translated block.json settings are applied correctly.
+- Including `pro/blocks-auto-inline-editing.php` directly no longer causes a fatal error.
 = 6.9.5 =
 *Release Date 7th August 2026*
 
@@ -436,6 +462,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.6 =
+Security: Image and Gallery fields now reject non-image files. On WordPress 7.1+, blocks without a version use block version 3.
 
 = 6.9.5 =
 Security: Anonymous inline forms now require OpenSSL.
