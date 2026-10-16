@@ -5,6 +5,7 @@ This section covers the fundamental concepts and architecture of Secure Custom F
 ## In This Section
 
 - [Architecture](architecture) - Understanding SCF's internal structure
+- [Namespace and API Naming](namespace-migration) - Naming and compatibility policy for SCF and ACF APIs
 - [Security](security) - Security principles and best practices
 
 ## Overview

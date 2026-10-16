@@ -224,6 +224,11 @@
         "parent": "concepts",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/concepts/architecture.md"
     },
+    "concepts/namespace-migration": {
+        "slug": "namespace-migration",
+        "parent": "concepts",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/concepts/namespace-migration.md"
+    },
     "concepts/security": {
         "slug": "security",
         "parent": "concepts",

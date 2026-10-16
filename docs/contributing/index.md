@@ -71,4 +71,5 @@ Releases are **not** deployed automatically — there is no GitHub Action that p
 - Follow WordPress coding standards
 - Write unit tests for new features
 - Document all changes
+- Follow the [namespace and API naming policy](../concepts/namespace-migration)
 - Keep pull requests focused
