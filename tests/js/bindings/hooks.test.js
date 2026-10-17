@@ -2,8 +2,8 @@
  * Unit tests for custom hooks
  */
 
-import { renderHook, waitFor } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
+import { renderHook } from '@testing-library/react';
+import { useSelect, useDispatch } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
 // Mock the fieldMetadataCache module
@@ -265,209 +265,135 @@ describe( 'Custom Hooks', () => {
 	} );
 
 	describe( 'useSiteEditorFields', () => {
-		const mockFieldGroups = [
+		const groups = [
 			{
-				title: 'Group 1',
-				fields: [
-					{ name: 'field1', label: 'Field 1', type: 'text' },
-					{ name: 'field2', label: 'Field 2', type: 'textarea' },
-				],
+				title: 'Group',
+				fields: [ { name: 'field1', label: 'Field 1', type: 'text' } ],
 			},
 		];
+		let core, invalidateResolution;
 
-		it( 'should fetch fields for a post type', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: mockFieldGroups,
-			} );
+		beforeEach( () => {
+			core = {
+				getEntityRecord: jest.fn( () => ( {
+					scf_field_groups: groups,
+				} ) ),
+				getResolutionError: jest.fn( () => null ),
+				hasFinishedResolution: jest.fn( () => true ),
+			};
+			invalidateResolution = jest.fn();
+			useDispatch.mockReturnValue( { invalidateResolution } );
+			useSelect.mockImplementation( ( callback ) =>
+				callback( () => core )
+			);
+		} );
 
+		it( 'uses the shared edit-context entity and preserves field metadata', () => {
 			const { result } = renderHook( () =>
 				useSiteEditorFields( 'product' )
 			);
-
-			expect( result.current.isLoading ).toBe( true );
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
+			expect( core.getEntityRecord ).toHaveBeenCalledWith(
+				'root',
+				'postType',
+				'product',
+				{ context: 'edit' }
+			);
 			expect( result.current.fields ).toEqual( {
 				field1: { label: 'Field 1', type: 'text' },
-				field2: { label: 'Field 2', type: 'textarea' },
 			} );
-
-			expect( result.current.error ).toBeNull();
-			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalled();
-		} );
-
-		it( 'should handle API errors', async () => {
-			const error = new Error( 'API Error' );
-			apiFetch.mockRejectedValue( error );
-
-			const { result } = renderHook( () =>
-				useSiteEditorFields( 'product' )
-			);
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
-			expect( result.current.fields ).toEqual( {} );
-			expect( result.current.error ).toBe( error );
-		} );
-
-		it( 'should reset when post type is null', () => {
-			const { result } = renderHook( () => useSiteEditorFields( null ) );
-
-			expect( result.current.fields ).toEqual( {} );
 			expect( result.current.isLoading ).toBe( false );
 			expect( result.current.error ).toBeNull();
-		} );
-
-		it( 'should call apiFetch with correct parameters', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: mockFieldGroups,
-			} );
-
-			renderHook( () => useSiteEditorFields( 'product' ) );
-
-			await waitFor( () => {
-				expect( apiFetch ).toHaveBeenCalledWith( {
-					path: '/wp/v2/types/product?context=edit',
-				} );
-			} );
-		} );
-
-		it( 'should update when post type changes', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: mockFieldGroups,
-			} );
-
-			const { rerender } = renderHook(
-				( { postType } ) => useSiteEditorFields( postType ),
-				{ initialProps: { postType: 'product' } }
-			);
-
-			await waitFor( () => {
-				expect( apiFetch ).toHaveBeenCalledWith( {
-					path: '/wp/v2/types/product?context=edit',
-				} );
-			} );
-
-			apiFetch.mockClear();
-
-			rerender( { postType: 'book' } );
-
-			await waitFor( () => {
-				expect( apiFetch ).toHaveBeenCalledWith( {
-					path: '/wp/v2/types/book?context=edit',
-				} );
-			} );
-		} );
-
-		it( 'should handle empty scf_field_groups', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: [],
-			} );
-
-			const { result } = renderHook( () =>
-				useSiteEditorFields( 'product' )
-			);
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
-			expect( result.current.fields ).toEqual( {} );
-			expect( result.current.error ).toBeNull();
-		} );
-
-		it( 'should handle missing scf_field_groups in response', async () => {
-			apiFetch.mockResolvedValue( {} );
-
-			const { result } = renderHook( () =>
-				useSiteEditorFields( 'product' )
-			);
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
-			expect( result.current.fields ).toEqual( {} );
-		} );
-
-		it( 'should cancel fetch on unmount', async () => {
-			// Use a promise that we can control
-			let resolvePromise;
-			const fetchPromise = new Promise( ( resolve ) => {
-				resolvePromise = resolve;
-			} );
-			apiFetch.mockReturnValue( fetchPromise );
-
-			const { unmount } = renderHook( () =>
-				useSiteEditorFields( 'product' )
-			);
-
-			// Unmount before the fetch resolves
-			unmount();
-
-			// Resolve the fetch after unmount
-			resolvePromise( { scf_field_groups: mockFieldGroups } );
-
-			// Wait a tick to ensure any state updates would have happened
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-
-			// If cleanup worked correctly, no state update errors should occur
-			// Verify test completed by checking unmount didn't throw
-			expect( true ).toBe( true );
-		} );
-
-		it( 'should handle post type changing from value to null', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: mockFieldGroups,
-			} );
-
-			const { result, rerender } = renderHook(
-				( { postType } ) => useSiteEditorFields( postType ),
-				{ initialProps: { postType: 'product' } }
-			);
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
-			expect( result.current.fields ).toEqual( {
-				field1: { label: 'Field 1', type: 'text' },
-				field2: { label: 'Field 2', type: 'textarea' },
-			} );
-
-			// Change to null
-			rerender( { postType: null } );
-
-			expect( result.current.fields ).toEqual( {} );
-			expect( result.current.isLoading ).toBe( false );
-			expect( result.current.error ).toBeNull();
-		} );
-
-		it( 'should store field metadata in cache on successful fetch', async () => {
-			apiFetch.mockResolvedValue( {
-				scf_field_groups: mockFieldGroups,
-			} );
-
-			const { result } = renderHook( () =>
-				useSiteEditorFields( 'product' )
-			);
-
-			await waitFor( () => {
-				expect( result.current.isLoading ).toBe( false );
-			} );
-
 			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalledWith(
-				{
-					field1: { label: 'Field 1', type: 'text' },
-					field2: { label: 'Field 2', type: 'textarea' },
-				}
+				result.current.fields
+			);
+			expect( apiFetch ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [ 1, 10, 50, 200 ] )(
+			'never starts a private fetch for %i consumers',
+			( count ) => {
+				const consumers = Array.from( { length: count }, () =>
+					renderHook( () => useSiteEditorFields( 'product' ) )
+				);
+				expect( apiFetch ).not.toHaveBeenCalled();
+				consumers.forEach( ( { unmount } ) => unmount() );
+				expect( invalidateResolution ).not.toHaveBeenCalled();
+			}
+		);
+
+		it( 'does no lookup or refresh for a null type', () => {
+			const { result } = renderHook( () => useSiteEditorFields( null ) );
+			result.current.refresh();
+			expect( core.getEntityRecord ).not.toHaveBeenCalled();
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( false );
+			expect( invalidateResolution ).not.toHaveBeenCalled();
+		} );
+
+		it( 'hides old fields while a resolution is unfinished or failed', () => {
+			core.hasFinishedResolution.mockReturnValue( false );
+			const { result, rerender } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+			expect( result.current.isLoading ).toBe( true );
+			expect( result.current.fields ).toEqual( {} );
+			const error = new Error( 'Temporary failure' );
+			core.getResolutionError.mockReturnValue( error );
+			rerender();
+			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBe( error );
+			expect( result.current.fields ).toEqual( {} );
+			expect(
+				fieldMetadataCache.addFieldMetadata
+			).not.toHaveBeenCalled();
+		} );
+
+		it( 'refreshes exactly the shared resolution without automatic retries', () => {
+			core.getResolutionError.mockReturnValue( new Error( 'Failure' ) );
+			const { result, rerender } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+			rerender();
+			expect( invalidateResolution ).not.toHaveBeenCalled();
+			result.current.refresh();
+			expect( invalidateResolution ).toHaveBeenCalledTimes( 1 );
+			expect( invalidateResolution ).toHaveBeenCalledWith(
+				'getEntityRecord',
+				[ 'root', 'postType', 'product', { context: 'edit' } ]
 			);
 		} );
+
+		it( 'switches keys immediately and does not apply an old type result', () => {
+			core.getEntityRecord.mockImplementation( ( kind, name, type ) =>
+				type === 'product' ? { scf_field_groups: groups } : undefined
+			);
+			core.hasFinishedResolution.mockImplementation(
+				( selector, args ) => args[ 2 ] === 'product'
+			);
+			const { result, rerender } = renderHook(
+				( { type } ) => useSiteEditorFields( type ),
+				{ initialProps: { type: 'product' } }
+			);
+			expect( result.current.fields ).toHaveProperty( 'field1' );
+			rerender( { type: 'book' } );
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( true );
+			rerender( { type: null } );
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		it.each( [ {}, { scf_field_groups: [] } ] )(
+			'handles empty/missing field groups',
+			( record ) => {
+				core.getEntityRecord.mockReturnValue( record );
+				const { result } = renderHook( () =>
+					useSiteEditorFields( 'product' )
+				);
+				expect( result.current.fields ).toEqual( {} );
+				expect( result.current.error ).toBeNull();
+			}
+		);
 	} );
 
 	describe( 'useBoundFields', () => {
