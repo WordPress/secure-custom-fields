@@ -383,6 +383,21 @@ describe( 'Custom Hooks', () => {
 			expect( result.current.isLoading ).toBe( false );
 		} );
 
+		it( 'keeps malformed field data errors out of the render path', () => {
+			core.getEntityRecord.mockReturnValue( {
+				scf_field_groups: [ null ],
+			} );
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.error ).toBeInstanceOf( TypeError );
+			expect( result.current.isLoading ).toBe( false );
+			expect(
+				fieldMetadataCache.addFieldMetadata
+			).not.toHaveBeenCalled();
+		} );
+
 		it.each( [ {}, { scf_field_groups: [] } ] )(
 			'handles empty/missing field groups',
 			( record ) => {

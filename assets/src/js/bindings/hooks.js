@@ -121,19 +121,24 @@ export function useSiteEditorFields( postType ) {
 		},
 		[ postType, args ]
 	);
-	const fields = useMemo(
-		() =>
-			formatFieldGroupsData(
-				! isLoading && ! error ? record?.scf_field_groups : null
-			),
-		[ record, isLoading, error ]
-	);
+	const { fields, error: fieldsError } = useMemo( () => {
+		try {
+			return {
+				fields: formatFieldGroupsData(
+					! isLoading && ! error ? record?.scf_field_groups : null
+				),
+				error,
+			};
+		} catch ( formatError ) {
+			return { fields: {}, error: formatError };
+		}
+	}, [ record, isLoading, error ] );
 
 	useEffect( () => {
-		if ( record && ! isLoading && ! error ) {
+		if ( record && ! isLoading && ! fieldsError ) {
 			addFieldMetadata( fields );
 		}
-	}, [ record, fields, isLoading, error ] );
+	}, [ record, fields, isLoading, fieldsError ] );
 
 	// One consumer must not cancel work shared by the rest of the registry.
 	// Explicit invalidation also permits retry without a per-mount retry storm.
@@ -143,7 +148,7 @@ export function useSiteEditorFields( postType ) {
 		}
 	}, [ postType, args, invalidateResolution ] );
 
-	return { fields, isLoading, error, refresh };
+	return { fields, isLoading, error: fieldsError, refresh };
 }
 
 /**
