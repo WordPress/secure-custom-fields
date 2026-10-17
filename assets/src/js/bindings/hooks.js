@@ -95,11 +95,10 @@ export function usePostEditorFields() {
  * @return {Object} Fields, loading/error state, and an explicit refresh callback.
  */
 export function useSiteEditorFields( postType ) {
-	// Match core's getPostType selector/resolver identity, not just its REST URL.
-	// root/postType defaults to edit context; a separate getEntityRecord key
-	// would request that same schema again alongside native editor consumers.
-	const args = useMemo( () => [ postType ], [ postType ] );
 	const { invalidateResolution } = useDispatch( coreDataStore );
+	// Share one getPostType resolution per type within this registry.
+	// root/postType records default to context=edit, which includes
+	// scf_field_groups; use the same selector key for status and refresh.
 	const { record, isLoading, error } = useSelect(
 		( select ) => {
 			if ( ! postType ) {
@@ -107,48 +106,41 @@ export function useSiteEditorFields( postType ) {
 			}
 
 			const core = select( coreDataStore );
-			const postTypeRecord = core.getPostType( ...args );
-			const resolutionError =
-				core.getResolutionError( 'getPostType', args ) || null;
 
 			return {
-				record: postTypeRecord,
-				isLoading:
-					! resolutionError &&
-					! core.hasFinishedResolution( 'getPostType', args ),
-				error: resolutionError,
+				record: core.getPostType( postType ),
+				isLoading: ! core.hasFinishedResolution( 'getPostType', [
+					postType,
+				] ),
+				error:
+					core.getResolutionError( 'getPostType', [ postType ] ) ||
+					null,
 			};
 		},
-		[ postType, args ]
+		[ postType ]
 	);
-	const { fields, error: fieldsError } = useMemo( () => {
-		try {
-			return {
-				fields: formatFieldGroupsData(
-					! isLoading && ! error ? record?.scf_field_groups : null
-				),
-				error,
-			};
-		} catch ( formatError ) {
-			return { fields: {}, error: formatError };
-		}
-	}, [ record, isLoading, error ] );
+
+	// Keep the stored fields visible while a refetch is in progress.
+	const fields = useMemo(
+		() => formatFieldGroupsData( record?.scf_field_groups ),
+		[ record ]
+	);
 
 	useEffect( () => {
-		if ( record && ! isLoading && ! fieldsError ) {
+		if ( record ) {
 			addFieldMetadata( fields );
 		}
-	}, [ record, fields, isLoading, fieldsError ] );
+	}, [ record, fields ] );
 
 	// One consumer must not cancel work shared by the rest of the registry.
 	// Explicit invalidation also permits retry without a per-mount retry storm.
 	const refresh = useCallback( () => {
 		if ( postType ) {
-			invalidateResolution( 'getPostType', args );
+			invalidateResolution( 'getPostType', [ postType ] );
 		}
-	}, [ postType, args, invalidateResolution ] );
+	}, [ postType, invalidateResolution ] );
 
-	return { fields, isLoading, error: fieldsError, refresh };
+	return { fields, isLoading, error, refresh };
 }
 
 /**

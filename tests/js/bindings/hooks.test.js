@@ -325,16 +325,39 @@ describe( 'Custom Hooks', () => {
 			expect( invalidateResolution ).not.toHaveBeenCalled();
 		} );
 
-		it( 'hides old fields while a resolution is unfinished or failed', () => {
+		it( 'keeps stored fields while a resolution is pending', () => {
 			core.hasFinishedResolution.mockReturnValue( false );
-			const { result, rerender } = renderHook( () =>
+			const { result } = renderHook( () =>
 				useSiteEditorFields( 'product' )
 			);
 			expect( result.current.isLoading ).toBe( true );
+			expect( result.current.fields ).toEqual( {
+				field1: { label: 'Field 1', type: 'text' },
+			} );
+			expect( result.current.error ).toBeNull();
+		} );
+
+		it( 'has no fields until a record is available', () => {
+			core.getPostType.mockReturnValue( undefined );
+			core.hasFinishedResolution.mockReturnValue( false );
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
 			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( true );
+			expect(
+				fieldMetadataCache.addFieldMetadata
+			).not.toHaveBeenCalled();
+		} );
+
+		it( 'reports a failed resolution as finished without fields', () => {
 			const error = new Error( 'Temporary failure' );
+			core.getPostType.mockReturnValue( undefined );
+			core.hasFinishedResolution.mockReturnValue( true );
 			core.getResolutionError.mockReturnValue( error );
-			rerender();
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
 			expect( result.current.isLoading ).toBe( false );
 			expect( result.current.error ).toBe( error );
 			expect( result.current.fields ).toEqual( {} );
@@ -378,19 +401,21 @@ describe( 'Custom Hooks', () => {
 			expect( result.current.isLoading ).toBe( false );
 		} );
 
-		it( 'keeps malformed field data errors out of the render path', () => {
+		it( 'keeps valid fields alongside malformed groups without a fetch error', () => {
 			core.getPostType.mockReturnValue( {
-				scf_field_groups: [ null ],
+				scf_field_groups: [ null, groups[ 0 ] ],
 			} );
 			const { result } = renderHook( () =>
 				useSiteEditorFields( 'product' )
 			);
-			expect( result.current.fields ).toEqual( {} );
-			expect( result.current.error ).toBeInstanceOf( TypeError );
+			expect( result.current.fields ).toEqual( {
+				field1: { label: 'Field 1', type: 'text' },
+			} );
+			expect( result.current.error ).toBeNull();
 			expect( result.current.isLoading ).toBe( false );
-			expect(
-				fieldMetadataCache.addFieldMetadata
-			).not.toHaveBeenCalled();
+			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalledWith(
+				result.current.fields
+			);
 		} );
 
 		it.each( [ {}, { scf_field_groups: [] } ] )(
