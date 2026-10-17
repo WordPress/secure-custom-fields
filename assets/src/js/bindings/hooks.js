@@ -95,10 +95,10 @@ export function usePostEditorFields() {
  * @return {Object} Fields, loading/error state, and an explicit refresh callback.
  */
 export function useSiteEditorFields( postType ) {
-	const args = useMemo(
-		() => [ 'root', 'postType', postType, { context: 'edit' } ],
-		[ postType ]
-	);
+	// Match core's getPostType selector/resolver identity, not just its REST URL.
+	// root/postType defaults to edit context; a separate getEntityRecord key
+	// would request that same schema again alongside native editor consumers.
+	const args = useMemo( () => [ postType ], [ postType ] );
 	const { invalidateResolution } = useDispatch( coreDataStore );
 	const { record, isLoading, error } = useSelect(
 		( select ) => {
@@ -107,15 +107,15 @@ export function useSiteEditorFields( postType ) {
 			}
 
 			const core = select( coreDataStore );
-			const postTypeRecord = core.getEntityRecord( ...args );
+			const postTypeRecord = core.getPostType( ...args );
 			const resolutionError =
-				core.getResolutionError( 'getEntityRecord', args ) || null;
+				core.getResolutionError( 'getPostType', args ) || null;
 
 			return {
 				record: postTypeRecord,
 				isLoading:
 					! resolutionError &&
-					! core.hasFinishedResolution( 'getEntityRecord', args ),
+					! core.hasFinishedResolution( 'getPostType', args ),
 				error: resolutionError,
 			};
 		},
@@ -144,7 +144,7 @@ export function useSiteEditorFields( postType ) {
 	// Explicit invalidation also permits retry without a per-mount retry storm.
 	const refresh = useCallback( () => {
 		if ( postType ) {
-			invalidateResolution( 'getEntityRecord', args );
+			invalidateResolution( 'getPostType', args );
 		}
 	}, [ postType, args, invalidateResolution ] );
 

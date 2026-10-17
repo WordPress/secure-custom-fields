@@ -275,7 +275,7 @@ describe( 'Custom Hooks', () => {
 
 		beforeEach( () => {
 			core = {
-				getEntityRecord: jest.fn( () => ( {
+				getPostType: jest.fn( () => ( {
 					scf_field_groups: groups,
 				} ) ),
 				getResolutionError: jest.fn( () => null ),
@@ -292,12 +292,7 @@ describe( 'Custom Hooks', () => {
 			const { result } = renderHook( () =>
 				useSiteEditorFields( 'product' )
 			);
-			expect( core.getEntityRecord ).toHaveBeenCalledWith(
-				'root',
-				'postType',
-				'product',
-				{ context: 'edit' }
-			);
+			expect( core.getPostType ).toHaveBeenCalledWith( 'product' );
 			expect( result.current.fields ).toEqual( {
 				field1: { label: 'Field 1', type: 'text' },
 			} );
@@ -324,7 +319,7 @@ describe( 'Custom Hooks', () => {
 		it( 'does no lookup or refresh for a null type', () => {
 			const { result } = renderHook( () => useSiteEditorFields( null ) );
 			result.current.refresh();
-			expect( core.getEntityRecord ).not.toHaveBeenCalled();
+			expect( core.getPostType ).not.toHaveBeenCalled();
 			expect( result.current.fields ).toEqual( {} );
 			expect( result.current.isLoading ).toBe( false );
 			expect( invalidateResolution ).not.toHaveBeenCalled();
@@ -358,17 +353,17 @@ describe( 'Custom Hooks', () => {
 			result.current.refresh();
 			expect( invalidateResolution ).toHaveBeenCalledTimes( 1 );
 			expect( invalidateResolution ).toHaveBeenCalledWith(
-				'getEntityRecord',
-				[ 'root', 'postType', 'product', { context: 'edit' } ]
+				'getPostType',
+				[ 'product' ]
 			);
 		} );
 
 		it( 'switches keys immediately and does not apply an old type result', () => {
-			core.getEntityRecord.mockImplementation( ( kind, name, type ) =>
+			core.getPostType.mockImplementation( ( type ) =>
 				type === 'product' ? { scf_field_groups: groups } : undefined
 			);
 			core.hasFinishedResolution.mockImplementation(
-				( selector, args ) => args[ 2 ] === 'product'
+				( selector, args ) => args[ 0 ] === 'product'
 			);
 			const { result, rerender } = renderHook(
 				( { type } ) => useSiteEditorFields( type ),
@@ -384,7 +379,7 @@ describe( 'Custom Hooks', () => {
 		} );
 
 		it( 'keeps malformed field data errors out of the render path', () => {
-			core.getEntityRecord.mockReturnValue( {
+			core.getPostType.mockReturnValue( {
 				scf_field_groups: [ null ],
 			} );
 			const { result } = renderHook( () =>
@@ -401,7 +396,7 @@ describe( 'Custom Hooks', () => {
 		it.each( [ {}, { scf_field_groups: [] } ] )(
 			'handles empty/missing field groups',
 			( record ) => {
-				core.getEntityRecord.mockReturnValue( record );
+				core.getPostType.mockReturnValue( record );
 				const { result } = renderHook( () =>
 					useSiteEditorFields( 'product' )
 				);
