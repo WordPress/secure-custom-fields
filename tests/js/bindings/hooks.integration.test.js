@@ -37,11 +37,11 @@ function Consumer( { type, index, results, history } ) {
 function mountConsumers( registry, types ) {
 	const results = Array( types.length ).fill( null );
 	const history = [];
-	const view = render(
+	const tree = ( nextTypes ) =>
 		createElement(
 			RegistryProvider,
 			{ value: registry },
-			types.map( ( type, index ) =>
+			nextTypes.map( ( type, index ) =>
 				createElement( Consumer, {
 					key: index,
 					type,
@@ -50,9 +50,27 @@ function mountConsumers( registry, types ) {
 					history,
 				} )
 			)
-		)
-	);
-	return { ...view, results, history };
+		);
+	const view = render( tree( types ) );
+	return {
+		...view,
+		results,
+		history,
+		rerenderTypes: ( nextTypes ) => view.rerender( tree( nextTypes ) ),
+	};
+}
+
+function holdNextRequest() {
+	const fetchSchema = apiFetch.getMockImplementation();
+	let release;
+	const gate = new Promise( ( resolve ) => {
+		release = resolve;
+	} );
+	apiFetch.mockImplementationOnce( async ( options ) => {
+		await gate;
+		return fetchSchema( options );
+	} );
+	return release;
 }
 
 async function expectFields( results, fields ) {
@@ -159,6 +177,95 @@ describe( 'useSiteEditorFields with real core-data', () => {
 		expect( loading ).toEqual( Array( 10 ).fill( true ) );
 		await expectFields( results, productFields );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should call apiFetch with correct parameters', async () => {
+		const { results } = mountConsumers( registry, [ 'product' ] );
+		expect( results[ 0 ].isLoading ).toBe( true );
+		await expectFields( results, productFields );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			path: '/wp/v2/types/product?context=edit',
+			parse: false,
+		} );
+	} );
+
+	// Unlike the former per-instance cancellation test, a shared request must
+	// survive one consumer unmounting so the remaining consumers can finish.
+	it( 'should preserve a pending shared fetch when one consumer unmounts', async () => {
+		const release = holdNextRequest();
+		const first = mountConsumers( registry, [ 'product' ] );
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalledTimes( 1 ) );
+		const request = apiFetch.mock.calls[ 0 ][ 0 ];
+		const second = mountConsumers( registry, [ 'product' ] );
+		expect( first.results[ 0 ].isLoading ).toBe( true );
+		expect( second.results[ 0 ].isLoading ).toBe( true );
+		first.unmount();
+		const renderCount = first.history.length;
+		expect( request.signal?.aborted ).not.toBe( true );
+		const pending = registry
+			.resolveSelect( coreDataStore )
+			.getPostType( 'product' );
+		await act( async () => {
+			release();
+			await pending;
+		} );
+		await expectFields( second.results, productFields );
+		expect( first.history ).toHaveLength( renderCount );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		const remounted = mountConsumers( registry, [ 'product' ] );
+		await expectFields( remounted.results, productFields );
+		await act( delay );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should update when post type changes in the same consumer', async () => {
+		const consumer = mountConsumers( registry, [ 'product' ] );
+		await expectFields( consumer.results, productFields );
+		const release = holdNextRequest();
+		consumer.history.length = 0;
+		consumer.rerenderTypes( [ 'book' ] );
+		expect( consumer.results[ 0 ].fields ).toEqual( {} );
+		expect( consumer.results[ 0 ].isLoading ).toBe( true );
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalledTimes( 2 ) );
+		const pending = registry
+			.resolveSelect( coreDataStore )
+			.getPostType( 'book' );
+		await act( async () => {
+			release();
+			await pending;
+		} );
+		await expectFields( consumer.results, bookFields );
+		for ( const fields of consumer.history ) {
+			expect( fields ).not.toHaveProperty( 'field1' );
+		}
+		consumer.rerenderTypes( [ null ] );
+		await expectFields( consumer.results, {} );
+		await act( delay );
+		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'should ignore a late response for the previous type in the same consumer', async () => {
+		const release = holdNextRequest();
+		const consumer = mountConsumers( registry, [ 'product' ] );
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalledTimes( 1 ) );
+		expect( consumer.results[ 0 ].isLoading ).toBe( true );
+		const pending = registry
+			.resolveSelect( coreDataStore )
+			.getPostType( 'product' );
+		consumer.history.length = 0;
+		consumer.rerenderTypes( [ 'book' ] );
+		expect( consumer.results[ 0 ].fields ).toEqual( {} );
+		await expectFields( consumer.results, bookFields );
+		await act( async () => {
+			release();
+			await pending;
+		} );
+		await expectFields( consumer.results, bookFields );
+		for ( const fields of consumer.history ) {
+			expect( fields ).not.toHaveProperty( 'field1' );
+		}
+		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'reuses a resolved type on remount', async () => {

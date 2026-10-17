@@ -287,7 +287,7 @@ describe( 'Custom Hooks', () => {
 			);
 		} );
 
-		it( 'uses the shared edit-context entity and preserves field metadata', () => {
+		it( 'should fetch fields for a post type', () => {
 			const { result } = renderHook( () =>
 				useSiteEditorFields( 'product' )
 			);
@@ -302,12 +302,23 @@ describe( 'Custom Hooks', () => {
 			);
 		} );
 
-		it( 'does no lookup or refresh for a null type', () => {
+		it( 'should store field metadata in cache on successful fetch', () => {
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalledWith(
+				result.current.fields
+			);
+			expect( result.current.fields ).toHaveProperty( 'field1' );
+		} );
+
+		it( 'should reset when post type is null', () => {
 			const { result } = renderHook( () => useSiteEditorFields( null ) );
 			result.current.refresh();
 			expect( core.getPostType ).not.toHaveBeenCalled();
 			expect( result.current.fields ).toEqual( {} );
 			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBeNull();
 			expect( invalidateResolution ).not.toHaveBeenCalled();
 		} );
 
@@ -336,7 +347,7 @@ describe( 'Custom Hooks', () => {
 			).not.toHaveBeenCalled();
 		} );
 
-		it( 'reports a failed resolution as finished without fields', () => {
+		it( 'should handle API errors', () => {
 			const error = new Error( 'Temporary failure' );
 			core.getPostType.mockReturnValue( undefined );
 			core.hasFinishedResolution.mockReturnValue( true );
@@ -367,7 +378,7 @@ describe( 'Custom Hooks', () => {
 			);
 		} );
 
-		it( 'switches keys immediately and does not apply an old type result', () => {
+		it( 'should update when post type changes', () => {
 			core.getPostType.mockImplementation( ( type ) =>
 				type === 'product' ? { scf_field_groups: groups } : undefined
 			);
@@ -382,9 +393,18 @@ describe( 'Custom Hooks', () => {
 			rerender( { type: 'book' } );
 			expect( result.current.fields ).toEqual( {} );
 			expect( result.current.isLoading ).toBe( true );
+		} );
+
+		it( 'should handle post type changing from value to null', () => {
+			const { result, rerender } = renderHook(
+				( { type } ) => useSiteEditorFields( type ),
+				{ initialProps: { type: 'product' } }
+			);
+			expect( result.current.fields ).toHaveProperty( 'field1' );
 			rerender( { type: null } );
 			expect( result.current.fields ).toEqual( {} );
 			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBeNull();
 		} );
 
 		it( 'keeps valid fields alongside malformed groups without a fetch error', () => {
@@ -404,17 +424,18 @@ describe( 'Custom Hooks', () => {
 			);
 		} );
 
-		it.each( [ {}, { scf_field_groups: [] } ] )(
-			'handles empty/missing field groups',
-			( record ) => {
-				core.getPostType.mockReturnValue( record );
-				const { result } = renderHook( () =>
-					useSiteEditorFields( 'product' )
-				);
-				expect( result.current.fields ).toEqual( {} );
-				expect( result.current.error ).toBeNull();
-			}
-		);
+		it.each( [
+			[ 'empty scf_field_groups', { scf_field_groups: [] } ],
+			[ 'missing scf_field_groups in response', {} ],
+		] )( 'should handle %s', ( description, record ) => {
+			core.getPostType.mockReturnValue( record );
+			const { result } = renderHook( () =>
+				useSiteEditorFields( 'product' )
+			);
+			expect( result.current.fields ).toEqual( {} );
+			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBeNull();
+		} );
 	} );
 
 	describe( 'useBoundFields', () => {
