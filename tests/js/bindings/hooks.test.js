@@ -4,6 +4,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 // Mock the fieldMetadataCache module
 jest.mock( '../../../assets/src/js/bindings/fieldMetadataCache', () => ( {
@@ -300,6 +301,7 @@ describe( 'Custom Hooks', () => {
 			expect( fieldMetadataCache.addFieldMetadata ).toHaveBeenCalledWith(
 				result.current.fields
 			);
+			expect( apiFetch ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should store field metadata in cache on successful fetch', () => {
@@ -311,6 +313,18 @@ describe( 'Custom Hooks', () => {
 			);
 			expect( result.current.fields ).toHaveProperty( 'field1' );
 		} );
+
+		it.each( [ 1, 10, 50, 200 ] )(
+			'never starts a private fetch for %i consumers',
+			( count ) => {
+				const consumers = Array.from( { length: count }, () =>
+					renderHook( () => useSiteEditorFields( 'product' ) )
+				);
+				expect( apiFetch ).not.toHaveBeenCalled();
+				consumers.forEach( ( { unmount } ) => unmount() );
+				expect( invalidateResolution ).not.toHaveBeenCalled();
+			}
+		);
 
 		it( 'should reset when post type is null', () => {
 			const { result } = renderHook( () => useSiteEditorFields( null ) );
