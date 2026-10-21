@@ -11,6 +11,16 @@ Process updating bidirectional fields.
 * @param string|false   $target_prefix   The ACF prefix for a post, user or term ID required for the update_field call for this field type.
 * @return void
 
+## `_scf_is_allowed_bidirectional_target()`
+
+Check whether a submitted bidirectional target is a valid choice for the origin field.
+
+* @since SCF 6.9.7
+@internal
+* @param integer|string $target ACF encoded target ID (e.g. 123, "user_1" or "term_5").
+* @param array          $field  The origin field.
+* @return boolean
+
 ## `_scf_prepare_bidirectional_update()`
 
 Prepare a side-effect-free bidirectional update plan.

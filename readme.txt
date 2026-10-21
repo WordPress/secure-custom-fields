@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 6.9.6
+Stable tag: 6.9.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 == Changelog ==
 = 6.9.7 =
-*Release Date 20th October 2026*
+*Release Date 21st October 2026*
 
 *Security*
 
@@ -473,6 +473,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.7 =
+Security: Front-end File field uploads only get preview images for users who can upload files, and submitted relationship values only link back to valid targets.
 
 = 6.9.6 =
 Security: Image and Gallery fields now reject non-image files. On WordPress 7.1+, blocks without a version use block version 3.
