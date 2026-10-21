@@ -90,6 +90,7 @@ class Bindings {
 			add_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), 5, 2 );
 			$field_value = acf_rest_sanitize_reference_data( $field_value, $raw_value, $field );
 			remove_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), 5 );
+			$field_value = $this->strip_post_passwords( $field_value );
 
 			switch ( $attribute_name ) {
 				case 'id':
@@ -131,6 +132,30 @@ class Bindings {
 		}
 
 		return apply_filters( 'acf/blocks/binding_value', $value, $source_attrs, $block_instance, $attribute_name );
+	}
+
+	/**
+	 * Removes the password from expanded post objects before they are output.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param mixed $value The field value, possibly containing WP_Post objects.
+	 * @return mixed
+	 */
+	private function strip_post_passwords( $value ) {
+		if ( $value instanceof \WP_Post ) {
+			$value                = clone $value;
+			$value->post_password = '';
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $item ) {
+				$value[ $key ] = $this->strip_post_passwords( $item );
+			}
+		}
+
+		return $value;
 	}
 
 	/**

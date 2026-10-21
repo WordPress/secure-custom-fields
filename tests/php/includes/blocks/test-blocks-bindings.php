@@ -342,6 +342,7 @@ class Test_Blocks_Bindings extends BaseTestCase {
 		remove_filter( 'post_password_required', '__return_false' );
 
 		$this->assertStringContainsString( 'Protected body', $value );
+		$this->assertStringNotContainsString( 'bindings-secret', $value );
 	}
 
 	/**

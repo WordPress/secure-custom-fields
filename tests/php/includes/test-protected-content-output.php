@@ -42,6 +42,13 @@ class Test_Protected_Content_Output extends BaseTestCase {
 	public function set_up() {
 		parent::set_up();
 
+		if ( ! class_exists( 'acf_field_user' ) ) {
+			acf_include( 'includes/fields/class-acf-field-user.php' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=user' ) ) {
+			acf_register_field_type( 'acf_field_user' );
+		}
+
 		$this->public_id    = wp_insert_post(
 			array(
 				'post_title'  => 'Public post',
@@ -66,6 +73,15 @@ class Test_Protected_Content_Output extends BaseTestCase {
 						'name'  => 'protected_output_text',
 						'label' => 'Text',
 						'type'  => 'text',
+					),
+					array(
+						'key'           => 'field_protected_output_user',
+						'name'          => 'protected_output_user',
+						'label'         => 'User',
+						'type'          => 'user',
+						'return_format' => 'array',
+						'multiple'      => 0,
+						'role'          => array(),
 					),
 				),
 				'location' => array(
@@ -95,6 +111,7 @@ class Test_Protected_Content_Output extends BaseTestCase {
 		acf_update_setting( 'enable_shortcode', $this->original_shortcode_setting );
 		acf_remove_local_field_group( 'group_protected_output' );
 		acf_remove_local_field( 'field_protected_output_text' );
+		acf_remove_local_field( 'field_protected_output_user' );
 		acf_get_store( 'values' )->reset();
 		unset( $GLOBALS['post'] );
 		$GLOBALS['wp_query'] = $GLOBALS['wp_the_query']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -119,6 +136,40 @@ class Test_Protected_Content_Output extends BaseTestCase {
 		remove_filter( 'post_password_required', '__return_false' );
 
 		$this->assertSame( 'Locked value', $unlocked );
+	}
+
+	/**
+	 * The shortcode outputs User fields as IDs rather than account details.
+	 */
+	public function test_shortcode_reduces_user_fields_to_ids() {
+		$user_login = uniqid( 'shortcode_user_', false );
+		$user_email = "{$user_login}@example.invalid";
+		$user_id    = wp_insert_user(
+			array(
+				'user_login' => $user_login,
+				'user_pass'  => 'password',
+				'user_email' => $user_email,
+			)
+		);
+		update_field( 'protected_output_user', $user_id, $this->public_id );
+		acf_get_store( 'values' )->reset();
+
+		// The test datastore has no users table for WP_User_Query to read.
+		$shim_user_query = static function ( $results, $query ) {
+			$user_ids           = array_map( 'intval', (array) ( $query->query_vars['include'] ?? array() ) );
+			$query->total_users = count( $user_ids );
+			return $user_ids;
+		};
+		add_filter( 'users_pre_query', $shim_user_query, 10, 2 );
+
+		$GLOBALS['post'] = get_post( $this->public_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$output          = acf_shortcode( array( 'field' => 'protected_output_user' ) );
+
+		remove_filter( 'users_pre_query', $shim_user_query, 10 );
+
+		$this->assertStringNotContainsString( $user_email, (string) $output );
+		$this->assertStringNotContainsString( $user_login, (string) $output );
+		$this->assertSame( (string) $user_id, (string) $output );
 	}
 
 	/**
