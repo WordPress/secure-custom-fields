@@ -415,6 +415,115 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 	}
 
 	/**
+	 * Builds a stand-in for the parsed ACF REST request of a post.
+	 *
+	 * @return object
+	 */
+	private function get_mock_post_request() {
+		return new class() {
+			/**
+			 * The REST object type.
+			 *
+			 * @var string
+			 */
+			public $object_type = 'post';
+
+			/**
+			 * The REST object subtype.
+			 *
+			 * @var string
+			 */
+			public $object_sub_type = 'post';
+
+			/**
+			 * The REST request method.
+			 *
+			 * @var string
+			 */
+			public $http_method = 'GET';
+
+			/**
+			 * Get a URL parameter value.
+			 *
+			 * @param string $param The URL parameter name.
+			 * @return null
+			 */
+			public function get_url_param( $param ) {
+				return null;
+			}
+		};
+	}
+
+	/**
+	 * Field values of a password-protected post are only returned once the post is unlocked.
+	 */
+	public function test_load_fields_hides_password_protected_post_values() {
+		wp_set_current_user( 0 );
+
+		$protected_id = wp_insert_post(
+			array(
+				'post_title'    => 'Protected Post',
+				'post_status'   => 'publish',
+				'post_type'     => 'post',
+				'post_password' => 'rest-secret',
+			)
+		);
+
+		acf_add_local_field_group(
+			array_merge(
+				$this->test_field_group,
+				array(
+					'key'    => 'group_test_rest_protected',
+					'title'  => 'Test REST Protected',
+					'fields' => array(
+						array(
+							'key'   => 'field_test_rest_protected_text',
+							'label' => 'Protected Text',
+							'name'  => 'test_rest_protected_text',
+							'type'  => 'text',
+						),
+					),
+				)
+			)
+		);
+		update_field( 'field_test_rest_protected_text', 'Locked value', $protected_id );
+		acf_get_store( 'fields' )->reset();
+		acf_get_store( 'values' )->reset();
+
+		$request_prop = $this->reflection->getProperty( 'request' );
+		$request_prop->setAccessible( true );
+		$request_prop->setValue( $this->rest_api, $this->get_mock_post_request() );
+
+		$object  = array( 'id' => $protected_id );
+		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $protected_id );
+
+		$this->assertSame( array(), $this->rest_api->load_fields( $object, 'acf', $request, 'post' ), 'Anonymous readers' );
+
+		$wrong_password = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $protected_id );
+		$wrong_password->set_param( 'password', 'not-the-password' );
+		$this->assertSame( array(), $this->rest_api->load_fields( $object, 'acf', $wrong_password, 'post' ), 'Wrong password' );
+
+		$right_password = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $protected_id );
+		$right_password->set_param( 'password', 'rest-secret' );
+		$this->assertSame( 'Locked value', $this->rest_api->load_fields( $object, 'acf', $right_password, 'post' )['test_rest_protected_text'], 'Right password' );
+
+		$editor = wp_insert_user(
+			array(
+				'user_login' => 'rest-protected-editor',
+				'user_pass'  => 'password',
+				'role'       => 'editor',
+			)
+		);
+		wp_set_current_user( $editor );
+		$this->assertSame( 'Locked value', $this->rest_api->load_fields( $object, 'acf', $request, 'post' )['test_rest_protected_text'], 'Editors' );
+		wp_set_current_user( 0 );
+
+		acf_remove_local_field_group( 'group_test_rest_protected' );
+		acf_remove_local_field( 'field_test_rest_protected_text' );
+		wp_delete_post( $protected_id, true );
+	}
+
+	/**
 	 * Test load_fields uses REST-safe formatted values for User fields.
 	 */
 	public function test_load_fields_uses_rest_safe_user_formatted_values() {

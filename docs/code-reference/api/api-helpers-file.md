@@ -591,6 +591,15 @@ acf_get_valid_post_id
 * @param   $post_id (mixed)
 * @return $post_id (mixed)
 
+## `scf_post_password_required()`
+
+Checks whether field values stored on an ACF post ID belong to a password-protected
+post whose password has not been entered yet.
+
+* @since SCF 6.9.7
+* @param integer|string $post_id ACF encoded post ID.
+* @return boolean
+
 ## `acf_get_post_id_info()`
 
 acf_get_post_id_info

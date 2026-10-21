@@ -39,6 +39,7 @@ This file tracks code elements that need documentation.
 
 - `acf/bidirectional/supported_field_types_for_post`
 - `acf/bidirectional/supported_target_field_types`
+- `scf/bidirectional/allow_target`
 
 ## acf-field-functions.php
 
@@ -350,6 +351,7 @@ This file tracks code elements that need documentation.
 - `acf/validate_post_id`
 - `acf/validate_setting`
 - `acf/verify_ajax`
+- `scf/upload/generate_previews`
 
 ## api/api-template.php
 
