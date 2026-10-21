@@ -1049,6 +1049,10 @@ function acf_shortcode( $atts ) {
 
 	// If we've decoded to a post, ensure the post is publicly visible.
 	if ( $decoded_post_id['type'] === 'post' ) {
+		if ( post_password_required( $decoded_post_id['id'] ) ) {
+			return;
+		}
+
 		if ( $atts['post_id'] !== false && ( (int) $atts['post_id'] !== (int) acf_get_valid_post_id() ) && ( ! is_post_publicly_viewable( $decoded_post_id['id'] ) ) && apply_filters( 'acf/shortcode/prevent_access_to_fields_on_non_public_posts', true ) ) {
 			if ( is_preview() ) {
 				return apply_filters( 'acf/shortcode/post_not_public_message', esc_html__( '[The ACF shortcode cannot display fields from non-public posts]', 'secure-custom-fields' ) );

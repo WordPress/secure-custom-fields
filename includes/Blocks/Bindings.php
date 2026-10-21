@@ -57,6 +57,12 @@ class Bindings {
 		if ( ! isset( $source_attrs['key'] ) || ! is_string( $source_attrs['key'] ) ) {
 			$value = '';
 		} else {
+			$post_id = acf_get_valid_post_id( false );
+			$decoded = acf_decode_post_id( $post_id );
+			if ( 'post' === $decoded['type'] && post_password_required( $decoded['id'] ) ) {
+				return '';
+			}
+
 			$field = get_field_object( $source_attrs['key'], false, true, true, true );
 
 			if ( ! $field ) {
@@ -79,7 +85,9 @@ class Bindings {
 				}
 			}
 
-			$field_value = $field['value'];
+			$raw_value   = acf_get_value( $post_id, $field );
+			$field_value = scf_rest_sanitize_user_data( $field['value'], $raw_value, $field );
+			$field_value = acf_rest_sanitize_reference_data( $field_value, $raw_value, $field );
 
 			switch ( $attribute_name ) {
 				case 'id':

@@ -58,6 +58,9 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 - Submitted relationship values only link back to objects that are valid choices for the field, or that the submitting user can edit. Revisions never link back. New filter: `scf/bidirectional/allow_target`.
 - Preview images for files uploaded through front-end File fields, including PDF previews and audio or video cover art, are only generated for users who can upload to the media library. New filter: `scf/upload/generate_previews`.
+- Password-protected posts referenced by a Post Object or Relationship field are only expanded in REST responses for users who can edit them.
+- Field values shown through block bindings only expand referenced content and user details the viewer can read.
+- Field values of password-protected posts stay hidden in the shortcode, block bindings and JSON-LD output until the password is entered.
 
 = 6.9.6 =
 *Release Date 16th October 2026*

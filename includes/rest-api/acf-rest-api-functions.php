@@ -523,6 +523,10 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 				if ( method_exists( $controller, 'check_read_permission' ) ) {
 					$exposable = (bool) $controller->check_read_permission( $post );
 				}
+
+				if ( $exposable && '' !== $post->post_password && ! current_user_can( 'edit_post', $post->ID ) ) {
+					$exposable = false;
+				}
 			}
 		}
 	}

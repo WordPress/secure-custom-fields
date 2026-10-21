@@ -91,6 +91,14 @@ class Test_Blocks_Bindings extends BaseTestCase {
 						'allow_in_bindings' => false,
 					),
 					array(
+						'key'           => 'field_bindings_relationship',
+						'name'          => 'bindings_relationship',
+						'label'         => 'Relationship',
+						'type'          => 'relationship',
+						'post_type'     => array( 'post' ),
+						'return_format' => 'object',
+					),
+					array(
 						'key'        => 'field_bindings_group',
 						'name'       => 'bindings_group',
 						'label'      => 'Group',
@@ -136,7 +144,7 @@ class Test_Blocks_Bindings extends BaseTestCase {
 		}
 
 		acf_remove_local_field_group( 'group_blocks_bindings' );
-		foreach ( array( 'field_bindings_text', 'field_bindings_select', 'field_bindings_private', 'field_bindings_group', 'field_bindings_group_inner' ) as $key ) {
+		foreach ( array( 'field_bindings_text', 'field_bindings_select', 'field_bindings_private', 'field_bindings_relationship', 'field_bindings_group', 'field_bindings_group_inner' ) as $key ) {
 			acf_remove_local_field( $key );
 		}
 
@@ -153,16 +161,31 @@ class Test_Blocks_Bindings extends BaseTestCase {
 	 * format values with so their filters exist.
 	 */
 	private function ensure_field_type_filters() {
-		if ( has_filter( 'acf/format_value/type=select' ) ) {
+		if ( has_filter( 'acf/format_value/type=select' ) && has_filter( 'acf/format_value/type=relationship' ) ) {
 			return;
 		}
 
-		foreach ( array( 'select', 'group' ) as $type ) {
+		foreach ( array( 'select', 'group', 'relationship' ) as $type ) {
 			$instance = acf_get_field_type( $type );
 			if ( $instance instanceof acf_field ) {
 				acf_register_field_type( get_class( $instance ) );
 			}
 		}
+	}
+
+	/**
+	 * Expands the Relationship field to post objects. Its own query needs a database,
+	 * which WorDBless does not provide.
+	 */
+	private function expand_relationship_without_query() {
+		add_filter(
+			'acf/format_value/key=field_bindings_relationship',
+			static function ( $value, $post_id ) {
+				return array_map( 'get_post', (array) get_post_meta( $post_id, 'bindings_relationship', true ) );
+			},
+			20,
+			2
+		);
 	}
 
 	/**
@@ -256,6 +279,87 @@ class Test_Blocks_Bindings extends BaseTestCase {
 			'Bound value',
 			$bindings->get_value( array( 'key' => 'bindings_text' ), $block, 'content' )
 		);
+	}
+
+	/**
+	 * A bound reference to content the viewer cannot read is reduced to IDs.
+	 */
+	public function test_get_value_reduces_references_the_viewer_cannot_read() {
+		$protected = wp_insert_post(
+			array(
+				'post_type'     => 'post',
+				'post_title'    => 'Protected target',
+				'post_content'  => 'Protected body',
+				'post_status'   => 'publish',
+				'post_password' => 'bindings-secret',
+			)
+		);
+		$private   = wp_insert_post(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'Private target',
+				'post_content' => 'Private body',
+				'post_status'  => 'private',
+			)
+		);
+		update_field( 'bindings_relationship', array( $protected, $private ), $this->post_id );
+		acf_get_store( 'values' )->reset();
+		$this->expand_relationship_without_query();
+		wp_set_current_user( 0 );
+
+		$bindings = $this->register_source();
+		$value    = $bindings->get_value( array( 'key' => 'field_bindings_relationship' ), $this->get_block_instance(), 'content' );
+
+		$this->assertStringNotContainsString( 'bindings-secret', $value );
+		$this->assertStringNotContainsString( 'Protected body', $value );
+		$this->assertStringNotContainsString( 'Private body', $value );
+		$this->assertSame( array( $protected, $private ), json_decode( $value, true ) );
+	}
+
+	/**
+	 * A bound reference to published content is still expanded.
+	 */
+	public function test_get_value_keeps_readable_references() {
+		$public = wp_insert_post(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'Public target',
+				'post_content' => 'Public body',
+				'post_status'  => 'publish',
+			)
+		);
+		update_field( 'bindings_relationship', array( $public ), $this->post_id );
+		acf_get_store( 'values' )->reset();
+		$this->expand_relationship_without_query();
+		wp_set_current_user( 0 );
+
+		$bindings = $this->register_source();
+		$value    = $bindings->get_value( array( 'key' => 'field_bindings_relationship' ), $this->get_block_instance(), 'content' );
+
+		$this->assertStringContainsString( 'Public target', $value );
+	}
+
+	/**
+	 * Field values of a password-protected post stay hidden until the password is entered.
+	 */
+	public function test_get_value_hides_values_of_password_protected_posts() {
+		update_field( 'bindings_text', 'Locked value', $this->post_id );
+		wp_update_post(
+			array(
+				'ID'            => $this->post_id,
+				'post_password' => 'bindings-secret',
+			)
+		);
+		$GLOBALS['post'] = get_post( $this->post_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		acf_get_store( 'values' )->reset();
+
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+
+		$this->assertSame( '', $bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'content' ) );
+
+		add_filter( 'post_password_required', '__return_false' );
+		$this->assertSame( 'Locked value', $bindings->get_value( array( 'key' => 'field_bindings_text' ), $block, 'content' ) );
 	}
 
 	/**
