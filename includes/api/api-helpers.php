@@ -2543,7 +2543,6 @@ function acf_upload_file( $uploaded_file ) {
 	// Save the data
 	$id = wp_insert_attachment( $object, $file );
 
-	// Only generate preview images, including audio and video cover art, for users who can upload to the media library.
 	/**
 	 * Filters whether a file uploaded through a basic File field gets preview images.
 	 *

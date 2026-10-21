@@ -145,11 +145,6 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	/**
 	 * A PostScript program that names the `%PDF-` marker after its own header is rejected.
 	 *
-	 * Ghostscript searches for `%PDF-` in the bytes following any leading whitespace, but
-	 * uses its PostScript interpreter when `%!PS` appears before that marker. Accepting the
-	 * marker anywhere in the header would therefore store a file that Ghostscript runs as a
-	 * PostScript program.
-	 *
 	 * @return void
 	 */
 	public function test_postscript_naming_the_pdf_marker_is_rejected(): void {
@@ -200,10 +195,7 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	}
 
 	/**
-	 * Leading whitespace before the marker is accepted, matching how Ghostscript reads it.
-	 *
-	 * Ghostscript consumes bytes up to and including a space before sniffing the header, so
-	 * such a file is still read as a PDF and must not be treated as a disguised one.
+	 * Leading whitespace before the marker is accepted.
 	 *
 	 * @return void
 	 */
@@ -334,7 +326,7 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	}
 
 	/**
-	 * Cover art embedded in a visitor's audio file is not saved, so it never reaches an image editor.
+	 * Cover art in a visitor's audio file is not saved.
 	 *
 	 * @return void
 	 */
@@ -342,7 +334,7 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 		add_theme_support( 'post-thumbnails' );
 		$this->mock_upload_type = 'audio/flac';
 
-		$this->prepare_upload_request( $this->flac_with_cover_art( 'application/pdf', "%PDF-1.4\n" ), 'visitor.flac' );
+		$this->prepare_upload_request( $this->flac_with_cover_art( 'image/jpeg', 'cover' ), 'visitor.flac' );
 		acf_upload_files();
 
 		$this->assertCount( 1, $this->attachment_ids, 'Only the audio file is stored.' );
