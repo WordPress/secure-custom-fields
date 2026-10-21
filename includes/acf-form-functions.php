@@ -194,7 +194,13 @@ function _acf_do_save_post( $post_id = 0 ) {
 
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 	if ( ! empty( $_POST['acf'] ) ) {
-		acf_update_values( $_POST['acf'], $post_id ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP when saved.
+		$was_saving_submitted = acf_get_data( 'scf_saving_submitted_values' );
+		acf_set_data( 'scf_saving_submitted_values', true );
+		try {
+			acf_update_values( $_POST['acf'], $post_id ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized by WP when saved.
+		} finally {
+			acf_set_data( 'scf_saving_submitted_values', $was_saving_submitted );
+		}
 	}
 	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
