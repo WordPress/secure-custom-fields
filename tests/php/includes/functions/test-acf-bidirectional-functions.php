@@ -907,8 +907,114 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 	 */
 	private function save_submitted_values( $values, $post_id ) {
 		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
-		acf_save_post( $post_id, $values );
+		$_POST['acf']  = $values;
+		acf_save_post( $post_id );
 		$_POST = $original_post;
+	}
+
+	/**
+	 * Registers a page-limited Relationship field with a bidirectional target.
+	 */
+	private function add_page_relationship_fields() {
+		$this->register_relational_field_type( 'relationship' );
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidi_post_source',
+				'name'                 => 'bidi_post_source',
+				'type'                 => 'relationship',
+				'post_type'            => array( 'page' ),
+				'taxonomy'             => array(),
+				'bidirectional'        => 1,
+				'bidirectional_target' => array( 'field_bidi_post_target' ),
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'       => 'field_bidi_post_target',
+				'name'      => 'bidi_post_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+	}
+
+	/**
+	 * Values passed to acf_save_post() while no user is logged in are not gated as submissions.
+	 */
+	public function test_programmatic_save_without_user_links_back_to_any_target() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_page_relationship_fields();
+		wp_set_current_user( 0 );
+
+		$source_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		$private_id = wp_insert_post(
+			array(
+				'post_title'  => 'Private target',
+				'post_type'   => 'page',
+				'post_status' => 'private',
+			)
+		);
+
+		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
+		acf_save_post( $source_id, array( 'field_bidi_post_source' => array( (string) $private_id ) ) );
+		$_POST = $original_post;
+
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_post_target', $private_id, false ) );
+		$this->assertFalse( acf_get_form_data( 'scf_programmatic_save' ) );
+	}
+
+	/**
+	 * Values passed to acf_save_post() on behalf of a logged-in user are still gated.
+	 */
+	public function test_programmatic_save_by_logged_in_user_is_gated() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_page_relationship_fields();
+
+		wp_set_current_user( 0 );
+
+		$source_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		$private_id = wp_insert_post(
+			array(
+				'post_title'  => 'Private target',
+				'post_type'   => 'page',
+				'post_status' => 'private',
+			)
+		);
+		$public_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Public target',
+				'post_type'   => 'page',
+				'post_status' => 'publish',
+			)
+		);
+
+		$subscriber_id = wp_insert_user(
+			array(
+				'user_login' => 'bidi-save-subscriber',
+				'user_pass'  => 'password',
+				'role'       => 'subscriber',
+			)
+		);
+		wp_set_current_user( $subscriber_id );
+
+		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
+		acf_save_post( $source_id, array( 'field_bidi_post_source' => array( (string) $private_id, (string) $public_id ) ) );
+		$_POST = $original_post;
+		wp_set_current_user( 0 );
+
+		$this->assertEmpty( get_post_meta( $private_id, 'bidi_post_target', true ), 'Private posts are not linked' );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_post_target', $public_id, false ) );
 	}
 
 	/**
@@ -978,7 +1084,7 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 	 */
 	public function test_submitted_unreadable_post_is_not_linked() {
 		acf_update_setting( 'enable_bidirection', true );
-		$this->register_relational_field_type( 'relationship' );
+		$this->add_page_relationship_fields();
 		wp_set_current_user( 0 );
 
 		$source_id  = wp_insert_post(
@@ -1005,26 +1111,6 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 			array(
 				'post_title'  => 'Wrong post type',
 				'post_status' => 'publish',
-			)
-		);
-		acf_add_local_field(
-			array(
-				'key'                  => 'field_bidi_post_source',
-				'name'                 => 'bidi_post_source',
-				'type'                 => 'relationship',
-				'post_type'            => array( 'page' ),
-				'taxonomy'             => array(),
-				'bidirectional'        => 1,
-				'bidirectional_target' => array( 'field_bidi_post_target' ),
-			)
-		);
-		acf_add_local_field(
-			array(
-				'key'       => 'field_bidi_post_target',
-				'name'      => 'bidi_post_target',
-				'type'      => 'relationship',
-				'post_type' => array(),
-				'taxonomy'  => array(),
 			)
 		);
 

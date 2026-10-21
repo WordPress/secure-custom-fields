@@ -56,7 +56,7 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 *Security*
 
-- Submitted relationship values only link back to objects that are valid choices for the field, or that the submitting user can edit. Revisions never link back. New filter: `scf/bidirectional/allow_target`.
+- Submitted relationship values only link back to objects that are valid choices for the field, or that the submitting user can edit. Values saved by code while no user is logged in, such as WP-CLI or cron imports, are not affected. Revisions never link back. New filter: `scf/bidirectional/allow_target`.
 - Preview images for files uploaded through front-end File fields, including PDF previews and audio or video cover art, are only generated for users who can upload to the media library. New filter: `scf/upload/generate_previews`.
 - Password-protected posts referenced by a Post Object or Relationship field are only expanded for users who entered the password or can edit them.
 - Field values shown through block bindings only expand referenced content and user details the viewer can read, and the shortcode outputs User fields as IDs.
