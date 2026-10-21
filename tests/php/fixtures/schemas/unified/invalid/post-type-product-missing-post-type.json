@@ -1,0 +1,18 @@
+{
+	"key": "post_type_product",
+	"title": "Product",
+	"field_groups": [
+		{
+			"key": "group_product_main",
+			"title": "Product Main",
+			"fields": [
+				{
+					"key": "field_product_price",
+					"label": "Price",
+					"name": "price",
+					"type": "text"
+				}
+			]
+		}
+	]
+}

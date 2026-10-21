@@ -1,0 +1,15 @@
+{
+	"key": "post_type_movie",
+	"title": "Movie",
+	"post_type": "movie",
+	"public": true,
+	"supports": [ "title" ],
+	"fields": [
+		{
+			"key": "field_movie_director",
+			"label": "Director",
+			"name": "director",
+			"type": "text"
+		}
+	]
+}

@@ -1,0 +1,44 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://raw.githubusercontent.com/WordPress/secure-custom-fields/trunk/schemas/unified-cpt.schema.json",
+	"title": "SCF Unified CPT+Fields",
+	"description": "Schema for a Secure Custom Fields unified definition file. Declares a post type together with the field groups attached to it. Validates the post type shape exactly like post-type.schema.json plus optional field_groups (array of field group objects) or top-level fields (array of field objects, auto-wrapped into a single field group at load time).",
+	"type": "object",
+	"required": [ "key", "title", "post_type" ],
+	"properties": {
+		"key": {
+			"type": "string",
+			"pattern": "^post_type_.+$",
+			"minLength": 1,
+			"description": "Unique identifier for the post type with post_type_ prefix (e.g. 'post_type_book')"
+		},
+		"title": { "$ref": "common.schema.json#/definitions/title" },
+		"post_type": {
+			"type": "string",
+			"pattern": "^[a-z0-9_-]+$",
+			"minLength": 1,
+			"maxLength": 20,
+			"not": { "$ref": "common.schema.json#/definitions/wordpressReservedTerms" },
+			"description": "The post type slug passed to register_post_type() (e.g. 'book'). Max 20 characters, lowercase letters/numbers/underscores/dashes only, cannot be a WordPress reserved term."
+		},
+		"menu_order": { "$ref": "common.schema.json#/definitions/menu_order" },
+		"active": { "$ref": "common.schema.json#/definitions/active" },
+		"modified": { "$ref": "common.schema.json#/definitions/modified" },
+		"field_groups": {
+			"type": "array",
+			"description": "Field groups attached to this post type. Each entry receives an automatic post_type location rule targeting this CPT at load time.",
+			"items": { "$ref": "field-group.schema.json#/definitions/fieldGroup" },
+			"minItems": 1
+		},
+		"fields": {
+			"type": "array",
+			"description": "Top-level fields. Auto-wrapped into a single synthetic field group pinned to the CPT at load time.",
+			"items": { "$ref": "field.schema.json#/definitions/field" },
+			"minItems": 1
+		}
+	},
+	"anyOf": [
+		{ "required": [ "field_groups" ] },
+		{ "required": [ "fields" ] }
+	]
+}
