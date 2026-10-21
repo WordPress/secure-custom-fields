@@ -87,9 +87,9 @@ class Bindings {
 			$raw_value   = acf_get_value( $post_id, $field );
 			$field_value = scf_rest_sanitize_user_data( $field['value'], $raw_value, $field );
 
-			add_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), 5, 2 );
+			add_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX, 2 );
 			$field_value = acf_rest_sanitize_reference_data( $field_value, $raw_value, $field );
-			remove_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), 5 );
+			remove_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX );
 			$field_value = $this->strip_post_passwords( $field_value );
 
 			switch ( $attribute_name ) {
@@ -164,6 +164,8 @@ class Bindings {
 	 * Bindings render on the front end, so a referenced post is exposed when the
 	 * viewer can read it there rather than when the REST API would return it.
 	 * Attachments are always expanded because their files are publicly served.
+	 * This runs last so that callbacks written for REST output do not decide
+	 * what a rendered block shows.
 	 *
 	 * @since SCF 6.9.7
 	 *

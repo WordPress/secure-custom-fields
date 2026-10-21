@@ -140,17 +140,6 @@ controller for a post type can re-expose targets via the
 * @param array   $field     The field array (context for filter subscribers).
 * @return boolean
 
-## `scf_rest_get_reference_controller()`
-
-Returns a shared REST controller instance for checking reference targets.
-
-* Reference checks can run for every referenced post on a page, so the
-controller for each post type is only instantiated once per request.
-* @since SCF 6.9.7
-* @param string $controller_class The controller class name.
-* @param string $post_type        The post type the controller handles.
-* @return object
-
 ## `scf_rest_format_standard_value()`
 
 Applies standard field formatting while keeping User values and references to

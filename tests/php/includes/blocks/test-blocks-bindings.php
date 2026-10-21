@@ -415,6 +415,14 @@ class Test_Blocks_Bindings extends BaseTestCase {
 		$value    = $bindings->get_value( array( 'key' => 'field_bindings_relationship' ), $this->get_block_instance(), 'content' );
 
 		$this->assertStringContainsString( 'Public target', $value );
+
+		// Callbacks written for REST output do not decide what a rendered block shows.
+		add_filter( 'acf/rest/expose_reference_target', '__return_false' );
+		acf_get_store( 'values' )->reset();
+		$value = $bindings->get_value( array( 'key' => 'field_bindings_relationship' ), $this->get_block_instance(), 'content' );
+		remove_filter( 'acf/rest/expose_reference_target', '__return_false' );
+
+		$this->assertStringContainsString( 'Public target', $value );
 	}
 
 	/**
