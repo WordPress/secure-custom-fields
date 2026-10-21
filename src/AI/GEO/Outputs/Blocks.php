@@ -151,8 +151,7 @@ class Blocks {
 			echo '<!-- SCF AI Block JSON-LD: Checking block: ' . esc_html( $block['name'] ) . " -->\n";
 		}
 
-		$decoded_post_id = acf_decode_post_id( $post_id );
-		if ( 'post' === $decoded_post_id['type'] && post_password_required( $decoded_post_id['id'] ) ) {
+		if ( scf_post_password_required( $post_id ) ) {
 			if ( $debug ) {
 				echo "<!-- SCF AI Block JSON-LD: Skipped (password protected post) -->\n";
 			}

@@ -35,7 +35,7 @@ function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $t
 	}
 
 	$decoded_origin = acf_decode_post_id( $post_id );
-	if ( 'post' === $decoded_origin['type'] && wp_is_post_revision( (int) $decoded_origin['id'] ) ) {
+	if ( 'post' === $decoded_origin['type'] && (int) $decoded_origin['id'] > 0 && wp_is_post_revision( (int) $decoded_origin['id'] ) ) {
 		return;
 	}
 

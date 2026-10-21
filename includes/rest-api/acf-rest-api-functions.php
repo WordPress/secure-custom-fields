@@ -518,13 +518,13 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 				: 'WP_REST_Posts_Controller';
 
 			if ( class_exists( $controller_class ) ) {
-				$controller = new $controller_class( $post->post_type );
+				$controller = scf_rest_get_reference_controller( $controller_class, $post->post_type );
 
 				if ( method_exists( $controller, 'check_read_permission' ) ) {
 					$exposable = (bool) $controller->check_read_permission( $post );
 				}
 
-				if ( $exposable && '' !== $post->post_password && ! current_user_can( 'edit_post', $post->ID ) ) {
+				if ( $exposable && post_password_required( $post ) && ! current_user_can( 'edit_post', $post->ID ) ) {
 					$exposable = false;
 				}
 			}
@@ -543,6 +543,29 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 	 * @param array   $field     The ACF field array.
 	 */
 	return (bool) apply_filters( 'acf/rest/expose_reference_target', $exposable, $target_id, $field );
+}
+
+/**
+ * Returns a shared REST controller instance for checking reference targets.
+ *
+ * Reference checks can run for every referenced post on a page, so the
+ * controller for each post type is only instantiated once per request.
+ *
+ * @since SCF 6.9.7
+ *
+ * @param string $controller_class The controller class name.
+ * @param string $post_type        The post type the controller handles.
+ * @return object
+ */
+function scf_rest_get_reference_controller( $controller_class, $post_type ) {
+	static $controllers = array();
+
+	$key = $controller_class . ':' . $post_type;
+	if ( ! isset( $controllers[ $key ] ) ) {
+		$controllers[ $key ] = new $controller_class( $post_type );
+	}
+
+	return $controllers[ $key ];
 }
 
 /**

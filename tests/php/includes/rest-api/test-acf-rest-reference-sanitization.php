@@ -118,6 +118,10 @@ class Test_ACF_REST_Reference_Sanitization extends BaseTestCase {
 		$this->set_role( 'editor' );
 		$this->assertTrue( acf_rest_reference_is_exposable( $protected_id, $field ), 'Editors' );
 
+		wp_set_current_user( 0 );
+		$this->add_test_filter( 'post_password_required', '__return_false' );
+		$this->assertTrue( acf_rest_reference_is_exposable( $protected_id, $field ), 'Visitors who entered the password' );
+
 		wp_delete_post( $protected_id, true );
 	}
 

@@ -115,7 +115,10 @@ class Test_Protected_Content_Output extends BaseTestCase {
 		$this->assertEmpty( acf_shortcode( $atts ) );
 
 		add_filter( 'post_password_required', '__return_false' );
-		$this->assertSame( 'Locked value', acf_shortcode( $atts ) );
+		$unlocked = acf_shortcode( $atts );
+		remove_filter( 'post_password_required', '__return_false' );
+
+		$this->assertSame( 'Locked value', $unlocked );
 	}
 
 	/**
@@ -134,7 +137,10 @@ class Test_Protected_Content_Output extends BaseTestCase {
 		$this->assertStringNotContainsString( 'Locked value', $this->render_post_jsonld( $this->protected_id ) );
 
 		add_filter( 'post_password_required', '__return_false' );
-		$this->assertStringContainsString( 'Locked value', $this->render_post_jsonld( $this->protected_id ) );
+		$unlocked = $this->render_post_jsonld( $this->protected_id );
+		remove_filter( 'post_password_required', '__return_false' );
+
+		$this->assertStringContainsString( 'Locked value', $unlocked );
 	}
 
 	/**

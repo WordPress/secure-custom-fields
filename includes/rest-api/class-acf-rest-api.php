@@ -435,6 +435,28 @@ class ACF_Rest_Api {
 	}
 
 	/**
+	 * Checks whether a post's field values must stay out of the response because the
+	 * post is password protected and the caller has neither unlocked it nor can edit it.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param integer         $post_id The post ID.
+	 * @param WP_REST_Request $request The current request.
+	 * @return boolean
+	 */
+	private function is_password_protected_content_hidden( $post_id, $request ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post instanceof WP_Post || ! post_password_required( $post ) || current_user_can( 'edit_post', $post->ID ) ) {
+			return false;
+		}
+
+		$password = $request instanceof WP_REST_Request ? $request->get_param( 'password' ) : '';
+
+		return ! is_string( $password ) || '' === $password || ! hash_equals( $post->post_password, $password );
+	}
+
+	/**
 	 * Load field values into the requested object. This method is not a part of any public API and is only public as
 	 * it is required by WordPress.
 	 *
@@ -461,6 +483,10 @@ class ACF_Rest_Api {
 		}
 
 		$object_sub_type = str_replace( '-revision', '', $object_sub_type );
+
+		if ( 'post' === $object_type && $this->is_password_protected_content_hidden( $object_id, $request ) ) {
+			return $fields;
+		}
 
 		// Get all field groups for the current object.
 		$field_groups = $this->get_field_groups_by_id( $object_id, $object_type, $object_sub_type );
