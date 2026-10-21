@@ -60,6 +60,20 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	private $attachment_action;
 
 	/**
+	 * Number of times WordPress asked for an image editor.
+	 *
+	 * @var int
+	 */
+	private $image_editor_requests = 0;
+
+	/**
+	 * Image editor observer callback.
+	 *
+	 * @var callable
+	 */
+	private $image_editor_observer;
+
+	/**
 	 * Set up isolated request state and upload observers.
 	 *
 	 * @return void
@@ -83,8 +97,19 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 			$this->attachment_ids[] = $attachment_id;
 		};
 
+		$this->image_editor_requests = 0;
+		$this->image_editor_observer = function ( $editors ) {
+			++$this->image_editor_requests;
+			return $editors;
+		};
+
 		add_filter( 'wp_handle_upload_overrides', $this->upload_overrides );
 		add_action( 'add_attachment', $this->attachment_action );
+		add_filter( 'wp_image_editors', $this->image_editor_observer );
+
+		// Register the sizes WordPress renders PDF previews at, so preview generation is attempted.
+		update_option( 'thumbnail_size_w', 150 );
+		update_option( 'thumbnail_size_h', 150 );
 	}
 
 	/**
@@ -95,6 +120,12 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	public function tear_down(): void {
 		remove_filter( 'wp_handle_upload_overrides', $this->upload_overrides );
 		remove_action( 'add_attachment', $this->attachment_action );
+		remove_filter( 'wp_image_editors', $this->image_editor_observer );
+		remove_all_filters( 'scf/upload/generate_previews' );
+		delete_option( 'thumbnail_size_w' );
+		delete_option( 'thumbnail_size_h' );
+		remove_theme_support( 'post-thumbnails' );
+		wp_set_current_user( 0 );
 
 		foreach ( $this->attachment_ids as $attachment_id ) {
 			wp_delete_attachment( $attachment_id, true );
@@ -215,6 +246,141 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	}
 
 	/**
+	 * A PDF from a visitor who cannot upload files is stored without loading an image editor.
+	 *
+	 * @return void
+	 */
+	public function test_pdf_from_visitor_skips_preview_generation(): void {
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'visitor.pdf' );
+		acf_upload_files();
+
+		$this->assertCount( 1, $this->attachment_ids, 'The PDF is still stored.' );
+		$this->assertSame( 0, $this->image_editor_requests, 'No image editor should be loaded for this PDF.' );
+	}
+
+	/**
+	 * A PDF from a user without the upload_files capability skips preview generation.
+	 *
+	 * @return void
+	 */
+	public function test_pdf_from_subscriber_skips_preview_generation(): void {
+		$this->set_current_user_role( 'subscriber' );
+
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'subscriber.pdf' );
+		acf_upload_files();
+
+		$this->assertCount( 1, $this->attachment_ids );
+		$this->assertSame( 0, $this->image_editor_requests );
+	}
+
+	/**
+	 * A PDF from a user who can upload to the media library still gets preview images.
+	 *
+	 * @return void
+	 */
+	public function test_pdf_from_user_who_can_upload_generates_preview(): void {
+		$this->set_current_user_role( 'author' );
+
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'author.pdf' );
+		acf_upload_files();
+
+		$this->assertCount( 1, $this->attachment_ids );
+		$this->assertSame( 1, $this->image_editor_requests, 'Trusted uploaders keep PDF previews.' );
+	}
+
+	/**
+	 * The filter can enable PDF previews for visitors.
+	 *
+	 * @return void
+	 */
+	public function test_pdf_preview_filter_can_enable_previews_for_visitors(): void {
+		add_filter( 'scf/upload/generate_previews', '__return_true' );
+
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'visitor-preview.pdf' );
+		acf_upload_files();
+
+		$this->assertSame( 1, $this->image_editor_requests );
+	}
+
+	/**
+	 * Sites can turn PDF previews off for every basic upload.
+	 *
+	 * @return void
+	 */
+	public function test_pdf_preview_filter_can_disable_previews_for_trusted_users(): void {
+		$this->set_current_user_role( 'author' );
+		add_filter( 'scf/upload/generate_previews', '__return_false' );
+
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'no-preview.pdf' );
+		acf_upload_files();
+
+		$this->assertSame( 0, $this->image_editor_requests );
+	}
+
+	/**
+	 * Skipping a visitor's PDF preview does not affect later metadata generation.
+	 *
+	 * @return void
+	 */
+	public function test_skipped_pdf_preview_does_not_leak_into_later_requests(): void {
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'visitor-first.pdf' );
+		acf_upload_files();
+
+		$this->assertSame(
+			array( 'thumbnail', 'medium', 'large' ),
+			apply_filters( 'fallback_intermediate_image_sizes', array( 'thumbnail', 'medium', 'large' ), array() ),
+			'The preview size override must be removed after the upload.'
+		);
+	}
+
+	/**
+	 * Cover art embedded in a visitor's audio file is not saved, so it never reaches an image editor.
+	 *
+	 * @return void
+	 */
+	public function test_audio_cover_art_from_visitor_is_not_saved(): void {
+		add_theme_support( 'post-thumbnails' );
+		$this->mock_upload_type = 'audio/flac';
+
+		$this->prepare_upload_request( $this->flac_with_cover_art( 'application/pdf', "%PDF-1.4\n" ), 'visitor.flac' );
+		acf_upload_files();
+
+		$this->assertCount( 1, $this->attachment_ids, 'Only the audio file is stored.' );
+		$this->assertSame( 0, $this->image_editor_requests );
+	}
+
+	/**
+	 * Cover art in audio uploaded by a user who can upload files is still saved.
+	 *
+	 * @return void
+	 */
+	public function test_audio_cover_art_from_user_who_can_upload_is_saved(): void {
+		add_theme_support( 'post-thumbnails' );
+		$this->set_current_user_role( 'author' );
+		$this->mock_upload_type = 'audio/flac';
+
+		$this->prepare_upload_request( $this->flac_with_cover_art( 'image/jpeg', 'cover' ), 'author.flac' );
+		acf_upload_files();
+
+		$this->assertCount( 2, $this->attachment_ids, 'The audio file and its cover art are stored.' );
+	}
+
+	/**
+	 * Removing a visitor's cover art does not affect later metadata reads.
+	 *
+	 * @return void
+	 */
+	public function test_skipped_cover_art_does_not_leak_into_later_requests(): void {
+		$this->mock_upload_type = 'audio/flac';
+		$this->prepare_upload_request( $this->flac_with_cover_art( 'image/jpeg', 'cover' ), 'visitor-first.flac' );
+		acf_upload_files();
+
+		$metadata = array( 'image' => array( 'data' => 'cover' ) );
+		$this->assertSame( $metadata, apply_filters( 'wp_read_audio_metadata', $metadata, '', '', array() ) );
+		$this->assertSame( $metadata, apply_filters( 'wp_read_video_metadata', $metadata, '', '', array() ) );
+	}
+
+	/**
 	 * Return a successful upload result when CLI upload validation fails.
 	 *
 	 * PHPUnit does not receive files over HTTP, so PHP's is_uploaded_file() check fails.
@@ -234,6 +400,43 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 			'url'  => 'https://example.test/' . basename( $file['tmp_name'] ),
 			'type' => $this->mock_upload_type,
 		);
+	}
+
+	/**
+	 * Builds a minimal FLAC file with an embedded picture block.
+	 *
+	 * @param string $mime The MIME type the picture declares.
+	 * @param string $data The picture bytes.
+	 * @return string
+	 */
+	private function flac_with_cover_art( string $mime, string $data ): string {
+		$stream_info  = pack( 'n', 4096 ) . pack( 'n', 4096 ) . "\0\0\0\0\0\0";
+		$stream_info .= pack( 'J', ( 44100 << 44 ) | ( 1 << 41 ) | ( 15 << 36 ) ) . str_repeat( "\0", 16 );
+		$flac         = 'fLaC' . chr( 0 ) . substr( pack( 'N', strlen( $stream_info ) ), 1 ) . $stream_info;
+
+		$picture = pack( 'N', 3 ) . pack( 'N', strlen( $mime ) ) . $mime . pack( 'N', 0 ) . pack( 'N', 1 ) . pack( 'N', 1 ) . pack( 'N', 24 ) . pack( 'N', 0 ) . pack( 'N', strlen( $data ) ) . $data;
+		$flac   .= chr( 0x80 | 6 ) . substr( pack( 'N', strlen( $picture ) ), 1 ) . $picture;
+
+		// Audio frames, so the metadata reader can seek past the header blocks.
+		return $flac . str_repeat( "\xff\xf8\x69\x08\0\0", 1000 );
+	}
+
+	/**
+	 * Log in as a new user with the given role.
+	 *
+	 * @param string $role Role name.
+	 * @return void
+	 */
+	private function set_current_user_role( string $role ): void {
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => $role . '_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => $role,
+			)
+		);
+		$this->assertIsInt( $user_id );
+		wp_set_current_user( $user_id );
 	}
 
 	/**

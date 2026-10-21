@@ -2543,8 +2543,40 @@ function acf_upload_file( $uploaded_file ) {
 	// Save the data
 	$id = wp_insert_attachment( $object, $file );
 
+	// Only generate preview images, including audio and video cover art, for users who can upload to the media library.
+	/**
+	 * Filters whether a file uploaded through a basic File field gets preview images.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param boolean $generate_previews Whether to generate preview images. Default true only for users who can upload files.
+	 * @param string  $file              Path to the uploaded file.
+	 * @param integer $id                Attachment ID.
+	 */
+	$skip_previews    = ! apply_filters( 'scf/upload/generate_previews', current_user_can( 'upload_files' ), $file, $id );
+	$no_preview_sizes = static function () {
+		return array();
+	};
+	$no_cover_art     = static function ( $metadata ) {
+		if ( is_array( $metadata ) ) {
+			unset( $metadata['image'] );
+		}
+		return $metadata;
+	};
+	if ( $skip_previews ) {
+		add_filter( 'fallback_intermediate_image_sizes', $no_preview_sizes, PHP_INT_MAX );
+		add_filter( 'wp_read_audio_metadata', $no_cover_art, PHP_INT_MAX );
+		add_filter( 'wp_read_video_metadata', $no_cover_art, PHP_INT_MAX );
+	}
+
 	// Add the meta-data
 	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+
+	if ( $skip_previews ) {
+		remove_filter( 'fallback_intermediate_image_sizes', $no_preview_sizes, PHP_INT_MAX );
+		remove_filter( 'wp_read_audio_metadata', $no_cover_art, PHP_INT_MAX );
+		remove_filter( 'wp_read_video_metadata', $no_cover_art, PHP_INT_MAX );
+	}
 
 	/** This action is documented in wp-admin/custom-header.php */
 	do_action( 'wp_create_file_in_uploads', $file, $id ); // For replication

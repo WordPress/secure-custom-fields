@@ -51,6 +51,13 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.7 =
+*Release Date 20th October 2026*
+
+*Security*
+
+- Preview images for files uploaded through front-end File fields, including PDF previews and audio or video cover art, are only generated for users who can upload to the media library. New filter: `scf/upload/generate_previews`.
+
 = 6.9.6 =
 *Release Date 16th October 2026*
 
