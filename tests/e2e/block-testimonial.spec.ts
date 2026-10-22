@@ -278,9 +278,11 @@ test.describe( 'SCF Block > Testimonial', () => {
 		await publishButton.click();
 
 		// Wait for the error notice to appear at the top of the editor
-		const errorNotice = page.locator(
-			'.components-notice.is-error .components-notice__content'
-		);
+		const errorNotice = page
+			.getByLabel( 'Editor content' )
+			.getByText(
+				'An ACF Block on this page requires attention before you can save.'
+			);
 		await expect( errorNotice ).toBeVisible( { timeout: 1000 } );
 	} );
 } );
