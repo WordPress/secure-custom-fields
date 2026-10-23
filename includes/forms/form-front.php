@@ -43,6 +43,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 		 * @since ACF 5.0.0
 		 */
 		public function __construct() {
+			add_action( 'acf/form_data', array( $this, 'render_external_form_meta' ) );
 			add_action(
 				'acf/validate_save_post',
 				function () {
@@ -52,6 +53,57 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			);
 			add_action( 'acf/validate_save_post', array( $this, 'validate_save_post' ), 1 );
 			add_filter( 'acf/pre_save_post', array( $this, 'pre_save_post' ), 5, 2 );
+		}
+
+		/**
+		 * Renders a signed validation grant for third-party front-end forms.
+		 *
+		 * Integrations that call acf_form_data() with `form => false` use ACF's
+		 * AJAX field validation without submitting through acf_form(). The grant
+		 * distinguishes those server-rendered integrations from native forms whose
+		 * form-specific authorization fields were removed from the request.
+		 *
+		 * @since SCF 6.9.5
+		 *
+		 * @param array $data Form data passed to acf_form_data().
+		 * @return void
+		 */
+		public function render_external_form_meta( array $data ): void {
+			if ( 'acf_form' !== ( $data['screen'] ?? '' )
+				|| ! array_key_exists( 'form', $data )
+				|| false !== $data['form']
+			) {
+				return;
+			}
+
+			$target_post_id = $data['post_id'] ?? '';
+			if ( is_bool( $target_post_id ) ) {
+				$target_post_id = (int) $target_post_id;
+			} elseif ( null !== $target_post_id && ! is_scalar( $target_post_id ) ) {
+				return;
+			}
+
+			$meta_payload = wp_json_encode(
+				array(
+					'blog_id'        => get_current_blog_id(),
+					'issued_at'      => time(),
+					'screen'         => 'acf_form',
+					'target_post_id' => (string) $target_post_id,
+				)
+			);
+
+			if ( ! is_string( $meta_payload ) ) {
+				return;
+			}
+
+			acf_hidden_input(
+				array(
+					'name'  => '_acf_external_form_meta',
+					'value' => base64_encode( $meta_payload ) // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Base64 transports signed JSON.
+						. '.'
+						. hash_hmac( 'sha256', 'acf_external_form|' . $meta_payload, wp_salt( 'nonce' ) ),
+				)
+			);
 		}
 
 		/**
@@ -241,6 +293,7 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 					|| isset( $_POST['_acf_form_meta'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The existing AJAX handler verifies its nonce before firing this action.
 					|| isset( $_POST['_acf_render_id'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The existing AJAX handler verifies its nonce before firing this action.
 				)
+				&& ! $this->has_valid_external_form_meta()
 				&& false === $this->prepare_submitted_form( true )
 			) {
 				wp_send_json_success(
@@ -255,6 +308,73 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 					)
 				);
 			}
+		}
+
+		/**
+		 * Verifies a validation-only grant emitted for a third-party form.
+		 *
+		 * Native grant markers always take precedence, so an external token cannot
+		 * bypass a missing, expired, or tampered acf_form() grant.
+		 *
+		 * @since SCF 6.9.5
+		 *
+		 * @return bool Whether the request has valid external-form authority.
+		 */
+		private function has_valid_external_form_meta(): bool {
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- The AJAX handler verifies its nonce before firing the validation action; this method verifies the signed form metadata.
+			if ( isset( $_POST['_acf_form_meta'] ) || isset( $_POST['_acf_render_id'] ) ) {
+				return false;
+			}
+
+			if ( empty( $_POST['_acf_external_form_meta'] ) || ! is_scalar( $_POST['_acf_external_form_meta'] ) ) {
+				return false;
+			}
+
+			if ( ! isset( $_POST['_acf_screen'], $_POST['_acf_post_id'] )
+				|| ! is_scalar( $_POST['_acf_screen'] )
+				|| ! is_scalar( $_POST['_acf_post_id'] )
+			) {
+				return false;
+			}
+
+			$parts = explode( '.', (string) wp_unslash( $_POST['_acf_external_form_meta'] ), 2 ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The HMAC authenticates the exact token bytes below.
+			if ( 2 !== count( $parts ) ) {
+				return false;
+			}
+
+			$payload = base64_decode( $parts[0], true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decodes signed JSON metadata.
+			if ( false === $payload ) {
+				return false;
+			}
+
+			$expected_mac = hash_hmac( 'sha256', 'acf_external_form|' . $payload, wp_salt( 'nonce' ) );
+			if ( ! hash_equals( $expected_mac, $parts[1] ) ) {
+				return false;
+			}
+
+			$meta = json_decode( $payload, true );
+			if ( ! is_array( $meta )
+				|| array_keys( $meta ) !== array( 'blog_id', 'issued_at', 'screen', 'target_post_id' )
+				|| ! is_int( $meta['blog_id'] )
+				|| ! is_int( $meta['issued_at'] )
+				|| ! is_string( $meta['screen'] )
+				|| ! is_string( $meta['target_post_id'] )
+			) {
+				return false;
+			}
+
+			$screen         = (string) wp_unslash( $_POST['_acf_screen'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Compared only with authenticated metadata.
+			$target_post_id = (string) wp_unslash( $_POST['_acf_post_id'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Compared only with authenticated metadata.
+			$ttl            = (int) apply_filters( 'acf/form/meta_ttl', DAY_IN_SECONDS );
+			$now            = time();
+
+			return $ttl > 0
+				&& get_current_blog_id() === $meta['blog_id']
+				&& hash_equals( $screen, $meta['screen'] )
+				&& hash_equals( $target_post_id, $meta['target_post_id'] )
+				&& $meta['issued_at'] <= $now + MINUTE_IN_SECONDS
+				&& ( $now - $meta['issued_at'] ) < $ttl;
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
 
 		/**
