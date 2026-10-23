@@ -477,9 +477,14 @@ describe( 'BlockEdit Component', () => {
 				mockBlockFormProps.onMount( $form );
 			} );
 
+			mockAjax.mockClear();
 			await sendFormChange( { field_1: 'Hello' } );
 
 			expect( setAttributes ).not.toHaveBeenCalled();
+
+			// The form values still go to the server, so it can validate them.
+			const { block } = mockAjax.mock.calls.at( -1 )[ 0 ].data;
+			expect( JSON.parse( block ).data ).toEqual( { field_1: 'Hello' } );
 		} );
 
 		test( 'uses the latest untouched form state as the loaded values', async () => {

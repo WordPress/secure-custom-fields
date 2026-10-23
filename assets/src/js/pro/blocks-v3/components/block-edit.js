@@ -685,8 +685,13 @@ export const BlockEdit = ( props ) => {
 				( ! hasWrittenFormDataRef.current &&
 					theSerializedAcfData === initialFormDataRef.current )
 			) {
+				// Send the form values even when they are not stored, so the server
+				// validates them. A new block has no stored data to validate.
 				return void fetchBlockData( {
-					theAttributes: attributesWithoutError,
+					theAttributes: {
+						...attributesWithoutError,
+						data: parsedData,
+					},
 					theClientId: clientId,
 					theContext: context,
 					isSelected: isSelected,
