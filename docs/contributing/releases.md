@@ -21,14 +21,21 @@ Using SVN for WordPress.org plugin releases is covered in more detail in <https:
 
 ## Changelog
 
-The changelog is maintained by hand. It is a section in `readme.txt`, not a separate `CHANGELOG.md` file, and there is no automated tool that generates it. A maintainer writes the entry for each new version before running the `prepare-release` script (see below). Entries group changes under categories such as `Feature:` and `Fix:`:
+The changelog is maintained by hand. It is a section in `readme.txt`, not a separate `CHANGELOG.md` file, and there is no automated tool that generates it. A maintainer writes the entry for each new version before running the `prepare-release` script (see below). Entries group changes under category headings such as `*Security*`, `*Features*`, `*Fixes*`, and `*Enhancements*`. Use the categories that fit the release:
 
 ```md
 == Changelog ==
 
 = X.Y.Z =
-* Feature: Description of new feature
-* Fix: Description of bug fix
+*Release Date 1st January 2026*
+
+*Security*
+
+- Description of security fix
+
+*Fixes*
+
+- Description of bug fix
 ```
 
 The milestone automation described below only assigns merged pull requests to the next release milestone, which makes it easier to gather changes when writing release notes. It does not produce the changelog text. Generating the changelog automatically is a separate open project.
