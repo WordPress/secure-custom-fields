@@ -34,11 +34,25 @@ function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $t
 		return;
 	}
 
+	$decoded_origin = acf_decode_post_id( $post_id );
+	if ( 'post' === $decoded_origin['type'] && (int) $decoded_origin['id'] > 0 && wp_is_post_revision( (int) $decoded_origin['id'] ) ) {
+		return;
+	}
+
 	$update_plan   = _scf_prepare_bidirectional_update( $target_item_ids, $post_id, $field, $target_prefix );
 	$valid_targets = $update_plan['target_fields'];
 	$item_id       = $update_plan['item_id'];
 	$additions     = $update_plan['additions'];
 	$subtractions  = $update_plan['subtractions'];
+
+	if ( acf_get_data( 'scf_saving_submitted_values' ) ) {
+		$additions = array_filter(
+			$additions,
+			static function ( $addition ) use ( $field ) {
+				return _scf_is_allowed_bidirectional_target( $addition, $field );
+			}
+		);
+	}
 
 	if ( ! empty( $valid_targets ) ) {
 		acf_set_data( 'acf_doing_bidirectional_update', true );
@@ -58,6 +72,81 @@ function acf_update_bidirectional_values( $target_item_ids, $post_id, $field, $t
 
 		acf_set_data( 'acf_doing_bidirectional_update', false );
 	}
+}
+
+/**
+ * Check whether a submitted bidirectional target is a valid choice for the origin field.
+ *
+ * @since SCF 6.9.7
+ * @internal
+ *
+ * @param integer|string $target ACF encoded target ID (e.g. 123, "user_1" or "term_5").
+ * @param array          $field  The origin field.
+ * @return boolean
+ */
+function _scf_is_allowed_bidirectional_target( $target, $field ) {
+	$decoded = acf_decode_post_id( $target );
+	$id      = (int) $decoded['id'];
+	$allowed = true;
+
+	switch ( $field['type'] ) {
+		case 'user':
+			$user  = 'user' === $decoded['type'] && $id ? get_userdata( $id ) : false;
+			$roles = acf_get_array( $field['role'] ?? array() );
+			if ( ! $user ) {
+				$allowed = false;
+			} elseif ( empty( $roles ) ) {
+				// The field only lists users of the current site.
+				$allowed = ! is_multisite() || is_user_member_of_blog( $user->ID );
+			} else {
+				$allowed = (bool) array_intersect( $roles, (array) $user->roles );
+			}
+			break;
+
+		case 'relationship':
+		case 'post_object':
+			$post = 'post' === $decoded['type'] && $id ? get_post( $id ) : null;
+			if ( ! $post ) {
+				$allowed = false;
+				break;
+			}
+			$post_types    = empty( $field['post_type'] ) ? acf_get_post_types() : acf_get_array( $field['post_type'] );
+			$post_statuses = acf_get_array( $field['post_status'] ?? array() );
+			$allowed       = in_array( $post->post_type, $post_types, true )
+				&& ( empty( $post_statuses ) || in_array( 'any', $post_statuses, true ) || in_array( $post->post_status, $post_statuses, true ) )
+				&& ( is_post_publicly_viewable( $post ) || current_user_can( 'read_post', $post->ID ) );
+			$terms         = $allowed && ! empty( $field['taxonomy'] ) ? acf_decode_taxonomy_terms( acf_get_array( $field['taxonomy'] ) ) : array();
+			if ( $terms ) {
+				// Match each field's choice query: Relationship ORs the taxonomies, Post Object ANDs them.
+				$matches = array();
+				foreach ( $terms as $taxonomy => $slugs ) {
+					$matches[] = has_term( $slugs, $taxonomy, $post );
+				}
+				$allowed = 'relationship' === $field['type'] ? in_array( true, $matches, true ) : ! in_array( false, $matches, true );
+			}
+			break;
+
+		case 'taxonomy':
+			$term    = 'term' === $decoded['type'] && $id ? get_term( $id ) : null;
+			$allowed = $term instanceof WP_Term && $term->taxonomy === $field['taxonomy'];
+			break;
+	}
+
+	// Users may always link to objects they can edit themselves, such as choices widened by a query filter.
+	if ( ! $allowed && in_array( $decoded['type'], array( 'post', 'user', 'term' ), true ) && $id ) {
+		$allowed = acf_current_user_can_edit_in_context( $decoded );
+	}
+
+	/**
+	 * Filters whether a submitted value may receive a bidirectional back-reference.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param boolean        $allowed Whether the target is a valid choice for the field.
+	 * @param integer|string $target  ACF encoded target ID.
+	 * @param array          $field   The origin field.
+	 */
+	return (bool) apply_filters( 'scf/bidirectional/allow_target', (bool) $allowed, $target, $field );
 }
 
 /**

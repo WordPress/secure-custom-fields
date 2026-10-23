@@ -1128,6 +1128,18 @@ ul.acf-checkbox-list {
 			vertical-align: middle;
 		}
 
+		// Center the checked dot inside the radio button.
+		input[type="radio"] {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+
+			&:checked:before {
+				float: none;
+				margin: auto;
+			}
+		}
+
 		input[type="text"] {
 			width: auto;
 			vertical-align: middle;

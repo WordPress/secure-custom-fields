@@ -107,6 +107,13 @@ class Posts {
 			return;
 		}
 
+		if ( post_password_required( $post ) ) {
+			if ( $debug ) {
+				echo "<!-- SCF AI JSON-LD: Post is password protected -->\n";
+			}
+			return;
+		}
+
 		/**
 		 * Filters the field objects before retrieval, allowing posts to provide custom data.
 		 *

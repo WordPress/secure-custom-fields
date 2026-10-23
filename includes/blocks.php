@@ -22,6 +22,10 @@ add_filter( 'block_type_metadata', 'acf_add_block_namespace' );
 add_filter( 'block_type_metadata_settings', 'acf_handle_json_block_registration', 99, 2 );
 add_action( 'acf_block_render_template', 'acf_block_render_template', 10, 6 );
 
+// Warn when legacy (V2 or earlier) blocks are registered.
+add_action( 'admin_notices', 'acf_maybe_show_legacy_block_version_notice' );
+add_action( 'admin_init', 'acf_dismiss_legacy_block_version_notice' );
+
 /**
  * Prefix block names for SCF blocks registered through block.json
  *
@@ -62,9 +66,11 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 	 *
 	 * @param integer $default_acf_block_version The default ACF block version.
 	 * @param array   $settings                  An array of block settings.
+	 * @param string  $source                    The registration source (`php` or `json`).
 	 * @return integer
 	 */
-	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 2, $settings );
+	$default_acf_block_version = version_compare( get_bloginfo( 'version' ), '7.1', '>=' ) ? 3 : 2;
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', $default_acf_block_version, $settings, 'json' );
 
 	// Setup SCF defaults.
 	$settings = wp_parse_args(
@@ -131,6 +137,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 		'expandedEditorButtons'    => 'expanded_editor_buttons',
 		'autoInlineEditing'        => 'auto_inline_editing',
 		'expandedEditorButtonText' => 'expanded_editor_button_text',
+		'renderPreview'            => 'render_preview',
 	);
 	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
@@ -140,7 +147,7 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 			unset( $settings[ $key ] );
 			$settings[ $mapped_key ] = $metadata['acf'][ $key ];
 			if ( $textdomain && isset( $i18n_schema->$key ) ) {
-				$settings[ $mapped_key ] = translate_settings_using_i18n_schema( $i18n_schema->$key, $settings[ $key ], $textdomain );
+				$settings[ $mapped_key ] = translate_settings_using_i18n_schema( $i18n_schema->$key, $settings[ $mapped_key ], $textdomain );
 			}
 		}
 	}
@@ -354,9 +361,11 @@ function acf_register_block_type( $block ) {
 	 *
 	 * @param integer $default_acf_block_version The default ACF block version.
 	 * @param array   $block                     An array of block settings.
+	 * @param string  $source                    The registration source (`php` or `json`).
 	 * @return integer
 	 */
-	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', 1, $block );
+	$default_acf_block_version = version_compare( get_bloginfo( 'version' ), '7.1', '>=' ) ? 3 : 1;
+	$default_acf_block_version = apply_filters( 'acf/blocks/default_block_version', $default_acf_block_version, $block, 'php' );
 
 	if ( ! isset( $block['acf_block_version'] ) ) {
 		$block['acf_block_version'] = $default_acf_block_version;
@@ -460,6 +469,171 @@ function acf_get_block_type( $name ) {
  */
 function acf_remove_block_type( $name ) {
 	acf_get_store( 'block-types' )->remove( $name );
+}
+
+/**
+ * Returns registered block types that are still explicitly on a legacy
+ * version (block version 2 or earlier), keyed by block name.
+ *
+ * On WP 7.1+, blocks without an explicit version default to V3, so any
+ * registered block still reporting a version of 2 or lower has been
+ * deliberately pinned to a legacy version (via block.json `blockVersion`,
+ * `acf_register_block_type()`, or the `acf/blocks/default_block_version`
+ * filter).
+ *
+ * @since SCF 6.9.6
+ *
+ * @return array An array of block titles keyed by block name.
+ */
+function acf_get_legacy_version_block_types() {
+	$legacy = array();
+
+	foreach ( acf_get_block_types() as $block_type ) {
+		$version = isset( $block_type['acf_block_version'] ) ? (int) $block_type['acf_block_version'] : 0;
+
+		if ( $version > 0 && $version <= 2 ) {
+			$name            = isset( $block_type['name'] ) ? $block_type['name'] : '';
+			$legacy[ $name ] = ! empty( $block_type['title'] ) ? $block_type['title'] : $name;
+		}
+	}
+
+	return $legacy;
+}
+
+/**
+ * Returns the site-wide dismissal option name for a legacy block notice context.
+ *
+ * @since SCF 6.9.6
+ *
+ * @param string $context The notice context: 'pre_upgrade' or 'post_upgrade'.
+ * @return string The option name used to store the dismissal.
+ */
+function acf_get_legacy_block_version_notice_option( $context ) {
+	return 'acf_legacy_block_version_notice_dismissed_' . $context;
+}
+
+/**
+ * Displays an admin notice on SCF admin screens when the site still has
+ * blocks explicitly registered as a legacy version (V2 or earlier).
+ *
+ * Two variants are shown depending on the WordPress version:
+ *  - On WP 7.1+ ("post_upgrade"): the editor is now always iframed, so the
+ *    legacy V2 in-canvas edit form is already gone and fields appear in the
+ *    sidebar. This has already happened.
+ *  - On WP < 7.1 ("pre_upgrade"): a heads-up that updating to 7.1 will move
+ *    those fields to the sidebar, so the blocks should be migrated first.
+ *
+ * The notice lists the affected blocks, is only shown to administrators, and
+ * each variant can be dismissed permanently for the whole site independently.
+ *
+ * @since SCF 6.9.6
+ *
+ * @return void
+ */
+function acf_maybe_show_legacy_block_version_notice() {
+	// Only show on SCF admin screens.
+	if ( ! acf_is_acf_admin_screen() ) {
+		return;
+	}
+
+	// Only show to administrator level users.
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	/**
+	 * Filters whether the legacy block version admin notice should be shown.
+	 *
+	 * @since SCF 6.9.6
+	 *
+	 * @param boolean $show Whether to show the notice. Default true.
+	 * @return boolean
+	 */
+	if ( ! apply_filters( 'acf/blocks/show_legacy_block_version_notice', true ) ) {
+		return;
+	}
+
+	$legacy_blocks = acf_get_legacy_version_block_types();
+
+	if ( empty( $legacy_blocks ) ) {
+		return;
+	}
+
+	// Determine which variant to show based on the WordPress version.
+	$is_wp_71_or_greater = version_compare( get_bloginfo( 'version' ), '7.1', '>=' );
+	$context             = $is_wp_71_or_greater ? 'post_upgrade' : 'pre_upgrade';
+
+	// Respect a permanent, site-wide dismissal for this variant.
+	if ( get_option( acf_get_legacy_block_version_notice_option( $context ) ) ) {
+		return;
+	}
+
+	$plugin_name = '<strong>' . __( 'SCF', 'secure-custom-fields' ) . ' &mdash;</strong>';
+
+	if ( $is_wp_71_or_greater ) {
+		$message = sprintf(
+			/* translators: %s - Plugin name. */
+			__( '%s WordPress 7.1 has changed how the block editor works. Blocks that showed fields inside the block while editing will now only show them in the sidebar. Migrate the following blocks to block version 3.', 'secure-custom-fields' ),
+			$plugin_name
+		);
+	} else {
+		$message = sprintf(
+			/* translators: %s - Plugin name. */
+			__( '%s When you update to WordPress 7.1, blocks that show fields inside the block while editing will only show them in the sidebar. Migrate the following blocks to block version 3 before updating.', 'secure-custom-fields' ),
+			$plugin_name
+		);
+	}
+
+	$dismiss_url = add_query_arg(
+		array(
+			'acf-dismiss-legacy-block-notice' => wp_create_nonce( 'acf/dismiss_legacy_block_version_notice' ),
+			'acf-legacy-notice-context'       => $context,
+		)
+	);
+
+	echo '<div class="acf-admin-notice notice notice-warning">';
+	echo '<p style="margin-bottom: 0.5em;">' . acf_esc_html( $message ) . '</p>';
+	echo '<ul style="list-style: disc; margin: 0.5em 0 0.5em 20px;">';
+	foreach ( $legacy_blocks as $acf_block_name => $acf_block_title ) {
+		echo '<li>' . esc_html( $acf_block_title ) . ' <code>' . esc_html( $acf_block_name ) . '</code></li>';
+	}
+	echo '</ul>';
+	echo '<p style="margin-top: 0.5em;"><a class="acf-dismiss-permanently-button" href="' . esc_url( $dismiss_url ) . '">' . esc_html__( 'Dismiss permanently', 'secure-custom-fields' ) . '</a></p>';
+	echo '</div>';
+}
+
+/**
+ * Permanently dismisses a legacy block version notice for the entire site.
+ *
+ * @since SCF 6.9.6
+ *
+ * @return void
+ */
+function acf_dismiss_legacy_block_version_notice() {
+	if ( empty( $_GET['acf-dismiss-legacy-block-notice'] ) ) {
+		return;
+	}
+
+	$nonce = sanitize_text_field( wp_unslash( $_GET['acf-dismiss-legacy-block-notice'] ) );
+
+	if (
+		! wp_verify_nonce( $nonce, 'acf/dismiss_legacy_block_version_notice' ) ||
+		! current_user_can( 'manage_options' )
+	) {
+		return;
+	}
+
+	// Only allow dismissing a known notice context.
+	$context = isset( $_GET['acf-legacy-notice-context'] ) ? sanitize_key( wp_unslash( $_GET['acf-legacy-notice-context'] ) ) : '';
+
+	if ( ! in_array( $context, array( 'pre_upgrade', 'post_upgrade' ), true ) ) {
+		return;
+	}
+
+	update_option( acf_get_legacy_block_version_notice_option( $context ), true );
+
+	wp_safe_redirect( remove_query_arg( array( 'acf-dismiss-legacy-block-notice', 'acf-legacy-notice-context' ) ) );
+	exit;
 }
 
 /**
@@ -954,14 +1128,23 @@ function acf_rendered_block_v3( $attributes, $content = '', $is_preview = false,
 		acf_get_store( 'values' )->reset();
 	}
 
-	// Capture block render output.
-	acf_set_data( 'acf_doing_block_preview', true );
+	// When preview rendering is disabled for this block, skip template rendering in the editor.
+	// The block's template still renders normally on the front-end (when $is_preview is false).
+	if ( $is_preview && isset( $block['render_preview'] ) && false === $block['render_preview'] ) {
+		$html = '';
+		// Mirror the else branch: always leave the flag as false when returning,
+		// so a stale true value from an outer/previous render doesn't affect subsequent blocks.
+		acf_set_data( 'acf_doing_block_preview', false );
+	} else {
+		// Capture block render output.
+		acf_set_data( 'acf_doing_block_preview', true );
 
-	ob_start();
-	acf_render_block( $attributes, $content, $is_preview, $post_id, $wp_block, $context );
-	acf_set_data( 'acf_doing_block_preview', false );
-	$html = ob_get_clean();
-	$html = is_string( $html ) ? $html : '';
+		ob_start();
+		acf_render_block( $attributes, $content, $is_preview, $post_id, $wp_block, $context );
+		acf_set_data( 'acf_doing_block_preview', false );
+		$html = ob_get_clean();
+		$html = is_string( $html ) ? $html : '';
+	}
 
 	// Replace <InnerBlocks /> placeholder on front-end, or if we're rendering an ACF block inside another ACF block template.
 	if ( ! $is_preview || doing_action( 'acf_block_render_template' ) ) {

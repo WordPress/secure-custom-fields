@@ -57,7 +57,12 @@ class Bindings {
 		if ( ! isset( $source_attrs['key'] ) || ! is_string( $source_attrs['key'] ) ) {
 			$value = '';
 		} else {
-			$field = get_field_object( $source_attrs['key'], false, true, true, true );
+			$post_id = acf_get_valid_post_id( false );
+			if ( scf_post_password_required( $post_id ) ) {
+				return '';
+			}
+
+			$field = get_field_object( $source_attrs['key'], $post_id, true, true, true );
 
 			if ( ! $field ) {
 				return '';
@@ -79,7 +84,13 @@ class Bindings {
 				}
 			}
 
-			$field_value = $field['value'];
+			$raw_value   = acf_get_value( $post_id, $field );
+			$field_value = scf_rest_sanitize_user_data( $field['value'], $raw_value, $field );
+
+			add_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX, 2 );
+			$field_value = acf_rest_sanitize_reference_data( $field_value, $raw_value, $field );
+			remove_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX );
+			$field_value = $this->strip_post_passwords( $field_value );
 
 			switch ( $attribute_name ) {
 				case 'id':
@@ -121,5 +132,62 @@ class Bindings {
 		}
 
 		return apply_filters( 'acf/blocks/binding_value', $value, $source_attrs, $block_instance, $attribute_name );
+	}
+
+	/**
+	 * Removes the password from expanded post objects before they are output.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param mixed $value The field value, possibly containing WP_Post objects.
+	 * @return mixed
+	 */
+	private function strip_post_passwords( $value ) {
+		if ( $value instanceof \WP_Post ) {
+			$value                = clone $value;
+			$value->post_password = '';
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $item ) {
+				$value[ $key ] = $this->strip_post_passwords( $item );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Decides whether a referenced post is expanded in a block binding value.
+	 *
+	 * Bindings render on the front end, so a referenced post is exposed when the
+	 * viewer can read it there rather than when the REST API would return it.
+	 * Attachments are always expanded because their files are publicly served.
+	 * This runs last so that callbacks written for REST output do not decide
+	 * what a rendered block shows.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param boolean $exposable Whether the REST rules would expose the target.
+	 * @param integer $target_id The referenced post or attachment ID.
+	 * @return boolean
+	 */
+	public function expose_reference_target( $exposable, $target_id ) {
+		$post = get_post( $target_id );
+
+		if ( ! $post instanceof \WP_Post ) {
+			return false;
+		}
+
+		if ( 'attachment' === $post->post_type ) {
+			return true;
+		}
+
+		if ( post_password_required( $post ) && ! current_user_can( 'edit_post', $post->ID ) ) {
+			return false;
+		}
+
+		return is_post_publicly_viewable( $post ) || current_user_can( 'read_post', $post->ID );
 	}
 }

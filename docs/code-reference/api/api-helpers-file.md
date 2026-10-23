@@ -591,6 +591,15 @@ acf_get_valid_post_id
 * @param   $post_id (mixed)
 * @return $post_id (mixed)
 
+## `scf_post_password_required()`
+
+Checks whether field values stored on an ACF post ID belong to a password-protected
+post whose password has not been entered yet.
+
+* @since SCF 6.9.7
+* @param integer|string $post_id ACF encoded post ID.
+* @return boolean
+
 ## `acf_get_post_id_info()`
 
 acf_get_post_id_info
@@ -752,6 +761,85 @@ acf_get_valid_terms
 * @param   $terms (int|array)
 * @param $taxonomy (string)
 * @return $terms
+
+## `acf_is_image_field()`
+
+Returns true when the field only accepts image uploads.
+
+* @since SCF 6.9.6
+* @param array $field The field array.
+* @return boolean
+
+## `acf_get_image_mime_types()`
+
+Returns allowed MIME types restricted to images.
+
+* @since SCF 6.9.6
+* @param array|false $field Optional field array for field-specific filtering.
+* @return array
+
+## `acf_apply_validate_is_image_attachment_filters()`
+
+Applies filters to image attachment validation errors.
+
+* @since SCF 6.9.6
+* @param array  $errors     Validation errors.
+* @param array  $file       Normalized file data.
+* @param array  $attachment Raw attachment data for the current context.
+* @param array  $field      The field array.
+* @param string $context    The validation context.
+* @return array
+
+## `acf_validate_is_image_attachment_upload()`
+
+Validates image attachment data during upload.
+
+* @since SCF 6.9.6
+* @param array  $errors        Validation errors.
+* @param array  $file          Normalized file data.
+* @param array  $attachment    Raw attachment data for the current context.
+* @param array  $field         The field array.
+* @param string $context       The validation context.
+* @param string $error_message The error message to use when validation fails.
+* @return array
+
+## `acf_validate_is_image_attachment_prepare()`
+
+Validates image attachment data when preparing for the media library.
+
+* @since SCF 6.9.6
+* @param array  $errors        Validation errors.
+* @param array  $file          Normalized file data.
+* @param array  $attachment    Raw attachment data for the current context.
+* @param array  $field         The field array.
+* @param string $context       The validation context.
+* @param string $error_message The error message to use when validation fails.
+* @return array
+
+## `acf_validate_is_image_attachment_basic_upload()`
+
+Validates image attachment data during basic uploader pre-save checks.
+
+* @since SCF 6.9.6
+* @param array  $errors        Validation errors.
+* @param array  $file          Normalized file data.
+* @param array  $attachment    Raw attachment data for the current context.
+* @param array  $field         The field array.
+* @param string $context       The validation context.
+* @param string $error_message The error message to use when validation fails.
+* @return array
+
+## `acf_validate_is_image_attachment()`
+
+Validates that an attachment is an image for image and gallery fields.
+
+* @since SCF 6.9.6
+* @param array  $errors     Existing validation errors.
+* @param array  $file       Normalized file data.
+* @param array  $attachment Raw attachment data for the current context.
+* @param array  $field      The field array.
+* @param string $context    The validation context.
+* @return array
 
 ## `acf_validate_attachment()`
 
@@ -963,8 +1051,12 @@ acf_encrypt
 * This function will encrypt a string using PHP
 <https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/>
 * @since   ACF 5.5.8
-* @param string $data The data to encrypt.
-* @return string|false Encrypted string, or false when OpenSSL is unavailable.
+* @param string $data    The data to encrypt.
+* @param string $context Optional domain-separation label. When non-empty, the key derivation
+and HMAC input are bound to this label so a token minted for one
+context cannot be verified as belonging to another. When empty, the
+legacy key derivation is used for back-compat with existing callers.
+* @return string|false Encrypted string, or false when OpenSSL is unavailable or encryption fails.
 
 ## `acf_decrypt()`
 
@@ -972,7 +1064,10 @@ Decrypts an encrypted string using PHP.
 <https://bhoover.com/using-php-openssl_encrypt-openssl_decrypt-encrypt-decrypt-data/>
 
 * @since   ACF 5.5.8
-* @param string $data The string to decrypt.
+* @param string $data    The string to decrypt.
+* @param string $context Optional domain-separation label. Must match the context passed to
+acf_encrypt() at mint time. When empty, the legacy key derivation is
+used for back-compat with existing callers.
 * @return string|false Decrypted string, or false if the payload is malformed, unauthenticated, or decryption fails.
 
 ## `acf_parse_markdown()`
