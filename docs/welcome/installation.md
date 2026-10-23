@@ -114,17 +114,69 @@ require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
 
 #### Load Secure Custom Fields
 
-Now you need to manually load the Secure Custom Fields plugin and define its paths. Adjust the paths according to the structure of your plugin or theme:
+When SCF is installed via Composer, you usually bundle it inside your own plugin (for example in vendor/secure-custom-fields/).
+
+However, some sites may also have SCF installed as a normal WordPress plugin.
+To avoid loading SCF twice, use a guarded bootstrap that:
+
+Does nothing if SCF is already loaded.
+
+Does nothing if the standalone SCF plugin is active.
+
+Otherwise loads your bundled copy from vendor/.
 
 ```php
-if (! class_exists('ACF')) {
-    // Define the path and URL to the Secure Custom Fields plugin.
-    define('MY_SCF_PATH', plugin_dir_path(dirname(__FILE__)) . 'vendor/secure-custom-fields/');
-    define('MY_SCF_URL', plugin_dir_url(dirname(__FILE__)) . 'vendor/secure-custom-fields/');
+/**
+ * Load bundled Secure Custom Fields (SCF) only if no external instance is active.
+ *
+ * Runs after all plugins are loaded to safely detect an existing SCF/ACF
+ * installation and prevent loading the embedded copy twice.
+ */
+function myplugin_scf_loader_bootstrap() {
 
-    // Include the plugin main file.
-    require_once MY_SCF_PATH . 'secure-custom-fields.php';
+    // If SCF/ACF is already loaded, stop.
+    if ( class_exists( 'ACF' ) ) {
+        return;
+    }
+
+    // Make sure plugin helper functions are available.
+    if ( ! function_exists( 'is_plugin_active' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
+    // Main file of the standalone SCF plugin.
+    $scf_plugin_file = 'secure-custom-fields/secure-custom-fields.php';
+
+    // If SCF is active as a normal plugin, let WordPress load it.
+    if ( function_exists( 'is_plugin_active' ) && is_plugin_active( $scf_plugin_file ) ) {
+        return;
+    }
+
+    // Define paths to the bundled SCF copy.
+    if ( ! defined( 'MY_SCF_PATH' ) ) {
+        define(
+            'MY_SCF_PATH',
+            plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/secure-custom-fields/'
+        );
+    }
+
+    if ( ! defined( 'MY_SCF_URL' ) ) {
+        define(
+            'MY_SCF_URL',
+            plugin_dir_url( dirname( __FILE__ ) ) . 'vendor/secure-custom-fields/'
+        );
+    }
+
+    // Load bundled SCF.
+    $scf_bootstrap = MY_SCF_PATH . 'secure-custom-fields.php';
+
+    if ( file_exists( $scf_bootstrap ) ) {
+        require_once $scf_bootstrap;
+    }
 }
+
+// Run after all plugins are loaded.
+add_action( 'plugins_loaded', 'myplugin_scf_loader_bootstrap' );
 ```
 
 ⚠️ **Note:** Replace MY_SCF_PATH and MY_SCF_URL with constants that match your plugin/theme structure if necessary.
