@@ -279,6 +279,14 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					'deps'       => array(),
 					'in_footer'  => true,
 				),
+				'scf-field-bits'          => array(
+					'handle'     => 'scf-field-bits',
+					'src'        => acf_get_url( sprintf( $js_path_patterns['base'], 'scf-field-bits' ) ),
+					'asset_file' => acf_get_path( sprintf( $asset_path_patterns['base'], 'scf-field-bits' ) ),
+					'deps'       => array( 'wp-blocks', 'wp-element', 'wp-data', 'wp-i18n', 'wp-components' ),
+					'version'    => $version,
+					'in_footer'  => true,
+				),
 			);
 
 			// Define style registrations.

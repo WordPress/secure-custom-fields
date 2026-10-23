@@ -30,6 +30,7 @@
 	"autoload": {
 		"psr-4": {
 			"SCF\\AI\\": "src/AI/",
+			"SCF\\Bits\\": "includes/Bits/",
 			"SCF\\Blocks\\": "includes/Blocks/",
 			"SCF\\CLI\\": "src/CLI/",
 			"SCF\\Datastore\\": "includes/Datastore/",

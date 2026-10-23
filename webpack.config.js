@@ -23,6 +23,7 @@ const commonConfig = {
 		'js/pro/acf-datastore': './assets/src/js/pro/acf-datastore.js',
 		'js/pro/acf-field-bindings':
 			'./assets/src/js/pro/acf-field-bindings.js',
+		'js/scf-field-bits': './assets/src/js/bits/index.js',
 		'js/pro/acf-pro-field-group':
 			'./assets/src/js/pro/acf-pro-field-group.js',
 		'js/pro/acf-pro-input': './assets/src/js/pro/acf-pro-input.js',
