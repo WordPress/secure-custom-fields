@@ -151,6 +151,13 @@ class Blocks {
 			echo '<!-- SCF AI Block JSON-LD: Checking block: ' . esc_html( $block['name'] ) . " -->\n";
 		}
 
+		if ( scf_post_password_required( $post_id ) ) {
+			if ( $debug ) {
+				echo "<!-- SCF AI Block JSON-LD: Skipped (password protected post) -->\n";
+			}
+			return;
+		}
+
 		// Get the block type.
 		$block_type = acf_get_block_type( $block['name'] );
 		if ( ! $block_type ) {

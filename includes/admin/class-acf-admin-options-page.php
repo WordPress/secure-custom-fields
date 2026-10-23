@@ -205,7 +205,26 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 				}
 			}
 
-			return array_values( array_unique( array_filter( $keys ) ) );
+			$keys = array_values( array_unique( array_filter( $keys ) ) );
+
+			/**
+			 * Filters the list of $_POST['acf'] keys an options page save is allowed to save.
+			 *
+			 * Use this to permit additional field keys when a developer dynamically injects fields
+			 * into an options page via JavaScript that aren't part of any field group assigned to
+			 * the page.
+			 *
+			 * @since SCF 6.9.6
+			 *
+			 * @param array $keys The allowed top-level $_POST['acf'] keys.
+			 * @param array $page The current options page configuration.
+			 */
+			$keys = apply_filters( 'acf/options_page/allowed_field_keys', $keys, $this->page );
+
+			// Re-normalize after the filter so a misbehaving callback can't break array_flip()
+			// downstream in admin_load() with non-scalar or empty values.
+			$keys = array_filter( (array) $keys, 'is_scalar' );
+			return array_values( array_unique( array_filter( array_map( 'strval', $keys ) ) ) );
 		}
 
 		/**

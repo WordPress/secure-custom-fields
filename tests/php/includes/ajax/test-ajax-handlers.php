@@ -432,6 +432,54 @@ class Test_Ajax_Handlers extends BaseTestCase {
 	}
 
 	/**
+	 * Test verify_request accepts a nonce created for a User field, and rejects
+	 * a valid nonce created for a field of another type.
+	 */
+	public function test_ajax_query_users_requires_user_field_nonce() {
+		wp_set_current_user( $this->admin_user_id );
+
+		acf_add_local_field(
+			array(
+				'key'    => 'field_query_users_user',
+				'name'   => 'query_users_user',
+				'type'   => 'user',
+				'role'   => '',
+				'parent' => 'group_query_users',
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'    => 'field_query_users_post',
+				'name'   => 'query_users_post',
+				'type'   => 'post_object',
+				'parent' => 'group_query_users',
+			)
+		);
+
+		$ajax = new ACF_Ajax_Query_Users();
+
+		$user_result = $ajax->verify_request(
+			array(
+				'nonce'     => wp_create_nonce( 'acf_field_user_field_query_users_user' ),
+				'field_key' => 'field_query_users_user',
+			)
+		);
+		$post_result = $ajax->verify_request(
+			array(
+				'nonce'     => wp_create_nonce( 'acf_field_post_object_field_query_users_post' ),
+				'field_key' => 'field_query_users_post',
+			)
+		);
+
+		acf_remove_local_field( 'field_query_users_user' );
+		acf_remove_local_field( 'field_query_users_post' );
+
+		$this->assertTrue( $user_result );
+		$this->assertInstanceOf( 'WP_Error', $post_result );
+		$this->assertSame( 'acf_invalid_nonce', $post_result->get_error_code() );
+	}
+
+	/**
 	 * Test that conditional_logic requires admin capability.
 	 */
 	public function test_ajax_query_users_conditional_logic_requires_admin() {

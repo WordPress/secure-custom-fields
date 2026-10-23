@@ -94,6 +94,25 @@ const useBlockEditorInspectorSidebarOpen = () => {
 };
 
 /**
+ * Whether the editor should skip rendering the block's template as a preview.
+ *
+ * Blocks opt out with `"renderPreview": false`. Blocks that only offered edit
+ * mode (`"mode": "edit"` with `"supports": { "mode": false }`) also skip the
+ * preview unless they set `"renderPreview": true`.
+ *
+ * @param {Object} blockType The block type configuration.
+ * @return {boolean} True when the preview should be skipped.
+ */
+function shouldSkipBlockPreview( blockType ) {
+	return (
+		blockType.render_preview !== true &&
+		( blockType.render_preview === false ||
+			( blockType.mode === 'edit' &&
+				blockType.supports?.mode === false ) )
+	);
+}
+
+/**
  * Converts serialized Google Map field values from JSON strings back into
  * objects so they aren't double-encoded when the block's data is stored as
  * a JSON block attribute. Google Map fields keep their value as a JSON
@@ -188,6 +207,9 @@ export const BlockEdit = ( props ) => {
 		() => preloadedData?.form ?? ''
 	);
 	const [ blockPreviewHtml, setBlockPreviewHtml ] = useState( () => {
+		if ( shouldSkipBlockPreview( blockType ) ) {
+			return 'acf-block-preview-no-html';
+		}
 		if ( preloadedData?.html ) {
 			return acf.applyFilters(
 				'blocks/preview/render',
@@ -237,6 +259,7 @@ export const BlockEdit = ( props ) => {
 	] = useState( '' );
 	const blockEditorInspectorSidebarOpen =
 		useBlockEditorInspectorSidebarOpen();
+	const [ mountPortal, setMountPortal ] = useState( false );
 
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
@@ -300,6 +323,9 @@ export const BlockEdit = ( props ) => {
 
 		// Prepare query options
 		const queryOptions = { preview: true, form: true, validate: true };
+		if ( shouldSkipBlockPreview( blockType ) ) {
+			delete queryOptions.preview;
+		}
 		if ( ! blockFormHtml ) {
 			queryOptions.validate = false;
 		}
@@ -489,7 +515,7 @@ export const BlockEdit = ( props ) => {
 			setBlockFormHtml( data.form );
 		}
 
-		if ( data.html ) {
+		if ( data.html && ! shouldSkipBlockPreview( blockType ) ) {
 			setBlockPreviewHtml(
 				acf.applyFilters( 'blocks/preview/render', data.html, true )
 			);
@@ -723,6 +749,8 @@ export const BlockEdit = ( props ) => {
 				freezeInlineToolbarDuringReRender
 			}
 			isFetchingBlock={ isFetchingBlock }
+			mountPortal={ mountPortal }
+			setMountPortal={ setMountPortal }
 		/>
 	);
 };
@@ -769,6 +797,8 @@ function BlockEditInner( props ) {
 		blockEditorInspectorSidebarOpen,
 		freezeInlineToolbarDuringReRender,
 		isFetchingBlock,
+		mountPortal,
+		setMountPortal,
 	} = props;
 
 	const { clientId } = useBlockEditContext();
@@ -776,7 +806,6 @@ function BlockEditInner( props ) {
 	const [ blockFormModalOpen, setBlockFormModalOpen ] = useState( false );
 	const modalFormContainerRef = useRef();
 	const [ currentFormContainer, setCurrentFormContainer ] = useState();
-	const [ canRenderForm, setCanRenderForm ] = useState( false );
 	const [ shouldShowModalDoneFallback, setShouldShowModalDoneFallback ] =
 		useState( false );
 	const [ invisibleBlockFormContainer, setInvisibleBlockFormContainer ] =
@@ -920,10 +949,10 @@ function BlockEditInner( props ) {
 
 	useEffect( () => {
 		if ( isSelected && inspectorControlsRef?.current ) {
-			setCanRenderForm( true );
+			setMountPortal( true );
 		} else if ( isSelected && ! inspectorControlsRef?.current ) {
 			setTimeout( () => {
-				setCanRenderForm( true );
+				setMountPortal( true );
 			}, 1 );
 		}
 	}, [ isSelected, inspectorControlsRef, inspectorControlsRef.current ] );
@@ -1091,6 +1120,9 @@ function BlockEditInner( props ) {
 
 	// Callback when a new inline editing element is selected
 	const handleNewInlineEditingElementSelected = ( uid ) => {
+		// Mount the block form now, so the first click on an inline editable
+		// element opens its fields instead of waiting for the block selection.
+		setMountPortal( true );
 		setTimeout( () => {
 			setCurrentInlineEditingElementUid( uid );
 			const element = previewRef?.current.querySelector(
@@ -1212,7 +1244,7 @@ function BlockEditInner( props ) {
 
 			{ /* Render form via portal when container is available */ }
 			{ portalTarget &&
-				canRenderForm &&
+				mountPortal &&
 				createPortal(
 					<>
 						<BlockForm

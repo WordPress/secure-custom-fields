@@ -36,8 +36,8 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 			add_action( 'register_form', array( $this, 'render_register' ) );
 
 			// save
-			add_action( 'user_register', array( $this, 'save_user' ) );
-			add_action( 'profile_update', array( $this, 'save_user' ) );
+			add_action( 'user_register', array( $this, 'save_user' ) ); // @phpstan-ignore return.void (save_user() returns early for back-compat; the value is ignored.)
+			add_action( 'profile_update', array( $this, 'save_user' ) ); // @phpstan-ignore return.void (save_user() returns early for back-compat; the value is ignored.)
 
 			// Perform validation before new user is registered.
 			add_filter( 'registration_errors', array( $this, 'filter_registration_errors' ), 10, 3 );
@@ -281,26 +281,108 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 
 
 		/**
-		 * description
+		 * Saves ACF field values to a user.
 		 *
-		 * @type    function
-		 * @date    8/10/13
 		 * @since   ACF 5.0.0
 		 *
-		 * @param   $post_id (int)
-		 * @return  $post_id (int)
+		 * @param integer $user_id The ID of the user being saved.
+		 * @return integer|void
 		 */
-		function save_user( $user_id ) {
-
-			// verify nonce
+		public function save_user( $user_id ) {
 			if ( ! acf_verify_nonce( 'user' ) ) {
 				return $user_id;
+			}
+
+			if ( isset( $_POST['acf'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above.
+				if ( ! is_array( $_POST['acf'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above.
+					return $user_id;
+				}
+
+				// Restrict $_POST['acf'] to keys of fields belonging to field groups that apply to this user.
+				$allowed_keys = $this->get_allowed_field_keys( $user_id );
+				$_POST['acf'] = array_intersect_key( $_POST['acf'], array_flip( $allowed_keys ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Verified above; sanitized downstream.
+				scf_restrict_uploaded_field_keys( $allowed_keys );
+
+				if ( empty( $_POST['acf'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above.
+					return $user_id;
+				}
 			}
 
 			// save
 			if ( acf_validate_save_post( true ) ) {
 				acf_save_post( "user_$user_id" );
 			}
+		}
+
+		/**
+		 * Returns the top-level ACF field keys that are allowed to be saved for
+		 * the given user in the current save context. On user_register the new
+		 * user has just been created via either the public register form or the
+		 * admin add-user form; on profile_update the user was rendered via the
+		 * edit form (self-edit or admin-edit-other).
+		 *
+		 * @since SCF 6.9.6
+		 *
+		 * @param integer $user_id The user being saved.
+		 * @return array
+		 */
+		private function get_allowed_field_keys( $user_id ) {
+			if ( 'user_register' === current_action() ) {
+				$queries = array(
+					array(
+						'user_id'   => 'new',
+						'user_form' => 'register',
+					),
+					array(
+						'user_id'   => 'new',
+						'user_form' => 'add',
+					),
+				);
+			} else {
+				$queries = array(
+					array(
+						'user_id'   => $user_id,
+						'user_form' => 'edit',
+					),
+				);
+			}
+
+			$keys = array();
+			foreach ( $queries as $query ) {
+				foreach ( acf_get_field_groups( $query ) as $field_group ) {
+					foreach ( acf_get_fields( $field_group ) as $field ) {
+						$prefix = $field['prefix'] ?? 'acf';
+
+						if ( 'acf' === $prefix ) {
+							if ( ! empty( $field['key'] ) ) {
+								$keys[] = $field['key'];
+							}
+						} elseif ( preg_match( '/^acf\[([^]]+)]$/', $prefix, $matches ) ) {
+							$keys[] = $matches[1];
+						}
+					}
+				}
+			}
+
+			$keys = array_values( array_unique( array_filter( $keys ) ) );
+
+			/**
+			 * Filters the list of $_POST['acf'] keys a user save is allowed to persist.
+			 *
+			 * Use this to permit additional field keys when a developer dynamically
+			 * injects fields into the register/add/edit user form via JavaScript
+			 * that aren't part of a field group whose location rules target this user.
+			 *
+			 * @since SCF 6.9.6
+			 *
+			 * @param array $keys    The allowed top-level $_POST['acf'] keys.
+			 * @param int   $user_id The user being saved.
+			 */
+			$keys = apply_filters( 'acf/form/user/allowed_field_keys', $keys, $user_id );
+
+			// Re-normalize after the filter so a misbehaving callback can't break array_flip().
+			$keys = array_filter( (array) $keys, 'is_scalar' );
+			return array_values( array_unique( array_filter( array_map( 'strval', $keys ) ) ) );
 		}
 
 		/**

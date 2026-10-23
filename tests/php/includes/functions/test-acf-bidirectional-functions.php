@@ -884,4 +884,432 @@ class Test_ACF_Bidirectional_Functions extends BaseTestCase {
 		acf_update_bidirectional_values( array( $user_id ), $source, $field, 'user' );
 		$this->assertSame( array( (string) $source ), get_field( 'field_noncore_subtraction_target', "user_{$user_id}", false ) );
 	}
+
+	/**
+	 * Register a core relational field type for submitted-value tests.
+	 *
+	 * @param string $type Field type name.
+	 */
+	private function register_relational_field_type( $type ) {
+		$class = "acf_field_{$type}";
+		if ( ! class_exists( $class ) ) {
+			acf_include( "includes/fields/class-acf-field-{$type}.php" );
+		} elseif ( ! has_filter( "acf/update_value/type={$type}" ) ) {
+			acf_register_field_type( $class );
+		}
+	}
+
+	/**
+	 * Save values the way a submitted form does.
+	 *
+	 * @param array          $values  Submitted values keyed by field key.
+	 * @param integer|string $post_id Origin object ID.
+	 */
+	private function save_submitted_values( $values, $post_id ) {
+		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
+		$_POST['acf']  = $values;
+		acf_save_post( $post_id );
+		$_POST = $original_post;
+	}
+
+	/**
+	 * Registers a page-limited Relationship field with a bidirectional target.
+	 */
+	private function add_page_relationship_fields() {
+		$this->register_relational_field_type( 'relationship' );
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidi_post_source',
+				'name'                 => 'bidi_post_source',
+				'type'                 => 'relationship',
+				'post_type'            => array( 'page' ),
+				'taxonomy'             => array(),
+				'bidirectional'        => 1,
+				'bidirectional_target' => array( 'field_bidi_post_target' ),
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'       => 'field_bidi_post_target',
+				'name'      => 'bidi_post_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+	}
+
+	/**
+	 * Values passed to acf_save_post() while no user is logged in are not gated as submissions.
+	 */
+	public function test_programmatic_save_without_user_links_back_to_any_target() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_page_relationship_fields();
+		wp_set_current_user( 0 );
+
+		$source_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		$private_id = wp_insert_post(
+			array(
+				'post_title'  => 'Private target',
+				'post_type'   => 'page',
+				'post_status' => 'private',
+			)
+		);
+
+		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
+		acf_save_post( $source_id, array( 'field_bidi_post_source' => array( (string) $private_id ) ) );
+		$_POST = $original_post;
+
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_post_target', $private_id, false ) );
+		$this->assertFalse( acf_get_form_data( 'scf_programmatic_save' ) );
+	}
+
+	/**
+	 * Values passed to acf_save_post() on behalf of a logged-in user are still gated.
+	 */
+	public function test_programmatic_save_by_logged_in_user_is_gated() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_page_relationship_fields();
+
+		wp_set_current_user( 0 );
+
+		$source_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		$private_id = wp_insert_post(
+			array(
+				'post_title'  => 'Private target',
+				'post_type'   => 'page',
+				'post_status' => 'private',
+			)
+		);
+		$public_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Public target',
+				'post_type'   => 'page',
+				'post_status' => 'publish',
+			)
+		);
+
+		$subscriber_id = wp_insert_user(
+			array(
+				'user_login' => 'bidi-save-subscriber',
+				'user_pass'  => 'password',
+				'role'       => 'subscriber',
+			)
+		);
+		wp_set_current_user( $subscriber_id );
+
+		$original_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Test fixture.
+		acf_save_post( $source_id, array( 'field_bidi_post_source' => array( (string) $private_id, (string) $public_id ) ) );
+		$_POST = $original_post;
+		wp_set_current_user( 0 );
+
+		$this->assertEmpty( get_post_meta( $private_id, 'bidi_post_target', true ), 'Private posts are not linked' );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_post_target', $public_id, false ) );
+	}
+
+	/**
+	 * Submitted User field values outside the field's roles must not receive back-references.
+	 */
+	public function test_submitted_user_outside_allowed_roles_is_not_linked() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->register_relational_field_type( 'user' );
+		$this->register_relational_field_type( 'relationship' );
+		wp_set_current_user( 0 );
+
+		$editor_id     = wp_insert_user(
+			array(
+				'user_login' => 'bidi-editor',
+				'user_pass'  => 'password',
+				'role'       => 'editor',
+			)
+		);
+		$subscriber_id = wp_insert_user(
+			array(
+				'user_login' => 'bidi-subscriber',
+				'user_pass'  => 'password',
+				'role'       => 'subscriber',
+			)
+		);
+		$source_id     = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidi_user_source',
+				'name'                 => 'bidi_user_source',
+				'type'                 => 'user',
+				'role'                 => array( 'subscriber' ),
+				'multiple'             => 0,
+				'bidirectional'        => 1,
+				'bidirectional_target' => array( 'field_bidi_user_target' ),
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'       => 'field_bidi_user_target',
+				'name'      => 'bidi_user_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+
+		$this->save_submitted_values( array( 'field_bidi_user_source' => (string) $editor_id ), $source_id );
+		$this->assertEmpty( get_user_meta( $editor_id, 'bidi_user_target', true ), 'Users outside the field roles are not linked' );
+		$this->assertEmpty( acf_get_data( 'scf_saving_submitted_values' ) );
+
+		$this->save_submitted_values( array( 'field_bidi_user_source' => (string) $subscriber_id ), $source_id );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_user_target', "user_{$subscriber_id}", false ) );
+
+		// Programmatic updates are not filtered.
+		update_field( 'field_bidi_user_source', $editor_id, $source_id );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_user_target', "user_{$editor_id}", false ) );
+	}
+
+	/**
+	 * Submitted Relationship values the current user cannot read must not receive back-references.
+	 */
+	public function test_submitted_unreadable_post_is_not_linked() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_page_relationship_fields();
+		wp_set_current_user( 0 );
+
+		$source_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Source',
+				'post_status' => 'publish',
+			)
+		);
+		$private_id = wp_insert_post(
+			array(
+				'post_title'  => 'Private target',
+				'post_type'   => 'page',
+				'post_status' => 'private',
+			)
+		);
+		$public_id  = wp_insert_post(
+			array(
+				'post_title'  => 'Public target',
+				'post_type'   => 'page',
+				'post_status' => 'publish',
+			)
+		);
+		$other_id   = wp_insert_post(
+			array(
+				'post_title'  => 'Wrong post type',
+				'post_status' => 'publish',
+			)
+		);
+
+		$this->save_submitted_values( array( 'field_bidi_post_source' => array( (string) $private_id, (string) $public_id, (string) $other_id ) ), $source_id );
+
+		$this->assertEmpty( get_post_meta( $private_id, 'bidi_post_target', true ), 'Private posts are not linked' );
+		$this->assertEmpty( get_post_meta( $other_id, 'bidi_post_target', true ), 'Other post types are not linked' );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_post_target', $public_id, false ) );
+	}
+
+	/**
+	 * Registers a role-limited User field with a bidirectional Relationship target on users.
+	 */
+	private function add_role_limited_user_fields() {
+		$this->register_relational_field_type( 'user' );
+		$this->register_relational_field_type( 'relationship' );
+		acf_add_local_field(
+			array(
+				'key'                  => 'field_bidi_user_source',
+				'name'                 => 'bidi_user_source',
+				'type'                 => 'user',
+				'role'                 => array( 'subscriber' ),
+				'multiple'             => 0,
+				'bidirectional'        => 1,
+				'bidirectional_target' => array( 'field_bidi_user_target' ),
+			)
+		);
+		acf_add_local_field(
+			array(
+				'key'       => 'field_bidi_user_target',
+				'name'      => 'bidi_user_target',
+				'type'      => 'relationship',
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			)
+		);
+	}
+
+	/**
+	 * A submitter who can edit the target may link to it even when it is not a listed choice.
+	 */
+	public function test_submitted_target_the_user_can_edit_is_linked() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_role_limited_user_fields();
+
+		$admin_id  = wp_insert_user(
+			array(
+				'user_login' => 'bidi-editor-admin',
+				'user_pass'  => 'password',
+				'role'       => 'administrator',
+			)
+		);
+		$editor_id = wp_insert_user(
+			array(
+				'user_login' => 'bidi-editor-target',
+				'user_pass'  => 'password',
+				'role'       => 'editor',
+			)
+		);
+		$source_id = wp_insert_post(
+			array(
+				'post_title'  => 'Admin submission',
+				'post_status' => 'publish',
+			)
+		);
+		wp_set_current_user( $admin_id );
+
+		$this->save_submitted_values( array( 'field_bidi_user_source' => (string) $editor_id ), $source_id );
+		$this->assertSame( array( (string) $source_id ), get_field( 'field_bidi_user_target', "user_{$editor_id}", false ) );
+
+		wp_set_current_user( 0 );
+	}
+
+	/**
+	 * Saving values to a revision never writes back-references.
+	 */
+	public function test_revision_origin_never_links_back() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_role_limited_user_fields();
+		wp_set_current_user( 0 );
+
+		$subscriber_id = wp_insert_user(
+			array(
+				'user_login' => 'bidi-revision-subscriber',
+				'user_pass'  => 'password',
+				'role'       => 'subscriber',
+			)
+		);
+		$parent_id     = wp_insert_post(
+			array(
+				'post_title'  => 'Parent',
+				'post_status' => 'publish',
+			)
+		);
+		$revision_id   = wp_insert_post(
+			array(
+				'post_title'  => 'Parent',
+				'post_type'   => 'revision',
+				'post_status' => 'inherit',
+				'post_parent' => $parent_id,
+			)
+		);
+		$this->assertSame( $parent_id, wp_is_post_revision( $revision_id ) );
+
+		update_field( 'field_bidi_user_source', $subscriber_id, $revision_id );
+		$this->assertEmpty( get_user_meta( $subscriber_id, 'bidi_user_target', true ) );
+	}
+
+	/**
+	 * The submitted-values flag is restored even when saving throws.
+	 */
+	public function test_submitted_flag_is_restored_after_an_exception() {
+		acf_update_setting( 'enable_bidirection', true );
+		$this->add_role_limited_user_fields();
+		$source_id = wp_insert_post( array( 'post_title' => 'Source' ) );
+		$thrower   = static function ( $value ) {
+			if ( null !== $value ) {
+				throw new RuntimeException( 'save failed' );
+			}
+			return $value;
+		};
+		add_filter( 'acf/update_value', $thrower );
+
+		try {
+			$this->save_submitted_values( array( 'field_bidi_user_source' => '1' ), $source_id );
+			$this->fail( 'The save should have thrown.' );
+		} catch ( RuntimeException $e ) {
+			$this->assertSame( 'save failed', $e->getMessage() );
+		} finally {
+			remove_filter( 'acf/update_value', $thrower );
+		}
+
+		$this->assertEmpty( acf_get_data( 'scf_saving_submitted_values' ) );
+	}
+
+	/**
+	 * Submitted post targets follow each field's taxonomy and status semantics.
+	 */
+	public function test_allowed_post_target_matches_field_choice_query() {
+		wp_set_current_user( 0 );
+		$both_id     = wp_insert_post(
+			array(
+				'post_title'  => 'In both taxonomies',
+				'post_status' => 'publish',
+			)
+		);
+		$category_id = wp_insert_post(
+			array(
+				'post_title'  => 'Category only',
+				'post_status' => 'publish',
+			)
+		);
+		// Prime the caches has_term() reads; the test datastore keeps no terms or term relationships.
+		$news     = 9001;
+		$featured = 9002;
+		$fixtures = array(
+			$news     => array( 'news', 'category' ),
+			$featured => array( 'featured', 'post_tag' ),
+		);
+		foreach ( $fixtures as $term_id => list( $slug, $taxonomy ) ) {
+			$term = (object) array(
+				'term_id'          => $term_id,
+				'name'             => $slug,
+				'slug'             => $slug,
+				'term_group'       => 0,
+				'term_taxonomy_id' => $term_id,
+				'taxonomy'         => $taxonomy,
+				'description'      => '',
+				'parent'           => 0,
+				'count'            => 1,
+				'filter'           => 'raw',
+			);
+			wp_cache_set( $term_id, $term, 'terms' );
+		}
+		wp_cache_set( $both_id, array( $news ), 'category_relationships' );
+		wp_cache_set( $both_id, array( $featured ), 'post_tag_relationships' );
+		wp_cache_set( $category_id, array( $news ), 'category_relationships' );
+		wp_cache_set( $category_id, array(), 'post_tag_relationships' );
+
+		$field = array(
+			'type'        => 'relationship',
+			'post_type'   => array( 'post' ),
+			'post_status' => array(),
+			'taxonomy'    => array( 'category:news', 'post_tag:featured' ),
+		);
+		$this->assertTrue( _scf_is_allowed_bidirectional_target( $both_id, $field ) );
+		$this->assertTrue( _scf_is_allowed_bidirectional_target( $category_id, $field ), 'Relationship matches any configured taxonomy' );
+
+		$field['type'] = 'post_object';
+		$this->assertTrue( _scf_is_allowed_bidirectional_target( $both_id, $field ) );
+		$this->assertFalse( _scf_is_allowed_bidirectional_target( $category_id, $field ), 'Post Object must match every configured taxonomy' );
+
+		$field['taxonomy']    = array();
+		$field['post_status'] = array( 'draft' );
+		$this->assertFalse( _scf_is_allowed_bidirectional_target( $both_id, $field ), 'Status outside the field configuration' );
+		$field['post_status'] = array( 'any' );
+		$this->assertTrue( _scf_is_allowed_bidirectional_target( $both_id, $field ) );
+
+		$this->assertFalse( _scf_is_allowed_bidirectional_target( 0, $field ), 'Malformed IDs resolve to no object' );
+		$this->assertFalse( _scf_is_allowed_bidirectional_target( "user_{$both_id}", $field ), 'Wrong object type' );
+	}
 }

@@ -1047,6 +1047,10 @@ function acf_shortcode( $atts ) {
 	$post_id         = acf_get_valid_post_id( $atts['post_id'] );
 	$decoded_post_id = acf_decode_post_id( $post_id );
 
+	if ( scf_post_password_required( $post_id ) ) {
+		return;
+	}
+
 	// If we've decoded to a post, ensure the post is publicly visible.
 	if ( $decoded_post_id['type'] === 'post' ) {
 		if ( $atts['post_id'] !== false && ( (int) $atts['post_id'] !== (int) acf_get_valid_post_id() ) && ( ! is_post_publicly_viewable( $decoded_post_id['id'] ) ) && apply_filters( 'acf/shortcode/prevent_access_to_fields_on_non_public_posts', true ) ) {
@@ -1067,8 +1071,13 @@ function acf_shortcode( $atts ) {
 	}
 
 	// Try to get the field value, ensuring any non-safe HTML is stripped from wysiwyg fields via `acf_the_content`
-	$field = get_field_object( $atts['field'], $post_id, $atts['format_value'], true, true );
-	$value = $field ? $field['value'] : get_field( $atts['field'], $post_id, $atts['format_value'], true );
+	$field     = get_field_object( $atts['field'], $post_id, $atts['format_value'], true, true );
+	$value     = $field ? $field['value'] : get_field( $atts['field'], $post_id, $atts['format_value'], true );
+	$raw_value = $field ? acf_get_value( $post_id, $field ) : null;
+
+	if ( $field ) {
+		$value = scf_rest_sanitize_user_data( $value, $raw_value, $field );
+	}
 
 	$field_type = is_array( $field ) && isset( $field['type'] ) ? $field['type'] : 'text';
 
@@ -1101,6 +1110,10 @@ function acf_shortcode( $atts ) {
 
 	// Temporarily always get the unescaped version for action comparison.
 	$unescaped_value = get_field( $atts['field'], $post_id, $atts['format_value'], false );
+
+	if ( $field ) {
+		$unescaped_value = scf_rest_sanitize_user_data( $unescaped_value, $raw_value, $field );
+	}
 
 	// Remove the filter preventing access to unknown filters now we've got all the values.
 	if ( $filter_applied ) {
