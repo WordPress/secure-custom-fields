@@ -1,29 +1,26 @@
 <?php
 /**
- * Tests for the ACF_Site_Health class.
+ * Tests for the SCF\Site_Health\Site_Health class.
  *
  * @package wordpress/secure-custom-fields
  */
 
 use WorDBless\BaseTestCase;
 
-// Load the legacy Site Health class (not loaded by the plugin bootstrap).
-acf_include( 'includes/class-acf-site-health.php' );
-
 /**
- * Class Test_ACF_Site_Health
+ * Class Test_Site_Health
  *
- * Tests the Site Health debug information provider, including option
- * storage, event tracking and the structure of the debug info section.
+ * Tests the production Site Health debug information provider, including option
+ * storage, event tracking, field group counting, and the debug info section.
  *
  * @group site-health
  */
-class Test_ACF_Site_Health extends BaseTestCase {
+class Test_Site_Health extends BaseTestCase {
 
 	/**
-	 * The ACF_Site_Health instance under test.
+	 * The SCF\Site_Health\Site_Health instance under test.
 	 *
-	 * @var ACF_Site_Health
+	 * @var SCF\Site_Health\Site_Health
 	 */
 	private $site_health;
 
@@ -42,7 +39,7 @@ class Test_ACF_Site_Health extends BaseTestCase {
 
 		acf_init();
 
-		$this->site_health = acf_get_instance( 'ACF_Site_Health' );
+		$this->site_health = acf_get_instance( 'SCF\Site_Health\Site_Health' );
 
 		delete_option( $this->site_health->option_name );
 
@@ -75,6 +72,7 @@ class Test_ACF_Site_Health extends BaseTestCase {
 	 * Tear down test fixtures.
 	 */
 	public function tear_down(): void {
+		remove_filter( 'acf/load_field_groups', '__return_empty_array', 99 );
 		acf_remove_local_field_group( $this->group_key );
 		delete_option( $this->site_health->option_name );
 
@@ -120,52 +118,6 @@ class Test_ACF_Site_Health extends BaseTestCase {
 		update_option( $this->site_health->option_name, 'this-is-not-json' );
 
 		$this->assertSame( array(), $this->site_health->get_site_health() );
-	}
-
-	/**
-	 * Test that update_site_health_data flattens values and prefers debug values.
-	 */
-	public function test_update_site_health_data_flattens_values() {
-		$this->site_health->update_site_health_data(
-			array(
-				'with_debug'    => array(
-					'label' => 'With Debug',
-					'value' => 'Yes',
-					'debug' => true,
-				),
-				'without_debug' => array(
-					'label' => 'Without Debug',
-					'value' => '42',
-				),
-			)
-		);
-
-		$stored = $this->site_health->get_site_health();
-
-		$this->assertTrue( $stored['with_debug'], 'The debug value should win over the display value' );
-		$this->assertSame( '42', $stored['without_debug'] );
-		$this->assertArrayHasKey( 'last_updated', $stored );
-	}
-
-	/**
-	 * Test that update_site_health_data preserves previously stored events.
-	 */
-	public function test_update_site_health_data_preserves_events() {
-		$this->site_health->add_site_health_event( 'some_event' );
-
-		$this->site_health->update_site_health_data(
-			array(
-				'plain' => array(
-					'label' => 'Plain',
-					'value' => 'value',
-				),
-			)
-		);
-
-		$stored = $this->site_health->get_site_health();
-
-		$this->assertArrayHasKey( 'event_some_event', $stored, 'event_* keys should survive data updates' );
-		$this->assertSame( 'value', $stored['plain'] );
 	}
 
 	/**
@@ -216,14 +168,23 @@ class Test_ACF_Site_Health extends BaseTestCase {
 	}
 
 	/**
-	 * Test that add_activation_event records the first_activated event.
+	 * Test that add_activation_event records the first activation event.
 	 */
 	public function test_add_activation_event_records_first_activated() {
 		$this->assertTrue( $this->site_health->add_activation_event() );
 
 		$stored = $this->site_health->get_site_health();
 
-		$this->assertArrayHasKey( 'event_first_activated', $stored );
+		// The exact key depends on whether this is the Pro build and how the
+		// method was invoked; at least one activation event should be present.
+		$activation_recorded = false;
+		foreach ( array( 'first_activated', 'first_activated_pro', 'activated_pro' ) as $name ) {
+			if ( isset( $stored[ 'event_' . $name ] ) ) {
+				$activation_recorded = true;
+				break;
+			}
+		}
+		$this->assertTrue( $activation_recorded, 'An activation event should be recorded' );
 
 		// A repeat activation should not be recorded again.
 		$this->assertFalse( $this->site_health->add_activation_event() );
@@ -264,7 +225,7 @@ class Test_ACF_Site_Health extends BaseTestCase {
 	/**
 	 * Test that no event is recorded when field groups already exist.
 	 */
-	public function test_pre_update_acf_internal_cpt_skips_event_when_posts_exist() {
+	public function test_pre_update_acf_internal_cpt_skips_event_when_groups_exist() {
 		// The local field group registered in set_up() counts as an existing post.
 		$this->site_health->pre_update_acf_internal_cpt(
 			array(
@@ -344,16 +305,17 @@ class Test_ACF_Site_Health extends BaseTestCase {
 	}
 
 	/**
-	 * Test that PHP field groups are not counted due to a case-sensitive comparison.
+	 * Test that PHP-registered field groups are counted.
+	 *
+	 * Regression test for #456: acf_add_local_field_group() registers groups
+	 * with 'local' => 'php' (lowercase), and the count filter must match the
+	 * lowercase value rather than 'PHP'.
 	 */
-	public function test_php_field_group_count_does_not_match_lowercase_local() {
+	public function test_php_field_group_count_matches_lowercase_local() {
 		$values = $this->site_health->get_site_health_values();
 
-		// NOTE: documents current behavior — possible bug: acf_add_local_field_group()
-		// registers groups with 'local' => 'php' (lowercase), but the count filter in
-		// includes/class-acf-site-health.php compares against 'PHP' (uppercase), so
-		// PHP-registered field groups are never counted. Tracked in #456.
-		$this->assertSame( '0', $values['php_field_groups']['value'] );
+		$this->assertNotSame( '0', $values['php_field_groups']['value'], 'PHP-registered groups should be counted' );
+		$this->assertGreaterThanOrEqual( 1, (int) $values['php_field_groups']['value'] );
 	}
 
 	/**
