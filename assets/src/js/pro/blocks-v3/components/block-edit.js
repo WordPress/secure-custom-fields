@@ -170,6 +170,22 @@ function deserializeGoogleMapValues( $form, serializedData, clientId ) {
 }
 
 /**
+ * Serializes the block form into the JSON string stored as theSerializedAcfData.
+ *
+ * @param {Object} $form    The block form jQuery element.
+ * @param {string} clientId The block client ID.
+ * @return {string|null} JSON string, or null when the form has no data.
+ */
+function serializeBlockForm( $form, clientId ) {
+	const serializedData = acf.serialize( $form, `acf-block_${ clientId }` );
+	if ( ! serializedData ) {
+		return null;
+	}
+	deserializeGoogleMapValues( $form, serializedData, clientId );
+	return JSON.stringify( serializedData );
+}
+
+/**
  * Main BlockEdit component wrapper
  * Manages block data fetching and initial setup
  *
@@ -264,6 +280,27 @@ export const BlockEdit = ( props ) => {
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
 	const debounceRef = useRef( null );
+	// Serialized form data before the user changed anything.
+	const initialFormDataRef = useRef( null );
+	const hasWrittenFormDataRef = useRef( false );
+
+	/**
+	 * Stores the form's current data as its loaded state, until the first real edit is written
+	 *
+	 * @param {jQuery} $form - The block form
+	 */
+	const captureInitialFormData = useCallback(
+		( $form ) => {
+			if ( hasWrittenFormDataRef.current ) {
+				return;
+			}
+			const serializedData = serializeBlockForm( $form, clientId );
+			if ( serializedData ) {
+				initialFormDataRef.current = serializedData;
+			}
+		},
+		[ clientId ]
+	);
 
 	// Initialize acf.blockEdit namespace for jsx-parser to use
 	if ( ! acf.blockEdit ) {
@@ -414,9 +451,10 @@ export const BlockEdit = ( props ) => {
 	 * @returns {string} - MD5 hash of serialized attributes
 	 */
 	function generateAttributesHash( attrs, ctx ) {
-		delete attrs.hasAcfError;
-		attrs._acf_context = sortObjectKeys( ctx );
-		return md5( JSON.stringify( sortObjectKeys( attrs ) ) );
+		// Work on a copy, attrs can be the block editor store's own object.
+		const { hasAcfError, ...hashAttrs } = attrs;
+		hashAttrs._acf_context = sortObjectKeys( ctx );
+		return md5( JSON.stringify( sortObjectKeys( hashAttrs ) ) );
 	}
 
 	/**
@@ -579,10 +617,18 @@ export const BlockEdit = ( props ) => {
 
 	// Update hasAcfError attribute based on validation errors
 	useEffect( () => {
-		setAttributes(
-			validationErrors ? { hasAcfError: true } : { hasAcfError: false }
-		);
-	}, [ validationErrors, setAttributes ] );
+		const hasError = !! validationErrors;
+		if ( hasError === !! attributes.hasAcfError ) {
+			return;
+		}
+
+		// hasAcfError is not saved with the block, so this must not mark the post as changed.
+		// Send only this key, so the next real edit is not merged into this change.
+		wp.data
+			.dispatch( 'core/block-editor' )
+			.__unstableMarkNextChangeAsNotPersistent();
+		setAttributes( { hasAcfError: hasError } );
+	}, [ validationErrors, attributes.hasAcfError, setAttributes ] );
 
 	// Listen for validation error events from other blocks
 	useEffect( () => {
@@ -631,17 +677,28 @@ export const BlockEdit = ( props ) => {
 				} );
 			}
 
+			// Stored data is keyed by field name and the form by field key, so on load
+			// the form is compared with its own first state instead.
 			if (
 				theSerializedAcfData ===
-				JSON.stringify( attributesWithoutError.data )
+					JSON.stringify( attributesWithoutError.data ) ||
+				( ! hasWrittenFormDataRef.current &&
+					theSerializedAcfData === initialFormDataRef.current )
 			) {
+				// Send the form values even when they are not stored, so the server
+				// validates them. A new block has no stored data to validate.
 				return void fetchBlockData( {
-					theAttributes: attributesWithoutError,
+					theAttributes: {
+						...attributesWithoutError,
+						data: parsedData,
+					},
 					theClientId: clientId,
 					theContext: context,
 					isSelected: isSelected,
 				} );
 			}
+
+			hasWrittenFormDataRef.current = true;
 
 			// Use original attributes (with hasAcfError) when updating
 			const updatedAttributes = {
@@ -714,6 +771,7 @@ export const BlockEdit = ( props ) => {
 			showValidationErrors={ showValidationErrors }
 			theSerializedAcfData={ theSerializedAcfData }
 			setTheSerializedAcfData={ setTheSerializedAcfData }
+			captureInitialFormData={ captureInitialFormData }
 			acfFormRef={ acfFormRef }
 			blockFormHtml={ blockFormHtml }
 			blockPreviewHtml={ blockPreviewHtml }
@@ -770,6 +828,7 @@ function BlockEditInner( props ) {
 		showValidationErrors,
 		theSerializedAcfData,
 		setTheSerializedAcfData,
+		captureInitialFormData,
 		acfFormRef,
 		blockFormHtml,
 		blockPreviewHtml,
@@ -1005,14 +1064,12 @@ function BlockEditInner( props ) {
 		setContentEditableChangeInProgress( false );
 		fieldInput.value = content;
 
-		const $form = $( acfFormRef?.current );
-		const serializedData = acf.serialize(
-			$form,
-			`acf-block_${ clientId }`
+		const serializedData = serializeBlockForm(
+			$( acfFormRef?.current ),
+			clientId
 		);
 		if ( serializedData ) {
-			deserializeGoogleMapValues( $form, serializedData, clientId );
-			setTheSerializedAcfData( JSON.stringify( serializedData ) );
+			setTheSerializedAcfData( serializedData );
 		} else {
 			setUserHasInteractedWithForm( false );
 		}
@@ -1251,20 +1308,15 @@ function BlockEditInner( props ) {
 							$={ $ }
 							clientId={ clientId }
 							blockFormHtml={ blockFormHtml }
+							onMount={ captureInitialFormData }
+							onUntouchedChange={ captureInitialFormData }
 							onChange={ function ( $form ) {
-								const serializedData = acf.serialize(
+								const serializedData = serializeBlockForm(
 									$form,
-									`acf-block_${ clientId }`
+									clientId
 								);
 								if ( serializedData ) {
-									deserializeGoogleMapValues(
-										$form,
-										serializedData,
-										clientId
-									);
-									setTheSerializedAcfData(
-										JSON.stringify( serializedData )
-									);
+									setTheSerializedAcfData( serializedData );
 								}
 							} }
 							validationErrors={ validationErrors }

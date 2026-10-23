@@ -16,6 +16,7 @@ import { lockPostSaving, unlockPostSaving } from '../utils/post-locking';
  * @param {string} props.blockFormHtml - HTML markup for the ACF form
  * @param {Function} props.onMount - Callback when the form mounts
  * @param {Function} props.onChange - Callback when form data changes
+ * @param {Function} props.onUntouchedChange - Callback when the form changes before any user interaction
  * @param {Array} props.validationErrors - Array of validation error objects
  * @param {boolean} props.showValidationErrors - Whether to display validation errors
  * @param {React.RefObject} props.acfFormRef - Ref to the form container element
@@ -29,6 +30,7 @@ export const BlockForm = ( {
 	blockFormHtml,
 	onMount,
 	onChange,
+	onUntouchedChange,
 	validationErrors,
 	showValidationErrors,
 	acfFormRef,
@@ -39,17 +41,24 @@ export const BlockForm = ( {
 	const [ formHtml, setFormHtml ] = useState( blockFormHtml );
 	const [ pendingChange, setPendingChange ] = useState( false );
 	const debounceTimer = useRef( null );
+	const reportedUntouchedChange = useRef( null );
 	const [ userInteracted, setUserInteracted ] = useState( false );
 	const [ hasRemounted, setHasRemounted ] = useState( false );
 
 	// Trigger onChange when there's a pending change
 	useEffect( () => {
-		if (
-			pendingChange &&
-			( userHasInteractedWithForm || userInteracted )
-		) {
+		if ( ! pendingChange ) {
+			return;
+		}
+
+		if ( userHasInteractedWithForm || userInteracted ) {
 			onChange( pendingChange );
 			setPendingChange( false );
+		} else if ( reportedUntouchedChange.current !== pendingChange ) {
+			// No interaction yet, so this is the form setting itself up.
+			// Report it once, not on every render, so a later edit is never taken as setup.
+			reportedUntouchedChange.current = pendingChange;
+			onUntouchedChange?.( pendingChange );
 		}
 	}, [
 		pendingChange,
@@ -57,6 +66,7 @@ export const BlockForm = ( {
 		userInteracted,
 		setPendingChange,
 		onChange,
+		onUntouchedChange,
 	] );
 
 	// Update form HTML when blockFormHtml prop changes
@@ -177,6 +187,8 @@ export const BlockForm = ( {
 		}
 
 		const handleChange = () => {
+			// Edits like a context menu paste fire no click or keydown first.
+			setUserInteracted( true );
 			onChange( $form );
 		};
 

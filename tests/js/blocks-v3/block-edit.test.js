@@ -8,7 +8,7 @@
 /* global acf, wp, MouseEvent */
 
 import React from 'react';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Mock md5
@@ -40,14 +40,19 @@ jest.mock(
 	} )
 );
 
+// Latest props passed to BlockForm, so tests can call its callbacks.
+let mockBlockFormProps = null;
 jest.mock(
 	'../../../assets/src/js/pro/blocks-v3/components/block-form',
 	() => ( {
-		BlockForm: ( { blockFormHtml } ) => (
-			<div data-testid="block-form">
-				{ blockFormHtml ? 'Form loaded' : 'No form' }
-			</div>
-		),
+		BlockForm: ( props ) => {
+			mockBlockFormProps = props;
+			return (
+				<div data-testid="block-form">
+					{ props.blockFormHtml ? 'Form loaded' : 'No form' }
+				</div>
+			);
+		},
 	} )
 );
 
@@ -225,11 +230,14 @@ global.acf = {
 };
 
 // Mock wp.data
+const mockMarkNextChangeAsNotPersistent = jest.fn();
 global.wp = {
 	data: {
 		dispatch: jest.fn( () => ( {
 			lockPostSaving: jest.fn(),
 			unlockPostSaving: jest.fn(),
+			__unstableMarkNextChangeAsNotPersistent:
+				mockMarkNextChangeAsNotPersistent,
 		} ) ),
 		select: jest.fn( () => ( {
 			getBlockParents: jest.fn( () => [] ),
@@ -339,7 +347,7 @@ describe( 'BlockEdit Component', () => {
 		expect( typeof acf.blockEdit.getBlockFieldInfo ).toBe( 'function' );
 	} );
 
-	test( 'calls setAttributes when validation errors change', async () => {
+	test( 'does not set hasAcfError on load when there are no errors', async () => {
 		const setAttributes = jest.fn();
 
 		await act( async () => {
@@ -350,12 +358,177 @@ describe( 'BlockEdit Component', () => {
 				/>
 			);
 		} );
+		await act( async () => {
+			jest.runAllTimers();
+		} );
 
-		// setAttributes should be called with hasAcfError
-		await waitFor( () => {
-			expect( setAttributes ).toHaveBeenCalledWith(
+		expect( setAttributes ).not.toHaveBeenCalled();
+		expect( mockMarkNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'sets hasAcfError as a non persistent change with only that key', async () => {
+		const setAttributes = jest.fn();
+		mockAjax.mockImplementationOnce( () => ( {
+			done( callback ) {
+				callback( {
+					data: {
+						form: '<div>Form HTML</div>',
+						preview: '<div>Preview HTML</div>',
+						validation: {
+							valid: false,
+							errors: [ { input: 'x', message: 'Required' } ],
+						},
+					},
+				} );
+				return this;
+			},
+			fail() {
+				return this;
+			},
+			abort: jest.fn(),
+		} ) );
+
+		await act( async () => {
+			render(
+				<BlockEdit
+					{ ...defaultProps }
+					setAttributes={ setAttributes }
+				/>
+			);
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 250 );
+		} );
+
+		expect( setAttributes ).toHaveBeenCalledWith( { hasAcfError: true } );
+		expect( mockMarkNextChangeAsNotPersistent ).toHaveBeenCalled();
+	} );
+
+	test( 'does not modify the attributes object when hashing', async () => {
+		const attributes = {
+			name: 'acf/test-block',
+			data: { field_1: 'value_1' },
+			hasAcfError: false,
+		};
+
+		await act( async () => {
+			render(
+				<BlockEdit { ...defaultProps } attributes={ attributes } />
+			);
+		} );
+		await act( async () => {
+			jest.runAllTimers();
+		} );
+
+		expect( attributes ).not.toHaveProperty( '_acf_context' );
+		expect( attributes ).toHaveProperty( 'hasAcfError', false );
+	} );
+
+	describe( 'writing form data back to the block', () => {
+		// Stored data is keyed by field name, the form serializes by field key.
+		const storedAttributes = {
+			name: 'acf/test-block',
+			data: { title: 'Hello', _title: 'field_1' },
+		};
+		const $form = { find: () => ( { each: () => {} } ) };
+
+		async function renderWithForm( setAttributes ) {
+			await act( async () => {
+				render(
+					<BlockEdit
+						{ ...defaultProps }
+						attributes={ storedAttributes }
+						setAttributes={ setAttributes }
+					/>
+				);
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+
+			// Mount the form, the same way the first inline editing click does.
+			const onInlineEditingElementSelected =
+				acf.parseJSX.mock.calls.at( -1 )[ 1 ];
+			await act( async () => {
+				onInlineEditingElementSelected( 'inline-uid' );
+			} );
+		}
+
+		async function sendFormChange( values ) {
+			acf.serialize.mockReturnValue( values );
+			await act( async () => {
+				mockBlockFormProps.onChange( $form );
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+		}
+
+		afterEach( () => {
+			acf.serialize.mockReturnValue( { field_1: 'value_1' } );
+		} );
+
+		test( 'skips the write when the form still has its loaded values', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+
+			acf.serialize.mockReturnValue( { field_1: 'Hello' } );
+			await act( async () => {
+				mockBlockFormProps.onMount( $form );
+			} );
+
+			mockAjax.mockClear();
+			await sendFormChange( { field_1: 'Hello' } );
+
+			expect( setAttributes ).not.toHaveBeenCalled();
+
+			// The form values still go to the server, so it can validate them.
+			const { block } = mockAjax.mock.calls.at( -1 )[ 0 ].data;
+			expect( JSON.parse( block ).data ).toEqual( { field_1: 'Hello' } );
+		} );
+
+		test( 'uses the latest untouched form state as the loaded values', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+
+			acf.serialize.mockReturnValue( { field_1: 'Hello' } );
+			await act( async () => {
+				mockBlockFormProps.onMount( $form );
+			} );
+
+			// A field changed its own markup while setting up.
+			acf.serialize.mockReturnValue( { field_1: 'Hello\r\n' } );
+			await act( async () => {
+				mockBlockFormProps.onUntouchedChange( $form );
+			} );
+
+			await sendFormChange( { field_1: 'Hello\r\n' } );
+
+			expect( setAttributes ).not.toHaveBeenCalled();
+		} );
+
+		test( 'writes a real edit, and later edits back to the loaded values', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+
+			acf.serialize.mockReturnValue( { field_1: 'Hello' } );
+			await act( async () => {
+				mockBlockFormProps.onMount( $form );
+			} );
+
+			await sendFormChange( { field_1: 'Hello world' } );
+
+			expect( setAttributes ).toHaveBeenLastCalledWith(
 				expect.objectContaining( {
-					hasAcfError: expect.any( Boolean ),
+					data: { field_1: 'Hello world' },
+				} )
+			);
+
+			await sendFormChange( { field_1: 'Hello' } );
+
+			expect( setAttributes ).toHaveBeenLastCalledWith(
+				expect.objectContaining( {
+					data: { field_1: 'Hello' },
 				} )
 			);
 		} );

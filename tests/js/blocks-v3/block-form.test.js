@@ -506,3 +506,107 @@ describe( 'BlockForm Attribute Handling', () => {
 		).not.toThrow();
 	} );
 } );
+
+describe( 'BlockForm Changes Before Interaction', () => {
+	const renderForm = ( props ) => {
+		const acfFormRef = { current: null };
+		render(
+			<BlockForm
+				$={ mockJQuery }
+				clientId="test-client-id"
+				blockFormHtml='<div class="acf-fields"><input type="text" name="field_1" /></div>'
+				onMount={ jest.fn() }
+				validationErrors={ null }
+				showValidationErrors={ false }
+				acfFormRef={ acfFormRef }
+				userHasInteractedWithForm={ false }
+				attributes={ { name: 'acf/test-block', data: {} } }
+				hideFieldsInSidebar={ false }
+				{ ...props }
+			/>
+		);
+		return acfFormRef;
+	};
+
+	// Change the form markup and let the 300ms debounce run.
+	const mutateForm = async ( acfFormRef ) => {
+		await act( async () => {
+			acfFormRef.current.appendChild( document.createElement( 'span' ) );
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 350 );
+		} );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	test( 'reports form changes before any interaction as untouched', async () => {
+		const onChange = jest.fn();
+		const onUntouchedChange = jest.fn();
+		const acfFormRef = renderForm( { onChange, onUntouchedChange } );
+
+		await mutateForm( acfFormRef );
+
+		expect( onUntouchedChange ).toHaveBeenCalled();
+		expect( onChange ).not.toHaveBeenCalled();
+	} );
+
+	test( 'reports an untouched change only once across renders', async () => {
+		const onUntouchedChange = jest.fn();
+		const acfFormRef = { current: null };
+		const props = {
+			$: mockJQuery,
+			clientId: 'test-client-id',
+			blockFormHtml:
+				'<div class="acf-fields"><input type="text" name="field_1" /></div>',
+			onMount: jest.fn(),
+			onUntouchedChange,
+			validationErrors: null,
+			showValidationErrors: false,
+			acfFormRef,
+			userHasInteractedWithForm: false,
+			attributes: { name: 'acf/test-block', data: {} },
+			hideFieldsInSidebar: false,
+		};
+		const { rerender } = render(
+			<BlockForm { ...props } onChange={ jest.fn() } />
+		);
+
+		await mutateForm( acfFormRef );
+		expect( onUntouchedChange ).toHaveBeenCalledTimes( 1 );
+
+		// A parent render passes a new onChange function each time.
+		await act( async () => {
+			rerender( <BlockForm { ...props } onChange={ jest.fn() } /> );
+		} );
+
+		expect( onUntouchedChange ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'treats a native input event as interaction', async () => {
+		const onChange = jest.fn();
+		const onUntouchedChange = jest.fn();
+		const acfFormRef = renderForm( { onChange, onUntouchedChange } );
+
+		await act( async () => {
+			acfFormRef.current
+				.querySelector( 'input' )
+				.dispatchEvent( new Event( 'input' ) );
+		} );
+
+		expect( onChange ).toHaveBeenCalledTimes( 1 );
+
+		onUntouchedChange.mockClear();
+		await mutateForm( acfFormRef );
+
+		expect( onChange ).toHaveBeenCalledTimes( 2 );
+		expect( onUntouchedChange ).not.toHaveBeenCalled();
+	} );
+} );
