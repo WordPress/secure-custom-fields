@@ -227,17 +227,30 @@ class Render {
 	 * @return void
 	 */
 	private function add_layout_menu() {
-		echo '<script type="text-html" class="tmpl-popup"><ul>';
+		// Layouts without a category stay at the top, categories keep the order of their first layout.
+		$groups = array( '' => array() );
 		foreach ( $this->layouts as $layout ) {
-			$safe_label = acf_esc_html( $layout['label'] );
-			$atts       = array(
-				'href'        => '#',
-				'data-layout' => $layout['name'],
-				'data-min'    => $layout['min'],
-				'data-max'    => $layout['max'],
-				'title'       => $safe_label,
-			);
-			printf( '<li><a %s>%s</a></li>', acf_esc_attrs( $atts ), $safe_label ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
+			$category              = isset( $layout['category'] ) ? trim( (string) $layout['category'] ) : '';
+			$groups[ $category ][] = $layout;
+		}
+
+		echo '<script type="text-html" class="tmpl-popup"><ul>';
+		foreach ( $groups as $category => $layouts ) {
+			if ( '' !== $category ) {
+				echo '<li class="acf-fc-popup-category">' . esc_html( (string) $category ) . '</li>';
+			}
+
+			foreach ( $layouts as $layout ) {
+				$safe_label = acf_esc_html( $layout['label'] );
+				$atts       = array(
+					'href'        => '#',
+					'data-layout' => $layout['name'],
+					'data-min'    => $layout['min'],
+					'data-max'    => $layout['max'],
+					'title'       => $safe_label,
+				);
+				printf( '<li><a %s>%s</a></li>', acf_esc_attrs( $atts ), $safe_label ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
+			}
 		}
 		echo '</ul></script>';
 	}

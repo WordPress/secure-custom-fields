@@ -147,6 +147,7 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 					'sub_fields' => array(),
 					'min'        => '',
 					'max'        => '',
+					'category'   => '',
 				)
 			);
 
@@ -461,6 +462,22 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 								'prefix'  => $layout_prefix,
 								'value'   => $layout['max'],
 								'prepend' => __( 'Max', 'secure-custom-fields' ),
+							)
+						);
+
+						?>
+					</li>
+					<li class="acf-fc-meta-category acf-fc-meta-left">
+						<?php
+
+						acf_render_field(
+							array(
+								'type'        => 'text',
+								'name'        => 'category',
+								'prefix'      => $layout_prefix,
+								'value'       => $layout['category'],
+								'prepend'     => __( 'Category', 'secure-custom-fields' ),
+								'placeholder' => __( 'Optional', 'secure-custom-fields' ),
 							)
 						);
 
@@ -1575,6 +1592,10 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 			if ( ! empty( $field['layouts'] ) ) {
 				foreach ( $field['layouts'] as &$layout ) {
 					$layout['label'] = acf_translate( $layout['label'] );
+
+					if ( ! empty( $layout['category'] ) ) {
+						$layout['category'] = acf_translate( $layout['category'] );
+					}
 				}
 			}
 

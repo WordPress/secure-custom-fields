@@ -93,7 +93,7 @@
         },
         "layouts": {
             "type": "array",
-            "description": "Array of layout configuration objects. Each layout represents a different content structure that editors can choose from. Each layout object should have: \"label\" (display name), \"name\" (machine name), \"sub_fields\" (array of field objects for this layout), \"display\" (layout style: \"table\", \"block\", or \"row\"), \"min\" (minimum instances of this layout), and \"max\" (maximum instances of this layout).",
+            "description": "Array of layout configuration objects. Each layout represents a different content structure that editors can choose from. Each layout object should have: \"label\" (display name), \"name\" (machine name), \"sub_fields\" (array of field objects for this layout), \"display\" (layout style: \"table\", \"block\", or \"row\"), \"min\" (minimum instances of this layout), \"max\" (maximum instances of this layout), and optionally \"category\" (groups the layout under a heading in the add layout menu).",
             "items": {
                 "type": "object"
             },

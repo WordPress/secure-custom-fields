@@ -16,3 +16,4 @@ The Flexible Content field provides a flexible content builder interface. It all
 - Button Label - Customize the "Add Row" text
 - Min/Max Layouts - Limit number of blocks
 - Layout Settings - Configure each layout type
+- Layout Category - Optional. Layouts with the same category are grouped under a heading in the "Add Layout" menu

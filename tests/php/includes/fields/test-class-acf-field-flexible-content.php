@@ -423,4 +423,104 @@ class Test_ACF_Field_Flexible_Content extends Abstract_ACF_Field_Test {
 
 		$this->assertIsArray( $imported );
 	}
+
+	/**
+	 * Test get_valid_layout adds an empty category by default.
+	 */
+	public function test_get_valid_layout_default_category() {
+		$layout = $this->field_instance->get_valid_layout( array( 'name' => 'custom' ) );
+
+		$this->assertArrayHasKey( 'category', $layout );
+		$this->assertSame( '', $layout['category'] );
+	}
+
+	/**
+	 * Get the add layout menu HTML for a list of layouts.
+	 *
+	 * @param array $layouts Layouts as name => category.
+	 * @return string
+	 */
+	protected function get_add_layout_menu_html( $layouts ) {
+		$field = $this->get_field(
+			array(
+				'button_label' => 'Add Row',
+				'value'        => array(),
+				'layouts'      => array(),
+			)
+		);
+
+		foreach ( $layouts as $name => $category ) {
+			$field['layouts'][] = $this->field_instance->get_valid_layout(
+				array(
+					'name'     => $name,
+					'label'    => ucfirst( $name ),
+					'category' => $category,
+				)
+			);
+		}
+
+		$render = new \SCF\Fields\FlexibleContent\Render( $field, array() );
+		$method = new ReflectionMethod( $render, 'add_layout_menu' );
+		$method->setAccessible( true );
+
+		ob_start();
+		$method->invoke( $render );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Test add layout menu stays flat when no layout has a category.
+	 */
+	public function test_add_layout_menu_without_categories() {
+		$html = $this->get_add_layout_menu_html(
+			array(
+				'text'  => '',
+				'image' => '',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'acf-fc-popup-category', $html );
+		$this->assertSame( 2, substr_count( $html, 'data-layout=' ) );
+		$this->assertLessThan( strpos( $html, 'data-layout="image"' ), strpos( $html, 'data-layout="text"' ) );
+	}
+
+	/**
+	 * Test add layout menu groups layouts by category.
+	 */
+	public function test_add_layout_menu_groups_by_category() {
+		$html = $this->get_add_layout_menu_html(
+			array(
+				'image'   => 'Media',
+				'note'    => '',
+				'quote'   => 'Text',
+				'gallery' => 'Media',
+			)
+		);
+
+		preg_match_all( '/class="acf-fc-popup-category">([^<]*)<|data-layout="([^"]*)"/', $html, $matches, PREG_SET_ORDER );
+		$order = array_map(
+			function ( $found ) {
+				return ! empty( $found[2] ) ? $found[2] : 'category:' . $found[1];
+			},
+			$matches
+		);
+
+		$this->assertSame(
+			array( 'note', 'category:Media', 'image', 'gallery', 'category:Text', 'quote' ),
+			$order
+		);
+	}
+
+	/**
+	 * Test add layout menu escapes the category heading.
+	 */
+	public function test_add_layout_menu_escapes_category() {
+		$html = $this->get_add_layout_menu_html(
+			array(
+				'text' => '<img src=x onerror=alert(1)>',
+			)
+		);
+
+		$this->assertStringNotContainsString( '<img', $html );
+	}
 }
