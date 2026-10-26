@@ -128,6 +128,16 @@ and `sanitize_callback` for nested schema properties, see:
 * @param string           $param
 * @return boolean|WP_Error
 
+### `is_password_protected_content_hidden`
+
+Checks whether a post's field values must stay out of the response because the
+post is password protected and the caller has neither unlocked it nor can edit it.
+
+* @since SCF 6.9.7
+* @param integer         $post_id The post ID.
+* @param WP_REST_Request $request The current request.
+* @return boolean
+
 ### `load_fields`
 
 Load field values into the requested object. This method is not a part of any public API and is only public as

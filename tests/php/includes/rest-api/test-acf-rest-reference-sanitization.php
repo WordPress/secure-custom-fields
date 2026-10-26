@@ -104,6 +104,46 @@ class Test_ACF_REST_Reference_Sanitization extends BaseTestCase {
 	}
 
 	/**
+	 * Password-protected posts are only exposable to users who can edit them.
+	 */
+	public function test_is_exposable_hides_password_protected_posts() {
+		$field        = $this->field( 'post_object' );
+		$protected_id = $this->create_protected_post();
+
+		$this->assertFalse( acf_rest_reference_is_exposable( $protected_id, $field ), 'Anonymous readers' );
+
+		$this->set_role( 'author' );
+		$this->assertFalse( acf_rest_reference_is_exposable( $protected_id, $field ), 'Authors who cannot edit the post' );
+
+		$this->set_role( 'editor' );
+		$this->assertTrue( acf_rest_reference_is_exposable( $protected_id, $field ), 'Editors' );
+
+		wp_set_current_user( 0 );
+		$this->add_test_filter( 'post_password_required', '__return_false' );
+		$this->assertTrue( acf_rest_reference_is_exposable( $protected_id, $field ), 'Visitors who entered the password' );
+
+		wp_delete_post( $protected_id, true );
+	}
+
+	/**
+	 * Password-protected references are reduced to IDs.
+	 */
+	public function test_password_protected_reference_is_reduced() {
+		$protected_id = $this->create_protected_post();
+		$protected    = get_post( $protected_id );
+
+		$this->assertSame( $protected_id, acf_rest_sanitize_reference_data( $protected, $protected_id, $this->field( 'post_object' ) ) );
+
+		$mixed = array( get_post( $this->public_id ), $protected );
+		$this->assertSame(
+			array( $this->public_id, $protected_id ),
+			acf_rest_sanitize_reference_data( $mixed, array( $this->public_id, $protected_id ), $this->field( 'relationship' ) )
+		);
+
+		wp_delete_post( $protected_id, true );
+	}
+
+	/**
 	 * The filter can expose a target the default check would reduce.
 	 */
 	public function test_is_exposable_filter() {
@@ -383,6 +423,23 @@ class Test_ACF_REST_Reference_Sanitization extends BaseTestCase {
 				'post_title'  => 'Reference ' . $status,
 				'post_status' => $status,
 				'post_type'   => 'post',
+			)
+		);
+	}
+
+	/**
+	 * Creates a published, password-protected post.
+	 *
+	 * @return int
+	 */
+	private function create_protected_post() {
+		return wp_insert_post(
+			array(
+				'post_title'    => 'Reference protected',
+				'post_status'   => 'publish',
+				'post_type'     => 'post',
+				'post_content'  => 'Protected body',
+				'post_password' => 'secret',
 			)
 		);
 	}

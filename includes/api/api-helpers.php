@@ -2312,6 +2312,21 @@ function acf_get_valid_post_id( $post_id = 0 ) {
 	return $post_id;
 }
 
+/**
+ * Checks whether field values stored on an ACF post ID belong to a password-protected
+ * post whose password has not been entered yet.
+ *
+ * @since SCF 6.9.7
+ *
+ * @param integer|string $post_id ACF encoded post ID.
+ * @return boolean
+ */
+function scf_post_password_required( $post_id ) {
+	$decoded = acf_decode_post_id( $post_id );
+
+	return 'post' === $decoded['type'] && (int) $decoded['id'] > 0 && post_password_required( (int) $decoded['id'] );
+}
+
 
 
 /**
@@ -2543,8 +2558,36 @@ function acf_upload_file( $uploaded_file ) {
 	// Save the data
 	$id = wp_insert_attachment( $object, $file );
 
+	/**
+	 * Filters whether a file uploaded through a basic File field gets preview images.
+	 *
+	 * @since SCF 6.9.7
+	 *
+	 * @param boolean $generate_previews Whether to generate preview images. Default true only for users who can upload files.
+	 * @param string  $file              Path to the uploaded file.
+	 * @param integer $id                Attachment ID.
+	 */
+	$skip_previews = ! apply_filters( 'scf/upload/generate_previews', current_user_can( 'upload_files' ), $file, $id );
+	$no_cover_art  = static function ( $metadata ) {
+		if ( is_array( $metadata ) ) {
+			unset( $metadata['image'] );
+		}
+		return $metadata;
+	};
+	if ( $skip_previews ) {
+		add_filter( 'fallback_intermediate_image_sizes', '__return_empty_array', PHP_INT_MAX );
+		add_filter( 'wp_read_audio_metadata', $no_cover_art, PHP_INT_MAX );
+		add_filter( 'wp_read_video_metadata', $no_cover_art, PHP_INT_MAX );
+	}
+
 	// Add the meta-data
 	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+
+	if ( $skip_previews ) {
+		remove_filter( 'fallback_intermediate_image_sizes', '__return_empty_array', PHP_INT_MAX );
+		remove_filter( 'wp_read_audio_metadata', $no_cover_art, PHP_INT_MAX );
+		remove_filter( 'wp_read_video_metadata', $no_cover_art, PHP_INT_MAX );
+	}
 
 	/** This action is documented in wp-admin/custom-header.php */
 	do_action( 'wp_create_file_in_uploads', $file, $id ); // For replication

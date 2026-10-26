@@ -152,6 +152,9 @@ function scf_restrict_uploaded_field_keys( array $allowed_keys ): void {
 function acf_save_post( $post_id = 0, $values = null ) {
 
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
+	// Values passed by code while no user is logged in, such as WP-CLI or cron, were not submitted by anyone.
+	$programmatic = null !== $values && ! is_user_logged_in();
+
 	// Override $_POST data with $values.
 	if ( $values !== null ) {
 		$_POST['acf'] = $values;
@@ -172,7 +175,12 @@ function acf_save_post( $post_id = 0, $values = null ) {
 	// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 	// Do generic action.
-	do_action( 'acf/save_post', $post_id );
+	acf_set_form_data( 'scf_programmatic_save', $programmatic );
+	try {
+		do_action( 'acf/save_post', $post_id );
+	} finally {
+		acf_set_form_data( 'scf_programmatic_save', false );
+	}
 
 	// Return true.
 	return true;
@@ -194,7 +202,13 @@ function _acf_do_save_post( $post_id = 0 ) {
 
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 	if ( ! empty( $_POST['acf'] ) ) {
-		acf_update_values( $_POST['acf'], $post_id ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WP when saved.
+		$was_saving_submitted = acf_get_data( 'scf_saving_submitted_values' );
+		acf_set_data( 'scf_saving_submitted_values', ! acf_get_form_data( 'scf_programmatic_save' ) );
+		try {
+			acf_update_values( $_POST['acf'], $post_id ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Sanitized by WP when saved.
+		} finally {
+			acf_set_data( 'scf_saving_submitted_values', $was_saving_submitted );
+		}
 	}
 	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
