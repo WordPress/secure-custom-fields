@@ -42,11 +42,16 @@ jest.mock(
 
 // Latest props passed to BlockForm, so tests can call its callbacks.
 let mockBlockFormProps = null;
+// How many times BlockForm has mounted, to see when the form is re-mounted.
+let mockBlockFormMounts = 0;
 jest.mock(
 	'../../../assets/src/js/pro/blocks-v3/components/block-form',
 	() => ( {
 		BlockForm: ( props ) => {
 			mockBlockFormProps = props;
+			require( 'react' ).useEffect( () => {
+				mockBlockFormMounts++;
+			}, [] );
 			return (
 				<div data-testid="block-form">
 					{ props.blockFormHtml ? 'Form loaded' : 'No form' }
@@ -247,7 +252,10 @@ global.wp = {
 };
 
 // Import after all mocks
-import { BlockEdit } from '../../../assets/src/js/pro/blocks-v3/components/block-edit';
+import {
+	BlockEdit,
+	isSameBlockData,
+} from '../../../assets/src/js/pro/blocks-v3/components/block-edit';
 
 describe( 'BlockEdit Component', () => {
 	const defaultProps = {
@@ -432,15 +440,40 @@ describe( 'BlockEdit Component', () => {
 		};
 		const $form = { find: () => ( { each: () => {} } ) };
 
+		// Sets the block's attributes from outside, like undo and redo do.
+		let setBlockAttributes = null;
+
+		/**
+		 * Keeps the attributes in state, so a write reaches BlockEdit like in the editor.
+		 *
+		 * @param {Object}   props               Props.
+		 * @param {Function} props.setAttributes Spy for the attribute updates.
+		 */
+		function StatefulBlockEdit( { setAttributes } ) {
+			const [ attributes, setState ] = React.useState( storedAttributes );
+			setBlockAttributes = setState;
+			const update = React.useCallback(
+				( newAttributes ) => {
+					setAttributes( newAttributes );
+					setState( ( previous ) => ( {
+						...previous,
+						...newAttributes,
+					} ) );
+				},
+				[ setAttributes ]
+			);
+			return (
+				<BlockEdit
+					{ ...defaultProps }
+					attributes={ attributes }
+					setAttributes={ update }
+				/>
+			);
+		}
+
 		async function renderWithForm( setAttributes ) {
 			await act( async () => {
-				render(
-					<BlockEdit
-						{ ...defaultProps }
-						attributes={ storedAttributes }
-						setAttributes={ setAttributes }
-					/>
-				);
+				render( <StatefulBlockEdit setAttributes={ setAttributes } /> );
 			} );
 			await act( async () => {
 				jest.advanceTimersByTime( 250 );
@@ -458,6 +491,25 @@ describe( 'BlockEdit Component', () => {
 			acf.serialize.mockReturnValue( values );
 			await act( async () => {
 				mockBlockFormProps.onChange( $form );
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+		}
+
+		async function changeDataFromOutside( data ) {
+			await act( async () => {
+				setBlockAttributes( ( previous ) => ( { ...previous, data } ) );
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+		}
+
+		async function mountReloadedForm( values ) {
+			acf.serialize.mockReturnValue( values );
+			await act( async () => {
+				mockBlockFormProps.onMount( $form );
 			} );
 			await act( async () => {
 				jest.advanceTimersByTime( 250 );
@@ -531,6 +583,189 @@ describe( 'BlockEdit Component', () => {
 					data: { field_1: 'Hello' },
 				} )
 			);
+		} );
+
+		test( 'loads a new form instead of writing back after an undo', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+			await mountReloadedForm( { field_1: 'Hello' } );
+			await sendFormChange( { field_1: 'HelloXYZ' } );
+			expect( setAttributes ).toHaveBeenCalledTimes( 1 );
+
+			setAttributes.mockClear();
+			mockAjax.mockClear();
+			const mountsBefore = mockBlockFormMounts;
+
+			// Undo puts back the stored data, the form still has the edit.
+			await changeDataFromOutside( storedAttributes.data );
+
+			expect( setAttributes ).not.toHaveBeenCalled();
+			const { block } = mockAjax.mock.calls.at( -1 )[ 0 ].data;
+			expect( JSON.parse( block ).data ).toEqual( storedAttributes.data );
+			expect( mockBlockFormMounts ).toBe( mountsBefore + 1 );
+
+			// The new form has the undone value, which is not written again.
+			await mountReloadedForm( { field_1: 'Hello' } );
+			expect( setAttributes ).not.toHaveBeenCalled();
+		} );
+
+		test( 'keeps redo and later edits working after an undo', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+			await mountReloadedForm( { field_1: 'Hello' } );
+			await sendFormChange( { field_1: 'HelloXYZ' } );
+
+			await changeDataFromOutside( storedAttributes.data );
+			await mountReloadedForm( { field_1: 'Hello' } );
+
+			setAttributes.mockClear();
+			const mountsBefore = mockBlockFormMounts;
+
+			// Redo.
+			await changeDataFromOutside( { field_1: 'HelloXYZ' } );
+			expect( setAttributes ).not.toHaveBeenCalled();
+			expect( mockBlockFormMounts ).toBe( mountsBefore + 1 );
+			await mountReloadedForm( { field_1: 'HelloXYZ' } );
+			expect( setAttributes ).not.toHaveBeenCalled();
+
+			// A new edit after the redo is written.
+			await sendFormChange( { field_1: 'HelloXYZ!' } );
+			expect( setAttributes ).toHaveBeenLastCalledWith(
+				expect.objectContaining( {
+					data: { field_1: 'HelloXYZ!' },
+				} )
+			);
+		} );
+
+		test( 'keeps an edit typed while the new form is loading', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+			await mountReloadedForm( { field_1: 'Hello' } );
+			await sendFormChange( { field_1: 'HelloXYZ' } );
+
+			// Hold the next fetch, so the reload is still on its way.
+			let finishFetch = null;
+			mockAjax.mockImplementationOnce( () => ( {
+				done( callback ) {
+					finishFetch = () =>
+						callback( {
+							data: {
+								form: '<div>Form HTML</div>',
+								preview: '<div>Preview HTML</div>',
+								validation: { valid: true },
+							},
+						} );
+					return this;
+				},
+				fail() {
+					return this;
+				},
+				abort: jest.fn(),
+			} ) );
+
+			await changeDataFromOutside( storedAttributes.data );
+			const mountsBefore = mockBlockFormMounts;
+
+			acf.serialize.mockReturnValue( { field_1: 'HelloXYZa' } );
+			await act( async () => {
+				mockBlockFormProps.onChange( $form );
+			} );
+			await act( async () => {
+				finishFetch();
+			} );
+
+			expect( mockBlockFormMounts ).toBe( mountsBefore );
+
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+			expect( setAttributes ).toHaveBeenLastCalledWith(
+				expect.objectContaining( {
+					data: { field_1: 'HelloXYZa' },
+				} )
+			);
+		} );
+
+		test( 'loads a new form when an untouched form gets outside data', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+			mockAjax.mockClear();
+			const mountsBefore = mockBlockFormMounts;
+
+			await changeDataFromOutside( { field_1: 'External' } );
+
+			expect( setAttributes ).not.toHaveBeenCalled();
+			const { block } = mockAjax.mock.calls.at( -1 )[ 0 ].data;
+			expect( JSON.parse( block ).data ).toEqual( {
+				field_1: 'External',
+			} );
+			expect( mockBlockFormMounts ).toBe( mountsBefore + 1 );
+		} );
+
+		test( 'does not load a new form when other attributes change', async () => {
+			const setAttributes = jest.fn();
+			await renderWithForm( setAttributes );
+			await mountReloadedForm( { field_1: 'Hello' } );
+			await sendFormChange( { field_1: 'HelloXYZ' } );
+			const mountsBefore = mockBlockFormMounts;
+
+			await act( async () => {
+				setBlockAttributes( ( previous ) => ( {
+					...previous,
+					align: 'wide',
+				} ) );
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+
+			expect( mockBlockFormMounts ).toBe( mountsBefore );
+		} );
+	} );
+
+	describe( 'isSameBlockData', () => {
+		test( 'maps field names to keys with the "_name" entries', () => {
+			expect(
+				isSameBlockData(
+					{ title: 'Hello', _title: 'field_1' },
+					{ field_1: 'Hello' },
+					null
+				)
+			).toBe( true );
+		} );
+
+		test( 'maps field names to keys with the block fields', () => {
+			expect(
+				isSameBlockData( { title: 'Hello' }, { field_1: 'Hello' }, [
+					{ name: 'title', key: 'field_1' },
+				] )
+			).toBe( true );
+		} );
+
+		test( 'compares data already keyed by field key', () => {
+			expect(
+				isSameBlockData(
+					{ field_2: 'b', field_1: 'a' },
+					{ field_1: 'a', field_2: 'b' },
+					null
+				)
+			).toBe( true );
+		} );
+
+		test( 'finds different values', () => {
+			expect(
+				isSameBlockData(
+					{ title: 'Hello', _title: 'field_1' },
+					{ field_1: 'HelloXYZ' },
+					null
+				)
+			).toBe( false );
+		} );
+
+		test( 'returns false without data', () => {
+			expect(
+				isSameBlockData( undefined, { field_1: 'Hello' }, null )
+			).toBe( false );
 		} );
 	} );
 

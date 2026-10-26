@@ -609,4 +609,66 @@ describe( 'BlockForm Changes Before Interaction', () => {
 		expect( onChange ).toHaveBeenCalledTimes( 2 );
 		expect( onUntouchedChange ).not.toHaveBeenCalled();
 	} );
+
+	test( 'a reloaded form ignores interaction from before it was mounted', async () => {
+		const onChange = jest.fn();
+		const onUntouchedChange = jest.fn();
+		const acfFormRef = renderForm( {
+			onChange,
+			onUntouchedChange,
+			userHasInteractedWithForm: true,
+			isReloaded: true,
+		} );
+
+		await mutateForm( acfFormRef );
+
+		expect( onUntouchedChange ).toHaveBeenCalled();
+		expect( onChange ).not.toHaveBeenCalled();
+	} );
+
+	test( 'a reloaded form reports edits made in it', async () => {
+		const onChange = jest.fn();
+		const acfFormRef = renderForm( {
+			onChange,
+			onUntouchedChange: jest.fn(),
+			userHasInteractedWithForm: true,
+			isReloaded: true,
+		} );
+
+		await act( async () => {
+			acfFormRef.current
+				.querySelector( 'input' )
+				.dispatchEvent( new Event( 'input' ) );
+		} );
+
+		expect( onChange ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'BlockForm Unmount', () => {
+	test( 'runs the unmount action so fields can clean up', () => {
+		const { unmount } = render(
+			<BlockForm
+				$={ mockJQuery }
+				clientId="test-client-id"
+				blockFormHtml="<div>Form</div>"
+				onMount={ jest.fn() }
+				onChange={ jest.fn() }
+				validationErrors={ null }
+				showValidationErrors={ false }
+				acfFormRef={ { current: null } }
+				userHasInteractedWithForm={ false }
+				attributes={ { name: 'acf/test-block', data: {} } }
+				hideFieldsInSidebar={ false }
+			/>
+		);
+		acf.doAction.mockClear();
+
+		unmount();
+
+		expect( acf.doAction ).toHaveBeenCalledWith(
+			'unmount',
+			expect.anything()
+		);
+	} );
 } );

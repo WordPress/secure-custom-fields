@@ -21,6 +21,7 @@ import { lockPostSaving, unlockPostSaving } from '../utils/post-locking';
  * @param {boolean} props.showValidationErrors - Whether to display validation errors
  * @param {React.RefObject} props.acfFormRef - Ref to the form container element
  * @param {boolean} props.userHasInteractedWithForm - Whether user has interacted with the form
+ * @param {boolean} props.isReloaded - Whether the form was re-mounted to show changed block data
  * @param {Object} props.attributes - Block attributes
  * @returns {JSX.Element} - Rendered form component
  */
@@ -35,6 +36,7 @@ export const BlockForm = ( {
 	showValidationErrors,
 	acfFormRef,
 	userHasInteractedWithForm,
+	isReloaded,
 	attributes,
 	hideFieldsInSidebar,
 } ) => {
@@ -51,7 +53,9 @@ export const BlockForm = ( {
 			return;
 		}
 
-		if ( userHasInteractedWithForm || userInteracted ) {
+		// A reloaded form only counts edits made in it, as the editor
+		// interaction that led to the reload (like Ctrl+Z) is not one.
+		if ( userInteracted || ( userHasInteractedWithForm && ! isReloaded ) ) {
 			onChange( pendingChange );
 			setPendingChange( false );
 		} else if ( reportedUntouchedChange.current !== pendingChange ) {
@@ -63,6 +67,7 @@ export const BlockForm = ( {
 	}, [
 		pendingChange,
 		userHasInteractedWithForm,
+		isReloaded,
 		userInteracted,
 		setPendingChange,
 		onChange,
@@ -298,6 +303,14 @@ export const BlockForm = ( {
 		onMount,
 		userHasInteractedWithForm,
 	] );
+
+	// Let the fields clean up (like WYSIWYG editors) when the form goes away.
+	useEffect( () => {
+		const $form = $( acfFormRef.current );
+		return () => {
+			acf.doAction( 'unmount', $form );
+		};
+	}, [] );
 
 	return (
 		<div

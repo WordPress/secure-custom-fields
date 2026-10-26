@@ -403,7 +403,11 @@
 
 			if ( acf.isGutenbergPostEditor() ) {
 				try {
-					wp.data.dispatch('core/editor').editPost({ meta: { _acf_changed: 1 } });
+					wp.data.dispatch( 'core/editor' ).editPost(
+						{ meta: { _acf_changed: 1 } },
+						// Not a change to undo, so keep it out of the undo history.
+						{ undoIgnore: true }
+					);
 				} catch ( error ) {
 					console.log( 'ACF: Failed to update _acf_changed meta', error );
 				}

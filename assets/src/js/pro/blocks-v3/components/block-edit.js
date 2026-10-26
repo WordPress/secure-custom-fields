@@ -186,6 +186,46 @@ function serializeBlockForm( $form, clientId ) {
 }
 
 /**
+ * Checks if the stored block data has the same values as the form data.
+ *
+ * Stored data can be keyed by field name (with "_name" entries holding the field key),
+ * the form data is always keyed by field key. Only top level fields are mapped.
+ *
+ * @param {Object|undefined} data     The block's data attribute.
+ * @param {Object}           formData The parsed form data.
+ * @param {Array|null}       fields   The block's fields, used to map names to keys.
+ * @return {boolean} True when both hold the same values.
+ */
+export function isSameBlockData( data, formData, fields ) {
+	if ( ! data || ! formData ) {
+		return false;
+	}
+
+	const keyedData = {};
+	Object.entries( data ).forEach( ( [ name, value ] ) => {
+		// Skip the "_name" entries, they only point to the field key.
+		if (
+			name.startsWith( '_' ) &&
+			typeof value === 'string' &&
+			value.startsWith( 'field_' )
+		) {
+			return;
+		}
+
+		const key =
+			data[ `_${ name }` ] ||
+			fields?.find( ( field ) => field.name === name )?.key ||
+			name;
+		keyedData[ key ] = value;
+	} );
+
+	return (
+		JSON.stringify( sortObjectKeys( keyedData ) ) ===
+		JSON.stringify( sortObjectKeys( formData ) )
+	);
+}
+
+/**
  * Main BlockEdit component wrapper
  * Manages block data fetching and initial setup
  *
@@ -276,6 +316,8 @@ export const BlockEdit = ( props ) => {
 	const blockEditorInspectorSidebarOpen =
 		useBlockEditorInspectorSidebarOpen();
 	const [ mountPortal, setMountPortal ] = useState( false );
+	// Changing this re-mounts the form with the latest form HTML.
+	const [ formKey, setFormKey ] = useState( 0 );
 
 	const acfFormRef = useRef( null );
 	const previewRef = useRef( null );
@@ -283,6 +325,13 @@ export const BlockEdit = ( props ) => {
 	// Serialized form data before the user changed anything.
 	const initialFormDataRef = useRef( null );
 	const hasWrittenFormDataRef = useRef( false );
+	// Form data and stored data as of the last sync, to tell form edits from outside changes.
+	const lastFormDataRef = useRef( null );
+	const lastDataRef = useRef( JSON.stringify( attributes.data ?? null ) );
+	// Set while the form waits for HTML matching the stored data, holds the focused input.
+	const formReloadRef = useRef( null );
+	// Set when the new form HTML is in, until the form has mounted.
+	const reloadedFormRef = useRef( null );
 
 	/**
 	 * Stores the form's current data as its loaded state, until the first real edit is written
@@ -301,6 +350,138 @@ export const BlockEdit = ( props ) => {
 		},
 		[ clientId ]
 	);
+
+	/**
+	 * Takes the form's current data as in sync with the stored data, so it is not written back
+	 *
+	 * @param {jQuery} $form - The block form
+	 */
+	const syncFormData = useCallback(
+		( $form ) => {
+			const serializedData = serializeBlockForm( $form, clientId );
+			lastFormDataRef.current = serializedData;
+			setTheSerializedAcfData( serializedData );
+		},
+		[ clientId ]
+	);
+
+	/**
+	 * Runs when the form mounts. After a reload, takes the new form as the synced state
+	 * and puts the focus back into the input that had it.
+	 *
+	 * @param {jQuery} $form - The block form
+	 */
+	const onFormMount = useCallback(
+		( $form ) => {
+			captureInitialFormData( $form );
+
+			const reloaded = reloadedFormRef.current;
+			if ( ! reloaded ) {
+				return;
+			}
+			reloadedFormRef.current = null;
+			syncFormData( $form );
+
+			if ( ! reloaded.focus ) {
+				return;
+			}
+			// Only take the focus back when it was lost with the old form.
+			const doc = $form[ 0 ].ownerDocument;
+			if ( doc.activeElement && doc.activeElement !== doc.body ) {
+				return;
+			}
+			const input = [
+				...$form[ 0 ].querySelectorAll( 'input, textarea, select' ),
+			].find( ( element ) => element.name === reloaded.focus.name );
+			if ( ! input ) {
+				return;
+			}
+			input.focus();
+			try {
+				input.setSelectionRange(
+					reloaded.focus.start,
+					reloaded.focus.end
+				);
+			} catch ( err ) {}
+		},
+		[ captureInitialFormData, syncFormData ]
+	);
+
+	/**
+	 * Runs when the form changes before the user touched it. A reloaded form takes
+	 * these changes (fields setting themselves up) as part of its synced state.
+	 *
+	 * @param {jQuery} $form - The block form
+	 */
+	const onFormUntouchedChange = useCallback(
+		( $form ) => {
+			captureInitialFormData( $form );
+			if ( formKey > 0 ) {
+				syncFormData( $form );
+			}
+		},
+		[ captureInitialFormData, syncFormData, formKey ]
+	);
+
+	/**
+	 * Checks if the serialized form holds a user edit, not its synced or loaded state
+	 *
+	 * @param {string} serializedData - Serialized form data
+	 * @return {boolean} - True for a user edit
+	 */
+	function isFormEdit( serializedData ) {
+		return (
+			serializedData !== lastFormDataRef.current &&
+			( hasWrittenFormDataRef.current ||
+				serializedData !== initialFormDataRef.current )
+		);
+	}
+
+	/**
+	 * Handles form changes. An edit made while a reload is on its way wins over the reload.
+	 *
+	 * @param {jQuery} $form - The block form
+	 */
+	function onFormChange( $form ) {
+		const serializedData = serializeBlockForm( $form, clientId );
+		if ( ! serializedData ) {
+			return;
+		}
+		if ( isFormEdit( serializedData ) ) {
+			formReloadRef.current = null;
+		}
+		setTheSerializedAcfData( serializedData );
+	}
+
+	/**
+	 * Asks for form HTML that matches the stored data, keeping track of the focused input.
+	 */
+	function requestFormReload() {
+		const form = acfFormRef.current;
+		const active = form?.ownerDocument.activeElement;
+		formReloadRef.current = {
+			focus:
+				active && active.name && form.contains( active )
+					? {
+							name: active.name,
+							start: active.selectionStart,
+							end: active.selectionEnd,
+					  }
+					: null,
+		};
+	}
+
+	/**
+	 * Re-mounts the form with the fetched HTML, if a reload is still wanted.
+	 */
+	function applyFormReload() {
+		if ( ! formReloadRef.current ) {
+			return;
+		}
+		reloadedFormRef.current = formReloadRef.current;
+		formReloadRef.current = null;
+		setFormKey( ( key ) => key + 1 );
+	}
 
 	// Initialize acf.blockEdit namespace for jsx-parser to use
 	if ( ! acf.blockEdit ) {
@@ -353,6 +534,7 @@ export const BlockEdit = ( props ) => {
 
 		if ( preloadedData ) {
 			handlePreloadedData( preloadedData );
+			applyFormReload();
 			unlockPostSavingByName( 'acf-fetching-block' );
 			setIsFetchingBlock( false );
 			return;
@@ -394,6 +576,7 @@ export const BlockEdit = ( props ) => {
 				setIsFetchingBlock( false );
 
 				setBlockFormHtml( response.data.form );
+				applyFormReload();
 
 				// Handle new field metadata for inline editing
 				if ( response.data.fields ) {
@@ -668,7 +851,25 @@ export const BlockEdit = ( props ) => {
 		debounceRef.current = setTimeout( () => {
 			const parsedData = JSON.parse( theSerializedAcfData );
 
+			if ( isFormEdit( theSerializedAcfData ) ) {
+				// A form edit wins over a reload that is still on its way.
+				formReloadRef.current = null;
+			}
+			const formChanged =
+				theSerializedAcfData !== lastFormDataRef.current;
+			lastFormDataRef.current = theSerializedAcfData;
+
+			const dataJson = JSON.stringify(
+				attributesWithoutError.data ?? null
+			);
+			const dataChanged = dataJson !== lastDataRef.current;
+			lastDataRef.current = dataJson;
+
 			if ( ! parsedData ) {
+				// The form was not edited, but it still has to show the new data.
+				if ( dataChanged ) {
+					requestFormReload();
+				}
 				return void fetchBlockData( {
 					theAttributes: attributesWithoutError,
 					theClientId: clientId,
@@ -677,11 +878,14 @@ export const BlockEdit = ( props ) => {
 				} );
 			}
 
-			// Stored data is keyed by field name and the form by field key, so on load
-			// the form is compared with its own first state instead.
+			// On load the form is also compared with its own first state, as stored
+			// data may not have the "_name" entries needed to map names to keys.
 			if (
-				theSerializedAcfData ===
-					JSON.stringify( attributesWithoutError.data ) ||
+				isSameBlockData(
+					attributesWithoutError.data,
+					parsedData,
+					blockFieldInfo
+				) ||
 				( ! hasWrittenFormDataRef.current &&
 					theSerializedAcfData === initialFormDataRef.current )
 			) {
@@ -698,7 +902,23 @@ export const BlockEdit = ( props ) => {
 				} );
 			}
 
+			// The form was not edited, so the data was changed from outside (undo, redo
+			// or another script). Writing the form back would cancel that change, so
+			// load a form for the new data instead.
+			if ( ! formChanged ) {
+				if ( dataChanged ) {
+					requestFormReload();
+				}
+				return void fetchBlockData( {
+					theAttributes: attributesWithoutError,
+					theClientId: clientId,
+					theContext: context,
+					isSelected: isSelected,
+				} );
+			}
+
 			hasWrittenFormDataRef.current = true;
+			lastDataRef.current = JSON.stringify( parsedData );
 
 			// Use original attributes (with hasAcfError) when updating
 			const updatedAttributes = {
@@ -771,7 +991,10 @@ export const BlockEdit = ( props ) => {
 			showValidationErrors={ showValidationErrors }
 			theSerializedAcfData={ theSerializedAcfData }
 			setTheSerializedAcfData={ setTheSerializedAcfData }
-			captureInitialFormData={ captureInitialFormData }
+			onFormMount={ onFormMount }
+			onFormChange={ onFormChange }
+			onFormUntouchedChange={ onFormUntouchedChange }
+			formKey={ formKey }
 			acfFormRef={ acfFormRef }
 			blockFormHtml={ blockFormHtml }
 			blockPreviewHtml={ blockPreviewHtml }
@@ -828,7 +1051,10 @@ function BlockEditInner( props ) {
 		showValidationErrors,
 		theSerializedAcfData,
 		setTheSerializedAcfData,
-		captureInitialFormData,
+		onFormMount,
+		onFormChange,
+		onFormUntouchedChange,
+		formKey,
 		acfFormRef,
 		blockFormHtml,
 		blockPreviewHtml,
@@ -1305,26 +1531,20 @@ function BlockEditInner( props ) {
 				createPortal(
 					<>
 						<BlockForm
+							key={ formKey }
 							$={ $ }
 							clientId={ clientId }
 							blockFormHtml={ blockFormHtml }
-							onMount={ captureInitialFormData }
-							onUntouchedChange={ captureInitialFormData }
-							onChange={ function ( $form ) {
-								const serializedData = serializeBlockForm(
-									$form,
-									clientId
-								);
-								if ( serializedData ) {
-									setTheSerializedAcfData( serializedData );
-								}
-							} }
+							onMount={ onFormMount }
+							onUntouchedChange={ onFormUntouchedChange }
+							onChange={ onFormChange }
 							validationErrors={ validationErrors }
 							showValidationErrors={ showValidationErrors }
 							acfFormRef={ acfFormRef }
 							userHasInteractedWithForm={
 								userHasInteractedWithForm
 							}
+							isReloaded={ formKey > 0 }
 							attributes={ attributes }
 							hideFieldsInSidebar={
 								( blockType?.auto_inline_editing &&
