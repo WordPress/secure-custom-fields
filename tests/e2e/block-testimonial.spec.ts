@@ -278,8 +278,10 @@ test.describe( 'SCF Block > Testimonial', () => {
 		await publishButton.click();
 
 		// Wait for the error notice to appear at the top of the editor
+		// WP trunk renders editor notices with `notices-inline-notices__*`
+		// classes instead of the legacy `components-notice` markup.
 		const errorNotice = page.locator(
-			'.components-notice.is-error .components-notice__content'
+			'.components-notice.is-error .components-notice__content, .notices-inline-notices__notice.is-error'
 		);
 		await expect( errorNotice ).toBeVisible( { timeout: 1000 } );
 	} );
