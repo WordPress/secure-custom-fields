@@ -309,8 +309,10 @@ test.describe( 'SCF Block V3 Features', () => {
 		await publishButton.click();
 
 		// Wait for the error notice to appear
+		// WP trunk renders editor notices with `notices-inline-notices__*`
+		// classes instead of the legacy `components-notice` markup.
 		const errorNotice = page.locator(
-			'.components-notice.is-error .components-notice__content'
+			'.components-notice.is-error .components-notice__content, .notices-inline-notices__notice.is-error'
 		);
 		await expect( errorNotice ).toBeVisible( { timeout: 3000 } );
 	} );
