@@ -526,4 +526,161 @@ describe( 'BlockEdit Component', () => {
 			).not.toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'inline text editing', () => {
+		let serverText;
+
+		beforeEach( () => {
+			// The server renders the field value into an inline editable element.
+			mockAjax.mockImplementation( () => ( {
+				done( callback ) {
+					callback( {
+						data: {
+							form: '<div>Form HTML</div>',
+							preview: serverText,
+							validation: { valid: true },
+						},
+					} );
+					return this;
+				},
+				fail() {
+					return this;
+				},
+				abort: jest.fn(),
+			} ) );
+			acf.parseJSX.mockImplementation( ( html ) => (
+				<h3
+					data-acf-inline-contenteditable="1"
+					contentEditable
+					suppressContentEditableWarning
+					tabIndex={ 0 }
+				>
+					{ html }
+				</h3>
+			) );
+		} );
+
+		afterEach( () => {
+			acf.parseJSX.mockImplementation( ( html ) => <div>{ html }</div> );
+		} );
+
+		/**
+		 * Renders the block with an inline editable title, places the caret in
+		 * it and types, like the browser does in a contentEditable element.
+		 * Then lets the block fetch the preview of the new value, as the
+		 * server renders it.
+		 *
+		 * @param {Object} options
+		 * @param {string} options.text         The initial title.
+		 * @param {number} options.caret        Caret offset to type at.
+		 * @param {string} options.typed        The typed characters.
+		 * @param {string} options.renderedText The title as the server renders it.
+		 * @return {Element} The inline editable element.
+		 */
+		const typeAndRerenderPreview = async ( {
+			text,
+			caret,
+			typed,
+			renderedText,
+		} ) => {
+			serverText = text;
+			const props = {
+				...defaultProps,
+				attributes: {
+					...defaultProps.attributes,
+					data: { title: text },
+				},
+				isSelected: true,
+			};
+			let rerender;
+			await act( async () => {
+				( { rerender } = render( <BlockEdit { ...props } /> ) );
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+
+			const editable = screen.getByRole( 'heading' );
+			const textNode = editable.firstChild;
+			expect( textNode.data ).toBe( text );
+			editable.focus();
+			textNode.insertData( caret, typed );
+			editable.ownerDocument
+				.getSelection()
+				.collapse( textNode, caret + typed.length );
+
+			serverText = renderedText;
+			await act( async () => {
+				rerender(
+					<BlockEdit
+						{ ...props }
+						attributes={ {
+							...props.attributes,
+							data: { title: textNode.data },
+						} }
+					/>
+				);
+			} );
+			await act( async () => {
+				jest.advanceTimersByTime( 250 );
+			} );
+
+			expect( editable ).toHaveTextContent( renderedText );
+			return editable;
+		};
+
+		const getCaret = ( element ) => {
+			const selection = element.ownerDocument.getSelection();
+			const range = element.ownerDocument.createRange();
+			range.setStart( element, 0 );
+			range.setEnd( selection.focusNode, selection.focusOffset );
+			return {
+				isCollapsed: selection.isCollapsed,
+				inElement: element.contains( selection.focusNode ),
+				offset: range.toString().length,
+			};
+		};
+
+		test( 'keeps the caret after the typed text when the preview re-renders', async () => {
+			const editable = await typeAndRerenderPreview( {
+				text: 'Accessible',
+				caret: 10,
+				typed: 'AAA',
+				renderedText: 'AccessibleAAA',
+			} );
+
+			expect( editable ).toHaveFocus();
+			expect( getCaret( editable ) ).toEqual( {
+				isCollapsed: true,
+				inElement: true,
+				offset: 13,
+			} );
+		} );
+
+		test( 'keeps the caret in the middle of the text', async () => {
+			const editable = await typeAndRerenderPreview( {
+				text: 'Accessible',
+				caret: 3,
+				typed: 'X',
+				renderedText: 'AccXessible',
+			} );
+
+			expect( getCaret( editable ).offset ).toBe( 4 );
+		} );
+
+		test( 'moves the caret to the end when the rendered text is shorter', async () => {
+			const editable = await typeAndRerenderPreview( {
+				text: 'Accessible',
+				caret: 10,
+				typed: 'AAA',
+				renderedText: 'Access',
+			} );
+
+			expect( getCaret( editable ) ).toEqual( {
+				isCollapsed: true,
+				inElement: true,
+				offset: 6,
+			} );
+		} );
+	} );
 } );

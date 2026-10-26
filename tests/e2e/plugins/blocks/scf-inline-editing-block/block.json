@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "scf/inline-editing-block",
+	"title": "SCF Inline Editing Block",
+	"description": "A test block with inline text editing.",
+	"category": "text",
+	"icon": "edit",
+	"acf": {
+		"blockVersion": 3,
+		"mode": "preview",
+		"renderTemplate": "template.php"
+	},
+	"textdomain": "secure-custom-fields"
+}

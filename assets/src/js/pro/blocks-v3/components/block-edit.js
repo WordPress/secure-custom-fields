@@ -33,6 +33,7 @@ import { ErrorBoundary, BlockPreviewErrorFallback } from './error-boundary';
 import { BlockToolbarFields } from './block-toolbar-fields';
 import { InlineEditingToolbar } from './inline-editing-toolbar';
 import { PopoverWrapper } from './popover-wrapper';
+import { PreserveContentEditableSelection } from './preserve-content-editable-selection';
 import {
 	lockPostSaving,
 	unlockPostSaving,
@@ -1490,17 +1491,23 @@ function BlockEditInner( props ) {
 						) }
 
 						{ /* Render actual preview HTML */ }
-						{ blockPreviewHtml !== 'acf-block-preview-loading' &&
-							blockPreviewHtml !== 'acf-block-preview-no-html' &&
-							blockPreviewHtml &&
-							acf.parseJSX(
-								blockPreviewHtml,
-								handleNewInlineEditingElementSelected,
-								updateFieldValueFromContentEditable,
-								handleNewContentEditableElementSelected,
-								blockFieldInfo,
-								$
-							) }
+						<PreserveContentEditableSelection
+							containerRef={ previewRef }
+						>
+							{ blockPreviewHtml !==
+								'acf-block-preview-loading' &&
+								blockPreviewHtml !==
+									'acf-block-preview-no-html' &&
+								blockPreviewHtml &&
+								acf.parseJSX(
+									blockPreviewHtml,
+									handleNewInlineEditingElementSelected,
+									updateFieldValueFromContentEditable,
+									handleNewContentEditableElementSelected,
+									blockFieldInfo,
+									$
+								) }
+						</PreserveContentEditableSelection>
 					</ErrorBoundary>
 				</BlockPreview>
 			</>
