@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/wp-env.json",
+  "testsEnvironment": false,
+  "port": 8889,
+  "plugins": ["."],
+  "mappings": {
+    "wp-content/plugins/secure-custom-fields": ".",
+    "wp-content/plugins/scf-test-plugins": "./tests/e2e/plugins"
+  }
+}

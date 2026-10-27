@@ -60,7 +60,7 @@ jobs:
               run: npm run build
 
             - name: Start wp-env
-              run: npm run wp-env start
+              run: npm run wp-env-test start
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
@@ -86,7 +86,7 @@ jobs:
 
             - name: Stop wp-env
               if: always()
-              run: npm run wp-env stop
+              run: npm run wp-env-test stop
 
     local-json-multisite:
         name: Local JSON Multisite Integration
