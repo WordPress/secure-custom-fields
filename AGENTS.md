@@ -10,8 +10,10 @@
 ```bash
 # Setup
 npm install && composer install
-npm run wp-env status   # Always check status first
-npm run wp-env start    # Only start if not already running
+npm run wp-env status        # Always check status first (dev site, port 8888)
+npm run wp-env start         # Only start if not already running
+npm run wp-env-test status   # E2E test site (port 8889)
+npm run wp-env-test start    # Only start if not already running
 
 # Development
 npm run watch           # Development with watch
@@ -28,7 +30,7 @@ npm run build          # Production build
 
 ## Testing instructions
 
-> **Note**: PHP/E2E tests require wp-env running.
+> **Note**: E2E tests require the test environment running (`npm run wp-env-test start`).
 
 ```bash
 # PHP (requires wp-env)
@@ -43,7 +45,7 @@ composer test:phpstan     # Static analysis only
 npm run test:unit         # Jest unit tests
 npm run test:unit:watch   # Jest in watch mode
 
-# End-to-end tests (Playwright, requires wp-env)
+# End-to-end tests (Playwright, requires `npm run wp-env-test start`)
 # IMPORTANT: NEVER run `npx playwright test` directly — always use these npm scripts:
 npm run test:e2e                               # All E2E tests
 npm run test:e2e:debug                         # Debug mode
