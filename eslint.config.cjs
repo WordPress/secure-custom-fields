@@ -1,0 +1,22 @@
+const wordpressConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
+
+module.exports = [
+	{
+		ignores: [
+			'node_modules/**',
+			'vendor/**',
+			'wordpress/**',
+			'assets/build/**',
+			'coverage/**',
+			'.nyc_output/**',
+			'.php-coverage/**',
+			'artifacts/**',
+			'test-results/**',
+			'playwright-report/**',
+			'blob-report/**',
+			'release/**',
+			'**/.claude/**',
+		],
+	},
+	...wordpressConfig,
+];
