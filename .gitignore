@@ -29,6 +29,7 @@ jspm_packages/
 .env.test
 .env.production
 .wp-env.override.json
+.wp-env.test.override.json
 
 # MacOS
 .DS_Store
