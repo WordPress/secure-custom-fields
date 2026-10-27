@@ -4619,6 +4619,99 @@
                         }
                     },
                     "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "key",
+                        "label",
+                        "name",
+                        "type"
+                    ],
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "pattern": "^field_.+$",
+                            "minLength": 1,
+                            "description": "Unique identifier for the field with field_ prefix (e.g. 'field_abc123')"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The label displayed for this field"
+                        },
+                        "name": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]*$",
+                            "description": "The field name/meta_key used to save and load data (empty for layout fields like tab, accordion)"
+                        },
+                        "aria-label": {
+                            "type": "string",
+                            "description": "Accessible label for screen readers"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "The type of field",
+                            "pattern": "^(?!(?:color_picker|date_picker|date_time_picker|google_map|icon_picker|time_picker|email|number|password|range|text|textarea|url|button_group|checkbox|nav_menu|radio|select|true_false|file|gallery|image|oembed|wysiwyg|accordion|clone|flexible_content|group|message|output|repeater|separator|tab|link|page_link|post_object|relationship|taxonomy|user)$).+$"
+                        },
+                        "instructions": {
+                            "type": "string",
+                            "description": "Instructions for content editors"
+                        },
+                        "required": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "default": false,
+                            "description": "Whether the field is required"
+                        },
+                        "conditional_logic": {
+                            "type": [
+                                "boolean",
+                                "integer",
+                                "string",
+                                "array"
+                            ],
+                            "default": 0,
+                            "description": "Conditional logic rules for field visibility. False/0/empty string to disable, or array of rule groups."
+                        },
+                        "wrapper": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "width": {
+                                    "type": "string",
+                                    "description": "Width of the field wrapper (e.g. '50' for 50%)"
+                                },
+                                "class": {
+                                    "type": "string",
+                                    "description": "CSS class(es) for the field wrapper"
+                                },
+                                "id": {
+                                    "type": "string",
+                                    "description": "HTML ID for the field wrapper"
+                                }
+                            },
+                            "description": "Wrapper element settings"
+                        },
+                        "menu_order": {
+                            "type": "integer",
+                            "description": "Order of the field within its parent"
+                        },
+                        "parent": {
+                            "type": [
+                                "string",
+                                "integer"
+                            ],
+                            "description": "Parent field or field group key/ID"
+                        },
+                        "parent_layout": {
+                            "type": "string",
+                            "description": "Parent layout key for flexible content sub-fields"
+                        }
+                    },
+                    "additionalProperties": true
                 }
             ]
         },

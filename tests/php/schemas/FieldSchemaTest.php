@@ -152,6 +152,17 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 				),
 				'Field with conditional logic should be valid',
 			),
+			'extension field type'            => array(
+				array(
+					'key'            => 'field_extension',
+					'label'          => 'Extension Field',
+					'name'           => 'extension_field',
+					'type'           => 'third_party_type',
+					'parent'         => 'group_test',
+					'custom_setting' => 'preserved',
+				),
+				'Third-party field types should use the permissive fallback',
+			),
 
 			// Multi-type property tests (properties accepting different types).
 			'maxlength as empty string'       => array(
@@ -835,16 +846,6 @@ class FieldSchemaTest extends BaseSchemaTestCase {
 			),
 
 			// Enum validation.
-			'invalid type'                             => array(
-				array(
-					'key'    => 'field_bad_type',
-					'label'  => 'Bad Type Field',
-					'name'   => 'bad_type',
-					'type'   => 'nonexistent_type',
-					'parent' => 'group_test',
-				),
-				'Field with invalid type should fail validation',
-			),
 			'invalid new_lines enum'                   => array(
 				array(
 					'key'       => 'field_textarea_bad_nl',

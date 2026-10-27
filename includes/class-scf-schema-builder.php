@@ -27,7 +27,8 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 	 * - Base properties (key, label, name, type, parent) are shared across all types
 	 * - oneOf validates "valid text field OR valid number field OR ..."
 	 * - Each variant merges base + type-specific properties with additionalProperties: false
-	 * - Fallback variant allows unknown types until all 35 field types have schemas
+	 * - Fallback variant allows extension field types without weakening known types
+	 * - The fallback pattern excludes known types so oneOf still matches exactly once
 	 *
 	 * Schema structure:
 	 * - schemas/field-fragments/field-base.schema.json: Base properties shared by all types
@@ -224,6 +225,29 @@ if ( ! class_exists( 'SCF_Schema_Builder' ) ) :
 					'additionalProperties' => $type_schema['additionalProperties'] ?? false,
 				);
 			}
+
+			// Preserve fields registered by extensions even when their type does not
+			// have a dedicated schema. Excluding known types prevents those fields
+			// from matching both their strict variant and this fallback.
+			$fallback_props = $base_props;
+			$type_property  = $fallback_props['type'] ?? array();
+			unset( $type_property['enum'] );
+			$escaped_types            = array_map(
+				static function ( $type ) {
+					return preg_quote( $type, '/' );
+				},
+				array_keys( $type_schemas )
+			);
+			$type_property['type']    = 'string';
+			$type_property['pattern'] = '^(?!(?:' . implode( '|', $escaped_types ) . ')$).+$';
+			$fallback_props['type']   = $type_property;
+
+			$variants[] = array(
+				'type'                 => 'object',
+				'required'             => array( 'key', 'label', 'name', 'type', 'parent' ),
+				'properties'           => $fallback_props,
+				'additionalProperties' => true,
+			);
 
 			$this->composed_field_schema = array(
 				'oneOf' => $variants,
