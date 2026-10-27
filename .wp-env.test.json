@@ -3,6 +3,10 @@
   "testsEnvironment": false,
   "port": 8889,
   "plugins": ["."],
+  "config": {
+    "WP_DEBUG": false,
+    "SCRIPT_DEBUG": false
+  },
   "mappings": {
     "wp-content/plugins/secure-custom-fields": ".",
     "wp-content/plugins/scf-test-plugins": "./tests/e2e/plugins"
