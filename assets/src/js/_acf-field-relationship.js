@@ -142,9 +142,13 @@
 				return;
 			}
 
-			// Wait until the list can be scrolled
-			const $list = this.$list( 'choices' );
+			// Load the next page when the list is scrolled to the bottom. Posts the current user can't read are
+			// left out of results, so a page may add too few choices to scroll, or none, so this also runs
+			// after each page loads, and when a hidden field is shown.
+			var $list = this.$list( 'choices' );
 			if ( ! $list.is( ':visible' ) ) {
+				// Fields inside a Group, or in a meta box that was collapsed, aren't sent the showField event, so
+				// also resume once the list comes into view.
 				if ( ! this.get( 'waitingForView' ) ) {
 					this.set( 'waitingForView', true );
 					acf.onceInView(
@@ -158,7 +162,6 @@
 				return;
 			}
 
-			// Scrolled to bottom
 			var scrollTop = Math.ceil( $list.scrollTop() );
 			var scrollHeight = Math.ceil( $list[ 0 ].scrollHeight );
 			var innerHeight = Math.ceil( $list.innerHeight() );
@@ -336,7 +339,7 @@
 
 			// add to this.o
 			const ajaxData = this.getAjaxData();
-			const ajaxDataJson = JSON.stringify( ajaxData );
+			const query = JSON.stringify( ajaxData );
 
 			// clear html if is new query
 			var $choiceslist = this.$list( 'choices' );
@@ -354,25 +357,25 @@
 			this.set( 'loading', true );
 
 			// callback
-			var onComplete = function ( jqXHR, status ) {
+			const onComplete = function ( jqXHR, status ) {
 				this.set( 'loading', false );
 				$loading.remove();
 
-				// Keep loading while the list doesn't fill up, unless the query has changed
+				// Only page on if the search hasn't changed since this page was requested.
 				if (
 					'success' === status &&
-					JSON.stringify( this.getAjaxData() ) === ajaxDataJson
+					JSON.stringify( this.getAjaxData() ) === query
 				) {
 					this.maybeFetchMore();
 				}
 			};
 
 			var onSuccess = function ( json ) {
-				// This page's posts were all left out, but later pages may have more
+				// A page can be empty when the current user can't read any of its posts, so keep paging.
 				if (
 					json &&
 					json.more &&
-					! ( json.results && json.results.length )
+					( ! json.results || ! json.results.length )
 				) {
 					this.set( 'more', true );
 					return;
@@ -383,7 +386,7 @@
 					// prevent pagination
 					this.set( 'more', false );
 
-					// add message
+					// add message, also when earlier pages were empty
 					if ( ! $choiceslist.find( '.acf-rel-item' ).length ) {
 						this.$list( 'choices' ).append(
 							'<li>' + acf.__( 'No matches found' ) + '</li>'

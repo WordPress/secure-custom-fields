@@ -524,7 +524,8 @@
 				$prevGroup = $group;
 			} );
 
-			// Remove the "No results" message once a later page has added options
+			// A page can be empty when the current user can't read any of its posts. Select2 then shows
+			// its "No results found" message, and doesn't remove it when later pages add results.
 			const $results = $(
 				'.select2-container--open .select2-results__options'
 			).first();
