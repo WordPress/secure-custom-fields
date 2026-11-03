@@ -103,8 +103,7 @@ class WC_Order {
 			return;
 		}
 
-		// Dynamically get order type from the order object
-		$location = $order->get_type();
+		$location = $this->get_order_location_type( $order->get_id() );
 
 		// Determine screen ID based on HPOS status and order type
 		if ( $this->is_hpos_enabled() ) {
@@ -296,8 +295,35 @@ class WC_Order {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
+		// Only accept fields rendered for this order, or from field groups located on it.
+		acf_restrict_save_input(
+			array(
+				'context'    => 'woo_order',
+				'post_id'    => 'woo_order_' . $order_id,
+				'render_ids' => array( 'woo_order_' . $order_id ),
+				'screen'     => array(
+					'post_id'   => $order_id,
+					'post_type' => $this->get_order_location_type( $order_id ),
+				),
+			)
+		);
+
 		// Remove the action to prevent an infinite loop via $order->save().
 		remove_action( 'woocommerce_update_order', array( $this, 'save_order' ), 10 );
 		acf_save_post( 'woo_order_' . $order_id );
+	}
+
+	/**
+	 * Returns the post type used to match field groups to an order, as in add_meta_boxes().
+	 *
+	 * @since ACF 6.8.11
+	 *
+	 * @param integer $order_id The order ID.
+	 * @return string
+	 */
+	protected function get_order_location_type( int $order_id ): string {
+		$order = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false;
+
+		return $order ? $order->get_type() : 'shop_order';
 	}
 }

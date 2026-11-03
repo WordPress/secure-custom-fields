@@ -248,17 +248,28 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 				$args['post__in'] = array( (int) $options['include'] );
 			}
 
+			$args['perm']                 = 'readable';
+			$args['acf_field_post_types'] = acf_get_array( $field['post_type'] );
+			$args                         = acf_ensure_perm_readable_post_status( $args );
+
 			// filters
 			$args = apply_filters( 'acf/fields/relationship/query', $args, $field, $options['post_id'] );
 			$args = apply_filters( 'acf/fields/relationship/query/name=' . $field['name'], $args, $field, $options['post_id'] );
 			$args = apply_filters( 'acf/fields/relationship/query/key=' . $field['key'], $args, $field, $options['post_id'] );
 
-			// get posts grouped by post type
-			$groups = acf_get_grouped_posts( $args, true );
+			// Re-normalize in case a filter reset `post_status` to 'any' while leaving `perm=readable`.
+			$args = acf_ensure_perm_readable_post_status( $args );
 
-			// bail early if no posts
+			// get posts grouped by post type
+			$readable = acf_remove_unreadable_grouped_posts( acf_get_grouped_posts( $args ), $args, $field );
+			$groups   = $readable['groups'];
+
+			// bail early if no posts, but keep paging if this page's posts were all removed
 			if ( empty( $groups ) ) {
-				return false;
+				return $readable['more'] ? array(
+					'results' => array(),
+					'more'    => true,
+				) : false;
 			}
 
 			// loop
@@ -299,6 +310,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 
 			return array(
 				'results' => $results,
+				'more'    => $readable['more'],
 				'limit'   => $args['posts_per_page'],
 			);
 		}
@@ -451,114 +463,114 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			);
 
 			?>
-			<div <?php echo acf_esc_attrs( $atts ); ?>>
+<div <?php echo acf_esc_attrs( $atts ); ?>>
+	
+			<?php
+			acf_hidden_input(
+				array(
+					'name'  => $field['name'],
+					'value' => '',
+				)
+			);
+			?>
+	
+			<?php
 
-				<?php
-				acf_hidden_input(
-					array(
-						'name'  => $field['name'],
-						'value' => '',
-					)
-				);
+			/* filters */
+			if ( $filter_count ) :
 				?>
-
+	<div class="filters -f<?php echo esc_attr( $filter_count ); ?>">
 				<?php
 
-				/* filters */
-				if ( $filter_count ) :
+				/* search */
+				if ( in_array( 'search', $filters, true ) ) :
 					?>
-					<div class="filters -f<?php echo esc_attr( $filter_count ); ?>">
+		<div class="filter -search">
+					<?php
+					acf_text_input(
+						array(
+							'placeholder' => __( 'Search...', 'secure-custom-fields' ),
+							'data-filter' => 's',
+						)
+					);
+					?>
+		</div>
+					<?php
+			endif;
+
+				/* post_type */
+				if ( in_array( 'post_type', $filters, true ) ) :
+					?>
+		<div class="filter -post_type">
+					<?php
+					acf_select_input(
+						array(
+							'choices'     => $filter_post_type_choices,
+							'data-filter' => 'post_type',
+						)
+					);
+					?>
+		</div>
+					<?php
+			endif;
+
+				/* post_type */
+				if ( in_array( 'taxonomy', $filters, true ) ) :
+					?>
+		<div class="filter -taxonomy">
+					<?php
+					acf_select_input(
+						array(
+							'choices'     => $filter_taxonomy_choices,
+							'data-filter' => 'taxonomy',
+						)
+					);
+					?>
+		</div>
+				<?php endif; ?>		
+	</div>
+			<?php endif; ?>
+	
+	<div class="selection">
+		<div class="choices">
+			<ul class="acf-bl list choices-list"></ul>
+		</div>
+		<div class="values">
+			<ul class="acf-bl list values-list">
+				<?php
+				if ( ! empty( $field['value'] ) ) :
+
+					// get posts
+					$posts = acf_get_posts(
+						array(
+							'post__in'  => $field['value'],
+							'post_type' => $field['post_type'],
+						)
+					);
+
+						// loop
+					foreach ( $posts as $post ) :
+						?>
+					<li>
 						<?php
-
-						/* search */
-						if ( in_array( 'search', $filters ) ) :
-							?>
-							<div class="filter -search">
-								<?php
-								acf_text_input(
-									array(
-										'placeholder' => __( 'Search...', 'secure-custom-fields' ),
-										'data-filter' => 's',
-									)
-								);
-								?>
-							</div>
-							<?php
-						endif;
-
-						/* post_type */
-						if ( in_array( 'post_type', $filters ) ) :
-							?>
-							<div class="filter -post_type">
-								<?php
-								acf_select_input(
-									array(
-										'choices'     => $filter_post_type_choices,
-										'data-filter' => 'post_type',
-									)
-								);
-								?>
-							</div>
-							<?php
-						endif;
-
-						/* post_type */
-						if ( in_array( 'taxonomy', $filters ) ) :
-							?>
-							<div class="filter -taxonomy">
-								<?php
-								acf_select_input(
-									array(
-										'choices'     => $filter_taxonomy_choices,
-										'data-filter' => 'taxonomy',
-									)
-								);
-								?>
-							</div>
-						<?php endif; ?>
-					</div>
+							acf_hidden_input(
+								array(
+									'name'  => $field['name'] . '[]',
+									'value' => $post->ID,
+								)
+							);
+						?>
+						<span tabindex="0" data-id="<?php echo esc_attr( $post->ID ); ?>" class="acf-rel-item acf-rel-item-remove">
+								<?php echo acf_esc_html( acf_current_user_can_read_post( $post, $field ) ? $this->get_post_title( $post, $field ) : acf_get_restricted_post_title() ); ?>
+							<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a>
+						</span>
+					</li>
+						<?php endforeach; ?>
 				<?php endif; ?>
-
-				<div class="selection">
-					<div class="choices">
-						<ul class="acf-bl list choices-list"></ul>
-					</div>
-					<div class="values">
-						<ul class="acf-bl list values-list">
-							<?php
-							if ( ! empty( $field['value'] ) ) :
-
-								// get posts
-								$posts = acf_get_posts(
-									array(
-										'post__in'  => $field['value'],
-										'post_type' => $field['post_type'],
-									)
-								);
-
-								// loop
-								foreach ( $posts as $post ) :
-									?>
-									<li>
-										<?php
-										acf_hidden_input(
-											array(
-												'name'  => $field['name'] . '[]',
-												'value' => $post->ID,
-											)
-										);
-										?>
-										<span tabindex="0" data-id="<?php echo esc_attr( $post->ID ); ?>" class="acf-rel-item acf-rel-item-remove">
-											<?php echo acf_esc_html( $this->get_post_title( $post, $field ) ); ?>
-											<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a>
-										</span>
-									</li>
-								<?php endforeach; ?>
-							<?php endif; ?>
-						</ul>
-					</div>
-				</div>
-			</div>
+			</ul>
+		</div>
+	</div>
+</div>
 			<?php
 		}
 
@@ -732,6 +744,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		 * @return  $value (mixed) the modified value
 		 */
 		function format_value( $value, $post_id, $field ) {
+			$value = acf_remove_unreadable_formatted_post_ids( $value, $post_id, $field );
 
 			// bail early if no value
 			if ( empty( $value ) ) {
@@ -820,6 +833,8 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 			} else {
 				$value = acf_idval( $value );
 			}
+
+			$value = acf_remove_disallowed_post_ids( $value, $post_id, $field );
 
 			acf_update_bidirectional_values( acf_get_array( $value ), $post_id, $field );
 
@@ -913,7 +928,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Formats the field value for JSON-LD output.
 		 *
-		 * @since 6.8.0
+		 * @since ACF 6.8.0
 		 *
 		 * @param mixed          $value   The value of the field.
 		 * @param integer|string $post_id The ID of the post.
@@ -942,7 +957,7 @@ if ( ! class_exists( 'acf_field_relationship' ) ) :
 		/**
 		 * Returns an array of JSON-LD Property output types that are supported by this field type.
 		 *
-		 * @since 6.8
+		 * @since ACF 6.8
 		 *
 		 * @return string[]
 		 */

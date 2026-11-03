@@ -107,6 +107,7 @@ class Posts {
 			return;
 		}
 
+		// Don't output field values of a password-protected post until the password has been entered.
 		if ( post_password_required( $post ) ) {
 			if ( $debug ) {
 				echo "<!-- SCF AI JSON-LD: Post is password protected -->\n";

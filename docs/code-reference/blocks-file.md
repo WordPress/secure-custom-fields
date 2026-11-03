@@ -245,6 +245,58 @@ Renders the block HTML.
 * @param array    $context    The block context array.
 * @return void|string
 
+## `_acf_get_block_reader()`
+
+The internal ACF function to return the user whose read access is checked for an ACF Block's
+relational field values while it renders.
+
+* Editing previews and previews of posts can show data the current user has just entered, so they're
+checked against the current user.
+* Otherwise, blocks saved in a post or synced pattern were saved by someone who can edit it, so they're
+checked against its author, wherever its content is shown, such as on the front end or in the REST API.
+Posts the author picked show to every visitor, and posts they couldn't have picked are left out, even if
+an editor published the post without noticing them. Posts that an editor picked for another user's post,
+and that the author can't read, are left out too.
+* Blocks rendered by a synced pattern are saved in the pattern, and other blocks rendered by `the_content`
+are saved in the current post. Posts whose content is shown inside a synced pattern, such as by a Query
+Loop in the pattern, are treated as part of the pattern.
+* Blocks that aren't saved in a post or synced pattern are checked against the current user if they're
+rendered in the admin, by AJAX or by a REST API endpoint, such as the block renderer, which can render
+any data. On the front end, they're in places like template parts and widgets, which only users who can
+edit the theme can change, so they aren't checked.
+* @since ACF 6.8.11
+* @param boolean $is_preview Whether the block is being rendered for an editing preview.
+* @return WP_User|false The user, or false if the block's values aren't checked.
+
+## `_acf_start_rest_block_render()`
+
+The internal ACF function to record that a REST API endpoint has started handling a request, so blocks
+it renders that aren't saved in a post are checked against the current user.
+
+* @since ACF 6.8.11
+* @param mixed $response The response, or an error.
+* @return mixed The unchanged response.
+
+## `_acf_end_rest_block_render()`
+
+The internal ACF function to record that a REST API endpoint has finished handling a request.
+
+* @since ACF 6.8.11
+* @param mixed $response The response, or an error.
+* @return mixed The unchanged response.
+
+## `_acf_track_synced_pattern()`
+
+The internal ACF function to record that blocks rendered by a synced pattern are saved in the pattern,
+by wrapping the render callback of the `core/block` block type.
+
+* A synced pattern renders its blocks by rendering its own block instance again, so the `render_block`
+filter runs twice for it and can't be used to find where the pattern ends.
+* @since ACF 6.8.11
+* @param array  $args       The block type's arguments.
+* @param string $block_type The block type's name.
+* @return array The block type's arguments.
+
 ## `scf_path_has_stream_wrapper()`
 
 Checks if a path uses a PHP stream wrapper, such as `phar://` or `php://`.
@@ -442,8 +494,50 @@ Iterates over blocks in post content and retrieves values
 that need to be saved to post meta.
 
 * @since ACF 6.3
-* @param string $content The content saved for the post.
+* @since ACF 6.8.11 Restricts each block's values to its own fields, keyed by field key.
+* @param string         $content The content saved for the post.
+* @param integer|string $post_id The post being saved.
 * @return array An array containing the field values that need to be saved.
+
+## `acf_filter_block_meta_values()`
+
+Restricts a post meta block's values to the fields of the field groups located on the block.
+
+* Block meta values come from post content, which anyone who can edit the post controls, rather
+than from a rendered form, so they are matched by location only. Values arrive keyed by field
+key or, as loaded by acf_add_block_meta_values(), by field name with `_{name}` key references.
+Names are mapped to the block's own fields so they can't resolve to a field with the same name
+elsewhere. Values for seamless clone sub fields are nested under the clone's key, as the clone
+field saves them (as in $_POST['acf']).
+* @since ACF 6.8.11
+* @param string         $block_name The block type name.
+* @param mixed          $values     The block's values.
+* @param integer|string $post_id    The post being saved.
+* @return array The allowed values, keyed by top-level field key.
+
+## `_acf_set_block_meta_value()`
+
+Adds a block field's value to the values to save, under the field's top-level key.
+
+* Seamless clone sub field values are nested under the clone's key, as the clone field saves them.
+* @since ACF 6.8.11
+@access private
+* @param array $keyed_values The values to save, keyed by top-level field key.
+* @param array $field        The field array.
+* @param mixed $value        The field's value.
+* @return void
+
+## `_acf_get_seamless_clone_path()`
+
+Returns the sub field keys from a seamless clone down to one of its (possibly nested) sub fields.
+
+* The acf_get_fields() function flattens seamless clones of seamless clones to their innermost fields; this finds the
+intermediate clones between the outer clone and such a field.
+* @since ACF 6.8.11
+@access private
+* @param array  $clone_field The clone field.
+* @param string $key         The sub field's key.
+* @return array The keys from the clone's direct sub field to the field, or an empty array if not found.
 
 ## `acf_inline_toolbar_editing_attrs()`
 

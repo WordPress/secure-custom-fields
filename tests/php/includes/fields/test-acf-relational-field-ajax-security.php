@@ -258,8 +258,7 @@ class Test_ACF_Relational_Field_Ajax_Security extends BaseTestCase {
 					'post_type'      => array( 'relational_hidden' ),
 					'post_status'    => 'any',
 					'posts_per_page' => -1,
-				),
-				true
+				)
 			);
 		} finally {
 			$this->serve_queries = false;
@@ -270,8 +269,8 @@ class Test_ACF_Relational_Field_Ajax_Security extends BaseTestCase {
 		$this->assertSame( array(), $this->observed_queries );
 	}
 
-	/** Ensure helper consumers remain unfiltered unless they opt in. */
-	public function test_grouped_posts_preserve_existing_behavior_by_default() {
+	/** Ensure anonymous helper queries only return publicly viewable posts. */
+	public function test_anonymous_grouped_posts_only_include_viewable_posts() {
 		wp_set_current_user( 0 );
 		$this->serve_queries = true;
 
@@ -297,10 +296,6 @@ class Test_ACF_Relational_Field_Ajax_Security extends BaseTestCase {
 			array(
 				$this->posts['public_post'],
 				$this->posts['public_page'],
-				$this->posts['own_draft'],
-				$this->posts['own_pending'],
-				$this->posts['own_private'],
-				$this->posts['other_private'],
 			),
 			$post_ids
 		);

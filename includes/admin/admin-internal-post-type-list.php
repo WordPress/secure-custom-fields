@@ -787,8 +787,10 @@ if ( ! class_exists( 'ACF_Admin_Internal_Post_Type_List' ) ) :
 					if ( ( $post['key'] && in_array( $post['key'], $keys, true ) ) || ( $post['ID'] && in_array( $post['ID'], $keys, true ) ) ) {
 						$local_post       = json_decode( file_get_contents( $files[ $key ] ), true );
 						$local_post['ID'] = $post['ID'];
-						$result           = acf_import_internal_post_type( $local_post, $this->post_type );
-						$synced[]         = $result['ID'];
+
+						// Local JSON comes from the server, so skip sanitization.
+						$result   = acf_skip_internal_post_sanitization( 'acf_import_internal_post_type', $local_post, $this->post_type );
+						$synced[] = $result['ID'];
 					}
 				}
 

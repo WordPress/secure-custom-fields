@@ -1258,6 +1258,51 @@
 		return rowsById;
 	};
 
+	const FIELD_LISTS_KEY = '_acf_fields';
+	const FIELD_LIST_NAME_PREFIX = `${ FIELD_LISTS_KEY }[`;
+	const FIELD_LIST_NAME_SUFFIX = '][]';
+
+	/**
+	 * Collects the field lists rendered in the editor's meta boxes, keyed by render ID.
+	 *
+	 * The server only accepts values for fields in a verified list, or from field groups
+	 * located on the post, so the lists are sent along with the values.
+	 *
+	 * @param {Document|Element} root The element to collect the lists from.
+	 * @return {Object} The rendered field keys, keyed by render ID.
+	 */
+	const collectRenderedFieldLists = ( root = document ) => {
+		const lists = {};
+		const inputs = root.querySelectorAll(
+			`input[name^="${ FIELD_LIST_NAME_PREFIX }"]`
+		);
+
+		for ( const { name, value, disabled } of inputs ) {
+			if (
+				disabled ||
+				! value ||
+				! name.endsWith( FIELD_LIST_NAME_SUFFIX )
+			) {
+				continue;
+			}
+
+			const renderId = name.slice(
+				FIELD_LIST_NAME_PREFIX.length,
+				-FIELD_LIST_NAME_SUFFIX.length
+			);
+			if ( ! renderId || renderId.includes( ']' ) ) {
+				continue;
+			}
+
+			if ( ! lists[ renderId ] ) {
+				lists[ renderId ] = [];
+			}
+			lists[ renderId ].push( value );
+		}
+
+		return lists;
+	};
+
 	let lastPostedAcfJson = null;
 	let lastObservedAcfJson = null;
 	let isApplyingEditorMetaToStore = false;
@@ -1279,6 +1324,11 @@
 				values[ fieldKey ] =
 					collectPaginatedRepeaterRowsForSave( fieldKey );
 			}
+		}
+
+		const fieldLists = collectRenderedFieldLists();
+		if ( Object.keys( fieldLists ).length ) {
+			values[ FIELD_LISTS_KEY ] = fieldLists;
 		}
 
 		const acfJson = JSON.stringify( values );

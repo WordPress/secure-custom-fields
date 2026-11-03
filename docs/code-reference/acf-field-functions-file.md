@@ -129,10 +129,20 @@ acf_render_fields
 * @date    8/10/13
 * @since ACF 5.0.0
 * @since ACF 5.6.9 Changed parameter order.
+* @since ACF 6.8.11 Added the $args parameter, and outputs the list of rendered top-level field keys.
 * @param   array        $fields      An array of fields.
 * @param (int|string) $post_id     The post ID to load values from.
 * @param string       $element     The wrapping element type.
 * @param string       $instruction The instruction render position (label|field).
+* @param array        $args {
+Optional. How the outermost render call outputs the list of rendered top-level field keys.
+*     @type string|false $render_id The object the fields are rendered for, which save handlers verify the list
+
+against. Defaults to `$post_id`, or no list if it is empty.
+
+* @type string       $prefix    The form's base input prefix. Default `acf`.
+* @type string|false $list_name The root name of the list input, or false for no list. Default `_acf_fields`.
+}
 * @return void
 
 ## `acf_render_field_wrap()`
@@ -140,11 +150,43 @@ acf_render_fields
 Render the wrapping element for a given field.
 
 * @since   ACF 5.0.0
+* @since ACF 6.8.11 Returns whether the field was rendered.
 * @param   array   $field         The field array.
 * @param string  $element       The wrapping element type.
 * @param string  $instruction   The instruction render position (label|field).
 * @param boolean $field_setting If a field setting is being rendered.
+* @return boolean True if the field was rendered, false if acf/prepare_field removed it.
+
+## `_acf_render_field_wrap_html()`
+
+Outputs the wrapping element and input of a prepared field.
+
+* @since   ACF 6.8.11
+@access  private
+* @param   array   $field         The prepared field array.
+* @param string  $element       The wrapping element type.
+* @param string  $instruction   The instruction render position (label|field).
+* @param boolean $field_setting If a field setting is being rendered.
 * @return void
+
+## `_acf_get_field_wrap_elements()`
+
+Returns the wrapping and inner element types for a field's wrapper.
+
+* @since   ACF 6.8.11
+@access  private
+* @param   string $element The wrapping element type.
+* @return array The wrapping element and the inner element.
+
+## `_acf_get_field_wrapper_attributes()`
+
+Returns the attributes of a prepared field's wrapping element.
+
+* @since   ACF 6.8.11
+@access  private
+* @param   array  $field   The prepared field array.
+* @param string $element The wrapping element type.
+* @return array The wrapper attributes.
 
 ## `acf_render_field()`
 

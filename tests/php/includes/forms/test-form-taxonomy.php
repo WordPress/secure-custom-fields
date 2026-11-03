@@ -16,15 +16,86 @@ acf_include( 'includes/forms/form-taxonomy.php' );
 class Test_Form_Taxonomy extends BaseTestCase {
 
 	/**
+	 * Term the save tests submit values for.
+	 *
+	 * @var integer
+	 */
+	private $term_id = 5;
+
+	/**
+	 * $_POST['acf'] as seen by acf/save_post, or null when no save ran.
+	 *
+	 * @var array|null
+	 */
+	private $saved_values;
+
+	/**
+	 * Test filters that must be removed during cleanup.
+	 *
+	 * @var array
+	 */
+	private $test_filters = array();
+
+	/**
+	 * Registers the field type and location the save tests use.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		if ( ! acf_get_field_type( 'text' ) ) {
+			acf_register_field_type( 'acf_field_text' );
+		}
+
+		acf_include( 'includes/locations/class-acf-location-taxonomy.php' );
+		if ( ! acf_get_location_type( 'taxonomy' ) ) {
+			acf_register_location_type( 'ACF_Location_Taxonomy' );
+		}
+
+		if ( ! has_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts' ) ) {
+			add_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts', 20, 2 );
+		}
+
+		$this->saved_values = null;
+		$this->add_test_filter( 'acf/save_post', array( $this, 'capture_saved_values' ), 1 );
+
+		$_POST  = array();
+		$_FILES = array();
+	}
+
+	/**
 	 * Clean up after each test to prevent global state pollution.
 	 */
-	public function tearDown(): void {
-		parent::tearDown();
+	public function tear_down() {
+		foreach ( $this->test_filters as $filter ) {
+			remove_filter( $filter['hook'], $filter['callback'], $filter['priority'] );
+		}
+		$this->test_filters = array();
 
-		// Reset globals to prevent polluting other tests.
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		$_POST  = array();
+		$_FILES = array();
+
 		global $pagenow;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
 		$pagenow = null;
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Records $_POST['acf'] when a save runs.
+	 */
+	public function capture_saved_values() {
+		/* phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Test reads the request it built. */
+		$this->saved_values = isset( $_POST['acf'] ) ? $_POST['acf'] : array();
 	}
 
 	/**
@@ -310,5 +381,218 @@ class Test_Form_Taxonomy extends BaseTestCase {
 		$form_taxonomy->view = $set_view;
 
 		$this->assertEquals( $expected_view, $form_taxonomy->view, "View should be set to $expected_view" );
+	}
+
+	/**
+	 * A term save keeps fields from groups located on the taxonomy and drops the rest.
+	 */
+	public function test_save_term_drops_fields_not_located_on_taxonomy() {
+		$this->add_term_groups();
+		$this->submit(
+			array(
+				'field_form_taxonomy_category' => 'kept',
+				'field_form_taxonomy_tag'      => 'dropped',
+				'field_form_taxonomy_unknown'  => 'dropped',
+			)
+		);
+
+		( new acf_form_taxonomy() )->save_term( $this->term_id, 0, 'category' );
+
+		$this->assertSame( array( 'field_form_taxonomy_category' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * The taxonomy allowed-keys filter can allow extra keys, and receives the ACF term ID.
+	 */
+	public function test_save_term_allowed_keys_filter_adds_keys() {
+		$received = null;
+		$this->add_test_filter(
+			'acf/form/taxonomy/allowed_field_keys',
+			function ( $keys, $post_id ) use ( &$received ) {
+				$received = $post_id;
+				$keys[]   = 'field_form_taxonomy_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+		$this->add_term_groups();
+		$this->submit(
+			array(
+				'field_form_taxonomy_category' => 'kept',
+				'field_form_taxonomy_injected' => 'kept',
+			)
+		);
+
+		( new acf_form_taxonomy() )->save_term( $this->term_id, 0, 'category' );
+
+		$this->assertSame( 'term_' . $this->term_id, $received );
+		$this->assertSame(
+			array(
+				'field_form_taxonomy_category' => 'kept',
+				'field_form_taxonomy_injected' => 'kept',
+			),
+			$this->saved_values
+		);
+	}
+
+	/**
+	 * Editing a term accepts fields listed for that term and ignores lists signed for another term.
+	 */
+	public function test_save_term_accepts_only_fields_listed_for_term() {
+		$this->add_term_groups();
+		$this->submit(
+			array(
+				'field_form_taxonomy_tag'     => 'kept',
+				'field_form_taxonomy_unknown' => 'dropped',
+			)
+		);
+		$_POST['_acf_fields'] = array(
+			'term_' . $this->term_id => array( $this->get_signed_field_list( 'term_' . $this->term_id, array( 'field_form_taxonomy_tag' ) ) ),
+			'term_6'                 => array( $this->get_signed_field_list( 'term_6', array( 'field_form_taxonomy_unknown' ) ) ),
+		);
+
+		( new acf_form_taxonomy() )->save_term( $this->term_id, 0, 'category' );
+
+		$this->assertSame( array( 'field_form_taxonomy_tag' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * Creating a term accepts fields listed for the taxonomy's Add form, not for another taxonomy or the term itself.
+	 */
+	public function test_create_term_accepts_only_fields_listed_for_add_form() {
+		$this->add_term_groups();
+		$this->submit(
+			array(
+				'field_form_taxonomy_tag'     => 'kept',
+				'field_form_taxonomy_unknown' => 'dropped',
+				'field_form_taxonomy_other'   => 'dropped',
+			)
+		);
+		$_POST['_acf_fields'] = array(
+			'term_0/category'        => array( $this->get_signed_field_list( 'term_0/category', array( 'field_form_taxonomy_tag' ) ) ),
+			'term_0/post_tag'        => array( $this->get_signed_field_list( 'term_0/post_tag', array( 'field_form_taxonomy_unknown' ) ) ),
+			'term_' . $this->term_id => array( $this->get_signed_field_list( 'term_' . $this->term_id, array( 'field_form_taxonomy_other' ) ) ),
+		);
+
+		$this->save_term_in_action( 'create_term', 'category' );
+
+		$this->assertSame( array( 'field_form_taxonomy_tag' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * Registers field groups located on categories and on tags.
+	 */
+	private function add_term_groups() {
+		$this->add_group( 'group_form_taxonomy_category', 'category', 'field_form_taxonomy_category' );
+		$this->add_group( 'group_form_taxonomy_tag', 'post_tag', 'field_form_taxonomy_tag' );
+	}
+
+	/**
+	 * Builds a nonce-verified taxonomy form submission.
+	 *
+	 * @param array $values The submitted acf values.
+	 */
+	private function submit( array $values ) {
+		$_POST['_acf_screen'] = 'taxonomy';
+		$_POST['_acf_nonce']  = wp_create_nonce( 'taxonomy' );
+		$_POST['acf']         = $values;
+	}
+
+	/**
+	 * Calls save_term() as if it ran inside the given action.
+	 *
+	 * @param string $action   The action name.
+	 * @param string $taxonomy The taxonomy.
+	 */
+	private function save_term_in_action( $action, $taxonomy ) {
+		global $wp_current_filter;
+
+		$wp_current_filter[] = $action; /* phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates the current action for save_term(). */
+		try {
+			( new acf_form_taxonomy() )->save_term( $this->term_id, 0, $taxonomy );
+		} finally {
+			array_pop( $wp_current_filter );
+		}
+	}
+
+	/**
+	 * Returns a field list signed for a render ID, as acf_render_fields() outputs it.
+	 *
+	 * @param string $render_id The render ID.
+	 * @param array  $keys      The listed field keys.
+	 * @return string
+	 */
+	private function get_signed_field_list( $render_id, array $keys ) {
+		ob_start();
+		_acf_render_field_list( $keys, $render_id, '_acf_fields' );
+		$processor = new WP_HTML_Tag_Processor( ob_get_clean() );
+		$processor->next_tag( 'input' );
+
+		return (string) $processor->get_attribute( 'value' );
+	}
+
+	/**
+	 * Registers a local field group located on a taxonomy, with one text field.
+	 *
+	 * @param string $group_key The field group key.
+	 * @param string $taxonomy  The taxonomy the group is located on.
+	 * @param string $field_key The field key.
+	 */
+	private function add_group( $group_key, $taxonomy, $field_key ) {
+		acf_add_local_field_group(
+			array(
+				'key'      => $group_key,
+				'title'    => $group_key,
+				'fields'   => array(
+					array(
+						'key'   => $field_key,
+						'name'  => $field_key,
+						'label' => $field_key,
+						'type'  => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => 'taxonomy',
+							'operator' => '==',
+							'value'    => $taxonomy,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Adds and tracks a test-specific filter.
+	 *
+	 * @param string   $hook          Filter name.
+	 * @param callable $callback      Filter callback.
+	 * @param int      $priority      Filter priority.
+	 * @param int      $accepted_args Accepted argument count.
+	 */
+	private function add_test_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+		add_filter( $hook, $callback, $priority, $accepted_args );
+
+		$this->test_filters[] = array(
+			'hook'     => $hook,
+			'callback' => $callback,
+			'priority' => $priority,
+		);
+	}
+
+	/**
+	 * Resets the stores the fixtures write to.
+	 */
+	private function reset_stores() {
+		foreach ( array( 'local-empty', 'fields', 'field-groups', 'values', 'form' ) as $store_name ) {
+			$store = acf_get_store( $store_name );
+			if ( $store ) {
+				$store->reset();
+			}
+		}
 	}
 }

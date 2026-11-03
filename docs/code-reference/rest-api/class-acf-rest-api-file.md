@@ -28,13 +28,6 @@ Cached controllers WP core does not lazy-load.
 
 * @var array<string, WP_REST_Controller>
 
-### `$rest_update_plan`
-
-Fields and updates resolved during the current REST request.
-
-* @since SCF 6.9.5
-* @var array|null
-
 ## Methods
 
 ### `maybe_apply_per_object_schema`
@@ -43,14 +36,14 @@ Upgrade both OPTIONS surfaces (schema.properties.acf and
 endpoints[].args.acf) from the type-level union to per-object precision
 when the caller can read the target object.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @return void
 
 ### `build_per_object_schema`
 
 Build the per-object ACF schema for the current request's target object.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @param integer|string $object_id The target object ID (may be a child id for revisions/autosaves).
 * @return array
 
@@ -60,7 +53,7 @@ Build the ACF schema scaffold and populate its `properties` from the
 given field groups. Shared between the type-level get_schema() and the
 per-object build_per_object_schema() so both surfaces stay in lockstep.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @param array               $field_groups Field groups to walk.
 * @param integer|string|null $object_id    Object ID passed to get_fields() so field-level filters see the target.
 * @return array
@@ -72,7 +65,7 @@ into the `acf` entry of each matching endpoint's args. Only runs for
 OPTIONS requests on routes matching the current URL, so write
 validation is left untouched.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @param array $endpoints Endpoints as passed by WP_REST_Server::get_routes().
 * @return array
 
@@ -82,7 +75,7 @@ Whether the current caller can read the given object. Fails closed
 (returns false) when permission cannot be conclusively verified.
 Callers guarantee that $this->wp_request is a WP_REST_Request.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @param integer|string $object_id The effective target ID (child ID if present, otherwise the URL id).
 * @param integer|string $child_id  The URL child_id, if any — signals a revision/autosave context.
 * @return boolean
@@ -91,14 +84,14 @@ Callers guarantee that $this->wp_request is a WP_REST_Request.
 
 Resolve the WP REST controller for the current request's object type.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @return WP_REST_Controller|null
 
 ### `get_core_controller`
 
 Cache and return a WP core REST controller for 'user' or 'comment'.
 
-* @since SCF 6.9.6
+* @since ACF 6.8.10
 * @param string $object_type One of 'user' or 'comment'.
 * @return WP_REST_Controller|null
 
@@ -133,7 +126,7 @@ and `sanitize_callback` for nested schema properties, see:
 Checks whether a post's field values must stay out of the response because the
 post is password protected and the caller has neither unlocked it nor can edit it.
 
-* @since SCF 6.9.7
+* @since ACF 6.8.11
 * @param integer         $post_id The post ID.
 * @param WP_REST_Request $request The current request.
 * @return boolean
@@ -149,26 +142,6 @@ it is required by WordPress.
 * @param string          $object_sub_type Note that this isn't the same as $this->object_type. This variable is
 more specific and can be a post type or taxonomy.
 * @return array
-
-### `check_bidirectional_target_permissions`
-
-Check bidirectional target permissions before the REST callback runs.
-
-* @since SCF 6.9.5
-* @param mixed           $dispatch_result Result from an earlier dispatch filter.
-* @param WP_REST_Request $request         Current REST request.
-* @return mixed|WP_Error
-
-### `prepare_field_updates`
-
-Resolve incoming values against fields active for the REST object.
-
-* @since SCF 6.9.5
-* @param array   $data            Incoming ACF field values.
-* @param integer $object_id       Object ID, or zero for a create request.
-* @param string  $object_type     ACF object type.
-* @param string  $object_sub_type Post type, taxonomy, or user.
-* @return array Field, value, and submitted field name tuples.
 
 ### `update_fields`
 

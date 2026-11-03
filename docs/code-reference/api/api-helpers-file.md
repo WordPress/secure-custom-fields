@@ -416,9 +416,62 @@ acf_get_grouped_posts
 * This function will return all posts grouped by post_type
 This is handy for select settings
 * @since   ACF 5.0.0
-* @param array $args                     The query arguments.
-* @param bool  $enforce_read_permissions Whether to exclude posts the current user cannot read.
+* @param array $args The query arguments.
 * @return array
+
+## `acf_ensure_perm_readable_post_status()`
+
+Normalizes an args array so `perm=readable` actually applies inside `WP_Query`.
+
+* WP_Query ignores `perm=readable` when `post_status='any'` (Trac #52094). Callers
+that opt into `perm=readable` therefore need `post_status` enumerated. This helper
+is idempotent and safe to call before and after the per-field `acf/fields/<type>/query`
+filters run — the post-filter call catches callbacks that reset `post_status`
+back to 'any' while leaving `perm` untouched.
+* @since ACF 6.8.7
+* @param array $args WP_Query args.
+* @return array Args with `post_status` enumerated when `perm=readable` requires it.
+
+## `_acf_get_unreadable_post_statuses()`
+
+The internal ACF function to return the statuses of a post type's posts that the current user can't
+read when another user wrote them, following how core maps the `read_post` capability.
+
+* Core lets users read other users' draft, pending and scheduled posts only if they can edit them, which
+for scheduled posts also requires the capability to edit published posts. Other users' private posts
+require the capability to read private posts. Post types that don't map meta capabilities let users
+with the post type's read capability read all of its posts.
+* Access granted to individual posts can't be known here, so sites that grant it can use the
+`acf/fields/relational/unreadable_post_statuses` filter.
+* @since ACF 6.8.11
+* @param string $post_type The post type.
+* @return string[]
+
+## `_acf_query_restrict_unreadable_posts()`
+
+The internal ACF function to hide posts the current user can't read from `acf_get_grouped_posts()`
+queries.
+
+* `WP_Query` only applies `perm=readable` to private posts, and checks an attachment's own `inherit`
+status rather than its parent's. This also hides other users' draft, pending and scheduled posts the
+current user can't edit, and attachments that inherit a status from a parent the user can't read.
+* When the query has the field's post types in `acf_field_post_types`, it also hides other users' posts
+of post types that aren't public, unless the field lists them or the user can open their list of posts
+in the admin or edit other users' posts, matching `acf_user_can_read_post()`.
+* @since ACF 6.8.11
+* @param string   $where    The WHERE clause of the query.
+* @param WP_Query $wp_query The WP_Query.
+* @return string The potentially modified WHERE clause.
+
+## `_acf_post_type_is_hidden_from_search()`
+
+The internal ACF function to check whether relational field searches leave out other users' posts of a
+post type, because it isn't public and the current user can't see its posts in the admin.
+
+* @since ACF 6.8.11
+* @param string   $post_type        The post type.
+* @param string[] $field_post_types The post types listed by the field's "Filter by Post Type" setting.
+* @return boolean
 
 ## `_acf_orderby_post_type()`
 
@@ -427,6 +480,176 @@ The internal ACF function to add order by post types for use in `acf_get_grouped
 * @param string $orderby  The current orderby value for a query.
 * @param object $wp_query The WP_Query.
 * @return string The potentially modified orderby string.
+
+## `acf_user_can_read_post()`
+
+Checks whether a user can read a post referenced by a relational field.
+
+* Matches WordPress core: published posts can be read by anyone (as in the REST API, and as the
+relational field search already shows them), and other posts need to be publicly viewable or
+need the `read_post` capability (which needs edit access for other users' drafts).
+* Posts of post types that aren't public, such as WooCommerce coupons, can only be seen in the admin.
+Published ones are readable if the field's "Filter by Post Type" setting lists their post type, or
+the user can open the post type's list of posts in the admin, which shows their titles. Others need
+the user to be able to edit them. Revisions are never public, so they need edit access, which for a
+revision means edit access to its parent.
+* Unlike `acf_rest_reference_is_exposable()`, this doesn't require the post type to be shown in the
+REST API, because these fields can reference any post type in the editor.
+* @since ACF 6.8.11
+* @param integer|WP_User $user  The user ID or object. 0 for visitors who aren't logged in.
+* @param integer|WP_Post $post  The post ID or object.
+* @param array           $field Optional. The field referencing the post.
+* @return boolean
+
+## `acf_current_user_can_read_post()`
+
+Checks whether the current user can read a post referenced by a relational field.
+
+* @since ACF 6.8.11
+* @see acf_user_can_read_post()
+* @param integer|WP_Post $post  The post ID or object.
+* @param array           $field Optional. The field referencing the post.
+* @return boolean
+
+## `_acf_user_can_list_post_type()`
+
+The internal ACF function to check whether a user can open a post type's list of posts in the admin,
+which shows the titles of all its published posts.
+
+* @since ACF 6.8.11
+* @param integer|WP_User $user      The user ID or object.
+* @param string          $post_type The post type.
+* @return boolean
+
+## `acf_remove_unreadable_grouped_posts()`
+
+Removes posts the current user can't read from a relational field's search results.
+
+* The query already hides posts core doesn't let the user read, but the `acf/user_can_read_post`
+filter can deny others. Searches that a site has opted out of `perm=readable` aren't checked.
+* @since ACF 6.8.11
+* @param array $groups The posts from `acf_get_grouped_posts()`, grouped by post type label.
+* @param array $args   The query args.
+* @param array $field  The relational field being searched.
+* @return array An array with `groups`, the groups without posts the user can't read, and `more`, whether
+there may be more pages of results, judged before any posts were removed.
+
+## `acf_get_restricted_post_title()`
+
+Returns the label shown in place of a selected post the current user can't read.
+
+* @since ACF 6.8.11
+* @return string
+
+## `_acf_get_stored_values_post_id()`
+
+The internal ACF function to return the object whose stored values a save is compared against.
+Revisions don't store values of their own yet, so they're compared against their parent post.
+
+* @since ACF 6.8.11
+* @param integer|string $post_id The ACF post ID being saved.
+* @return integer|string
+
+## `_acf_is_checking_submitted_post_ids()`
+
+The internal ACF function to check whether relational fields should check the post IDs being saved.
+That's while ACF saves submitted values. Values code saves with update_field() during that save, such
+as back-references written by bidirectional sync, aren't checked.
+
+* @since ACF 6.8.11
+* @return boolean
+
+## `_acf_field_has_relational_fields()`
+
+The internal ACF function to return whether a field is, or contains, a Relationship, Post Object or
+Page Link field, at any depth inside Repeater, Group, Clone and Flexible Content fields.
+
+* @since ACF 6.8.11
+* @param array $field The field array.
+* @return boolean
+
+## `_acf_get_stored_post_ids_snapshot()`
+
+The internal ACF function to return the post IDs stored in an object's relational fields before the
+current user-submitted save changed them.
+
+* Repeater and Flexible Content rows are saved one at a time, and can be moved, added or removed, so a
+selection may be saved to a different row than it was stored in, after that row was already updated.
+The IDs are recorded, by field key, before the first relational field is updated, and kept until the
+save finishes. A sub field has the same key in every row, so this covers moved rows at any depth.
+* @since ACF 6.8.11
+* @param integer|string $post_id The ACF post ID being saved.
+* @return array An array with `ids`, the sets of post IDs stored in each relational field, keyed by field
+key, and `names`, the meta names that have a field key reference.
+
+## `_acf_snapshot_stored_post_ids()`
+
+The internal ACF function to record an object's stored post IDs during a user-submitted save, when the
+first field that is, or contains, a relational field is updated, before any of them are changed. Saves
+without relational fields don't record anything.
+
+* @since ACF 6.8.11
+* @param mixed          $check   The short-circuit value, returned unchanged.
+* @param mixed          $value   The value being updated.
+* @param integer|string $post_id The ACF post ID being saved.
+* @param array          $field   The field being updated.
+* @return mixed
+
+## `_acf_clear_stored_post_ids_snapshot()`
+
+The internal ACF function to discard an object's stored post ID snapshot once its save has finished.
+
+* @since ACF 6.8.11
+* @param integer|string $post_id The ACF post ID that was saved.
+* @return void
+
+## `_acf_clear_rest_stored_post_ids_snapshots()`
+
+The internal ACF function to discard stored post ID snapshots after each REST request (including each
+request in a batch), which updates fields without firing `acf/save_post`.
+
+* REST requests made while a submitted save is still running, such as with `rest_do_request()` from an
+`acf/update_value` callback, leave the snapshots alone, as that save still needs them.
+* @since ACF 6.8.11
+* @param mixed $response The REST response, returned unchanged.
+* @return mixed
+
+## `acf_remove_disallowed_post_ids()`
+
+Removes newly selected post IDs that the current user isn't allowed to add to a relational field.
+
+* Only runs while ACF is saving submitted values. A new ID must belong to an existing post that the
+current user can read. IDs already stored in the field, in any Repeater or Flexible Content row, are
+kept, so a selection the user can't read isn't lost when they save.
+* Stored values are matched by field key. A value stored under a different key, such as by a field that
+was later recreated or imported with a new key, isn't matched, so a user who can't read its posts drops
+them when they save it.
+* @since ACF 6.8.11
+* @param mixed          $value   The normalized field value: an ID, or an array of IDs.
+* @param integer|string $post_id The ACF post ID being saved.
+* @param array          $field   The field array.
+* @return mixed The value with disallowed IDs removed.
+
+## `acf_remove_unreadable_formatted_post_ids()`
+
+Removes posts that can't be read from a relational field's value before it's formatted.
+
+* Applies to values formatted while rendering an ACF Block by default. Block data is stored in the post
+content, which anyone who can edit the post controls, and the block editor renders previews from data
+that hasn't been saved yet, so selections in it are never checked when they're saved.
+* Previews are checked against the current user. Other blocks are checked against the author of the post
+or synced pattern they're saved in, so posts that author picked show to every visitor but posts they
+couldn't have picked don't. Blocks that aren't saved in either are checked against the current user when
+rendered in the admin, by AJAX or by a REST API endpoint, and aren't checked on the front end, where
+they're in places like template parts and widgets that only administrators can edit. See
+`_acf_get_block_reader()`.
+* The `acf/fields/relational/hide_unreadable_posts` filter can apply this to other values too, or turn it
+off.
+* @since ACF 6.8.11
+* @param mixed          $value   The value: an ID, or an array of IDs (and Page Link URLs).
+* @param integer|string $post_id The ACF post ID the value is formatted for.
+* @param array          $field   The field array.
+* @return mixed The value without posts that can't be read.
 
 ## `acf_get_pretty_user_roles()`
 
@@ -591,12 +814,12 @@ acf_get_valid_post_id
 * @param   $post_id (mixed)
 * @return $post_id (mixed)
 
-## `scf_post_password_required()`
+## `acf_post_password_required()`
 
 Checks whether field values stored on an ACF post ID belong to a password-protected
 post whose password has not been entered yet.
 
-* @since SCF 6.9.7
+* @since ACF 6.8.11
 * @param integer|string $post_id ACF encoded post ID.
 * @return boolean
 
@@ -624,7 +847,22 @@ acf_isset_termmeta
 This function will walk through the $_FILES data and upload each found.
 
 * @since   ACF 5.0.9
+* @since ACF 6.8.11 Uploader nonces are verified against the render IDs set by acf_set_upload_render_ids() for
+this save, or the post ID being saved. See _acf_verify_file_uploader_nonce().
 * @param array $ancestors An internal parameter, not required.
+
+## `_acf_verify_file_uploader_nonce()`
+
+Returns true if the basic uploader nonce submitted for a field verifies for the object being saved.
+
+* The nonce is verified against the render IDs set by acf_set_upload_render_ids() for this save, or
+the post ID being saved. Saves that never set render IDs, such as other plugins' form handlers,
+also accept the render IDs of the field lists in the request. The nonce itself is signed for the
+current user and render, so this only accepts nonces the user was served.
+* @since ACF 6.8.11
+@access private
+* @param string $field_key The field key.
+* @return boolean
 
 ## `acf_upload_file()`
 
@@ -704,6 +942,7 @@ acf_current_user_can_admin
 Checks if the current user has the SCF capability for programmatic access, without considering show_admin setting.
 
 * @since 6.6.0
+* @since 6.9.8 Sets the default of the `acf/fields/allow_append_choices` filter, which replaces the checks in the choice field types.
 * @return bool True if the user has the ACF capability.
 
 ## `scf_numeric_to_int()`

@@ -151,7 +151,8 @@ class Blocks {
 			echo '<!-- SCF AI Block JSON-LD: Checking block: ' . esc_html( $block['name'] ) . " -->\n";
 		}
 
-		if ( scf_post_password_required( $post_id ) ) {
+		// Don't output field values of a password-protected post until the password has been entered.
+		if ( acf_post_password_required( $post_id ) ) {
 			if ( $debug ) {
 				echo "<!-- SCF AI Block JSON-LD: Skipped (password protected post) -->\n";
 			}

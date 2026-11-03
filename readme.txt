@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 6.9.7
+Stable tag: 6.9.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,33 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.8 =
+*Release Date 3rd November 2026*
+
+*Security*
+
+- Saves only keep submitted values for fields rendered for the content being saved, or from field groups whose location rules match it. This now applies to posts, terms, attachments, menu items, widgets, the Customizer, WooCommerce orders, options pages, comments, users and the block editor. Fields added with JavaScript can be allowed with the `acf/form/{context}/allowed_field_keys` filters. Registration forms no longer save fields from field groups set to "User Form is Add / Edit".
+- Field, field group, post type, taxonomy and options page settings are sanitized when saved by users without the `unfiltered_html` capability. For those users, a field's wrapper settings are limited to width, class and id. Event handler (`on*`) attributes in a field's wrapper setting are never output.
+- Custom values submitted to Checkbox, Radio and Select fields can no longer change the field's other settings. The new `acf/fields/allow_append_choices` filter controls who can add choices, which by default is still only users with the SCF capability.
+- WordPress's Custom Fields meta box, its AJAX handler and XML-RPC can no longer change meta that belongs to SCF fields.
+- Basic uploader nonces are tied to the content being edited.
+- The request that loads field groups while editing a post only returns field groups for that post.
+- Relationship, Post Object and Page Link fields don't show the titles or statuses of posts the current user cannot read, and don't save newly selected posts the user cannot read. Existing selections the user cannot read are shown as "(Restricted item)" and are kept when saving.
+- Relationship, Post Object and Page Link values rendered in blocks leave out posts the post's author cannot read. New filter: `acf/fields/relational/hide_unreadable_posts`.
+- Bidirectional fields only add references to posts the current user can edit, terms they can assign, and users they can edit or set as a post's author. Saves made with `update_field()`, WP-CLI or cron are not checked. New filters: `acf/bidirectional/can_update_target` and `acf/is_trusted_save_context`.
+- Block bindings and the shortcode output only user IDs for User fields. New filter: `acf/bindings/allow_user_data`.
+
+*Fixes*
+
+- Block bindings and the shortcode output nothing for values they can't show as text, such as post objects, instead of causing a fatal error on PHP 8.
+- Relationship field searches keep loading results when a page of results is left out.
+- Saving a custom choice no longer removes backslashes from the field's other settings.
+
+*Deprecations*
+
+- `scf_post_password_required()` is deprecated in favor of `acf_post_password_required()`, and `scf_restrict_uploaded_field_keys()` in favor of `acf_restrict_uploaded_field_keys()`.
+- The `scf/upload/generate_previews` filter is deprecated in favor of `acf/upload/generate_previews`, and `scf/bidirectional/allow_target` in favor of `acf/bidirectional/can_update_target`.
+
 = 6.9.7 =
 *Release Date 21st October 2026*
 
@@ -473,6 +500,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.8 =
+Security: Saves only keep values for fields that belong to the content being saved, and field settings are sanitized for users without unfiltered_html.
 
 = 6.9.7 =
 Security: Front-end File field uploads only get preview images for users who can upload files, and submitted relationship values only link back to valid targets.

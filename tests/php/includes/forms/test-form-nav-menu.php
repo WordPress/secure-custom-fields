@@ -16,6 +16,92 @@ acf_include( 'includes/forms/form-nav-menu.php' );
 class Test_Form_Nav_Menu extends BaseTestCase {
 
 	/**
+	 * Menu the save tests submit values for.
+	 *
+	 * @var integer
+	 */
+	private $menu_id = 7;
+
+	/**
+	 * $_POST['acf'] as seen by acf/save_post, keyed by the ACF post ID saved.
+	 *
+	 * @var array
+	 */
+	private $saved_values = array();
+
+	/**
+	 * Test filters that must be removed during cleanup.
+	 *
+	 * @var array
+	 */
+	private $test_filters = array();
+
+	/**
+	 * Registers the field type and locations the save tests use.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		if ( ! acf_get_field_type( 'text' ) ) {
+			acf_register_field_type( 'acf_field_text' );
+		}
+
+		acf_include( 'includes/locations/class-acf-location-nav-menu.php' );
+		acf_include( 'includes/locations/class-acf-location-nav-menu-item.php' );
+		if ( ! acf_get_location_type( 'nav_menu' ) ) {
+			acf_register_location_type( 'ACF_Location_Nav_Menu' );
+		}
+		if ( ! acf_get_location_type( 'nav_menu_item' ) ) {
+			acf_register_location_type( 'ACF_Location_Nav_Menu_Item' );
+		}
+
+		if ( ! has_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts' ) ) {
+			add_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts', 20, 2 );
+		}
+
+		$this->saved_values = array();
+		$this->add_test_filter( 'acf/save_post', array( $this, 'capture_saved_values' ), 1 );
+
+		$_POST  = array();
+		$_FILES = array();
+	}
+
+	/**
+	 * Removes local fields, request data, menu data and filters.
+	 */
+	public function tear_down() {
+		foreach ( $this->test_filters as $filter ) {
+			remove_filter( $filter['hook'], $filter['callback'], $filter['priority'] );
+		}
+		$this->test_filters = array();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+		acf_set_data( 'nav_menu_id', null );
+
+		$_POST  = array();
+		$_FILES = array();
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Records $_POST['acf'] when a save runs.
+	 *
+	 * @param integer|string $post_id The ACF post ID being saved.
+	 */
+	public function capture_saved_values( $post_id ) {
+		/* phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Test reads the request it built. */
+		$this->saved_values[ $post_id ] = isset( $_POST['acf'] ) ? $_POST['acf'] : array();
+	}
+
+	/**
 	 * Test if the acf_form_nav_menu class exists.
 	 */
 	public function test_form_nav_menu_class_exists() {
@@ -334,5 +420,289 @@ class Test_Form_Nav_Menu extends BaseTestCase {
 			has_action( 'admin_footer', array( $form_nav_menu, 'admin_footer' ) ),
 			'admin_footer action should not be added when not on nav-menus screen'
 		);
+	}
+
+	/**
+	 * A menu save keeps fields from groups located on the menu and drops the rest.
+	 */
+	public function test_update_nav_menu_drops_fields_not_located_on_menu() {
+		$this->add_menu_groups();
+		$this->submit(
+			array(
+				'field_form_nav_menu_menu'    => 'kept',
+				'field_form_nav_menu_other'   => 'dropped',
+				'field_form_nav_menu_item'    => 'dropped',
+				'field_form_nav_menu_unknown' => 'dropped',
+			)
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( array( 'term_7' => array( 'field_form_nav_menu_menu' => 'kept' ) ), $this->saved_values );
+	}
+
+	/**
+	 * The menu allowed-keys filter can allow extra keys, and receives the ACF menu ID.
+	 */
+	public function test_update_nav_menu_allowed_keys_filter_adds_keys() {
+		$this->add_menu_groups();
+		$received = null;
+		$this->add_test_filter(
+			'acf/form/nav_menu/allowed_field_keys',
+			function ( $keys, $post_id ) use ( &$received ) {
+				$received = $post_id;
+				$keys[]   = 'field_form_nav_menu_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+		$this->submit(
+			array(
+				'field_form_nav_menu_menu'     => 'kept',
+				'field_form_nav_menu_injected' => 'kept',
+			)
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( 'term_7', $received );
+		$this->assertSame(
+			array(
+				'field_form_nav_menu_menu'     => 'kept',
+				'field_form_nav_menu_injected' => 'kept',
+			),
+			$this->saved_values['term_7']
+		);
+	}
+
+	/**
+	 * A menu save accepts fields listed for the menu and ignores lists signed for another menu.
+	 */
+	public function test_update_nav_menu_accepts_only_fields_listed_for_menu() {
+		$this->add_menu_groups();
+		$this->submit(
+			array(
+				'field_form_nav_menu_other'   => 'kept',
+				'field_form_nav_menu_unknown' => 'dropped',
+			)
+		);
+		$_POST['_acf_fields'] = array(
+			'term_7' => array( $this->get_signed_field_list( 'term_7', array( 'field_form_nav_menu_other' ) ) ),
+			'term_8' => array( $this->get_signed_field_list( 'term_8', array( 'field_form_nav_menu_unknown' ) ) ),
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( array( 'field_form_nav_menu_other' => 'kept' ), $this->saved_values['term_7'] );
+	}
+
+	/**
+	 * Menu item saves keep fields located on menu items, and skip IDs that are not menu items.
+	 */
+	public function test_update_nav_menu_items_drop_fields_not_located_on_items() {
+		$this->add_menu_groups();
+		$item_id = $this->insert_menu_item();
+		$post_id = wp_insert_post(
+			array(
+				'post_type'   => 'post',
+				'post_title'  => 'Not a menu item',
+				'post_status' => 'publish',
+			)
+		);
+		$this->submit( array() );
+		$_POST['menu-item-acf'] = array(
+			$item_id => array(
+				'field_form_nav_menu_item' => 'kept',
+				'field_form_nav_menu_menu' => 'dropped',
+			),
+			$post_id => array( 'field_form_nav_menu_item' => 'dropped' ),
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( array( $item_id => array( 'field_form_nav_menu_item' => 'kept' ) ), $this->saved_values );
+	}
+
+	/**
+	 * The menu item allowed-keys filter can allow extra keys, and receives the item ID.
+	 */
+	public function test_update_nav_menu_items_allowed_keys_filter_adds_keys() {
+		$this->add_menu_groups();
+		$item_id  = $this->insert_menu_item();
+		$received = null;
+		$this->add_test_filter(
+			'acf/form/nav_menu_item/allowed_field_keys',
+			function ( $keys, $post_id ) use ( &$received ) {
+				$received = $post_id;
+				$keys[]   = 'field_form_nav_menu_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+		$this->submit( array() );
+		$_POST['menu-item-acf'] = array(
+			$item_id => array(
+				'field_form_nav_menu_item'     => 'kept',
+				'field_form_nav_menu_injected' => 'kept',
+			),
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( $item_id, $received );
+		$this->assertSame(
+			array(
+				'field_form_nav_menu_item'     => 'kept',
+				'field_form_nav_menu_injected' => 'kept',
+			),
+			$this->saved_values[ $item_id ]
+		);
+	}
+
+	/**
+	 * Each menu item accepts only the fields listed for itself.
+	 */
+	public function test_update_nav_menu_items_accept_only_fields_listed_for_item() {
+		$this->add_menu_groups();
+		$item_id       = $this->insert_menu_item();
+		$other_item_id = $this->insert_menu_item();
+		$this->submit( array() );
+		$_POST['menu-item-acf'] = array(
+			$item_id       => array(
+				'field_form_nav_menu_other'   => 'kept',
+				'field_form_nav_menu_unknown' => 'dropped',
+			),
+			$other_item_id => array( 'field_form_nav_menu_other' => 'dropped' ),
+		);
+		$_POST['_acf_fields']   = array(
+			$item_id       => array( $this->get_signed_field_list( (string) $item_id, array( 'field_form_nav_menu_other' ) ) ),
+			$other_item_id => array( $this->get_signed_field_list( (string) $other_item_id, array( 'field_form_nav_menu_unknown' ) ) ),
+		);
+
+		( new acf_form_nav_menu() )->update_nav_menu( $this->menu_id );
+
+		$this->assertSame( array( 'field_form_nav_menu_other' => 'kept' ), $this->saved_values[ $item_id ] );
+		$this->assertArrayNotHasKey( $other_item_id, $this->saved_values );
+	}
+
+	/**
+	 * Registers field groups located on the menu, on another menu, and on the menu's items.
+	 */
+	private function add_menu_groups() {
+		$this->add_group( 'group_form_nav_menu_menu', 'nav_menu', '7', 'field_form_nav_menu_menu' );
+		$this->add_group( 'group_form_nav_menu_other', 'nav_menu', '8', 'field_form_nav_menu_other' );
+		$this->add_group( 'group_form_nav_menu_item', 'nav_menu_item', '7', 'field_form_nav_menu_item' );
+	}
+
+	/**
+	 * Inserts a custom link menu item.
+	 *
+	 * @return integer The menu item ID.
+	 */
+	private function insert_menu_item() {
+		$item_id = wp_insert_post(
+			array(
+				'post_type'   => 'nav_menu_item',
+				'post_title'  => 'Menu item',
+				'post_status' => 'publish',
+			)
+		);
+		update_post_meta( $item_id, '_menu_item_type', 'custom' );
+
+		return $item_id;
+	}
+
+	/**
+	 * Builds a nonce-verified menu form submission.
+	 *
+	 * @param array $values The submitted acf values for the menu.
+	 */
+	private function submit( array $values ) {
+		$_POST['_acf_screen'] = 'nav_menu';
+		$_POST['_acf_nonce']  = wp_create_nonce( 'nav_menu' );
+		$_POST['acf']         = $values;
+	}
+
+	/**
+	 * Returns a field list signed for a render ID, as acf_render_fields() outputs it.
+	 *
+	 * @param string $render_id The render ID.
+	 * @param array  $keys      The listed field keys.
+	 * @return string
+	 */
+	private function get_signed_field_list( $render_id, array $keys ) {
+		ob_start();
+		_acf_render_field_list( $keys, $render_id, '_acf_fields' );
+		$processor = new WP_HTML_Tag_Processor( ob_get_clean() );
+		$processor->next_tag( 'input' );
+
+		return (string) $processor->get_attribute( 'value' );
+	}
+
+	/**
+	 * Registers a local field group with one text field.
+	 *
+	 * @param string $group_key The field group key.
+	 * @param string $param     The location rule param.
+	 * @param string $value     The location rule value.
+	 * @param string $field_key The field key.
+	 */
+	private function add_group( $group_key, $param, $value, $field_key ) {
+		acf_add_local_field_group(
+			array(
+				'key'      => $group_key,
+				'title'    => $group_key,
+				'fields'   => array(
+					array(
+						'key'   => $field_key,
+						'name'  => $field_key,
+						'label' => $field_key,
+						'type'  => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => $param,
+							'operator' => '==',
+							'value'    => $value,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Adds and tracks a test-specific filter.
+	 *
+	 * @param string   $hook          Filter name.
+	 * @param callable $callback      Filter callback.
+	 * @param int      $priority      Filter priority.
+	 * @param int      $accepted_args Accepted argument count.
+	 */
+	private function add_test_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+		add_filter( $hook, $callback, $priority, $accepted_args );
+
+		$this->test_filters[] = array(
+			'hook'     => $hook,
+			'callback' => $callback,
+			'priority' => $priority,
+		);
+	}
+
+	/**
+	 * Resets the stores the fixtures write to.
+	 */
+	private function reset_stores() {
+		foreach ( array( 'local-empty', 'fields', 'field-groups', 'values', 'form' ) as $store_name ) {
+			$store = acf_get_store( $store_name );
+			if ( $store ) {
+				$store->reset();
+			}
+		}
 	}
 }

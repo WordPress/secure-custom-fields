@@ -298,6 +298,31 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Clean up after each test.
+	 */
+	public function tear_down() {
+		wp_set_current_user( 0 );
+		parent::tear_down();
+	}
+
+	/**
+	 * Logs in an administrator, who has the SCF capability.
+	 *
+	 * @return void
+	 */
+	private function set_admin_user() {
+		wp_set_current_user(
+			wp_insert_user(
+				array(
+					'user_login' => 'select-admin-' . wp_generate_password( 6, false ),
+					'user_pass'  => 'password',
+					'role'       => 'administrator',
+				)
+			)
+		);
+	}
+
+	/**
 	 * Get a persisted select field for append_user_choices_to_field tests.
 	 *
 	 * @param array $overrides Optional field configuration overrides.
@@ -337,6 +362,7 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 	 * Test append_user_choices_to_field appends new sanitized choices and saves the field.
 	 */
 	public function test_append_user_choices_appends_and_saves() {
+		$this->set_admin_user();
 		$field    = $this->get_persisted_field();
 		$captured = null;
 		$this->capture_updated_field( $captured );
@@ -347,6 +373,26 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 		$this->assertArrayHasKey( 'purple', $captured['choices'] );
 		$this->assertArrayHasKey( 'orange', $captured['choices'], 'Appended choices should be sanitized with sanitize_text_field' );
 		$this->assertArrayNotHasKey( '<script>alert(1)</script>orange', $captured['choices'] );
+	}
+
+	/**
+	 * Test only users with the SCF capability append choices by default.
+	 */
+	public function test_append_user_choices_requires_capability_by_default() {
+		wp_set_current_user( 0 );
+		$field    = $this->get_persisted_field();
+		$captured = null;
+		$this->capture_updated_field( $captured );
+
+		$this->field_instance->append_user_choices_to_field( array( 'purple' ), $this->post_id, $field );
+		$this->assertNull( $captured, 'Choices are not appended for users without the SCF capability' );
+
+		add_filter( 'acf/fields/allow_append_choices', '__return_true' );
+		$this->field_instance->append_user_choices_to_field( array( 'purple' ), $this->post_id, $field );
+		remove_filter( 'acf/fields/allow_append_choices', '__return_true' );
+
+		$this->assertIsArray( $captured, 'The acf/fields/allow_append_choices filter can allow other users' );
+		$this->assertArrayHasKey( 'purple', $captured['choices'] );
 	}
 
 	/**
@@ -374,6 +420,7 @@ class Test_ACF_Field_Select extends Abstract_ACF_Field_Test {
 			}
 		);
 
+		$this->set_admin_user();
 		$field    = $this->get_persisted_field();
 		$captured = null;
 		$this->capture_updated_field( $captured );
