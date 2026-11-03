@@ -36,14 +36,6 @@ class REST_Save {
 	private $pending_cleanup_post_id = null;
 
 	/**
-	 * Stable bridge to the private datastore preflight.
-	 *
-	 * @since SCF 6.9.5
-	 * @var \Closure
-	 */
-	private $preflight_datastore_callback;
-
-	/**
 	 * Constructor.
 	 *
 	 * Defers hook registration to rest_api_init so the
@@ -53,7 +45,6 @@ class REST_Save {
 	 * @since ACF 6.8.1
 	 */
 	public function __construct() {
-		$this->preflight_datastore_callback = \Closure::fromCallable( array( $this, 'preflight_datastore_request' ) );
 		add_action( 'rest_api_init', array( $this, 'maybe_register_rest_save_hooks' ) );
 
 		// Skip the legacy ACF_Form_Post::save_post() during the metabox AJAX
@@ -96,7 +87,6 @@ class REST_Save {
 			return;
 		}
 
-		add_filter( 'rest_dispatch_request', $this->preflight_datastore_callback, 10, 4 );
 		add_action( '_wp_put_post_revision', array( $this, 'save_revision_meta' ), 11, 2 );
 
 		foreach ( get_post_types( array( 'show_in_rest' => true ) ) as $post_type ) {
@@ -122,103 +112,6 @@ class REST_Save {
 		// to create a revision. Catches orphaned _acf when no revision is
 		// created (e.g., post type doesn't support revisions).
 		add_action( 'wp_after_insert_post', array( $this, 'cleanup_acf_transport_meta' ), 20 );
-	}
-
-	/**
-	 * Checks bidirectional datastore targets before dispatch.
-	 *
-	 * @since SCF 6.9.5
-	 *
-	 * @param mixed            $result  Result from an earlier dispatch filter.
-	 * @param \WP_REST_Request $request Current REST request.
-	 * @param string           $route   Matched REST route.
-	 * @param array            $handler Matched route handler.
-	 * @return mixed|\WP_Error
-	 */
-	private function preflight_datastore_request( $result, $request, $route, $handler ) {
-		$meta   = $request->get_param( 'meta' );
-		$values = is_array( $meta ) && ! empty( $meta['_acf'] ) ? json_decode( $meta['_acf'], true ) : null;
-		if ( null !== $result || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) || ! is_array( $values ) || ! isset( $handler['callback'][0] ) ) {
-			return $result;
-		}
-		$controller  = $handler['callback'][0];
-		$is_autosave = $controller instanceof \WP_REST_Autosaves_Controller;
-		if ( ! $is_autosave && ! ( $controller instanceof \WP_REST_Posts_Controller ) ) {
-			return $result;
-		}
-
-		$post_id        = isset( $request->get_url_params()['id'] ) ? absint( $request->get_param( 'id' ) ) : 0;
-		$origin_id      = $post_id;
-		$current_values = $post_id ? null : array();
-		if ( $is_autosave ) {
-			$post = get_post( $post_id );
-			if ( ! $post ) {
-				return $result;
-			}
-			if ( ! function_exists( 'wp_check_post_lock' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/post.php';
-			}
-			if ( in_array( $post->post_status, array( 'draft', 'auto-draft' ), true ) && get_current_user_id() === (int) $post->post_author && ! wp_check_post_lock( $post_id ) ) {
-				unset( $meta['_acf'] );
-				$request->set_param( 'meta', $meta );
-				return $result;
-			}
-			$autosave       = wp_get_post_autosave( $post_id, get_current_user_id() );
-			$origin_id      = $autosave ? $autosave->ID : 0;
-			$current_values = $autosave ? null : array();
-			$location_args  = array( 'post_id' => $post_id );
-		} elseif ( $post_id ) {
-			$location_args = array( 'post_id' => $post_id );
-		} else {
-			$post_status   = $request->get_param( 'status' );
-			$template      = $request->get_param( 'template' );
-			$location_args = array(
-				'post_type'   => $controller->get_item_schema()['title'],
-				'post_status' => $post_status ? $post_status : 'draft',
-			);
-			if ( $template ) {
-				$location_args['page_template'] = $template;
-			}
-		}
-
-		$active_fields = array();
-		foreach ( acf_get_field_groups( $location_args ) as $field_group ) {
-			foreach ( (array) acf_get_fields( $field_group ) as $field ) {
-				$prepared_field = apply_filters( 'acf/prepare_field', $field );
-				if ( $prepared_field ) {
-					$active_fields[ $prepared_field['key'] ] = true;
-				}
-			}
-		}
-		$filtered_values = $values;
-		foreach ( $values as $field_key => $value ) {
-			if ( ! acf_get_setting( 'enable_bidirection' ) ) {
-				continue;
-			}
-			$is_active = isset( $active_fields[ $field_key ] );
-			$field     = acf_get_field( $field_key );
-			if ( ! $field ) {
-				continue;
-			}
-			foreach ( _scf_collect_bidirectional_destinations( $field, $value, $origin_id, $current_values, true ) as $destination ) {
-				if ( ! acf_current_user_can_edit_in_context( acf_decode_post_id( $destination ) ) ) {
-					if ( ! $is_active ) {
-						unset( $filtered_values[ $field_key ] );
-						break;
-					}
-					return new \WP_Error( 'acf_rest_cannot_update_bidirectional_target', __( 'Sorry, you are not allowed to update one or more bidirectional targets.', 'secure-custom-fields' ), array( 'status' => 403 ) );
-				}
-			}
-		}
-		if ( $filtered_values !== $values ) {
-			if ( $filtered_values ) {
-				$meta['_acf'] = wp_json_encode( $filtered_values );
-			} else {
-				unset( $meta['_acf'] );
-			}
-			$request->set_param( 'meta', $meta );
-		}
-		return $result;
 	}
 
 	/**
@@ -258,7 +151,18 @@ class REST_Save {
 			$values = wp_kses_post_deep( $values );
 		}
 
-		acf_update_values( $values, $revision_id );
+		// The values were submitted by the user, so check them as the post's save did. Otherwise
+		// the revision would store selections the post's save rejected, and restoring it would
+		// copy them to the post.
+		$was_saving_submitted = acf_get_data( 'acf_saving_submitted_values' );
+		acf_set_data( 'acf_saving_submitted_values', true );
+
+		try {
+			acf_update_values( $values, $revision_id );
+		} finally {
+			acf_set_data( 'acf_saving_submitted_values', $was_saving_submitted );
+			_acf_clear_stored_post_ids_snapshot( $revision_id );
+		}
 
 		$this->current_acf_values = null;
 	}
@@ -292,6 +196,24 @@ class REST_Save {
 			return;
 		}
 
+		$allowed = $this->restrict_values( $post, $values, $meta['_acf'] );
+
+		// Values come from the request meta, never from uploads.
+		acf_discard_uploaded_field_values();
+
+		// Keep dropped values out of the stored blob too, which WordPress copies to the revision.
+		if ( count( $allowed ) !== count( $values ) ) {
+			update_metadata( 'post', $post->ID, '_acf', wp_slash( wp_json_encode( (object) $allowed ) ) );
+		}
+
+		$values = $allowed;
+
+		if ( empty( $values ) ) {
+			// Nothing to save, but the transport blob still needs removing once the revision system has run.
+			$this->pending_cleanup_post_id = $post->ID;
+			return;
+		}
+
 		// Save individual meta keys to the post.
 		// Fires acf/save_post action, runs all ACF processing hooks.
 		acf_save_post( $post->ID, $values );
@@ -307,7 +229,38 @@ class REST_Save {
 	}
 
 	/**
-	 * Handles SCF values during autosave REST requests.
+	 * Restricts decoded values to the fields rendered for the post in the editor, or belonging to
+	 * field groups located on it.
+	 *
+	 * The editor sends the field lists rendered in its meta boxes as `_acf_fields` in the `_acf` blob.
+	 * They are read from the request, as the meta's sanitize callback keeps them out of the stored
+	 * meta. Autosaves are matched as the post they belong to.
+	 *
+	 * @since ACF 6.8.11
+	 *
+	 * @param \WP_Post $post     The post or autosave being saved.
+	 * @param array    $values   The decoded values.
+	 * @param mixed    $raw_meta The `_acf` meta from the request.
+	 * @return array
+	 */
+	private function restrict_values( $post, $values, $raw_meta ) {
+		$request_values = is_string( $raw_meta ) ? json_decode( $raw_meta, true ) : null;
+		$lists          = is_array( $request_values ) && isset( $request_values['_acf_fields'] ) && is_array( $request_values['_acf_fields'] ) ? $request_values['_acf_fields'] : array();
+
+		return acf_filter_save_values(
+			$values,
+			array_merge(
+				_acf_get_post_save_args( $post, 'datastore' ),
+				array(
+					'lists'           => $lists,
+					'flat_clone_keys' => true,
+				)
+			)
+		);
+	}
+
+	/**
+	 * Handles ACF values during autosave REST requests.
 	 *
 	 * @since ACF 6.8.1
 	 *

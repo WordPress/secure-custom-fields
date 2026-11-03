@@ -523,6 +523,18 @@
 				$prevOptions = $options;
 				$prevGroup = $group;
 			} );
+
+			// Remove the "No results" message once a later page has added options
+			const $results = $(
+				'.select2-container--open .select2-results__options'
+			).first();
+			if (
+				$results.children(
+					'.select2-results__option:not(.select2-results__message):not(.loading-results)'
+				).length
+			) {
+				$results.children( '.select2-results__message' ).remove();
+			}
 		},
 	} );
 

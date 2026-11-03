@@ -131,10 +131,11 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    18/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @param   string $name The name to get key for.
+		 * @param   string|null $name The name to get key for.
 		 * @return  string The key for the given name.
 		 */
 		public function _key( $name = '' ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+			$name = $name ?? '';
 			return isset( $this->aliases[ $name ] ) ? $this->aliases[ $name ] : $name;
 		}
 
@@ -162,11 +163,11 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    7/2/19
 		 * @since   ACF 5.7.11
 		 *
-		 * @param   string $key The key to check.
+		 * @param   string|null $key The key to check.
 		 * @return  boolean True if key exists.
 		 */
 		public function is( $key = '' ) {
-			return isset( $this->data[ $key ] );
+			return isset( $this->data[ $key ?? '' ] );
 		}
 
 		/**
@@ -215,8 +216,8 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    9/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @param   (string|array) $name  The data name or an array of data.
-		 * @param   mixed          $value The data value.
+		 * @param   (string|array|null) $name  The data name or an array of data.
+		 * @param   mixed               $value The data value.
 		 * @return  ACF_Data
 		 */
 		public function set( $name = '', $value = null ) {
@@ -227,7 +228,7 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 
 				// Set single.
 			} else {
-				$this->data[ $name ] = $value;
+				$this->data[ $name ?? '' ] = $value;
 			}
 
 			// Return this for chaining.
@@ -262,13 +263,13 @@ if ( ! class_exists( 'ACF_Data' ) ) :
 		 * @date    9/1/19
 		 * @since   ACF 5.7.10
 		 *
-		 * @param   string $name The data name.
+		 * @param   string|null $name The data name.
 		 * @return  ACF_Data
 		 */
 		public function remove( $name = '' ) {
 
 			// Remove data.
-			unset( $this->data[ $name ] );
+			unset( $this->data[ $name ?? '' ] );
 
 			// Return this for chaining.
 			return $this;

@@ -1047,7 +1047,8 @@ function acf_shortcode( $atts ) {
 	$post_id         = acf_get_valid_post_id( $atts['post_id'] );
 	$decoded_post_id = acf_decode_post_id( $post_id );
 
-	if ( scf_post_password_required( $post_id ) ) {
+	// Don't output fields of a password-protected post until the password has been entered.
+	if ( acf_post_password_required( $post_id ) ) {
 		return;
 	}
 
@@ -1071,13 +1072,8 @@ function acf_shortcode( $atts ) {
 	}
 
 	// Try to get the field value, ensuring any non-safe HTML is stripped from wysiwyg fields via `acf_the_content`
-	$field     = get_field_object( $atts['field'], $post_id, $atts['format_value'], true, true );
-	$value     = $field ? $field['value'] : get_field( $atts['field'], $post_id, $atts['format_value'], true );
-	$raw_value = $field ? acf_get_value( $post_id, $field ) : null;
-
-	if ( $field ) {
-		$value = scf_rest_sanitize_user_data( $value, $raw_value, $field );
-	}
+	$field = get_field_object( $atts['field'], $post_id, $atts['format_value'], true, true );
+	$value = $field ? $field['value'] : get_field( $atts['field'], $post_id, $atts['format_value'], true );
 
 	$field_type = is_array( $field ) && isset( $field['type'] ) ? $field['type'] : 'text';
 
@@ -1104,27 +1100,27 @@ function acf_shortcode( $atts ) {
 		return;
 	}
 
-	if ( is_array( $value ) ) {
-		$value = implode( ', ', $value );
-	}
-
 	// Temporarily always get the unescaped version for action comparison.
 	$unescaped_value = get_field( $atts['field'], $post_id, $atts['format_value'], false );
-
-	if ( $field ) {
-		$unescaped_value = scf_rest_sanitize_user_data( $unescaped_value, $raw_value, $field );
-	}
 
 	// Remove the filter preventing access to unknown filters now we've got all the values.
 	if ( $filter_applied ) {
 		remove_filter( 'acf/prevent_access_to_unknown_fields', '__return_true' );
 	}
 
-	if ( is_array( $unescaped_value ) ) {
-		$unescaped_value = implode( ', ', $unescaped_value );
+	// Reduce User data to IDs. The escaped value is rebuilt from the reduced value, as escaping turns user objects into false.
+	if ( acf_bindings_should_reduce_user_data( $field, $post_id, 'shortcode' ) ) {
+		$unescaped_value = acf_bindings_reduce_user_value( $unescaped_value, $field );
+
+		if ( $atts['format_value'] ) {
+			$value = map_deep( $unescaped_value, 'acf_esc_html' );
+		}
 	}
 
-	if ( ! is_scalar( $unescaped_value ) ) {
+	$value           = acf_bindings_flatten_value( $value );
+	$unescaped_value = acf_bindings_flatten_value( $unescaped_value );
+
+	if ( null === $unescaped_value ) {
 		$unescaped_value = false;
 	}
 
@@ -1138,6 +1134,120 @@ function acf_shortcode( $atts ) {
 	return $value;
 }
 add_shortcode( 'acf', 'acf_shortcode' );
+
+/**
+ * Checks whether a User field's value should be reduced to user IDs before it is
+ * output by the [acf] shortcode or an ACF block binding.
+ *
+ * Both render into pages that anyone can view, so unlike the REST API this isn't
+ * gated on a capability. Only User fields are handled: field types that can contain
+ * a User field, such as Group and Clone, can't be output through bindings, and
+ * acf_bindings_flatten_value() outputs nothing for the nested arrays they'd produce.
+ *
+ * @since ACF 6.8.11
+ *
+ * @param array|false    $field   The field array.
+ * @param integer|string $post_id The ACF post ID the value is loaded from.
+ * @param string         $context Where the value is output. Either 'shortcode' or 'bindings'.
+ * @return boolean
+ */
+function acf_bindings_should_reduce_user_data( $field, $post_id, $context ) {
+	if ( ! is_array( $field ) || empty( $field['type'] ) || 'user' !== $field['type'] ) {
+		return false;
+	}
+
+	/**
+	 * Filters whether the [acf] shortcode and ACF block bindings may output full User field data.
+	 *
+	 * By default, User field values are reduced to user IDs, so personal data such as
+	 * email addresses isn't displayed to visitors. Returning true skips that reduction.
+	 * Only values that can be output as text are displayed, so a single User field
+	 * returning an array outputs its data as a comma separated list, but multiple users
+	 * returned as arrays or objects still output nothing.
+	 *
+	 * @since ACF 6.8.11
+	 *
+	 * @param boolean        $allow   Whether to output full User field data. Default false.
+	 * @param array          $field   The field array.
+	 * @param integer|string $post_id The ACF post ID the value is loaded from.
+	 * @param string         $context Where the value is output. Either 'shortcode' or 'bindings'.
+	 */
+	return ! apply_filters( 'acf/bindings/allow_user_data', false, $field, $post_id, $context );
+}
+
+/**
+ * Reduces a formatted User field value to user IDs.
+ *
+ * User arrays and objects become integer IDs. Scalar values, such as IDs or text that
+ * a format_value filter has already produced, are left as they are, so numeric-looking
+ * text such as '007' isn't cast to an integer.
+ *
+ * @since ACF 6.8.11
+ *
+ * @param mixed $value The formatted User field value.
+ * @param array $field The field array.
+ * @return mixed
+ */
+function acf_bindings_reduce_user_value( $value, $field ) {
+	$to_id = static function ( $user ) {
+		return ( is_array( $user ) || is_object( $user ) ) ? acf_idval( $user ) : $user;
+	};
+
+	if ( ! empty( $field['multiple'] ) && is_array( $value ) ) {
+		return array_map( $to_id, $value );
+	}
+
+	return $value ? $to_id( $value ) : $value;
+}
+
+/**
+ * Flattens a field value for output by the [acf] shortcode or an ACF block binding.
+ *
+ * Arrays are joined into a comma separated list when every item is scalar. Anything
+ * that can't be converted to a string, such as post or user objects, returns null.
+ *
+ * @since ACF 6.8.11
+ *
+ * @param mixed $value The field value.
+ * @return string|integer|float|boolean|null
+ */
+function acf_bindings_flatten_value( $value ) {
+	if ( is_array( $value ) ) {
+		foreach ( $value as $item ) {
+			if ( null !== $item && ! is_scalar( $item ) ) {
+				return null;
+			}
+		}
+
+		$value = implode( ', ', $value );
+	}
+
+	return is_scalar( $value ) ? $value : null;
+}
+
+/**
+ * The internal ACF function to save a value passed to an API function, such as update_field().
+ *
+ * Values passed by code weren't submitted by a user, even when the code runs during a user-submitted
+ * save, such as from an `acf/update_value` callback, so they aren't checked like submitted values.
+ *
+ * @since ACF 6.8.11
+ *
+ * @param mixed          $value   The value to save.
+ * @param integer|string $post_id The ACF post ID to save the value to.
+ * @param array          $field   The field array.
+ * @return boolean
+ */
+function _acf_update_api_value( $value, $post_id, $field ) {
+	$was_saving_submitted = acf_get_data( 'acf_saving_submitted_values' );
+	acf_set_data( 'acf_saving_submitted_values', false );
+
+	try {
+		return acf_update_value( $value, $post_id, $field );
+	} finally {
+		acf_set_data( 'acf_saving_submitted_values', $was_saving_submitted );
+	}
+}
 
 
 /**
@@ -1171,7 +1281,7 @@ function update_field( $selector, $value, $post_id = false ) {
 	}
 
 	// save
-	return acf_update_value( $value, $post_id, $field );
+	return _acf_update_api_value( $value, $post_id, $field );
 }
 
 
@@ -1206,7 +1316,7 @@ function update_sub_field( $selector, $value, $post_id = false ) {
 	}
 
 	// update
-	return acf_update_value( $value, $post_id, $sub_field );
+	return _acf_update_api_value( $value, $post_id, $sub_field );
 }
 
 
@@ -1284,7 +1394,7 @@ function add_row( $selector, $row = false, $post_id = false ) {
 	$field['pagination'] = false;
 
 	// update value
-	acf_update_value( $value, $post_id, $field );
+	_acf_update_api_value( $value, $post_id, $field );
 
 	// return
 	return count( $value );
@@ -1330,7 +1440,7 @@ function add_sub_row( $selector, $row = false, $post_id = false ) {
 	$value[] = $row;
 
 	// update
-	acf_update_value( $value, $post_id, $sub_field );
+	_acf_update_api_value( $value, $post_id, $sub_field );
 
 	// return
 	return count( $value );
@@ -1375,7 +1485,7 @@ function update_row( $selector, $i = 1, $row = false, $post_id = false ) {
 	$value[ $i ] = $row;
 
 	// update value
-	acf_update_value( $value, $post_id, $field );
+	_acf_update_api_value( $value, $post_id, $field );
 
 	// return
 	return true;
@@ -1423,7 +1533,7 @@ function update_sub_row( $selector, $i = 1, $row = false, $post_id = false ) {
 	$value[ $i ] = $row;
 
 	// update
-	acf_update_value( $value, $post_id, $sub_field );
+	_acf_update_api_value( $value, $post_id, $sub_field );
 
 	// return
 	return true;
@@ -1472,7 +1582,7 @@ function delete_row( $selector, $i = 1, $post_id = false ) {
 	unset( $value[ $i ] );
 
 	// update
-	acf_update_value( $value, $post_id, $field );
+	_acf_update_api_value( $value, $post_id, $field );
 
 	// return
 	return true;
@@ -1525,7 +1635,7 @@ function delete_sub_row( $selector, $i = 1, $post_id = false ) {
 	unset( $value[ $i ] );
 
 	// update
-	acf_update_value( $value, $post_id, $sub_field );
+	_acf_update_api_value( $value, $post_id, $sub_field );
 
 	// return
 	return true;

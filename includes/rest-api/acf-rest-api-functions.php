@@ -483,15 +483,18 @@ function acf_rest_reduce_icon_picker_reference( $formatted_value, $raw_value, $f
  * Determines whether the current user should see the fully-expanded target of
  * a reference field (Relationship, Post Object, Image, Gallery, File).
  *
- * Delegates to the target post type's REST controller (usually
- * `WP_REST_Posts_Controller`, or `WP_REST_Attachments_Controller` for
- * attachments, or a custom class declared via `rest_controller_class`) so this
- * stays in lockstep with what `/wp/v2/<post_type>/<id>` returns for the same
- * caller. Targets whose post type is not REST-exposed
- * (`show_in_rest === false`) are treated as non-exposable, matching core.
+ * Delegates to the REST controller core registered for the target post type
+ * (via `WP_Post_Type::get_rest_controller()`; usually `WP_REST_Posts_Controller`,
+ * or `WP_REST_Attachments_Controller` for attachments, or a custom class declared
+ * via `rest_controller_class`) so this stays in lockstep with what
+ * `/wp/v2/<post_type>/<id>` returns for the same caller. Targets whose post type
+ * is not REST-exposed (`show_in_rest === false`) are treated as non-exposable,
+ * matching core.
  *
- * Fail-closed contract: if the resolved REST controller does not implement
- * `check_read_permission()`, the target is treated as non-exposable. A
+ * Fail-closed contract: if core has no REST controller for the post type (for
+ * example, a `rest_controller_class` that doesn't extend `WP_REST_Controller`),
+ * or the controller does not implement `check_read_permission()`, the target is
+ * treated as non-exposable. A
  * bare `current_user_can( 'read_post', $id )` fallback is intentionally NOT
  * used because it evaluates to false for anonymous callers on published posts
  * (anon lacks the `read` cap on standard installs), so the fallback would
@@ -499,7 +502,12 @@ function acf_rest_reduce_icon_picker_reference( $formatted_value, $raw_value, $f
  * controller for a post type can re-expose targets via the
  * `acf/rest/expose_reference_target` filter after making an informed decision.
  *
- * @since SCF 6.9.6
+ * Password-protected targets whose password has not been entered are only
+ * exposable to users who can edit them, even though the REST controller's read
+ * check passes for published protected posts.
+ *
+ * @since ACF 6.8.10
+ * @since ACF 6.8.11 Password-protected targets are only exposed to users who entered the password or can edit them.
  *
  * @param integer $target_id The referenced resource ID (post or attachment).
  * @param array   $field     The field array (context for filter subscribers).
@@ -519,6 +527,7 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 				$exposable = (bool) $controller->check_read_permission( $post );
 			}
 
+			// Core's read check passes for published password-protected posts, so hide them from anyone who can't edit them.
 			if ( $exposable && post_password_required( $post ) && ! current_user_can( 'edit_post', $post->ID ) ) {
 				$exposable = false;
 			}

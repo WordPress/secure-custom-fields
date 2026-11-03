@@ -160,6 +160,10 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 				$args['include'] = (int) $options['include'];
 			}
 
+			$args['perm']                 = 'readable';
+			$args['acf_field_post_types'] = acf_get_array( $field['post_type'] );
+			$args                         = acf_ensure_perm_readable_post_status( $args );
+
 			// filters
 			$args = apply_filters( 'acf/fields/page_link/query', $args, $field, $options['post_id'] );
 			$args = apply_filters( 'acf/fields/page_link/query/name=' . $field['name'], $args, $field, $options['post_id'] );
@@ -204,7 +208,8 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			}
 
 			// get posts grouped by post type
-			$groups = acf_get_grouped_posts( $args, true );
+			$readable = acf_remove_unreadable_grouped_posts( acf_get_grouped_posts( $args ), $args, $field );
+			$groups   = $readable['groups'];
 
 			// loop
 			if ( ! empty( $groups ) ) {
@@ -243,6 +248,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			acf_send_ajax_results(
 				array(
 					'results' => $results,
+					'more'    => $readable['more'],
 					'limit'   => $args['posts_per_page'],
 				)
 			);
@@ -386,6 +392,9 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 		 * @return void
 		 */
 		public function render_field( $field ) {
+			// Read checks need the Page Link field, not the select it's rendered as.
+			$page_link_field = $field;
+
 			// Change Field into a select
 			$field['type']    = 'select';
 			$field['ui']      = 1;
@@ -409,7 +418,7 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 						if ( is_object( $post ) ) {
 
 							// append to choices
-							$field['choices'][ $post->ID ] = $this->get_post_title( $post, $field );
+							$field['choices'][ $post->ID ] = acf_current_user_can_read_post( $post, $page_link_field ) ? $this->get_post_title( $post, $field ) : acf_get_restricted_post_title();
 						} else {
 
 							// append to choices
@@ -544,6 +553,8 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 				return false;
 			}
 
+			$value = acf_remove_unreadable_formatted_post_ids( $value, $post_id, $field );
+
 			// bail early if no value
 			if ( empty( $value ) ) {
 				return $value;
@@ -608,6 +619,8 @@ if ( ! class_exists( 'acf_field_page_link' ) ) :
 			} else {
 				$value = acf_maybe_idval( $value );
 			}
+
+			$value = acf_remove_disallowed_post_ids( $value, $post_id, $field );
 
 			// Return value.
 			return $value;

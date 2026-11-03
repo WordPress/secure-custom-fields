@@ -58,7 +58,9 @@ class Bindings {
 			$value = '';
 		} else {
 			$post_id = acf_get_valid_post_id( false );
-			if ( scf_post_password_required( $post_id ) ) {
+
+			// Don't output fields of a password-protected post until the password has been entered.
+			if ( acf_post_password_required( $post_id ) ) {
 				return '';
 			}
 
@@ -84,110 +86,36 @@ class Bindings {
 				}
 			}
 
-			$raw_value   = acf_get_value( $post_id, $field );
-			$field_value = scf_rest_sanitize_user_data( $field['value'], $raw_value, $field );
+			$value = $field['value'];
 
-			add_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX, 2 );
-			$field_value = acf_rest_sanitize_reference_data( $field_value, $raw_value, $field );
-			remove_filter( 'acf/rest/expose_reference_target', array( $this, 'expose_reference_target' ), PHP_INT_MAX );
-			$field_value = $this->strip_post_passwords( $field_value );
+			// Reduce User data to IDs. The escaped value is rebuilt from the reduced value, as escaping turns user objects into false.
+			if ( acf_bindings_should_reduce_user_data( $field, $post_id, 'bindings' ) ) {
+				$value = acf_bindings_reduce_user_value( acf_format_value( acf_get_value( $post_id, $field ), $post_id, $field ), $field );
+				$value = map_deep( $value, 'acf_esc_html' );
+			}
 
 			switch ( $attribute_name ) {
 				case 'id':
 				case 'alt':
 				case 'title':
 					// The value is in the field of the same name.
-					$value = is_array( $field_value ) ? $field_value[ $attribute_name ] ?? '' : '';
+					$value = is_array( $value ) ? acf_bindings_flatten_value( $value[ $attribute_name ] ?? '' ) : '';
 					break;
 				case 'url':
-					if ( is_array( $field_value ) ) {
-						// The URL is in the array returned by media-like fields.
-						$value = $field_value['url'] ?? '';
-					} elseif ( is_scalar( $field_value ) || null === $field_value ) {
-						// Scalar URL-like fields use the field value directly.
-						$value = $field_value ?? '';
-					} else {
-						$value = '';
-					}
+					// The URL is in the array returned by media-like fields. Scalar URL-like fields use the field value directly.
+					$value = acf_bindings_flatten_value( is_array( $value ) ? $value['url'] ?? '' : $value );
 					break;
 				case 'rel':
 					// Handle checkbox field for rel attribute by joining array values.
-					if ( is_array( $field_value ) ) {
-						$value = implode( ' ', $field_value );
-					} elseif ( is_scalar( $field_value ) || null === $field_value ) {
-						$value = $field_value ?? '';
-					} else {
-						$value = '';
-					}
+					$value = is_array( $value ) ? implode( ' ', array_filter( $value, 'is_scalar' ) ) : acf_bindings_flatten_value( $value );
 					break;
 				default:
-					$value = $field_value;
-
-					if ( is_array( $value ) ) {
-						$value = wp_json_encode( $value );
-					} elseif ( ! is_scalar( $value ) && null !== $value ) {
-						$value = '';
-					}
+					// Anything we can't output as a string would throw an error, so it's returned as null for safety.
+					$flat_value = acf_bindings_flatten_value( $value );
+					$value      = is_array( $value ) && null !== $flat_value ? wp_json_encode( $value ) : $flat_value;
 			}
 		}
 
 		return apply_filters( 'acf/blocks/binding_value', $value, $source_attrs, $block_instance, $attribute_name );
-	}
-
-	/**
-	 * Removes the password from expanded post objects before they are output.
-	 *
-	 * @since SCF 6.9.7
-	 *
-	 * @param mixed $value The field value, possibly containing WP_Post objects.
-	 * @return mixed
-	 */
-	private function strip_post_passwords( $value ) {
-		if ( $value instanceof \WP_Post ) {
-			$value                = clone $value;
-			$value->post_password = '';
-			return $value;
-		}
-
-		if ( is_array( $value ) ) {
-			foreach ( $value as $key => $item ) {
-				$value[ $key ] = $this->strip_post_passwords( $item );
-			}
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Decides whether a referenced post is expanded in a block binding value.
-	 *
-	 * Bindings render on the front end, so a referenced post is exposed when the
-	 * viewer can read it there rather than when the REST API would return it.
-	 * Attachments are always expanded because their files are publicly served.
-	 * This runs last so that callbacks written for REST output do not decide
-	 * what a rendered block shows.
-	 *
-	 * @since SCF 6.9.7
-	 *
-	 * @param boolean $exposable Whether the REST rules would expose the target.
-	 * @param integer $target_id The referenced post or attachment ID.
-	 * @return boolean
-	 */
-	public function expose_reference_target( $exposable, $target_id ) {
-		$post = get_post( $target_id );
-
-		if ( ! $post instanceof \WP_Post ) {
-			return false;
-		}
-
-		if ( 'attachment' === $post->post_type ) {
-			return true;
-		}
-
-		if ( post_password_required( $post ) && ! current_user_can( 'edit_post', $post->ID ) ) {
-			return false;
-		}
-
-		return is_post_publicly_viewable( $post ) || current_user_can( 'read_post', $post->ID );
 	}
 }

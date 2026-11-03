@@ -248,6 +248,7 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_include( 'includes/assets.php' );
 			acf_include( 'includes/compatibility.php' );
 			acf_include( 'includes/deprecated.php' );
+			acf_include( 'includes/scf-deprecated.php' );
 			acf_include( 'includes/l10n.php' );
 			acf_include( 'includes/local-fields.php' );
 			acf_include( 'includes/local-meta.php' );

@@ -586,7 +586,7 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			}
 
 			// Save custom options back to the field definition if configured.
-			if ( ! empty( $field['save_options'] ) && is_array( $value ) && scf_current_user_has_capability() ) {
+			if ( ! empty( $field['save_options'] ) && is_array( $value ) ) {
 				// Get the raw field, using the ID if present or the key otherwise (i.e. when using JSON).
 				$selector = $field['ID'] ? $field['ID'] : $field['key'];
 				$field    = acf_get_field( $selector );
@@ -619,6 +619,28 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 		 * @return void
 		 */
 		public function append_user_choices_to_field( $value, $post_id, $field ) {
+			/**
+			 * Filters whether submitted values may be appended to a field's choices
+			 * via the checkbox `save_custom`, radio `save_other_choice`, and select
+			 * `save_options` settings. When false, the field definition is left
+			 * unchanged. The submitter's own field value still saves to their post.
+			 *
+			 * For example, to only allow users who can edit posts to add choices:
+			 *
+			 *     add_filter( 'acf/fields/allow_append_choices', function () {
+			 *         return current_user_can( 'edit_posts' );
+			 *     } );
+			 *
+			 * @since ACF 6.8.11
+			 *
+			 * @param boolean        $allow   Whether to append submitted values. Default true.
+			 * @param array          $field   The field array holding all the field options.
+			 * @param integer|string $post_id The post_id of which the value will be saved.
+			 */
+			if ( ! apply_filters( 'acf/fields/allow_append_choices', true, $field, $post_id ) ) {
+				return;
+			}
+
 			/**
 			 * Filters the maximum number of choices that may be stored on a field
 			 * via the checkbox `save_custom`, radio `save_other_choice`, and select
@@ -664,8 +686,12 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			}
 
 			// Save only if we actually appended a new choice.
+			// The field is already unslashed, and acf_update_field() unslashes values
+			// (but not keys) again, so slash it first to keep choice keys and values identical.
+			// The other settings are already stored and the new choices are sanitized above,
+			// so skip sanitization to leave the field's existing HTML alone.
 			if ( $appended ) {
-				acf_update_field( $field );
+				acf_skip_internal_post_sanitization( 'acf_update_field', wp_slash( $field ) );
 			}
 		}
 
