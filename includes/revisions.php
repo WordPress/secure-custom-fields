@@ -365,6 +365,8 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 * Modifies the $post_id to allow loading values from a revision.
 		 *
 		 * @since ACF 5.5.10
+		 * @since SCF 6.9.8 Requires the preview query arg, since WordPress also flags
+		 *                  an editor viewing a draft or pending post as a preview.
 		 *
 		 * @param mixed $post_id  The post ID after being processed by acf_get_valid_post_id().
 		 * @param mixed $_post_id The post ID before being processed by acf_get_valid_post_id().
