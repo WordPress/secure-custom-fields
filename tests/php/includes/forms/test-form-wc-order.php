@@ -23,10 +23,29 @@ class Test_Form_WC_Order extends BaseTestCase {
 	private $user_ids = array();
 
 	/**
+	 * Registers the field type and location the order field groups use.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		if ( ! acf_get_field_type( 'text' ) ) {
+			acf_register_field_type( 'acf_field_text' );
+		}
+
+		acf_include( 'includes/locations/class-acf-location-post-type.php' );
+		if ( ! acf_get_location_type( 'post_type' ) ) {
+			acf_register_location_type( 'ACF_Location_Post_Type' );
+		}
+	}
+
+	/**
 	 * Tear down after each test.
 	 */
 	public function tear_down() {
+		unset( $GLOBALS['scf_test_wc_order_types'] );
 		acf_get_store( 'form' )->reset();
+		acf_reset_local();
 
 		// Clean up any filters/actions we added.
 		remove_all_filters( 'acf/input/meta_box_priority' );
@@ -37,7 +56,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 		}
 		$this->user_ids = array();
 
-		unset( $_POST['acf'], $_POST['_acf_nonce'] );
+		unset( $_POST['acf'], $_POST['_acf_nonce'], $_POST['_acf_fields'] );
 		wp_set_current_user( 0 );
 
 		global $current_screen;
@@ -420,6 +439,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 		$wc_order = $this->get_hpos_enabled_order_form();
 		$this->set_order_manager_user();
 		$this->set_valid_acf_order_payload();
+		$this->add_order_field_group();
 
 		$saved_post_id = null;
 		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
@@ -486,6 +506,7 @@ class Test_Form_WC_Order extends BaseTestCase {
 		set_current_screen( 'woocommerce_page_wc-orders' );
 		$this->set_order_manager_user();
 		$this->set_valid_acf_order_payload();
+		$this->add_order_field_group();
 
 		$saved_post_id = null;
 		$save_hook     = function ( $post_id ) use ( &$saved_post_id ) {
@@ -498,6 +519,95 @@ class Test_Form_WC_Order extends BaseTestCase {
 		remove_action( 'acf/save_post', $save_hook );
 
 		$this->assertSame( 'woo_order_123', $saved_post_id, 'Authorized admin order edits should save ACF order fields.' );
+	}
+
+	/**
+	 * An order save keeps fields located on the order's type and drops the rest.
+	 */
+	public function test_save_order_drops_fields_not_located_on_order_type() {
+		$this->add_order_field_group();
+		$this->add_order_type_field_group( 'group_test_wc_subscription', 'shop_subscription', 'field_test_wc_subscription' );
+		$saved_values = $this->save_order_values(
+			array(
+				'field_test_wc_order'        => 'kept',
+				'field_test_wc_subscription' => 'dropped',
+				'field_test_wc_unknown'      => 'dropped',
+			)
+		);
+
+		$this->assertSame( array( 'field_test_wc_order' => 'kept' ), $saved_values );
+	}
+
+	/**
+	 * Orders of other types only keep fields from field groups located on their own type.
+	 */
+	public function test_save_order_matches_fields_to_the_orders_own_type() {
+		$GLOBALS['scf_test_wc_order_types'] = array( 123 => 'shop_order_custom' );
+		$this->add_order_field_group();
+		$this->add_order_type_field_group( 'group_test_wc_custom', 'shop_order_custom', 'field_test_wc_custom' );
+
+		$saved_values = $this->save_order_values(
+			array(
+				'field_test_wc_order'  => 'dropped',
+				'field_test_wc_custom' => 'kept',
+			)
+		);
+
+		unset( $GLOBALS['scf_test_wc_order_types'] );
+
+		$this->assertSame( array( 'field_test_wc_custom' => 'kept' ), $saved_values );
+	}
+
+	/**
+	 * The order allowed-keys filter can allow extra keys, and receives the ACF order ID.
+	 */
+	public function test_save_order_allowed_keys_filter_adds_keys() {
+		$this->add_order_field_group();
+		$received = null;
+		$callback = function ( $keys, $post_id ) use ( &$received ) {
+			$received = $post_id;
+			$keys[]   = 'field_test_wc_injected';
+			return $keys;
+		};
+		add_filter( 'acf/form/woo_order/allowed_field_keys', $callback, 10, 2 );
+
+		$saved_values = $this->save_order_values(
+			array(
+				'field_test_wc_order'    => 'kept',
+				'field_test_wc_injected' => 'kept',
+			)
+		);
+
+		remove_filter( 'acf/form/woo_order/allowed_field_keys', $callback, 10 );
+
+		$this->assertSame( 'woo_order_123', $received );
+		$this->assertSame(
+			array(
+				'field_test_wc_order'    => 'kept',
+				'field_test_wc_injected' => 'kept',
+			),
+			$saved_values
+		);
+	}
+
+	/**
+	 * An order save accepts fields listed for the order and ignores lists signed for another order.
+	 */
+	public function test_save_order_accepts_only_fields_listed_for_order() {
+		$this->set_order_manager_user();
+		$_POST['_acf_fields'] = array(
+			'woo_order_123' => array( $this->get_signed_field_list( 'woo_order_123', array( 'field_test_wc_listed' ) ) ),
+			'woo_order_456' => array( $this->get_signed_field_list( 'woo_order_456', array( 'field_test_wc_unknown' ) ) ),
+		);
+
+		$saved_values = $this->save_order_values(
+			array(
+				'field_test_wc_listed'  => 'kept',
+				'field_test_wc_unknown' => 'dropped',
+			)
+		);
+
+		$this->assertSame( array( 'field_test_wc_listed' => 'kept' ), $saved_values );
 	}
 
 	/**
@@ -567,6 +677,113 @@ class Test_Form_WC_Order extends BaseTestCase {
 		wp_set_current_user( $user_id );
 
 		return $user_id;
+	}
+
+	/**
+	 * Registers a field group located on orders, holding the field the order payload saves.
+	 */
+	private function add_order_field_group() {
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_test_wc_order',
+				'title'    => 'Order fields',
+				'fields'   => array(
+					array(
+						'key'  => 'field_test_wc_order',
+						'name' => 'test_wc_order',
+						'type' => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'shop_order',
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Registers a field group located on an order type, with one text field.
+	 *
+	 * @param string $group_key  The field group key.
+	 * @param string $order_type The order type the group is located on.
+	 * @param string $field_key  The field key.
+	 */
+	private function add_order_type_field_group( $group_key, $order_type, $field_key ) {
+		acf_add_local_field_group(
+			array(
+				'key'      => $group_key,
+				'title'    => $group_key,
+				'fields'   => array(
+					array(
+						'key'  => $field_key,
+						'name' => $field_key,
+						'type' => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => $order_type,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Saves order 123 as an order manager on the order screen and returns the values that reached acf/save_post.
+	 *
+	 * @param array $values The submitted acf values.
+	 * @return array|null The saved values, or null when no save ran.
+	 */
+	private function save_order_values( array $values ) {
+		$wc_order = $this->get_hpos_enabled_order_form();
+		set_current_screen( 'woocommerce_page_wc-orders' );
+		if ( ! get_current_user_id() ) {
+			$this->set_order_manager_user();
+		}
+		$this->set_valid_acf_order_payload();
+		$_POST['acf'] = $values;
+
+		$saved_values = null;
+		$save_hook    = function () use ( &$saved_values ) {
+			/* phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Test reads the request it built. */
+			$saved_values = isset( $_POST['acf'] ) ? $_POST['acf'] : array();
+		};
+		add_action( 'acf/save_post', $save_hook, 1 );
+
+		$wc_order->save_order( 123 );
+
+		remove_action( 'acf/save_post', $save_hook, 1 );
+
+		return $saved_values;
+	}
+
+	/**
+	 * Returns a field list signed for a render ID, as acf_render_fields() outputs it.
+	 *
+	 * @param string $render_id The render ID.
+	 * @param array  $keys      The listed field keys.
+	 * @return string
+	 */
+	private function get_signed_field_list( $render_id, array $keys ) {
+		ob_start();
+		_acf_render_field_list( $keys, $render_id, '_acf_fields' );
+		$processor = new WP_HTML_Tag_Processor( ob_get_clean() );
+		$processor->next_tag( 'input' );
+
+		return (string) $processor->get_attribute( 'value' );
 	}
 
 	/**

@@ -16,6 +16,96 @@ acf_include( '/includes/forms/form-post.php' );
 class Test_Form_Post extends BaseTestCase {
 
 	/**
+	 * Post the save tests submit values for.
+	 *
+	 * @var integer
+	 */
+	private $post_id;
+
+	/**
+	 * $_POST['acf'] as seen by acf/save_post, or null when no save ran.
+	 *
+	 * @var array|null
+	 */
+	private $saved_values;
+
+	/**
+	 * Test filters that must be removed during cleanup.
+	 *
+	 * @var array
+	 */
+	private $test_filters = array();
+
+	/**
+	 * Registers field groups for posts and pages, and a post to save.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		if ( ! acf_get_field_type( 'text' ) ) {
+			acf_register_field_type( 'acf_field_text' );
+		}
+
+		acf_include( 'includes/locations/class-acf-location-post-type.php' );
+		if ( ! acf_get_location_type( 'post_type' ) ) {
+			acf_register_location_type( 'ACF_Location_Post_Type' );
+		}
+
+		if ( ! has_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts' ) ) {
+			add_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts', 20, 2 );
+		}
+
+		$this->add_group( 'group_form_post_posts', 'post', 'field_form_post_post' );
+		$this->add_group( 'group_form_post_pages', 'page', 'field_form_post_page' );
+
+		$this->post_id = wp_insert_post(
+			array(
+				'post_type'   => 'post',
+				'post_title'  => 'Form post save',
+				'post_status' => 'draft',
+			)
+		);
+
+		$this->saved_values = null;
+		$this->add_test_filter( 'acf/save_post', array( $this, 'capture_saved_values' ), 1 );
+
+		$_POST  = array();
+		$_FILES = array();
+	}
+
+	/**
+	 * Removes local fields, request data and filters.
+	 */
+	public function tear_down() {
+		foreach ( $this->test_filters as $filter ) {
+			remove_filter( $filter['hook'], $filter['callback'], $filter['priority'] );
+		}
+		$this->test_filters = array();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		$_POST  = array();
+		$_FILES = array();
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Records $_POST['acf'] when a save runs.
+	 */
+	public function capture_saved_values() {
+		/* phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Test reads the request it built. */
+		$this->saved_values = isset( $_POST['acf'] ) ? $_POST['acf'] : array();
+	}
+
+	/**
 	 * Test if the ACF_Form_Post class exists.
 	 */
 	public function test_form_post_class_exists() {
@@ -278,5 +368,243 @@ class Test_Form_Post extends BaseTestCase {
 			$form_post->is_block_field_group( $field_group_mixed_rules ),
 			'Field group with block location among other rules should be identified as block field group'
 		);
+	}
+
+	/**
+	 * A post save keeps fields from groups located on the post type and drops the rest.
+	 */
+	public function test_save_post_drops_fields_not_located_on_post() {
+		$this->submit(
+			array(
+				'field_form_post_post'    => 'kept',
+				'field_form_post_page'    => 'dropped',
+				'field_form_post_unknown' => 'dropped',
+			)
+		);
+
+		$this->save_post( $this->post_id );
+
+		$this->assertSame( array( 'field_form_post_post' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * The post allowed-keys filter can allow extra keys, and receives the post ID.
+	 */
+	public function test_save_post_allowed_keys_filter_adds_keys() {
+		$received = null;
+		$this->add_test_filter(
+			'acf/form/post/allowed_field_keys',
+			function ( $keys, $post_id ) use ( &$received ) {
+				$received = $post_id;
+				$keys[]   = 'field_form_post_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+		$this->submit(
+			array(
+				'field_form_post_post'     => 'kept',
+				'field_form_post_injected' => 'kept',
+			)
+		);
+
+		$this->save_post( $this->post_id );
+
+		$this->assertSame( $this->post_id, $received );
+		$this->assertSame(
+			array(
+				'field_form_post_post'     => 'kept',
+				'field_form_post_injected' => 'kept',
+			),
+			$this->saved_values
+		);
+	}
+
+	/**
+	 * A field listed in a field list signed for the post is saved even if not located on it.
+	 */
+	public function test_save_post_accepts_fields_listed_for_post() {
+		$this->submit( array( 'field_form_post_page' => 'kept' ) );
+		$_POST['_acf_fields'] = array(
+			(string) $this->post_id => array( $this->get_signed_field_list( (string) $this->post_id, array( 'field_form_post_page' ) ) ),
+		);
+
+		$this->save_post( $this->post_id );
+
+		$this->assertSame( array( 'field_form_post_page' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * A field list signed for another post grants nothing.
+	 */
+	public function test_save_post_ignores_field_list_signed_for_another_post() {
+		$other_id = (string) ( $this->post_id + 1 );
+		$this->submit(
+			array(
+				'field_form_post_post' => 'kept',
+				'field_form_post_page' => 'dropped',
+			)
+		);
+		$_POST['_acf_fields'] = array(
+			(string) $this->post_id => array( $this->get_signed_field_list( $other_id, array( 'field_form_post_page' ) ) ),
+			$other_id               => array( $this->get_signed_field_list( $other_id, array( 'field_form_post_page' ) ) ),
+		);
+
+		$this->save_post( $this->post_id );
+
+		$this->assertSame( array( 'field_form_post_post' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * A preview saved to a revision accepts the fields located on, and listed for, the post it belongs to.
+	 */
+	public function test_save_post_preview_revision_matches_parent_post() {
+		$revision_id = _wp_put_post_revision( get_post( $this->post_id ) );
+		$this->submit(
+			array(
+				'field_form_post_post' => 'kept',
+				'field_form_post_page' => 'kept',
+			)
+		);
+		$_POST['wp-preview']  = 'dopreview';
+		$_POST['post_ID']     = $this->post_id;
+		$_POST['_acf_fields'] = array(
+			(string) $this->post_id => array( $this->get_signed_field_list( (string) $this->post_id, array( 'field_form_post_page' ) ) ),
+		);
+
+		$this->save_post( $revision_id );
+
+		$this->assertSame(
+			array(
+				'field_form_post_post' => 'kept',
+				'field_form_post_page' => 'kept',
+			),
+			$this->saved_values
+		);
+	}
+
+	/**
+	 * Uploaded files for fields the post does not accept are dropped.
+	 */
+	public function test_save_post_drops_uploads_for_fields_not_allowed() {
+		$keys          = array( 'field_form_post_post', 'field_form_post_page' );
+		$branch        = array_fill_keys( $keys, '' );
+		$_FILES['acf'] = array(
+			'name'     => $branch,
+			'type'     => $branch,
+			'tmp_name' => $branch,
+			'error'    => array_fill_keys( $keys, UPLOAD_ERR_NO_FILE ),
+			'size'     => array_fill_keys( $keys, 0 ),
+		);
+		$this->submit( array( 'field_form_post_page' => 'dropped' ) );
+
+		$this->save_post( $this->post_id );
+
+		/* phpcs:disable WordPress.Security -- Test reads the request it built. */
+		foreach ( $_FILES['acf'] as $attribute => $uploaded ) {
+			$this->assertSame( array( 'field_form_post_post' ), array_keys( $uploaded ), "Unexpected keys in {$attribute}." );
+		}
+		/* phpcs:enable WordPress.Security */
+	}
+
+	/**
+	 * Builds a nonce-verified post form submission.
+	 *
+	 * @param array $values The submitted acf values.
+	 */
+	private function submit( array $values ) {
+		$_POST['_acf_screen'] = 'post';
+		$_POST['_acf_nonce']  = wp_create_nonce( 'post' );
+		$_POST['acf']         = $values;
+	}
+
+	/**
+	 * Runs the post form save for a post.
+	 *
+	 * @param integer $post_id The post ID.
+	 */
+	private function save_post( $post_id ) {
+		( new ACF_Form_Post() )->save_post( $post_id, get_post( $post_id ) );
+	}
+
+	/**
+	 * Returns a field list signed for a render ID, as acf_render_fields() outputs it.
+	 *
+	 * @param string $render_id The render ID.
+	 * @param array  $keys      The listed field keys.
+	 * @return string
+	 */
+	private function get_signed_field_list( $render_id, array $keys ) {
+		ob_start();
+		_acf_render_field_list( $keys, $render_id, '_acf_fields' );
+		$processor = new WP_HTML_Tag_Processor( ob_get_clean() );
+		$processor->next_tag( 'input' );
+
+		return (string) $processor->get_attribute( 'value' );
+	}
+
+	/**
+	 * Registers a local field group located on a post type, with one text field.
+	 *
+	 * @param string $group_key The field group key.
+	 * @param string $post_type The post type the group is located on.
+	 * @param string $field_key The field key.
+	 */
+	private function add_group( $group_key, $post_type, $field_key ) {
+		acf_add_local_field_group(
+			array(
+				'key'      => $group_key,
+				'title'    => $group_key,
+				'fields'   => array(
+					array(
+						'key'   => $field_key,
+						'name'  => $field_key,
+						'label' => $field_key,
+						'type'  => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => $post_type,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Adds and tracks a test-specific filter.
+	 *
+	 * @param string   $hook          Filter name.
+	 * @param callable $callback      Filter callback.
+	 * @param int      $priority      Filter priority.
+	 * @param int      $accepted_args Accepted argument count.
+	 */
+	private function add_test_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+		add_filter( $hook, $callback, $priority, $accepted_args );
+
+		$this->test_filters[] = array(
+			'hook'     => $hook,
+			'callback' => $callback,
+			'priority' => $priority,
+		);
+	}
+
+	/**
+	 * Resets the stores the fixtures write to.
+	 */
+	private function reset_stores() {
+		foreach ( array( 'local-empty', 'fields', 'field-groups', 'values', 'form' ) as $store_name ) {
+			$store = acf_get_store( $store_name );
+			if ( $store ) {
+				$store->reset();
+			}
+		}
 	}
 }

@@ -24,11 +24,15 @@ function wc_get_order_types_mock( $context = '' ) {
 /**
  * Mock function for wc_get_order.
  *
+ * Tests can set an order's type in `$GLOBALS['scf_test_wc_order_types']`, keyed by order ID.
+ *
  * @param int $order_id The order ID.
  * @return Mock_WC_Order Mock order object.
  */
 function wc_get_order_mock( $order_id ) {
-	return new Mock_WC_Order( $order_id );
+	$order_types = $GLOBALS['scf_test_wc_order_types'] ?? array();
+
+	return new Mock_WC_Order( $order_id, $order_types[ $order_id ] ?? 'shop_order' );
 }
 
 /**

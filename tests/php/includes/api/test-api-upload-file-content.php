@@ -24,6 +24,8 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	/** Test field key. */
 	private const FIELD_KEY = 'field_scf_upload_content';
 
+	private const RENDER_ID = 'scf_upload_content_test';
+
 	/**
 	 * Attachment IDs created by the current test.
 	 *
@@ -121,7 +123,9 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 		remove_filter( 'wp_handle_upload_overrides', $this->upload_overrides );
 		remove_action( 'add_attachment', $this->attachment_action );
 		remove_filter( 'wp_image_editors', $this->image_editor_observer );
+		remove_all_filters( 'acf/upload/generate_previews' );
 		remove_all_filters( 'scf/upload/generate_previews' );
+		acf_set_form_data( 'upload_render_ids', null );
 		delete_option( 'thumbnail_size_w' );
 		delete_option( 'thumbnail_size_h' );
 		remove_theme_support( 'post-thumbnails' );
@@ -286,12 +290,36 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	 * @return void
 	 */
 	public function test_pdf_preview_filter_can_enable_previews_for_visitors(): void {
-		add_filter( 'scf/upload/generate_previews', '__return_true' );
+		add_filter( 'acf/upload/generate_previews', '__return_true' );
 
 		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'visitor-preview.pdf' );
 		acf_upload_files();
 
 		$this->assertSame( 1, $this->image_editor_requests );
+	}
+
+	/**
+	 * The deprecated SCF filter still controls preview generation.
+	 *
+	 * @return void
+	 */
+	public function test_deprecated_pdf_preview_filter_still_applies(): void {
+		$deprecated_hooks = array();
+		$record_hook      = function ( $hook ) use ( &$deprecated_hooks ) {
+			$deprecated_hooks[] = $hook;
+		};
+		add_action( 'deprecated_hook_run', $record_hook );
+		add_filter( 'deprecated_hook_trigger_error', '__return_false' );
+		add_filter( 'scf/upload/generate_previews', '__return_true' );
+
+		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'deprecated-preview.pdf' );
+		acf_upload_files();
+
+		remove_action( 'deprecated_hook_run', $record_hook );
+		remove_filter( 'deprecated_hook_trigger_error', '__return_false' );
+
+		$this->assertSame( 1, $this->image_editor_requests );
+		$this->assertContains( 'scf/upload/generate_previews', $deprecated_hooks );
 	}
 
 	/**
@@ -301,7 +329,7 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 	 */
 	public function test_pdf_preview_filter_can_disable_previews_for_trusted_users(): void {
 		$this->set_current_user_role( 'author' );
-		add_filter( 'scf/upload/generate_previews', '__return_false' );
+		add_filter( 'acf/upload/generate_previews', '__return_false' );
 
 		$this->prepare_upload_request( "%PDF-1.4\n1 0 obj<<>>endobj\n", 'no-preview.pdf' );
 		acf_upload_files();
@@ -444,7 +472,9 @@ class Test_API_Upload_File_Content extends BaseTestCase {
 		$this->assertNotFalse( file_put_contents( $this->temp_file, $contents ) );
 
 		$nonce_name = self::FIELD_KEY . '_file_nonce';
-		$nonce      = wp_create_nonce( 'acf/file_uploader_nonce/' . self::FIELD_KEY );
+		$nonce      = wp_create_nonce( acf_get_file_uploader_nonce_action( self::RENDER_ID, self::FIELD_KEY ) );
+
+		acf_set_upload_render_ids( array( self::RENDER_ID ) );
 
 		$_FILES['acf']   = array(
 			'name'     => array( self::FIELD_KEY => $name ),

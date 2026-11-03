@@ -1144,6 +1144,29 @@ class Test_Blocks extends BaseTestCase {
 			)
 		);
 
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_meta_block',
+				'title'    => 'Meta Block fields',
+				'fields'   => array(
+					array(
+						'key'  => 'field_meta_text',
+						'name' => 'meta_text',
+						'type' => 'text',
+					),
+				),
+				'location' => array(
+					array(
+						array(
+							'param'    => 'block',
+							'operator' => '==',
+							'value'    => 'acf/meta-block',
+						),
+					),
+				),
+			)
+		);
+
 		$this->assertTrue( acf_block_uses_post_meta( array( 'name' => 'acf/meta-block' ) ) );
 		$this->assertFalse( acf_block_uses_post_meta( array( 'name' => 'acf/unknown' ) ) );
 
@@ -1163,6 +1186,8 @@ class Test_Blocks extends BaseTestCase {
 		// Empty/non-block content short-circuits.
 		$this->assertSame( array(), acf_get_block_meta_values_to_save( '' ) );
 		$this->assertSame( array(), acf_get_block_meta_values_to_save( 'plain text' ) );
+
+		acf_remove_local_field_group( 'group_meta_block' );
 	}
 
 	/**

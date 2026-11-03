@@ -952,6 +952,9 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 			'wrong new_post'  => array( 'new_post' ),
 			'extra grant key' => array( 'extra_key' ),
 			'duplicate roots' => array( 'duplicate_roots' ),
+			'uppercase hash'  => array( 'uppercase_anchor' ),
+			'short hash'      => array( 'short_anchor' ),
+			'non-hex hash'    => array( 'non_hex_anchor' ),
 		);
 	}
 
@@ -1044,6 +1047,12 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 					$grant['unexpected_claim'] = 'unsigned addition';
 				} elseif ( 'duplicate_roots' === $variant ) {
 					$grant['allowed_field_keys'][] = $grant['allowed_field_keys'][0];
+				} elseif ( 'uppercase_anchor' === $variant ) {
+					$grant['form_anchor'] = strtoupper( $grant['form_anchor'] );
+				} elseif ( 'short_anchor' === $variant ) {
+					$grant['form_anchor'] = substr( $grant['form_anchor'], 0, 63 );
+				} elseif ( 'non_hex_anchor' === $variant ) {
+					$grant['form_anchor'] = str_repeat( 'g', 64 );
 				}
 
 				// Re-sign these cases so they reach the schema or context check

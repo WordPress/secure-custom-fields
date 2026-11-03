@@ -275,28 +275,49 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	}
 
 	/**
-	 * Registering a user accepts fields from register and add-user form groups.
-	 * "Add / Edit" groups (stored as "edit") render on the add-user form, so
-	 * they are accepted too.
+	 * Registering a user only accepts fields from register form groups.
 	 */
-	public function test_save_user_register_accepts_register_and_add_form_fields() {
+	public function test_save_user_register_accepts_register_form_fields() {
 		$this->submit(
 			'user',
 			array(
 				'field_register'     => 'kept',
-				'field_add'          => 'kept',
-				'field_edit'         => 'kept',
+				'field_add'          => 'dropped',
+				'field_edit'         => 'dropped',
 				'field_post_comment' => 'dropped',
 			)
 		);
 
 		$this->run_in_action( 'user_register', $this->user_id );
 
+		$this->assertSame( array( 'field_register' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * Adding a user in the admin accepts fields from add-user and "Add / Edit" form groups.
+	 */
+	public function test_save_user_add_accepts_add_form_fields() {
+		set_current_screen( 'user' );
+		$this->submit(
+			'user',
+			array(
+				'field_register'     => 'dropped',
+				'field_add'          => 'kept',
+				'field_edit'         => 'kept',
+				'field_post_comment' => 'dropped',
+			)
+		);
+		$_POST['action'] = 'createuser';
+
+		$this->run_in_action( 'user_register', $this->user_id );
+
+		unset( $_POST['action'] );
+		$GLOBALS['current_screen'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting the admin screen set above.
+
 		$this->assertSame(
 			array(
-				'field_register' => 'kept',
-				'field_add'      => 'kept',
-				'field_edit'     => 'kept',
+				'field_add'  => 'kept',
+				'field_edit' => 'kept',
 			),
 			$this->saved_values
 		);

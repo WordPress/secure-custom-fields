@@ -16,6 +16,95 @@ acf_include( 'includes/forms/form-customizer.php' );
 class Test_Form_Customizer extends BaseTestCase {
 
 	/**
+	 * $_POST['acf'] as seen by acf/save_post, keyed by the ACF post ID saved.
+	 *
+	 * @var array
+	 */
+	private $saved_values = array();
+
+	/**
+	 * Widget registered for the save tests.
+	 *
+	 * @var WP_Widget|null
+	 */
+	private $test_widget;
+
+	/**
+	 * Test filters that must be removed during cleanup.
+	 *
+	 * @var array
+	 */
+	private $test_filters = array();
+
+	/**
+	 * Registers the field type, location and widget the save tests use.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		acf_include( 'includes/fields/class-acf-field-text.php' );
+		if ( ! acf_get_field_type( 'text' ) ) {
+			acf_register_field_type( 'acf_field_text' );
+		}
+
+		acf_include( 'includes/locations/class-acf-location-widget.php' );
+		if ( ! acf_get_location_type( 'widget' ) ) {
+			acf_register_location_type( 'ACF_Location_Widget' );
+		}
+
+		if ( ! has_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts' ) ) {
+			add_filter( 'acf/load_field_groups', '_acf_apply_get_local_internal_posts', 20, 2 );
+		}
+
+		global $wp_widget_factory;
+		$this->test_widget = new WP_Widget( 'scf_test', 'SCF test' );
+		$wp_widget_factory->register( $this->test_widget );
+
+		$this->saved_values = array();
+		$this->add_test_filter( 'acf/save_post', array( $this, 'capture_saved_values' ), 1 );
+
+		$_POST  = array();
+		$_FILES = array();
+	}
+
+	/**
+	 * Removes local fields, the test widget, request data and filters.
+	 */
+	public function tear_down() {
+		foreach ( $this->test_filters as $filter ) {
+			remove_filter( $filter['hook'], $filter['callback'], $filter['priority'] );
+		}
+		$this->test_filters = array();
+
+		global $wp_widget_factory;
+		$wp_widget_factory->unregister( $this->test_widget );
+		$this->test_widget = null;
+
+		acf_reset_local();
+		acf_enable_local();
+		$this->reset_stores();
+
+		$_POST  = array();
+		$_FILES = array();
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Records $_POST['acf'] when a save runs.
+	 *
+	 * @param string $post_id The ACF post ID being saved.
+	 */
+	public function capture_saved_values( $post_id ) {
+		/* phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Test reads the request it built. */
+		$this->saved_values[ $post_id ] = isset( $_POST['acf'] ) ? $_POST['acf'] : array();
+	}
+
+	/**
 	 * Test if the ACF_Form_Customizer class exists.
 	 */
 	public function test_form_post_class_exists() {
@@ -55,7 +144,10 @@ class Test_Form_Customizer extends BaseTestCase {
 		$instance     = array( 'test' => 'value' );
 		$new_instance = array( 'acf' => array( 'field_123' => 'test_value' ) );
 		$old_instance = array();
-		$widget       = (object) array( 'id' => 'widget-1' );
+		$widget       = (object) array(
+			'id'      => 'widget-1',
+			'id_base' => 'widget',
+		);
 
 		$result = $form_customizer->save_widget( $instance, $new_instance, $old_instance, $widget );
 		$this->assertEquals( $instance, $result, 'Should return instance unchanged when wp_customize is not set' );
@@ -471,5 +563,370 @@ class Test_Form_Customizer extends BaseTestCase {
 		$setting->method( 'post_value' )->willReturn( $value );
 
 		return $setting;
+	}
+
+	/**
+	 * A Customizer widget update keeps fields located on the widget type and drops the rest.
+	 */
+	public function test_save_widget_drops_fields_not_located_on_widget() {
+		$this->add_widget_groups();
+
+		$instance = $this->save_customizer_widget(
+			array(
+				'field_form_customizer_located' => 'kept',
+				'field_form_customizer_other'   => 'dropped',
+				'field_form_customizer_unknown' => 'dropped',
+			)
+		);
+
+		$this->assertSame( 'widget_scf_test-3', $instance['acf']['post_id'] );
+		$this->assertSame( array( 'field_form_customizer_located' => 'kept' ), $instance['acf']['values'] );
+		$this->assertSame( array( 'field_form_customizer_located' => 'field_form_customizer_located' ), $instance['acf']['fields'] );
+		$this->assertArrayNotHasKey( '_acf_fields', $instance );
+	}
+
+	/**
+	 * The widget allowed-keys filter applies to Customizer widget updates.
+	 */
+	public function test_save_widget_allowed_keys_filter_adds_keys() {
+		$this->add_widget_groups();
+		$received = null;
+		$this->add_test_filter(
+			'acf/form/widget/allowed_field_keys',
+			function ( $keys, $post_id ) use ( &$received ) {
+				$received = $post_id;
+				$keys[]   = 'field_form_customizer_injected';
+				return $keys;
+			},
+			10,
+			2
+		);
+
+		$instance = $this->save_customizer_widget(
+			array(
+				'field_form_customizer_located'  => 'kept',
+				'field_form_customizer_injected' => 'kept',
+			)
+		);
+
+		$this->assertSame( 'widget_scf_test-3', $received );
+		$this->assertSame(
+			array(
+				'field_form_customizer_located'  => 'kept',
+				'field_form_customizer_injected' => 'kept',
+			),
+			$instance['acf']['values']
+		);
+	}
+
+	/**
+	 * A Customizer widget update accepts fields listed for its widget type, ignores other types' lists, and keeps the lists.
+	 */
+	public function test_save_widget_accepts_only_fields_listed_for_widget_type() {
+		$this->add_widget_groups();
+		$lists = array(
+			'widget/scf_test' => array( $this->get_signed_field_list( 'widget/scf_test', array( 'field_form_customizer_other' ) ) ),
+			'widget/archives' => array( $this->get_signed_field_list( 'widget/archives', array( 'field_form_customizer_unknown' ) ) ),
+		);
+
+		$instance = $this->save_customizer_widget(
+			array(
+				'field_form_customizer_other'   => 'kept',
+				'field_form_customizer_unknown' => 'dropped',
+			),
+			$lists
+		);
+
+		$this->assertSame( array( 'field_form_customizer_other' => 'kept' ), $instance['acf']['values'] );
+		$this->assertSame( $lists, $instance['acf']['_acf_fields'] );
+	}
+
+	/**
+	 * Publishing the Customizer saves only the fields located on the setting's widget, to that widget.
+	 */
+	public function test_customize_save_drops_fields_not_located_on_widget() {
+		$this->add_widget_groups();
+		$setting = $this->get_widget_setting(
+			'widget_scf_test[3]',
+			array(
+				'post_id' => 'widget_archives-9',
+				'values'  => array(
+					'field_form_customizer_located' => 'kept',
+					'field_form_customizer_other'   => 'dropped',
+					'field_form_customizer_unknown' => 'dropped',
+				),
+			)
+		);
+
+		( new ACF_Form_Customizer() )->customize_save( $this->get_customizer( array( $setting ) ) );
+
+		$this->assertSame( array( 'widget_scf_test-3' => array( 'field_form_customizer_located' => 'kept' ) ), $this->saved_values );
+	}
+
+	/**
+	 * Publishing the Customizer accepts fields listed for the setting's widget type and ignores other types' lists.
+	 */
+	public function test_customize_save_accepts_only_fields_listed_for_widget_type() {
+		$this->add_widget_groups();
+		$setting = $this->get_widget_setting(
+			'widget_scf_test[3]',
+			array(
+				'values'      => array(
+					'field_form_customizer_other'   => 'kept',
+					'field_form_customizer_unknown' => 'dropped',
+				),
+				'_acf_fields' => array(
+					'widget/scf_test' => array( $this->get_signed_field_list( 'widget/scf_test', array( 'field_form_customizer_other' ) ) ),
+					'widget/archives' => array( $this->get_signed_field_list( 'widget/archives', array( 'field_form_customizer_unknown' ) ) ),
+				),
+			)
+		);
+
+		( new ACF_Form_Customizer() )->customize_save( $this->get_customizer( array( $setting ) ) );
+
+		$this->assertSame( array( 'widget_scf_test-3' => array( 'field_form_customizer_other' => 'kept' ) ), $this->saved_values );
+	}
+
+	/**
+	 * Publishing the Customizer saves nothing for settings that are not a single registered widget.
+	 */
+	public function test_customize_save_skips_settings_that_are_not_registered_widgets() {
+		$this->add_widget_groups();
+		$values   = array( 'values' => array( 'field_form_customizer_located' => 'dropped' ) );
+		$settings = array(
+			$this->get_widget_setting( 'widget_unregistered[3]', $values ),
+			$this->get_widget_setting( 'widget_scf_test[abc]', $values ),
+			$this->get_widget_setting( 'widget_scf_test[3][4]', $values ),
+			$this->get_widget_setting( 'nav_menu_item[3]', $values ),
+		);
+
+		( new ACF_Form_Customizer() )->customize_save( $this->get_customizer( $settings ) );
+
+		$this->assertSame( array(), $this->saved_values );
+	}
+
+	/**
+	 * Registers field groups located on the test widget and on the archives widget.
+	 */
+	private function add_widget_groups() {
+		$this->add_group( 'group_form_customizer_located', 'scf_test', 'field_form_customizer_located' );
+		$this->add_group( 'group_form_customizer_other', 'archives', 'field_form_customizer_other' );
+	}
+
+	/**
+	 * Runs the Customizer widget update for the test widget.
+	 *
+	 * @param array $values The submitted acf values.
+	 * @param array $lists  The submitted field lists, keyed by render ID.
+	 * @return array The instance the handler returns.
+	 */
+	private function save_customizer_widget( array $values, array $lists = array() ) {
+		$_POST['wp_customize'] = 'on';
+		$_POST['_acf_nonce']   = wp_create_nonce( 'widget' );
+
+		$widget = (object) array(
+			'id'      => 'scf_test-3',
+			'id_base' => 'scf_test',
+			'number'  => 3,
+		);
+
+		$new_instance = array(
+			'title'       => 'Widget',
+			'acf'         => $values,
+			'_acf_fields' => $lists,
+		);
+
+		return ( new ACF_Form_Customizer() )->save_widget( $new_instance, $new_instance, array(), $widget );
+	}
+
+	/**
+	 * Returns a Customizer setting posting ACF data, with its ID parsed as WP_Customize_Setting does.
+	 *
+	 * @param string $id  The setting ID.
+	 * @param array  $acf The ACF data posted in the setting's value.
+	 * @return object
+	 */
+	private function get_widget_setting( $id, array $acf ) {
+		$parts = explode( '[', str_replace( ']', '', $id ) );
+
+		return new class( $id, array_shift( $parts ), $parts, $acf ) {
+			/**
+			 * The setting ID.
+			 *
+			 * @var string
+			 */
+			public $id;
+
+			/**
+			 * The ACF data, set by ACF_Form_Customizer::settings().
+			 *
+			 * @var mixed
+			 */
+			public $acf;
+
+			/**
+			 * The parsed ID.
+			 *
+			 * @var array
+			 */
+			private $id_data;
+
+			/**
+			 * The posted value.
+			 *
+			 * @var array
+			 */
+			private $value;
+
+			/**
+			 * Constructor.
+			 *
+			 * @param string $id   The setting ID.
+			 * @param string $base The ID base.
+			 * @param array  $keys The ID keys.
+			 * @param array  $acf  The posted ACF data.
+			 */
+			public function __construct( $id, $base, $keys, $acf ) {
+				$this->id      = $id;
+				$this->id_data = array(
+					'base' => $base,
+					'keys' => $keys,
+				);
+				$this->value   = array( 'acf' => $acf );
+			}
+
+			/**
+			 * Returns the parsed ID.
+			 *
+			 * @return array
+			 */
+			public function id_data() {
+				return $this->id_data;
+			}
+
+			/**
+			 * Returns the posted value.
+			 *
+			 * @return array
+			 */
+			public function post_value() {
+				return $this->value;
+			}
+		};
+	}
+
+	/**
+	 * Returns a Customizer manager holding the given settings.
+	 *
+	 * @param array $settings The settings.
+	 * @return object
+	 */
+	private function get_customizer( array $settings ) {
+		return new class( $settings ) {
+			/**
+			 * The settings.
+			 *
+			 * @var array
+			 */
+			private $settings;
+
+			/**
+			 * Constructor.
+			 *
+			 * @param array $settings The settings.
+			 */
+			public function __construct( $settings ) {
+				$this->settings = $settings;
+			}
+
+			/**
+			 * Returns the settings.
+			 *
+			 * @return array
+			 */
+			public function settings() {
+				return $this->settings;
+			}
+		};
+	}
+
+	/**
+	 * Returns a field list signed for a render ID, as acf_render_fields() outputs it.
+	 *
+	 * @param string $render_id The render ID.
+	 * @param array  $keys      The listed field keys.
+	 * @return string
+	 */
+	private function get_signed_field_list( $render_id, array $keys ) {
+		ob_start();
+		_acf_render_field_list( $keys, $render_id, '_acf_fields' );
+		$processor = new WP_HTML_Tag_Processor( ob_get_clean() );
+		$processor->next_tag( 'input' );
+
+		return (string) $processor->get_attribute( 'value' );
+	}
+
+	/**
+	 * Registers a local field group located on a widget type, with one text field.
+	 *
+	 * @param string $group_key The field group key.
+	 * @param string $id_base   The widget type the group is located on.
+	 * @param string $field_key The field key.
+	 */
+	private function add_group( $group_key, $id_base, $field_key ) {
+		acf_add_local_field_group(
+			array(
+				'key'      => $group_key,
+				'title'    => $group_key,
+				'fields'   => array(
+					array(
+						'key'   => $field_key,
+						'name'  => $field_key,
+						'label' => $field_key,
+						'type'  => 'text',
+					),
+				),
+				'active'   => true,
+				'location' => array(
+					array(
+						array(
+							'param'    => 'widget',
+							'operator' => '==',
+							'value'    => $id_base,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Adds and tracks a test-specific filter.
+	 *
+	 * @param string   $hook          Filter name.
+	 * @param callable $callback      Filter callback.
+	 * @param int      $priority      Filter priority.
+	 * @param int      $accepted_args Accepted argument count.
+	 */
+	private function add_test_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+		add_filter( $hook, $callback, $priority, $accepted_args );
+
+		$this->test_filters[] = array(
+			'hook'     => $hook,
+			'callback' => $callback,
+			'priority' => $priority,
+		);
+	}
+
+	/**
+	 * Resets the stores the fixtures write to.
+	 */
+	private function reset_stores() {
+		foreach ( array( 'local-empty', 'fields', 'field-groups', 'values', 'form' ) as $store_name ) {
+			$store = acf_get_store( $store_name );
+			if ( $store ) {
+				$store->reset();
+			}
+		}
 	}
 }
