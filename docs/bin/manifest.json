@@ -204,6 +204,11 @@
         "parent": "code-reference",
         "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/revisions-file.md"
     },
+    "code-reference/scf-deprecated-file": {
+        "slug": "scf-deprecated-file",
+        "parent": "code-reference",
+        "markdown_source": "https://github.com/wordpress/secure-custom-fields/blob/trunk/docs/code-reference/scf-deprecated-file.md"
+    },
     "code-reference/scf-ui-options-page-functions-file": {
         "slug": "scf-ui-options-page-functions-file",
         "parent": "code-reference",

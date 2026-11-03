@@ -215,6 +215,55 @@ eg. [acf field="heading" post_id="123" format_value="1"]
 * @param array $atts The shortcode attributes.
 * @return string|void
 
+## `acf_bindings_should_reduce_user_data()`
+
+Checks whether a User field's value should be reduced to user IDs before it is
+output by the [acf] shortcode or an ACF block binding.
+
+* Both render into pages that anyone can view, so unlike the REST API this isn't
+gated on a capability. Only User fields are handled: field types that can contain
+a User field, such as Group and Clone, can't be output through bindings, and
+acf_bindings_flatten_value() outputs nothing for the nested arrays they'd produce.
+* @since ACF 6.8.11
+* @param array|false    $field   The field array.
+* @param integer|string $post_id The ACF post ID the value is loaded from.
+* @param string         $context Where the value is output. Either 'shortcode' or 'bindings'.
+* @return boolean
+
+## `acf_bindings_reduce_user_value()`
+
+Reduces a formatted User field value to user IDs.
+
+* User arrays and objects become integer IDs. Scalar values, such as IDs or text that
+a format_value filter has already produced, are left as they are, so numeric-looking
+text such as '007' isn't cast to an integer.
+* @since ACF 6.8.11
+* @param mixed $value The formatted User field value.
+* @param array $field The field array.
+* @return mixed
+
+## `acf_bindings_flatten_value()`
+
+Flattens a field value for output by the [acf] shortcode or an ACF block binding.
+
+* Arrays are joined into a comma separated list when every item is scalar. Anything
+that can't be converted to a string, such as post or user objects, returns null.
+* @since ACF 6.8.11
+* @param mixed $value The field value.
+* @return string|integer|float|boolean|null
+
+## `_acf_update_api_value()`
+
+The internal ACF function to save a value passed to an API function, such as update_field().
+
+* Values passed by code weren't submitted by a user, even when the code runs during a user-submitted
+save, such as from an `acf/update_value` callback, so they aren't checked like submitted values.
+* @since ACF 6.8.11
+* @param mixed          $value   The value to save.
+* @param integer|string $post_id The ACF post ID to save the value to.
+* @param array          $field   The field array.
+* @return boolean
+
 ## `update_field()`
 
 This function will update a value in the database

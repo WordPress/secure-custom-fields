@@ -31,6 +31,7 @@
 - [Locations](locations-file)
 - [Loop](loop-file)
 - [Revisions](revisions-file)
+- [Scf Deprecated](scf-deprecated-file)
 - [Scf Ui Options Page Functions](scf-ui-options-page-functions-file)
 - [Upgrades](upgrades-file)
 - [Validation](validation-file)

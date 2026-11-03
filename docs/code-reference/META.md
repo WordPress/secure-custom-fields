@@ -21,12 +21,6 @@ This file tracks code elements that need documentation.
 - `acf/prepare_field`
 - `acf/prepare_field`
 
-## Datastore/REST_Save.php
-
-### Hooks
-
-- `acf/prepare_field`
-
 ## abilities/class-scf-field-abilities.php
 
 ### Hooks
@@ -37,9 +31,9 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/bidirectional/can_update_target`
 - `acf/bidirectional/supported_field_types_for_post`
 - `acf/bidirectional/supported_target_field_types`
-- `scf/bidirectional/allow_target`
 
 ## acf-field-functions.php
 
@@ -77,6 +71,7 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/input/form_data`
+- `acf/is_trusted_save_context`
 - `acf/save_post`
 
 ## acf-helper-functions.php
@@ -175,6 +170,7 @@ This file tracks code elements that need documentation.
 ### Hooks
 
 - `acf/input/meta_box_priority`
+- `acf/options_page/allowed_field_keys`
 - `acf/options_page/allowed_field_keys`
 
 ## admin/post-types/admin-field-group.php
@@ -333,6 +329,8 @@ This file tracks code elements that need documentation.
 - `acf/connect_attachment_to_post`
 - `acf/current_user_can_edit_in_context`
 - `acf/current_user_can_edit_post`
+- `acf/fields/relational/hide_unreadable_posts`
+- `acf/fields/relational/unreadable_post_statuses`
 - `acf/filesize`
 - `acf/get_image_mime_types`
 - `acf/get_image_sizes`
@@ -344,6 +342,8 @@ This file tracks code elements that need documentation.
 - `acf/load_attachment`
 - `acf/pre_load_attachment`
 - `acf/pre_load_post_id`
+- `acf/upload/generate_previews`
+- `acf/user_can_read_post`
 - `acf/validate_attachment`
 - `acf/validate_is_image_attachment`
 - `acf/validate_is_image_attachment/error_message`
@@ -351,7 +351,6 @@ This file tracks code elements that need documentation.
 - `acf/validate_post_id`
 - `acf/validate_setting`
 - `acf/verify_ajax`
-- `scf/upload/generate_previews`
 
 ## api/api-template.php
 
@@ -370,6 +369,7 @@ This file tracks code elements that need documentation.
 
 - `acf/admin/prevent_escaped_html_notice`
 - `acf/ajax/shortcode_capability`
+- `acf/bindings/allow_user_data`
 - `acf/prevent_access_to_unknown_fields`
 - `acf/removed_unsafe_html`
 - `acf/removed_unsafe_html`
@@ -526,6 +526,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/fields/allow_append_choices`
 - `acf/fields/max_appended_choices`
 
 ## fields/class-acf-field-relationship.php
@@ -539,6 +540,7 @@ This file tracks code elements that need documentation.
 
 ### Hooks
 
+- `acf/fields/allow_append_choices`
 - `acf/fields/max_appended_choices`
 - `acf/fields/select/query`
 
@@ -579,12 +581,6 @@ This file tracks code elements that need documentation.
 
 - `acf/input/meta_box_priority`
 
-## forms/form-comment.php
-
-### Hooks
-
-- `acf/form/comment/allowed_field_keys`
-
 ## forms/form-front.php
 
 ### Functions
@@ -609,12 +605,6 @@ This file tracks code elements that need documentation.
 
 - `acf/form-post/skip_save`
 - `acf/input/meta_box_priority`
-
-## forms/form-user.php
-
-### Hooks
-
-- `acf/form/user/allowed_field_keys`
 
 ## l10n.php
 
@@ -729,6 +719,13 @@ This file tracks code elements that need documentation.
 
 - `acf/revisions/skip_legacy_metabox_handling`
 - `acf/revisions/skip_legacy_metabox_handling`
+
+## scf-deprecated.php
+
+### Hooks
+
+- `scf/bidirectional/allow_target`
+- `scf/upload/generate_previews`
 
 ## upgrades.php
 

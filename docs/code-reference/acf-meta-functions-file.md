@@ -149,4 +149,87 @@ Deletes metadata from the database.
 * @param boolean        $hidden  True if we should update the reference key.
 * @return boolean
 
+## `_acf_is_field_meta_key()`
+
+Returns true if a post meta key stores the value of an ACF field.
+
+* A key belongs to a field if the post has a field key reference for it, or if it is a name ACF loads a value
+from without a reference: a top-level field's name, the name of a group or clone sub field (such as
+`{group}_{sub_field}`), or a repeater or flexible content row's sub field (such as `{repeater}_0_{sub_field}`).
+* @since ACF 6.8.11
+@access private
+* @param integer $post_id  The post ID.
+* @param string  $meta_key The meta key.
+* @return boolean
+
+## `_acf_get_field_storage_names()`
+
+Returns the meta names ACF loads field values from without a field key reference.
+
+* These are the names of top-level fields (in field groups, or local fields registered without one) and of
+group and clone sub fields (as array keys in `names`), and
+patterns for the sub fields of repeater and flexible content rows, whose names include the row number
+(in `patterns`). They are worked out as the field types name sub fields when loading their values.
+* Cached for the request, until local fields or posts (including database fields) change.
+* @since ACF 6.8.11
+@access private
+* @return array
+
+## `_acf_add_field_storage_names()`
+
+Adds the meta name a field is loaded from without a reference, and those of its sub fields.
+
+* Group and clone sub field names are worked out with the field types' own prepare_field_for_db(), as when
+their values are loaded. Repeater and flexible content rows are named `{field}_{row}_{sub_field}`; the row
+number is held as a placeholder and turned into a pattern.
+* @since ACF 6.8.11
+@access private
+* @param array $storage The names and patterns, as array keys.
+* @param array $field   The field array, with its meta name in `name`.
+* @return void
+
+## `_acf_get_field_storage_sub_fields()`
+
+Returns a field's sub fields with their meta names in `name`, as the field type names them when loading.
+
+* @since ACF 6.8.11
+@access private
+* @param array $field The field array, with its meta name in `name`.
+* @return array
+
+## `_acf_get_prepared_sub_fields()`
+
+Returns a group or clone field's sub fields named by the field type's prepare_field_for_db().
+
+* @since ACF 6.8.11
+@access private
+* @param array  $field The field array.
+* @param string $type  The field type.
+* @return array
+
+## `_acf_get_row_sub_fields()`
+
+Returns a repeater's sub fields, or those of every flexible content layout, named for their rows.
+
+* Rows are named `{field}_{row}_{sub_field}`, with the row number held as a placeholder.
+* @since ACF 6.8.11
+@access private
+* @param array  $field The field array.
+* @param string $type  The field type.
+* @return array
+
+## `acf_map_post_meta_caps()`
+
+Prevents WordPress's own custom field editing from changing post meta that belongs to an ACF field.
+
+* The Custom Fields meta box (`metakeyinput` and `meta[]` in the post form), `wp_ajax_add_meta` and XML-RPC
+`custom_fields` check these capabilities. Without this, a user who can edit a post could write values for ACF
+fields that aren't shown to them, bypassing ACF's save checks. ACF saves its own values without these checks.
+Meta keys registered with register_meta() and protected meta keys are left to WordPress.
+* @since ACF 6.8.11
+* @param string[] $caps       The primitive capabilities required.
+* @param string   $cap        The capability being checked.
+* @param mixed    ...$context The user ID, and the post ID and meta key.
+* @return string[]
+
 ---

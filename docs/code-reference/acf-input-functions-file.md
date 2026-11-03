@@ -88,6 +88,15 @@ acf_file_input
 * @param   array $attrs The array of attrs.
 * @return void echos out value.
 
+## `acf_get_file_uploader_nonce_action()`
+
+Returns the nonce action of a basic uploader file input, bound to the object it is rendered for.
+
+* @since ACF 6.8.11
+* @param string $render_id The render ID of the object, as from acf_get_current_render_id().
+* @param string $field_key The field key.
+* @return string
+
 ## `acf_get_file_input()`
 
 acf_get_file_input

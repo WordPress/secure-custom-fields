@@ -9,43 +9,25 @@ Process updating bidirectional fields.
 * @param integer|string $post_id         The ACF encoded origin post, user or term ID.
 * @param array          $field           The field being updated on the origin post, user or term ID.
 * @param string|false   $target_prefix   The ACF prefix for a post, user or term ID required for the update_field call for this field type.
-* @return void
 
-## `_scf_is_allowed_bidirectional_target()`
+## `acf_can_update_bidirectional_target()`
 
-Check whether a submitted bidirectional target is a valid choice for the origin field.
+Checks whether a bidirectional update may add or remove a reference on a target post, user or term.
 
-* @since SCF 6.9.7
-@internal
-* @param integer|string $target ACF encoded target ID (e.g. 123, "user_1" or "term_5").
-* @param array          $field  The origin field.
+* Targets that don't exist, or aren't the object type this field links to, are always skipped.
+When adding a reference while ACF is saving submitted values, through acf_save_post() or the
+REST API, the current user must also be able to edit the target post, assign the target term, or
+edit the target user. Users can also be linked from a post by anyone who can edit others' posts of
+that post type, as they could set the user as the post's author. Removals only take the origin's
+own ID out of the target, so they aren't permission checked. Values saved by code with
+update_field(), or from a trusted context (see acf_is_trusted_save_context()), aren't checked.
+* @since ACF 6.8.11
+* @param integer|string $target_id     The ACF encoded target post, user or term ID.
+* @param integer|string $post_id       The ACF encoded origin post, user or term ID.
+* @param array          $field         The field being updated on the origin.
+* @param string|false   $target_prefix The ACF prefix for the target object type, or false for posts.
+* @param string         $action        Either 'add' or 'remove'.
 * @return boolean
-
-## `_scf_prepare_bidirectional_update()`
-
-Prepare a side-effect-free bidirectional update plan.
-
-* @since SCF 6.9.5
-@internal
-* @param array          $target_item_ids Target post, user, or term IDs.
-* @param integer|string $post_id         Encoded origin object ID.
-* @param array          $field           Field being updated on the origin object.
-* @param string|false   $target_prefix   Target object prefix, or false for posts.
-* @param array|null     $current_values  Optional current raw field values.
-* @return array
-
-## `_scf_collect_bidirectional_destinations()`
-
-Collect the bidirectional destinations that a field update will write.
-
-* @since SCF 6.9.5
-@internal
-* @param array          $field   Resolved root or nested field.
-* @param mixed          $value   Incoming value for the field.
-* @param integer|string $post_id Encoded origin object ID.
-* @param array|null     $current Optional current values, or null to load them.
-* @param boolean        $resave_paginated Whether paginated repeater rows will be re-saved.
-* @return array
 
 ## `acf_get_valid_bidirectional_target_types()`
 
@@ -78,7 +60,6 @@ Renders the field settings required for bidirectional fields
 
 * @since ACF 6.2
 * @param array $field The field object passed into field setting functions.
-* @return void
 
 ## `acf_get_bidirectional_field_settings_instruction_text()`
 
