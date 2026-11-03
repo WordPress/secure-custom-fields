@@ -372,7 +372,7 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 */
 		public function acf_validate_post_id( $post_id, $_post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Required by the acf/validate_post_id filter signature.
 			// Bail early if not a well-formed WordPress preview context.
-			if ( ! is_preview() ) {
+			if ( ! is_preview() || ! isset( $_GET['preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check of the preview query arg.
 				return $post_id;
 			}
 

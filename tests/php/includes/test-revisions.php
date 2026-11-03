@@ -114,7 +114,7 @@ class Test_ACF_Revisions extends BaseTestCase {
 	 * Clean up test data.
 	 */
 	public function tearDown(): void {
-		unset( $_POST['_acf_changed'], $_POST['action'], $_GET['preview'], $_GET['preview_id'] );
+		unset( $_POST['_acf_changed'], $_POST['action'], $_GET['preview'], $_GET['preview_id'], $_GET['p'] );
 		$GLOBALS['wp_query']->is_preview = false;
 		acf()->revisions->cache          = array();
 		wp_set_current_user( 0 );
@@ -522,6 +522,26 @@ class Test_ACF_Revisions extends BaseTestCase {
 
 		$_GET['preview']    = 'true';
 		$_GET['preview_id'] = (string) $this->post_id;
+
+		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
+	}
+
+	/**
+	 * Test that an editor viewing a draft by its permalink gets the post's
+	 * own values, since WordPress flags that view as a preview too.
+	 */
+	public function test_validate_post_id_ignores_draft_view_without_preview_arg() {
+		wp_update_post(
+			array(
+				'ID'          => $this->post_id,
+				'post_status' => 'draft',
+			)
+		);
+		wp_save_post_revision( $this->post_id );
+		$this->set_current_user_role( 'administrator' );
+
+		$_GET['p']                       = (string) $this->post_id;
+		$GLOBALS['wp_query']->is_preview = true;
 
 		$this->assertEquals( $this->post_id, acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id ) );
 	}
