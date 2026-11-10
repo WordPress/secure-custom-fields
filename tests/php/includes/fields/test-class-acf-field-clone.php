@@ -160,6 +160,158 @@ class Test_ACF_Field_Clone extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test acf_get_fields filter expands every seamless clone field in the list.
+	 *
+	 * Expanding the first clone makes the list longer, which used to push the
+	 * later clones past the loop bound and leave them unexpanded.
+	 *
+	 * @see https://github.com/WordPress/secure-custom-fields/issues/589
+	 */
+	public function test_acf_get_fields_expands_multiple_seamless_clone_fields() {
+		$fields = array(
+			array(
+				'key'        => 'field_clone_1',
+				'name'       => 'first_clone',
+				'type'       => 'clone',
+				'label'      => 'First Clone',
+				'display'    => 'seamless',
+				'sub_fields' => array(
+					array(
+						'key'   => 'field_sub_1',
+						'name'  => 'sub_text_1',
+						'type'  => 'text',
+						'label' => 'Sub Text 1',
+					),
+					array(
+						'key'   => 'field_sub_2',
+						'name'  => 'sub_text_2',
+						'type'  => 'text',
+						'label' => 'Sub Text 2',
+					),
+				),
+			),
+			array(
+				'key'        => 'field_clone_2',
+				'name'       => 'second_clone',
+				'type'       => 'clone',
+				'label'      => 'Second Clone',
+				'display'    => 'seamless',
+				'sub_fields' => array(
+					array(
+						'key'   => 'field_sub_3',
+						'name'  => 'sub_text_3',
+						'type'  => 'text',
+						'label' => 'Sub Text 3',
+					),
+					array(
+						'key'   => 'field_sub_4',
+						'name'  => 'sub_number_4',
+						'type'  => 'number',
+						'label' => 'Sub Number 4',
+					),
+				),
+			),
+		);
+
+		$result = $this->clone_field->acf_get_fields( $fields, array() );
+
+		$this->assertSame(
+			array( 'field_sub_1', 'field_sub_2', 'field_sub_3', 'field_sub_4' ),
+			wp_list_pluck( $result, 'key' )
+		);
+	}
+
+	/**
+	 * Test seamless clones are expanded in place when mixed with other fields.
+	 *
+	 * @see https://github.com/WordPress/secure-custom-fields/issues/589
+	 */
+	public function test_acf_get_fields_expands_seamless_clones_mixed_with_other_fields() {
+		$sub_fields = static function ( $prefix ) {
+			return array(
+				array(
+					'key'   => "field_{$prefix}_a",
+					'name'  => "{$prefix}_a",
+					'type'  => 'text',
+					'label' => "{$prefix} A",
+				),
+				array(
+					'key'   => "field_{$prefix}_b",
+					'name'  => "{$prefix}_b",
+					'type'  => 'text',
+					'label' => "{$prefix} B",
+				),
+				array(
+					'key'   => "field_{$prefix}_c",
+					'name'  => "{$prefix}_c",
+					'type'  => 'text',
+					'label' => "{$prefix} C",
+				),
+			);
+		};
+
+		$fields = array(
+			array(
+				'key'        => 'field_clone_1',
+				'name'       => 'first_clone',
+				'type'       => 'clone',
+				'label'      => 'First Clone',
+				'display'    => 'seamless',
+				'sub_fields' => $sub_fields( 'one' ),
+			),
+			array(
+				'key'   => 'field_title',
+				'name'  => 'title',
+				'type'  => 'text',
+				'label' => 'Title',
+			),
+			array(
+				'key'        => 'field_clone_2',
+				'name'       => 'second_clone',
+				'type'       => 'clone',
+				'label'      => 'Second Clone',
+				'display'    => 'seamless',
+				'sub_fields' => $sub_fields( 'two' ),
+			),
+			array(
+				'key'        => 'field_clone_group',
+				'name'       => 'group_clone',
+				'type'       => 'clone',
+				'label'      => 'Group Clone',
+				'display'    => 'group',
+				'sub_fields' => $sub_fields( 'grouped' ),
+			),
+			array(
+				'key'        => 'field_clone_3',
+				'name'       => 'third_clone',
+				'type'       => 'clone',
+				'label'      => 'Third Clone',
+				'display'    => 'seamless',
+				'sub_fields' => $sub_fields( 'three' ),
+			),
+		);
+
+		$result = $this->clone_field->acf_get_fields( $fields, array() );
+
+		$this->assertSame(
+			array(
+				'field_one_a',
+				'field_one_b',
+				'field_one_c',
+				'field_title',
+				'field_two_a',
+				'field_two_b',
+				'field_two_c',
+				'field_clone_group',
+				'field_three_a',
+				'field_three_b',
+				'field_three_c',
+			),
+			wp_list_pluck( $result, 'key' )
+		);
+	}
+
+	/**
 	 * Test seamless clones expose bidirectional fields at the parent level.
 	 */
 	public function test_acf_get_fields_exposes_bidirectional_field_from_seamless_clone() {
