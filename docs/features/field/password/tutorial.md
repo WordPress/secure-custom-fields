@@ -7,24 +7,14 @@
 3. Configure options:
    - Set placeholder text
    - Add prepend/append
-   - Configure validation
-   - Set character limits
 
 ## Common Use Cases
 
-1. Security Settings
-   - API keys
-   - Access tokens
-   - Private credentials
-
-2. User Management
-   - Password fields
-   - Security questions
-   - Access codes
+- Values that should not be visible on screen while an editor types them, such as access codes shared with site visitors
 
 ## Tips
 
-- Use secure handling
-- Clear validation rules
-- Consider masking options
-- Implement proper sanitization
+- The field masks input but stores the value as plain text.
+- Don't print the value in templates or blocks unless it is meant to be public.
+- Leave Show in REST API off for field groups that contain values you don't want exposed.
+- Store credentials, API keys and access tokens outside custom fields, for example in `wp-config.php` constants.
