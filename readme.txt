@@ -51,6 +51,22 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.9 =
+*Release Date 11th November 2026*
+
+*Security*
+
+- Taxonomy fields save terms only to objects that use the taxonomy.
+- Submitted Taxonomy field values that save terms require permission to assign terms in that taxonomy.
+- Saving fields on a profile update requires permission to edit the user.
+- The Gallery field renders attachment edit fields only for users who can edit the attachment.
+- SCF never reads or writes the user metadata WordPress uses for roles, capabilities or sign-in, whatever a field is named.
+
+*Fixes*
+
+- Block JSON-LD output honours the `enable_schema` setting, as the post output already did.
+- Clone and Flexible Content fields mapped to a Schema.org property output only the sub fields mapped to a property, each formatted by its own field type.
+
 = 6.9.8 =
 *Release Date 3rd November 2026*
 
@@ -500,6 +516,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.9 =
+Security: Taxonomy, profile and Gallery saves check the user's permissions, and SCF never reads or writes the user metadata WordPress uses for roles, capabilities or sign-in.
 
 = 6.9.8 =
 Security: Saves only keep values for fields that belong to the content being saved, and field settings are sanitized for users without unfiltered_html.
