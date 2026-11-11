@@ -169,6 +169,9 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 				// replace this clone field with sub fields
 				--$i;
 				array_splice( $fields, $i, 1, $field['sub_fields'] );
+
+				// The splice changes the list length, so update the loop bound.
+				$count = count( $fields );
 			}
 
 			// return
