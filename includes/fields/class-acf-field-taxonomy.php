@@ -344,6 +344,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * Filters the field value before it is saved into the database.
 		 *
 		 * @since ACF 3.6
+		 * @since SCF 6.9.9 Submitted values that save terms keep the stored value when the user can't assign terms in the taxonomy.
 		 *
 		 * @param  mixed   $value   The value which will be saved in the database.
 		 * @param  integer $post_id The post_id of which the value will be saved.
@@ -351,6 +352,9 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * @return mixed $value The modified value.
 		 */
 		public function update_value( $value, $post_id, $field ) {
+			if ( $field['save_terms'] && ! $this->can_assign_submitted_terms( $field['taxonomy'] ) ) {
+				return acf_get_metadata_by_field( _acf_get_stored_values_post_id( $post_id ), $field );
+			}
 
 			if ( is_array( $value ) ) {
 				$value = array_filter( $value );
@@ -390,6 +394,7 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 		 * This function will save any terms in the save_post_terms array
 		 *
 		 * @since   ACF 5.0.9
+		 * @since   SCF 6.9.9 Objects other than posts only keep terms in taxonomies registered for their object type.
 		 *
 		 * @param  mixed $post_id The ACF post ID to save to.
 		 * @return void
@@ -413,11 +418,61 @@ if ( ! class_exists( 'acf_field_taxonomy' ) ) :
 
 				// Loop over taxonomies and save terms.
 				foreach ( $this->save_post_terms as $taxonomy => $term_ids ) {
-					wp_set_object_terms( $id, $term_ids, $taxonomy, false );
+					if ( $this->object_uses_taxonomy( $type, $id, $taxonomy ) ) {
+						wp_set_object_terms( $id, $term_ids, $taxonomy, false );
+					}
 				}
 
 				// Reset storage.
 				$this->save_post_terms = array();
+			}
+		}
+
+		/**
+		 * Checks whether the current user may assign terms in a taxonomy through submitted values.
+		 *
+		 * Values saved by code, and values submitted through a front-end form, aren't checked.
+		 *
+		 * @since SCF 6.9.9
+		 *
+		 * @param string $taxonomy The taxonomy.
+		 * @return boolean
+		 */
+		private function can_assign_submitted_terms( $taxonomy ) {
+			if ( ! acf_get_data( 'acf_saving_submitted_values' ) || ! empty( $GLOBALS['acf_form'] ) ) {
+				return true;
+			}
+
+			$taxonomy_object = get_taxonomy( $taxonomy );
+
+			return ! $taxonomy_object || current_user_can( $taxonomy_object->cap->assign_terms );
+		}
+
+		/**
+		 * Checks whether an object keeps terms of a taxonomy.
+		 *
+		 * Posts keep terms in any taxonomy. Other objects share the term relationships table with posts,
+		 * so they only keep terms in taxonomies registered for their object type.
+		 *
+		 * @since SCF 6.9.9
+		 *
+		 * @param string         $type     The object type, as returned by acf_decode_post_id().
+		 * @param integer|string $id       The object ID.
+		 * @param string         $taxonomy The taxonomy.
+		 * @return boolean
+		 */
+		private function object_uses_taxonomy( $type, $id, $taxonomy ) {
+			switch ( $type ) {
+				case 'post':
+					return true;
+				case 'user':
+				case 'comment':
+					return is_object_in_taxonomy( $type, $taxonomy );
+				case 'woo_order':
+					$order = function_exists( 'wc_get_order' ) ? wc_get_order( $id ) : false;
+					return $order && is_object_in_taxonomy( $order->get_type(), $taxonomy );
+				default:
+					return false;
 			}
 		}
 
