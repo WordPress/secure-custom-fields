@@ -38,6 +38,11 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 		register_taxonomy( 'scf_user_tax', 'user' );
 		register_taxonomy( 'scf_comment_tax', 'comment' );
 		register_taxonomy( 'scf_order_tax', 'shop_order' );
+		register_taxonomy(
+			'scf_admin_tax',
+			'post',
+			array( 'capabilities' => array( 'assign_terms' => 'manage_options' ) )
+		);
 
 		acf_include( 'includes/fields/class-acf-field-taxonomy.php' );
 		$this->field_type = acf_get_field_type( 'taxonomy' );
@@ -51,9 +56,11 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 	 */
 	public function tear_down() {
 		remove_action( 'set_object_terms', array( $this, 'record_write' ), 10 );
-		foreach ( array( 'scf_post_tax', 'scf_user_tax', 'scf_comment_tax', 'scf_order_tax' ) as $taxonomy ) {
+		foreach ( array( 'scf_post_tax', 'scf_user_tax', 'scf_comment_tax', 'scf_order_tax', 'scf_admin_tax' ) as $taxonomy ) {
 			unregister_taxonomy( $taxonomy );
 		}
+		wp_set_current_user( 0 );
+		unset( $GLOBALS['acf_form'] );
 
 		parent::tear_down();
 	}
@@ -67,7 +74,7 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 	 * @param string  $taxonomy  The taxonomy.
 	 */
 	public function record_write( $object_id, $terms, $tt_ids, $taxonomy ) {
-		if ( in_array( $taxonomy, array( 'scf_post_tax', 'scf_user_tax', 'scf_comment_tax', 'scf_order_tax' ), true ) ) {
+		if ( in_array( $taxonomy, array( 'scf_post_tax', 'scf_user_tax', 'scf_comment_tax', 'scf_order_tax', 'scf_admin_tax' ), true ) ) {
 			$this->writes[] = array( (int) $object_id, $taxonomy );
 		}
 	}
@@ -77,9 +84,38 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 	 *
 	 * @param string         $taxonomy The field's taxonomy.
 	 * @param integer|string $post_id  The ACF post ID being saved.
+	 * @return mixed The value the field saves.
 	 */
 	private function save_terms( $taxonomy, $post_id ) {
-		$field = array(
+		$value = $this->field_type->update_value( array( 3 ), $post_id, $this->get_field( $taxonomy ) );
+		$this->field_type->save_post( $post_id );
+
+		return $value;
+	}
+
+	/**
+	 * Saves a term as a value submitted through a form or the REST API.
+	 *
+	 * @param string         $taxonomy The field's taxonomy.
+	 * @param integer|string $post_id  The ACF post ID being saved.
+	 * @return mixed The value the field saves.
+	 */
+	private function save_submitted_terms( $taxonomy, $post_id ) {
+		return _acf_save_submitted_values(
+			function () use ( $taxonomy, $post_id ) {
+				return $this->save_terms( $taxonomy, $post_id );
+			}
+		);
+	}
+
+	/**
+	 * Returns a Taxonomy field with save_terms enabled.
+	 *
+	 * @param string $taxonomy The field's taxonomy.
+	 * @return array
+	 */
+	private function get_field( $taxonomy ) {
+		return array(
 			'key'                  => 'field_save_terms_' . $taxonomy,
 			'name'                 => 'save_terms_' . $taxonomy,
 			'type'                 => 'taxonomy',
@@ -88,9 +124,23 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 			'bidirectional'        => 0,
 			'bidirectional_target' => array(),
 		);
+	}
 
-		$this->field_type->update_value( array( 3 ), $post_id, $field );
-		$this->field_type->save_post( $post_id );
+	/**
+	 * Inserts a user with the given role and makes them the current user.
+	 *
+	 * @param string $role The role.
+	 */
+	private function log_in_as( $role ) {
+		wp_set_current_user(
+			wp_insert_user(
+				array(
+					'user_login' => $role . '_' . uniqid(),
+					'user_pass'  => 'password',
+					'role'       => $role,
+				)
+			)
+		);
 	}
 
 	/**
@@ -161,5 +211,67 @@ class Test_ACF_Field_Taxonomy_Save_Terms extends BaseTestCase {
 		$this->save_terms( 'scf_post_tax', 'woo_order_9' );
 
 		$this->assertSame( array( array( 9, 'scf_order_tax' ) ), $this->writes );
+	}
+
+	/**
+	 * Submitted terms aren't assigned when the user can't assign terms in the taxonomy.
+	 */
+	public function test_submitted_terms_need_permission_to_assign_terms() {
+		$post_id = wp_insert_post( array( 'post_title' => 'Target' ) );
+		$this->log_in_as( 'author' );
+
+		$this->save_submitted_terms( 'scf_admin_tax', $post_id );
+
+		$this->assertSame( array(), $this->writes );
+	}
+
+	/**
+	 * Submitted terms keep the stored value when the user can't assign terms in the taxonomy.
+	 */
+	public function test_submitted_terms_keep_the_stored_value_without_permission() {
+		$post_id = wp_insert_post( array( 'post_title' => 'Target' ) );
+		update_post_meta( $post_id, 'save_terms_scf_admin_tax', array( '5' ) );
+		$this->log_in_as( 'author' );
+
+		$value = $this->save_submitted_terms( 'scf_admin_tax', $post_id );
+
+		$this->assertSame( array( '5' ), $value );
+	}
+
+	/**
+	 * Submitted terms are assigned when the user can assign terms in the taxonomy.
+	 */
+	public function test_submitted_terms_save_for_users_who_can_assign_terms() {
+		$post_id = wp_insert_post( array( 'post_title' => 'Target' ) );
+		$this->log_in_as( 'administrator' );
+
+		$value = $this->save_submitted_terms( 'scf_admin_tax', $post_id );
+
+		$this->assertSame( array( 3 ), $value );
+		$this->assertSame( array( array( $post_id, 'scf_admin_tax' ) ), $this->writes );
+	}
+
+	/**
+	 * Terms saved by code aren't checked against the current user.
+	 */
+	public function test_terms_saved_by_code_are_not_checked() {
+		$post_id = wp_insert_post( array( 'post_title' => 'Target' ) );
+		$this->log_in_as( 'author' );
+
+		$this->save_terms( 'scf_admin_tax', $post_id );
+
+		$this->assertSame( array( array( $post_id, 'scf_admin_tax' ) ), $this->writes );
+	}
+
+	/**
+	 * Terms submitted through a front-end form are saved for visitors who aren't logged in.
+	 */
+	public function test_front_end_form_terms_are_not_checked() {
+		$post_id             = wp_insert_post( array( 'post_title' => 'Target' ) );
+		$GLOBALS['acf_form'] = array( 'post_id' => $post_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates a front-end form submission.
+
+		$this->save_submitted_terms( 'scf_admin_tax', $post_id );
+
+		$this->assertSame( array( array( $post_id, 'scf_admin_tax' ) ), $this->writes );
 	}
 }
