@@ -221,4 +221,109 @@ class Test_ACF_Field_Clone extends Abstract_ACF_Field_Test {
 		$this->assertCount( 1, $result );
 		$this->assertEquals( 'clone', $result[0]['type'] );
 	}
+
+	/**
+	 * Registers the Clone and Password field types. The test bootstrap doesn't load them, and
+	 * constructing a field in set_up() replaces the registered Clone type with its info stub.
+	 */
+	private function ensure_field_types() {
+		if ( ! acf_get_field_type( 'clone' ) instanceof acf_field ) {
+			acf_register_field_type( $this->clone_field );
+		}
+		if ( ! class_exists( 'acf_field_password' ) ) {
+			acf_include( 'includes/fields/class-acf-field-password.php' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=password' ) ) {
+			acf_register_field_type( 'acf_field_password' );
+		}
+	}
+
+	/**
+	 * A Clone field mapped to a Schema.org property with a Password and a Text sub field.
+	 *
+	 * @return array
+	 */
+	private function get_jsonld_field() {
+		return $this->get_field(
+			array(
+				'key'             => 'field_clone_jsonld',
+				'name'            => 'clone_jsonld',
+				'_name'           => 'clone_jsonld',
+				'display'         => 'group',
+				'schema_property' => 'Thing.description',
+				'sub_fields'      => array(
+					array(
+						'key'             => 'field_clone_jsonld_field_pwd',
+						'__key'           => 'field_pwd',
+						'name'            => 'clone_pwd',
+						'_name'           => 'clone_pwd',
+						'__name'          => 'clone_pwd',
+						'type'            => 'password',
+						'label'           => 'Stored Password',
+						'schema_property' => 'identifier',
+					),
+					array(
+						'key'             => 'field_clone_jsonld_field_text',
+						'__key'           => 'field_text',
+						'name'            => 'clone_text',
+						'_name'           => 'clone_text',
+						'__name'          => 'clone_text',
+						'type'            => 'text',
+						'label'           => 'Text',
+						'schema_property' => 'name',
+					),
+					array(
+						'key'    => 'field_clone_jsonld_field_note',
+						'__key'  => 'field_note',
+						'name'   => 'clone_note',
+						'_name'  => 'clone_note',
+						'__name' => 'clone_note',
+						'type'   => 'text',
+						'label'  => 'Unmapped note',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * JSON-LD output of a mapped Clone only carries mapped sub fields, formatted by their own type.
+	 */
+	public function test_format_value_for_jsonld_outputs_only_mapped_sub_fields() {
+		$this->ensure_field_types();
+
+		$field = $this->get_jsonld_field();
+		$value = array(
+			'field_clone_jsonld_field_pwd'  => 'CLONE_SECRET_123',
+			'field_clone_jsonld_field_text' => 'Visible name',
+			'field_clone_jsonld_field_note' => 'Not mapped',
+		);
+
+		$formatted = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $value, $field );
+
+		$this->assertSame(
+			array(
+				'identifier' => false,
+				'name'       => 'Visible name',
+			),
+			$formatted
+		);
+		$this->assertStringNotContainsString( 'CLONE_SECRET_123', wp_json_encode( $formatted ) );
+	}
+
+	/**
+	 * A mapped Clone with no mapped sub field values is left out of the JSON-LD output.
+	 */
+	public function test_format_value_for_jsonld_returns_null_without_mapped_values() {
+		$field = $this->get_jsonld_field();
+
+		$this->assertNull( $this->clone_field->format_value_for_jsonld( array(), $this->post_id, $field ) );
+		$this->assertNull(
+			$this->clone_field->format_value_for_jsonld(
+				array( 'field_clone_jsonld_field_note' => 'Not mapped' ),
+				$this->post_id,
+				$field
+			)
+		);
+	}
 }

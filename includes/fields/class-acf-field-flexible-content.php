@@ -1742,6 +1742,87 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
 			return $value;
 		}
+
+		/**
+		 * Formats the field value for JSON-LD output.
+		 *
+		 * Mirrors the Repeater field: each layout only outputs the sub fields mapped to a Schema.org
+		 * property, each formatted by its own field type, instead of the REST formatter's copy of
+		 * every sub field. A sub field mapped to a Schema.org type names the layout's @type.
+		 *
+		 * @since 6.9.9
+		 *
+		 * @param mixed          $value   The value of the field.
+		 * @param integer|string $post_id The ID of the post.
+		 * @param array          $field   The field array.
+		 * @return mixed
+		 */
+		public function format_value_for_jsonld( $value, $post_id, $field ) {
+			if ( empty( $value ) || ! is_array( $value ) || empty( $field['layouts'] ) ) {
+				return null;
+			}
+
+			$layouts = array();
+			foreach ( $field['layouts'] as $layout ) {
+				$layouts[ $layout['name'] ] = $layout['sub_fields'];
+			}
+
+			$all_types   = array_keys( \SCF\AI\GEO\SchemaData::get_type_hierarchy() );
+			$all_types[] = 'Thing';
+
+			$items = array();
+
+			foreach ( $value as $row ) {
+				if ( ! is_array( $row ) || empty( $row['acf_fc_layout'] ) || empty( $layouts[ $row['acf_fc_layout'] ] ) ) {
+					continue;
+				}
+
+				$row_data = array();
+				$row_type = null;
+
+				foreach ( $layouts[ $row['acf_fc_layout'] ] as $sub_field ) {
+					$sub_value = $row[ $sub_field['key'] ] ?? $row[ $sub_field['name'] ] ?? null;
+
+					if ( null === $sub_value ) {
+						continue;
+					}
+
+					$schema_property = $sub_field['schema_property'] ?? '';
+
+					if ( empty( $schema_property ) ) {
+						continue;
+					}
+
+					if ( in_array( $schema_property, $all_types, true ) ) {
+						$row_type = $schema_property;
+						continue;
+					}
+
+					$property_name   = \SCF\AI\GEO\Schema::get_property_name( $schema_property );
+					$formatted_value = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
+
+					if ( null !== $formatted_value ) {
+						$row_data[ $property_name ] = $formatted_value;
+					}
+				}
+
+				if ( $row_type ) {
+					$row_data = array_merge( array( '@type' => $row_type ), $row_data );
+				}
+
+				if ( count( $row_data ) === 1 && ! isset( $row_data['@type'] ) ) {
+					$items[] = reset( $row_data );
+				} elseif ( ! empty( $row_data ) ) {
+					$items[] = $row_data;
+				}
+			}
+
+			if ( empty( $items ) ) {
+				return null;
+			}
+
+			return $items;
+		}
 	}
 
 
