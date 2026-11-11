@@ -423,4 +423,92 @@ class Test_ACF_Field_Flexible_Content extends Abstract_ACF_Field_Test {
 
 		$this->assertIsArray( $imported );
 	}
+
+	/**
+	 * Registers the Password field type, which the test bootstrap doesn't load.
+	 */
+	private function ensure_password_field_type() {
+		if ( ! class_exists( 'acf_field_password' ) ) {
+			acf_include( 'includes/fields/class-acf-field-password.php' );
+		}
+		if ( ! has_filter( 'acf/format_value/type=password' ) ) {
+			acf_register_field_type( 'acf_field_password' );
+		}
+	}
+
+	/**
+	 * The base field mapped to a Schema.org property, with a mapped Password sub field in the text layout.
+	 *
+	 * @return array
+	 */
+	private function get_jsonld_field() {
+		$field = $this->get_field( array( 'schema_property' => 'abstract' ) );
+		$field['layouts']['layout_text']['sub_fields'][0]['schema_property']  = 'description';
+		$field['layouts']['layout_text']['sub_fields'][]                      = array(
+			'key'             => 'field_flex_pwd',
+			'name'            => 'flex_pwd',
+			'_name'           => 'flex_pwd',
+			'type'            => 'password',
+			'label'           => 'Stored Password',
+			'schema_property' => 'identifier',
+		);
+		$field['layouts']['layout_image']['sub_fields'][1]['schema_property'] = 'caption';
+
+		return $field;
+	}
+
+	/**
+	 * JSON-LD output of a mapped Flexible Content field only carries mapped sub fields per layout.
+	 */
+	public function test_format_value_for_jsonld_outputs_only_mapped_sub_fields() {
+		$this->ensure_password_field_type();
+
+		$field = $this->get_jsonld_field();
+		$value = array(
+			array(
+				'acf_fc_layout'      => 'text_block',
+				'field_text_content' => 'Hello',
+				'field_flex_pwd'     => 'FLEX_SECRET_123',
+			),
+			array(
+				'acf_fc_layout' => 'image_block',
+				'field_image'   => 42,
+				'field_caption' => 'A caption',
+			),
+		);
+
+		$formatted = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $value, $field );
+
+		$this->assertSame(
+			array(
+				array(
+					'description' => 'Hello',
+					'identifier'  => false,
+				),
+				'A caption',
+			),
+			$formatted
+		);
+		$this->assertStringNotContainsString( 'FLEX_SECRET_123', wp_json_encode( $formatted ) );
+	}
+
+	/**
+	 * Rows of unknown layouts and rows without mapped values are left out.
+	 */
+	public function test_format_value_for_jsonld_skips_rows_without_mapped_values() {
+		$field = $this->get_jsonld_field();
+		$value = array(
+			array(
+				'acf_fc_layout' => 'missing_layout',
+				'field_x'       => 'x',
+			),
+			array(
+				'acf_fc_layout' => 'image_block',
+				'field_image'   => 42,
+			),
+		);
+
+		$this->assertNull( $this->field_instance->format_value_for_jsonld( $value, $this->post_id, $field ) );
+		$this->assertNull( $this->field_instance->format_value_for_jsonld( false, $this->post_id, $field ) );
+	}
 }

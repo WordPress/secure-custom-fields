@@ -501,6 +501,61 @@ if ( ! class_exists( 'acf_field_clone' ) ) :
 		}
 
 		/**
+		 * Formats the field value for JSON-LD output.
+		 *
+		 * Mirrors the Group field: only sub fields mapped to a Schema.org property are output, each
+		 * formatted by its own field type, instead of the REST formatter's copy of every sub field.
+		 *
+		 * @since 6.9.9
+		 *
+		 * @param mixed          $value   The value of the field.
+		 * @param integer|string $post_id The ID of the post.
+		 * @param array          $field   The field array.
+		 * @return mixed
+		 */
+		public function format_value_for_jsonld( $value, $post_id, $field ) {
+			if ( empty( $value ) || ! is_array( $value ) || empty( $field['sub_fields'] ) ) {
+				return null;
+			}
+
+			$output_format = $field['schema_output_format'] ?? '';
+			$result        = array();
+
+			if ( ! empty( $output_format ) ) {
+				$result['@type'] = $output_format;
+			}
+
+			$field = $this->prepare_field_for_db( $field );
+
+			foreach ( $field['sub_fields'] as $sub_field ) {
+				$sub_value = $value[ $sub_field['key'] ] ?? $value[ $sub_field['__name'] ] ?? null;
+
+				if ( null === $sub_value ) {
+					continue;
+				}
+
+				$schema_property = $sub_field['schema_property'] ?? '';
+
+				if ( empty( $schema_property ) ) {
+					continue;
+				}
+
+				$property_name   = \SCF\AI\GEO\Schema::get_property_name( $schema_property );
+				$formatted_value = \SCF\AI\GEO\GEO::format_field_value_for_jsonld( $sub_value, $sub_field );
+
+				if ( null !== $formatted_value ) {
+					$result[ $property_name ] = $formatted_value;
+				}
+			}
+
+			if ( count( $result ) > 1 || ( count( $result ) === 1 && ! isset( $result['@type'] ) ) ) {
+				return $result;
+			}
+
+			return null;
+		}
+
+		/**
 		 * Updates the field value in the database.
 		 *
 		 * @param mixed $value   The value to save.
