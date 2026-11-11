@@ -24,6 +24,13 @@ class Test_ACF_Field_Gallery_Ajax_Visibility extends BaseTestCase {
 	private const FIELD_KEY = 'field_test_gallery_ajax_visibility';
 
 	/**
+	 * Value of the attachment edit field added during the test.
+	 *
+	 * @var string
+	 */
+	private const EDIT_FIELD_VALUE = 'gallery-ajax-edit-field-value';
+
+	/**
 	 * Subscriber used for object-specific read permission tests.
 	 *
 	 * @var int
@@ -194,6 +201,69 @@ class Test_ACF_Field_Gallery_Ajax_Visibility extends BaseTestCase {
 		$output = $this->invoke_ajax_get_attachment( $attachment['id'] );
 
 		$this->assert_attachment_metadata_rendered( $attachment, $output );
+	}
+
+	/**
+	 * Attachment edit fields are not rendered for users who can't edit the attachment.
+	 *
+	 * @return void
+	 */
+	public function test_anonymous_does_not_receive_attachment_edit_fields() {
+		$parent_id  = $this->create_post( 'Edit Fields Gallery Parent', 'publish' );
+		$attachment = $this->create_attachment( 'edit-fields-anonymous', $parent_id );
+		add_filter( 'attachment_fields_to_edit', array( $this, 'add_edit_field' ) );
+
+		wp_set_current_user( 0 );
+		$output = $this->invoke_ajax_get_attachment( $attachment['id'] );
+
+		remove_filter( 'attachment_fields_to_edit', array( $this, 'add_edit_field' ) );
+
+		$this->assert_attachment_metadata_rendered( $attachment, $output );
+		$this->assertStringNotContainsString( self::EDIT_FIELD_VALUE, $output );
+	}
+
+	/**
+	 * Attachment edit fields are rendered for users who can edit the attachment.
+	 *
+	 * @return void
+	 */
+	public function test_editor_receives_attachment_edit_fields() {
+		$parent_id  = $this->create_post( 'Editor Gallery Parent', 'publish' );
+		$attachment = $this->create_attachment( 'edit-fields-editor', $parent_id );
+		add_filter( 'attachment_fields_to_edit', array( $this, 'add_edit_field' ) );
+
+		$editor_id = wp_insert_user(
+			array(
+				'user_login' => 'gallery_ajax_editor',
+				'user_pass'  => 'password',
+				'role'       => 'editor',
+			)
+		);
+		wp_set_current_user( $editor_id );
+		$output = $this->invoke_ajax_get_attachment( $attachment['id'] );
+
+		remove_filter( 'attachment_fields_to_edit', array( $this, 'add_edit_field' ) );
+		wp_set_current_user( 0 );
+		wp_delete_user( $editor_id );
+
+		$this->assert_attachment_metadata_rendered( $attachment, $output );
+		$this->assertStringContainsString( self::EDIT_FIELD_VALUE, $output );
+	}
+
+	/**
+	 * Adds an attachment edit field holding a known value.
+	 *
+	 * @param array $form_fields The attachment form fields.
+	 * @return array
+	 */
+	public function add_edit_field( $form_fields ) {
+		$form_fields['gallery_ajax_edit_field'] = array(
+			'label' => 'Edit field',
+			'input' => 'text',
+			'value' => self::EDIT_FIELD_VALUE,
+		);
+
+		return $form_fields;
 	}
 
 	/**

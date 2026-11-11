@@ -321,6 +321,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		 *
 		 * @date    13/12/2013
 		 * @since   ACF 5.0.0
+		 * @since   SCF 6.9.9 Attachment edit fields render only for users who can edit the attachment.
 		 *
 		 * @param   integer $id    The attachment ID.
 		 * @param   array   $field The field array.
@@ -329,7 +330,7 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 		public function render_attachment( $id, $field ) {
 			// Load attachment data.
 			$attachment = wp_prepare_attachment_for_js( $id );
-			$compat     = get_compat_media_markup( $id );
+			$compat     = current_user_can( 'edit_post', $id ) ? get_compat_media_markup( $id ) : array( 'item' => '' );
 
 			// Get attachment thumbnail (video).
 			if ( isset( $attachment['thumb']['src'] ) ) {
