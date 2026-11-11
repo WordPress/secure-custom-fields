@@ -1,6 +1,100 @@
 <?php
 
 /**
+ * Checks whether a user meta key holds data WordPress uses for roles, capabilities or sign-in.
+ *
+ * @since SCF 6.9.9
+ *
+ * @param string  $meta_key The user meta key.
+ * @param integer $user_id  Optional. The user the key is written to or deleted from. Default 0.
+ * @return boolean
+ */
+function scf_is_protected_user_meta_key( $meta_key, $user_id = 0 ) {
+	$meta_key = (string) $meta_key;
+
+	/*
+	 * Reads use the key as given, writes and deletes unslash it first.
+	 */
+	if ( _scf_is_protected_user_meta_name( $meta_key ) || _scf_is_protected_user_meta_name( wp_unslash( $meta_key ) ) ) {
+		return true;
+	}
+
+	/*
+	 * Writes and deletes find their rows with the database's collation, which can match a key spelled differently.
+	 */
+	return (int) $user_id > 0 && _scf_user_meta_rows_hold_protected_key( (int) $user_id, wp_unslash( $meta_key ) );
+}
+
+/**
+ * Checks a user meta key against the keys WordPress uses for roles, capabilities or sign-in.
+ *
+ * @since SCF 6.9.9
+ * @internal
+ *
+ * @param string $key The user meta key.
+ * @return boolean
+ */
+function _scf_is_protected_user_meta_name( $key ) {
+	global $wpdb;
+
+	if ( in_array( $key, array( 'session_tokens', '_application_passwords' ), true ) ) {
+		return true;
+	}
+
+	foreach ( array( 'capabilities', 'user_level' ) as $suffix ) {
+		if ( $wpdb->base_prefix . $suffix === $key ) {
+			return true;
+		}
+
+		if ( ! str_ends_with( $key, '_' . $suffix ) || ( $wpdb->base_prefix && ! str_starts_with( $key, $wpdb->base_prefix ) ) ) {
+			continue;
+		}
+
+		/*
+		 * The same parsing get_blogs_of_user() uses to find site roles.
+		 */
+		$site_id = str_replace( array( $wpdb->base_prefix, '_' . $suffix ), '', $key );
+		if ( is_numeric( $site_id ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Checks whether a write or delete for a user would change a row holding a protected key.
+ *
+ * @since SCF 6.9.9
+ * @internal
+ *
+ * @param integer $user_id  The user ID.
+ * @param string  $meta_key The user meta key, unslashed.
+ * @return boolean
+ */
+function _scf_user_meta_rows_hold_protected_key( $user_id, $meta_key ) {
+	global $wpdb;
+
+	$table = _get_meta_table( 'user' );
+	if ( ! $table ) {
+		return false;
+	}
+
+	/*
+	 * The same lookup update_metadata() and delete_metadata() run.
+	 */
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	$keys = $wpdb->get_col( $wpdb->prepare( "SELECT meta_key FROM $table WHERE meta_key = %s AND user_id = %d", $meta_key, $user_id ) );
+	foreach ( $keys as $key ) {
+		if ( _scf_is_protected_user_meta_name( $key ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Returns an array of "ACF only" meta for the given post_id.
  *
  * @date    9/10/18
@@ -121,6 +215,10 @@ function acf_get_metadata( $post_id = 0, $name = '', $hidden = false ) {
 		return null;
 	}
 
+	if ( 'user' === $type && scf_is_protected_user_meta_key( $prefix . $name ) ) {
+		return null;
+	}
+
 	// Determine CRUD function.
 	// - Relies on decoded post_id result to identify option or meta types.
 	// - Uses xxx_metadata(type) instead of xxx_type_meta() to bypass additional logic that could alter the ID.
@@ -165,6 +263,10 @@ function acf_update_metadata( $post_id = 0, $name = '', $value = '', $hidden = f
 		return false;
 	}
 
+	if ( 'user' === $type && scf_is_protected_user_meta_key( $prefix . $name, $id ) ) {
+		return false;
+	}
+
 	// Determine CRUD function.
 	// - Relies on decoded post_id result to identify option or meta types.
 	// - Uses xxx_metadata(type) instead of xxx_type_meta() to bypass additional logic that could alter the ID.
@@ -206,6 +308,10 @@ function acf_delete_metadata( $post_id = 0, $name = '', $hidden = false ) {
 
 	// Bail early if no $id (possible during new acf_form).
 	if ( ! $id ) {
+		return false;
+	}
+
+	if ( 'user' === $type && scf_is_protected_user_meta_key( $prefix . $name, $id ) ) {
 		return false;
 	}
 
