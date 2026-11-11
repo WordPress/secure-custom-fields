@@ -1,5 +1,33 @@
 # Acf Meta Functions Global Functions
 
+## `scf_is_protected_user_meta_key()`
+
+Checks whether a user meta key holds data WordPress uses for roles, capabilities or sign-in.
+
+* @since SCF 6.9.9
+* @param string  $meta_key The user meta key.
+* @param integer $user_id  Optional. The user the key is written to or deleted from. Default 0.
+* @return boolean
+
+## `_scf_is_protected_user_meta_name()`
+
+Checks a user meta key against the keys WordPress uses for roles, capabilities or sign-in.
+
+* @since SCF 6.9.9
+@internal
+* @param string $key The user meta key.
+* @return boolean
+
+## `_scf_user_meta_rows_hold_protected_key()`
+
+Checks whether a write or delete for a user would change a row holding a protected key.
+
+* @since SCF 6.9.9
+@internal
+* @param integer $user_id  The user ID.
+* @param string  $meta_key The user meta key, unslashed.
+* @return boolean
+
 ## `acf_get_meta()`
 
 Returns an array of "ACF only" meta for the given post_id.
