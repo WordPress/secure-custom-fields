@@ -287,12 +287,17 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * Saves ACF field values to a user.
 		 *
 		 * @since   ACF 5.0.0
+		 * @since   SCF 6.9.9 Profile updates require permission to edit the user.
 		 *
 		 * @param integer $user_id The ID of the user being saved.
 		 * @return integer|void
 		 */
 		public function save_user( $user_id ) {
 			if ( ! acf_verify_nonce( 'user' ) ) {
+				return $user_id;
+			}
+
+			if ( current_action() === 'profile_update' && ! current_user_can( 'edit_user', $user_id ) ) {
 				return $user_id;
 			}
 

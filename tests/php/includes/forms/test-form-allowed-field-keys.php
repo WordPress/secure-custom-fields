@@ -133,6 +133,7 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 		acf_reset_local();
 		acf_enable_local();
 		$this->reset_stores();
+		wp_set_current_user( 0 );
 
 		$_POST    = array();
 		$_FILES   = array();
@@ -260,6 +261,7 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	 * Saving an existing user only accepts fields from edit-form groups.
 	 */
 	public function test_save_user_profile_update_only_accepts_edit_form_fields() {
+		wp_set_current_user( $this->user_id );
 		$this->submit(
 			'user',
 			array(
@@ -327,6 +329,7 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	 * A user save with no allowed fields does not save anything.
 	 */
 	public function test_save_user_skips_save_without_allowed_fields() {
+		wp_set_current_user( $this->user_id );
 		$this->submit( 'user', array( 'field_register' => 'dropped' ) );
 
 		$this->run_in_action( 'profile_update', $this->user_id );
@@ -345,6 +348,7 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 				return array_merge( $keys, array( 'field_injected', array( 'nested' ), null, '' ) );
 			}
 		);
+		wp_set_current_user( $this->user_id );
 		$this->submit(
 			'user',
 			array(
@@ -362,6 +366,41 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 			),
 			$this->saved_values
 		);
+	}
+
+	/**
+	 * A profile update saves nothing when no user is logged in.
+	 */
+	public function test_save_user_profile_update_requires_a_logged_in_user() {
+		$this->submit( 'user', array( 'field_edit' => 'dropped' ) );
+
+		$this->run_in_action( 'profile_update', $this->user_id );
+
+		$this->assertNull( $this->saved_values );
+	}
+
+	/**
+	 * A profile update saves nothing when the current user can't edit the user.
+	 */
+	public function test_save_user_profile_update_requires_permission_to_edit_the_user() {
+		wp_set_current_user( $this->insert_user( 'subscriber' ) );
+		$this->submit( 'user', array( 'field_edit' => 'dropped' ) );
+
+		$this->run_in_action( 'profile_update', $this->user_id );
+
+		$this->assertNull( $this->saved_values );
+	}
+
+	/**
+	 * A user who can edit other users saves their profile fields.
+	 */
+	public function test_save_user_profile_update_by_an_administrator_saves_fields() {
+		wp_set_current_user( $this->insert_user( 'administrator' ) );
+		$this->submit( 'user', array( 'field_edit' => 'kept' ) );
+
+		$this->run_in_action( 'profile_update', $this->user_id );
+
+		$this->assertSame( array( 'field_edit' => 'kept' ), $this->saved_values );
 	}
 
 	// =========================================================================
@@ -384,6 +423,7 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	 * Uploaded files for fields that are not allowed are dropped from user saves.
 	 */
 	public function test_save_user_drops_uploads_for_fields_not_allowed() {
+		wp_set_current_user( $this->user_id );
 		$this->submit( 'user', array( 'field_register' => 'dropped' ) );
 		$this->add_upload_fixture( array( 'field_edit', 'field_register' ) );
 
@@ -436,6 +476,22 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 		$_POST['_acf_screen'] = $screen;
 		$_POST['_acf_nonce']  = wp_create_nonce( $screen );
 		$_POST['acf']         = $values;
+	}
+
+	/**
+	 * Inserts a user with the given role.
+	 *
+	 * @param string $role The role.
+	 * @return integer The user ID.
+	 */
+	private function insert_user( $role ) {
+		return wp_insert_user(
+			array(
+				'user_login' => $role . '_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => $role,
+			)
+		);
 	}
 
 	/**
