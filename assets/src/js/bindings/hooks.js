@@ -2,12 +2,10 @@
  * Custom hooks for block bindings
  */
 
-import { useState, useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useState, useEffect, useMemo, useCallback } from '@wordpress/element';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
 
 import { extractPostTypeFromTemplate, formatFieldGroupsData } from './utils';
 import { addFieldMetadata } from './fieldMetadataCache';
@@ -94,63 +92,55 @@ export function usePostEditorFields() {
  *
  * @since 6.7.0
  * @param {string|null} postType The post type to fetch fields for.
- * @return {Object} Object containing fields, isLoading, and error.
+ * @return {Object} Fields, loading/error state, and an explicit refresh callback.
  */
 export function useSiteEditorFields( postType ) {
-	const [ fields, setFields ] = useState( {} );
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ error, setError ] = useState( null );
+	const { invalidateResolution } = useDispatch( coreDataStore );
+	// Share one getPostType resolution per type within this registry.
+	// root/postType records default to context=edit, which includes
+	// scf_field_groups; use the same selector key for status and refresh.
+	const { record, isLoading, error } = useSelect(
+		( select ) => {
+			if ( ! postType ) {
+				return { record: null, isLoading: false, error: null };
+			}
+
+			const core = select( coreDataStore );
+
+			return {
+				record: core.getPostType( postType ),
+				isLoading: ! core.hasFinishedResolution( 'getPostType', [
+					postType,
+				] ),
+				error:
+					core.getResolutionError( 'getPostType', [ postType ] ) ||
+					null,
+			};
+		},
+		[ postType ]
+	);
+
+	// Keep the stored fields visible while a refetch is in progress.
+	const fields = useMemo(
+		() => formatFieldGroupsData( record?.scf_field_groups ),
+		[ record ]
+	);
 
 	useEffect( () => {
-		if ( ! postType ) {
-			setFields( {} );
-			setIsLoading( false );
-			setError( null );
-			return;
+		if ( record ) {
+			addFieldMetadata( fields );
 		}
+	}, [ record, fields ] );
 
-		let isCancelled = false;
-		setIsLoading( true );
-		setError( null );
+	// One consumer must not cancel work shared by the rest of the registry.
+	// Explicit invalidation also permits retry without a per-mount retry storm.
+	const refresh = useCallback( () => {
+		if ( postType ) {
+			invalidateResolution( 'getPostType', [ postType ] );
+		}
+	}, [ postType, invalidateResolution ] );
 
-		const fetchFields = async () => {
-			try {
-				const path = addQueryArgs( `/wp/v2/types/${ postType }`, {
-					context: 'edit',
-				} );
-
-				const postTypeData = await apiFetch( { path } );
-
-				if ( isCancelled ) {
-					return;
-				}
-
-				const fieldsMap = formatFieldGroupsData(
-					postTypeData.scf_field_groups
-				);
-
-				// Store field metadata in the data store
-				addFieldMetadata( fieldsMap );
-
-				setFields( fieldsMap );
-				setIsLoading( false );
-			} catch ( err ) {
-				if ( ! isCancelled ) {
-					setError( err );
-					setIsLoading( false );
-				}
-			}
-		};
-
-		fetchFields();
-
-		// Cleanup function to prevent state updates after unmount
-		return () => {
-			isCancelled = true;
-		};
-	}, [ postType ] );
-
-	return { fields, isLoading, error };
+	return { fields, isLoading, error, refresh };
 }
 
 /**

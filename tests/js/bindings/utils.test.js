@@ -272,6 +272,41 @@ describe( 'Block Bindings Utils', () => {
 			} );
 		} );
 
+		it( 'keeps valid fields alongside a null group', () => {
+			expect(
+				formatFieldGroupsData( [ null, mockFieldGroups[ 0 ] ] )
+			).toEqual( {
+				field1: { label: 'Field 1', type: 'text' },
+				field2: { label: 'Field 2', type: 'textarea' },
+			} );
+		} );
+
+		it( 'ignores invalid groups', () => {
+			expect(
+				formatFieldGroupsData( [
+					undefined,
+					'string',
+					42,
+					{ fields: null },
+				] )
+			).toEqual( {} );
+		} );
+
+		it( 'ignores fields without a name but keeps valid siblings', () => {
+			expect(
+				formatFieldGroupsData( [
+					{
+						fields: [
+							null,
+							{},
+							{ label: 'x' },
+							mockFieldGroups[ 0 ].fields[ 0 ],
+						],
+					},
+				] )
+			).toEqual( { field1: { label: 'Field 1', type: 'text' } } );
+		} );
+
 		it( 'should return empty object for empty array', () => {
 			const result = formatFieldGroupsData( [] );
 			expect( result ).toEqual( {} );

@@ -9,6 +9,8 @@ import {
 	useBlockBindingsUtils,
 } from '@wordpress/block-editor';
 import {
+	Button,
+	Notice,
 	ComboboxControl,
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
@@ -48,8 +50,12 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		// Get fields based on editor context
 		const postEditorFields = usePostEditorFields();
-		const { fields: siteEditorFields } =
-			useSiteEditorFields( templatePostType );
+		const {
+			fields: siteEditorFields,
+			isLoading: isLoadingSiteEditorFields,
+			error: siteEditorFieldsError,
+			refresh: refreshSiteEditorFields,
+		} = useSiteEditorFields( templatePostType );
 
 		// Use appropriate fields based on context
 		const activeFields = isSiteEditor ? siteEditorFields : postEditorFields;
@@ -156,6 +162,24 @@ const withCustomControls = createHigherOrderComponent( ( BlockEdit ) => {
 						) }
 						resetAll={ handleReset }
 					>
+						{ isSiteEditor && siteEditorFieldsError && (
+							<Notice status="error" isDismissible={ false }>
+								<p>
+									{ __(
+										'Unable to load custom fields. Please try again.',
+										'secure-custom-fields'
+									) }
+								</p>
+								<Button
+									variant="secondary"
+									onClick={ refreshSiteEditorFields }
+									disabled={ isLoadingSiteEditorFields }
+									isBusy={ isLoadingSiteEditorFields }
+								>
+									{ __( 'Retry', 'secure-custom-fields' ) }
+								</Button>
+							</Notice>
+						) }
 						{ canUseAllAttributesMode ? (
 							<ToolsPanelItem
 								hasValue={ () =>

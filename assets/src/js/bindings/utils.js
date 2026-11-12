@@ -43,9 +43,9 @@ export function getAllowedFieldTypes( blockName, attribute = null ) {
  * Filters field options based on allowed field types.
  *
  * @since 6.7.0
- * @param {Array}       fieldOptions  Array of field option objects with value, label, and type.
- * @param {string}      blockName     The name of the block.
- * @param {string|null} attribute     The attribute name, or null for all types.
+ * @param {Array}       fieldOptions Array of field option objects with value, label, and type.
+ * @param {string}      blockName    The name of the block.
+ * @param {string|null} attribute    The attribute name, or null for all types.
  * @return {Array} Filtered array of field options.
  */
 export function getFilteredFieldOptions(
@@ -142,8 +142,11 @@ export function formatFieldGroupsData( fieldGroups ) {
 	}
 
 	fieldGroups.forEach( ( group ) => {
-		if ( Array.isArray( group.fields ) ) {
+		if ( Array.isArray( group?.fields ) ) {
 			group.fields.forEach( ( field ) => {
+				if ( ! field?.name ) {
+					return;
+				}
 				fieldsMap[ field.name ] = {
 					label: field.label,
 					type: field.type,
