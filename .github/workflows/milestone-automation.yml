@@ -18,6 +18,7 @@ jobs:
             issues: write
             pull-requests: read
         timeout-minutes: 5
+        if: github.repository == 'WordPress/secure-custom-fields'
 
         steps:
             # This workflow does not check out or execute code from the pull request.
@@ -30,112 +31,112 @@ jobs:
                   script: |
                       const { owner, repo } = context.repo;
 
-                      // Pull requests are squash merged, so each one lands on trunk as a single commit.
-                      const issueNumbers = [];
-                      for (const { id: sha } of context.payload.commits) {
+                      // Pull requests are squash merged, so each push to trunk is the merge commit of at most one.
+                      let mergedPullRequest;
+                      for (let attempt = 1; attempt <= 3 && !mergedPullRequest; attempt++) {
+                        if (attempt > 1) {
+                          // GitHub can take a moment to link a new merge commit to its pull request.
+                          await new Promise((resolve) => setTimeout(resolve, 10000));
+                        }
+
                         const { data: pullRequests } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                           owner,
                           repo,
-                          commit_sha: sha
+                          commit_sha: context.sha
                         });
-                        for (const pullRequest of pullRequests) {
-                          if (pullRequest.merged_at && pullRequest.base.ref === 'trunk' && pullRequest.merge_commit_sha === sha) {
-                            issueNumbers.push(pullRequest.number);
-                          }
-                        }
+                        mergedPullRequest = pullRequests.find(
+                          ({ merged_at, base, merge_commit_sha }) =>
+                            merged_at && base.ref === 'trunk' && merge_commit_sha === context.sha
+                        );
                       }
 
-                      if (issueNumbers.length === 0) {
-                        console.log('No pull request was merged by this push.');
+                      if (!mergedPullRequest) {
+                        console.log(`No pull request was merged by ${context.sha}.`);
                         return;
                       }
 
-                      for (const issueNumber of issueNumbers) {
-                        await assignMilestone(issueNumber);
-                      }
+                      const issueNumber = mergedPullRequest.number;
 
-                      async function assignMilestone(issueNumber) {
-                        // Read the current state instead of relying on the event payload. This
-                        // avoids overwriting a milestone assigned while the job was queued.
-                        const { data: pullRequest } = await github.rest.issues.get({
-                          owner,
-                          repo,
-                          issue_number: issueNumber
-                        });
+                      // Read the current state instead of relying on the event payload. This
+                      // avoids overwriting a milestone assigned while the job was queued.
+                      const { data: pullRequest } = await github.rest.issues.get({
+                        owner,
+                        repo,
+                        issue_number: issueNumber
+                      });
 
-                        if (pullRequest.milestone) {
-                          if (pullRequest.milestone.state === 'open') {
-                            console.log(
-                              `PR #${issueNumber} already has open milestone: ${pullRequest.milestone.title}. Keeping it.`
-                            );
-                            return;
-                          }
-
-                          const warningMarker = '<!-- scf-closed-milestone-warning -->';
-                          const comments = await github.paginate(
-                            github.rest.issues.listComments,
-                            {
-                              owner,
-                              repo,
-                              issue_number: issueNumber,
-                              per_page: 100
-                            }
-                          );
-
-                          if (comments.some(({ body }) => body?.includes(warningMarker))) {
-                            console.log(`PR #${issueNumber} already has a closed milestone warning.`);
-                            return;
-                          }
-
+                      if (pullRequest.milestone) {
+                        if (pullRequest.milestone.state === 'open') {
                           console.log(
-                            `PR #${issueNumber} has closed milestone: ${pullRequest.milestone.title}. Adding notification comment.`
-                          );
-
-                          await github.rest.issues.createComment({
-                            owner,
-                            repo,
-                            issue_number: issueNumber,
-                            body: `${warningMarker}\nThis PR was merged with a closed milestone (\`${pullRequest.milestone.title}\`). Please verify this is intentional.`
-                          });
-                          return;
-                        }
-
-                        const targetTitle = process.env.NEXT_MILESTONE?.trim();
-                        if (!targetTitle) {
-                          core.setFailed(
-                            'The NEXT_MILESTONE repository variable is not configured. Set it to the exact title of the next open release milestone.'
+                            `PR #${issueNumber} already has open milestone: ${pullRequest.milestone.title}. Keeping it.`
                           );
                           return;
                         }
 
-                        const milestones = await github.paginate(
-                          github.rest.issues.listMilestones,
+                        const warningMarker = '<!-- scf-closed-milestone-warning -->';
+                        const comments = await github.paginate(
+                          github.rest.issues.listComments,
                           {
                             owner,
                             repo,
-                            state: 'open',
+                            issue_number: issueNumber,
                             per_page: 100
                           }
                         );
-                        const targetMilestone = milestones.find(
-                          ({ title }) => title === targetTitle
-                        );
 
-                        if (!targetMilestone) {
-                          core.setFailed(
-                            `Could not find an open milestone named "${targetTitle}". Update NEXT_MILESTONE or create the milestone.`
-                          );
+                        if (comments.some(({ body }) => body?.includes(warningMarker))) {
+                          console.log(`PR #${issueNumber} already has a closed milestone warning.`);
                           return;
                         }
 
                         console.log(
-                          `Assigning PR #${issueNumber} to ${targetMilestone.title} (#${targetMilestone.number}).`
+                          `PR #${issueNumber} has closed milestone: ${pullRequest.milestone.title}. Adding notification comment.`
                         );
 
-                        await github.rest.issues.update({
+                        await github.rest.issues.createComment({
                           owner,
                           repo,
                           issue_number: issueNumber,
-                          milestone: targetMilestone.number
+                          body: `${warningMarker}\nThis PR was merged with a closed milestone (\`${pullRequest.milestone.title}\`). Please verify this is intentional.`
                         });
+                        return;
                       }
+
+                      const targetTitle = process.env.NEXT_MILESTONE?.trim();
+                      if (!targetTitle) {
+                        core.setFailed(
+                          'The NEXT_MILESTONE repository variable is not configured. Set it to the exact title of the next open release milestone.'
+                        );
+                        return;
+                      }
+
+                      const milestones = await github.paginate(
+                        github.rest.issues.listMilestones,
+                        {
+                          owner,
+                          repo,
+                          state: 'open',
+                          per_page: 100
+                        }
+                      );
+                      const targetMilestone = milestones.find(
+                        ({ title }) => title === targetTitle
+                      );
+
+                      if (!targetMilestone) {
+                        core.setFailed(
+                          `Could not find an open milestone named "${targetTitle}". Update NEXT_MILESTONE or create the milestone.`
+                        );
+                        return;
+                      }
+
+                      console.log(
+                        `Assigning PR #${issueNumber} to ${targetMilestone.title} (#${targetMilestone.number}).`
+                      );
+
+                      await github.rest.issues.update({
+                        owner,
+                        repo,
+                        issue_number: issueNumber,
+                        milestone: targetMilestone.number
+                      });
