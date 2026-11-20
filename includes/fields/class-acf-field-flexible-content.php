@@ -559,6 +559,11 @@ if ( ! class_exists( 'acf_field_flexible_content' ) ) :
 
 			// loop through rows
 			foreach ( $value as $i => $l ) {
+				// SCF stores rows under the row numbers 0, 1, 2 and so on. Skip any other key: it ends up in input names and meta names.
+				if ( ! is_int( $i ) || $i < 0 ) {
+					continue;
+				}
+
 				// If the layout is disabled, prevent it from showing up on the frontend.
 				if ( $this->should_disable_layout( $i, $disabled_layouts ) ) {
 					continue;

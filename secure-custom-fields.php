@@ -172,6 +172,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'enable_bidirection'      => true,
 				'enable_block_bindings'   => true,
 				'enable_abilities'        => true,
+				'enable_meta_box_cb_edit' => true,
 				'enable_schema'           => false,
 				'pro'                     => true,
 			);

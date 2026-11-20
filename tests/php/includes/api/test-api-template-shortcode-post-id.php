@@ -59,10 +59,12 @@ class Test_API_Template_Shortcode_Post_ID extends BaseTestCase {
 				'title'    => 'Shortcode Post ID',
 				'fields'   => array(
 					array(
-						'key'   => 'field_shortcode_post_id_text',
-						'name'  => 'shortcode_post_id_text',
-						'label' => 'Text',
-						'type'  => 'text',
+						'key'               => 'field_shortcode_post_id_text',
+						'name'              => 'shortcode_post_id_text',
+						'label'             => 'Text',
+						'type'              => 'text',
+						// Local fields default to no shortcode access; these tests are about post visibility.
+						'allow_in_bindings' => true,
 					),
 				),
 				'location' => array(

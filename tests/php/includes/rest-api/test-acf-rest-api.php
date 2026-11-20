@@ -808,6 +808,166 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 		$this->assertStringNotContainsString( 'user_activation_key', $json );
 	}
 
+	/**
+	 * User subfields in Flexible Content rows are reduced to IDs in the REST value and its source.
+	 *
+	 * @dataProvider flexible_content_user_provider
+	 *
+	 * @param string  $text_name        Name of the Text subfield next to the User subfields.
+	 * @param boolean $duplicate_layout Whether an earlier layout takes the same name once the row is saved.
+	 * @param boolean $in_repeater      Whether the Flexible Content field sits inside a Repeater.
+	 */
+	public function test_load_fields_reduces_user_in_flexible_content( $text_name, $duplicate_layout, $in_repeater ) {
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => uniqid( 'rest_flexible_user_', false ),
+				'user_pass'  => 'password',
+			)
+		);
+
+		$text_layout = array(
+			'key'        => 'layout_test_rest_flexible_text',
+			'name'       => 'user_layout',
+			'sub_fields' => array(
+				array(
+					'key'  => 'field_test_rest_flexible_other',
+					'name' => 'other',
+					'type' => 'text',
+				),
+			),
+		);
+		$user_layout = array(
+			'key'        => 'layout_test_rest_flexible_user',
+			'name'       => 'user_layout',
+			'sub_fields' => array(
+				array(
+					'key'  => 'field_test_rest_flexible_text',
+					'name' => $text_name,
+					'type' => 'text',
+				),
+				array(
+					'key'           => 'field_test_rest_flexible_user_object',
+					'name'          => 'user_object',
+					'type'          => 'user',
+					'return_format' => 'object',
+				),
+				array(
+					'key'           => 'field_test_rest_flexible_user_array',
+					'name'          => 'user_array',
+					'type'          => 'user',
+					'return_format' => 'array',
+				),
+			),
+		);
+		$field_keys  = array(
+			'field_test_rest_flexible',
+			'field_test_rest_flexible_repeater',
+			'field_test_rest_flexible_other',
+			'field_test_rest_flexible_text',
+			'field_test_rest_flexible_user_object',
+			'field_test_rest_flexible_user_array',
+		);
+
+		$register = function ( $layouts ) use ( $in_repeater, $field_keys ) {
+			acf_remove_local_field_group( 'group_test_rest_security_flexible_user' );
+			array_map( 'acf_remove_local_field', $field_keys );
+			acf_get_store( 'fields' )->reset();
+
+			$field = array(
+				'key'     => 'field_test_rest_flexible',
+				'name'    => 'test_rest_flexible',
+				'type'    => 'flexible_content',
+				'layouts' => $layouts,
+			);
+			if ( $in_repeater ) {
+				$field = array(
+					'key'        => 'field_test_rest_flexible_repeater',
+					'name'       => 'test_rest_flexible_repeater',
+					'type'       => 'repeater',
+					'sub_fields' => array( $field ),
+				);
+			}
+
+			acf_add_local_field_group(
+				array_merge(
+					$this->test_field_group,
+					array(
+						'key'    => 'group_test_rest_security_flexible_user',
+						'fields' => array( $field ),
+					)
+				)
+			);
+
+			return $field;
+		};
+
+		$value = array(
+			array(
+				'acf_fc_layout'                        => 'user_layout',
+				'field_test_rest_flexible_text'        => 'not_a_layout',
+				'field_test_rest_flexible_user_object' => $user_id,
+				'field_test_rest_flexible_user_array'  => $user_id,
+			),
+		);
+		if ( $in_repeater ) {
+			$value = array( array( 'field_test_rest_flexible' => $value ) );
+		}
+
+		// The row is saved while its layout name is still unique.
+		$field = $register( array( $user_layout ) );
+		update_field( $field['key'], $value, $this->test_post_id );
+		if ( $duplicate_layout ) {
+			$register( array( $text_layout, $user_layout ) );
+		}
+
+		$request_prop = $this->reflection->getProperty( 'request' );
+		$request_prop->setAccessible( true );
+		$request_prop->setValue( $this->rest_api, $this->get_mock_post_request() );
+
+		// The test environment has no users table to query.
+		$shim_user_query = static function ( $results, $query ) {
+			$query->total_users = 1;
+			return $query->query_vars['include'];
+		};
+		add_filter( 'users_pre_query', $shim_user_query, 10, 2 );
+
+		$results = array();
+		foreach ( array( 'light', 'standard' ) as $format ) {
+			$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $this->test_post_id );
+			$request->set_param( 'acf_format', $format );
+			$results[ $format ] = $this->rest_api->load_fields( array( 'id' => $this->test_post_id ), 'acf', $request, 'post' );
+		}
+
+		remove_filter( 'users_pre_query', $shim_user_query, 10 );
+		wp_delete_user( $user_id );
+		acf_remove_local_field_group( 'group_test_rest_security_flexible_user' );
+		array_map( 'acf_remove_local_field', $field_keys );
+
+		foreach ( $results as $format => $result ) {
+			foreach ( array( $result[ $field['name'] ], $result[ $field['name'] . '_source' ]['formatted_value'] ) as $rows ) {
+				$row = $in_repeater ? $rows[0]['test_rest_flexible'][0] : $rows[0];
+
+				$this->assertSame( 'not_a_layout', $row[ $text_name ], "Failed in {$format} format." );
+				$this->assertSame( $user_id, $row['user_object'], "Failed in {$format} format." );
+				$this->assertSame( $user_id, $row['user_array'], "Failed in {$format} format." );
+			}
+		}
+	}
+
+	/**
+	 * Data provider for Flexible Content rows holding User subfields.
+	 *
+	 * @return array
+	 */
+	public function flexible_content_user_provider() {
+		return array(
+			'regular layout'                          => array( 'note', false, false ),
+			'subfield named like the layout key'      => array( 'acf_fc_layout', false, false ),
+			'earlier layout with the same name'       => array( 'note', true, false ),
+			'subfield named like the key in repeater' => array( 'acf_fc_layout', false, true ),
+		);
+	}
+
 	// =========================================================================
 	// Update Fields Tests
 	// =========================================================================

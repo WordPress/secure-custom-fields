@@ -299,6 +299,7 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 		 * @type    function
 		 * @date    8/10/13
 		 * @since   ACF 5.0.0
+		 * @since   SCF 6.9.10 Term edits require permission to edit the term.
 		 *
 		 * @param   $post_id (int)
 		 * @return  $post_id (int)
@@ -307,6 +308,12 @@ if ( ! class_exists( 'acf_form_taxonomy' ) ) :
 
 			// vars
 			$post_id = 'term_' . $term_id;
+
+			// edit_term fires on every wp_update_term() call. Checked before the nonce, which is single-use, so a
+			// refused save does not use it up for the save that follows in the same request.
+			if ( current_action() === 'edit_term' && ! current_user_can( 'edit_term', $term_id ) ) {
+				return $term_id;
+			}
 
 			// verify and remove nonce
 			if ( ! acf_verify_nonce( 'taxonomy' ) ) {

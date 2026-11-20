@@ -246,6 +246,13 @@ function acf_validate_field( $field = array() ) {
 	$field['ID']         = (int) $field['ID'];
 	$field['menu_order'] = (int) $field['menu_order'];
 
+	// New and local fields, including fields loaded from Local JSON, default to disallowing access through bindings.
+	// Database-only fields without this setting retain their historical behavior.
+	// When both copies exist, Local JSON takes precedence and uses the local-field default.
+	if ( 0 === $field['ID'] && ! isset( $field['allow_in_bindings'] ) ) {
+		$field['allow_in_bindings'] = false;
+	}
+
 	// Add backwards compatibility for wrapper attributes.
 	// Todo: Remove need for this.
 	// Wrapper settings are printed as attributes, so only allow an array of scalar values.

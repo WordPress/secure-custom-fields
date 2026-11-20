@@ -104,8 +104,13 @@ if ( ! class_exists( 'acf_field_link' ) ) :
 
 	<div class="acf-hidden">
 		<a class="link-node" href="<?php echo esc_url( $link['url'] ); ?>" target="<?php echo esc_attr( $link['target'] ); ?>"><?php echo esc_html( $link['title'] ); ?></a>
-			<?php foreach ( $link as $k => $v ) : ?>
-				<?php
+			<?php
+			foreach ( $link as $k => $v ) :
+				// Each key becomes part of an input name, and the stored value can hold any key. Skip keys with brackets
+				// or that name a prototype property; plain extra keys are kept so they survive the next save.
+				if ( ! preg_match( '/^[A-Za-z0-9_-]+$/', (string) $k ) || in_array( $k, array( '__proto__', 'constructor', 'prototype' ), true ) ) {
+					continue;
+				}
 				acf_hidden_input(
 					array(
 						'class' => "input-$k",

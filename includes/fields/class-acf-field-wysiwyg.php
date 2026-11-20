@@ -233,14 +233,11 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 			}
 
 			// vars
-			$textarea = acf_get_textarea_input(
-				array(
-					'id'    => $id,
-					'class' => 'wp-editor-area',
-					'name'  => $field['name'],
-					'style' => $height ? "height:{$height}px;" : '',
-					'value' => '%s',
-				)
+			$textarea = array(
+				'id'    => $id,
+				'class' => 'wp-editor-area',
+				'name'  => $field['name'],
+				'style' => $height ? "height:{$height}px;" : '',
 			);
 
 			?>
@@ -267,7 +264,7 @@ if ( ! class_exists( 'acf_field_wysiwyg' ) ) :
 					<?php if ( $field['delay'] ) : ?>
 					<div class="acf-editor-toolbar"><?php esc_html_e( 'Click to initialize TinyMCE', 'secure-custom-fields' ); ?></div>
 				<?php endif; ?>
-					<?php printf( $textarea, $field['value'] ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by format_for_editor(). ?>
+					<textarea <?php echo acf_esc_attrs( $textarea ); ?>><?php echo $field['value']; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by format_for_editor(). ?></textarea>
 			</div>
 		</div>
 			<?php

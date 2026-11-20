@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'acf_form_front' ) ) :
 	class acf_form_front {
+		use \SCF\Forms\Option_Save_Guard;
 
 		/**
 		 * An array of registered form settings.
@@ -455,8 +456,12 @@ if ( ! class_exists( 'acf_form_front' ) ) :
 			$render_id = $this->get_submitted_render_id();
 			acf_set_upload_render_ids( $render_id ? array( 'acf_form/' . $render_id ) : array() );
 
-			// save
-			acf_save_post( $post_id );
+			// Guard verified HTTP submissions without changing trusted direct calls.
+			if ( null === $submission_grant ) {
+				acf_save_post( $post_id );
+			} else {
+				$this->save_post_with_option_guard( $post_id );
+			}
 
 			// restore form (potentially modified)
 			$form = $GLOBALS['acf_form'];

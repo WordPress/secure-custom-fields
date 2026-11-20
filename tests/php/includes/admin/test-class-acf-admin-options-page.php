@@ -46,6 +46,27 @@ class Testable_ACF_Admin_Options_Page extends acf_admin_options_page {
 	public function filter_test_field_values( array $values ): array {
 		return $this->filter_options_page_field_values( $values );
 	}
+
+	/**
+	 * Saves test values through the Options Page handler.
+	 *
+	 * @param array $values Submitted ACF values.
+	 * @return bool
+	 */
+	public function save_test_values( array $values ): bool {
+		$_POST['acf'] = $this->filter_options_page_field_values( $values );
+
+		return $this->save_options_page_values();
+	}
+
+	/**
+	 * Returns whether the last save blocked any submitted values.
+	 *
+	 * @return bool
+	 */
+	public function last_save_blocked_values(): bool {
+		return $this->blocked_option_values;
+	}
 }
 
 /**
@@ -109,6 +130,8 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 		$this->options_page       = new Testable_ACF_Admin_Options_Page();
 		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG );
 
+		wp_set_current_user( 0 );
+
 		$_POST    = array();
 		$_REQUEST = array();
 	}
@@ -137,6 +160,7 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 
 		$_POST    = array();
 		$_REQUEST = array();
+		wp_set_current_user( 0 );
 
 		parent::tear_down();
 	}
@@ -446,6 +470,601 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 				)
 			)
 		);
+	}
+
+	/**
+	 * An Author cannot overwrite unowned options with array or nested scalar values.
+	 */
+	public function test_low_capability_user_cannot_adopt_or_overwrite_unowned_options() {
+		global $wp_roles;
+
+		$missing                   = new stdClass();
+		$roles_option              = 'wp_user_roles';
+		$roles_reference           = '_' . $roles_option;
+		$nested_parent_option      = 'wp_user_nested';
+		$nested_parent_reference   = '_' . $nested_parent_option;
+		$nested_canary_option      = 'wp_user_nested_canary';
+		$nested_canary_reference   = '_' . $nested_canary_option;
+		$original_roles            = get_option( $roles_option, $missing );
+		$original_roles_reference  = get_option( $roles_reference, $missing );
+		$original_nested_parent    = get_option( $nested_parent_option, $missing );
+		$original_parent_reference = get_option( $nested_parent_reference, $missing );
+		$original_canary           = get_option( $nested_canary_option, $missing );
+		$original_canary_reference = get_option( $nested_canary_reference, $missing );
+
+		try {
+			$wp_roles->for_site();
+			$role_definitions = $wp_roles->roles;
+			$crafted_roles    = array(
+				'author' => array(
+					'name'         => 'Author',
+					'capabilities' => array(
+						'read'             => 1,
+						'edit_posts'       => 1,
+						'publish_posts'    => 1,
+						'upload_files'     => 1,
+						'manage_options'   => 1,
+						'activate_plugins' => 1,
+					),
+				),
+			);
+
+			update_option( $roles_option, $role_definitions );
+			delete_option( $roles_reference );
+			update_option( $nested_canary_option, 'foreign-scalar-original' );
+			delete_option( $nested_canary_reference );
+
+			$author_id = wp_insert_user(
+				array(
+					'user_login' => 'scf_options_collision_author',
+					'user_pass'  => 'password',
+					'user_email' => 'scf-options-collision-author@example.com',
+					'role'       => 'author',
+				)
+			);
+
+			$this->assertIsInt( $author_id );
+			wp_set_current_user( $author_id );
+			$this->assertFalse( current_user_can( 'manage_options' ) );
+			$this->assertFalse( current_user_can( 'activate_plugins' ) );
+
+			$this->add_page_group(
+				'group_options_collision',
+				self::LOW_PAGE_SLUG,
+				array(
+					$this->make_text_field(
+						'field_options_collision_roles',
+						array( 'name' => 'roles' )
+					),
+					array(
+						'key'        => 'field_options_collision_nested',
+						'name'       => 'nested',
+						'label'      => 'Nested',
+						'type'       => 'group',
+						'sub_fields' => array(
+							$this->make_text_field(
+								'field_options_collision_canary',
+								array( 'name' => 'canary' )
+							),
+						),
+					),
+				)
+			);
+			$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'wp_user' );
+
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array(
+						'field_options_collision_roles'  => $crafted_roles,
+						'field_options_collision_nested' => array(
+							'field_options_collision_canary' => 'attacker-scalar',
+						),
+					)
+				)
+			);
+
+			$this->assertTrue( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( $role_definitions, get_option( $roles_option ) );
+			$this->assertSame( 'foreign-scalar-original', get_option( $nested_canary_option ) );
+			$this->assertSame( $missing, get_option( $roles_reference, $missing ) );
+			$this->assertSame( $missing, get_option( $nested_canary_reference, $missing ) );
+
+			$wp_roles->for_site();
+			wp_set_current_user( 0 );
+			wp_set_current_user( $author_id );
+			$this->assertFalse( current_user_can( 'manage_options' ) );
+			$this->assertFalse( current_user_can( 'activate_plugins' ) );
+		} finally {
+			wp_set_current_user( 0 );
+			$this->restore_test_option( $roles_option, $original_roles, $missing );
+			$this->restore_test_option( $roles_reference, $original_roles_reference, $missing );
+			$this->restore_test_option( $nested_parent_option, $original_nested_parent, $missing );
+			$this->restore_test_option( $nested_parent_reference, $original_parent_reference, $missing );
+			$this->restore_test_option( $nested_canary_option, $original_canary, $missing );
+			$this->restore_test_option( $nested_canary_reference, $original_canary_reference, $missing );
+			$wp_roles->for_site();
+		}
+	}
+
+	/**
+	 * A malformed Group value cannot delete an unowned child option.
+	 */
+	public function test_group_value_cannot_delete_unowned_child_option() {
+		$missing              = new stdClass();
+		$option_name          = 'scf_delete_storage_child';
+		$reference_name       = '_' . $option_name;
+		$parent_option        = 'scf_delete_storage';
+		$parent_reference     = '_' . $parent_option;
+		$field_key            = 'field_options_collision_delete_group';
+		$original_value       = get_option( $option_name, $missing );
+		$original_reference   = get_option( $reference_name, $missing );
+		$original_parent      = get_option( $parent_option, $missing );
+		$original_parent_meta = get_option( $parent_reference, $missing );
+
+		try {
+			update_option( $option_name, 'foreign-original' );
+			delete_option( $reference_name );
+			delete_option( $parent_option );
+			delete_option( $parent_reference );
+
+			$this->add_page_group(
+				'group_options_collision_delete',
+				self::LOW_PAGE_SLUG,
+				array(
+					array(
+						'key'        => $field_key,
+						'name'       => 'storage',
+						'label'      => 'Delete Group',
+						'type'       => 'group',
+						'sub_fields' => array(
+							$this->make_text_field(
+								'field_options_collision_delete_child',
+								array( 'name' => 'child' )
+							),
+						),
+					),
+				)
+			);
+			$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_delete' );
+
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'crafted-scalar-causes-group-delete' )
+				)
+			);
+			$this->assertSame( 'foreign-original', get_option( $option_name ) );
+			$this->assertSame( $missing, get_option( $reference_name, $missing ) );
+		} finally {
+			$this->restore_test_option( $option_name, $original_value, $missing );
+			$this->restore_test_option( $reference_name, $original_reference, $missing );
+			$this->restore_test_option( $parent_option, $original_parent, $missing );
+			$this->restore_test_option( $parent_reference, $original_parent_meta, $missing );
+		}
+	}
+
+	/**
+	 * Flexible Content cannot overwrite unowned layout metadata.
+	 */
+	public function test_flexible_content_cannot_overwrite_unowned_layout_metadata() {
+		$missing               = new stdClass();
+		$parent_option         = 'scf_flex_storage_content';
+		$parent_reference      = '_' . $parent_option;
+		$layout_meta_option    = 'scf_flex_storage__content_layout_meta';
+		$layout_meta_reference = '_' . $layout_meta_option;
+		$original_parent       = get_option( $parent_option, $missing );
+		$original_reference    = get_option( $parent_reference, $missing );
+		$original_layout_meta  = get_option( $layout_meta_option, $missing );
+		$original_layout_ref   = get_option( $layout_meta_reference, $missing );
+
+		try {
+			delete_option( $parent_option );
+			delete_option( $parent_reference );
+			update_option( $layout_meta_option, 'foreign-flex-metadata' );
+			delete_option( $layout_meta_reference );
+
+			$this->add_page_group(
+				'group_options_collision_flexible',
+				self::LOW_PAGE_SLUG,
+				array(
+					array(
+						'key'     => 'field_options_collision_flexible',
+						'name'    => 'content',
+						'label'   => 'Flexible Content',
+						'type'    => 'flexible_content',
+						'layouts' => array(),
+					),
+				)
+			);
+			$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_flex_storage' );
+
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( 'field_options_collision_flexible' => array() )
+				)
+			);
+			$this->assertSame( 'foreign-flex-metadata', get_option( $layout_meta_option ) );
+			$this->assertSame( $missing, get_option( $layout_meta_reference, $missing ) );
+			$this->assertSame( $missing, get_option( $parent_option, $missing ) );
+			$this->assertSame( $missing, get_option( $parent_reference, $missing ) );
+		} finally {
+			$this->restore_test_option( $parent_option, $original_parent, $missing );
+			$this->restore_test_option( $parent_reference, $original_reference, $missing );
+			$this->restore_test_option( $layout_meta_option, $original_layout_meta, $missing );
+			$this->restore_test_option( $layout_meta_reference, $original_layout_ref, $missing );
+		}
+	}
+
+	/**
+	 * An Author can create and then update an option in custom storage.
+	 */
+	public function test_low_capability_user_can_create_and_update_custom_storage_option() {
+		$option_name    = 'scf_custom_storage_legitimate_value';
+		$reference_name = '_' . $option_name;
+		$field_key      = 'field_custom_storage';
+
+		delete_option( $option_name );
+		delete_option( $reference_name );
+
+		$author_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_custom_storage_author',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-custom-storage-author@example.com',
+				'role'       => 'author',
+			)
+		);
+
+		$this->assertIsInt( $author_id );
+		wp_set_current_user( $author_id );
+		$this->assertFalse( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_custom_storage',
+			self::LOW_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$field_key,
+					array( 'name' => 'legitimate_value' )
+				),
+			)
+		);
+		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_custom_storage' );
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'created-value' )
+				)
+			);
+			$this->assertFalse( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( 'created-value', get_option( $option_name ) );
+			$this->assertSame( $field_key, get_option( $reference_name ) );
+
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'updated-value' )
+				)
+			);
+			$this->assertSame( 'updated-value', get_option( $option_name ) );
+			$this->assertSame( $field_key, get_option( $reference_name ) );
+		} finally {
+			delete_option( $option_name );
+			delete_option( $reference_name );
+		}
+	}
+
+	/**
+	 * An administrator can update an existing option without an ACF owner.
+	 */
+	public function test_administrator_can_update_unowned_option() {
+		$option_name    = 'scf_admin_storage_foreign_value';
+		$reference_name = '_' . $option_name;
+		$field_key      = 'field_admin_custom_storage';
+
+		update_option( $option_name, 'foreign-original' );
+		delete_option( $reference_name );
+
+		$admin_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_storage_administrator',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-storage-administrator@example.com',
+				'role'       => 'administrator',
+			)
+		);
+
+		$this->assertIsInt( $admin_id );
+		wp_set_current_user( $admin_id );
+		$this->assertTrue( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_admin_custom_storage',
+			self::LOW_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$field_key,
+					array( 'name' => 'foreign_value' )
+				),
+			)
+		);
+		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_admin_storage' );
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'administrator-update' )
+				)
+			);
+			$this->assertSame( 'administrator-update', get_option( $option_name ) );
+			$this->assertSame( $field_key, get_option( $reference_name ) );
+		} finally {
+			delete_option( $option_name );
+			delete_option( $reference_name );
+		}
+	}
+
+	/**
+	 * Default storage only produces option names that start with "options_",
+	 * so an Author can update a value there that code stored without a reference.
+	 */
+	public function test_low_capability_user_can_update_unreferenced_option_in_default_storage() {
+		$option_name    = 'options_scf_default_storage_value';
+		$reference_name = '_' . $option_name;
+		$field_key      = 'field_default_storage_value';
+
+		update_option( $option_name, 'stored-by-code' );
+		delete_option( $reference_name );
+
+		$author_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_default_storage_author',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-default-storage-author@example.com',
+				'role'       => 'author',
+			)
+		);
+
+		$this->assertIsInt( $author_id );
+		wp_set_current_user( $author_id );
+		$this->assertFalse( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_default_storage_value',
+			self::LOW_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$field_key,
+					array( 'name' => 'scf_default_storage_value' )
+				),
+			)
+		);
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'updated-value' )
+				)
+			);
+			$this->assertFalse( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( 'updated-value', get_option( $option_name ) );
+			$this->assertSame( $field_key, get_option( $reference_name ) );
+		} finally {
+			delete_option( $option_name );
+			delete_option( $reference_name );
+		}
+	}
+
+	/**
+	 * In custom storage, an option that already carries a field reference is
+	 * field storage. An Author can update it when the reference holds another
+	 * field's key, or is empty because code saved the value by field name.
+	 */
+	public function test_low_capability_user_can_update_custom_storage_option_with_field_reference() {
+		$other_key_option = 'scf_referenced_storage_other_key';
+		$by_name_option   = 'scf_referenced_storage_by_name';
+		$other_key_field  = 'field_referenced_storage_other_key';
+		$by_name_field    = 'field_referenced_storage_by_name';
+		$option_names     = array(
+			$other_key_option,
+			'_' . $other_key_option,
+			$by_name_option,
+			'_' . $by_name_option,
+		);
+
+		update_option( $other_key_option, 'stored-by-earlier-field' );
+		update_option( '_' . $other_key_option, 'field_referenced_storage_earlier' );
+		update_option( $by_name_option, 'stored-by-name' );
+		update_option( '_' . $by_name_option, '' );
+
+		$author_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_referenced_storage_author',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-referenced-storage-author@example.com',
+				'role'       => 'author',
+			)
+		);
+
+		$this->assertIsInt( $author_id );
+		wp_set_current_user( $author_id );
+		$this->assertFalse( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_referenced_storage',
+			self::LOW_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$other_key_field,
+					array( 'name' => 'other_key' )
+				),
+				$this->make_text_field(
+					$by_name_field,
+					array( 'name' => 'by_name' )
+				),
+			)
+		);
+		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_referenced_storage' );
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array(
+						$other_key_field => 'updated-other-key',
+						$by_name_field   => 'updated-by-name',
+					)
+				)
+			);
+			$this->assertFalse( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( 'updated-other-key', get_option( $other_key_option ) );
+			$this->assertSame( $other_key_field, get_option( '_' . $other_key_option ) );
+			$this->assertSame( 'updated-by-name', get_option( $by_name_option ) );
+			$this->assertSame( $by_name_field, get_option( '_' . $by_name_option ) );
+		} finally {
+			array_map( 'delete_option', $option_names );
+		}
+	}
+
+	/**
+	 * A seamless Clone saved without a field name stores nothing itself, so an
+	 * Author can still save the fields it clones.
+	 */
+	public function test_low_capability_user_can_save_nameless_seamless_clone() {
+		$option_name    = 'scf_nameless_clone_storage_cloned_value';
+		$reference_name = '_' . $option_name;
+		$source_key     = 'field_nameless_clone_source';
+		$clone_key      = 'field_nameless_clone';
+
+		delete_option( $option_name );
+		delete_option( $reference_name );
+
+		$author_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_nameless_clone_author',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-nameless-clone-author@example.com',
+				'role'       => 'author',
+			)
+		);
+
+		$this->assertIsInt( $author_id );
+		wp_set_current_user( $author_id );
+		$this->assertFalse( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_nameless_clone_source',
+			self::PROTECTED_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$source_key,
+					array( 'name' => 'cloned_value' )
+				),
+			)
+		);
+		$this->add_page_group(
+			'group_nameless_clone',
+			self::LOW_PAGE_SLUG,
+			array(
+				array(
+					'key'          => $clone_key,
+					'name'         => '',
+					'label'        => '',
+					'type'         => 'clone',
+					'display'      => 'seamless',
+					'clone'        => array( $source_key ),
+					'prefix_label' => 0,
+					'prefix_name'  => 0,
+				),
+			)
+		);
+		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_nameless_clone_storage' );
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array(
+						$clone_key => array(
+							$clone_key . '_' . $source_key => 'cloned-value',
+						),
+					)
+				)
+			);
+			$this->assertFalse( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( 'cloned-value', get_option( $option_name ) );
+			$this->assertSame( $source_key, get_option( $reference_name ) );
+		} finally {
+			delete_option( $option_name );
+			delete_option( $reference_name );
+		}
+	}
+
+	/**
+	 * Values that an acf/save_post callback saves with update_field() are not
+	 * submitted values, so the ownership check leaves them alone.
+	 */
+	public function test_values_saved_by_code_during_the_save_are_not_checked() {
+		$submitted_option = 'scf_code_save_storage_submitted';
+		$existing_option  = 'scf_code_save_storage_existing';
+		$created_option   = 'scf_code_save_storage_created';
+		$field_key        = 'field_code_save_submitted';
+		$option_names     = array(
+			$submitted_option,
+			'_' . $submitted_option,
+			$existing_option,
+			'_' . $existing_option,
+			$created_option,
+			'_' . $created_option,
+		);
+
+		array_map( 'delete_option', $option_names );
+		update_option( $existing_option, 'original' );
+
+		$author_id = wp_insert_user(
+			array(
+				'user_login' => 'scf_code_save_author',
+				'user_pass'  => 'password',
+				'user_email' => 'scf-code-save-author@example.com',
+				'role'       => 'author',
+			)
+		);
+
+		$this->assertIsInt( $author_id );
+		wp_set_current_user( $author_id );
+		$this->assertFalse( current_user_can( 'manage_options' ) );
+
+		$this->add_page_group(
+			'group_code_save',
+			self::LOW_PAGE_SLUG,
+			array(
+				$this->make_text_field(
+					$field_key,
+					array( 'name' => 'submitted' )
+				),
+			)
+		);
+		$this->options_page->page = $this->make_page( self::LOW_PAGE_SLUG, 'scf_code_save_storage' );
+
+		$this->add_test_filter(
+			'acf/save_post',
+			static function ( $post_id ) {
+				update_field( 'existing', 'updated-by-code', $post_id );
+				update_field( 'created', 'created-by-code', $post_id );
+			},
+			20
+		);
+
+		try {
+			$this->assertTrue(
+				$this->options_page->save_test_values(
+					array( $field_key => 'submitted-value' )
+				)
+			);
+			$this->assertFalse( $this->options_page->last_save_blocked_values() );
+			$this->assertSame( 'submitted-value', get_option( $submitted_option ) );
+			$this->assertSame( 'updated-by-code', get_option( $existing_option ) );
+			$this->assertSame( 'created-by-code', get_option( $created_option ) );
+		} finally {
+			array_map( 'delete_option', $option_names );
+		}
 	}
 
 	/**
@@ -769,6 +1388,21 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 
 		$this->assertSame( array( 'site-z', 'site-a', 'site-b', 'site-c' ), $site_children );
 		$this->assertSame( array( 'options-general.php', 'settings-child', 'options-writing.php', 'options-reading.php' ), $settings_children );
+	}
+
+	/**
+	 * Restores an option after a test.
+	 *
+	 * @param string $name    Option name.
+	 * @param mixed  $value   Original value, or the sentinel when the option was missing.
+	 * @param object $missing Missing-value sentinel.
+	 */
+	private function restore_test_option( $name, $value, $missing ) {
+		if ( $missing === $value ) {
+			delete_option( $name );
+		} else {
+			update_option( $name, $value );
+		}
 	}
 
 	/**

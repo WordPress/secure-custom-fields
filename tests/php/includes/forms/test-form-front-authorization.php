@@ -162,6 +162,133 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 	}
 
 	/**
+	 * An anonymous front-end form cannot overwrite protected options, even when
+	 * a matching field reference already exists.
+	 *
+	 * @return void
+	 */
+	public function test_anonymous_front_end_form_cannot_adopt_protected_option(): void {
+		$missing                 = new stdClass();
+		$role_field_key          = 'field_front_options_role';
+		$spaced_role_field_key   = 'field_front_options_spaced_role';
+		$safe_field_key          = 'field_front_options_safe';
+		$role_option             = 'default_role';
+		$role_reference          = '_' . $role_option;
+		$safe_option             = 'default_scf_front_options_safe';
+		$safe_reference          = '_' . $safe_option;
+		$original_role           = get_option( $role_option, $missing );
+		$original_role_reference = get_option( $role_reference, $missing );
+		$original_safe           = get_option( $safe_option, $missing );
+		$original_safe_reference = get_option( $safe_reference, $missing );
+
+		$this->register_text_field( $role_field_key, 'role' );
+		$this->register_text_field( $spaced_role_field_key, 'role ' );
+		$this->register_text_field( $safe_field_key, 'scf_front_options_safe' );
+
+		$form = array(
+			'id'       => 'front-options-ownership',
+			'post_id'  => 'default',
+			'fields'   => array( $role_field_key, $safe_field_key ),
+			'honeypot' => false,
+			'return'   => '',
+		);
+
+		try {
+			wp_set_current_user( 0 );
+			update_option( $role_option, 'subscriber' );
+			delete_option( $role_reference );
+			delete_option( $safe_option );
+			delete_option( $safe_reference );
+
+			$request = $this->render_request( $form );
+			$this->submit_request(
+				$request,
+				array(
+					$role_field_key => 'administrator',
+					$safe_field_key => 'first safe value',
+				)
+			);
+
+			$this->assertSame( 0, get_current_user_id() );
+			$this->assertSame( 'subscriber', get_option( $role_option ) );
+			$this->assertSame( $missing, get_option( $role_reference, $missing ) );
+			$this->assertSame( 'first safe value', get_option( $safe_option ) );
+			$this->assertSame( $safe_field_key, get_option( $safe_reference ) );
+
+			update_option( $role_reference, $spaced_role_field_key );
+			$form['fields'] = array( $spaced_role_field_key, $safe_field_key );
+			$this->assertSame( 'subscriber', get_option( 'default_role ' ) );
+			$this->assertSame( $spaced_role_field_key, get_option( '_default_role ' ) );
+
+			$request = $this->render_request( $form );
+			$this->submit_request(
+				$request,
+				array(
+					$spaced_role_field_key => 'administrator',
+					$safe_field_key        => 'updated safe value',
+				)
+			);
+
+			$this->assertSame( 'subscriber', get_option( $role_option ) );
+			$this->assertSame( $spaced_role_field_key, get_option( $role_reference ) );
+			$this->assertSame( 'updated safe value', get_option( $safe_option ) );
+			$this->assertSame( $safe_field_key, get_option( $safe_reference ) );
+		} finally {
+			$this->restore_test_option( $role_option, $original_role, $missing );
+			$this->restore_test_option( $role_reference, $original_role_reference, $missing );
+			$this->restore_test_option( $safe_option, $original_safe, $missing );
+			$this->restore_test_option( $safe_reference, $original_safe_reference, $missing );
+			wp_set_current_user( 0 );
+		}
+	}
+
+	/**
+	 * Whitespace in custom storage cannot turn a field value into another
+	 * option's ownership marker.
+	 *
+	 * @return void
+	 */
+	public function test_front_end_form_cannot_plant_option_reference_with_whitespace_storage(): void {
+		$missing                   = new stdClass();
+		$marker_field_key          = 'field_front_reference_marker';
+		$planted_field_key         = 'field_front_reference_victim';
+		$victim_option             = 'scf_front_reference_victim';
+		$victim_reference          = '_' . $victim_option;
+		$marker_reference          = '_ ' . $victim_reference;
+		$original_victim           = get_option( $victim_option, $missing );
+		$original_victim_reference = get_option( $victim_reference, $missing );
+		$original_marker_reference = get_option( $marker_reference, $missing );
+
+		$this->register_text_field( $marker_field_key, $victim_option );
+
+		$form = array(
+			'id'       => 'front-options-reference',
+			'post_id'  => ' ',
+			'fields'   => array( $marker_field_key ),
+			'honeypot' => false,
+			'return'   => '',
+		);
+
+		try {
+			wp_set_current_user( 0 );
+			update_option( $victim_option, 'foreign-original' );
+			delete_option( $victim_reference );
+			delete_option( $marker_reference );
+
+			$request = $this->render_request( $form );
+			$this->submit_request( $request, array( $marker_field_key => $planted_field_key ) );
+			$this->assertSame( 'foreign-original', get_option( $victim_option ) );
+			$this->assertSame( $missing, get_option( $victim_reference, $missing ) );
+			$this->assertSame( $missing, get_option( $marker_reference, $missing ) );
+		} finally {
+			$this->restore_test_option( $victim_option, $original_victim, $missing );
+			$this->restore_test_option( $victim_reference, $original_victim_reference, $missing );
+			$this->restore_test_option( $marker_reference, $original_marker_reference, $missing );
+			wp_set_current_user( 0 );
+		}
+	}
+
+	/**
 	 * Inline and registered new-post forms keep sensitive settings out of the
 	 * grant and still use them when creating the post.
 	 *
@@ -1706,6 +1833,22 @@ class Test_Form_Front_Authorization extends BaseTestCase {
 
 		$this->field_keys[] = $parent_key;
 		$this->field_keys[] = $child_key;
+	}
+
+	/**
+	 * Restores an option after a test.
+	 *
+	 * @param string $name    Option name.
+	 * @param mixed  $value   Original value, or the sentinel when it was missing.
+	 * @param object $missing Missing-value sentinel.
+	 * @return void
+	 */
+	private function restore_test_option( string $name, $value, object $missing ): void {
+		if ( $missing === $value ) {
+			delete_option( $name );
+		} else {
+			update_option( $name, $value );
+		}
 	}
 
 	/**

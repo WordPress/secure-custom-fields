@@ -92,6 +92,22 @@ describe( 'SCF Serialization and State Helpers', () => {
 				field_1: 'kept',
 			} );
 		} );
+
+		it( 'should not write to Object.prototype through prototype chain names', () => {
+			const $el = createFormStub( [
+				{ name: 'acf[field_1][url]', value: 'kept' },
+				{ name: 'acf[field_1][__proto__[polluted]', value: 'x' },
+				{ name: 'acf[field_1][__proto__[list][]', value: 'x' },
+				{ name: '__proto__[polluted]', value: 'x' },
+				{ name: 'acf[constructor][prototype][polluted]', value: 'x' },
+			] );
+
+			expect( acf.serialize( $el ) ).toEqual( {
+				acf: { field_1: { url: 'kept' } },
+			} );
+			expect( {}.polluted ).toBeUndefined();
+			expect( {}.list ).toBeUndefined();
+		} );
 	} );
 
 	describe( 'serializeForAjax()', () => {

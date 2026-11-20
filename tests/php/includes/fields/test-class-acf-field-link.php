@@ -393,4 +393,49 @@ class Test_ACF_Field_Link extends Abstract_ACF_Field_Test {
 		$this->assertEquals( 'https://array.com', $result['url'] );
 		$this->assertEquals( '_self', $result['target'] );
 	}
+
+	/**
+	 * Test render_field prints hidden inputs only for keys that are safe in an input name.
+	 *
+	 * The stored value can hold extra keys, and every printed key becomes part of an input name. Plain keys are kept so
+	 * they survive the next save; keys with brackets or that name a prototype property are skipped.
+	 */
+	public function test_render_field_skips_unsafe_keys() {
+		$field = $this->get_field(
+			array(
+				'id'    => 'acf-field_link_test',
+				'class' => '',
+				'name'  => 'acf[field_link_test]',
+				'value' => array(
+					'title'         => 'Example',
+					'url'           => 'https://example.com',
+					'target'        => '',
+					'__proto__[p[]' => 'x',
+					'__proto__'     => 'x',
+					'constructor'   => 'x',
+					'a]b'           => 'x',
+					'rel'           => 'nofollow',
+					'data-id'       => '7',
+				),
+			)
+		);
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$html = ob_get_clean();
+
+		preg_match_all( '/\sname="([^"]*)"/', $html, $matches );
+		$this->assertSame(
+			array(
+				'acf[field_link_test][title]',
+				'acf[field_link_test][url]',
+				'acf[field_link_test][target]',
+				'acf[field_link_test][rel]',
+				'acf[field_link_test][data-id]',
+			),
+			$matches[1]
+		);
+		$this->assertStringNotContainsString( '__proto__', $html );
+		$this->assertStringNotContainsString( 'constructor', $html );
+	}
 }

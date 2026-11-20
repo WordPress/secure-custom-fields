@@ -18,6 +18,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 	 * Class for managing options pages in the WordPress admin.
 	 */
 	class acf_admin_options_page {
+		use \SCF\Forms\Option_Save_Guard;
 
 
 		/**
@@ -26,6 +27,15 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		 * @var array Contains the current options page
 		 */
 		public $page;
+
+		/**
+		 * Whether the last options page save blocked any submitted field values.
+		 *
+		 * @since SCF 6.9.10
+		 *
+		 * @var bool
+		 */
+		protected $blocked_option_values = false;
 
 
 		/**
@@ -113,7 +123,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 					acf_update_setting( 'autoload', $this->page['autoload'] );
 
 					// save
-					acf_save_post( $this->page['post_id'] );
+					$this->save_options_page_values();
 
 					/**
 					 * Fires after publishing a save on an options page.
@@ -126,7 +136,7 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 					do_action( 'acf/options_page/save', $this->page['post_id'], $this->page['menu_slug'] );
 
 					// redirect
-					wp_safe_redirect( add_query_arg( array( 'message' => '1' ) ) );
+					wp_safe_redirect( add_query_arg( array( 'message' => $this->blocked_option_values ? '2' : '1' ) ) );
 					exit;
 				}
 			}
@@ -163,6 +173,27 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 		}
 
 
+		/**
+		 * Saves Options Page values after checking option ownership.
+		 *
+		 * Sets $blocked_option_values when a submitted value is rejected so the
+		 * save redirect can surface a warning notice.
+		 *
+		 * @since SCF 6.9.10
+		 *
+		 * @return bool
+		 */
+		protected function save_options_page_values(): bool {
+			$this->blocked_option_values = false;
+
+			return $this->save_post_with_option_guard(
+				$this->page['post_id'],
+				function () {
+					$this->blocked_option_values = true;
+				}
+			);
+		}
+
 
 		/**
 		 * This action will find and add field groups to the current edit page
@@ -178,6 +209,8 @@ if ( ! class_exists( 'acf_admin_options_page' ) ) :
 			// notices
 			if ( ! empty( $_GET['message'] ) && '1' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to display a notice.
 				acf_add_admin_notice( $this->page['updated_message'], 'success' );
+			} elseif ( ! empty( $_GET['message'] ) && '2' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to display a notice.
+				acf_add_admin_notice( __( 'Some values were not saved because they would overwrite existing site options that this page does not manage. An administrator can review and save this page to take ownership of them.', 'secure-custom-fields' ), 'warning' );
 			}
 
 			// add submit div

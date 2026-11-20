@@ -261,11 +261,18 @@ if ( ! class_exists( 'acf_form_comment' ) ) :
 		 * Saves ACF field values to a comment.
 		 *
 		 * @since ACF 5.0.0
+		 * @since SCF 6.9.10 Comment edits require permission to edit the comment.
 		 *
 		 * @param integer $comment_id The ID of the comment being saved to.
 		 * @return integer|void
 		 */
 		public function save_comment( $comment_id ) {
+			// edit_comment fires on every wp_update_comment() call. Checked before the nonce, which is single-use, so a
+			// refused save does not use it up for the save that follows in the same request.
+			if ( current_action() === 'edit_comment' && ! current_user_can( 'edit_comment', $comment_id ) ) {
+				return $comment_id;
+			}
+
 			// bail early if not valid nonce
 			if ( ! acf_verify_nonce( 'comment' ) ) {
 				return $comment_id;

@@ -196,6 +196,43 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	}
 
 	/**
+	 * Editing a comment saves nothing when the current user can't edit the comment.
+	 */
+	public function test_save_comment_edit_comment_requires_permission_to_edit_the_comment() {
+		wp_set_current_user( $this->insert_user( 'subscriber' ) );
+		$this->submit( 'comment', array( 'field_post_comment' => 'dropped' ) );
+
+		$this->run_comment_in_action( 'edit_comment' );
+
+		$this->assertNull( $this->saved_values );
+	}
+
+	/**
+	 * A user who can edit the comment saves its fields.
+	 */
+	public function test_save_comment_edit_comment_by_an_administrator_saves_fields() {
+		wp_set_current_user( $this->insert_user( 'administrator' ) );
+		$this->submit( 'comment', array( 'field_post_comment' => 'kept' ) );
+
+		$this->run_comment_in_action( 'edit_comment' );
+
+		$this->assertSame( array( 'field_post_comment' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * A refused comment edit does not use up the nonce of the save that follows it.
+	 */
+	public function test_save_comment_refused_edit_comment_keeps_the_nonce() {
+		$this->submit( 'comment', array( 'field_post_comment' => 'kept' ) );
+
+		$this->run_comment_in_action( 'edit_comment' );
+		$this->assertNull( $this->saved_values );
+
+		$this->run_comment_in_action( 'comment_post' );
+		$this->assertSame( array( 'field_post_comment' => 'kept' ), $this->saved_values );
+	}
+
+	/**
 	 * A comment that does not exist accepts no fields.
 	 */
 	public function test_save_comment_skips_save_for_missing_comment() {
@@ -392,6 +429,22 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 	}
 
 	/**
+	 * A refused profile update does not use up the nonce of the save that follows it.
+	 *
+	 * Another plugin can call wp_update_user() on a user being registered before SCF saves the
+	 * registration form, which fires profile_update for a user the visitor can't edit.
+	 */
+	public function test_save_user_refused_profile_update_keeps_the_nonce() {
+		$this->submit( 'user', array( 'field_register' => 'kept' ) );
+
+		$this->run_in_action( 'profile_update', $this->user_id );
+		$this->assertNull( $this->saved_values );
+
+		$this->run_in_action( 'user_register', $this->user_id );
+		$this->assertSame( array( 'field_register' => 'kept' ), $this->saved_values );
+	}
+
+	/**
 	 * A user who can edit other users saves their profile fields.
 	 */
 	public function test_save_user_profile_update_by_an_administrator_saves_fields() {
@@ -506,6 +559,22 @@ class Test_Form_Allowed_Field_Keys extends BaseTestCase {
 		$wp_current_filter[] = $action; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates the current action for save_user().
 		try {
 			( new ACF_Form_User() )->save_user( $user_id );
+		} finally {
+			array_pop( $wp_current_filter );
+		}
+	}
+
+	/**
+	 * Calls save_comment() as if it ran inside the given action.
+	 *
+	 * @param string $action The action name.
+	 */
+	private function run_comment_in_action( $action ) {
+		global $wp_current_filter;
+
+		$wp_current_filter[] = $action; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulates the current action for save_comment().
+		try {
+			( new acf_form_comment() )->save_comment( $this->comment_id );
 		} finally {
 			array_pop( $wp_current_filter );
 		}
