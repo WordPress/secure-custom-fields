@@ -490,6 +490,61 @@ class Test_REST_Types_Endpoint extends BaseTestCase {
 	}
 
 	/**
+	 * Test that get_scf_fields reports whether each field can be output through bindings.
+	 */
+	public function test_get_scf_fields_includes_allow_in_bindings() {
+		acf_add_local_field_group(
+			array(
+				'key'          => 'group_test_types_allow_in_bindings',
+				'title'        => 'Types Allow In Bindings',
+				'show_in_rest' => 1,
+				'active'       => true,
+				'location'     => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'post',
+						),
+					),
+				),
+				'fields'       => array(
+					array(
+						'key'               => 'field_test_types_bindings_on',
+						'label'             => 'Bindings On',
+						'name'              => 'test_types_bindings_on',
+						'type'              => 'text',
+						'allow_in_bindings' => 1,
+					),
+					array(
+						'key'               => 'field_test_types_bindings_off',
+						'label'             => 'Bindings Off',
+						'name'              => 'test_types_bindings_off',
+						'type'              => 'text',
+						'allow_in_bindings' => 0,
+					),
+				),
+			)
+		);
+		$this->login_as( 'administrator' );
+
+		$groups = $this->endpoint->get_scf_fields( array( 'slug' => 'post' ) );
+		$fields = array();
+		foreach ( $groups as $group ) {
+			foreach ( $group['fields'] as $field ) {
+				$fields[ $field['name'] ] = $field;
+			}
+		}
+
+		acf_remove_local_field_group( 'group_test_types_allow_in_bindings' );
+		acf_remove_local_field( 'field_test_types_bindings_on' );
+		acf_remove_local_field( 'field_test_types_bindings_off' );
+
+		$this->assertTrue( $fields['test_types_bindings_on']['allow_in_bindings'] );
+		$this->assertFalse( $fields['test_types_bindings_off']['allow_in_bindings'] );
+	}
+
+	/**
 	 * Test that get_scf_post_id returns the internal post ID for users who
 	 * can edit the post type definition.
 	 */

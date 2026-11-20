@@ -254,9 +254,10 @@ class SCF_Rest_Types_Endpoint {
 			if ( is_array( $fields ) ) {
 				foreach ( $fields as $field ) {
 					$group_fields[] = array(
-						'name'  => $field['name'],
-						'label' => $field['label'],
-						'type'  => $field['type'],
+						'name'              => $field['name'],
+						'label'             => $field['label'],
+						'type'              => $field['type'],
+						'allow_in_bindings' => ! isset( $field['allow_in_bindings'] ) || (bool) $field['allow_in_bindings'],
 					);
 				}
 			}
@@ -325,17 +326,21 @@ class SCF_Rest_Types_Endpoint {
 						'items'       => array(
 							'type'       => 'object',
 							'properties' => array(
-								'name'  => array(
+								'name'              => array(
 									'type'        => 'string',
 									'description' => __( 'The field name.', 'secure-custom-fields' ),
 								),
-								'label' => array(
+								'label'             => array(
 									'type'        => 'string',
 									'description' => __( 'The field label.', 'secure-custom-fields' ),
 								),
-								'type'  => array(
+								'type'              => array(
 									'type'        => 'string',
 									'description' => __( 'The field type.', 'secure-custom-fields' ),
+								),
+								'allow_in_bindings' => array(
+									'type'        => 'boolean',
+									'description' => __( 'Whether the field value can be output through Block Bindings.', 'secure-custom-fields' ),
 								),
 							),
 						),
