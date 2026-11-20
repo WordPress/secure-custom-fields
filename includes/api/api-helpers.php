@@ -5649,3 +5649,20 @@ function acf_is_multisite_main_site() {
 	}
 	return false;
 }
+
+/**
+ * Allow filterable permissions metabox callbacks.
+ *
+ * @since   SCF 6.9.10
+ *
+ * @param   boolean $enable_meta_box_cb_edit Can the current user edit metabox callbacks.
+ * @return  boolean
+ */
+function acf_settings_enable_meta_box_cb_edit( $enable_meta_box_cb_edit ): bool {
+	if ( ! is_super_admin() ) {
+		return false;
+	}
+
+	return (bool) $enable_meta_box_cb_edit;
+}
+add_filter( 'acf/settings/enable_meta_box_cb_edit', 'acf_settings_enable_meta_box_cb_edit', 1 );

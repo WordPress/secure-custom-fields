@@ -168,6 +168,10 @@ function scf_rest_sanitize_user_data( $formatted_value, $raw_value, $field ) {
 	if ( 'flexible_content' === $field['type'] ) {
 		$raw_value = is_array( $raw_value ) ? $raw_value : array();
 
+		// Resolve each row's layout the way the field formats it: by the stored
+		// layout name, with the last layout winning when names repeat.
+		$layouts = array_column( $field['layouts'] ?? array(), 'sub_fields', 'name' );
+
 		foreach ( $formatted_value as $row_index => $formatted_row ) {
 			if ( ! is_array( $formatted_row ) ) {
 				continue;
@@ -176,20 +180,15 @@ function scf_rest_sanitize_user_data( $formatted_value, $raw_value, $field ) {
 			$raw_row     = array_key_exists( $row_index, $raw_value ) && is_array( $raw_value[ $row_index ] )
 				? $raw_value[ $row_index ]
 				: array();
-			$layout_name = $formatted_row['acf_fc_layout'] ?? $raw_row['acf_fc_layout'] ?? '';
+			$layout_name = $raw_row['acf_fc_layout'] ?? '';
 
-			foreach ( $field['layouts'] ?? array() as $layout ) {
-				if ( ! isset( $layout['name'] ) || $layout_name !== $layout['name'] ) {
-					continue;
-				}
-
+			if ( isset( $layouts[ $layout_name ] ) ) {
 				$formatted_value[ $row_index ] = scf_rest_sanitize_user_sub_fields(
 					$formatted_row,
 					$raw_row,
-					$layout['sub_fields'] ?? array(),
+					$layouts[ $layout_name ],
 					'_name'
 				);
-				break;
 			}
 		}
 	}
@@ -588,6 +587,21 @@ function acf_rest_reference_is_exposable( $target_id, $field ) {
 function scf_rest_format_standard_value( $value, $post_id, $field ) {
 	$value_formatted = acf_format_value( $value, $post_id, $field );
 	$value_formatted = scf_rest_sanitize_user_data( $value_formatted, $value, $field );
+
+	// A full user object never reaches the response, whatever the field definitions say.
+	if ( $value_formatted instanceof WP_User ) {
+		$value_formatted = (int) $value_formatted->ID;
+	} elseif ( is_array( $value_formatted ) ) {
+		array_walk_recursive(
+			$value_formatted,
+			static function ( &$item ) {
+				if ( $item instanceof WP_User ) {
+					$item = (int) $item->ID;
+				}
+			}
+		);
+	}
+
 	return acf_rest_sanitize_reference_data( $value_formatted, $value, $field );
 }
 

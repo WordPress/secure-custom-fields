@@ -770,6 +770,19 @@
 	};
 
 	/**
+	 * Returns true if a serialized input name key would walk into the
+	 * prototype chain instead of the object being built.
+	 *
+	 * @param	string key The key parsed from an input name.
+	 * @return	boolean
+	 */
+	var isPrototypeKey = function ( key ) {
+		return (
+			key === '__proto__' || key === 'constructor' || key === 'prototype'
+		);
+	};
+
+	/**
 	 *  serialize
 	 *
 	 *  description
@@ -788,6 +801,9 @@
 		// vars
 		var keys = name.match( /([^\[\]])+/g );
 		if ( ! keys ) return;
+
+		// bail early if the name would reach Object.prototype (input names may be built from stored data)
+		if ( keys.some( isPrototypeKey ) ) return;
 		var length = keys.length;
 		var ref = obj;
 

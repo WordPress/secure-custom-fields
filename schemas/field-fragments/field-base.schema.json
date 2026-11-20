@@ -163,6 +163,13 @@
 				"parent_layout": {
 					"type": "string",
 					"description": "Parent layout key for flexible content sub-fields"
+				},
+				"allow_in_bindings": {
+					"type": [
+						"boolean",
+						"integer"
+					],
+					"description": "Whether the field value can be used in Block Bindings and the shortcode"
 				}
 			}
 		},

@@ -126,6 +126,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
                         },
@@ -259,6 +266,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "display_format": {
                             "type": "string",
                             "default": "d/m/Y",
@@ -370,6 +384,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "display_format": {
                             "type": "string",
                             "default": "d/m/Y g:i a",
@@ -480,6 +501,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "height": {
                             "type": "string",
@@ -595,6 +623,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "library": {
                             "type": "string",
@@ -731,6 +766,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "display_format": {
                             "type": "string",
                             "default": "g:i a",
@@ -835,6 +877,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
@@ -942,6 +991,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "default_value": {
                             "$ref": "#/definitions/default_value_numeric"
@@ -1077,6 +1133,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "placeholder": {
                             "$ref": "#/definitions/placeholder"
                         },
@@ -1180,6 +1243,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "default_value": {
                             "$ref": "#/definitions/default_value_numeric"
@@ -1315,6 +1385,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
                         },
@@ -1424,6 +1501,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
@@ -1535,6 +1619,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
                         },
@@ -1635,6 +1726,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "choices": {
                             "$ref": "#/definitions/choices"
@@ -1751,6 +1849,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "choices": {
                             "$ref": "#/definitions/choices"
@@ -1879,6 +1984,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "allow_null": {
                             "$ref": "#/definitions/allow_null"
                         },
@@ -1991,6 +2103,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "choices": {
                             "$ref": "#/definitions/choices"
@@ -2111,6 +2230,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "choices": {
                             "$ref": "#/definitions/choices"
@@ -2245,6 +2371,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "default_value": {
                             "type": "integer",
                             "default": 0,
@@ -2365,6 +2498,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "return_format": {
                             "$ref": "#/definitions/return_format_media"
                         },
@@ -2474,6 +2614,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "return_format": {
                             "$ref": "#/definitions/return_format_media"
@@ -2615,6 +2762,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "return_format": {
                             "$ref": "#/definitions/return_format_media"
                         },
@@ -2740,6 +2894,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "width": {
                             "type": "string",
                             "default": "",
@@ -2844,6 +3005,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "default_value": {
                             "$ref": "#/definitions/default_value"
@@ -2968,6 +3136,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "open": {
                             "type": "integer",
                             "default": 0,
@@ -3075,6 +3250,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "clone": {
                             "type": [
@@ -3202,6 +3384,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "layouts": {
                             "type": "array",
                             "default": [],
@@ -3323,6 +3512,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "sub_fields": {
                             "$ref": "#/definitions/sub_fields"
                         },
@@ -3424,6 +3620,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "message": {
                             "type": "string",
@@ -3540,6 +3743,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "html": {
                             "type": "boolean",
                             "default": false,
@@ -3639,6 +3849,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "sub_fields": {
                             "$ref": "#/definitions/sub_fields"
@@ -3768,6 +3985,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         }
                     },
                     "additionalProperties": false
@@ -3863,6 +4087,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "placement": {
                             "type": "string",
@@ -3976,6 +4207,13 @@
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
                         },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
+                        },
                         "return_format": {
                             "type": "string",
                             "enum": [
@@ -4079,6 +4317,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "post_type": {
                             "$ref": "#/definitions/post_type"
@@ -4191,6 +4436,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "post_type": {
                             "$ref": "#/definitions/post_type"
@@ -4315,6 +4567,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "post_type": {
                             "$ref": "#/definitions/post_type"
@@ -4448,6 +4707,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "taxonomy": {
                             "type": "string",
@@ -4592,6 +4858,13 @@
                         "parent_layout": {
                             "type": "string",
                             "description": "Parent layout key for flexible content sub-fields"
+                        },
+                        "allow_in_bindings": {
+                            "type": [
+                                "boolean",
+                                "integer"
+                            ],
+                            "description": "Whether the field value can be used in Block Bindings and the shortcode"
                         },
                         "role": {
                             "type": "string",

@@ -602,12 +602,12 @@ class Test_ACF_Rest_Api_Functions extends BaseTestCase {
 				),
 				'raw'       => array(
 					2 => array(
-						'acf_fc_layout'     => 'user_layout',
-						'field_nested_user' => $user_id,
-					),
-					7 => array(
 						'acf_fc_layout'         => 'metadata_layout',
 						'field_nested_metadata' => $formatted_lookalike,
+					),
+					7 => array(
+						'acf_fc_layout'     => 'user_layout',
+						'field_nested_user' => $user_id,
 					),
 				),
 				'expected'  => array(
@@ -632,6 +632,48 @@ class Test_ACF_Rest_Api_Functions extends BaseTestCase {
 
 			$this->assertSame( $case['expected'], $result, "Failed sanitizing {$field_type} field values." );
 		}
+	}
+
+	/**
+	 * Test standard REST formatting reduces user objects that no User field definition accounts for.
+	 */
+	public function test_format_value_for_rest_standard_format_never_returns_user_objects() {
+		$field = acf_validate_field(
+			array(
+				'key'        => 'field_test_unexpected_user_group',
+				'name'       => 'test_unexpected_user_group',
+				'type'       => 'group',
+				'sub_fields' => array(
+					acf_validate_field(
+						array(
+							'key'  => 'field_test_unexpected_user_note',
+							'name' => 'note',
+							'type' => 'text',
+						)
+					),
+				),
+			)
+		);
+
+		$return_user = static function () {
+			$user     = new WP_User();
+			$user->ID = 42;
+			return $user;
+		};
+		add_filter( 'acf/format_value/key=field_test_unexpected_user_note', $return_user );
+
+		$nested = acf_format_value_for_rest(
+			array( 'field_test_unexpected_user_note' => 'A note' ),
+			$this->test_post_id,
+			$field,
+			'standard'
+		);
+		$direct = acf_format_value_for_rest( 'A note', $this->test_post_id, $field['sub_fields'][0], 'standard' );
+
+		remove_filter( 'acf/format_value/key=field_test_unexpected_user_note', $return_user );
+
+		$this->assertSame( 42, $nested['note'] );
+		$this->assertSame( 42, $direct );
 	}
 
 	/**

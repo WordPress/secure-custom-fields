@@ -226,6 +226,36 @@ describe( 'Block Binding Sources', () => {
 			} );
 		} );
 
+		it( 'should escape placeholder values in site editor', () => {
+			fieldMetadataCache.getFieldMetadata.mockReturnValue( null );
+
+			const mockSelect = jest.fn( ( storeName ) => {
+				if ( storeName === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => 'wp_template',
+					};
+				}
+				return {};
+			} );
+
+			const values = registeredConfig.getValues( {
+				select: mockSelect,
+				context: {},
+				bindings: {
+					content: {
+						args: {
+							key: '<details open data-x_ontoggle="alert(1)">x</details>',
+						},
+					},
+				},
+			} );
+
+			expect( values.content ).not.toMatch( /</ );
+			expect( values.content ).toBe(
+				'&lt;details open data-x Ontoggle="alert(1)">x&lt;/details>'
+			);
+		} );
+
 		it( 'should return processed field values in post editor', () => {
 			const mockSelect = jest.fn( ( storeName ) => {
 				if ( storeName === 'core/editor' ) {

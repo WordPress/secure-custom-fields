@@ -1098,7 +1098,7 @@ function acf_shortcode( $atts ) {
 
 	if ( isset( $field['allow_in_bindings'] ) && ! $field['allow_in_bindings'] ) {
 		if ( is_preview() || current_user_can( $display_errors_to_user ) ) {
-			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not allowed to be output in bindings or the ACF Shortcode.', 'secure-custom-fields' ) . ']' );
+			return apply_filters( 'acf/shortcode/field_not_allowed_message', '[' . esc_html__( 'The requested ACF field is not available through Block Bindings or the ACF Shortcode. Enable "Allow Access to Value in Editor UI" for this field or set allow_in_bindings to true in the field definition.', 'secure-custom-fields' ) . ']' );
 		} else {
 			return;
 		}

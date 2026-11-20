@@ -293,11 +293,13 @@ if ( ! class_exists( 'ACF_Form_User' ) ) :
 		 * @return integer|void
 		 */
 		public function save_user( $user_id ) {
-			if ( ! acf_verify_nonce( 'user' ) ) {
+			// Checked before the nonce, which is single-use: a refused profile_update (fired by any
+			// wp_update_user() call) must not use it up for the save that follows in the same request.
+			if ( current_action() === 'profile_update' && ! current_user_can( 'edit_user', $user_id ) ) {
 				return $user_id;
 			}
 
-			if ( current_action() === 'profile_update' && ! current_user_can( 'edit_user', $user_id ) ) {
+			if ( ! acf_verify_nonce( 'user' ) ) {
 				return $user_id;
 			}
 

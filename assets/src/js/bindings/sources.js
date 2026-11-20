@@ -4,6 +4,7 @@
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
+import { escapeHTML } from '@wordpress/escape-html';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -53,9 +54,12 @@ registerBlockBindingsSource( {
 						return;
 					}
 
+					// The key comes from block markup and the placeholder is
+					// rendered as HTML by rich text attributes, so escape it.
 					const fieldMetadata = getFieldMetadata( fieldKey );
-					result[ attribute ] =
-						fieldMetadata?.label || formatFieldLabel( fieldKey );
+					result[ attribute ] = escapeHTML(
+						fieldMetadata?.label || formatFieldLabel( fieldKey )
+					);
 				}
 			);
 			return result;

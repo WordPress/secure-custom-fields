@@ -42,7 +42,7 @@
 			"description": "Internal field name used during form processing."
 		},
 		"allow_in_bindings": {
-			"type": "boolean",
+			"type": [ "boolean", "integer" ],
 			"description": "Whether the field value can be used in block bindings."
 		},
 		"fieldInternalProperties": {

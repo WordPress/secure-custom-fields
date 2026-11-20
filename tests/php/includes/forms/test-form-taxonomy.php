@@ -82,6 +82,8 @@ class Test_Form_Taxonomy extends BaseTestCase {
 
 		$_POST  = array();
 		$_FILES = array();
+		wp_set_current_user( 0 );
+		wp_cache_delete( $this->term_id, 'terms' );
 
 		global $pagenow;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Resetting globals in test tearDown.
@@ -478,6 +480,89 @@ class Test_Form_Taxonomy extends BaseTestCase {
 		$this->save_term_in_action( 'create_term', 'category' );
 
 		$this->assertSame( array( 'field_form_taxonomy_tag' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * Editing a term saves nothing when the current user can't edit the term.
+	 */
+	public function test_edit_term_requires_permission_to_edit_the_term() {
+		wp_set_current_user( $this->insert_user( 'subscriber' ) );
+		$this->prime_term();
+		$this->add_term_groups();
+		$this->submit( array( 'field_form_taxonomy_category' => 'dropped' ) );
+
+		$this->save_term_in_action( 'edit_term', 'category' );
+
+		$this->assertNull( $this->saved_values );
+	}
+
+	/**
+	 * A user who can edit the term saves its fields.
+	 */
+	public function test_edit_term_by_an_administrator_saves_fields() {
+		wp_set_current_user( $this->insert_user( 'administrator' ) );
+		$this->prime_term();
+		$this->add_term_groups();
+		$this->submit( array( 'field_form_taxonomy_category' => 'kept' ) );
+
+		$this->save_term_in_action( 'edit_term', 'category' );
+
+		$this->assertSame( array( 'field_form_taxonomy_category' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * A refused term edit does not use up the nonce of the save that follows it.
+	 */
+	public function test_refused_edit_term_keeps_the_nonce() {
+		wp_set_current_user( $this->insert_user( 'subscriber' ) );
+		$this->prime_term();
+		$this->add_term_groups();
+		$this->submit( array( 'field_form_taxonomy_category' => 'kept' ) );
+
+		$this->save_term_in_action( 'edit_term', 'category' );
+		$this->assertNull( $this->saved_values );
+
+		$this->save_term_in_action( 'create_term', 'category' );
+		$this->assertSame( array( 'field_form_taxonomy_category' => 'kept' ), $this->saved_values );
+	}
+
+	/**
+	 * Puts the test term in the object cache, so capability checks find it.
+	 *
+	 * Without it, edit_term maps to do_not_allow for every user, and a refusal would not show the role check.
+	 */
+	private function prime_term() {
+		wp_cache_set(
+			$this->term_id,
+			(object) array(
+				'term_id'          => $this->term_id,
+				'name'             => 'Allowed keys term',
+				'slug'             => 'allowed-keys-term',
+				'term_group'       => 0,
+				'term_taxonomy_id' => $this->term_id,
+				'taxonomy'         => 'category',
+				'description'      => '',
+				'parent'           => 0,
+				'count'            => 0,
+			),
+			'terms'
+		);
+	}
+
+	/**
+	 * Inserts a user with the given role.
+	 *
+	 * @param string $role The role.
+	 * @return integer The user ID.
+	 */
+	private function insert_user( $role ) {
+		return wp_insert_user(
+			array(
+				'user_login' => $role . '_' . uniqid(),
+				'user_pass'  => 'password',
+				'role'       => $role,
+			)
+		);
 	}
 
 	/**

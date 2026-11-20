@@ -657,6 +657,33 @@ if ( ! class_exists( 'ACF_Taxonomy' ) ) {
 		}
 
 		/**
+		 * Updates a taxonomy, keeping the stored meta box callbacks when the current user can't edit them.
+		 *
+		 * Local JSON sync and other trusted saves wrapped in acf_skip_internal_post_sanitization() are left as given.
+		 *
+		 * @since SCF 6.9.10
+		 *
+		 * @param array $post The ACF post array.
+		 * @return array
+		 */
+		public function update_post( $post ) {
+			if ( ! acf_get_data( 'skip_internal_post_sanitization' ) && ! acf_get_setting( 'enable_meta_box_cb_edit' ) ) {
+				$existing_post = ! empty( $post['ID'] ) ? $this->get_raw_post( $post['ID'] ) : false;
+				$existing_post = is_array( $existing_post ) ? $existing_post : array();
+
+				$post['meta_box_cb']          = ! empty( $existing_post['meta_box_cb'] ) ? (string) $existing_post['meta_box_cb'] : '';
+				$post['meta_box_sanitize_cb'] = ! empty( $existing_post['meta_box_sanitize_cb'] ) ? (string) $existing_post['meta_box_sanitize_cb'] : '';
+
+				// A custom meta box runs the callbacks, so only keep it when it was already stored.
+				if ( isset( $post['meta_box'] ) && 'custom' === $post['meta_box'] && ( empty( $existing_post['meta_box'] ) || 'custom' !== $existing_post['meta_box'] ) ) {
+					$post['meta_box'] = 'default';
+				}
+			}
+
+			return parent::update_post( $post );
+		}
+
+		/**
 		 * Imports a taxonomy from CPTUI.
 		 *
 		 * @since ACF 6.1

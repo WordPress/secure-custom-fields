@@ -67,18 +67,20 @@ class Test_Blocks_Bindings extends BaseTestCase {
 				'title'    => 'Bindings Test Fields',
 				'fields'   => array(
 					array(
-						'key'   => 'field_bindings_text',
-						'name'  => 'bindings_text',
-						'label' => 'Text',
-						'type'  => 'text',
+						'key'               => 'field_bindings_text',
+						'name'              => 'bindings_text',
+						'label'             => 'Text',
+						'type'              => 'text',
+						'allow_in_bindings' => true,
 					),
 					array(
-						'key'      => 'field_bindings_select',
-						'name'     => 'bindings_select',
-						'label'    => 'Select',
-						'type'     => 'select',
-						'multiple' => 1,
-						'choices'  => array(
+						'key'               => 'field_bindings_select',
+						'name'              => 'bindings_select',
+						'label'             => 'Select',
+						'type'              => 'select',
+						'allow_in_bindings' => true,
+						'multiple'          => 1,
+						'choices'           => array(
 							'a' => 'Alpha',
 							'b' => 'Beta',
 						),
@@ -91,19 +93,27 @@ class Test_Blocks_Bindings extends BaseTestCase {
 						'allow_in_bindings' => false,
 					),
 					array(
-						'key'           => 'field_bindings_relationship',
-						'name'          => 'bindings_relationship',
-						'label'         => 'Relationship',
-						'type'          => 'relationship',
-						'post_type'     => array( 'post' ),
-						'return_format' => 'object',
+						'key'               => 'field_bindings_relationship',
+						'name'              => 'bindings_relationship',
+						'label'             => 'Relationship',
+						'type'              => 'relationship',
+						'allow_in_bindings' => true,
+						'post_type'         => array( 'post' ),
+						'return_format'     => 'object',
 					),
 					array(
-						'key'        => 'field_bindings_group',
-						'name'       => 'bindings_group',
-						'label'      => 'Group',
-						'type'       => 'group',
-						'sub_fields' => array(
+						'key'   => 'field_bindings_no_flag',
+						'name'  => 'bindings_no_flag',
+						'label' => 'Text Without Flag',
+						'type'  => 'text',
+					),
+					array(
+						'key'               => 'field_bindings_group',
+						'name'              => 'bindings_group',
+						'label'             => 'Group',
+						'type'              => 'group',
+						'allow_in_bindings' => true,
+						'sub_fields'        => array(
 							array(
 								'key'   => 'field_bindings_group_inner',
 								'name'  => 'inner',
@@ -144,7 +154,7 @@ class Test_Blocks_Bindings extends BaseTestCase {
 		}
 
 		acf_remove_local_field_group( 'group_blocks_bindings' );
-		foreach ( array( 'field_bindings_text', 'field_bindings_select', 'field_bindings_private', 'field_bindings_relationship', 'field_bindings_group', 'field_bindings_group_inner' ) as $key ) {
+		foreach ( array( 'field_bindings_text', 'field_bindings_select', 'field_bindings_private', 'field_bindings_relationship', 'field_bindings_no_flag', 'field_bindings_group', 'field_bindings_group_inner' ) as $key ) {
 			acf_remove_local_field( $key );
 		}
 
@@ -417,6 +427,33 @@ class Test_Blocks_Bindings extends BaseTestCase {
 			'',
 			$bindings->get_value( array( 'key' => 'field_bindings_private' ), $block, 'content' )
 		);
+	}
+
+	/**
+	 * Test that local fields without allow_in_bindings return nothing on the front end.
+	 */
+	public function test_get_value_defaults_local_fields_to_disallowed() {
+		update_field( 'bindings_no_flag', 'Blocked value', $this->post_id );
+		acf_get_store( 'values' )->reset();
+
+		$bindings = $this->register_source();
+		$block    = $this->get_block_instance();
+
+		$this->assertSame(
+			'',
+			$bindings->get_value( array( 'key' => 'field_bindings_no_flag' ), $block, 'content' )
+		);
+
+		$was_preview                     = $GLOBALS['wp_query']->is_preview;
+		$GLOBALS['wp_query']->is_preview = true;
+
+		try {
+			$message = $bindings->get_value( array( 'key' => 'field_bindings_no_flag' ), $block, 'content' );
+			$this->assertStringContainsString( 'Allow Access to Value in Editor UI', $message );
+			$this->assertStringContainsString( 'allow_in_bindings', $message );
+		} finally {
+			$GLOBALS['wp_query']->is_preview = $was_preview;
+		}
 	}
 
 	/**

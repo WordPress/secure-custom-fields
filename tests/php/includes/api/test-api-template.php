@@ -24,12 +24,21 @@ class Test_API_Template extends BaseTestCase {
 	private $post_id;
 
 	/**
+	 * Original enable_shortcode setting.
+	 *
+	 * @var bool
+	 */
+	private $original_enable_shortcode;
+
+	/**
 	 * Set up test fixtures.
 	 */
 	public function set_up() {
 		parent::set_up();
 
 		$this->ensure_field_type_filters();
+		$this->original_enable_shortcode = acf_get_setting( 'enable_shortcode' );
+		acf_update_setting( 'enable_shortcode', true );
 
 		$this->post_id = wp_insert_post(
 			array(
@@ -90,6 +99,26 @@ class Test_API_Template extends BaseTestCase {
 							),
 						),
 					),
+					array(
+						'key'   => 'field_tmpl_shortcode_local',
+						'name'  => 'tmpl_shortcode_local',
+						'label' => 'Local Shortcode Text',
+						'type'  => 'text',
+					),
+					array(
+						'key'               => 'field_tmpl_shortcode_allowed',
+						'name'              => 'tmpl_shortcode_allowed',
+						'label'             => 'Allowed Shortcode Text',
+						'type'              => 'text',
+						'allow_in_bindings' => true,
+					),
+					array(
+						'key'               => 'field_tmpl_shortcode_blocked',
+						'name'              => 'tmpl_shortcode_blocked',
+						'label'             => 'Blocked Shortcode Text',
+						'type'              => 'text',
+						'allow_in_bindings' => false,
+					),
 				),
 				'location' => array(),
 			)
@@ -103,6 +132,7 @@ class Test_API_Template extends BaseTestCase {
 	 * Clean up test data.
 	 */
 	public function tear_down() {
+		acf_update_setting( 'enable_shortcode', $this->original_enable_shortcode );
 		acf_get_store( 'values' )->reset();
 		acf()->loop->loops = array();
 		parent::tear_down();
@@ -673,6 +703,91 @@ class Test_API_Template extends BaseTestCase {
 
 		$this->assertSame( 'post value', get_field( 'tmpl_text', $this->post_id ) );
 		$this->assertSame( 'option value', get_field( 'tmpl_text', 'options' ) );
+	}
+
+	// =========================================================================
+	// ACF shortcode
+	// =========================================================================
+
+	/**
+	 * Test local fields without allow_in_bindings are blocked for Options.
+	 */
+	public function test_shortcode_blocks_local_field_without_allow_in_bindings_for_options() {
+		update_field( 'field_tmpl_shortcode_local', 'local option marker', 'options' );
+		acf_get_store( 'values' )->reset();
+
+		$this->assertSame( '', do_shortcode( '[acf field="field_tmpl_shortcode_local" post_id="options"]' ) );
+
+		$admin_id = wp_insert_user(
+			array(
+				'user_login' => 'tmpl_shortcode_admin_' . uniqid(),
+				'user_pass'  => 'password',
+				'user_email' => uniqid() . '@example.com',
+				'role'       => 'administrator',
+			)
+		);
+
+		try {
+			wp_set_current_user( $admin_id );
+
+			$message = do_shortcode( '[acf field="field_tmpl_shortcode_local" post_id="options"]' );
+			$this->assertStringContainsString( 'Allow Access to Value in Editor UI', $message );
+			$this->assertStringContainsString( 'allow_in_bindings', $message );
+		} finally {
+			wp_set_current_user( 0 );
+			wp_delete_user( $admin_id );
+		}
+	}
+
+	/**
+	 * Test persisted legacy fields without allow_in_bindings remain compatible.
+	 */
+	public function test_shortcode_allows_persisted_legacy_field_without_allow_in_bindings_for_options() {
+		$field_key  = 'field_tmpl_shortcode_legacy_' . uniqid();
+		$field_name = 'tmpl_shortcode_legacy_' . uniqid();
+		$field_id   = wp_insert_post(
+			array(
+				'post_type'    => 'acf-field',
+				'post_title'   => 'Legacy Shortcode Text',
+				'post_name'    => $field_key,
+				'post_excerpt' => $field_name,
+				'post_status'  => 'publish',
+				'post_content' => maybe_serialize( array( 'type' => 'text' ) ),
+			)
+		);
+
+		try {
+			$field = acf_get_field( $field_id );
+			$this->assertGreaterThan( 0, $field['ID'] );
+			$this->assertArrayNotHasKey( 'allow_in_bindings', $field );
+
+			update_field( $field_key, 'legacy option marker', 'options' );
+			acf_get_store( 'values' )->reset();
+
+			$this->assertSame( 'legacy option marker', do_shortcode( sprintf( '[acf field="%s" post_id="options"]', $field_key ) ) );
+		} finally {
+			wp_delete_post( $field_id, true );
+		}
+	}
+
+	/**
+	 * Test fields explicitly allowed in bindings are available for Options.
+	 */
+	public function test_shortcode_allows_field_with_allow_in_bindings_true_for_options() {
+		update_field( 'field_tmpl_shortcode_allowed', 'allowed option marker', 'options' );
+		acf_get_store( 'values' )->reset();
+
+		$this->assertSame( 'allowed option marker', do_shortcode( '[acf field="field_tmpl_shortcode_allowed" post_id="options"]' ) );
+	}
+
+	/**
+	 * Test fields explicitly disallowed in bindings are blocked for Options.
+	 */
+	public function test_shortcode_blocks_field_with_allow_in_bindings_false_for_options() {
+		update_field( 'field_tmpl_shortcode_blocked', 'blocked option marker', 'options' );
+		acf_get_store( 'values' )->reset();
+
+		$this->assertSame( '', do_shortcode( '[acf field="field_tmpl_shortcode_blocked" post_id="options"]' ) );
 	}
 
 	// =========================================================================

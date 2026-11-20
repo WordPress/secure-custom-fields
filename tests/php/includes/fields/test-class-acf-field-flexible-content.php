@@ -270,6 +270,32 @@ class Test_ACF_Field_Flexible_Content extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test load_value skips rows whose stored key is not a row number.
+	 *
+	 * SCF only stores the row numbers 0, 1, 2 and so on, but the meta can be written by other code. The row key ends up in
+	 * input names and in the meta names sub field values are read from.
+	 */
+	public function test_load_value_skips_rows_with_non_integer_keys() {
+		$field = $this->get_field();
+
+		$result = $this->field_instance->load_value(
+			array(
+				0      => 'text_block',
+				'%1$s' => 'text_block',
+				'row'  => 'image_block',
+				-1     => 'text_block',
+				1      => 'image_block',
+			),
+			$this->post_id,
+			$field
+		);
+
+		$this->assertSame( array( 0, 1 ), array_keys( $result ) );
+		$this->assertSame( 'text_block', $result[0]['acf_fc_layout'] );
+		$this->assertSame( 'image_block', $result[1]['acf_fc_layout'] );
+	}
+
+	/**
 	 * Test load_value handles false value.
 	 */
 	public function test_load_value_handles_false() {

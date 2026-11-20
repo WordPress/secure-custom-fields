@@ -312,4 +312,27 @@ class Test_ACF_Field_Wysiwyg extends Abstract_ACF_Field_Test {
 
 		$this->assertSame( 0, $result );
 	}
+
+	/**
+	 * Test render_field does not interpret the input name as a format string.
+	 *
+	 * The name of a sub field contains the row key of its parent, which is read from the stored value.
+	 */
+	public function test_render_field_name_is_not_a_format_string() {
+		$field = $this->get_field(
+			array(
+				'id'           => 'acf-test_wysiwyg',
+				'name'         => 'acf[field_sections][row-%1$s][field_body]',
+				'value'        => '" onfocus="alert(1)" data-x="',
+				'media_upload' => 0,
+			)
+		);
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$html = ob_get_clean();
+
+		$this->assertMatchesRegularExpression( '/<textarea [^>]*name="acf\[field_sections\]\[row-%1\$s\]\[field_body\]" style="height:300px;">" onfocus="alert\(1\)" data-x="<\/textarea>/', $html );
+		$this->assertDoesNotMatchRegularExpression( '/<textarea [^>]*onfocus/', $html );
+	}
 }
