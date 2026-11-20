@@ -17,6 +17,12 @@ global.acf = {
 		};
 		return translations[ key ] || key;
 	} ),
+	// Decodes HTML entities like acf.decode() in _acf.js.
+	decode: jest.fn( ( string ) => {
+		const textarea = document.createElement( 'textarea' );
+		textarea.innerHTML = string;
+		return textarea.value;
+	} ),
 };
 
 describe( 'BlockPlaceholder Component', () => {
@@ -163,6 +169,81 @@ describe( 'BlockPlaceholder Component', () => {
 				screen.getByTestId( 'placeholder-label' )
 			).toHaveTextContent( label );
 			unmount();
+		} );
+	} );
+	describe( 'placeholder button text', () => {
+		test( 'renders custom button text decoded as plain text', () => {
+			render(
+				<BlockPlaceholder
+					blockLabel="Test Block"
+					setBlockFormModalOpen={ jest.fn() }
+					buttonText={ 'Edit &amp; Configure &lt;b&gt;' }
+				/>
+			);
+
+			const button = screen.getByRole( 'button' );
+			expect( button ).toHaveTextContent( 'Edit & Configure <b>' );
+			expect( button.querySelector( 'b' ) ).toBeNull();
+			expect( global.acf.decode ).toHaveBeenCalledWith(
+				'Edit &amp; Configure &lt;b&gt;'
+			);
+			expect( global.acf.__ ).not.toHaveBeenCalledWith( 'Edit Block' );
+		} );
+
+		test( 'falls back to Edit Block for empty button text', () => {
+			render(
+				<BlockPlaceholder
+					blockLabel="Test Block"
+					setBlockFormModalOpen={ jest.fn() }
+					buttonText=""
+				/>
+			);
+
+			expect( screen.getByRole( 'button' ) ).toHaveTextContent(
+				'Edit Block'
+			);
+		} );
+	} );
+
+	describe( 'placeholder block icon', () => {
+		const customIcon = <svg data-testid="custom-icon" />;
+
+		test( 'renders an element icon', () => {
+			render(
+				<BlockPlaceholder
+					blockLabel="Test Block"
+					setBlockFormModalOpen={ jest.fn() }
+					blockIcon={ customIcon }
+				/>
+			);
+
+			expect( screen.getByTestId( 'custom-icon' ) ).toBeInTheDocument();
+		} );
+
+		test( 'renders an icon wrapped in an object with a src key', () => {
+			render(
+				<BlockPlaceholder
+					blockLabel="Test Block"
+					setBlockFormModalOpen={ jest.fn() }
+					blockIcon={ { src: customIcon } }
+				/>
+			);
+
+			expect( screen.getByTestId( 'custom-icon' ) ).toBeInTheDocument();
+		} );
+
+		test( 'falls back to the default icon for string icons', () => {
+			render(
+				<BlockPlaceholder
+					blockLabel="Test Block"
+					setBlockFormModalOpen={ jest.fn() }
+					blockIcon="admin-comments"
+				/>
+			);
+
+			const icon = screen.getByTestId( 'icon' );
+			expect( icon ).not.toHaveTextContent( 'admin-comments' );
+			expect( icon.querySelector( 'svg' ) ).not.toBeNull();
 		} );
 	} );
 } );

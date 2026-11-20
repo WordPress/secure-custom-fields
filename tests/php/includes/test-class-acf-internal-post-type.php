@@ -297,4 +297,62 @@ class Test_ACF_Internal_Post_Type extends BaseTestCase {
 			'Post type key should not start with group_ prefix'
 		);
 	}
+
+	/**
+	 * Data provider for invalid acf/load_{$post_type} filter results.
+	 *
+	 * @return array
+	 */
+	public function invalid_load_filter_result_provider() {
+		return array(
+			'false'           => array( false ),
+			'string'          => array( 'not a post' ),
+			'missing key'     => array( array( 'ID' => 1 ) ),
+			'missing ID'      => array( array( 'key' => 'post_type_invalid' ) ),
+			'array key'       => array(
+				array(
+					'key' => array( 'post_type_invalid' ),
+					'ID'  => 1,
+				),
+			),
+			'object ID'       => array(
+				array(
+					'key' => 'post_type_invalid',
+					'ID'  => new stdClass(),
+				),
+			),
+			'null key and ID' => array(
+				array(
+					'key' => null,
+					'ID'  => null,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Test get_post() returns false, without storing it, when acf/load_{$post_type} returns an invalid post.
+	 *
+	 * @dataProvider invalid_load_filter_result_provider
+	 *
+	 * @param mixed $filtered The value returned by the filter.
+	 */
+	public function test_get_post_returns_false_for_invalid_load_filter_result( $filtered ) {
+		acf_get_store( $this->post_type->store )->reset();
+
+		$filter = static function () use ( $filtered ) {
+			return $filtered;
+		};
+		add_filter( 'acf/load_post_type', $filter );
+
+		$result = $this->post_type->get_post( $this->post_type_id );
+
+		remove_filter( 'acf/load_post_type', $filter );
+
+		$this->assertFalse( $result );
+		$this->assertFalse( acf_get_store( $this->post_type->store )->has( $this->post_type_id ) );
+
+		$this->assertIsArray( $this->post_type->get_post( $this->post_type_id ), 'A valid post should still load once the filter is removed' );
+		acf_get_store( $this->post_type->store )->reset();
+	}
 }

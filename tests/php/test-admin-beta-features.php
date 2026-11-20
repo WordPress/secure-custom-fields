@@ -84,38 +84,19 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 	}
 
 	/**
-	 * Test beta feature admin menu integration.
+	 * The Beta Features admin page is gone, but beta features still reach the block editor.
 	 */
-	public function test_beta_feature_admin_menu() {
-		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
-
-		// Use a reflection to check if the admin_menu method exists.
-		$reflection = new ReflectionClass( $this->beta_features );
-		$this->assertTrue( $reflection->hasMethod( 'admin_menu' ), 'Admin menu method should exist' );
-
-		// In a real WordPress environment, the admin_menu method would be hooked to the admin_menu action
-		// For testing purposes, we'll just verify the method exists and is callable
-		$this->assertTrue( is_callable( array( $this->beta_features, 'admin_menu' ) ) );
+	public function test_beta_features_page_removed_and_script_hooked() {
+		$this->assertFalse( has_action( 'admin_menu', array( $this->beta_features, 'admin_menu' ) ) );
+		$this->assertFalse( method_exists( $this->beta_features, 'check_submit' ) );
+		$this->assertSame( 20, has_action( 'admin_enqueue_scripts', array( $this->beta_features, 'add_beta_features_script' ) ) );
 	}
 
 	/**
-	 * Test beta feature form submission.
+	 * The beta features URL now points to the Settings page.
 	 */
-	public function test_beta_feature_form_submission() {
-
-		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
-
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
-
-		$this->assertFalse( $beta_feature->is_enabled() );
-
-		$_POST['scf_beta_features_nonce'] = wp_create_nonce( 'scf_beta_features_update' );
-		$_POST['scf_beta_features']       = array( 'editor_sidebar' => '1' );
-
-		$this->beta_features->check_submit();
-
-		$this->assertTrue( $beta_feature->is_enabled() );
-		$this->assertTrue( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
+	public function test_beta_features_url_points_to_settings_page() {
+		$this->assertStringContainsString( 'page=acf-settings-tab-general', scf_get_admin_beta_features_url() );
 	}
 
 	/**
@@ -131,25 +112,6 @@ class SCF_Admin_Beta_Features_Test extends BaseTestCase {
 
 		$beta_feature->cleanup();
 
-		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
-	}
-
-	/**
-	 * Test beta feature nonce verification.
-	 */
-	public function test_beta_feature_nonce_verification() {
-		$this->beta_features->register_beta_feature( 'SCF_Admin_Beta_Feature_Editor_Sidebar' );
-
-		$beta_feature = $this->beta_features->get_beta_feature( 'editor_sidebar' );
-
-		$this->assertFalse( $beta_feature->is_enabled() );
-
-		$_POST['scf_beta_features_nonce'] = 'invalid_nonce';
-		$_POST['scf_beta_features']       = array( 'editor_sidebar' => '1' );
-
-		$this->beta_features->check_submit();
-
-		$this->assertFalse( $beta_feature->is_enabled() );
 		$this->assertFalse( get_option( 'scf_beta_feature_editor_sidebar_enabled' ) );
 	}
 }

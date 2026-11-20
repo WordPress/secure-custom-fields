@@ -1,0 +1,242 @@
+// Settings page (@wordpress/components). The header bar and page margins come from SCF's global admin styles.
+@use 'variables' as *;
+
+$scf-settings-border: #e2e6e8;
+$scf-settings-label-bg: #fafbfc;
+$scf-settings-text: #2e3538;
+$scf-settings-muted: #435056;
+
+.scf-settings-wrap {
+	box-sizing: border-box;
+	max-width: 1280px;
+}
+
+.scf-settings {
+	color: $scf-settings-text;
+}
+
+// Tab bar, styled like SCF's other tab groups.
+.scf-settings-tabs .components-tab-panel__tabs {
+	display: flex;
+	align-items: stretch;
+	min-height: 48px;
+	margin-bottom: 24px;
+	border-bottom: 1px solid $gray-200;
+
+	.components-tab-panel__tabs-item {
+		box-sizing: border-box;
+		height: auto;
+		min-height: 48px;
+		margin-right: 24px;
+		padding: 3px 0 0;
+		border-bottom: 3px solid transparent;
+		border-radius: 0;
+		background: none;
+		box-shadow: none;
+		color: $gray-500;
+		font-size: 12.5px;
+		font-weight: normal;
+
+		// Replace the component's own underline with SCF's.
+		&::after {
+			display: none;
+		}
+
+		&:hover {
+			color: $gray-800;
+		}
+
+		&:focus-visible {
+			outline: 1px solid #5897fb;
+		}
+
+		&.is-active {
+			border-bottom-color: $color-primary;
+			color: $blue-500;
+		}
+	}
+}
+
+.scf-settings-tab-count {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 0 6px;
+	border-radius: 10px;
+	background: $gray-100;
+	color: $gray-600;
+	font-size: 11px;
+	line-height: 18px;
+}
+
+.scf-settings-tab-content,
+.scf-settings-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+// Section card.
+.scf-settings-section {
+	box-sizing: border-box;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 12px;
+	background: #fff;
+	box-shadow:
+		0 5px 8px rgba(0, 0, 0, 0.05),
+		0 2px 4px rgba(0, 0, 0, 0.02),
+		0 0 0 1px rgba(0, 0, 0, 0.08);
+
+	// Matches SCF's postbox headers.
+	&__header {
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		min-height: 64px;
+		padding: 0 24px;
+		border-bottom: 1px solid $scf-settings-border;
+	}
+
+	.scf-settings-section__title {
+		margin: 0;
+		padding: 0;
+		color: $gray-700;
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.4;
+	}
+}
+
+// Row: fixed label column + flexible content column.
+.scf-settings-row {
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	width: 100%;
+	border-bottom: 1px solid $scf-settings-border;
+	container-type: inline-size;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&__label {
+		box-sizing: border-box;
+		display: flex;
+		flex: none;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 8px;
+		width: 320px;
+		padding: 24px;
+		border-right: 1px solid $scf-settings-border;
+		background: $scf-settings-label-bg;
+	}
+
+	&__title {
+		color: $scf-settings-text;
+		font-size: 14px;
+		line-height: 16px;
+	}
+
+	&__content {
+		box-sizing: border-box;
+		display: flex;
+		flex: 1 1 0;
+		gap: 12px;
+		min-width: 0;
+		padding: 24px;
+
+		&.is-toggle {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		&.is-input {
+			flex-direction: column;
+			align-items: stretch;
+			justify-content: center;
+
+			.scf-settings-row__control {
+				max-width: 400px;
+			}
+		}
+	}
+
+	&__control {
+		flex: none;
+
+		.components-toggle-control .components-base-control__field {
+			margin: 0;
+		}
+	}
+
+	&__help {
+		max-width: 640px;
+		color: $scf-settings-muted;
+		font-size: 14px;
+		line-height: 20px;
+
+		.components-external-link {
+			white-space: nowrap;
+		}
+	}
+
+	&__badges {
+		margin-top: 8px;
+	}
+}
+
+// Stack the label above the content in narrow rows.
+@container (max-width: 600px) {
+	.scf-settings-row__label {
+		width: 100%;
+		border-right: none;
+		border-bottom: 1px solid $scf-settings-border;
+	}
+
+	.scf-settings-row__content {
+		flex-basis: 100%;
+	}
+}
+
+.scf-settings-badge {
+	display: inline-block;
+	padding: 0 8px;
+	border-radius: 4px;
+	background: #f0f0f0;
+	color: #1e1e1e;
+	font-size: 12px;
+	line-height: 20px;
+
+	&.is-warning {
+		background: #fcf9e8;
+		color: #614200;
+	}
+}
+
+.scf-settings-badge-trigger {
+	display: inline-block;
+	border-radius: 4px;
+
+	&:focus-visible {
+		outline: 2px solid $color-primary;
+		outline-offset: 1px;
+	}
+}
+
+.scf-settings-snackbars {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	left: auto;
+	width: auto;
+	z-index: 100000;
+}
+
+// The header Save button is hidden until the app knows the tab has fields to save.
+#acf-settings-save[hidden] {
+	display: none;
+}

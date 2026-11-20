@@ -451,6 +451,53 @@ describe( 'BlockForm Change Detection', () => {
 	} );
 } );
 
+describe( 'BlockForm default values', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	const renderForm = ( attributes, onChange ) =>
+		render(
+			<BlockForm
+				$={ mockJQuery }
+				clientId="test-client-id"
+				blockFormHtml="<div>Form</div>"
+				onMount={ jest.fn() }
+				onChange={ onChange }
+				validationErrors={ null }
+				showValidationErrors={ false }
+				acfFormRef={ { current: document.createElement( 'div' ) } }
+				userHasInteractedWithForm={ false }
+				attributes={ attributes }
+				hideFieldsInSidebar={ false }
+			/>
+		);
+
+	test( 'saves default field values on mount when the block has no data', () => {
+		const onChange = jest.fn();
+		renderForm( { name: 'acf/test-block', data: {} }, onChange );
+
+		expect( onChange ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'saves default field values on mount when data is missing', () => {
+		const onChange = jest.fn();
+		renderForm( { name: 'acf/test-block' }, onChange );
+
+		expect( onChange ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'does not save on mount when the block already has data', () => {
+		const onChange = jest.fn();
+		renderForm(
+			{ name: 'acf/test-block', data: { field_1: 'Saved' } },
+			onChange
+		);
+
+		expect( onChange ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'BlockForm Attribute Handling', () => {
 	test( 'passes attributes to form context', () => {
 		const attributes = {

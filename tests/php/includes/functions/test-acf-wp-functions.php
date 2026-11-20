@@ -544,4 +544,64 @@ class Test_ACF_WP_Functions extends BaseTestCase {
 
 		$this->assertNull( $result, 'Should return null for null input' );
 	}
+
+	/**
+	 * Passing a post object to wp_insert_post() for an internal post type doesn't cause a fatal error.
+	 */
+	public function test_wp_insert_post_accepts_internal_post_object() {
+		$content = wp_slash( serialize( array( 'type' => 'text' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+		$post_id = acf_insert_or_update_internal_post(
+			array(
+				'post_type'    => 'acf-field',
+				'post_status'  => 'publish',
+				'post_title'   => 'Object field',
+				'post_content' => $content,
+			)
+		);
+		$this->assertIsInt( $post_id );
+		$this->assertGreaterThan( 0, $post_id );
+
+		$post             = get_post( $post_id );
+		$post->post_title = 'Object field updated';
+
+		$this->assertSame( $post_id, wp_insert_post( $post ) );
+		$this->assertSame( 'Object field updated', get_post_field( 'post_title', $post_id ) );
+
+		$new_id = wp_insert_post(
+			(object) array(
+				'post_type'    => 'acf-field',
+				'post_status'  => 'publish',
+				'post_title'   => 'New object field',
+				'post_content' => $content,
+			)
+		);
+		$this->assertIsInt( $new_id );
+		$this->assertGreaterThan( 0, $new_id );
+
+		wp_delete_post( $post_id, true );
+		wp_delete_post( $new_id, true );
+	}
+
+	/**
+	 * Content saved through acf_insert_or_update_internal_post() is still stored exactly as given.
+	 */
+	public function test_preserve_internal_post_content_with_array_and_object() {
+		$content = wp_slash( serialize( array( 'instructions' => 'A &amp; B <em>x</em>' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+		$data    = array(
+			'post_type'    => 'acf-field',
+			'post_content' => 'filtered',
+		);
+
+		acf_set_data( 'saving_internal_post_content', $content );
+
+		$from_array  = _acf_preserve_internal_post_content( $data, array(), array( 'post_content' => $content ) );
+		$from_object = _acf_preserve_internal_post_content( $data, array(), (object) array( 'post_content' => $content ) );
+		$no_content  = _acf_preserve_internal_post_content( $data, array(), (object) array() );
+
+		acf_set_data( 'saving_internal_post_content', null );
+
+		$this->assertSame( $content, $from_array['post_content'] );
+		$this->assertSame( $content, $from_object['post_content'] );
+		$this->assertSame( 'filtered', $no_content['post_content'] );
+	}
 }

@@ -584,6 +584,33 @@ class Test_ACF_Revisions extends BaseTestCase {
 	}
 
 	/**
+	 * Test that reading a field before the main query is set up doesn't call is_preview(), which
+	 * would trigger a "called incorrectly" notice.
+	 */
+	public function test_validate_post_id_before_main_query_is_set_up() {
+		wp_save_post_revision( $this->post_id );
+		$this->set_current_user_role( 'administrator' );
+		$this->start_preview();
+
+		$wp_query = $GLOBALS['wp_query'];
+		unset( $GLOBALS['wp_query'] );
+
+		$doing_it_wrong = array();
+		$record         = static function ( $function_name ) use ( &$doing_it_wrong ) {
+			$doing_it_wrong[] = $function_name;
+		};
+		add_action( 'doing_it_wrong_run', $record );
+
+		$result = acf()->revisions->acf_validate_post_id( $this->post_id, $this->post_id );
+
+		remove_action( 'doing_it_wrong_run', $record );
+		$GLOBALS['wp_query'] = $wp_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring the main query.
+
+		$this->assertEquals( $this->post_id, $result );
+		$this->assertSame( array(), $doing_it_wrong );
+	}
+
+	/**
 	 * Puts the main query into a preview context for the test post.
 	 */
 	private function start_preview() {

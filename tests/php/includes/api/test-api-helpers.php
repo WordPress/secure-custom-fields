@@ -329,4 +329,60 @@ class Test_API_Helpers extends BaseTestCase {
 
 		$this->assertSame( '(no title)', acf_get_term_title( $term ) );
 	}
+
+	// =========================================================================
+	// _acf_get_stored_post_ids_snapshot()
+	// =========================================================================
+
+	/**
+	 * Test the snapshot skips `_` prefixed meta that isn't a field key reference, such as another plugin's array.
+	 */
+	public function test_stored_post_ids_snapshot_skips_non_field_key_references() {
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Snapshot post',
+				'post_status' => 'publish',
+			)
+		);
+
+		acf_add_local_field(
+			array(
+				'key'  => 'field_snapshot_relationship',
+				'name' => 'snapshot_relationship',
+				'type' => 'relationship',
+			)
+		);
+
+		// The test datastore can't list all of a post's meta, so supply it as acf_get_meta() would return it.
+		$meta = static function () {
+			return array(
+				'snapshot_relationship'  => array( '12', '34' ),
+				'_snapshot_relationship' => 'field_snapshot_relationship',
+				'other_plugin_data'      => 'value',
+				'_other_plugin_data'     => array( 'not' => 'a field key' ),
+				'other_plugin_string'    => 'value',
+				'_other_plugin_string'   => 'not_a_field_key',
+			);
+		};
+		add_filter( 'acf/pre_load_meta', $meta );
+
+		acf_set_data( 'acf_stored_post_ids_snapshots', array() );
+		$snapshot = _acf_get_stored_post_ids_snapshot( $post_id );
+		acf_set_data( 'acf_stored_post_ids_snapshots', array() );
+
+		remove_filter( 'acf/pre_load_meta', $meta );
+		acf_remove_local_field( 'field_snapshot_relationship' );
+		wp_delete_post( $post_id, true );
+
+		$this->assertSame( array( 'snapshot_relationship' => true ), $snapshot['names'] );
+		$this->assertSame(
+			array(
+				'field_snapshot_relationship' => array(
+					'12' => true,
+					'34' => true,
+				),
+			),
+			$snapshot['ids']
+		);
+	}
 }

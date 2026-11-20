@@ -324,6 +324,97 @@ class Test_Class_ACF_Options_Page extends BaseTestCase {
 	}
 
 	/**
+	 * Test child pages are ordered by menu position, and a redirecting parent opens the child with the lowest position.
+	 */
+	public function test_get_options_pages_orders_children_by_position() {
+		// A child of another menu, registered before the ACF parent.
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Settings Child',
+				'menu_slug'   => 'settings-child',
+				'parent_slug' => 'options-general.php',
+				'position'    => 5,
+			)
+		);
+		acf_add_options_page(
+			array(
+				'page_title' => 'Site Settings',
+				'menu_slug'  => 'site-settings',
+			)
+		);
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Third',
+				'menu_slug'   => 'site-third',
+				'parent_slug' => 'site-settings',
+				'position'    => 3,
+			)
+		);
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Unpositioned',
+				'menu_slug'   => 'site-unpositioned',
+				'parent_slug' => 'site-settings',
+			)
+		);
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'First',
+				'menu_slug'   => 'site-first',
+				'parent_slug' => 'site-settings',
+				'position'    => 1,
+			)
+		);
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Also Third',
+				'menu_slug'   => 'site-also-third',
+				'parent_slug' => 'site-settings',
+				'position'    => 3,
+			)
+		);
+
+		$pages = acf_get_options_pages();
+
+		$this->assertSame(
+			array( 'site-settings', 'settings-child', 'site-first', 'site-third', 'site-also-third', 'site-unpositioned' ),
+			array_keys( $pages ),
+			'Top-level pages should come first, then children grouped by parent and ordered by position, keeping registration order for ties'
+		);
+		$this->assertSame( 'site-first', $pages['site-settings']['menu_slug'], 'Parent should redirect to the child with the lowest position' );
+		$this->assertSame( 'site-first', $pages['site-third']['parent_slug'], 'Children should point at the redirect target' );
+		$this->assertSame( 'site-first', $pages['site-unpositioned']['parent_slug'], 'Children without a position should point at the redirect target' );
+		$this->assertSame( 'options-general.php', $pages['settings-child']['parent_slug'], 'Children of other menus should keep their parent' );
+	}
+
+	/**
+	 * Test get_page() handles a null slug without a deprecation notice for a null array offset (PHP 8.5).
+	 */
+	public function test_get_page_with_null_slug() {
+		acf_add_options_page(
+			array(
+				'page_title' => 'Lookup Page',
+				'menu_slug'  => 'lookup-page',
+			)
+		);
+
+		$notices = array();
+		set_error_handler( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Captures notices raised by the code under test.
+			static function ( $errno, $errstr ) use ( &$notices ) {
+				$notices[] = $errstr;
+				return true;
+			}
+		);
+		$page = acf_options_page()->get_page( null );
+		restore_error_handler();
+
+		$this->assertNull( $page );
+		$this->assertSame( array(), $notices );
+		$this->assertNull( acf_options_page()->get_page( '' ) );
+		$this->assertIsArray( acf_options_page()->get_page( 'lookup-page' ) );
+	}
+
+	/**
 	 * Test parent pages with redirect disabled keep their own menu slug.
 	 */
 	public function test_get_options_pages_respects_redirect_false() {

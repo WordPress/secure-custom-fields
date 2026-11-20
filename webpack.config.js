@@ -29,12 +29,14 @@ const commonConfig = {
 		'js/pro/acf-pro-ui-options-page':
 			'./assets/src/js/pro/acf-pro-ui-options-page.js',
 		'js/scf-bindings': './assets/src/js/bindings/index.js',
+		'js/scf-settings': './assets/src/js/settings-page/index.js',
 
 		// CSS files
 		'css/acf-dark': './assets/src/sass/acf-dark.scss',
 		'css/acf-field-group': './assets/src/sass/acf-field-group.scss',
 		'css/acf-global': './assets/src/sass/acf-global.scss',
 		'css/acf-input': './assets/src/sass/acf-input.scss',
+		'css/scf-settings': './assets/src/sass/scf-settings.scss',
 		'css/pro/acf-pro-field-group':
 			'./assets/src/sass/pro/acf-pro-field-group.scss',
 		'css/pro/acf-pro-input': './assets/src/sass/pro/acf-pro-input.scss',

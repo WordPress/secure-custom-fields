@@ -234,14 +234,14 @@ if ( ! class_exists( 'acf_field_number' ) ) :
 
 			// min
 			if ( is_numeric( $field['min'] ) && $value < floatval( $field['min'] ) ) {
-				/* translators: %d: the minimum value */
-				$valid = sprintf( __( 'Value must be equal to or higher than %d', 'secure-custom-fields' ), $field['min'] );
+				/* translators: %s: the minimum allowed value */
+				$valid = sprintf( __( 'Value must be equal to or higher than %s', 'secure-custom-fields' ), $field['min'] );
 			}
 
 			// max
 			if ( is_numeric( $field['max'] ) && $value > floatval( $field['max'] ) ) {
-				/* translators: %d: the maximum value */
-				$valid = sprintf( __( 'Value must be equal to or lower than %d', 'secure-custom-fields' ), $field['max'] );
+				/* translators: %s: the maximum allowed value */
+				$valid = sprintf( __( 'Value must be equal to or lower than %s', 'secure-custom-fields' ), $field['max'] );
 			}
 
 			// return

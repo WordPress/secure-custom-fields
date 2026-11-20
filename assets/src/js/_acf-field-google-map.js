@@ -449,7 +449,12 @@
 			var map = {
 				street_number: [ 'street_number' ],
 				street_name: [ 'street_address', 'route' ],
-				city: [ 'locality', 'postal_town' ],
+				city: [
+					'locality',
+					'postal_town',
+					'sublocality',
+					'neighborhood',
+				],
 				state: [
 					'administrative_area_level_1',
 					'administrative_area_level_2',
@@ -468,10 +473,12 @@
 				// Loop over address components.
 				for ( var i = 0; i < obj.address_components.length; i++ ) {
 					var component = obj.address_components[ i ];
-					var component_type = component.types[ 0 ];
 
-					// Look for matching component type.
-					if ( keywords.indexOf( component_type ) !== -1 ) {
+					// Look for a matching component type.
+					var isMatch = component.types.some( function ( type ) {
+						return keywords.indexOf( type ) !== -1;
+					} );
+					if ( isMatch ) {
 						// Append to result.
 						result[ k ] = component.long_name;
 

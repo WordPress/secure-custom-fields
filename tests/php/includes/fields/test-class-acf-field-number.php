@@ -127,6 +127,21 @@ class Test_ACF_Field_Number extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test validate_value shows decimal min and max values in full.
+	 */
+	public function test_validate_value_decimal_min_max_message() {
+		$field = $this->get_field(
+			array(
+				'min' => '0.5',
+				'max' => '2.75',
+			)
+		);
+
+		$this->assertSame( 'Value must be equal to or higher than 0.5', $this->field_instance->validate_value( true, '0.25', $field, 'acf[field_number_test]' ) );
+		$this->assertSame( 'Value must be equal to or lower than 2.75', $this->field_instance->validate_value( true, '3', $field, 'acf[field_number_test]' ) );
+	}
+
+	/**
 	 * Test validate_value within range.
 	 */
 	public function test_validate_value_in_range() {
