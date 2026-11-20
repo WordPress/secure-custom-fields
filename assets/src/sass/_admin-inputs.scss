@@ -328,6 +328,10 @@
 				left: 20px;
 			}
 
+			html[dir="rtl"] & .acf-switch-slider {
+				right: 20px;
+			}
+
 		}
 
 		.acf-switch-off,

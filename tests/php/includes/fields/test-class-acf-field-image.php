@@ -187,6 +187,109 @@ class Test_ACF_Field_Image extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test validate_value accepts an image attachment with no local file, as on stream-wrapped file systems.
+	 */
+	public function test_validate_value_accepts_image_attachment_without_local_file() {
+		$image_id = wp_insert_attachment(
+			array(
+				'post_title'     => 'Offloaded Image',
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'image/png',
+				'post_status'    => 'inherit',
+			),
+			false,
+			$this->post_id
+		);
+
+		$valid = $this->field_instance->validate_value( true, $image_id, $this->get_field(), 'acf[field_image_test]' );
+
+		wp_delete_attachment( $image_id, true );
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value rejects IDs that aren't image attachments.
+	 */
+	public function test_validate_value_rejects_missing_and_non_attachment_ids() {
+		$this->assertSame( 'File must be a valid image.', $this->field_instance->validate_value( true, 999999, $this->get_field(), 'acf[field_image_test]' ) );
+		$this->assertSame( 'File must be a valid image.', $this->field_instance->validate_value( true, $this->post_id, $this->get_field(), 'acf[field_image_test]' ) );
+	}
+
+	/**
+	 * Test validate_value accepts any attachment when acf/is_image_field returns false.
+	 */
+	public function test_validate_value_respects_is_image_field_filter() {
+		$pdf_id = wp_insert_attachment(
+			array(
+				'post_title'     => 'Test Document',
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'application/pdf',
+				'post_status'    => 'inherit',
+			),
+			'/tmp/test-document.pdf',
+			$this->post_id
+		);
+
+		add_filter( 'acf/is_image_field', '__return_false' );
+
+		$pdf_valid      = $this->field_instance->validate_value( true, $pdf_id, $this->get_field(), 'acf[field_image_test]' );
+		$missing_valid  = $this->field_instance->validate_value( true, 999999, $this->get_field(), 'acf[field_image_test]' );
+		$non_attachment = $this->field_instance->validate_value( true, $this->post_id, $this->get_field(), 'acf[field_image_test]' );
+
+		remove_filter( 'acf/is_image_field', '__return_false' );
+		wp_delete_attachment( $pdf_id, true );
+
+		$this->assertTrue( $pdf_valid );
+		$this->assertSame( 'Test Image requires a valid attachment ID.', $missing_valid );
+		$this->assertSame( 'Test Image requires a valid attachment ID.', $non_attachment );
+	}
+
+	/**
+	 * Test render_field previews a non-image attachment with its mime type icon when acf/is_image_field returns false.
+	 */
+	public function test_render_field_previews_non_image_attachment_when_not_image_field() {
+		$pdf_id = wp_insert_attachment(
+			array(
+				'post_title'     => 'Test Document',
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'application/pdf',
+				'post_status'    => 'inherit',
+			),
+			'/tmp/test-document.pdf',
+			$this->post_id
+		);
+
+		$field = $this->get_field(
+			array(
+				'id'         => 'acf-field_image_test',
+				'class'      => '',
+				'name'       => 'acf[field_image_test]',
+				'value'      => $pdf_id,
+				'library'    => 'all',
+				'mime_types' => '',
+			)
+		);
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$as_image_field = ob_get_clean();
+
+		add_filter( 'acf/is_image_field', '__return_false' );
+		ob_start();
+		$this->field_instance->render_field( $field );
+		$as_file_field = ob_get_clean();
+		remove_filter( 'acf/is_image_field', '__return_false' );
+
+		wp_delete_attachment( $pdf_id, true );
+
+		$this->assertStringNotContainsString( 'acf-image-uploader has-value', $as_image_field );
+		$this->assertStringNotContainsString( 'value="' . $pdf_id . '"', $as_image_field );
+		$this->assertStringContainsString( 'acf-image-uploader has-value', $as_file_field );
+		$this->assertStringContainsString( 'value="' . $pdf_id . '"', $as_file_field );
+		$this->assertStringContainsString( 'alt="Test Document"', $as_file_field );
+	}
+
+	/**
 	 * Test validate_value allows an empty value and keeps earlier errors.
 	 */
 	public function test_validate_value_empty_and_earlier_error() {

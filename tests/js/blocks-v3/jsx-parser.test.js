@@ -183,6 +183,21 @@ describe( 'parseJSX', () => {
 	} );
 
 	describe( 'Script Tag Handling', () => {
+		// Preview scripts only render when the block type or site opts in.
+		const originalGet = acf.get.getMockImplementation();
+
+		beforeEach( () => {
+			acf.get.mockImplementation( ( key ) =>
+				key === 'allowDangerousPreviewScriptsInBlocks'
+					? true
+					: originalGet( key )
+			);
+		} );
+
+		afterEach( () => {
+			acf.get.mockImplementation( originalGet );
+		} );
+
 		test( 'converts script tags to ScriptComponent', () => {
 			const result = parseJSX( '<script>console.log("test");</script>' );
 			// ScriptComponent is a class component

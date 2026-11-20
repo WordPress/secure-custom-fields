@@ -90,6 +90,17 @@ Returns a block type for the given name.
 * @param   string $name The block type name.
 * @return (array|null)
 
+## `acf_blocks_allow_dangerous_preview_scripts()`
+
+Returns true if inline `<script>` tags in block preview HTML may run in the block editor for all ACF blocks.
+
+* Preview HTML can contain field values entered by other, possibly lower-privileged, users, so inline scripts are
+disabled by default. Individual block types can opt in with `allow_dangerous_preview_scripts` in
+acf_register_block_type(), or `allowDangerousPreviewScripts` under the `acf` key in block.json. Enqueueing scripts
+with the block and using the `render_block_preview` JS action is the recommended alternative.
+* @since SCF 6.9.10
+* @return boolean
+
 ## `acf_remove_block_type()`
 
 Removes a block type for the given name.

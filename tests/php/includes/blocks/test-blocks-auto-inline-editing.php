@@ -18,6 +18,7 @@ use function SCF\Blocks\AutoInlineEditing\get_allowed_contenteditable_fields;
 use function SCF\Blocks\AutoInlineEditing\get_non_auto_inline_editing_fields;
 use function SCF\Blocks\AutoInlineEditing\populate_auto_inline_editing_values;
 use function SCF\Blocks\AutoInlineEditing\apply_inline_editing_attributes_to_html_string;
+use function SCF\Blocks\AutoInlineEditing\field_return_type_supports_auto_inline_editing;
 
 /**
  * Test the auto inline editing layer.
@@ -157,7 +158,179 @@ class Test_Blocks_Auto_Inline_Editing extends BaseTestCase {
 	 */
 	public function test_field_type_lists() {
 		$this->assertSame( array( 'text', 'textarea' ), get_allowed_contenteditable_fields() );
-		$this->assertSame( array( 'repeater', 'flexible-content' ), get_non_auto_inline_editing_fields() );
+		$this->assertSame( array( 'repeater', 'flexible_content' ), get_non_auto_inline_editing_fields() );
+	}
+
+	/**
+	 * Test which field return types support auto inline editing.
+	 */
+	public function test_field_return_type_supports_auto_inline_editing() {
+		$supported = array(
+			array( 'type' => 'text' ),
+			array( 'type' => 'textarea' ),
+			array(
+				'type'          => 'image',
+				'return_format' => 'url',
+			),
+			array(
+				'type'          => 'select',
+				'return_format' => 'value',
+				'multiple'      => 0,
+			),
+			array(
+				'type'       => 'taxonomy',
+				'field_type' => 'select',
+			),
+		);
+		foreach ( $supported as $field ) {
+			$this->assertTrue( field_return_type_supports_auto_inline_editing( $field ), wp_json_encode( $field ) );
+		}
+
+		$unsupported = array(
+			array( 'type' => 'checkbox' ),
+			array( 'type' => 'flexible_content' ),
+			array( 'type' => 'gallery' ),
+			array( 'type' => 'google_map' ),
+			array( 'type' => 'relationship' ),
+			array( 'type' => 'repeater' ),
+			array(
+				'type'     => 'select',
+				'multiple' => 1,
+			),
+			array(
+				'type'       => 'taxonomy',
+				'field_type' => 'checkbox',
+			),
+			array(
+				'type'       => 'taxonomy',
+				'field_type' => 'multi_select',
+			),
+			array(
+				'type'          => 'image',
+				'return_format' => 'array',
+			),
+			array(
+				'type'          => 'post_object',
+				'return_format' => 'object',
+			),
+		);
+		foreach ( $unsupported as $field ) {
+			$this->assertFalse( field_return_type_supports_auto_inline_editing( $field ), wp_json_encode( $field ) );
+		}
+	}
+
+	/**
+	 * Test the acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing filter.
+	 */
+	public function test_field_return_type_supports_auto_inline_editing_filter() {
+		$received = array();
+		$filter   = static function ( $supports, $field ) use ( &$received ) {
+			$received[] = array( $supports, $field['name'] );
+			return 'custom_object' === $field['name'] ? true : $supports;
+		};
+		add_filter( 'acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing', $filter, 10, 2 );
+
+		$supported = field_return_type_supports_auto_inline_editing(
+			array(
+				'name'          => 'custom_object',
+				'type'          => 'image',
+				'return_format' => 'array',
+			)
+		);
+
+		remove_filter( 'acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing', $filter, 10 );
+
+		$this->assertTrue( $supported );
+		$this->assertSame( array( array( false, 'custom_object' ) ), $received );
+	}
+
+	/**
+	 * Test that fields with non-scalar return types keep their value and aren't captured.
+	 */
+	public function test_populate_values_skips_non_scalar_return_types() {
+		$GLOBALS['acf_blocks_doing_auto_inline_editing'] = true;
+
+		// An empty array/object return format value is not replaced with the placeholder string.
+		$value = populate_auto_inline_editing_values(
+			'',
+			0,
+			array(
+				'name'          => 'empty_image',
+				'type'          => 'image',
+				'return_format' => 'array',
+			)
+		);
+		$this->assertSame( '', $value );
+
+		$value = populate_auto_inline_editing_values(
+			false,
+			0,
+			array(
+				'name'     => 'empty_multi_select',
+				'type'     => 'select',
+				'multiple' => 1,
+			)
+		);
+		$this->assertFalse( $value );
+
+		$this->assertSame( array(), $GLOBALS['acf_fields_used_in_block_render_template'] );
+
+		// The filter can opt a field back in.
+		add_filter( 'acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing', '__return_true' );
+		$value = populate_auto_inline_editing_values(
+			'',
+			0,
+			array(
+				'name'          => 'opted_in_image',
+				'type'          => 'image',
+				'return_format' => 'array',
+			)
+		);
+		remove_filter( 'acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing', '__return_true' );
+
+		$this->assertSame( 'acf_auto_inline_editing_field_name_opted_in_image', $value );
+	}
+
+	/**
+	 * Test that field values containing "&" survive being written back into the element.
+	 */
+	public function test_apply_attributes_preserves_ampersands() {
+		$GLOBALS['acf_fields_used_in_block_render_template'] = array(
+			array(
+				'name'  => 'headline',
+				'value' => 'Fish & Chips',
+				'type'  => 'text',
+			),
+		);
+
+		$html = apply_inline_editing_attributes_to_html_string(
+			'<div><h2>Fish &amp; Chips</h2></div>',
+			array( 'id' => 'block_aie_amp' )
+		);
+
+		$this->assertStringContainsString( 'data-acf-inline-contenteditable-field-slug="headline"', $html );
+		$this->assertMatchesRegularExpression( '#<h2[^>]*>Fish &amp; Chips</h2>#', $html );
+	}
+
+	/**
+	 * Test that removing a placeholder from mixed text keeps "&" in the remaining text.
+	 */
+	public function test_apply_attributes_strips_placeholder_and_preserves_ampersands() {
+		$GLOBALS['acf_fields_used_in_block_render_template'] = array(
+			array(
+				'name'  => 'byline',
+				'value' => 'acf_auto_inline_editing_field_name_byline',
+				'type'  => 'text',
+			),
+		);
+
+		$html = apply_inline_editing_attributes_to_html_string(
+			'<div><p>Tom &amp; Jerry acf_auto_inline_editing_field_name_byline</p></div>',
+			array( 'id' => 'block_aie_amp2' )
+		);
+
+		$this->assertStringNotContainsString( 'acf_auto_inline_editing_field_name_byline', $html );
+		$this->assertStringContainsString( '<p>Tom &amp; Jerry </p>', $html );
 	}
 
 	/**

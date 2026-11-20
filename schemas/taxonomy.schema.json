@@ -347,7 +347,12 @@
 				"allow_ai_access": {
 					"type": [ "boolean", "integer" ],
 					"default": false,
-					"description": "Whether to expose this taxonomy to AI integrations"
+					"description": "Deprecated: replaced by enable_acf_abilities and no longer read. Kept so older exports still validate."
+				},
+				"enable_acf_abilities": {
+					"type": [ "boolean", "integer" ],
+					"default": true,
+					"description": "Let AI tools and other integrations access and manage terms in this taxonomy through the WordPress Abilities API."
 				},
 				"ai_description": {
 					"type": "string",

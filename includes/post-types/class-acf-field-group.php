@@ -94,7 +94,7 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 				'description'           => '',
 				'show_in_rest'          => false,
 				'display_title'         => '',
-				'allow_ai_access'       => false,
+				'enable_acf_abilities'  => true,
 				'ai_description'        => '',
 			);
 		}
@@ -141,6 +141,10 @@ if ( ! class_exists( 'ACF_Field_Group' ) ) {
 			 * @param array $post The post array.
 			 */
 			$post = apply_filters( "acf/load_{$this->hook_name}", $post );
+
+			if ( ! is_array( $post ) || ! isset( $post['key'], $post['ID'] ) ) {
+				return false;
+			}
 
 			// Store field group using aliases to also find via key, ID and name.
 			$store->set( $post['key'], $post );

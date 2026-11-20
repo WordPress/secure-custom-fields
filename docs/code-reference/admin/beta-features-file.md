@@ -11,10 +11,11 @@ Alias of acf()->admin_beta_features->register_beta_feature()
 
 ## `scf_get_admin_beta_features_url()`
 
-This function will return the admin URL to the beta features page
+This function will return the admin URL where beta features are managed.
 
 * @type    function
 * @since SCF 6.5.0
-* @return  string The URL to the beta features page.
+* @since SCF 6.9.10 Returns the Settings page URL, as the Beta Features page was removed.
+* @return  string The URL to the settings page.
 
 ---

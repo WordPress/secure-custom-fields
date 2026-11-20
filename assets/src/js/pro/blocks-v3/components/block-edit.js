@@ -40,6 +40,7 @@ import {
 	lockPostSavingByName,
 	unlockPostSavingByName,
 } from '../utils/post-locking';
+import { getContentEditableText } from '../utils/content-editable';
 
 /**
  * InspectorBlockFormContainer
@@ -1054,7 +1055,7 @@ function BlockEditInner( props ) {
 						const fieldSlug = element.attributes.getNamedItem(
 							'data-acf-inline-contenteditable-field-slug'
 						).value;
-						let content = element.innerHTML.trim();
+						let content = getContentEditableText( element );
 						if ( ! content ) content = '';
 						updateFieldValueFromContentEditable(
 							content,
@@ -1080,7 +1081,7 @@ function BlockEditInner( props ) {
 						const fieldSlug = element.attributes.getNamedItem(
 							'data-acf-inline-contenteditable-field-slug'
 						).value;
-						let content = element.innerHTML.trim();
+						let content = getContentEditableText( element );
 
 						// Handle empty content - remove empty BR tags
 						if (
@@ -1231,8 +1232,11 @@ function BlockEditInner( props ) {
 								} }
 								icon="edit"
 							>
-								{ blockType?.expanded_editor_button_text ||
-									acf.__( 'Open Expanded Editor' ) }
+								{ blockType?.expanded_editor_button_text
+									? acf.decode(
+											blockType.expanded_editor_button_text
+									  )
+									: acf.__( 'Open Expanded Editor' ) }
 							</Button>
 						</PanelBody>
 					) }
@@ -1471,6 +1475,9 @@ function BlockEditInner( props ) {
 									blockType?.title || acf.__( 'ACF Block' )
 								}
 								setBlockFormModalOpen={ setBlockFormModalOpen }
+								buttonText={
+									blockType?.placeholder_button_text
+								}
 								error={ error }
 							/>
 						) }
@@ -1479,6 +1486,8 @@ function BlockEditInner( props ) {
 							<BlockPlaceholder
 								setBlockFormModalOpen={ setBlockFormModalOpen }
 								blockLabel={ blockType.title }
+								blockIcon={ blockType.icon }
+								buttonText={ blockType.placeholder_button_text }
 							/>
 						) : null }
 
@@ -1499,7 +1508,8 @@ function BlockEditInner( props ) {
 								updateFieldValueFromContentEditable,
 								handleNewContentEditableElementSelected,
 								blockFieldInfo,
-								$
+								$,
+								blockType
 							) }
 					</ErrorBoundary>
 				</BlockPreview>

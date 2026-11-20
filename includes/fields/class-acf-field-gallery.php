@@ -856,9 +856,20 @@ if ( ! class_exists( 'acf_field_gallery' ) ) :
 				$value = array();
 			}
 
+			$is_image_field = acf_is_image_field( $field );
+
 			foreach ( $value as $attachment_id ) {
-				if ( is_numeric( $attachment_id ) && ! wp_attachment_is_image( $attachment_id ) ) {
-					return __( 'File must be a valid image.', 'secure-custom-fields' );
+				if ( ! is_numeric( $attachment_id ) ) {
+					continue;
+				}
+
+				if ( $is_image_field ) {
+					if ( ! acf_is_valid_image_attachment_id( $attachment_id ) ) {
+						return __( 'File must be a valid image.', 'secure-custom-fields' );
+					}
+				} elseif ( 'attachment' !== get_post_type( (int) $attachment_id ) ) {
+					/* translators: %s: field label */
+					return sprintf( __( '%s requires a valid attachment ID.', 'secure-custom-fields' ), $field['label'] );
 				}
 			}
 

@@ -174,6 +174,11 @@ export const BlockForm = ( {
 			acf.doAction( 'remount', $form );
 			onMount?.( $form );
 			setHasRemounted( true );
+
+			// Save default field values for blocks inserted and left unedited.
+			if ( ! Object.keys( attributes?.data ?? {} ).length ) {
+				onChange( $form );
+			}
 		}
 
 		const handleChange = () => {

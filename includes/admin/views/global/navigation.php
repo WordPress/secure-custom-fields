@@ -21,7 +21,10 @@ $more_items     = array();
 
 // Hardcoded since future ACF post types will likely live in the "More" menu.
 $core_tabs_classes      = array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy' );
-$acf_more_items_classes = array( 'acf-ui-options-page', 'acf-tools', 'acf-settings-updates' );
+$acf_more_items_classes = array_merge(
+	array( 'acf-ui-options-page', 'acf-tools', 'acf-settings-updates' ),
+	acf_get_instance( 'SCF\Settings_Page\Settings_Page' )->get_page_slugs()
+);
 
 if ( isset( $submenu[ $parent_slug ] ) ) {
 	foreach ( $submenu[ $parent_slug ] as $i => $sub_item ) {
@@ -66,7 +69,7 @@ if ( isset( $submenu[ $parent_slug ] ) ) {
 				$acf_more_items[] = $menu_item;
 			}
 		} elseif ( in_array( $menu_item['class'], $acf_more_items_classes, true ) ) {
-			// ACF tabs moved to the "More" menu.
+			// ACF tabs moved to the "More" menu, including the settings page's "acf-settings-tab-{key}" item.
 			$acf_more_items[] = $menu_item;
 		} else {
 			// Third party tabs placed into the "More" menu.
@@ -177,8 +180,6 @@ $screen = get_current_screen();
 if ( ! in_array( $screen->id, acf_get_internal_post_types(), true ) ) {
 	if ( 'acf-tools' === $plugin_page ) {
 		$acf_page_title = __( 'Tools', 'secure-custom-fields' );
-	} elseif ( 'scf-beta-features' === $plugin_page ) {
-		$acf_page_title = __( 'Beta Features', 'secure-custom-fields' );
 	}
 	acf_get_view( 'global/header' );
 }

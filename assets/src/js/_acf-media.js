@@ -550,6 +550,7 @@
 			this.customizeAttachmentFilters();
 			this.customizeAttachmentCompat();
 			this.customizeAttachmentLibrary();
+			this.customizeQuery();
 		},
 
 		customizeAttachmentsButton: function () {
@@ -856,6 +857,45 @@
 					);
 				},
 			} );
+		},
+
+		/**
+		 * Hides the _acfuploader arg from wp.media.model.Query initialize.
+		 *
+		 * A Query only watches the uploader queue for new uploads when its
+		 * args contain known keys. Queries created after the first one, for
+		 * example after a search returns no results, inherit _acfuploader
+		 * from the mirrored args, so new uploads stopped showing up. The arg
+		 * is removed while the Query initializes and restored afterwards, so
+		 * it is still sent with the AJAX request.
+		 *
+		 * @since SCF 6.9.10
+		 */
+		customizeQuery: function () {
+			// validate
+			if ( ! acf.isset( wp, 'media', 'model', 'Query' ) ) {
+				return;
+			}
+
+			// vars
+			const Query = wp.media.model.Query;
+			const initialize = Query.prototype.initialize;
+
+			// extend
+			Query.prototype.initialize = function ( models, options ) {
+				const args = acf.isget( options, 'args' );
+				const acfuploader = acf.isget( args, '_acfuploader' );
+
+				if ( acfuploader ) {
+					delete args._acfuploader;
+				}
+
+				initialize.apply( this, arguments );
+
+				if ( acfuploader ) {
+					args._acfuploader = acfuploader;
+				}
+			};
 		},
 	} );
 } )( jQuery );

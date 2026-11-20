@@ -8,6 +8,11 @@
 // eslint-disable-next-line import/no-unresolved -- WordPress provides jquery as an external script dependency.
 import jQuery from 'jquery';
 import { createElement, createRef } from '@wordpress/element';
+import {
+	applyInnerBlocksDefaults,
+	getInnerBlocksSettings,
+} from '../utils/inner-blocks';
+import { shouldRenderPreviewNode } from '../utils/preview-scripts';
 
 const useInnerBlocksProps =
 	wp.blockEditor.__experimentalUseInnerBlocksProps ||
@@ -31,7 +36,10 @@ function getJSXNameReplacement( attrName ) {
  */
 function ACFInnerBlocksComponent( props ) {
 	const { className = 'acf-innerblocks-container' } = props;
-	const innerBlocksProps = useInnerBlocksProps( { className }, props );
+	const innerBlocksProps = useInnerBlocksProps(
+		{ className },
+		getInnerBlocksSettings( props )
+	);
 	return createElement( 'div', {
 		...innerBlocksProps,
 		children: innerBlocksProps.children,
@@ -157,11 +165,18 @@ function parseAttribute( attribute ) {
  * Main parseNodeToJSX function - Based on 6.7.0.2's function `O`
  * Recursively converts DOM nodes to React/JSX elements
  *
- * @param {Node}   node  DOM node.
- * @param {number} depth Recursion depth.
+ * @param {Node}         node      DOM node.
+ * @param {number}       depth     Recursion depth.
+ * @param {Object}       callbacks Inline editing callbacks and field metadata.
+ * @param {Object|false} blockType The registered block type, used for preview script and InnerBlocks settings.
  * @return {JSX.Element|null} Parsed JSX element.
  */
-function parseNodeToJSX( node, depth = 0, callbacks = {} ) {
+function parseNodeToJSX( node, depth = 0, callbacks = {}, blockType = null ) {
+	// Drop <script> nodes unless the block or site opts in to preview scripts.
+	if ( ! shouldRenderPreviewNode( node, blockType, blockType?.name ) ) {
+		return null;
+	}
+
 	const {
 		onNewInlineEditingElementSelected,
 		onNewContentEditableElementSelected,
@@ -362,6 +377,7 @@ function parseNodeToJSX( node, depth = 0, callbacks = {} ) {
 
 	// Handle ACFInnerBlocks component
 	if ( componentType === 'ACFInnerBlocks' ) {
+		applyInnerBlocksDefaults( props, blockType );
 		return createElement( ACFInnerBlocksComponent, { ...props } );
 	}
 
@@ -376,7 +392,7 @@ function parseNodeToJSX( node, depth = 0, callbacks = {} ) {
 			}
 		} else {
 			elementArgs.push(
-				parseNodeToJSX( childNode, depth + 1, callbacks )
+				parseNodeToJSX( childNode, depth + 1, callbacks, blockType )
 			);
 		}
 	} );
@@ -387,7 +403,7 @@ function parseNodeToJSX( node, depth = 0, callbacks = {} ) {
 }
 
 // Preserve the legacy parser for v1/v2 blocks, which pass the block version
-// as the second argument.
+// as the second argument and the block name as the third.
 const legacyParseJSX = acf.parseJSX;
 
 /**
@@ -400,6 +416,7 @@ const legacyParseJSX = acf.parseJSX;
  * @param {Function} onNewContentEditableElementSelected ContentEditable selection callback.
  * @param {Array}    blockFieldInfo                     Field metadata.
  * @param {Function} $                                  jQuery-compatible parser.
+ * @param {Object}   blockType                          The registered block type, used for preview script and InnerBlocks settings.
  * @return {JSX.Element|Array} Parsed JSX children.
  */
 export function parseJSX(
@@ -408,13 +425,20 @@ export function parseJSX(
 	onContentEditableChange = null,
 	onNewContentEditableElementSelected = null,
 	blockFieldInfo = null,
-	$ = null
+	$ = null,
+	blockType = null
 ) {
 	if (
 		typeof onNewInlineEditingElementSelected === 'number' &&
 		typeof legacyParseJSX === 'function'
 	) {
-		return legacyParseJSX( htmlString, onNewInlineEditingElementSelected );
+		// Legacy signature: ( html, acfBlockVersion, blockName ). Forward the block
+		// name so v1/v2 blocks keep their per-block preview script opt-in.
+		return legacyParseJSX(
+			htmlString,
+			onNewInlineEditingElementSelected,
+			onContentEditableChange
+		);
 	}
 
 	const isJQueryParser =
@@ -447,7 +471,8 @@ export function parseJSX(
 	const parsedElement = parseNodeToJSX(
 		parser( htmlString )[ 0 ],
 		0,
-		callbacks
+		callbacks,
+		blockType
 	);
 	return parsedElement.props.children;
 }

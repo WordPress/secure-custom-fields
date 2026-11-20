@@ -130,19 +130,23 @@ function acf_handle_json_block_registration( $settings, $metadata ) {
 
 	// Map custom SCF properties from the SCF key, with localization.
 	$property_mappings = array(
-		'renderCallback'           => 'render_callback',
-		'renderTemplate'           => 'render_template',
-		'mode'                     => 'mode',
-		'blockVersion'             => 'acf_block_version',
-		'postTypes'                => 'post_types',
-		'validate'                 => 'validate',
-		'validateOnLoad'           => 'validate_on_load',
-		'usePostMeta'              => 'use_post_meta',
-		'hideFieldsInSidebar'      => 'hide_fields_in_sidebar',
-		'expandedEditorButtons'    => 'expanded_editor_buttons',
-		'autoInlineEditing'        => 'auto_inline_editing',
-		'expandedEditorButtonText' => 'expanded_editor_button_text',
-		'renderPreview'            => 'render_preview',
+		'renderCallback'               => 'render_callback',
+		'renderTemplate'               => 'render_template',
+		'mode'                         => 'mode',
+		'blockVersion'                 => 'acf_block_version',
+		'postTypes'                    => 'post_types',
+		'validate'                     => 'validate',
+		'validateOnLoad'               => 'validate_on_load',
+		'usePostMeta'                  => 'use_post_meta',
+		'hideFieldsInSidebar'          => 'hide_fields_in_sidebar',
+		'expandedEditorButtons'        => 'expanded_editor_buttons',
+		'autoInlineEditing'            => 'auto_inline_editing',
+		'expandedEditorButtonText'     => 'expanded_editor_button_text',
+		'placeholderButtonText'        => 'placeholder_button_text',
+		'renderPreview'                => 'render_preview',
+		'defaultBlock'                 => 'default_block',
+		'directInsert'                 => 'direct_insert',
+		'allowDangerousPreviewScripts' => 'allow_dangerous_preview_scripts',
 	);
 	$textdomain        = ! empty( $metadata['textdomain'] ) ? $metadata['textdomain'] : 'secure-custom-fields';
 	$i18n_schema       = get_block_metadata_i18n_schema();
@@ -465,6 +469,34 @@ function acf_get_block_type( $name ) {
 }
 
 /**
+ * Returns true if inline `<script>` tags in block preview HTML may run in the block editor for all ACF blocks.
+ *
+ * Preview HTML can contain field values entered by other, possibly lower-privileged, users, so inline scripts are
+ * disabled by default. Individual block types can opt in with `allow_dangerous_preview_scripts` in
+ * acf_register_block_type(), or `allowDangerousPreviewScripts` under the `acf` key in block.json. Enqueueing scripts
+ * with the block and using the `render_block_preview` JS action is the recommended alternative.
+ *
+ * @since SCF 6.9.10
+ *
+ * @return boolean
+ */
+function acf_blocks_allow_dangerous_preview_scripts() {
+	/**
+	 * Filters whether inline `<script>` tags in block preview HTML may run in the block editor, for all ACF blocks.
+	 * Block types that set `allow_dangerous_preview_scripts` run their preview scripts regardless.
+	 *
+	 * Only enable this if no block template prints unescaped field values inside `<script>` tags, as anyone who can
+	 * edit a block's fields could otherwise run JavaScript in the browser of other users who view the block in the
+	 * editor.
+	 *
+	 * @since SCF 6.9.10
+	 *
+	 * @param boolean $allowed Whether inline preview scripts may run. Default false.
+	 */
+	return (bool) apply_filters( 'acf/blocks/allow_dangerous_preview_scripts', false );
+}
+
+/**
  * Removes a block type for the given name.
  *
  * @since   ACF 5.7.12
@@ -737,6 +769,8 @@ function acf_validate_block_type( $block ) {
 			'enqueue_style'   => false,
 			'enqueue_script'  => false,
 			'enqueue_assets'  => false,
+			'default_block'   => array(),
+			'direct_insert'   => false,
 		)
 	);
 
@@ -779,6 +813,11 @@ function acf_validate_block_type( $block ) {
 		}
 	}
 
+	// Allow 'default_block' to be passed as a block name string.
+	if ( is_string( $block['default_block'] ) && '' !== $block['default_block'] ) {
+		$block['default_block'] = array( 'name' => $block['default_block'] );
+	}
+
 	// Return block.
 	return $block;
 }
@@ -816,6 +855,7 @@ function acf_prepare_block( $block ) {
 		'enqueue_assets',
 		'post_types',
 		'use_post_meta',
+		'allow_dangerous_preview_scripts',
 	);
 	$block     = array_diff_key( $block, array_flip( $protected ) );
 
@@ -1547,8 +1587,35 @@ function acf_enqueue_block_assets() {
 			// Block.json setting takes precedence over the filter default.
 			$button_text = $block_json_text ? $block_json_text : $default_text;
 
-			// Sanitize the button text to prevent XSS.
-			$block['expanded_editor_button_text'] = is_string( $button_text ) ? acf_esc_html( $button_text ) : '';
+			// Button labels are rendered as plain text, so strip tags rather than allowing any HTML.
+			$block['expanded_editor_button_text'] = is_string( $button_text ) ? esc_html( wp_strip_all_tags( $button_text ) ) : '';
+
+			// Cast so PHP-falsy values such as '0' don't enable preview scripts in JS.
+			$block['allow_dangerous_preview_scripts'] = ! empty( $block['allow_dangerous_preview_scripts'] );
+
+			// Get the placeholder button text from block.json (if set).
+			$block_json_placeholder_text = ! empty( $block['placeholder_button_text'] ) ? $block['placeholder_button_text'] : '';
+
+			/**
+			 * Filters the default placeholder button text for blocks.
+			 *
+			 * This filter provides a global default for the "Edit Block" button shown in the
+			 * placeholder of blocks that don't render a preview.
+			 * The block.json `placeholderButtonText` setting takes precedence over this filter.
+			 *
+			 * @since SCF 6.9.10
+			 *
+			 * @param string $button_text The default button text. Empty string uses "Edit Block" translation.
+			 * @param array  $block       The block configuration array.
+			 * @return string The filtered default button text.
+			 */
+			$default_placeholder_text = apply_filters( 'acf/blocks/default_placeholder_button_text', '', $block );
+
+			// Block.json setting takes precedence over the filter default.
+			$placeholder_text = $block_json_placeholder_text ? $block_json_placeholder_text : $default_placeholder_text;
+
+			// Button labels are rendered as plain text, so strip tags rather than allowing any HTML.
+			$block['placeholder_button_text'] = is_string( $placeholder_text ) ? esc_html( wp_strip_all_tags( $placeholder_text ) ) : '';
 
 			return $block;
 		},
@@ -1558,8 +1625,9 @@ function acf_enqueue_block_assets() {
 	// Localize data.
 	acf_localize_data(
 		array(
-			'blockTypes' => array_values( $block_types ),
-			'postType'   => get_post_type(),
+			'blockTypes'                           => array_values( $block_types ),
+			'postType'                             => get_post_type(),
+			'allowDangerousPreviewScriptsInBlocks' => acf_blocks_allow_dangerous_preview_scripts(),
 		)
 	);
 

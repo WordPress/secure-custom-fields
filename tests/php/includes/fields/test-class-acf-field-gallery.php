@@ -193,6 +193,46 @@ class Test_ACF_Field_Gallery extends Abstract_ACF_Field_Test {
 	}
 
 	/**
+	 * Test validate_value accepts image attachments with no local file, as on stream-wrapped file systems.
+	 */
+	public function test_validate_value_accepts_images_without_local_file() {
+		$image_id = wp_insert_attachment(
+			array(
+				'post_title'     => 'Offloaded image',
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'image/png',
+				'post_status'    => 'inherit',
+			),
+			false,
+			$this->post_id
+		);
+
+		$valid = $this->field_instance->validate_value( true, array( $image_id ), $this->get_field(), 'acf[field_gallery_test]' );
+
+		$this->assertTrue( $valid );
+	}
+
+	/**
+	 * Test validate_value accepts any attachment when acf/is_image_field returns false.
+	 */
+	public function test_validate_value_respects_is_image_field_filter() {
+		$field = $this->get_field();
+		$ids   = array_merge( $this->create_attachments( 1 ), $this->create_attachments( 1, 'application/pdf', 'pdf' ) );
+
+		add_filter( 'acf/is_image_field', '__return_false' );
+
+		$attachments_valid = $this->field_instance->validate_value( true, $ids, $field, 'acf[field_gallery_test]' );
+		$missing_valid     = $this->field_instance->validate_value( true, array_merge( $ids, array( 999999 ) ), $field, 'acf[field_gallery_test]' );
+		$post_valid        = $this->field_instance->validate_value( true, array( $this->post_id ), $field, 'acf[field_gallery_test]' );
+
+		remove_filter( 'acf/is_image_field', '__return_false' );
+
+		$this->assertTrue( $attachments_valid );
+		$this->assertSame( 'Test Gallery requires a valid attachment ID.', $missing_valid );
+		$this->assertSame( 'Test Gallery requires a valid attachment ID.', $post_valid );
+	}
+
+	/**
 	 * Test validate_value returns an earlier validation error unchanged.
 	 */
 	public function test_validate_value_keeps_earlier_error() {

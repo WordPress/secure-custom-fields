@@ -187,4 +187,75 @@ class Test_ACF_Field_Icon_Picker extends Abstract_ACF_Field_Test {
 		// Unrecognized format falls back to returning the value array.
 		$this->assertIsArray( $result );
 	}
+
+	/**
+	 * Renders the field with the Media Library tab and returns the attachment IDs it tried to load.
+	 *
+	 * @param array $value The field value.
+	 * @return array
+	 */
+	protected function get_attachment_ids_loaded_by_render( $value ) {
+		$loaded = array();
+		$spy    = static function ( $downsize, $attachment_id ) use ( &$loaded ) {
+			$loaded[] = $attachment_id;
+			return $downsize;
+		};
+		add_filter( 'image_downsize', $spy, 10, 2 );
+
+		// The Media Library tab is only shown to users who can upload files.
+		$add_media_tab = static function ( $tabs ) {
+			$tabs['media_library'] = 'Media Library';
+			return $tabs;
+		};
+		add_filter( 'acf/fields/icon_picker/tabs', $add_media_tab );
+
+		$field = $this->get_field(
+			array(
+				'id'    => 'acf-field_icon_picker_test',
+				'class' => '',
+				'name'  => 'acf[field_icon_picker_test]',
+				'tabs'  => array( 'media_library' ),
+				'value' => $value,
+			)
+		);
+
+		ob_start();
+		$this->field_instance->render_field( $field );
+		ob_end_clean();
+
+		remove_filter( 'image_downsize', $spy, 10 );
+		remove_filter( 'acf/fields/icon_picker/tabs', $add_media_tab );
+
+		return $loaded;
+	}
+
+	/**
+	 * Test render_field only loads an attachment preview for Media Library icons.
+	 */
+	public function test_render_field_only_loads_media_library_preview() {
+		$this->assertSame(
+			array(),
+			$this->get_attachment_ids_loaded_by_render(
+				array(
+					'type'  => 'url',
+					'value' => 'https://example.org/icon.svg',
+				)
+			)
+		);
+
+		$this->assertSame(
+			array(),
+			$this->get_attachment_ids_loaded_by_render( $this->get_sample_icon() )
+		);
+
+		$this->assertSame(
+			array( 123 ),
+			$this->get_attachment_ids_loaded_by_render(
+				array(
+					'type'  => 'media_library',
+					'value' => '123',
+				)
+			)
+		);
+	}
 }

@@ -330,4 +330,37 @@ class FieldGroupSchemaTest extends BaseSchemaTestCase {
 			),
 		);
 	}
+
+	/**
+	 * Test the Abilities settings, including the legacy allow_ai_access setting from older exports.
+	 */
+	public function test_abilities_settings() {
+		$entity = array(
+			'key'    => 'group_abilities',
+			'title'  => 'Abilities',
+			'fields' => array(),
+		);
+
+		$valid = array(
+			'enabled'          => array( 'enable_acf_abilities' => true ),
+			'disabled'         => array(
+				'enable_acf_abilities' => false,
+				'ai_description'       => 'Used for testing.',
+			),
+			'stored as int'    => array( 'enable_acf_abilities' => 1 ),
+			'legacy key alone' => array( 'allow_ai_access' => 1 ),
+		);
+
+		foreach ( $valid as $description => $settings ) {
+			$result = $this->validator->validate( array_merge( $entity, $settings ), $this->get_schema_type() );
+			$this->assertTrue( $result, "Field group abilities settings ({$description}) should validate. Errors: " . $this->validator->get_validation_errors_string() );
+		}
+
+		$result = $this->validator->validate( array_merge( $entity, array( 'enable_acf_abilities' => 'yes' ) ), $this->get_schema_type() );
+		$this->assertFalse( $result, 'A string enable_acf_abilities should fail validation' );
+
+		$schema     = $this->validator->load_schema( $this->get_schema_type() );
+		$definition = $this->get_definition_name();
+		$this->assertTrue( $schema->definitions->$definition->properties->enable_acf_abilities->default, 'Abilities should default to enabled' );
+	}
 }

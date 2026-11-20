@@ -30,10 +30,37 @@ acf_raw_setting
 acf_update_setting
 
 * alias of acf()->update_setting()
-* @since   ACF 5.0.0
-* @param   $name (string)
-* @param $value (mixed)
-* @return n/a
+* Saving to the database doesn't check the current user's capabilities, so callers acting on
+user input must check them first.
+* Settings that can be saved in the database, but are updated here without $save_to_db
+(e.g. from a theme or plugin on "acf/init"), are treated as set in code, even if they're
+registered with "acf/settings/allowed_db_settings" afterwards. Their in-memory value then
+takes precedence over the database value, and they are locked in the settings UI.
+* @since ACF 5.0.0
+* @since SCF 6.9.10 Added the `$save_to_db` parameter.
+* @param string  $name       The name of the setting.
+* @param mixed   $value      The value for the setting.
+* @param boolean $save_to_db Whether to save to the db (true) or not (false). Defaults to false.
+* @return mixed True on success, a WP_Error if the value couldn't be saved to the database.
+
+## `acf_is_setting_set_in_code()`
+
+Returns true if a database-backed setting has been set in code via acf_update_setting().
+
+* This holds whether the setting was registered with "acf/settings/allowed_db_settings" before or after it was
+set in code. Settings that aren't allowed in the database always return false.
+* @since SCF 6.9.10
+* @param string $name The name of the setting.
+* @return boolean
+
+## `acf_is_setting_managed()`
+
+Returns true if a setting is managed in code, either via an "acf/settings/{$name}" filter
+or via acf_update_setting(), and so cannot be changed in the settings UI.
+
+* @since SCF 6.9.10
+* @param string $name The name of the setting.
+* @return boolean
 
 ## `acf_validate_setting()`
 
@@ -52,6 +79,47 @@ Alias of acf()->get_setting()
 * @param   string $name  The name of the setting to test.
 * @param string $value An optional default value for the setting if it doesn't exist.
 * @return n/a
+
+## `acf_get_allowed_db_settings()`
+
+Returns the settings that can be saved in the database from the settings page, with their sanitize callbacks.
+
+* Values are stored in options named "acf_{$name}", the same options ACF uses, so sites moving between ACF
+and SCF keep their settings. Other plugins can add settings with the "acf/settings/allowed_db_settings" filter.
+* This is called from acf_get_setting(), so the filtered result is cached until the callbacks
+on the filter change.
+* @since SCF 6.9.10
+* @return array<string, array{sanitize_callback: callable, autoload: bool}>
+
+## `acf_normalize_allowed_db_settings()`
+
+Normalizes the settings returned by the "acf/settings/allowed_db_settings" filter.
+
+* Each entry needs a callable 'sanitize_callback'. It runs on every save and SCF can't pick one for an unknown
+setting, so entries without one are dropped and can't be saved. 'autoload' defaults to true, like SCF's own
+settings. A filter that doesn't return an array leaves SCF's own settings in place.
+* @since SCF 6.9.10
+* @param mixed $settings The filtered settings.
+* @param array $defaults SCF's own settings, used when the filter doesn't return an array.
+* @return array<string, array{sanitize_callback: callable, autoload: bool}>
+
+## `acf_report_invalid_allowed_db_settings()`
+
+Reports problems with the "acf/settings/allowed_db_settings" filter with _doing_it_wrong(), once each.
+
+* The allowed settings are often built before "init", when loading SCF's translations would itself trigger a
+notice, so the report waits for "init" if it hasn't run yet.
+* @since SCF 6.9.10
+* @param array[] $problems Each an array of the problem type and the setting name.
+* @return void
+
+## `acf_sanitize_rest_api_format()`
+
+Sanitizes the REST API format setting value.
+
+* @since SCF 6.9.10
+* @param mixed $value The incoming value.
+* @return string The sanitized value, defaulting to 'light'.
 
 ## `acf_is_pro()`
 
@@ -1079,6 +1147,17 @@ Validates that an attachment is an image for image and gallery fields.
 * @param array  $field      The field array.
 * @param string $context    The validation context.
 * @return array
+
+## `acf_is_valid_image_attachment_id()`
+
+Returns whether an attachment ID passes save-time image validation.
+
+* Trusts post_mime_type rather than wp_attachment_is_image(), which bails when
+get_attached_file() is empty (stream-wrapped filesystems / some offload
+plugins). Deleted IDs, non-attachment posts, and non-image mimes fail.
+* @since SCF 6.9.10
+* @param integer|string $attachment_id The attachment ID.
+* @return boolean
 
 ## `acf_validate_attachment()`
 

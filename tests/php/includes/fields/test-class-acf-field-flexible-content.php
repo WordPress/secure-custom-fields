@@ -511,4 +511,44 @@ class Test_ACF_Field_Flexible_Content extends Abstract_ACF_Field_Test {
 		$this->assertNull( $this->field_instance->format_value_for_jsonld( $value, $this->post_id, $field ) );
 		$this->assertNull( $this->field_instance->format_value_for_jsonld( false, $this->post_id, $field ) );
 	}
+
+	/**
+	 * Layout meta is added to the loaded ACF meta, so disabled layouts are copied to revisions used by previews.
+	 */
+	public function test_load_meta_includes_layout_meta() {
+		$layout_meta = array(
+			'disabled' => array( 1 ),
+			'renamed'  => array( 0 => 'Intro' ),
+		);
+		acf_update_metadata_by_field( $this->post_id, array( 'name' => '_test_flex_layout_meta' ), $layout_meta );
+
+		$meta = array(
+			'test_flex'    => array( 'text_block', 'image_block' ),
+			'_test_flex'   => 'field_flex_test',
+			'test_text'    => 'Hello',
+			'_test_text'   => 'field_text',
+			'test_missing' => array( 'text_block' ),
+		);
+
+		$loaded = $this->field_instance->load_meta( $meta, $this->post_id );
+
+		$this->assertSame( $layout_meta, $loaded['_test_flex_layout_meta'] );
+		$this->assertArrayNotHasKey( '_test_text_layout_meta', $loaded );
+		$this->assertArrayNotHasKey( '_test_missing_layout_meta', $loaded );
+		$this->assertSame( $meta, array_diff_key( $loaded, array( '_test_flex_layout_meta' => true ) ) );
+	}
+
+	/**
+	 * Layout meta is only added for posts, since only post meta is copied to revisions.
+	 */
+	public function test_load_meta_ignores_non_post_ids() {
+		$meta = array(
+			'test_flex'  => array( 'text_block' ),
+			'_test_flex' => 'field_flex_test',
+		);
+
+		$this->assertSame( $meta, $this->field_instance->load_meta( $meta, 'options' ) );
+		$this->assertSame( $meta, $this->field_instance->load_meta( $meta, 'user_1' ) );
+		$this->assertNull( $this->field_instance->load_meta( null, $this->post_id ) );
+	}
 }

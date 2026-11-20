@@ -4,9 +4,10 @@
 
 Whether the SCF datastore is enabled.
 
-* The datastore requires WordPress 6.7+ and can be enabled via the
-`acf/settings/enable_datastore` filter.
+* Requires WordPress 6.7+. Controlled by the "Datastore" setting on the Settings page, or the
+`acf/settings/enable_datastore` filter (applied by acf_get_setting()).
 * @since ACF 6.8.1
+* @since SCF 6.9.10 Reads the "enable_datastore" setting.
 * @return boolean
 
 ---

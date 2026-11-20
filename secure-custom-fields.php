@@ -140,6 +140,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'url'                     => plugin_dir_url( __FILE__ ),
 				'show_admin'              => true,
 				'show_updates'            => true,
+				'show_settings'           => true,
 				'enable_post_types'       => true,
 				'enable_options_pages_ui' => true,
 				'stripslashes'            => false,
@@ -170,7 +171,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'enable_shortcode'        => true,
 				'enable_bidirection'      => true,
 				'enable_block_bindings'   => true,
-				'enable_acf_ai'           => false,
+				'enable_abilities'        => true,
 				'enable_schema'           => false,
 				'pro'                     => true,
 			);
@@ -287,6 +288,8 @@ if ( ! class_exists( 'ACF' ) ) {
 				acf_include( 'includes/admin/admin-commands.php' );
 				acf_include( 'includes/admin/beta-features.php' );
 				acf_include( 'includes/admin/class-acf-admin-options-page.php' );
+
+				acf_new_instance( 'SCF\Settings_Page\Settings_Page' );
 			}
 
 			// Include legacy.
