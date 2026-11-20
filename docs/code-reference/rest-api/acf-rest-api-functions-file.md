@@ -106,11 +106,17 @@ All-or-nothing reduction for Icon Picker fields.
 only its `media_library` variant expands a stored attachment ID into a full
 attachment array in standard-format mode. The other variants (`dashicons`,
 `url`, `svg`) carry user-provided data with no permission gate needed.
+* With the "Icon String" return format (the default), the formatted value is
+a string rather than an array; for `media_library` icons it is the
+attachment URL from `wp_get_attachment_url()`. In that case the type and
+attachment ID are read from the stored raw value instead.
 * When the type is `media_library` and the caller cannot read the target
 attachment, the field is reduced to the same shape
-`?acf_format=light` would return: `{ type: 'media_library', value: <int> }`.
-Everything else passes through unchanged.
+`?acf_format=light` would return: `{ type: 'media_library', value: <int> }`,
+whatever the field's return format. Everything else passes through
+unchanged.
 * @since SCF 6.9.6
+* @since SCF 6.9.10 Media Library icons using the string return format are also reduced.
 * @param mixed $formatted_value The formatted field value.
 * @param mixed $raw_value       The raw field value.
 * @param array $field           The field array.
