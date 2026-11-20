@@ -58,10 +58,11 @@ unchanged, such as trashing or restoring. Both values are slashed at this point.
 Follows WP_Customize_Manager::preserve_insert_changeset_post_content().
 * @since ACF 6.8.11
 @internal
-* @param array   $data                An array of slashed, sanitized post data.
-* @param array   $postarr             An array of sanitized post data.
-* @param array   $unsanitized_postarr An array of slashed yet unsanitized post data.
-* @param boolean $update              Whether this is an existing post being updated.
+* @param array        $data                An array of slashed, sanitized post data.
+* @param array        $postarr             An array of sanitized post data.
+* @param array|object $unsanitized_postarr The slashed yet unsanitized post data, exactly as passed to
+wp_insert_post(), which also accepts an object such as a WP_Post.
+* @param boolean      $update              Whether this is an existing post being updated.
 * @return array
 
 ## `acf_skip_internal_post_sanitization()`

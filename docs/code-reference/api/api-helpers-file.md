@@ -1473,4 +1473,12 @@ Detect if we're on a multisite main site.
 * @since ACF 6.2.4
 * @return boolean true if we're in a multisite install and on the main site
 
+## `acf_settings_enable_meta_box_cb_edit()`
+
+Allow filterable permissions metabox callbacks.
+
+* @since   SCF 6.9.10
+* @param   boolean $enable_meta_box_cb_edit Can the current user edit metabox callbacks.
+* @return boolean
+
 ---

@@ -4,7 +4,7 @@ Tags: fields, custom fields, meta, scf
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 6.9.9
+Stable tag: 6.9.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,62 @@ This plugin builds upon and is a fork of the previous work done by the contribut
 
 
 == Changelog ==
+= 6.9.10 =
+*Release Date 20th November 2026*
+
+*Security*
+
+- `script` tags in block preview HTML no longer run in the block editor unless the block opts in with `allowDangerousPreviewScripts` in block.json (`allow_dangerous_preview_scripts` in `acf_register_block_type()`), or the site opts in with the new `acf/blocks/allow_dangerous_preview_scripts` filter.
+- The `[acf]` shortcode no longer shows fields from draft or private posts referenced by a prefixed ID such as `post_123` inside a block, or outside the loop.
+- Icon Picker fields set to return an icon string no longer reveal the URLs of private Media Library images in the REST API.
+- Fields registered in code, including field groups loaded from Local JSON, no longer expose their values through the `[acf]` shortcode or Block Bindings unless "Allow Access to Value in Editor UI" (`allow_in_bindings`) is enabled. Fields stored only in the database keep their previous behavior. When a field group exists both in Local JSON and in the database, the Local JSON copy takes precedence. To restore access, set `allow_in_bindings` to `true` in the field definition or JSON file, or turn the setting on for each affected field and save the field group.
+- Meta box callbacks for custom post types and taxonomies can only be set or changed by super admins on multisite, or administrators on single sites. Other users keep the stored values when saving or importing. The new `enable_meta_box_cb_edit` setting turns editing off for everyone.
+- Options Page saves and front-end forms only write options that belong to their own fields. The Options Page shows a notice when a save skips submitted values.
+- REST responses reduce User objects returned as the whole field value, including User fields in Flexible Content rows.
+- User profile saves check permission to edit the user before using the form nonce. Comment and term edits require permission to edit the comment or term before fields are saved.
+- Block Bindings: the placeholder an `acf/field` binding shows in the site editor is escaped as text.
+- Form serialization ignores input names that would write to the JavaScript object prototype, and the Link field no longer renders stored keys with brackets or prototype names as inputs.
+- The WYSIWYG field no longer uses its rendered textarea markup as a format string.
+- Flexible Content fields skip stored rows whose key is not a row number.
+- The bundled timepicker reads inline settings as JSON instead of evaluating them. DOMPurify is updated to 3.4.18.
+
+*Features*
+
+- New Settings page (SCF > Settings) with a Features tab to turn SCF features on and off without code. Settings set in code show as "Managed via code" and can't be changed there.
+- Developers can add tabs, sections and fields to the Settings page with the `acf/settings_page/tabs`, `acf/settings_page/general/sections` and `acf/settings_page/general/{$section}/fields` filters, and register settings that can be saved with `acf/settings/allowed_db_settings`. The Features tab can be hidden with the `acf/settings/show_settings` filter.
+- Abilities are enabled by default for field groups, post types and taxonomies on WordPress 6.9 and later. They can be turned off for each object, or for the whole site on the Settings page. The `enable_acf_ai` setting is renamed to `enable_abilities`, and existing `allow_ai_access` values are not carried over.
+- The Beta Features page is removed. Beta features will move to the Settings page.
+
+*Enhancements*
+
+- Breaking change: generated post type and taxonomy ability names include the object type, so they no longer collide. For example, `acf/create-book` is now `acf/create-book-post` and `acf/books` is now `acf/list-book-posts`.
+- Abilities publish valid JSON Schema, so MCP clients can discover and use them. Schemas describe conditional logic, Repeater and Group sub fields, and Flexible Content layouts. The `acf/field-groups` ability includes the fields of each field group.
+- The "Edit Block" button on version 3 blocks that don't render a preview can be changed with `placeholderButtonText` in block.json or the new `acf/blocks/default_placeholder_button_text` filter.
+- Blocks registered with `acf_register_block_type()` can set the InnerBlocks `default_block` and `direct_insert` options.
+- New `acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing` filter.
+- Child options pages appear in their parent's menu in Menu Position order. A parent page that redirects to its first child opens the child with the lowest Menu Position.
+- Google Map fields find the city for more addresses, such as those that only have a neighborhood or sublocality.
+- The Date Picker's bundled jQuery UI stylesheet is updated to 1.14.2.
+
+*Fixes*
+
+- Version 3 blocks save default field values when a block is inserted and left unedited.
+- Auto inline editing works with values that contain `&`, saves inline edits as plain text, and no longer replaces empty array or object values with a placeholder.
+- Passing a post object to `wp_insert_post()` no longer causes a fatal error.
+- Saving relational fields no longer causes a fatal error when another plugin stores an array in meta whose name starts with `_`.
+- Reading a field before the main query is set up no longer triggers an `is_preview()` notice.
+- Image fields no longer fail validation on hosts that use stream-wrapped file systems, and Image and Gallery fields respect the `acf/is_image_field` filter when validating values.
+- Disabled Flexible Content layouts no longer appear in post previews.
+- Number and Range validation messages show decimal minimum and maximum values correctly.
+- The media modal keeps showing new uploads after a search returns no results.
+- Field group metaboxes that appear without a page reload can be collapsed and expanded.
+- True/False fields using the stylized UI show the switch correctly in right-to-left languages.
+- Field group settings no longer show an incorrect top border on small screens.
+- The Icon Picker field no longer loads an attachment preview when the selected icon is not from the Media Library.
+- Options pages no longer trigger a "Using null as an array offset" deprecation notice on PHP 8.5.
+- Field groups, post types and taxonomies no longer trigger PHP warnings when an `acf/load_{$post_type}` filter returns an invalid value.
+- The field export ability accepts fields that have `allow_in_bindings` set.
+
 = 6.9.9 =
 *Release Date 11th November 2026*
 
@@ -516,6 +572,9 @@ Revert from 6.5.2.
 * Security - SCF defined Post Type and Taxonomy metabox callbacks no longer have access to $_POST data. (Thanks to the Automattic Security Team for the disclosure)
 
 == Upgrade Notice ==
+
+= 6.9.10 =
+Security: fields registered in code or loaded from Local JSON must enable "Allow Access to Value in Editor UI" (`allow_in_bindings`) to be used with the `[acf]` shortcode or Block Bindings. Abilities are now on by default, and generated ability names include the object type.
 
 = 6.9.9 =
 Security: Taxonomy, profile and Gallery saves check the user's permissions, and SCF never reads or writes the user metadata WordPress uses for roles, capabilities or sign-in.
