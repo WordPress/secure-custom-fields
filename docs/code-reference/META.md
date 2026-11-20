@@ -342,6 +342,7 @@ This file tracks code elements that need documentation.
 - `acf/load_attachment`
 - `acf/pre_load_attachment`
 - `acf/pre_load_post_id`
+- `acf/settings/allowed_db_settings`
 - `acf/upload/generate_previews`
 - `acf/user_can_read_post`
 - `acf/validate_attachment`
@@ -405,13 +406,21 @@ This file tracks code elements that need documentation.
 - `acf/input/admin_print_footer_scripts`
 - `acf/input/admin_print_scripts`
 
+## blocks-auto-inline-editing.php
+
+### Hooks
+
+- `acf/blocks/auto_inline_editing/field_return_type_supports_auto_inline_editing`
+
 ## blocks.php
 
 ### Hooks
 
+- `acf/blocks/allow_dangerous_preview_scripts`
 - `acf/blocks/default_block_version`
 - `acf/blocks/default_block_version`
 - `acf/blocks/default_expanded_editor_button_text`
+- `acf/blocks/default_placeholder_button_text`
 - `acf/blocks/fields_needing_wide_popover`
 - `acf/blocks/fields_to_open_in_expanded_editor`
 - `acf/blocks/no_fields_assigned_message`
@@ -444,12 +453,6 @@ This file tracks code elements that need documentation.
 
 - `acf/field_group/disable_field_settings_tabs`
 - `acf/field_group/enable_field_browser`
-
-## datastore.php
-
-### Hooks
-
-- `acf/settings/enable_datastore`
 
 ## fields.php
 
@@ -726,6 +729,18 @@ This file tracks code elements that need documentation.
 
 - `scf/bidirectional/allow_target`
 - `scf/upload/generate_previews`
+
+## src/Settings_Page/Settings_Page.php
+
+Settings page tabs, sections and fields. The "Features" tab is removed when `acf/settings/show_settings` returns false.
+
+### Hooks
+
+- `acf/fields/google_map/api`
+- `acf/settings/show_settings`
+- `acf/settings_page/general/{$section}/fields`
+- `acf/settings_page/general/sections`
+- `acf/settings_page/tabs`
 
 ## upgrades.php
 

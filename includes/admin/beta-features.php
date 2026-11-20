@@ -17,6 +17,9 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 	 * Class SCF_Admin_Beta_Features
 	 *
 	 * This class provides different beta features that eventually will land on secure custom fields.
+	 *
+	 * The Beta Features admin page was removed in SCF 6.9.10, and its URL redirects to the Settings page.
+	 * Beta features keep their stored "scf_beta_feature_{$name}_enabled" options.
 	 */
 	class SCF_Admin_Beta_Features {
 
@@ -35,7 +38,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function __construct() {
-			add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_beta_features_script' ), 20 );
 		}
 
 		/**
@@ -82,54 +85,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		}
 
 		/**
-		 * This function will add the SCF beta features menu item to the WP admin
-		 *
-		 * @type    action (admin_menu)
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function admin_menu() {
-			// bail early if no show_admin
-			if ( ! acf_get_setting( 'show_admin' ) ) {
-				return;
-			}
-
-			$page = add_submenu_page( 'edit.php?post_type=acf-field-group', __( 'Beta Features', 'secure-custom-fields' ), __( 'Beta Features', 'secure-custom-fields' ), acf_get_setting( 'capability' ), 'scf-beta-features', array( $this, 'html' ) );
-
-			add_action( 'load-' . $page, array( $this, 'load' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'add_beta_features_script' ), 20 );
-		}
-
-		/**
-		 * Loads the admin beta features page.
-		 *
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function load() {
-			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
-			// Include and register beta features before checking submit
-			$this->include_beta_features();
-
-			$this->check_submit();
-		}
-
-		/**
-		 * Modifies the admin body class.
-		 *
-		 * @since SCF 6.5.0
-		 *
-		 * @param string $classes Space-separated list of CSS classes.
-		 * @return string
-		 */
-		public function admin_body_class( $classes ) {
-			$classes .= ' acf-admin-page';
-			return $classes;
-		}
-
-		/**
 		 * Includes various beta feature-related files.
 		 *
 		 * @since   SCF 6.5.0
@@ -156,89 +111,6 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		}
 
 		/**
-		 * Verifies the nonces and submits the value if it passes.
-		 *
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function check_submit() {
-			// Check if form was submitted.
-			if ( ! isset( $_POST['scf_beta_features_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['scf_beta_features_nonce'] ), 'scf_beta_features_update' ) ) {
-				return;
-			}
-
-			$beta_features = $this->get_beta_features();
-			$updated       = false;
-
-			foreach ( $beta_features as $name => $beta_feature ) {
-				$enabled = isset( $_POST['scf_beta_features'][ $name ] ) && '1' === $_POST['scf_beta_features'][ $name ];
-				$beta_feature->set_enabled( $enabled );
-				$updated = true;
-			}
-
-			if ( $updated ) {
-				add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-			}
-		}
-
-		/**
-		 * Display admin notices.
-		 *
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function admin_notices() {
-			?>
-			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'Beta feature settings updated successfully.', 'secure-custom-fields' ); ?></p>
-			</div>
-			<?php
-		}
-
-		/**
-		 * Admin Beta Features html
-		 *
-		 * @since   SCF 6.5.0
-		 *
-		 * @return  void
-		 */
-		public function html() {
-			// vars
-			$screen = get_current_screen();
-
-			// view
-			$view = array(
-				'screen_id' => $screen->id,
-			);
-
-			foreach ( $this->get_beta_features() as $name => $beta_feature ) {
-				add_meta_box( 'scf-admin-beta-feature-' . $name, acf_esc_html( $beta_feature->title ), array( $this, 'metabox_html' ), $screen->id, 'normal', 'default', array( 'beta_feature' => $name ) );
-			}
-
-			acf_get_view( 'beta-features/beta-features', $view );
-		}
-
-		/**
-		 * Output the metabox HTML for specific beta features
-		 *
-		 * @since SCF 6.5.0
-		 *
-		 * @param mixed $post    The post this metabox is being displayed on, should be an empty string always for us on an beta features page.
-		 * @param array $metabox An array of the metabox attributes.
-		 */
-		public function metabox_html( $post, $metabox ) {
-			$beta_feature = $this->get_beta_feature( $metabox['args']['beta_feature'] );
-			$form_attrs   = array( 'method' => 'post' );
-
-			printf( '<form %s>', acf_esc_attrs( $form_attrs ) );
-			$beta_feature->html();
-			acf_nonce_input( $beta_feature->name );
-			echo '</form>';
-		}
-
-		/**
 		 * Adds the editor sidebar script to the page.
 		 *
 		 * @since   SCF 6.5.0
@@ -246,7 +118,10 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function add_beta_features_script() {
-			// Check if the connected fields feature is enabled
+			// Bail early if no show_admin.
+			if ( ! acf_get_setting( 'show_admin' ) ) {
+				return;
+			}
 
 			$script = 'window.scf = window.scf || {};
 window.scf.betaFeatures = window.scf.betaFeatures || {};';
@@ -278,13 +153,14 @@ function scf_register_admin_beta_feature( $beta_feature ) {
 }
 
 /**
- * This function will return the admin URL to the beta features page
+ * This function will return the admin URL where beta features are managed.
  *
  * @type    function
  * @since   SCF 6.5.0
+ * @since   SCF 6.9.10 Returns the Settings page URL, as the Beta Features page was removed.
  *
- * @return  string The URL to the beta features page.
+ * @return  string The URL to the settings page.
  */
 function scf_get_admin_beta_features_url() {
-	return admin_url( 'edit.php?post_type=acf-field-group&page=scf-beta-features' );
+	return admin_url( 'edit.php?post_type=acf-field-group&page=acf-settings-tab-general' );
 }

@@ -218,6 +218,211 @@ class Test_Blocks extends BaseTestCase {
 	}
 
 	/**
+	 * Test the InnerBlocks default_block and direct_insert settings in acf_validate_block_type().
+	 */
+	public function test_validate_block_type_inner_blocks_settings() {
+		$defaults = acf_validate_block_type( array( 'name' => 'inner-defaults' ) );
+		$this->assertSame( array(), $defaults['default_block'] );
+		$this->assertFalse( $defaults['direct_insert'] );
+
+		// A block name string is normalized to the array InnerBlocks expects.
+		$string_default = acf_validate_block_type(
+			array(
+				'name'          => 'inner-string',
+				'default_block' => 'core/heading',
+				'direct_insert' => true,
+			)
+		);
+		$this->assertSame( array( 'name' => 'core/heading' ), $string_default['default_block'] );
+		$this->assertTrue( $string_default['direct_insert'] );
+
+		// Arrays are left as they are.
+		$array_default = acf_validate_block_type(
+			array(
+				'name'          => 'inner-array',
+				'default_block' => array(
+					'name'       => 'core/paragraph',
+					'attributes' => array( 'content' => 'Hi' ),
+				),
+			)
+		);
+		$this->assertSame(
+			array(
+				'name'       => 'core/paragraph',
+				'attributes' => array( 'content' => 'Hi' ),
+			),
+			$array_default['default_block']
+		);
+
+		// An empty string is not turned into a block name.
+		$empty_default = acf_validate_block_type(
+			array(
+				'name'          => 'inner-empty',
+				'default_block' => '',
+			)
+		);
+		$this->assertSame( '', $empty_default['default_block'] );
+	}
+
+	/**
+	 * Test the block.json mappings for the placeholder, InnerBlocks and preview script settings.
+	 */
+	public function test_handle_json_block_registration_maps_new_settings() {
+		$this->block_names[] = 'acf/json-new-settings';
+
+		$settings = acf_handle_json_block_registration(
+			array(),
+			array(
+				'name'  => 'acf/json-new-settings',
+				'title' => 'JSON New Settings',
+				'file'  => '/tmp/scf-test-json-new/block.json',
+				'acf'   => array(
+					'renderTemplate'               => 'template.php',
+					'placeholderButtonText'        => 'Set up',
+					'defaultBlock'                 => array( 'name' => 'core/heading' ),
+					'directInsert'                 => true,
+					'allowDangerousPreviewScripts' => true,
+				),
+			)
+		);
+
+		$this->assertSame( 'Set up', $settings['placeholder_button_text'] );
+		$this->assertSame( array( 'name' => 'core/heading' ), $settings['default_block'] );
+		$this->assertTrue( $settings['direct_insert'] );
+		$this->assertTrue( $settings['allow_dangerous_preview_scripts'] );
+	}
+
+	/**
+	 * Test that block attributes can never turn on preview scripts in acf_prepare_block().
+	 */
+	public function test_prepare_block_protects_allow_dangerous_preview_scripts() {
+		$this->register_block(
+			array(
+				'name'            => 'preview-scripts-off',
+				'title'           => 'Preview Scripts Off',
+				'render_template' => 'template.php',
+			)
+		);
+		$this->register_block(
+			array(
+				'name'                            => 'preview-scripts-on',
+				'title'                           => 'Preview Scripts On',
+				'render_template'                 => 'template.php',
+				'allow_dangerous_preview_scripts' => true,
+			)
+		);
+
+		$prepared_off = acf_prepare_block(
+			array(
+				'name'                            => 'acf/preview-scripts-off',
+				'id'                              => 'scripts-off',
+				'allow_dangerous_preview_scripts' => true,
+			)
+		);
+		$this->assertArrayNotHasKey( 'allow_dangerous_preview_scripts', $prepared_off );
+
+		$prepared_on = acf_prepare_block(
+			array(
+				'name'                            => 'acf/preview-scripts-on',
+				'id'                              => 'scripts-on',
+				'allow_dangerous_preview_scripts' => false,
+			)
+		);
+		$this->assertTrue( $prepared_on['allow_dangerous_preview_scripts'] );
+	}
+
+	/**
+	 * Test the acf/blocks/allow_dangerous_preview_scripts filter.
+	 */
+	public function test_blocks_allow_dangerous_preview_scripts_filter() {
+		$this->assertFalse( acf_blocks_allow_dangerous_preview_scripts() );
+
+		add_filter( 'acf/blocks/allow_dangerous_preview_scripts', '__return_true' );
+		$this->assertTrue( acf_blocks_allow_dangerous_preview_scripts() );
+		remove_filter( 'acf/blocks/allow_dangerous_preview_scripts', '__return_true' );
+
+		// Truthy non-boolean values are cast.
+		$return_one = static function () {
+			return 1;
+		};
+		add_filter( 'acf/blocks/allow_dangerous_preview_scripts', $return_one );
+		$this->assertTrue( acf_blocks_allow_dangerous_preview_scripts() );
+		remove_filter( 'acf/blocks/allow_dangerous_preview_scripts', $return_one );
+	}
+
+	/**
+	 * Test the block type data acf_enqueue_block_assets() localizes for the editor.
+	 */
+	public function test_enqueue_block_assets_localizes_block_settings() {
+		$this->register_block(
+			array(
+				'name'                            => 'enqueue-custom-text',
+				'title'                           => 'Enqueue Custom Text',
+				'render_template'                 => 'template.php',
+				'placeholder_button_text'         => '<b>Set up</b> & go',
+				'expanded_editor_button_text'     => '<img src=x onerror=alert(1)>Open & edit',
+				'allow_dangerous_preview_scripts' => '0',
+			)
+		);
+		$this->register_block(
+			array(
+				'name'                            => 'enqueue-default-text',
+				'title'                           => 'Enqueue Default Text',
+				'render_template'                 => 'template.php',
+				'allow_dangerous_preview_scripts' => true,
+			)
+		);
+
+		$filter_placeholder = static function () {
+			return '<em>Configure</em>';
+		};
+		add_filter( 'acf/blocks/default_placeholder_button_text', $filter_placeholder );
+
+		$assets        = acf_get_instance( 'ACF_Assets' );
+		$original_data = $assets->data;
+
+		acf_enqueue_block_assets();
+		$data = $assets->data;
+
+		$assets->data = $original_data;
+		remove_filter( 'acf/blocks/default_placeholder_button_text', $filter_placeholder );
+
+		$this->assertFalse( $data['allowDangerousPreviewScriptsInBlocks'] );
+
+		$block_types = array_column( $data['blockTypes'], null, 'name' );
+		$custom      = $block_types['acf/enqueue-custom-text'];
+		$default     = $block_types['acf/enqueue-default-text'];
+
+		// Button labels are stripped of tags and escaped; the block setting beats the filter.
+		$this->assertSame( 'Set up &amp; go', $custom['placeholder_button_text'] );
+		$this->assertSame( 'Open &amp; edit', $custom['expanded_editor_button_text'] );
+		$this->assertSame( 'Configure', $default['placeholder_button_text'] );
+		$this->assertSame( '', $default['expanded_editor_button_text'] );
+
+		// The preview scripts flag is cast to a boolean.
+		$this->assertFalse( $custom['allow_dangerous_preview_scripts'] );
+		$this->assertTrue( $default['allow_dangerous_preview_scripts'] );
+	}
+
+	/**
+	 * Test that acf_enqueue_block_assets() localizes the site-wide preview scripts filter.
+	 */
+	public function test_enqueue_block_assets_localizes_global_preview_scripts_flag() {
+		add_filter( 'acf/blocks/allow_dangerous_preview_scripts', '__return_true' );
+
+		$assets        = acf_get_instance( 'ACF_Assets' );
+		$original_data = $assets->data;
+
+		acf_enqueue_block_assets();
+		$data = $assets->data;
+
+		$assets->data = $original_data;
+		remove_filter( 'acf/blocks/allow_dangerous_preview_scripts', '__return_true' );
+
+		$this->assertTrue( $data['allowDangerousPreviewScriptsInBlocks'] );
+	}
+
+	/**
 	 * Test that registering a block without a name fails.
 	 */
 	public function test_register_block_type_requires_name() {

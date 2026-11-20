@@ -299,4 +299,16 @@ Gets an ACF options page from request args and verifies nonce based on action.
 * @param string $action The action being performed.
 * @return array|boolean
 
+## `acf_preserve_unsubmitted_abilities_settings()`
+
+Keeps the stored Abilities settings when an edit screen submission doesn't include them.
+
+* The SCF AI tab isn't rendered while the global "enable_abilities" setting is off, so saving
+would otherwise reset these settings to their defaults and re-enable abilities that had been
+switched off for this object.
+* @since SCF 6.9.10
+* @param array   $submitted The submitted field group, post type or taxonomy settings.
+* @param WP_Post $post      The post being saved.
+* @return array
+
 ---

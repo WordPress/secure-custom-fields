@@ -1,4 +1,12 @@
 const md5 = require( 'md5' );
+const {
+	applyInnerBlocksDefaults,
+	getInnerBlocksSettings,
+} = require( './blocks-v3/utils/inner-blocks' );
+const {
+	shouldRenderPreviewNode,
+	removeExecutablePreviewScripts,
+} = require( './blocks-v3/utils/preview-scripts' );
 
 ( ( $, undefined ) => {
 	// Dependencies.
@@ -526,9 +534,10 @@ const md5 = require( 'md5' );
 	 *
 	 * @param	string html The HTML to convert.
 	 * @param	int acfBlockVersion The ACF block version number.
+	 * @param	string blockName The block name, used to check whether preview scripts may run.
 	 * @return	object Result of React.createElement().
 	 */
-	acf.parseJSX = ( html, acfBlockVersion ) => {
+	acf.parseJSX = ( html, acfBlockVersion, blockName ) => {
 		// Apply a temporary wrapper for the jQuery parse to prevent text nodes triggering errors.
 		html = '<div>' + html + '</div>';
 		// Correctly balance InnerBlocks tags for jQuery's initial parse.
@@ -536,7 +545,8 @@ const md5 = require( 'md5' );
 			/<InnerBlocks([^>]+)?\/>/,
 			'<InnerBlocks$1></InnerBlocks>'
 		);
-		return parseNode( $( html )[ 0 ], acfBlockVersion, 0 ).props.children;
+		const root = parseNode( $( html )[ 0 ], acfBlockVersion, 0, blockName );
+		return root.props.children;
 	};
 
 	/**
@@ -548,9 +558,21 @@ const md5 = require( 'md5' );
 	 * @param	DOM node The DOM node.
 	 * @param	int acfBlockVersion The ACF block version number.
 	 * @param	int level The recursion level.
+	 * @param	string blockName The block name, used to check whether preview scripts may run.
 	 * @return	object Result of React.createElement().
 	 */
-	function parseNode( node, acfBlockVersion, level = 0 ) {
+	function parseNode( node, acfBlockVersion, level = 0, blockName ) {
+		// Drop <script> nodes unless the block or site opts in to preview scripts.
+		if (
+			! shouldRenderPreviewNode(
+				node,
+				!! blockName && getBlockType( blockName ),
+				blockName
+			)
+		) {
+			return null;
+		}
+
 		// Get node name.
 		const nodeName = parseNodeName(
 			node.nodeName.toLowerCase(),
@@ -574,7 +596,16 @@ const md5 = require( 'md5' );
 				nodeAttrs[ name ] = value;
 			} );
 
-		if ( 'ACFInnerBlocks' === nodeName ) {
+		if ( 'ACFInnerBlocks' === nodeName || InnerBlocks === nodeName ) {
+			const blockType = !! blockName && getBlockType( blockName );
+			applyInnerBlocksDefaults( nodeAttrs, blockType );
+
+			if ( InnerBlocks === nodeName ) {
+				return (
+					<InnerBlocks { ...getInnerBlocksSettings( nodeAttrs ) } />
+				);
+			}
+
 			return <ACFInnerBlocks { ...nodeAttrs } />;
 		}
 
@@ -587,7 +618,9 @@ const md5 = require( 'md5' );
 					args.push( text );
 				}
 			} else {
-				args.push( parseNode( child, acfBlockVersion, level + 1 ) );
+				args.push(
+					parseNode( child, acfBlockVersion, level + 1, blockName )
+				);
 			}
 		} );
 
@@ -677,7 +710,7 @@ const md5 = require( 'md5' );
 		const { className = 'acf-innerblocks-container' } = props;
 		const innerBlockProps = useInnerBlocksProps(
 			{ className: className },
-			props
+			getInnerBlocksSettings( props )
 		);
 
 		return <div { ...innerBlockProps }>{ innerBlockProps.children }</div>;
@@ -1063,6 +1096,7 @@ const md5 = require( 'md5' );
 			this.el = false;
 			this.subscribed = true;
 			this.renderMethod = 'jQuery';
+			this.isPreview = false;
 			this.passedValidation = false;
 			this.setup( props );
 
@@ -1190,18 +1224,27 @@ const md5 = require( 'md5' );
 			if ( this.renderMethod === 'jsx' ) {
 				state.jsx = acf.parseJSX(
 					html,
-					getBlockVersion( this.props.name )
+					getBlockVersion( this.props.name ),
+					this.props.name
 				);
 
-				// Handle templates which don't contain any valid JSX parsable elements.
-				if ( ! state.jsx ) {
+				// Handle templates which don't contain any valid JSX parsable elements,
+				// including ones whose only elements were dropped (such as blocked preview scripts).
+				if (
+					! state.jsx ||
+					( Array.isArray( state.jsx ) &&
+						! state.jsx.some( ( element ) =>
+							React.isValidElement( element )
+						) )
+				) {
 					console.warn(
 						'Your ACF block template contains no valid HTML elements. Appending a empty div to prevent React JS errors.'
 					);
 					state.html += '<div></div>';
 					state.jsx = acf.parseJSX(
 						state.html,
-						getBlockVersion( this.props.name )
+						getBlockVersion( this.props.name ),
+						this.props.name
 					);
 				}
 
@@ -1217,6 +1260,15 @@ const md5 = require( 'md5' );
 				state.$el = $( this.el );
 			} else {
 				state.$el = $( html );
+
+				// Strip executable preview scripts unless the block or site opts in.
+				if ( this.isPreview ) {
+					state.$el = removeExecutablePreviewScripts(
+						state.$el,
+						getBlockType( this.props.name ),
+						this.props.name
+					);
+				}
 			}
 			this.setState( state );
 		}
@@ -1667,6 +1719,7 @@ const md5 = require( 'md5' );
 			const contextPostId = acf.isget( this.props, 'context', 'postId' );
 
 			this.id = `BlockPreview-${ props.clientId }`;
+			this.isPreview = true;
 
 			super.setup( props );
 

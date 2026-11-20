@@ -243,10 +243,12 @@
 		renderPostScreen: function ( data ) {
 			// Helper function to copy events
 			var copyEvents = function ( $from, $to ) {
-				var events = $._data( $from[ 0 ] ).events;
-				for ( var type in events ) {
-					for ( var i = 0; i < events[ type ].length; i++ ) {
-						$to.on( type, events[ type ][ i ].handler );
+				if ( $from.length ) {
+					var events = $._data( $from[ 0 ] ).events;
+					for ( var type in events ) {
+						for ( var i = 0; i < events[ type ].length; i++ ) {
+							$to.on( type, events[ type ][ i ].handler );
+						}
 					}
 				}
 			};
@@ -367,11 +369,11 @@
 					if ( $( '.postbox' ).length ) {
 						copyEvents(
 							$( '.postbox .handlediv' ).first(),
-							$postbox.children( '.handlediv' )
+							$postbox.find( '.handlediv' )
 						);
 						copyEvents(
 							$( '.postbox .hndle' ).first(),
-							$postbox.children( '.hndle' )
+							$postbox.find( '.hndle' )
 						);
 					}
 

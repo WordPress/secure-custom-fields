@@ -115,6 +115,25 @@ class Test_SCF_Site_Health extends BaseTestCase {
 	}
 
 	/**
+	 * Site Health reports the enable_abilities setting, which is on by default.
+	 */
+	public function test_abilities_setting_is_reported() {
+		$values = $this->site_health->get_site_health_values();
+
+		$this->assertArrayNotHasKey( 'ai_enabled', $values );
+		$this->assertSame( 'Abilities API Support', $values['abilities_enabled']['label'] );
+		$this->assertTrue( $values['abilities_enabled']['debug'] );
+
+		acf_update_setting( 'enable_abilities', false );
+		$values = $this->site_health->get_site_health_values();
+		acf_update_setting( 'enable_abilities', true );
+
+		$this->assertFalse( $values['abilities_enabled']['debug'] );
+		$this->assertArrayNotHasKey( 'abilities_api', $values );
+		$this->assertArrayNotHasKey( 'ai_ready_objects', $values );
+	}
+
+	/**
 	 * Builds a location rule.
 	 *
 	 * @param string $param    The rule param.

@@ -19,6 +19,7 @@ use WorDBless\BaseTestCase;
  * @covers ::acf_is_image_field
  * @covers ::acf_get_image_mime_types
  * @covers ::acf_validate_is_image_attachment
+ * @covers ::acf_is_valid_image_attachment_id
  * @covers ::acf_validate_attachment
  * @covers ::acf_upload_file
  */
@@ -268,6 +269,42 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 	}
 
 	/**
+	 * Image attachments without a local file, as on stream-wrapped file systems, pass the prepare check.
+	 */
+	public function test_prepare_accepts_image_attachment_without_local_file() {
+		$image_id = $this->create_attachment( false, 'image/png' );
+
+		$this->assertSame( array(), acf_validate_is_image_attachment( array(), array(), array( 'id' => $image_id ), $this->field( 'image' ), 'prepare' ) );
+	}
+
+	/**
+	 * The image attachment ID helper trusts the attachment's MIME type.
+	 */
+	public function test_is_valid_image_attachment_id() {
+		$image_id   = $this->create_attachment( 'photo.jpg', 'image/jpeg' );
+		$no_file_id = $this->create_attachment( false, 'image/webp' );
+		$pdf_id     = $this->create_attachment( 'document.pdf', 'application/pdf' );
+		$post_id    = wp_insert_post(
+			array(
+				'post_title'  => 'Not an attachment',
+				'post_status' => 'publish',
+			)
+		);
+
+		$this->assertTrue( acf_is_valid_image_attachment_id( $image_id ) );
+		$this->assertTrue( acf_is_valid_image_attachment_id( (string) $image_id ) );
+		$this->assertTrue( acf_is_valid_image_attachment_id( $no_file_id ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( $pdf_id ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( $post_id ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( 999999 ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( 0 ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( 'abc' ) );
+		$this->assertFalse( acf_is_valid_image_attachment_id( array( $image_id ) ) );
+
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
 	 * Without an attachment ID, the reported MIME type is checked.
 	 */
 	public function test_prepare_without_id_checks_mime() {
@@ -457,8 +494,8 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 	/**
 	 * Creates an attachment for the given file name.
 	 *
-	 * @param string $file The attached file name.
-	 * @param string $mime The attachment MIME type.
+	 * @param string|false $file The attached file name, or false for none.
+	 * @param string       $mime The attachment MIME type.
 	 * @return int
 	 */
 	private function create_attachment( $file, $mime ) {
@@ -469,7 +506,7 @@ class Test_API_Image_Attachment_Validation extends BaseTestCase {
 				'post_mime_type' => $mime,
 				'post_status'    => 'inherit',
 			),
-			'/tmp/' . $file
+			$file ? '/tmp/' . $file : false
 		);
 
 		$this->attachment_ids[] = $attachment_id;

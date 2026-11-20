@@ -57,6 +57,17 @@
 				attachment.height = size.height;
 			}
 
+			// Show the file type icon for attachments that are not images.
+			if (
+				! size &&
+				attachment.type &&
+				'image' !== attachment.type &&
+				attachment.icon
+			) {
+				attachment.url = attachment.icon;
+				attachment.alt = attachment.alt || attachment.title;
+			}
+
 			// Return.
 			return attachment;
 		},

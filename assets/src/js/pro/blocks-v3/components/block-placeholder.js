@@ -8,7 +8,7 @@ import { Placeholder, Button, Icon } from '@wordpress/components';
  * SVG icon for the block placeholder
  * Represents a generic block/form icon
  */
-const blockIcon = (
+const defaultBlockIcon = (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 24 24"
@@ -29,16 +29,29 @@ const blockIcon = (
  * @param {Object} props - Component props
  * @param {Function} props.setBlockFormModalOpen - Function to open the block form modal
  * @param {string} props.blockLabel - The block's title/label
+ * @param {Object|string} props.blockIcon - The block type's icon; string icons fall back to the default icon
+ * @param {string} props.buttonText - Custom button text, HTML-escaped by the server
+ * @param {string} props.instructions - Optional instructions, such as an error message
  * @returns {JSX.Element} - Rendered placeholder
  */
 export const BlockPlaceholder = ( {
 	setBlockFormModalOpen,
 	blockLabel,
+	blockIcon,
+	buttonText,
 	instructions,
 } ) => {
+	// Registered block icons may be wrapped in an object with a `src` key.
+	let icon = blockIcon?.src || blockIcon;
+
+	// String icons (dashicon names or SVG markup) aren't rendered here.
+	if ( typeof icon === 'string' ) {
+		icon = null;
+	}
+
 	return (
 		<Placeholder
-			icon={ <Icon icon={ blockIcon } /> }
+			icon={ <Icon icon={ icon || defaultBlockIcon } /> }
 			label={ blockLabel }
 			instructions={ instructions }
 		>
@@ -48,7 +61,9 @@ export const BlockPlaceholder = ( {
 					setBlockFormModalOpen( true );
 				} }
 			>
-				{ acf.__( 'Edit Block' ) }
+				{ buttonText
+					? acf.decode( buttonText )
+					: acf.__( 'Edit Block' ) }
 			</Button>
 		</Placeholder>
 	);

@@ -367,14 +367,19 @@ if ( ! class_exists( 'acf_revisions' ) ) :
 		 * @since ACF 5.5.10
 		 * @since SCF 6.9.8 Requires the preview query arg, since WordPress also flags
 		 *                  an editor viewing a draft or pending post as a preview.
+		 * @since SCF 6.9.10 Checks the main query exists before calling is_preview().
 		 *
 		 * @param mixed $post_id  The post ID after being processed by acf_get_valid_post_id().
 		 * @param mixed $_post_id The post ID before being processed by acf_get_valid_post_id().
 		 * @return mixed
 		 */
 		public function acf_validate_post_id( $post_id, $_post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Required by the acf/validate_post_id filter signature.
-			// Bail early if not a well-formed WordPress preview context.
-			if ( ! is_preview() || ! isset( $_GET['preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check of the preview query arg.
+			global $wp_query;
+
+			// Bail early if not a preview request. is_preview() alone is also true when an editor views a draft
+			// directly (?p=123), so require core's preview flag too. The $wp_query check avoids is_preview()'s
+			// notice before the main query is set. Access control is the edit_post check below.
+			if ( ! isset( $_GET['preview'] ) || ! isset( $wp_query ) || ! is_preview() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check of the preview query arg.
 				return $post_id;
 			}
 

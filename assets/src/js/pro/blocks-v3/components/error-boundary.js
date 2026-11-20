@@ -113,6 +113,7 @@ function hasResetKeysChanged( prevKeys = [], nextKeys = [] ) {
 export const BlockPreviewErrorFallback = ( {
 	setBlockFormModalOpen,
 	blockLabel,
+	buttonText,
 	error,
 } ) => {
 	let errorMessage = null;
@@ -126,6 +127,7 @@ export const BlockPreviewErrorFallback = ( {
 		<BlockPlaceholder
 			setBlockFormModalOpen={ setBlockFormModalOpen }
 			blockLabel={ blockLabel }
+			buttonText={ buttonText }
 			instructions={ errorMessage }
 		/>
 	);

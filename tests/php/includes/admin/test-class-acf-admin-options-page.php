@@ -687,6 +687,91 @@ class Test_ACF_Admin_Options_Page extends BaseTestCase {
 	}
 
 	/**
+	 * Child options pages appear in their ACF parent's menu in Menu Position order, while children of other
+	 * menus keep their position among that menu's items.
+	 */
+	public function test_admin_menu_orders_children_by_position() {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$globals = array( 'menu', 'submenu', '_wp_last_utility_menu', '_registered_pages', '_parent_pages', 'admin_page_hooks', '_wp_real_parent_file', '_wp_submenu_nopriv', '_wp_menu_nopriv' );
+		$backup  = array();
+		foreach ( $globals as $name ) {
+			$backup[ $name ] = $GLOBALS[ $name ] ?? null;
+		}
+		$pages_backup = acf_options_page()->pages;
+
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Restored below.
+		$GLOBALS['menu']                  = array();
+		$GLOBALS['_wp_last_utility_menu'] = 80;
+		$GLOBALS['submenu']               = array(
+			'options-general.php' => array(
+				array( 'General', 'manage_options', 'options-general.php' ),
+				array( 'Writing', 'manage_options', 'options-writing.php' ),
+				array( 'Reading', 'manage_options', 'options-reading.php' ),
+			),
+		);
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+		acf_options_page()->pages = array();
+
+		$this->add_test_filter(
+			'user_has_cap',
+			static function ( $allcaps ) {
+				$allcaps['manage_options'] = true;
+				$allcaps['edit_posts']     = true;
+				return $allcaps;
+			}
+		);
+
+		acf_add_options_page(
+			array(
+				'page_title' => 'Site Settings',
+				'menu_slug'  => 'site-settings',
+			)
+		);
+		foreach ( array( 'site-a', 'site-b', 'site-c' ) as $slug ) {
+			acf_add_options_sub_page(
+				array(
+					'page_title'  => $slug,
+					'menu_slug'   => $slug,
+					'parent_slug' => 'site-settings',
+					'position'    => 1,
+				)
+			);
+		}
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Site Z',
+				'menu_slug'   => 'site-z',
+				'parent_slug' => 'site-settings',
+				'position'    => 0,
+			)
+		);
+		acf_add_options_sub_page(
+			array(
+				'page_title'  => 'Settings Child',
+				'menu_slug'   => 'settings-child',
+				'parent_slug' => 'options-general.php',
+				'position'    => 1,
+			)
+		);
+
+		$admin = new acf_admin_options_page();
+		remove_action( 'admin_menu', array( $admin, 'admin_menu' ), 99 );
+		$admin->admin_menu();
+
+		$site_children     = wp_list_pluck( $GLOBALS['submenu']['site-z'] ?? array(), 2 );
+		$settings_children = wp_list_pluck( $GLOBALS['submenu']['options-general.php'], 2 );
+
+		acf_options_page()->pages = $pages_backup;
+		foreach ( $backup as $name => $value ) {
+			$GLOBALS[ $name ] = $value; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring the snapshot.
+		}
+
+		$this->assertSame( array( 'site-z', 'site-a', 'site-b', 'site-c' ), $site_children );
+		$this->assertSame( array( 'options-general.php', 'settings-child', 'options-writing.php', 'options-reading.php' ), $settings_children );
+	}
+
+	/**
 	 * Adds and tracks a test-specific filter.
 	 *
 	 * @param string   $hook          Filter name.

@@ -230,6 +230,42 @@ class Test_ACF_REST_Reference_Sanitization extends BaseTestCase {
 	}
 
 	/**
+	 * Media library icons using the string return format are reduced when the attachment can't be read.
+	 */
+	public function test_icon_picker_string_return_format() {
+		$field = $this->field( 'icon_picker' );
+
+		$hidden_raw = array(
+			'type'  => 'media_library',
+			'value' => (string) $this->draft_id,
+		);
+		$this->assertSame(
+			array(
+				'type'  => 'media_library',
+				'value' => $this->draft_id,
+			),
+			acf_rest_reduce_icon_picker_reference( 'https://example.org/wp-content/uploads/private.png', $hidden_raw, $field )
+		);
+
+		$public_raw = array(
+			'type'  => 'media_library',
+			'value' => $this->public_id,
+		);
+		$this->assertSame(
+			'https://example.org/wp-content/uploads/public.png',
+			acf_rest_reduce_icon_picker_reference( 'https://example.org/wp-content/uploads/public.png', $public_raw, $field )
+		);
+
+		$dashicon = array(
+			'type'  => 'dashicons',
+			'value' => 'dashicons-admin-post',
+		);
+		$this->assertSame( 'dashicons-admin-post', acf_rest_reduce_icon_picker_reference( 'dashicons-admin-post', $dashicon, $field ) );
+
+		$this->assertSame( 'https://example.org/icon.svg', acf_rest_reduce_icon_picker_reference( 'https://example.org/icon.svg', 'https://example.org/icon.svg', $field ) );
+	}
+
+	/**
 	 * References nested in Group, Repeater and Flexible Content fields are reduced.
 	 */
 	public function test_nested_references() {
