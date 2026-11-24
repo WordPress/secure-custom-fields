@@ -39,7 +39,7 @@ The repository contains the plugin source. The JavaScript and CSS that ship with
 
 ### Prerequisites
 
-- Node.js >= 20.15.1 and npm >= 10.8.1 (see `engines` in `package.json`)
+- Node.js >= 22.22.2 and npm >= 10.8.1 (see `engines` in `package.json`)
 - PHP >= 7.4 and [Composer](https://getcomposer.org/)
 
 ### Build the plugin
