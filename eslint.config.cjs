@@ -1,4 +1,5 @@
 const wordpressConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
+const jestPlugin = require( 'eslint-plugin-jest' );
 
 module.exports = [
 	{
@@ -19,4 +20,9 @@ module.exports = [
 		],
 	},
 	...wordpressConfig,
+	// The scripts config targets Vitest for unit tests, but this suite runs on Jest.
+	{
+		...jestPlugin.configs[ 'flat/recommended' ],
+		files: [ 'tests/js/**/*.{js,jsx}' ],
+	},
 ];

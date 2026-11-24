@@ -2,7 +2,13 @@
  * Jest configuration for unit tests
  */
 module.exports = {
-	...require( '@wordpress/scripts/config/jest-unit.config' ),
+	preset: '@wordpress/jest-preset-default',
+	transform: {
+		'\\.[jt]sx?$': [
+			'babel-jest',
+			{ presets: [ '@wordpress/babel-preset-default' ] },
+		],
+	},
 	testMatch: [ '**/tests/js/**/*.test.js', '**/tests/js/**/*.test.jsx' ],
 	testPathIgnorePatterns: [ '/node_modules/', '/.claude/' ],
 	setupFilesAfterEnv: [ '<rootDir>/tests/js/setup-tests.js' ],
