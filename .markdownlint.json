@@ -31,6 +31,13 @@
         "style": "ordered"
     },
     "fenced-code-language": true,
+    "descriptive-link-text": {
+        "prohibited_texts": [
+            "click here",
+            "here",
+            "more"
+        ]
+    },
     "ignores": [
         "vendor/**",
         "node_modules/**"

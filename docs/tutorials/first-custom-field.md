@@ -70,12 +70,12 @@ In the **General** tab, you must define the following:
 
 Let’s say you want to create a group of fields for movie entries. Here's how you could configure it:
 
-| Field Label      | Field Name      | Field Type | Description                              |
-|------------------|------------------|------------|------------------------------------------|
-| Movie Title      | `movie_title`    | Text       | Stores the name of the movie             |
-| Director         | `director`       | Text       | Stores the name of the director          |
-| Release Year     | `release_year`   | Number     | Stores the year the movie was released   |
-| Poster Image     | `poster`         | Image      | Upload an image file for the movie poster |
+| Field Label  | Field Name     | Field Type | Description                               |
+| ------------ | -------------- | ---------- | ----------------------------------------- |
+| Movie Title  | `movie_title`  | Text       | Stores the name of the movie              |
+| Director     | `director`     | Text       | Stores the name of the director           |
+| Release Year | `release_year` | Number     | Stores the year the movie was released    |
+| Poster Image | `poster`       | Image      | Upload an image file for the movie poster |
 
 > 💡 These fields would be added one by one using the **Add Field** button, and each configured in the field editor panel.
 
