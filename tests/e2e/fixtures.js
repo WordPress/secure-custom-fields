@@ -64,6 +64,9 @@ function generateWorkerCoverageId( workerInfo ) {
 	return `worker-${ workerInfo.workerIndex }-${ Date.now() }`;
 }
 
+// Whether the test site runs WordPress 6.2. Set by the editor fixture.
+let isWP62;
+
 // Extend WordPress test with Istanbul coverage collection and WP version compatibility
 const test = wpTest.extend( {
 	page: async ( { page }, use, testInfo ) => {
@@ -113,24 +116,23 @@ const test = wpTest.extend( {
 
 	// Override editor fixture to provide version-compatible methods.
 	// WP 6.3+ has "View" button and iframe canvas, WP 6.2 has "Preview" button and no iframe.
-	editor: async ( { editor, page, context }, use ) => {
+	editor: async ( { editor, page, context, requestUtils }, use ) => {
+		// The WordPress version is the same for the whole run, so check it once.
+		if ( isWP62 === undefined ) {
+			const response = await requestUtils.request.get( '/wp-admin/' );
+			isWP62 = /\bbranch-6-2\b/.test( await response.text() );
+		}
+
 		// Create extended editor object with version-compatible overrides
 		const extendedEditor = Object.create( editor, {
-			// WP 6.2 doesn't have iframe canvas. Return a Promise so
-			// `await editor.canvas` works correctly for both versions.
+			// WP 6.2 doesn't have iframe canvas. The getter must return a
+			// locator synchronously, because the e2e utils call
+			// `editor.canvas.locator()` directly.
 			canvas: {
 				get() {
-					return ( async () => {
-						const isWP62 = await page.evaluate( () =>
-							document.body.classList.contains( 'branch-6-2' )
-						);
-						if ( isWP62 ) {
-							return page;
-						}
-						return page.frameLocator(
-							'iframe[name="editor-canvas"]'
-						);
-					} )();
+					return isWP62
+						? page
+						: page.frameLocator( 'iframe[name="editor-canvas"]' );
 				},
 			},
 			// Older WordPress versions expose "Preview"; newer versions expose "View".
