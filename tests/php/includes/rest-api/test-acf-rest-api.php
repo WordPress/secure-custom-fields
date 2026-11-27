@@ -524,6 +524,61 @@ class Test_ACF_Rest_Api extends BaseTestCase {
 	}
 
 	/**
+	 * The _source entries tell the block editor whether each field can be output through bindings.
+	 */
+	public function test_load_fields_source_includes_allow_in_bindings() {
+		acf_add_local_field_group(
+			array_merge(
+				$this->test_field_group,
+				array(
+					'key'    => 'group_test_rest_allow_in_bindings',
+					'title'  => 'Test REST Allow In Bindings',
+					'fields' => array(
+						array(
+							'key'               => 'field_test_rest_bindings_on',
+							'label'             => 'Bindings On',
+							'name'              => 'test_rest_bindings_on',
+							'type'              => 'text',
+							'allow_in_bindings' => 1,
+						),
+						array(
+							'key'               => 'field_test_rest_bindings_off',
+							'label'             => 'Bindings Off',
+							'name'              => 'test_rest_bindings_off',
+							'type'              => 'text',
+							'allow_in_bindings' => 0,
+						),
+						array(
+							'key'   => 'field_test_rest_bindings_unset',
+							'label' => 'Bindings Unset',
+							'name'  => 'test_rest_bindings_unset',
+							'type'  => 'text',
+						),
+					),
+				)
+			)
+		);
+		acf_get_store( 'fields' )->reset();
+
+		$request_prop = $this->reflection->getProperty( 'request' );
+		$request_prop->setAccessible( true );
+		$request_prop->setValue( $this->rest_api, $this->get_mock_post_request() );
+
+		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $this->test_post_id );
+		$result  = $this->rest_api->load_fields( array( 'id' => $this->test_post_id ), 'acf', $request, 'post' );
+
+		$this->assertTrue( $result['test_rest_bindings_on_source']['allow_in_bindings'] );
+		$this->assertFalse( $result['test_rest_bindings_off_source']['allow_in_bindings'] );
+		// Matches SCF\Blocks\Bindings::get_value(), which renders fields without the setting.
+		$this->assertTrue( $result['test_rest_bindings_unset_source']['allow_in_bindings'] );
+
+		acf_remove_local_field_group( 'group_test_rest_allow_in_bindings' );
+		acf_remove_local_field( 'field_test_rest_bindings_on' );
+		acf_remove_local_field( 'field_test_rest_bindings_off' );
+		acf_remove_local_field( 'field_test_rest_bindings_unset' );
+	}
+
+	/**
 	 * Test load_fields uses REST-safe formatted values for User fields.
 	 */
 	public function test_load_fields_uses_rest_safe_user_formatted_values() {

@@ -10,7 +10,22 @@ import {
 	extractPostTypeFromTemplate,
 	formatFieldGroupsData,
 	fieldsToOptions,
+	isFieldAllowedInBindings,
+	getBindingsEditorSettings,
 } from '../../../assets/src/js/bindings/utils';
+
+/**
+ * Stubs the data PHP localizes for the bindings script with acf_localize_data().
+ *
+ * @param {Object} data The scfBindings data.
+ */
+const setBindingsData = ( data ) => {
+	window.acf.get.mockImplementation( ( key ) =>
+		key === 'scfBindings' ? data : undefined
+	);
+};
+
+const originalAcfGet = window.acf.get.getMockImplementation();
 
 describe( 'Block Bindings Utils', () => {
 	describe( 'getBindableAttributes', () => {
@@ -330,6 +345,91 @@ describe( 'Block Bindings Utils', () => {
 			expect( result ).toEqual( [
 				{ value: 'field1', label: 'Field 1', type: 'text' },
 			] );
+		} );
+	} );
+
+	describe( 'allow_in_bindings handling', () => {
+		it( 'keeps the allow_in_bindings flag from field groups data', () => {
+			const result = formatFieldGroupsData( [
+				{
+					fields: [
+						{
+							name: 'on',
+							label: 'On',
+							type: 'text',
+							allow_in_bindings: true,
+						},
+						{
+							name: 'off',
+							label: 'Off',
+							type: 'text',
+							allow_in_bindings: false,
+						},
+					],
+				},
+			] );
+
+			expect( result.on.allow_in_bindings ).toBe( true );
+			expect( result.off.allow_in_bindings ).toBe( false );
+		} );
+
+		it( 'treats fields without the flag as allowed', () => {
+			expect( isFieldAllowedInBindings( { type: 'text' } ) ).toBe( true );
+			expect(
+				isFieldAllowedInBindings( { allow_in_bindings: true } )
+			).toBe( true );
+			expect(
+				isFieldAllowedInBindings( { allow_in_bindings: false } )
+			).toBe( false );
+		} );
+
+		it( 'leaves fields without a name out of the options', () => {
+			const result = fieldsToOptions( {
+				'': { label: '', type: 'text', allow_in_bindings: true },
+				named: { label: 'Named', type: 'text' },
+			} );
+
+			expect( result.map( ( option ) => option.value ) ).toEqual( [
+				'named',
+			] );
+		} );
+
+		it( 'leaves fields not allowed in bindings out of the options', () => {
+			const result = fieldsToOptions( {
+				on: { label: 'On', type: 'text', allow_in_bindings: true },
+				off: { label: 'Off', type: 'text', allow_in_bindings: false },
+				legacy: { label: 'Legacy', type: 'text' },
+			} );
+
+			expect( result.map( ( option ) => option.value ) ).toEqual( [
+				'on',
+				'legacy',
+			] );
+		} );
+	} );
+
+	describe( 'getBindingsEditorSettings', () => {
+		afterEach( () => {
+			window.acf.get.mockImplementation( originalAcfGet );
+		} );
+
+		it( 'returns safe defaults when PHP printed no settings', () => {
+			expect( getBindingsEditorSettings() ).toEqual( {
+				hasFieldGroups: false,
+				fieldGroupsUrl: '',
+			} );
+		} );
+
+		it( 'reads the settings printed by PHP', () => {
+			setBindingsData( {
+				hasFieldGroups: true,
+				fieldGroupsUrl: 'http://example.com/wp-admin/edit.php',
+			} );
+
+			expect( getBindingsEditorSettings() ).toEqual( {
+				hasFieldGroups: true,
+				fieldGroupsUrl: 'http://example.com/wp-admin/edit.php',
+			} );
 		} );
 	} );
 } );

@@ -418,6 +418,11 @@ if ( ! class_exists( 'acf_field' ) ) :
 				$binding_url
 			);
 
+			// Without the datastore, the block editor reads fields from the REST API, so the field group must be shown there.
+			if ( ! acf_is_using_datastore() ) {
+				$binding_instructions .= '<br />' . esc_html__( 'To select this field in the block editor, the field group also needs Show in REST API turned on.', 'secure-custom-fields' );
+			}
+
 			// This field setting has a unique behaviour. If the value isn't defined on the field object, it defaults to true, but for new fields, it defaults to off.
 			if ( ! isset( $field['allow_in_bindings'] ) ) {
 				if ( empty( $field['ID'] ) || doing_action( 'wp_ajax_acf/field_group/render_field_settings' ) ) {

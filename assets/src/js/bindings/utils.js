@@ -147,6 +147,7 @@ export function formatFieldGroupsData( fieldGroups ) {
 				fieldsMap[ field.name ] = {
 					label: field.label,
 					type: field.type,
+					allow_in_bindings: field.allow_in_bindings,
 				};
 			} );
 		}
@@ -156,9 +157,29 @@ export function formatFieldGroupsData( fieldGroups ) {
 }
 
 /**
+ * Checks whether a field's value can be output through block bindings.
+ *
+ * Mirrors the "Allow Access to Value in Editor UI" check in SCF\Blocks\Bindings::get_value():
+ * a field bound with this setting off renders empty on the front end. Fields without the
+ * flag (older REST responses) are treated as allowed, as they are in PHP.
+ *
+ * @since 6.9.10
+ * @param {Object} fieldConfig The field data.
+ * @return {boolean} Whether the field can be bound.
+ */
+export function isFieldAllowedInBindings( fieldConfig ) {
+	return fieldConfig?.allow_in_bindings !== false;
+}
+
+/**
  * Converts fields map to options array for ComboboxControl.
  *
+ * Fields without a name are left out, as there is no key to bind them by. Fields
+ * with "Allow Access to Value in Editor UI" off are left out, as they would render
+ * empty on the front end once bound.
+ *
  * @since 6.7.0
+ * @since 6.9.10 Leaves out fields without a name or not allowed in bindings.
  * @param {Object} fieldsMap Object with field data.
  * @return {Array} Array of option objects with value, label, and type.
  */
@@ -167,11 +188,32 @@ export function fieldsToOptions( fieldsMap ) {
 		return [];
 	}
 
-	return Object.entries( fieldsMap ).map(
-		( [ fieldName, fieldConfig ] ) => ( {
+	return Object.entries( fieldsMap )
+		.filter(
+			( [ fieldName, fieldConfig ] ) =>
+				fieldName && isFieldAllowedInBindings( fieldConfig )
+		)
+		.map( ( [ fieldName, fieldConfig ] ) => ( {
 			value: fieldName,
 			label: fieldConfig.label,
 			type: fieldConfig.type,
-		} )
-	);
+		} ) );
+}
+
+/**
+ * Gets the bindings data localized by PHP with acf_localize_data().
+ *
+ * @since 6.9.10
+ * @return {Object} Data with hasFieldGroups and fieldGroupsUrl.
+ */
+export function getBindingsEditorSettings() {
+	const settings = window.acf?.get?.( 'scfBindings' );
+
+	return {
+		hasFieldGroups: !! settings?.hasFieldGroups,
+		fieldGroupsUrl:
+			typeof settings?.fieldGroupsUrl === 'string'
+				? settings.fieldGroupsUrl
+				: '',
+	};
 }

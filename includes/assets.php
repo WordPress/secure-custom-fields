@@ -161,6 +161,41 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 		}
 
 		/**
+		 * Returns the data the legacy SCF block bindings editor script needs.
+		 *
+		 * The editor script only sees fields from field groups with "Show in REST API" on, so it
+		 * can't tell an empty field list apart from a post with no field groups at all. This tells
+		 * it whether the post being edited has any field groups, so it can explain an empty list.
+		 *
+		 * @since SCF 6.9.10
+		 *
+		 * @return array {
+		 *     @type bool   $hasFieldGroups Whether the post being edited has any SCF field groups.
+		 *     @type string $fieldGroupsUrl The field groups admin URL, or an empty string if the user can't manage SCF.
+		 * }
+		 */
+		private function get_block_bindings_editor_data() {
+			$post             = get_post();
+			$has_field_groups = false;
+
+			if ( $post instanceof WP_Post ) {
+				$has_field_groups = ! empty(
+					acf_get_field_groups(
+						array(
+							'post_id'   => $post->ID,
+							'post_type' => $post->post_type,
+						)
+					)
+				);
+			}
+
+			return array(
+				'hasFieldGroups' => $has_field_groups,
+				'fieldGroupsUrl' => acf_current_user_can_admin() ? admin_url( 'edit.php?post_type=acf-field-group' ) : '',
+			);
+		}
+
+		/**
 		 * Registers the ACF scripts and styles.
 		 *
 		 * @date    10/4/18
@@ -645,6 +680,7 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 					$this->supports_block_bindings_editor_script()
 				) {
 					wp_enqueue_script( 'scf-bindings' );
+					acf_localize_data( array( 'scfBindings' => $this->get_block_bindings_editor_data() ) );
 				}
 				wp_enqueue_style( 'acf-pro-input' );
 

@@ -506,9 +506,11 @@ class ACF_Rest_Api {
 				// We keep this one for backward compatibility with existing code that expects the field value to be.
 				$fields[ $field['name'] ]             = $rest_value;
 				$fields[ $field['name'] . '_source' ] = array(
-					'label'           => $field['label'],
-					'type'            => $field['type'],
-					'formatted_value' => $source_formatted_value,
+					'label'             => $field['label'],
+					'type'              => $field['type'],
+					'formatted_value'   => $source_formatted_value,
+					// Mirrors SCF\Blocks\Bindings::get_value(), which only renders the field when this is on (or unset).
+					'allow_in_bindings' => ! isset( $field['allow_in_bindings'] ) || (bool) $field['allow_in_bindings'],
 				);
 			}
 		}
