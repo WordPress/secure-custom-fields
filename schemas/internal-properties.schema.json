@@ -9,6 +9,11 @@
 			"minimum": 1,
 			"description": "WordPress post ID. Present in GET/LIST/CREATE/UPDATE/IMPORT/DUPLICATE outputs."
 		},
+		"fieldID": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "WordPress post ID, or 0 for a code-registered field without a backing post."
+		},
 		"_valid": {
 			"type": [ "boolean", "integer" ],
 			"description": "Validation cache flag. Indicates whether the entity passed validation. Can be boolean or integer (0/1)."
@@ -49,7 +54,7 @@
 			"type": "object",
 			"description": "Internal properties for field entities",
 			"properties": {
-				"ID": { "$ref": "#/definitions/ID" },
+				"ID": { "$ref": "#/definitions/fieldID" },
 				"_valid": { "$ref": "#/definitions/_valid" },
 				"prefix": { "$ref": "#/definitions/prefix" },
 				"value": { "$ref": "#/definitions/value" },

@@ -231,20 +231,26 @@ class SCFSchemaBuilderTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test compose_field_schema only adds fallback when types are missing schemas.
+	 * Test compose_field_schema adds a fallback for extension field types.
 	 *
-	 * With all 39 field types having dedicated schemas, no fallback variant
-	 * should be present. The fallback (with additionalProperties: true) is
-	 * only added when there are field types without schema files.
+	 * The fallback accepts field types without dedicated schemas while excluding
+	 * known types so each known field continues to match exactly one variant.
 	 */
-	public function test_compose_field_schema_no_fallback_when_all_types_have_schemas() {
+	public function test_compose_field_schema_adds_fallback_for_unknown_types() {
 		$result = $this->builder->compose_field_schema();
 
-		// All dedicated schemas have additionalProperties: false.
-		// If a fallback exists, it would have additionalProperties: true.
-		$last_variant = end( $result['oneOf'] );
+		$fallback = end( $result['oneOf'] );
 
-		$this->assertFalse( $last_variant['additionalProperties'] );
+		$this->assertTrue( $fallback['additionalProperties'] );
+		$this->assertArrayHasKey( 'pattern', $fallback['properties']['type'] );
+		$this->assertSame( 0, preg_match( '/' . $fallback['properties']['type']['pattern'] . '/', 'text' ) );
+		$this->assertSame( 1, preg_match( '/' . $fallback['properties']['type']['pattern'] . '/', 'phpunit_unknown_type' ) );
+		$this->assertTrue(
+			rest_validate_value_from_schema( 'phpunit_unknown_type', $fallback['properties']['type'], 'type' )
+		);
+		$this->assertTrue(
+			is_wp_error( rest_validate_value_from_schema( 'text', $fallback['properties']['type'], 'type' ) )
+		);
 	}
 
 	/**
