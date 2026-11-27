@@ -1082,6 +1082,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				array(
 					'field_name'        => '',
 					'field_key'         => '',
+					'field_prefix'      => '',
 					'post_id'           => 0,
 					'rows_per_page'     => 0,
 					'refresh'           => false,
@@ -1099,11 +1100,6 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			if ( ! acf_current_user_can_edit_in_context( $post_id_info, sanitize_text_field( $args['options_page_slug'] ) ) ) {
 				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 403 );
-			}
-
-			if ( ! acf_current_user_can_edit_post( (int) $args['post_id'] ) ) {
-				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
-				wp_send_json_error( $error, 404 );
 			}
 
 			if ( '' === $args['field_name'] || '' === $args['field_key'] ) {
