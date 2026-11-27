@@ -328,7 +328,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$value  = (int) $value;
 			$rows   = array();
 			$offset = 0;
-			$paged  = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
+			$paged  = isset( $_POST['paged'] ) ? max( 1, intval( $_POST['paged'] ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 
 			// Ensure pagination is disabled inside blocks.
 			if ( acf_get_data( 'acf_inside_rest_call' ) || doing_action( 'wp_ajax_acf/ajax/fetch-block' ) ) {
@@ -1082,6 +1082,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 				array(
 					'field_name'        => '',
 					'field_key'         => '',
+					'field_prefix'      => '',
 					'post_id'           => 0,
 					'rows_per_page'     => 0,
 					'refresh'           => false,
@@ -1099,11 +1100,6 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			if ( ! acf_current_user_can_edit_in_context( $post_id_info, sanitize_text_field( $args['options_page_slug'] ) ) ) {
 				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
 				wp_send_json_error( $error, 403 );
-			}
-
-			if ( ! acf_current_user_can_edit_post( (int) $args['post_id'] ) ) {
-				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
-				wp_send_json_error( $error, 404 );
 			}
 
 			if ( '' === $args['field_name'] || '' === $args['field_key'] ) {
@@ -1143,7 +1139,18 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			 */
 			$field['name']   = $args['field_name'];
 			$field['prefix'] = $args['field_prefix'];
-			$field['value']  = acf_get_value( $post_id, $field );
+
+			/*
+			 * The field name comes from the request, so don't load rows that another field saved under that name.
+			 * Values without a reference key (such as imported data) still load, as they do everywhere else.
+			 */
+			$reference = acf_get_metadata_by_field( $post_id, $field, true );
+			if ( $reference && $reference !== $field['key'] ) {
+				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
+				wp_send_json_error( $error, 403 );
+			}
+
+			$field['value'] = acf_get_value( $post_id, $field );
 
 			if ( $args['refresh'] ) {
 				$response['total_rows'] = (int) acf_get_metadata_by_field( $post_id, $field );
