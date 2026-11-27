@@ -44,6 +44,34 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	private const PAGE_SLUG = 'test-repeater-ajax-options';
 
 	/**
+	 * Custom options storage used by some tests.
+	 *
+	 * @var string
+	 */
+	private const CUSTOM_STORAGE = 'test_repeater_ajax_storage';
+
+	/**
+	 * Key of a second repeater whose sub field has the same name as the main repeater's.
+	 *
+	 * @var string
+	 */
+	private const OTHER_FIELD_KEY = 'field_test_repeater_ajax_permissions_other';
+
+	/**
+	 * Name of the second repeater.
+	 *
+	 * @var string
+	 */
+	private const OTHER_FIELD_NAME = 'test_repeater_ajax_permissions_other';
+
+	/**
+	 * Key of the second repeater's sub field.
+	 *
+	 * @var string
+	 */
+	private const OTHER_SUB_FIELD_KEY = 'field_test_repeater_ajax_permissions_other_text';
+
+	/**
 	 * Snapshot of the registered options pages, restored in tear_down().
 	 *
 	 * @var array
@@ -108,9 +136,13 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	 * @return void
 	 */
 	public function tear_down(): void {
-		foreach ( array( '', '_0_text', '_1_text' ) as $suffix ) {
-			delete_option( 'options_' . self::FIELD_NAME . $suffix );
-			delete_option( '_options_' . self::FIELD_NAME . $suffix );
+		foreach ( array( 'options', self::CUSTOM_STORAGE ) as $storage ) {
+			foreach ( array( self::FIELD_NAME, self::OTHER_FIELD_NAME ) as $name ) {
+				foreach ( array( '', '_0_text', '_1_text' ) as $suffix ) {
+					delete_option( "{$storage}_{$name}{$suffix}" );
+					delete_option( "_{$storage}_{$name}{$suffix}" );
+				}
+			}
 		}
 
 		foreach ( $this->post_ids as $post_id ) {
@@ -123,6 +155,12 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 
 		acf_remove_local_field( self::SUB_FIELD_KEY );
 		acf_remove_local_field( self::FIELD_KEY );
+		acf_remove_local_field( self::OTHER_SUB_FIELD_KEY );
+		acf_remove_local_field( self::OTHER_FIELD_KEY );
+		acf_remove_local_field( 'field_test_repeater_ajax_group_inner' );
+		acf_remove_local_field( 'field_test_repeater_ajax_group_inner_text' );
+		acf_remove_local_field( 'field_test_repeater_ajax_group' );
+		acf_remove_local_field( 'field_test_repeater_ajax_clone' );
 
 		// The handler flags the shared field type instance as rendering for the rest of the request.
 		acf_get_field_type( 'repeater' )->is_rendering = false;
@@ -151,6 +189,8 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	private function ensure_field_types() {
 		$field_types = array(
 			'text'     => array( 'acf_field_text', array( 'includes/fields/class-acf-field-text.php' ) ),
+			'group'    => array( 'acf_field__group', array( 'includes/fields/class-acf-field-group.php' ) ),
+			'clone'    => array( 'acf_field_clone', array( 'includes/fields/class-acf-field-clone.php' ) ),
 			'repeater' => array(
 				'acf_field_repeater',
 				array( 'includes/fields/class-acf-repeater-table.php', 'includes/fields/class-acf-field-repeater.php' ),
@@ -267,11 +307,249 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 		$this->save_rows( $post_id );
 		wp_set_current_user( $user_id );
 
-		$response = $this->invoke_ajax_get_rows( $post_id, '', 0 );
+		$response = $this->invoke_ajax_get_rows( $post_id, '', array( 'paged' => 0 ) );
 
 		$this->assertTrue( $response['success'] );
 		$this->assertSame( array( 0 ), array_keys( $response['data']['rows'] ) );
 		$this->assertStringContainsString( 'row one', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
+	 * The request's field name must point to values saved by the requested field.
+	 *
+	 * Another repeater with a matching sub field name stores its rows in the same options storage, for
+	 * example from an admin-only options page.
+	 *
+	 * @return void
+	 */
+	public function test_field_name_of_another_field_is_rejected() {
+		acf_add_local_field(
+			array(
+				'key'        => self::OTHER_FIELD_KEY,
+				'name'       => self::OTHER_FIELD_NAME,
+				'label'      => 'Other Repeater',
+				'type'       => 'repeater',
+				'sub_fields' => array(
+					array(
+						'key'   => self::OTHER_SUB_FIELD_KEY,
+						'name'  => 'text',
+						'label' => 'Text',
+						'type'  => 'text',
+					),
+				),
+			)
+		);
+		update_field(
+			self::OTHER_FIELD_KEY,
+			array(
+				array( self::OTHER_SUB_FIELD_KEY => 'other one' ),
+				array( self::OTHER_SUB_FIELD_KEY => 'other two' ),
+			),
+			'options'
+		);
+
+		$this->register_options_page( 'edit_posts' );
+		$this->save_rows( 'options' );
+		wp_set_current_user( $this->create_user( 'editor' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'options', self::PAGE_SLUG, array( 'field_name' => self::OTHER_FIELD_NAME ) );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Sorry, you do not have permission to do that.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'other two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * Rows saved without a reference key, such as imported data, still load.
+	 *
+	 * @return void
+	 */
+	public function test_rows_without_reference_key_still_load() {
+		$user_id = $this->create_user( 'author' );
+		$post_id = $this->create_post( $user_id );
+		update_post_meta( $post_id, self::FIELD_NAME, 2 );
+		update_post_meta( $post_id, self::FIELD_NAME . '_0_text', 'row one' );
+		update_post_meta( $post_id, self::FIELD_NAME . '_1_text', 'row two' );
+		wp_set_current_user( $user_id );
+
+		$response = $this->invoke_ajax_get_rows( $post_id );
+
+		$this->assertTrue( $response['success'], 'Rows without a reference key should still load.' );
+		$this->assertStringContainsString( 'row two', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
+	 * An options page with custom storage can load the next page of rows.
+	 *
+	 * @return void
+	 */
+	public function test_options_page_with_custom_storage_can_load_next_page() {
+		$this->register_options_page( 'edit_posts', self::CUSTOM_STORAGE );
+		$this->save_rows( self::CUSTOM_STORAGE );
+		wp_set_current_user( $this->create_user( 'editor' ) );
+
+		$response = $this->invoke_ajax_get_rows( self::CUSTOM_STORAGE, self::PAGE_SLUG );
+
+		$this->assertTrue( $response['success'], 'Custom storage pagination should succeed.' );
+		$this->assertStringContainsString( 'row two', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
+	 * An options page slug cannot unlock storage that belongs to another page.
+	 *
+	 * @return void
+	 */
+	public function test_options_page_slug_for_other_storage_is_rejected() {
+		$this->register_options_page( 'edit_posts', self::CUSTOM_STORAGE );
+		$this->save_rows( 'options' );
+		wp_set_current_user( $this->create_user( 'editor' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'options', self::PAGE_SLUG );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Sorry, you do not have permission to do that.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'row two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * A subscriber cannot load rows from an options page that requires edit_posts.
+	 *
+	 * @return void
+	 */
+	public function test_subscriber_cannot_load_options_page_rows() {
+		$this->register_options_page( 'edit_posts' );
+		$this->save_rows( 'options' );
+		wp_set_current_user( $this->create_user( 'subscriber' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'options', self::PAGE_SLUG );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Sorry, you do not have permission to do that.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'row two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * A request with an invalid nonce is rejected.
+	 *
+	 * @return void
+	 */
+	public function test_invalid_nonce_is_rejected() {
+		$this->register_options_page( 'edit_posts' );
+		$this->save_rows( 'options' );
+		wp_set_current_user( $this->create_user( 'editor' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'options', self::PAGE_SLUG, array( 'nonce' => 'invalid' ) );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Invalid nonce.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'row two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * A repeater inside a group loads rows under its full meta name.
+	 *
+	 * @return void
+	 */
+	public function test_repeater_inside_group_can_load_next_page() {
+		$inner_key     = 'field_test_repeater_ajax_group_inner';
+		$inner_sub_key = 'field_test_repeater_ajax_group_inner_text';
+
+		acf_add_local_field(
+			array(
+				'key'        => 'field_test_repeater_ajax_group',
+				'name'       => 'test_repeater_ajax_group',
+				'label'      => 'Group',
+				'type'       => 'group',
+				'sub_fields' => array(
+					array(
+						'key'           => $inner_key,
+						'name'          => 'inner',
+						'label'         => 'Inner',
+						'type'          => 'repeater',
+						'pagination'    => 1,
+						'rows_per_page' => 1,
+						'sub_fields'    => array(
+							array(
+								'key'   => $inner_sub_key,
+								'name'  => 'text',
+								'label' => 'Text',
+								'type'  => 'text',
+							),
+						),
+					),
+				),
+			)
+		);
+
+		$user_id = $this->create_user( 'author' );
+		$post_id = $this->create_post( $user_id );
+		update_field(
+			'field_test_repeater_ajax_group',
+			array(
+				$inner_key => array(
+					array( $inner_sub_key => 'row one' ),
+					array( $inner_sub_key => 'row two' ),
+				),
+			),
+			$post_id
+		);
+		wp_set_current_user( $user_id );
+
+		$response = $this->invoke_ajax_get_rows(
+			$post_id,
+			'',
+			array(
+				'field_key'  => $inner_key,
+				'field_name' => 'test_repeater_ajax_group_inner',
+				'nonce'      => wp_create_nonce( 'acf_field_repeater_' . $inner_key ),
+			)
+		);
+
+		$this->assertTrue( $response['success'], 'Nested repeater pagination should succeed.' );
+		$this->assertStringContainsString( 'row two', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
+	 * A cloned repeater loads rows saved through the clone field.
+	 *
+	 * @return void
+	 */
+	public function test_cloned_repeater_can_load_next_page() {
+		acf_add_local_field(
+			array(
+				'key'          => 'field_test_repeater_ajax_clone',
+				'name'         => 'test_repeater_ajax_clone',
+				'label'        => 'Clone',
+				'type'         => 'clone',
+				'clone'        => array( self::FIELD_KEY ),
+				'display'      => 'seamless',
+				'prefix_name'  => 1,
+				'prefix_label' => 0,
+			)
+		);
+
+		$user_id = $this->create_user( 'author' );
+		$post_id = $this->create_post( $user_id );
+		update_field(
+			'field_test_repeater_ajax_clone',
+			array(
+				'test_repeater_ajax_clone_' . self::FIELD_NAME => array(
+					array( self::SUB_FIELD_KEY => 'row one' ),
+					array( self::SUB_FIELD_KEY => 'row two' ),
+				),
+			),
+			$post_id
+		);
+		wp_set_current_user( $user_id );
+
+		$response = $this->invoke_ajax_get_rows(
+			$post_id,
+			'',
+			array( 'field_name' => 'test_repeater_ajax_clone_' . self::FIELD_NAME )
+		);
+
+		$this->assertTrue( $response['success'], 'Cloned repeater pagination should succeed.' );
+		$this->assertStringContainsString( 'row two', implode( '', $response['data']['rows'] ) );
 	}
 
 	/**
@@ -313,14 +591,16 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	 * Registers the test options page with the default options storage.
 	 *
 	 * @param string $capability The capability required to edit the page.
+	 * @param string $post_id    Optional. The page's storage. Default 'options'.
 	 * @return void
 	 */
-	private function register_options_page( $capability ) {
+	private function register_options_page( $capability, $post_id = 'options' ) {
 		acf_add_options_page(
 			array(
 				'page_title' => 'Repeater AJAX Options',
 				'menu_slug'  => self::PAGE_SLUG,
 				'capability' => $capability,
+				'post_id'    => $post_id,
 			)
 		);
 	}
@@ -391,16 +671,16 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	 *
 	 * @param int|string $post_id           The ACF post ID.
 	 * @param string     $options_page_slug Optional. The options page slug.
-	 * @param int        $paged             Optional. The page to load. Default 2.
+	 * @param array      $overrides         Optional. Request values to override.
 	 * @return array
 	 *
 	 * @throws \RuntimeException Re-thrown when an unrelated runtime exception
 	 *                           bubbles out of the handler.
 	 */
-	private function invoke_ajax_get_rows( $post_id, $options_page_slug = '', $paged = 2 ) {
+	private function invoke_ajax_get_rows( $post_id, $options_page_slug = '', $overrides = array() ) {
 		$request = array(
 			'action'            => 'acf/ajax/query_repeater',
-			'paged'             => $paged,
+			'paged'             => 2,
 			'field_key'         => self::FIELD_KEY,
 			'field_name'        => self::FIELD_NAME,
 			'rows_per_page'     => 1,
@@ -409,6 +689,7 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 			'post_id'           => $post_id,
 			'options_page_slug' => $options_page_slug,
 		);
+		$request = array_merge( $request, $overrides );
 
 		$_POST    = $request;
 		$_REQUEST = $request;

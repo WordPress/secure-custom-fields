@@ -1139,7 +1139,18 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			 */
 			$field['name']   = $args['field_name'];
 			$field['prefix'] = $args['field_prefix'];
-			$field['value']  = acf_get_value( $post_id, $field );
+
+			/*
+			 * The field name comes from the request, so don't load rows that another field saved under that name.
+			 * Values without a reference key (such as imported data) still load, as they do everywhere else.
+			 */
+			$reference = acf_get_metadata_by_field( $post_id, $field, true );
+			if ( $reference && $reference !== $field['key'] ) {
+				$error = array( 'error' => __( 'Sorry, you do not have permission to do that.', 'secure-custom-fields' ) );
+				wp_send_json_error( $error, 403 );
+			}
+
+			$field['value'] = acf_get_value( $post_id, $field );
 
 			if ( $args['refresh'] ) {
 				$response['total_rows'] = (int) acf_get_metadata_by_field( $post_id, $field );
