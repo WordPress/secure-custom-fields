@@ -328,7 +328,7 @@ if ( ! class_exists( 'acf_field_repeater' ) ) :
 			$value  = (int) $value;
 			$rows   = array();
 			$offset = 0;
-			$paged  = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
+			$paged  = isset( $_POST['paged'] ) ? max( 1, intval( $_POST['paged'] ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified elsewhere.
 
 			// Ensure pagination is disabled inside blocks.
 			if ( acf_get_data( 'acf_inside_rest_call' ) || doing_action( 'wp_ajax_acf/ajax/fetch-block' ) ) {

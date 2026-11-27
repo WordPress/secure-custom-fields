@@ -206,6 +206,75 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	}
 
 	/**
+	 * An options request without an options page slug requires manage_options.
+	 *
+	 * @return void
+	 */
+	public function test_options_request_without_page_slug_requires_manage_options() {
+		$this->register_options_page( 'edit_posts' );
+		$this->save_rows( 'options' );
+		wp_set_current_user( $this->create_user( 'editor' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'options' );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Sorry, you do not have permission to do that.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'row two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * A user can load the next page of rows on their own profile.
+	 *
+	 * @return void
+	 */
+	public function test_user_can_load_next_page_on_own_profile() {
+		$user_id = $this->create_user( 'subscriber' );
+		$this->save_rows( 'user_' . $user_id );
+		wp_set_current_user( $user_id );
+
+		$response = $this->invoke_ajax_get_rows( 'user_' . $user_id );
+
+		$this->assertTrue( $response['success'], 'Profile pagination should succeed for the profile owner.' );
+		$this->assertStringContainsString( 'row two', implode( '', $response['data']['rows'] ) );
+		$this->assertStringNotContainsString( 'row one', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
+	 * A user who cannot edit another user's profile is rejected.
+	 *
+	 * @return void
+	 */
+	public function test_user_cannot_load_rows_on_another_profile() {
+		$owner_id = $this->create_user( 'subscriber' );
+		$this->save_rows( 'user_' . $owner_id );
+		wp_set_current_user( $this->create_user( 'author' ) );
+
+		$response = $this->invoke_ajax_get_rows( 'user_' . $owner_id );
+
+		$this->assertFalse( $response['success'] );
+		$this->assertSame( 'Sorry, you do not have permission to do that.', $response['data']['error'] );
+		$this->assertStringNotContainsString( 'row two', wp_json_encode( $response ) );
+	}
+
+	/**
+	 * A page number below 1 loads the first page instead of an invalid row.
+	 *
+	 * @return void
+	 */
+	public function test_page_below_one_loads_first_page() {
+		$user_id = $this->create_user( 'author' );
+		$post_id = $this->create_post( $user_id );
+		$this->save_rows( $post_id );
+		wp_set_current_user( $user_id );
+
+		$response = $this->invoke_ajax_get_rows( $post_id, '', 0 );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( array( 0 ), array_keys( $response['data']['rows'] ) );
+		$this->assertStringContainsString( 'row one', implode( '', $response['data']['rows'] ) );
+	}
+
+	/**
 	 * A user who can edit the post can load the next page of rows.
 	 *
 	 * @return void
@@ -318,19 +387,20 @@ class Test_ACF_Field_Repeater_Ajax_Permissions extends BaseTestCase {
 	}
 
 	/**
-	 * Calls the handler for page two and returns the decoded JSON response.
+	 * Calls the handler and returns the decoded JSON response.
 	 *
 	 * @param int|string $post_id           The ACF post ID.
 	 * @param string     $options_page_slug Optional. The options page slug.
+	 * @param int        $paged             Optional. The page to load. Default 2.
 	 * @return array
 	 *
 	 * @throws \RuntimeException Re-thrown when an unrelated runtime exception
 	 *                           bubbles out of the handler.
 	 */
-	private function invoke_ajax_get_rows( $post_id, $options_page_slug = '' ) {
+	private function invoke_ajax_get_rows( $post_id, $options_page_slug = '', $paged = 2 ) {
 		$request = array(
 			'action'            => 'acf/ajax/query_repeater',
-			'paged'             => 2,
+			'paged'             => $paged,
 			'field_key'         => self::FIELD_KEY,
 			'field_name'        => self::FIELD_NAME,
 			'rows_per_page'     => 1,
